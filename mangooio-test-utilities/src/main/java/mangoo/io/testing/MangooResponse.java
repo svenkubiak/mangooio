@@ -101,8 +101,8 @@ public class MangooResponse {
     }
     
     public MangooResponse header(String name, String value) {
-    	this.headers.put(name, value);
-    	return this;
+        this.headers.put(name, value);
+        return this;
     }
     
     public MangooResponse method(HttpString method) {
@@ -140,7 +140,7 @@ public class MangooResponse {
         }
         
         for (Map.Entry<String, String> entry : this.headers.entrySet()) {
-        	request.setHeader(entry.getKey(), entry.getValue());
+            request.setHeader(entry.getKey(), entry.getValue());
         }
 
         try {
