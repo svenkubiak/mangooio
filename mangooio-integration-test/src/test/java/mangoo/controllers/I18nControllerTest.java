@@ -16,7 +16,7 @@ public class I18nControllerTest {
 
     @Test
     public void templateTest() {
-        MangooResponse response = MangooRequest.get("/translation").execute();
+        MangooResponse response = MangooRequest.get("/translation").header("Accept-Language", "de-DE").execute();
         
         assertNotNull(response.getContent());
         assertEquals("willkommen", response.getContent());

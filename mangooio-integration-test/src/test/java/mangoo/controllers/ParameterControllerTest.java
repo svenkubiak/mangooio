@@ -24,7 +24,7 @@ public class ParameterControllerTest {
     
     @Test
     public void doubleTest() {
-        MangooResponse response = MangooRequest.get("/double/1.42").execute();
+        MangooResponse response = MangooRequest.get("/double/1.42").header("Accept-Language", "en-US").execute();
         
         assertNotNull(response.getContent());
         assertEquals("1,42", response.getContent());
@@ -32,7 +32,7 @@ public class ParameterControllerTest {
     
     @Test
     public void floatTest() {
-        MangooResponse response = MangooRequest.get("/float/1.24").execute();
+        MangooResponse response = MangooRequest.get("/float/1.24").header("Accept-Language", "en-US").execute();
         
         assertNotNull(response.getContent());
         assertEquals("1,24", response.getContent());

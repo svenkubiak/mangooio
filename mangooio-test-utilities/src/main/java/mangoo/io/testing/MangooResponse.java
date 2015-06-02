@@ -6,7 +6,9 @@ import io.undertow.util.Methods;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mangoo.io.configuration.Config;
 import mangoo.io.core.Application;
@@ -50,6 +52,7 @@ public class MangooResponse {
     private CookieStore cookieStore = new BasicCookieStore();
     private HttpClient httpClient;
     private HttpClient httpClientNoRedirects;
+    private Map<String, String> headers = new HashMap<String, String>();
     
     public MangooResponse (String uri, HttpString method) {
         this.responseUri = uri;
@@ -97,6 +100,11 @@ public class MangooResponse {
         return this;
     }
     
+    public MangooResponse header(String name, String value) {
+    	this.headers.put(name, value);
+    	return this;
+    }
+    
     public MangooResponse method(HttpString method) {
         this.responseMethod = method;
         return this;
@@ -131,6 +139,10 @@ public class MangooResponse {
             request.setHeader("Content-Type", responseContentType.toString());  
         }
         
+        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
+        	request.setHeader(entry.getKey(), entry.getValue());
+        }
+
         try {
             if (this.responseDisbaleRedirects) {
                 this.httpResponse = this.httpClientNoRedirects.execute(request);
