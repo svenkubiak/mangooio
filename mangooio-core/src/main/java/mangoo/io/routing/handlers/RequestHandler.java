@@ -421,7 +421,7 @@ public class RequestHandler implements HttpHandler {
             } else if ((int.class).equals(clazz)) {
                 parameters[index] = (queryParameters.get(key) == null) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
             } else if ((Double.class).equals(clazz)) {
-                parameters[index] = (queryParameters.get(key) == null) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
+            	parameters[index] = (queryParameters.get(key) == null) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((double.class).equals(clazz)) {
                 parameters[index] = (queryParameters.get(key) == null) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((Float.class).equals(clazz)) {
