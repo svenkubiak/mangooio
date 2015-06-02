@@ -1,0 +1,54 @@
+package mangoo.io.cache;
+
+import mangoo.io.enums.Default;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+import com.google.inject.Singleton;
+
+/**
+ *
+ * @author svenkubiak
+ *
+ */
+@Singleton
+public class Cache {
+    private net.sf.ehcache.Cache cacheInstance;
+
+    public Cache() {
+        CacheManager cm = CacheManager.getInstance();
+        cm.addCacheIfAbsent(Default.CACHE_NAME.toString());
+        this.cacheInstance = cm.getCache(Default.CACHE_NAME.toString());
+    }
+
+    /**
+     * Adds a value with the given key to the cache
+     * 
+     * @param key The key to store the value
+     * @param value The actual value to store
+     */
+    public void add(String key, Object value) {
+        this.cacheInstance.put(new Element(key, value));
+    }
+
+    /**
+     * Retrieves a value for a given key from the cache
+     * 
+     * @param key The key on which the value is stored
+     * @return The retrieved value or null if the key is not found
+     */
+    public Object get(String key) {
+        if (this.cacheInstance.get(key) != null) {
+            return this.cacheInstance.get(key).getObjectValue();
+        }
+
+        return null;
+    }
+
+    /**
+     * Clears the complete cache by removing all entries
+     */
+    public void clear() {
+        this.cacheInstance.removeAll();
+    }
+}
