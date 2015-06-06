@@ -1,6 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.svenkubiak/mangoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.svenkubiak/mangooio)
 [![Travis Build Status](https://secure.travis-ci.org/svenkubiak/mangooio.png?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/5322/badge.svg)](https://scan.coverity.com/projects/5322)
 
 If this software is useful to you, you can support further development by using Flattr. Thank you!
 
