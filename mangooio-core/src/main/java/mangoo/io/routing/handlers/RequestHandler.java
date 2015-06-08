@@ -41,7 +41,7 @@ import mangoo.io.routing.Response;
 import mangoo.io.routing.bindings.Exchange;
 import mangoo.io.routing.bindings.Flash;
 import mangoo.io.routing.bindings.Form;
-import mangoo.io.routing.bindings.Json;
+import mangoo.io.routing.bindings.Body;
 import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.TemplateEngine;
 
@@ -385,14 +385,14 @@ public class RequestHandler implements HttpHandler {
         return form;
     }
 
-    private Json getJson(HttpServerExchange exchange) throws IOException {
-        Json json = new Json();
+    private Body getBody(HttpServerExchange exchange) throws IOException {
+        Body body = new Body();
         if (exchange.getRequestMethod().equals(Methods.POST) || exchange.getRequestMethod().equals(Methods.PUT)) {
             exchange.startBlocking();
-            json.setContent(IOUtils.toString(exchange.getInputStream()));
+            body.setContent(IOUtils.toString(exchange.getInputStream()));
         }
 
-        return json;
+        return body;
     }
 
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws Exception {
@@ -406,8 +406,8 @@ public class RequestHandler implements HttpHandler {
 
             if ((Form.class).equals(clazz)) {
                 parameters[index] = getForm(exchange);
-            } else if ((Json.class).equals(clazz)) {
-                parameters[index] = getJson(exchange);
+            } else if ((Body.class).equals(clazz)) {
+                parameters[index] = getBody(exchange);
             } else if ((Authentication.class).equals(clazz)) {
                 parameters[index] = this.authentication;
             } else if ((Session.class).equals(clazz)) {
@@ -436,7 +436,7 @@ public class RequestHandler implements HttpHandler {
                 if (this.mapper == null) {
                     this.mapper = JsonFactory.create();
                 }
-                parameters[index] = this.mapper.readValue(getJson(exchange).getContent(), clazz);
+                parameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
             }
 
             index++;
