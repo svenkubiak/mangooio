@@ -30,6 +30,21 @@ public class Cache {
     public void add(String key, Object value) {
         this.cacheInstance.put(new Element(key, value));
     }
+    
+    /**
+     * Adds a value with the given key to the cache and
+     * sets and expiration
+     * 
+     * @param key The key to store the value
+     * @param value The actual value to store
+     * @param expiration The time after which the value gets evicted in seconds
+     */
+    public void add(String key, Object value, int expiration) {
+    	Element element = new Element(key, value);
+    	element.setTimeToLive(expiration);
+
+    	this.cacheInstance.put(element);
+    }
 
     /**
      * Retrieves a value for a given key from the cache
