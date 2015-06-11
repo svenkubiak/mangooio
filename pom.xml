@@ -33,8 +33,8 @@
 		<module>mangooio-integration-test</module>
 	</modules>
 	<scm>
-		<connection>scm:git:ssh://git@git.svenkubiak.de/home/git/mangooio.git</connection>
-		<developerConnection>scm:git:ssh://git@git.svenkubiak.de/home/git/mangooio.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com:svenkubiak/mangooio.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 	<name>mangooio</name>
