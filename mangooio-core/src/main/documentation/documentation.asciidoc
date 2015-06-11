@@ -1748,6 +1748,14 @@ not |false
 [appendix]
 == Changelog
 
+Version 1.0.0-Alpha3
+
+* 
+
+Version 1.0.0-Alpha2
+
+* Added asciidoc documentation (svenkubiak)
+
 Version 1.0.0-Alpha1
 
-* Initial release
+* Initial release (svenkubiak)
