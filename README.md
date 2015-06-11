@@ -1,5 +1,5 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.svenkubiak/mangoo/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.svenkubiak/mangooio)
-[![Travis Build Status](https://secure.travis-ci.org/svenkubiak/mangooio.png?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
+[![Maven Central](https://img.shields.io/maven-central/v/de.svenkubiak/mangooio.svg)](http://search.maven.org/#search|ga|1|mangooio)
+[![Travis Build Status](https://img.shields.io/travis/svenkubiak/mangooio/master.svg)](http://travis-ci.org/svenkubiak/mangooio)
 
 If this software is useful to you, you can support further development by using Flattr. Thank you!
 
