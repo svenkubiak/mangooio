@@ -4,6 +4,7 @@ import mangoo.io.core.Application;
 import mangoo.io.enums.Key;
 import mangoo.io.enums.Mode;
 
+import org.fluentlenium.adapter.FluentTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -11,13 +12,13 @@ import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
 
 @SuppressWarnings("all")
-public class MangooUnit {
+public class MangooUnit extends FluentTest {
     private static volatile Injector injector;
     private static volatile GreenMail fakeSMTP;
     
     @BeforeClass
     public static final void mangooStartup() {
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE.toString(), mangoo.io.enums.Mode.TEST.toString());
         Application.main(null);
         fakeSMTP = Application.getFakeSMTP();
         injector = Application.getInjector();

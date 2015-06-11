@@ -4,6 +4,7 @@ import java.util.Date;
 
 import mangoo.io.configuration.Config;
 import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
@@ -33,14 +34,13 @@ public class Authentication {
 
     public Authentication(Config config) {
         this.config = config;
-        this.expires = String.valueOf(new Date().getTime() + this.config.getInt("auth.cookie.expires", Default.COOKIE_EXPIRES.toInt()));
+        this.expires = String.valueOf(new Date().getTime() + this.config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toInt()));
     }
     
     public String getAuthenticatedUser() {
         return this.authenticatedUser;
     }
     
-
     public String getExpires() {
         return expires;
     }

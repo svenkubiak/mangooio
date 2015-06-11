@@ -63,7 +63,7 @@ public class Bootstrap {
             + " | '_ ` _ \\ / _` | '_ \\ / _` |/ _ \\ / _ \\ \n"
             + " | | | | | | (_| | | | | (_| | (_) | (_) |\n"
             + " |_| |_| |_|\\__,_|_| |_|\\__, |\\___/ \\___/ https://mangoo.io\n"
-            + "                         __/ |            @mangooframework\n"
+            + "                         __/ |            @mangoo_io\n"
             + "                        |___/             " + VERSION + "\n";
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;

@@ -16,7 +16,7 @@ public enum Default {
     SMTP_SSL("false"),
     APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
-    ASSETS_PATH("src/main/resources/assets/"),
+    ASSETS_PATH("src/main/resources/files/assets/"),
     CONFIG_PATH("/src/main/resources/application.conf"),
     FAKE_SMTP_PROTOCOL("smtp"),
     STYLESHEET_FOLDER("stylesheets"),
