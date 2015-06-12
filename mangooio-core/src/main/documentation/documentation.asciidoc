@@ -1750,11 +1750,11 @@ not |false
 
 Version 1.0.0-Alpha3
 
-* 
+* Added HtmlUnitDriver to MangooUnit (svenkubiak)
 
 Version 1.0.0-Alpha2
 
-* Added asciidoc documentation (svenkubiak)
+* Added asciidoc documentation to mangooio-core (svenkubiak)
 
 Version 1.0.0-Alpha1
 

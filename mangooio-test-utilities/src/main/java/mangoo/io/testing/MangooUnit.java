@@ -7,6 +7,8 @@ import mangoo.io.enums.Mode;
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
@@ -15,7 +17,8 @@ import com.icegreen.greenmail.util.GreenMail;
 public class MangooUnit extends FluentTest {
     private static volatile Injector injector;
     private static volatile GreenMail fakeSMTP;
-    
+    public WebDriver webDriver = new HtmlUnitDriver();
+
     @BeforeClass
     public static final void mangooStartup() {
         System.setProperty(Key.APPLICATION_MODE.toString(), mangoo.io.enums.Mode.TEST.toString());
@@ -36,5 +39,10 @@ public class MangooUnit extends FluentTest {
     
     public static GreenMail getFakeSMTP() {
         return fakeSMTP;
+    }
+
+    @Override
+    public WebDriver getDefaultDriver() {
+        return webDriver;
     }
 }
