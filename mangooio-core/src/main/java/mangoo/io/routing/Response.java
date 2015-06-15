@@ -2,13 +2,19 @@ package mangoo.io.routing;
 
 import io.undertow.util.StatusCodes;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import mangoo.io.enums.ContentType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.boon.json.JsonFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 
@@ -18,15 +24,19 @@ import com.google.common.base.Charsets;
  *
  */
 public final class Response {
+    private static final Logger LOG = LoggerFactory.getLogger(Response.class);
     private Map<String, Object> content = new HashMap<String, Object>();
     private String redirectTo;
     private String contentType = ContentType.TEXT_HTML.toString();
     private String charset = Charsets.UTF_8.name();
     private String body = "";
     private String template;
+    private String binaryFileName;
+    private byte[] binaryFile;
+    private boolean binary;
     private boolean rendered;
     private boolean redirect;
-    private int statusCode;
+    private int statusCode = StatusCodes.OK;;
 
     /**
      * Creates a response object with HTTP status code 200
@@ -174,9 +184,17 @@ public final class Response {
     public String getBody() {
         return this.body;
     }
+    
+    public byte[] getBinaryFile() {
+        return this.binaryFile;
+    }
 
     public String getTemplate() {
         return this.template;
+    }
+    
+    public String getBinaryFileName() {
+    	return this.binaryFileName;
     }
 
     public Map<String, Object> getContent() {
@@ -185,6 +203,10 @@ public final class Response {
 
     public boolean isRedirect() {
         return this.redirect;
+    }
+    
+    public boolean isBinary() {
+        return this.binary;
     }
 
     public boolean isRendered() {
@@ -223,6 +245,25 @@ public final class Response {
         this.rendered = true;
 
         return this;
+    }
+    
+    /**
+     * Sends a binary file to the client
+     * 
+     * @param file The file to send
+     * @return A response object {@link mangoo.io.routing.Response} 
+     */
+    public Response andBinaryFile(File file) {
+		try (FileInputStream fileInputStream = new FileInputStream(file)){
+			this.binaryFileName = file.getName();
+	    	this.binaryFile = IOUtils.toByteArray(fileInputStream);
+	    	this.binary = true;
+	    	this.rendered = true;
+		} catch (IOException e) {
+			LOG.error("Failed to handle binary file", e);
+		}
+    	
+    	return this;
     }
 
     /**

@@ -1744,18 +1744,3 @@ not |false
 |auth.login.redirect |The URL a user is redirected when not logged in
 |none
 |=======================================================================
-
-[appendix]
-== Changelog
-
-Version 1.0.0-Alpha3
-
-* Added HtmlUnitDriver to MangooUnit (svenkubiak)
-
-Version 1.0.0-Alpha2
-
-* Added asciidoc documentation to mangooio-core (svenkubiak)
-
-Version 1.0.0-Alpha1
-
-* Initial release (svenkubiak)

@@ -108,7 +108,7 @@ public class RequestHandler implements HttpHandler {
             if (continueAfterFilter) {
                 Response result = getResult(exchange);
                 if (result == null) {
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html; charset=UTF-8");
+                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, Default.CONTENT_TYPE.toString());
                     exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
                     exchange.getResponseSender().send(Templates.DEFAULT.internalServerError());
                 } else {
@@ -120,9 +120,15 @@ public class RequestHandler implements HttpHandler {
                         exchange.setResponseCode(StatusCodes.FOUND);
                         exchange.getResponseHeaders().put(Headers.LOCATION, result.getRedirectTo());
                         exchange.endExchange();
+                    } else if (result.isBinary()) {
+                    	exchange.setResponseCode(result.getStatusCode());
+                    	exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTETE_STREAM.toString());
+                        exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + result.getBinaryFileName());
+                        exchange.startBlocking();
+                        exchange.getOutputStream().write(result.getBinaryFile());
                     } else {
-                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
                         exchange.setResponseCode(result.getStatusCode());
+                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
                         exchange.getResponseSender().send(result.getBody());
                     }
                 }

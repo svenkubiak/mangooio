@@ -38,6 +38,9 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<compilerArgument>-parameters</compilerArgument>
+					<optimize>true</optimize>
+					<debug>false</debug>
 				</configuration>
 			</plugin>
 			<plugin>
