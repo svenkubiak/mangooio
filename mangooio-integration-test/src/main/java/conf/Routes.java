@@ -6,6 +6,7 @@ import mangoo.io.routing.Router;
 import controllers.ApplicationController;
 import controllers.AuthenticationController;
 import controllers.AuthenticityController;
+import controllers.FlashController;
 import controllers.FormController;
 import controllers.I18nController;
 import controllers.JsonController;
@@ -46,6 +47,9 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/authenticationrequired").onClassAndMethod(AuthenticationController.class, "notauthenticated");
         Router.mapRequest(Methods.POST).toUrl("/login").onClassAndMethod(AuthenticationController.class, "login");
         Router.mapRequest(Methods.GET).toUrl("/logout").onClassAndMethod(AuthenticationController.class, "logout");
+        
+        Router.mapRequest(Methods.GET).toUrl("/flash").onClassAndMethod(FlashController.class, "flash");
+        Router.mapRequest(Methods.GET).toUrl("/flashed").onClassAndMethod(FlashController.class, "flashed");
         
         Router.mapRequest(Methods.GET).toUrl("/translation").onClassAndMethod(I18nController.class, "translation");
         
