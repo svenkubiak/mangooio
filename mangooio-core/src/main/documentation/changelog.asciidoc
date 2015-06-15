@@ -2,6 +2,7 @@
 
 Version 1.0.0-Alpha3
 
+* [https://github.com/svenkubiak/mangooio/issues/5](#5) Added option nor sending binary content (svenkubia)
 * Added HtmlUnitDriver to MangooUnit (svenkubiak)
 * Removed changelog from documentation and added to seperate file (svenkubiak)
 * Fixed bug that did not pass request parameter when project was generated from archetype (svenkubiak)
