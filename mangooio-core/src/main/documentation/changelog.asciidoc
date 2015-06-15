@@ -1,16 +1,19 @@
-== Changelog
+= Changelog
 
-Version 1.0.0-Alpha3
+== Version 1.0.0-Alpha3 - 15.06.2015
 
-* [https://github.com/svenkubiak/mangooio/issues/5](#5) Added option nor sending binary content (svenkubia)
+* https://github.com/svenkubiak/mangooio/issues/1[#2] Fixed flash passing between requests (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/1[#1] Fixed failing parameter tests (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/6[#6] Version bump (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/5[#5] Added option for sending binary content (svenkubiak)
 * Added HtmlUnitDriver to MangooUnit (svenkubiak)
 * Removed changelog from documentation and added to seperate file (svenkubiak)
 * Fixed bug that did not pass request parameter when project was generated from archetype (svenkubiak)
 
-Version 1.0.0-Alpha2 - 11.06.2015
+== Version 1.0.0-Alpha2 - 11.06.2015
 
 * Added asciidoc documentation to mangooio-core (svenkubiak)
 
-Version 1.0.0-Alpha1 - 11.06.2015
+== Version 1.0.0-Alpha1 - 11.06.2015
 
 * Initial release (svenkubiak)

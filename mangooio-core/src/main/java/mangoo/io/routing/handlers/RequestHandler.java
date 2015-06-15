@@ -121,11 +121,7 @@ public class RequestHandler implements HttpHandler {
                         exchange.getResponseHeaders().put(Headers.LOCATION, result.getRedirectTo());
                         exchange.endExchange();
                     } else if (result.isBinary()) {
-                    	exchange.setResponseCode(result.getStatusCode());
-                    	exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTETE_STREAM.toString());
-                        exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + result.getBinaryFileName());
-                        exchange.startBlocking();
-                        exchange.getOutputStream().write(result.getBinaryFile());
+                    	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(result));
                     } else {
                         exchange.setResponseCode(result.getStatusCode());
                         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
