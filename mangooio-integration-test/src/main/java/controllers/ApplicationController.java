@@ -1,5 +1,8 @@
 package controllers;
 
+import java.io.File;
+import java.net.URL;
+
 import mangoo.io.routing.Response;
 
 public class ApplicationController {
@@ -26,5 +29,12 @@ public class ApplicationController {
     
     public Response unauthorized() {
         return Response.withUnauthorized().andEmptyBody();
+    }
+    
+    public Response binary() {
+   		URL url = this.getClass().getResource("/attachment.txt");
+   		File file = new File(url.getFile());
+    	
+    	return Response.withOk().andBinaryFile(file);
     }
 }

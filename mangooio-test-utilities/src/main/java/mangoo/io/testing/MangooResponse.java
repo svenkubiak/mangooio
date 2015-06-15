@@ -176,4 +176,8 @@ public class MangooResponse {
     public String getContentType() {
         return this.httpResponse.getEntity().getContentType().getValue();
     }
+
+	public String getResponseUrl() {
+		return responseUrl;
+	}
 }

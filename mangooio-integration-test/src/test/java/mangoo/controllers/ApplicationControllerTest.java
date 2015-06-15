@@ -2,10 +2,28 @@ package mangoo.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import io.undertow.util.FileUtils;
 import io.undertow.util.StatusCodes;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
+
+import mangoo.io.configuration.Config;
+import mangoo.io.core.Application;
+import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
 import mangoo.io.testing.MangooRequest;
 import mangoo.io.testing.MangooResponse;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 /**
@@ -92,4 +110,30 @@ public class ApplicationControllerTest {
         assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
     }
+    
+    @Test
+    public void binaryTest() throws ClientProtocolException, IOException {
+    	Config config = Application.getInjector().getInstance(Config.class);
+        String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
+        int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());  
+        
+    	File file = new File(UUID.randomUUID().toString());
+    	FileOutputStream fileOutputStream = new FileOutputStream(file);
+    	CloseableHttpClient httpclient = HttpClients.custom().build();
+    	try {
+    	    HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
+    	    CloseableHttpResponse response = httpclient.execute(httpget);
+   	        try {
+   	            fileOutputStream.write(EntityUtils.toByteArray(response.getEntity()));
+   	            fileOutputStream.close();
+   	        } finally {
+   	            response.close();
+   	        }
+   	    } finally {
+   	        httpclient.close();
+   	    }
+    	
+    	assertEquals("This is an attachment", FileUtils.readFile(file));
+    	assertTrue(file.delete());
+	}
 }
