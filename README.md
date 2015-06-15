@@ -19,4 +19,4 @@ Changelog: [https://mangoo.io/changelog](https://mangoo.io/changelog)
 
 You can grab each documentation version by simply adding the version tag, e.g. https://mangoo.io/documentation/1.0.0-Alpha-2
 
-Documentation is also available as PDF, simply by adding "pdf" to the URL, e.g. https://mangoo.io/documentation/pdf or https://mangoo.io/documentation/1.0.0-Alpha-2/pdf.
+Documentation is also available as PDF by simply adding "pdf" to the URL, e.g. https://mangoo.io/documentation/pdf or https://mangoo.io/documentation/1.0.0-Alpha-2/pdf.
