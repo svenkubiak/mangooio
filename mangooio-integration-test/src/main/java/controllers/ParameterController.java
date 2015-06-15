@@ -12,7 +12,7 @@ public class ParameterController {
     }
     
     public Response doubleParam (double foo) {
-        return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
+        return Response.withOk().andTextBody(String.valueOf(foo));
     }
     
     public Response intParam (int foo) {
@@ -20,7 +20,7 @@ public class ParameterController {
     }
     
     public Response floatParam (float foo) {
-        return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
+        return Response.withOk().andTextBody(String.valueOf(foo));
     }
     
     public Response multipleParam (String foo, int bar) {

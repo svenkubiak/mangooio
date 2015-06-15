@@ -24,20 +24,18 @@ public class ParameterControllerTest {
     
     @Test
     public void doubleTest() {
-    	//FIXME This needs to be fixed! Not working on travis!!!
-//        MangooResponse response = MangooRequest.get("/double/1.42").header("Accept-Language", "de-DE").execute();
-//        
-//        assertNotNull(response.getContent());
-//        assertEquals("1.42", response.getContent());
+        MangooResponse response = MangooRequest.get("/double/1.42").execute();
+        
+        assertNotNull(response.getContent());
+        assertEquals("1.42", response.getContent());
     }
     
     @Test
     public void floatTest() {
-    	//FIXME This needs to be fixed! Not working on travis!!!
-//        MangooResponse response = MangooRequest.get("/float/1.24").header("Accept-Language", "de-DE").execute();
-//        
-//        assertNotNull(response.getContent());
-//        assertEquals("1.24", response.getContent());
+        MangooResponse response = MangooRequest.get("/float/1.24").execute();
+        
+        assertNotNull(response.getContent());
+        assertEquals("1.24", response.getContent());
     }
     
     @Test

@@ -348,6 +348,8 @@ public Response index(int id, String foo) {
 }
 -------------------------------------------
 
+NOTE: Double and Float values are always passed with "." seperatation, either if you pass the query or request parameter with "," seperation. 
+
 == Lifecycle
 
 In some cases it is useful to hook into the startup process of a mangoo
