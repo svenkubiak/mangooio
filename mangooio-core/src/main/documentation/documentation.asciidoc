@@ -1545,11 +1545,11 @@ mvn clean package
 The https://maven.apache.org/plugins/maven-shade-plugin/[Maven Shade
 Plugin] will generate the JAR file, which you can find in the target
 directory once the maven build is complete. By default, the JAR file
-will be named "app.jar". You can change the name in your pom.xml file in
+will be named "mangooioapp.jar". You can change the name in your pom.xml file in
 the Shade Plugin
 
 --------------------------
-<finalName>app</finalName>
+<finalName>mangooioapp</finalName>
 --------------------------
 
 After you have deployed the jar to your production environment, you can
