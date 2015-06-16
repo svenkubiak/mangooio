@@ -1,13 +1,15 @@
 = Changelog
 
-== Version 1.0.0-Beta 1 - xx.xx.xxxx
+== Version 1.0.0-Beta 1 - xx.07.2015
 
-* Updated documentation
-* Sonar refactorings
+* https://github.com/svenkubiak/mangooio/issues/11[#11] Application name and secret is now generated from user input (svenkubiak) 
+* https://github.com/svenkubiak/mangooio/issues/13[#13] Archetype now takes root project version on generation (svenkubiak) 
+* Updated documentation (svenkubiak)
+* Sonar refactorings (svenkubiak)
 
 == Version 1.0.0-Alpha3 - 15.06.2015
 
-* https://github.com/svenkubiak/mangooio/issues/1[#2] Fixed flash passing between requests (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/2[#2] Fixed flash passing between requests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/1[#1] Fixed failing parameter tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/6[#6] Version bump (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/5[#5] Added option for sending binary content (svenkubiak)
