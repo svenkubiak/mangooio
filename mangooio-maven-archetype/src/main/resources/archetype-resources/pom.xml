@@ -9,7 +9,7 @@
 	<version>${version}</version>
 	<url>https://mangoo.io</url>
 	<properties>
-		<mangoo.version>1.0.0-SNAPSHOT</mangoo.version>
+		<mangooio.version>1.0.0-Alpha3</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -45,7 +45,7 @@
 			</plugin>
 			<plugin>
 				<groupId>de.svenkubiak</groupId>
-				<artifactId>mangoo-maven-plugin</artifactId>
+				<artifactId>mangooio-maven-plugin</artifactId>
 				<version>${mangoo.version}</version>
 			</plugin>
 			<plugin>
@@ -64,6 +64,7 @@
 							</excludes>
 						</filter>
 					</filters>
+					<finalName>mangooioapp</finalName>
 				</configuration>
 				<executions>
 					<execution>
@@ -89,13 +90,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
-			<artifactId>mangoo-core</artifactId>
-			<version>${mangoo.version}</version>
+			<artifactId>mangooio-core</artifactId>
+			<version>${mangooio.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
-			<artifactId>mangoo-test-utilities</artifactId>
-			<version>${mangoo.version}</version>
+			<artifactId>mangooio-test-utilities</artifactId>
+			<version>${mangooio.version}</version>
 		</dependency>		
 	</dependencies>
 </project>

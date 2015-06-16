@@ -27,7 +27,9 @@ public enum Key {
     SMTP_USERNAME("smtp.username"),
     SMTP_PASSWORD("smtp.password"),
     SMTP_SSL("smtp.ssl"),
-    COOKIE_NAME("cookie.name");
+    COOKIE_NAME("cookie.name"),
+    COOKIE_ENCRYPTION("cookie.encryption"),
+    COOKIE_EXPIRES("cookie.expires");
 
     private final String value;
 

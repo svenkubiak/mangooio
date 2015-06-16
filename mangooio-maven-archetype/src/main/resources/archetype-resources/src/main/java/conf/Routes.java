@@ -7,7 +7,10 @@ import controllers.ApplicationController;
 
 public class Routes implements MangooRoutes {
     @Override
-    public void routify(Router router) {
-        router.mapRequest(Methods.GET).to("/").on(ApplicationController.class, "index");
+    public void routify() {
+        Router.mapRequest(Methods.GET).toUrl("/").onClassAndMethod(ApplicationController.class, "index");
+        
+        Router.mapResourceFile().toUrl("/robots.txt");
+        Router.mapResourcePath().toUrl("/assets/");
     }
 }

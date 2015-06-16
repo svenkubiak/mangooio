@@ -1,13 +1,14 @@
 package controllers;
 
-import mangoo.io.routing.Result;
-import mangoo.io.routing.Results;
+import com.google.inject.Singleton;
 
+import mangoo.io.routing.Response;
+
+@Singleton
 public class ApplicationController {
     
-    public Result index() {
+    public Response index() {
         String hello = "Hello World!";
-        
-        return Results.ok().render("hello", hello);
+        return Response.withOk().andContent("hello", hello);
     }
 }

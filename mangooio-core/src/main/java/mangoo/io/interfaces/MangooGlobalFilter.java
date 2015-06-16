@@ -8,6 +8,6 @@ import mangoo.io.routing.bindings.Exchange;
  *
  */
 @FunctionalInterface
-public interface MangooRequestFilter {
+public interface MangooGlobalFilter {
     public boolean filter(Exchange exchange);
 }

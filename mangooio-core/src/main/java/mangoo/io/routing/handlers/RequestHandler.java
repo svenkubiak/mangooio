@@ -34,14 +34,13 @@ import mangoo.io.crypto.Crypto;
 import mangoo.io.enums.ContentType;
 import mangoo.io.enums.Default;
 import mangoo.io.enums.Key;
-import mangoo.io.enums.Templates;
 import mangoo.io.i18n.Messages;
-import mangoo.io.interfaces.MangooRequestFilter;
+import mangoo.io.interfaces.MangooGlobalFilter;
 import mangoo.io.routing.Response;
+import mangoo.io.routing.bindings.Body;
 import mangoo.io.routing.bindings.Exchange;
 import mangoo.io.routing.bindings.Flash;
 import mangoo.io.routing.bindings.Form;
-import mangoo.io.routing.bindings.Body;
 import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.TemplateEngine;
 
@@ -64,8 +63,9 @@ import com.google.inject.Injector;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
-    private int parameterCount;
+	private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
+    private static final String AUTHENTICITY_TOKEN = "authenticityToken";
+	private int parameterCount;
     private Class<?> controllerClass;
     private String controllerMethod;
     private Object controller;
@@ -88,7 +88,7 @@ public class RequestHandler implements HttpHandler {
         this.methodParameters = getMethodParameters();
         this.parameterCount = this.methodParameters.size();
         this.config = this.injector.getInstance(Config.class);
-        this.globalFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
+        this.globalFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooGlobalFilter.class));
     }
 
     @Override
@@ -107,26 +107,21 @@ public class RequestHandler implements HttpHandler {
             boolean continueAfterFilter = executeFilter(exchange);
             if (continueAfterFilter) {
                 Response result = getResult(exchange);
-                if (result == null) {
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, Default.CONTENT_TYPE.toString());
-                    exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
-                    exchange.getResponseSender().send(Templates.DEFAULT.internalServerError());
-                } else {
-                    setSession(exchange);
-                    setFlash(exchange);
-                    setAuthentication(exchange);
 
-                    if (result.isRedirect()) {
-                        exchange.setResponseCode(StatusCodes.FOUND);
-                        exchange.getResponseHeaders().put(Headers.LOCATION, result.getRedirectTo());
-                        exchange.endExchange();
-                    } else if (result.isBinary()) {
-                    	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(result));
-                    } else {
-                        exchange.setResponseCode(result.getStatusCode());
-                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
-                        exchange.getResponseSender().send(result.getBody());
-                    }
+                setSession(exchange);
+                setFlash(exchange);
+                setAuthentication(exchange);
+
+                if (result.isRedirect()) {
+                	exchange.setResponseCode(StatusCodes.FOUND);
+                    exchange.getResponseHeaders().put(Headers.LOCATION, result.getRedirectTo());
+                    exchange.endExchange();
+                } else if (result.isBinary()) {
+                  	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(result));
+                } else {
+                    exchange.setResponseCode(result.getStatusCode());
+                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
+                    exchange.getResponseSender().send(result.getBody());
                 }
             }
         } catch (Exception e) {
@@ -179,7 +174,7 @@ public class RequestHandler implements HttpHandler {
 
     private boolean executeGlobalFilter(HttpServerExchange exchange) throws Exception {
         if (this.globalFilter) {
-            MangooRequestFilter mangooGlobalFilter = this.injector.getInstance(MangooRequestFilter.class);
+            MangooGlobalFilter mangooGlobalFilter = this.injector.getInstance(MangooGlobalFilter.class);
             return mangooGlobalFilter.filter(getExchange(exchange));
         }
 
@@ -188,9 +183,9 @@ public class RequestHandler implements HttpHandler {
 
     private Exchange getExchange(HttpServerExchange httpServerExchange) throws Exception {
         if (this.exchange == null) {
-            String authenticityToken = getRequestParameters(httpServerExchange).get("authenticityToken");
+            String authenticityToken = getRequestParameters(httpServerExchange).get(AUTHENTICITY_TOKEN);
             if (StringUtils.isBlank(authenticityToken)) {
-                authenticityToken = getForm(httpServerExchange).get("authenticityToken");
+                authenticityToken = getForm(httpServerExchange).get(AUTHENTICITY_TOKEN);
             }
 
             this.exchange = new Exchange(httpServerExchange, this.session, authenticityToken, this.authentication);
@@ -243,11 +238,11 @@ public class RequestHandler implements HttpHandler {
 
     private Session getSession(HttpServerExchange exchange) throws Exception {
         Session session = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getString("cookie.name"));
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getString(Key.COOKIE_NAME));
         if (cookie != null) {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
-                if (this.config.getBoolean("cookie.encryption", false)) {
+                if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
                     Crypto crypto = this.injector.getInstance(Crypto.class);
                     cookieValue = crypto.decrypt(cookieValue);
                 }
@@ -271,7 +266,7 @@ public class RequestHandler implements HttpHandler {
                     Date now = new Date();
                     Date expireDate = new Date(Long.valueOf(expires));
 
-                    if (now.before(expireDate) && DigestUtils.sha384Hex(data + authenticityToken + expires + this.config.getString("application.secret")).equals(sign)) {
+                    if (now.before(expireDate) && DigestUtils.sha384Hex(data + authenticityToken + expires + this.config.getString(Key.APPLICATION_SECRET)).equals(sign)) {
                         Map<String, String> sessionValues = new HashMap<String, String>();
                         if (StringUtils.isNotEmpty(data)) {
                             for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(data).entrySet()) {
@@ -289,7 +284,7 @@ public class RequestHandler implements HttpHandler {
         if (session == null) {
             session = new Session();
             session.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(16));
-            session.setExpires(new Date().getTime() + config.getInt("cookie.expires"));
+            session.setExpires(new Date().getTime() + config.getInt(Key.COOKIE_EXPIRES));
         }
 
         this.session = session;
@@ -301,18 +296,18 @@ public class RequestHandler implements HttpHandler {
         if (this.session != null && this.session.hasChanges()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.session.getValues());
 
-            String sign = DigestUtils.sha384Hex(values + session.getAuthenticityToken() + session.getExpires() + config.getString("application.secret"));
+            String sign = DigestUtils.sha384Hex(values + session.getAuthenticityToken() + session.getExpires() + config.getString(Key.APPLICATION_SECRET));
             String value = sign + "|" + session.getAuthenticityToken() + "|" + session.getExpires() + "-" + values;
 
-            if (this.config.getBoolean("cookie.encryption", false)) {
+            if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
                 Crypto crypto = this.injector.getInstance(Crypto.class);
                 value = crypto.encrypt(value);
             }
 
-            Cookie cookie = new CookieImpl(config.getString("cookie.name"), value)
+            Cookie cookie = new CookieImpl(config.getString(Key.COOKIE_NAME), value)
                 .setHttpOnly(true)
                 .setPath("/")
-                .setMaxAge(config.getInt("cookie.expires"));
+                .setMaxAge(config.getInt(Key.COOKIE_EXPIRES));
 
             exchange.setResponseCookie(cookie);
             this.session = null;
@@ -320,16 +315,18 @@ public class RequestHandler implements HttpHandler {
     }
 
     private void setFlash(HttpServerExchange exchange) throws Exception {
-        if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
+        String cookieName = config.getString(Key.APPLICATION_NAME) + "-FLASH";
+        
+    	if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
-
-            Cookie cookie = new CookieImpl(config.getString("application.name") + "-FLASH", values)
+            
+            Cookie cookie = new CookieImpl(cookieName, values)
                 .setHttpOnly(true)
                 .setPath("/");
 
             exchange.setResponseCookie(cookie);
         } else {
-            Cookie cookie = exchange.getRequestCookies().get(config.getString("application.name") + "-FLASH");
+            Cookie cookie = exchange.getRequestCookies().get(cookieName);
             if (cookie != null) {
                 cookie.setHttpOnly(true)
                     .setPath("/")
@@ -510,7 +507,7 @@ public class RequestHandler implements HttpHandler {
                 cookie = new CookieImpl(Key.AUTH_COOKIE_NAME.toString(), value)
                     .setHttpOnly(true)
                     .setPath("/")
-                    .setMaxAge(config.getInt("auth.cookie.expires", 86400));
+                    .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, 86400));
             }
 
             exchange.setResponseCookie(cookie);
