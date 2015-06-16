@@ -9,14 +9,14 @@ If this software is useful to you, you can support further development by using 
 mangoo I/O
 ================
 
-mangoo I/O is an intuitive, lightweight, high performance full stack java web framework.
+mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-Homepage: [https://mangoo.io](https://mangoo.io)
-
-Documentation: [https://mangoo.io/documentation](https://mangoo.io/documentation)
-
+Homepage: [https://mangoo.io](https://mangoo.io)  
+Documentation: [https://mangoo.io/documentation](https://mangoo.io/documentation)  
 Changelog: [https://mangoo.io/changelog](https://mangoo.io/changelog)
 
-You can grab previous documentation versions by simply adding the version tag to the URL, e.g. https://mangoo.io/documentation/1.0.0-Alpha-2
+You can grab previous documentation versions by simply adding the version tag to the URL, e.g.   
+https://mangoo.io/documentation/1.0.0-Alpha-2
 
-Documentation is also available as PDF by simply adding "pdf" to the URL, e.g. https://mangoo.io/documentation/pdf or https://mangoo.io/documentation/1.0.0-Alpha-2/pdf.
+Documentation is also available as PDF by simply adding "pdf" to the URL, e.g.  
+https://mangoo.io/documentation/pdf or https://mangoo.io/documentation/1.0.0-Alpha-2/pdf
