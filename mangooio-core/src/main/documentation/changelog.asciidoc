@@ -2,6 +2,7 @@
 
 == Version 1.0.0-Beta 1 - xx.07.2015
 
+* https://github.com/svenkubiak/mangooio/issues/12[#12] Added option to autocast cache values (svenkubiak) 
 * https://github.com/svenkubiak/mangooio/issues/11[#11] Application name and secret is now generated from user input (svenkubiak) 
 * https://github.com/svenkubiak/mangooio/issues/13[#13] Archetype now takes root project version on generation (svenkubiak) 
 * Updated documentation (svenkubiak)

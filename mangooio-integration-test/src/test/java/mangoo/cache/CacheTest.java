@@ -9,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CacheTest {
-    private static Cache cache;
+    private static final String TEST = "this is a test for the cache";
+	private static Cache cache;
     
     @Before
     public void init() {
@@ -18,21 +19,26 @@ public class CacheTest {
     
     @Test
     public void addTest() {
-        String test = "this is a test for the cache";
-        cache.add("test", test);
+        cache.add("test", TEST);
         
-        assertEquals(cache.get("test"), test);
+        assertEquals(cache.get("test"), TEST);
     }
     
     @Test
     public void clearTest() {
-        String test = "this is a test for the cache";
-        cache.add("test", test);
+        cache.add("test", TEST);
         
-        assertEquals(cache.get("test"), test);
+        assertEquals(cache.get("test"), TEST);
         
         cache.clear();
         
         assertNull(cache.get("test"));
+    }
+    
+    @Test
+    public void castTest() {
+    	cache.add("test", TEST);
+    	
+    	assertEquals(TEST, cache.get("test", String.class));
     }
 }
