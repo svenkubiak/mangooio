@@ -106,22 +106,23 @@ public class RequestHandler implements HttpHandler {
 
             boolean continueAfterFilter = executeFilter(exchange);
             if (continueAfterFilter) {
-                Response result = getResult(exchange);
+                Response response = getResponse(exchange);
 
                 setSession(exchange);
                 setFlash(exchange);
                 setAuthentication(exchange);
 
-                if (result.isRedirect()) {
+                if (response.isRedirect()) {
                 	exchange.setResponseCode(StatusCodes.FOUND);
-                    exchange.getResponseHeaders().put(Headers.LOCATION, result.getRedirectTo());
+                    exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
                     exchange.endExchange();
-                } else if (result.isBinary()) {
-                  	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(result));
+                } else if (response.isBinary()) {
+                  	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
                 } else {
-                    exchange.setResponseCode(result.getStatusCode());
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, result.getContentType() + "; charset=" + result.getCharset());
-                    exchange.getResponseSender().send(result.getBody());
+                    exchange.setResponseCode(response.getStatusCode());
+                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
+                    response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+                    exchange.getResponseSender().send(response.getBody());
                 }
             }
         } catch (Exception e) {
@@ -215,7 +216,7 @@ public class RequestHandler implements HttpHandler {
         return continueAfterFilter;
     }
 
-    private Response getResult(HttpServerExchange exchange) throws Exception {
+    private Response getResponse(HttpServerExchange exchange) throws Exception {
         Response result;
 
         if (this.methodParameters.isEmpty()) {

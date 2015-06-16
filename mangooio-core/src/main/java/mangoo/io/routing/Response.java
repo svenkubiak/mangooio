@@ -1,5 +1,6 @@
 package mangoo.io.routing;
 
+import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import com.google.common.base.Charsets;
  */
 public final class Response {
     private static final Logger LOG = LoggerFactory.getLogger(Response.class);
+    private Map<HttpString, String> headers = new HashMap<HttpString, String>();
     private Map<String, Object> content = new HashMap<String, Object>();
     private String redirectTo;
     private String contentType = ContentType.TEXT_HTML.toString();
@@ -38,7 +40,59 @@ public final class Response {
     private boolean redirect;
     private int statusCode = StatusCodes.OK;;
 
-    /**
+    public int getStatusCode() {
+        return this.statusCode;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    public String getCharset() {
+        return this.charset;
+    }
+
+    public String getBody() {
+        return this.body;
+    }
+    
+    public byte[] getBinaryFile() {
+        return this.binaryFile.clone();
+    }
+
+    public String getTemplate() {
+        return this.template;
+    }
+    
+    public String getBinaryFileName() {
+    	return this.binaryFileName;
+    }
+
+    public Map<String, Object> getContent() {
+        return this.content;
+    }
+
+    public boolean isRedirect() {
+        return this.redirect;
+    }
+    
+    public boolean isBinary() {
+        return this.binary;
+    }
+
+    public boolean isRendered() {
+        return this.rendered;
+    }
+
+    public String getRedirectTo() {
+        return this.redirectTo;
+    }
+    
+    public Map<HttpString, String> getHeaders() {
+		return headers;
+	}
+
+	/**
      * Creates a response object with HTTP status code 200
      * 
      * @return A response object {@link mangoo.io.routing.Response}
@@ -169,54 +223,6 @@ public final class Response {
         return this;
     }
 
-    public int getStatusCode() {
-        return this.statusCode;
-    }
-
-    public String getContentType() {
-        return this.contentType;
-    }
-
-    public String getCharset() {
-        return this.charset;
-    }
-
-    public String getBody() {
-        return this.body;
-    }
-    
-    public byte[] getBinaryFile() {
-        return this.binaryFile.clone();
-    }
-
-    public String getTemplate() {
-        return this.template;
-    }
-    
-    public String getBinaryFileName() {
-    	return this.binaryFileName;
-    }
-
-    public Map<String, Object> getContent() {
-        return this.content;
-    }
-
-    public boolean isRedirect() {
-        return this.redirect;
-    }
-    
-    public boolean isBinary() {
-        return this.binary;
-    }
-
-    public boolean isRendered() {
-        return this.rendered;
-    }
-
-    public String getRedirectTo() {
-        return this.redirectTo;
-    }
-
     /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The default content type "text/html" will be used.
@@ -287,5 +293,19 @@ public final class Response {
         this.rendered = true;
 
         return this;
+    }
+    
+    /**
+     * Adds an additional header to the request response. If an header
+     * key already exists, it will we overwritten with the latest value.
+     * 
+     * @param key The header constant from Headers class (e.g. Headers.CONTENT_TYPE)
+     * @param value The header value
+     * @return A response object {@link mangoo.io.routing.Response}
+     */
+    public Response andHeader(HttpString key, String value) {
+    	this.headers.put(key, value);
+    	
+    	return this;
     }
 }

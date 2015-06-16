@@ -112,6 +112,14 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void headerTest() {
+    	 MangooResponse response = MangooRequest.get("/header").execute();
+
+         assertNotNull(response);
+         assertEquals("Access-Control-Allow-Origin: https://mangoo.io", response.getHttpResponse().getFirstHeader("Access-Control-Allow-Origin").toString());
+    }
+    
+    @Test
     public void binaryTest() throws ClientProtocolException, IOException {
     	Config config = Application.getInjector().getInstance(Config.class);
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
