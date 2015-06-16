@@ -7,7 +7,8 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class Module extends AbstractModule {
-    @Override
+    
+	@Override
     protected void configure() {
         bind(MangooLifecycle.class).to(Lifecycle.class);
     }

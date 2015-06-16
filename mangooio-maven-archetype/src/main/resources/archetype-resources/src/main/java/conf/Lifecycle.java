@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class Lifecycle implements MangooLifecycle {
     
-    @Override
+	@Override
     public void applicationStarted() {
     }
 }

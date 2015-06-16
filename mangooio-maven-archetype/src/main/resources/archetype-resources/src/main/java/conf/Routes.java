@@ -5,8 +5,10 @@ import mangoo.io.interfaces.MangooRoutes;
 import mangoo.io.routing.Router;
 import controllers.ApplicationController;
 
+@Singleton
 public class Routes implements MangooRoutes {
-    @Override
+    
+	@Override
     public void routify() {
         Router.mapRequest(Methods.GET).toUrl("/").onClassAndMethod(ApplicationController.class, "index");
         
