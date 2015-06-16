@@ -1,5 +1,7 @@
 package controllers;
 
+import io.undertow.util.HttpString;
+
 import java.io.File;
 import java.net.URL;
 
@@ -36,5 +38,9 @@ public class ApplicationController {
     	File file = new File(url.getFile());
         
         return Response.withOk().andBinaryFile(file);
+    }
+    
+    public Response header() {
+    	return Response.withOk().andEmptyBody().andHeader(new HttpString("Access-Control-Allow-Origin"), "https://mangoo.io");
     }
 }

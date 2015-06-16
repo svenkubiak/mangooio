@@ -24,6 +24,7 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/badrequest").onClassAndMethod(ApplicationController.class, "badrequest");
         Router.mapRequest(Methods.GET).toUrl("/unauthorized").onClassAndMethod(ApplicationController.class, "unauthorized");
         Router.mapRequest(Methods.GET).toUrl("/binary").onClassAndMethod(ApplicationController.class, "binary");
+        Router.mapRequest(Methods.GET).toUrl("/header").onClassAndMethod(ApplicationController.class, "header");
         
         Router.mapRequest(Methods.POST).toUrl("/form").onClassAndMethod(FormController.class, "form");
         
