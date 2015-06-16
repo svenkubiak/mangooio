@@ -32,9 +32,9 @@ public class ApplicationController {
     }
     
     public Response binary() {
-   		URL url = this.getClass().getResource("/attachment.txt");
-   		File file = new File(url.getFile());
-    	
-    	return Response.withOk().andBinaryFile(file);
+    	URL url = this.getClass().getResource("/attachment.txt");
+    	File file = new File(url.getFile());
+        
+        return Response.withOk().andBinaryFile(file);
     }
 }
