@@ -40,10 +40,10 @@ public class Cache {
      * @param expiration The time after which the value gets evicted in seconds
      */
     public void add(String key, Object value, int expiration) {
-    	Element element = new Element(key, value);
-    	element.setTimeToLive(expiration);
+        Element element = new Element(key, value);
+        element.setTimeToLive(expiration);
 
-    	this.cacheInstance.put(element);
+        this.cacheInstance.put(element);
     }
 
     /**

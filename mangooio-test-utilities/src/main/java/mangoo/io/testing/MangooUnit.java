@@ -2,7 +2,6 @@ package mangoo.io.testing;
 
 import mangoo.io.core.Application;
 import mangoo.io.enums.Key;
-import mangoo.io.enums.Mode;
 
 import org.fluentlenium.adapter.FluentTest;
 import org.junit.AfterClass;

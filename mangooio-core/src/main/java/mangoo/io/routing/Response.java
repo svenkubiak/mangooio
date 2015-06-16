@@ -186,7 +186,7 @@ public final class Response {
     }
     
     public byte[] getBinaryFile() {
-        return this.binaryFile;
+        return this.binaryFile.clone();
     }
 
     public String getTemplate() {
