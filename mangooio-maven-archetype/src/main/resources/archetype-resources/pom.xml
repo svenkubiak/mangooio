@@ -46,7 +46,7 @@
 			<plugin>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>${mangoo.version}</version>
+				<version>${mangooio.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -97,6 +97,7 @@
 			<groupId>de.svenkubiak</groupId>
 			<artifactId>mangooio-test-utilities</artifactId>
 			<version>\${mangooio.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

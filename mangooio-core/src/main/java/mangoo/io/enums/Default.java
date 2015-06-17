@@ -25,6 +25,7 @@ public enum Default {
     CONTENT_TYPE("text/html; charset=UTF-8"),
     SCHEDULER_PREFIX("org.quartz."),
     APPLICATION_SECRET_MIN_LENGTH("16"),
+    SERVER("Undertow"),
     CACHE_NAME("mangoo");
 
     private final String value;

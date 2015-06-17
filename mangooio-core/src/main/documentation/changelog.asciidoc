@@ -1,7 +1,10 @@
 = Changelog
 
-== Version 1.0.0-Beta 1 - xx.07.2015
+== Version 1.0.0-Beta 1 - 17.07.2015
 
+* Added server "Undertow" token to response (svenkubiak)
+* Added new lifecycle hook "applicationInitialized" (svenkubiak)
+* Fixed bug that checked mode for testing incorrectly (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/10[#10] Added option to add additional headers to response (svenkubiak) 
 * https://github.com/svenkubiak/mangooio/issues/12[#12] Added option to autocast cache values (svenkubiak) 
 * https://github.com/svenkubiak/mangooio/issues/11[#11] Application name and secret is now generated from user input (svenkubiak) 

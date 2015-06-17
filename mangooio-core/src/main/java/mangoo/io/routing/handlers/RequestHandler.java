@@ -115,12 +115,14 @@ public class RequestHandler implements HttpHandler {
                 if (response.isRedirect()) {
                 	exchange.setResponseCode(StatusCodes.FOUND);
                     exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
+                    exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
                     exchange.endExchange();
                 } else if (response.isBinary()) {
                   	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
                 } else {
                     exchange.setResponseCode(response.getStatusCode());
                     exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
+                    exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
                     response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
                     exchange.getResponseSender().send(response.getBody());
                 }

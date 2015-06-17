@@ -102,6 +102,7 @@ public class Bootstrap {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
         this.config = this.injector.getInstance(Config.class);
         this.injector.getInstance(Cache.class);
+        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();
     }
 
     public void prepareConfig() {

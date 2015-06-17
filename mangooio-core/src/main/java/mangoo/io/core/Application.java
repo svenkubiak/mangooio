@@ -66,7 +66,7 @@ public final class Application {
      * @return True if the application is running in test mode, false otherwise
      */
     public static boolean inTestMode() {
-        return Mode.PROD.equals(mode);
+        return Mode.TEST.equals(mode);
     }
 
     public static Mode getMode() {

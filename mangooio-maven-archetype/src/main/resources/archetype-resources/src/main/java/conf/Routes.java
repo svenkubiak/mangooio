@@ -1,5 +1,7 @@
 package conf;
 
+import com.google.inject.Singleton;
+
 import io.undertow.util.Methods;
 import mangoo.io.interfaces.MangooRoutes;
 import mangoo.io.routing.Router;
