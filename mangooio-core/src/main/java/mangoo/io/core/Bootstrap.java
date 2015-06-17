@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-import mangoo.io.cache.Cache;
 import mangoo.io.configuration.Config;
 import mangoo.io.enums.Default;
 import mangoo.io.enums.Key;
@@ -101,7 +100,6 @@ public class Bootstrap {
     public void prepareInjector() {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
         this.config = this.injector.getInstance(Config.class);
-        this.injector.getInstance(Cache.class);
         this.injector.getInstance(MangooLifecycle.class).applicationInitialized();
     }
 
