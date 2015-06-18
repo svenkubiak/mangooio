@@ -1,11 +1,16 @@
 package mangoo.io.templating;
 
+import io.undertow.server.HttpServerExchange;
+
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import mangoo.io.core.Application;
 import mangoo.io.i18n.Messages;
@@ -14,7 +19,7 @@ import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.directives.AuthenticityFormDirective;
 import mangoo.io.templating.directives.AuthenticityTokenDirective;
 import mangoo.io.templating.methods.I18nMethod;
-import mangoo.io.utils.ExceptionUtils;
+import mangoo.io.utils.ThrowableUtils;
 import mangoo.io.utils.Source;
 
 import com.google.common.base.Charsets;
@@ -86,15 +91,18 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String renderException(List<StackTraceElement> exception) throws Exception {
+    public String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
         Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<String, Object>();
 
-        StackTraceElement stackTraceElement = exception.get(0);
-        String sourceCodePath = ExceptionUtils.getSourceCodePath(stackTraceElement);
+        StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
+        String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
 
-        List<Source> sources = ExceptionUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
+        List<Source> sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
         content.put("sources", sources);
+        content.put("cause",ExceptionUtils.getMessage(cause));
+        content.put("url", exchange.getRequestURI());
+        content.put("method", exchange.getRequestMethod());
         content.put("line", stackTraceElement.getLineNumber());
         content.put("sourceCodePath", new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getAbsolutePath());
 

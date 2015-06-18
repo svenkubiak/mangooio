@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
@@ -139,9 +138,9 @@ public class RequestHandler implements HttpHandler {
 
     private void displayException(HttpServerExchange exchange, Throwable cause) throws Exception {
         TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-        String content = templateEngine.renderException(Arrays.asList(cause.getStackTrace()));
-
-        exchange.setResponseCode(StatusCodes.BAD_REQUEST);
+        String content = templateEngine.renderException(exchange, cause);
+        
+        exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
         exchange.getResponseSender().send(content);
     }
 

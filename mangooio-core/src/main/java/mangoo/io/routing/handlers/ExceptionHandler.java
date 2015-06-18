@@ -16,7 +16,7 @@ public class ExceptionHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
     	exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-        exchange.setResponseCode(StatusCodes.BAD_REQUEST);
-        exchange.getResponseSender().send(Templates.DEFAULT.badRequest());
+        exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
+        exchange.getResponseSender().send(Templates.DEFAULT.internalServerError());
     }
 }

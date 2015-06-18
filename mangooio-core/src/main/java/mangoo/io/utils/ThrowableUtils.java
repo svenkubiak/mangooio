@@ -14,9 +14,9 @@ import com.google.common.base.Charsets;
  * @author svenkubiak
  *
  */
-public final class ExceptionUtils {
+public final class ThrowableUtils {
 
-    private ExceptionUtils() {
+    private ThrowableUtils() {
     }
     
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
@@ -47,7 +47,7 @@ public final class ExceptionUtils {
         int index = 0;
         List<Source> sources = new ArrayList<Source>();
         for (String line : lines) {
-            if ( (index + 4 > errorLine) && (index - 4 < errorLine) ) {
+            if ( (index + 5 > errorLine) && (index - 3 < errorLine) ) {
                 sources.add(new Source((index + 1) == errorLine, index + 1, line));
             }
             index++;
