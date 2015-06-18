@@ -29,7 +29,10 @@ public enum Key {
     SMTP_SSL("smtp.ssl"),
     COOKIE_NAME("cookie.name"),
     COOKIE_ENCRYPTION("cookie.encryption"),
-    COOKIE_EXPIRES("cookie.expires");
+    COOKIE_EXPIRES("cookie.expires"),
+    ERROR("error"),
+    WARNING("warning"),
+    SUCCESS("success");
 
     private final String value;
 

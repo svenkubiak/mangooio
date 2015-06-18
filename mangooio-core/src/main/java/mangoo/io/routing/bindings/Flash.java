@@ -3,6 +3,8 @@ package mangoo.io.routing.bindings;
 import java.util.HashMap;
 import java.util.Map;
 
+import mangoo.io.enums.Key;
+
 /**
  *
  * @author svenkubiak
@@ -20,15 +22,15 @@ public class Flash {
     }
 
     public void setError(String value) {
-        this.values.put("error", value);
+        this.values.put(Key.ERROR.toString(), value);
     }
 
-    public void setWarn(String value) {
-        this.values.put("warn", value);
+    public void setWarning(String value) {
+        this.values.put(Key.WARNING.toString(), value);
     }
 
     public void setSuccess(String value) {
-        this.values.put("success", value);
+        this.values.put(Key.SUCCESS.toString(), value);
     }
 
     public void add(String key, String value) {

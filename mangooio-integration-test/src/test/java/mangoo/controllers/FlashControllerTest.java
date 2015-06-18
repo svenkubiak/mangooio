@@ -14,6 +14,6 @@ public class FlashControllerTest {
         MangooResponse response = MangooRequest.instance().uri("/flash").method(Methods.GET).execute();
 
         assertNotNull(response);
-        assertEquals("simpleerrorwarninginfo", response.getContent());
+        assertEquals("simpleerrorwarningsuccess", response.getContent());
     }
 }
