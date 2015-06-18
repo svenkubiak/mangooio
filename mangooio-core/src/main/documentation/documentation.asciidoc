@@ -1,5 +1,9 @@
 == Overview
 
+.Document version
+[NOTE]
+You are reading version {version} of the documentation.
+
 Development of mangoo I/O was started in mid 2015 out of the interest on
 how difficult it would be to create an intuitiv, developer friendly,
 full stack Java framework from scratch. After the fresh new breeze of
@@ -58,7 +62,7 @@ documentation. If you want for example the documentation of version
 https://mangoo.io/documentation/1.0.1
 -------------------------------------
 
-A quick note in the sidebar will show you, which version of the
+A quick note in the header will show you, which version of the
 documentation you are reading.
 
 == Getting started
