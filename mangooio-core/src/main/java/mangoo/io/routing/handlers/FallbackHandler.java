@@ -15,7 +15,7 @@ import mangoo.io.enums.Templates;
 public class FallbackHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-    	exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, Default.CONTENT_TYPE.toString());
         exchange.setResponseCode(StatusCodes.NOT_FOUND);
         exchange.getResponseSender().send(Templates.DEFAULT.notFound());

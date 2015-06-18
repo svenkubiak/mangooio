@@ -17,7 +17,7 @@ import freemarker.template.TemplateModelException;
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LoggerFactory.getLogger(I18nMethod.class);
-	private static final int NUM_ARGUMENTS = 1;
+    private static final int NUM_ARGUMENTS = 1;
     private Messages messages;
 
     public I18nMethod(Messages messages) {
@@ -37,7 +37,7 @@ public class I18nMethod implements TemplateMethodModelEx {
             for (Object object : args) {
                 if (object instanceof SimpleScalar) {
                     strings.add(((SimpleScalar) object).getAsString());
-                } else if  (object instanceof SimpleNumber) {
+                } else if (object instanceof SimpleNumber) {
                     strings.add(((SimpleNumber) object).toString());
                 }
             }
@@ -54,7 +54,7 @@ public class I18nMethod implements TemplateMethodModelEx {
 
     public void logError(String messageKey, String messageValue) {
         if (messageKey.equals(messageValue)) {
-            LOG.error("Message key {} missing. Using key as value inside template" + " - but this is most likely not what you want.", messageKey);
+            LOG.error("Message key {} missing. Using key as value inside template - but this is most likely not what you want.", messageKey);
         }
     }
 }

@@ -34,7 +34,7 @@ import freemarker.template.Version;
 @Singleton
 public class TemplateEngine {
     private static final int ONE_SECOND = 1;
-	private static final int STRONG_SIZE_LIMIT = 20;
+    private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 22);
     private Configuration configuration = new Configuration(VERSION);
     private String baseDirectory;
@@ -55,13 +55,9 @@ public class TemplateEngine {
         }
 
         StringBuilder buffer = new StringBuilder();
-        buffer.append(System.getProperty("user.dir"))
-            .append(File.separator)
-            .append("src")
-            .append(File.separator)
-            .append("main")
-            .append(File.separator)
-            .append("java");
+        buffer.append(System.getProperty("user.dir")).append(File.separator)
+              .append("src").append(File.separator).append("main")
+              .append(File.separator).append("java");
 
         this.baseDirectory = buffer.toString();
     }
@@ -102,7 +98,7 @@ public class TemplateEngine {
 
         List<Source> sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
         content.put("sources", sources);
-        content.put("cause",ExceptionUtils.getMessage(cause));
+        content.put("cause", ExceptionUtils.getMessage(cause));
         content.put("url", exchange.getRequestURI());
         content.put("method", exchange.getRequestMethod());
         content.put("line", stackTraceElement.getLineNumber());
