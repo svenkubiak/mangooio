@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
 import mangoo.io.core.Application;
+import mangoo.io.enums.Default;
 import mangoo.io.i18n.Messages;
 import mangoo.io.routing.bindings.Flash;
 import mangoo.io.routing.bindings.Session;
@@ -32,13 +33,14 @@ import freemarker.template.Version;
 
 @Singleton
 public class TemplateEngine {
-    private static final int STRONG_SIZE_LIMIT = 20;
+    private static final int ONE_SECOND = 1;
+	private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 22);
     private Configuration configuration = new Configuration(VERSION);
     private String baseDirectory;
 
     public TemplateEngine() {
-        this.configuration.setClassForTemplateLoading(this.getClass(), "/templates/");
+        this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
         this.configuration.setDefaultEncoding(Charsets.UTF_8.name());
         this.configuration.setOutputEncoding(Charsets.UTF_8.name());
         this.configuration.setLocalizedLookup(false);
@@ -46,7 +48,7 @@ public class TemplateEngine {
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
 
         if (Application.inDevMode()) {
-            this.configuration.setTemplateUpdateDelay(1);
+            this.configuration.setTemplateUpdateDelay(ONE_SECOND);
         } else {
             this.configuration.setTemplateUpdateDelay(Integer.MAX_VALUE);
             this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
@@ -67,10 +69,10 @@ public class TemplateEngine {
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
         String name = null;
-        if (templateName.endsWith(".ftl")) {
+        if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
             name = templateName;            
         } else {
-            name = templateName + ".ftl";
+            name = templateName + Default.TEMPLATE_SUFFIX.toString();
         }
 
         Template template = configuration.getTemplate(pathPrefix + "/" + name);

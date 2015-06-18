@@ -11,7 +11,6 @@ import freemarker.cache.TemplateLoader;
 public class TemplateEngineLoader implements TemplateLoader {
     public static final String ESCAPE_PREFIX = "<#ftl strip_whitespace=true><#escape x as x?html>";
     public static final String ESCAPE_SUFFIX = "</#escape>";
-
     private final TemplateLoader delegate;
 
     public TemplateEngineLoader(TemplateLoader delegate) {
@@ -29,13 +28,11 @@ public class TemplateEngineLoader implements TemplateLoader {
     }
 
     @Override
-    public Reader getReader(Object templateSource, String encoding)
-            throws IOException {
+    public Reader getReader(Object templateSource, String encoding) throws IOException {
         Reader reader = delegate.getReader(templateSource, encoding);
         try {
             String templateText = IOUtils.toString(reader);
-            return new StringReader(ESCAPE_PREFIX + templateText
-                    + ESCAPE_SUFFIX);
+            return new StringReader(ESCAPE_PREFIX + templateText + ESCAPE_SUFFIX);
         } finally {
             IOUtils.closeQuietly(reader);
         }

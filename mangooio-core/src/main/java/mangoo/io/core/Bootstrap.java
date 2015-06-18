@@ -180,7 +180,7 @@ public class Bootstrap {
                 modules.add(new Modules());
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-                LOG.error("Failed to load modules. Check that conf/Module.java exisits in your Application", e);
+                LOG.error("Failed to load modules. Check that conf/Module.java exisits in your application", e);
                 this.error = true;
             }
         }

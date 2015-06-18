@@ -26,7 +26,9 @@ public enum Default {
     SCHEDULER_PREFIX("org.quartz."),
     APPLICATION_SECRET_MIN_LENGTH("16"),
     SERVER("Undertow"),
-    CACHE_NAME("mangoo");
+    CACHE_NAME("mangoo"),
+    TEMPLATES_FOLDER("/templates/"),
+    TEMPLATE_SUFFIX(".ftl");
 
     private final String value;
 

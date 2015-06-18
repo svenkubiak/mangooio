@@ -167,7 +167,7 @@ public class Form {
     }
 
     public void range(int minLength, int maxLength, String fieldName) {
-        Preconditions.checkNotNull(fieldName, "Fieldname is required for validation: rang");
+        Preconditions.checkNotNull(fieldName, "Fieldname is required for validation: range");
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (value.length() >= minLength && value.length() <= maxLength) {

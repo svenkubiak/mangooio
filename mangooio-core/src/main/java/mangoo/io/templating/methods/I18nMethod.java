@@ -16,8 +16,8 @@ import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
-    private static final int NUM_ARGUMENTS = 1;
     private static final Logger LOG = LoggerFactory.getLogger(I18nMethod.class);
+	private static final int NUM_ARGUMENTS = 1;
     private Messages messages;
 
     public I18nMethod(Messages messages) {
