@@ -34,7 +34,7 @@ public class Messages {
 
     /**
      * Returns a localized value for a given key stored in messages_xx.properties
-     * 
+     *
      * @param key The key to look up the localized value
      * @return The localized value or an empty value if the given key is not configured
      */
@@ -44,8 +44,8 @@ public class Messages {
 
     /**
      * Returns a localized value for a given key stored in messages_xx.properties and passing the
-     * given arguments 
-     * 
+     * given arguments
+     *
      * @param key The key to look up the localized value
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured

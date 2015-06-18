@@ -16,11 +16,11 @@ public class Body {
     public void setContent(String content) {
     	this.content = content;
     }
-    
+
     public String asString() {
         return this.content;
     }
-    
+
 	public Map<String, Object> asJson() {
         return JsonFactory.create().readValue(this.content, Map.class);
     }

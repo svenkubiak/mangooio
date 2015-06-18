@@ -130,8 +130,8 @@ public class Form {
                 valid = false;
             }
 
-            for (int i=0; i < parts.length; i++) {
-                int p = Integer.parseInt(parts[i]);
+            for (String part : parts) {
+                int p = Integer.parseInt(part);
                 if(p < IPV4_MIN || p > IPV4_MAX) {
                     valid = false;
                 }

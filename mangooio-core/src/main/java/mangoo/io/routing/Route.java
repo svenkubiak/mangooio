@@ -26,7 +26,7 @@ public class Route {
 
     /**
      * Maps a request mapping to given URL
-     * 
+     *
      * @param url The URL of the request (e.g. /foo)
      */
     public Route toUrl(String url) {
@@ -59,7 +59,7 @@ public class Route {
 
     /**
      * Maps the request to a given controller class and controller method
-     * 
+     *
      * @param controllerClass The controller class (e.g. ApplicationController)
      * @param controllerMethod The controller method (e.g. index)
      */
@@ -73,9 +73,9 @@ public class Route {
     /**
      * Maps the request to a given controller class. Used for websockets as they have specific controller
      * methods.
-     * 
+     *
      * @param controllerClass The controller class (e.g. ApplicationController)
-     */    
+     */
     public void onClass(Class<?> controllerClass) {
         this.controllerClass = controllerClass;
 

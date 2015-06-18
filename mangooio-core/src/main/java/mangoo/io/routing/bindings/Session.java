@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -20,10 +20,10 @@ public class Session {
     private String authenticityToken;
     private boolean changed;
     private long expires;
-    
+
     public Session() {
     }
-    
+
     public Session(Map<String, String> values) {
         this.values = values;
     }
@@ -31,11 +31,11 @@ public class Session {
     public boolean hasContent() {
         return !this.values.isEmpty();
     }
-    
+
     public String get(String key) {
         return this.values.get(key);
     }
-    
+
     public void add(String key, String value) {
         if (key.contains("|") || key.contains(":") || key.contains("&")) {
             LOG.error("Invalid characters found in session key. Please note, that the key can not contain |, : or &");
@@ -43,7 +43,7 @@ public class Session {
             LOG.error("Invalid characters found in session value. Please note, that the value can not contain |, : or &");
         } else {
             this.changed = true;
-            this.values.put(key, value);    
+            this.values.put(key, value);
         }
     }
 
@@ -51,20 +51,20 @@ public class Session {
         this.changed = true;
         this.values.remove(key);
     }
-    
+
     public void clear() {
         this.changed = true;
         this.values = new HashMap<String, String>();
     }
-    
+
     public boolean hasChanges() {
         return this.changed;
     }
-    
+
     public Map<String, String> getValues() {
         return this.values;
     }
-    
+
     public long getExpires() {
         return expires;
     }

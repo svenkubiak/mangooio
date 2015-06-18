@@ -47,9 +47,9 @@ public class Mailer {
 
     /**
      * Sends a plain text message using the SMTP configuration in application.conf
-     * 
+     *
      * For more information @see <a href="https://commons.apache.org/proper/commons-email/userguide.html">https://commons.apache.org/proper/commons-email/userguide.html</a>
-     * 
+     *
      * @param email The email to send
      */
     public void send(Email email) {
@@ -67,9 +67,9 @@ public class Mailer {
 
     /**
      * Sends a multi part email using the SMTP configuration in application.conf
-     * 
+     *
      * For more information @see <a href="https://commons.apache.org/proper/commons-email/userguide.html">https://commons.apache.org/proper/commons-email/userguide.html</a>
-     * 
+     *
      * @param multiPartEmail The multi part email to send
      */
     public void send(MultiPartEmail multiPartEmail) {
@@ -87,9 +87,9 @@ public class Mailer {
 
     /**
      * Sends a HTML email using the SMTP configuration in application.conf
-     * 
+     *
      * For more information @see <a href="https://commons.apache.org/proper/commons-email/userguide.html">https://commons.apache.org/proper/commons-email/userguide.html</a>
-     * 
+     *
      * @param htmlEmail The HTML email to send
      */
     public void send(HtmlEmail htmlEmail) {

@@ -36,11 +36,11 @@ public class Authentication {
         this.config = config;
         this.expires = String.valueOf(new Date().getTime() + this.config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toInt()));
     }
-    
+
     public String getAuthenticatedUser() {
         return this.authenticatedUser;
     }
-    
+
     public String getExpires() {
         return expires;
     }
@@ -59,7 +59,7 @@ public class Authentication {
 
     /**
      * Hashes a given clear text password using BCrypt
-     * 
+     *
      * @param password The clear text password
      * @return The hashed password
      */
@@ -72,7 +72,7 @@ public class Authentication {
     /**
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given already hashed password
-     * 
+     *
      * @param password The clear text password
      * @param hash The previously hashed password to check
      * @return True if the hashed password matches the hash, false otherwise
@@ -100,7 +100,7 @@ public class Authentication {
 
     /**
      * Performs a login for a given username
-     * 
+     *
      * @param username The username to login
      * @param remember If true, the user will stay logged in for (default) 2 weeks
      */
@@ -115,7 +115,7 @@ public class Authentication {
 
     /**
      * Checks if the authentication contains an authenticated user
-     * 
+     *
      * @return True if authentication contains an authenticated user, false otherwise
      */
     public boolean hasAuthenticatedUser() {
@@ -124,7 +124,7 @@ public class Authentication {
 
     /**
      * Checks if the given username is authenticated
-     * 
+     *
      * @param username The username to check
      * @return True if the given username is authenticates
      */

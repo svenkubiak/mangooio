@@ -16,7 +16,7 @@ public final class Application {
     private static volatile Injector injector;
     private static volatile GreenMail fakeSMTP;
     private static volatile Undertow undertow;
-    
+
     private Application() {
     }
 
@@ -44,7 +44,7 @@ public final class Application {
 
     /**
      * Checks if the application is running in dev mode
-     * 
+     *
      * @return True if the application is running in dev mode, false otherwise
      */
     public static boolean inDevMode() {
@@ -53,7 +53,7 @@ public final class Application {
 
     /**
      * Checks if the application is running in prod mode
-     * 
+     *
      * @return True if the application is running in prod mode, false otherwise
      */
     public static boolean inProdMode() {
@@ -62,7 +62,7 @@ public final class Application {
 
     /**
      * Checks if the application is running in test mode
-     * 
+     *
      * @return True if the application is running in test mode, false otherwise
      */
     public static boolean inTestMode() {

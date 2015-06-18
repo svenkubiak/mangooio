@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-
 import mangoo.io.core.Application;
 import mangoo.io.enums.Default;
 import mangoo.io.i18n.Messages;
@@ -20,8 +18,10 @@ import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.directives.AuthenticityFormDirective;
 import mangoo.io.templating.directives.AuthenticityTokenDirective;
 import mangoo.io.templating.methods.I18nMethod;
-import mangoo.io.utils.ThrowableUtils;
 import mangoo.io.utils.Source;
+import mangoo.io.utils.ThrowableUtils;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
@@ -53,7 +53,7 @@ public class TemplateEngine {
             this.configuration.setTemplateUpdateDelay(Integer.MAX_VALUE);
             this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
         }
-        
+
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
             .append(File.separator)
@@ -62,7 +62,7 @@ public class TemplateEngine {
             .append("main")
             .append(File.separator)
             .append("java");
-        
+
         this.baseDirectory = buffer.toString();
     }
 
@@ -70,7 +70,7 @@ public class TemplateEngine {
     public String render(Flash flash, Session session, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
         String name = null;
         if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
-            name = templateName;            
+            name = templateName;
         } else {
             name = templateName + Default.TEMPLATE_SUFFIX.toString();
         }

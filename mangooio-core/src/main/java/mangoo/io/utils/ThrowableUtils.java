@@ -18,7 +18,7 @@ public final class ThrowableUtils {
 
     private ThrowableUtils() {
     }
-    
+
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
@@ -40,7 +40,7 @@ public final class ThrowableUtils {
             .append("main")
             .append(File.separator)
             .append("java");
-        
+
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
         List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 

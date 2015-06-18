@@ -43,7 +43,7 @@ public class Crypto {
 
     /**
      * Decrypts an given encrypted text using the application secret property (application.secret) as key
-     * 
+     *
      * @param encrytedText The encrypted text
      * @return The clear text or null if decryption failed
      */
@@ -52,8 +52,8 @@ public class Crypto {
     }
 
     /**
-     * Decrypts an given encrypted text using the given key 
-     * 
+     * Decrypts an given encrypted text using the given key
+     *
      * @param encrytedText The encrypted text
      * @param key The encryption key
      * @return The clear text or null if decryption failed
@@ -70,23 +70,23 @@ public class Crypto {
 
     /**
      * Encrypts a given plain text using the application secret property (application.secret) as key
-     * 
+     *
      * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
      * the size of the application.secret property length (16/24/32 characters)
-     * 
+     *
      * @param plainText The plain text to encrypt
      * @return The encrypted text or null if encryption failed
      */
     public String encrypt(String plainText) {
         return encrypt(plainText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
     }
-    
+
     /**
      * Encrypts a given plain text using the given key
-     * 
+     *
      * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
      * the size of the application.secret property length (16/24/32 characters)
-     * 
+     *
      * @param plainText The plain text to encrypt
      * @return The encrypted text or null if encryption failed
      */

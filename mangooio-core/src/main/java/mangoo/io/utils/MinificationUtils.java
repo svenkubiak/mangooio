@@ -48,10 +48,10 @@ public final class MinificationUtils {
     private MinificationUtils() {
         config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
     }
-    
+
     public static void setBasePath(String path) {
         synchronized (MinificationUtils.class) {
-            basePath = path;            
+            basePath = path;
         }
     }
 

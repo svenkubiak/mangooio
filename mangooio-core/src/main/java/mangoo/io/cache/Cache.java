@@ -23,18 +23,18 @@ public class Cache {
 
     /**
      * Adds a value with the given key to the cache
-     * 
+     *
      * @param key The key to store the value
      * @param value The actual value to store
      */
     public void add(String key, Object value) {
         this.cacheInstance.put(new Element(key, value));
     }
-    
+
     /**
      * Adds a value with the given key to the cache and
      * sets and expiration
-     * 
+     *
      * @param key The key to store the value
      * @param value The actual value to store
      * @param expiration The time after which the value gets evicted in seconds
@@ -48,7 +48,7 @@ public class Cache {
 
     /**
      * Retrieves a value for a given key from the cache
-     * 
+     *
      * @param key The key on which the value is stored
      * @return The retrieved value or null if the key is not found
      */
@@ -59,18 +59,18 @@ public class Cache {
 
         return null;
     }
-    
+
     /**
      * Retrieves a value for given key from the cache
      * autocasting it to the required class
-     * 
+     *
      * @param key The key on which the value is stored
      * @param clazz The class to cast to
      * @return The class to cast to to containing the cache value or null if the key is not found
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        return (T) this.cacheInstance.get(key).getObjectValue();
+        return (T) this.cacheInstance.get(key);
     }
 
     /**

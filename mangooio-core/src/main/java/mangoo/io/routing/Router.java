@@ -24,9 +24,9 @@ public final class Router {
 
     /**
      * Creates a request mapping using the given request method
-     * 
+     *
      * @param requestMethod The request method (e.g. Methods.GET)
-     * @return A route object {@link mangoo.io.routing.Route} 
+     * @return A route object {@link mangoo.io.routing.Route}
      */
     public static Route mapRequest(HttpString requestMethod) {
         return new Route(requestMethod);
@@ -34,7 +34,7 @@ public final class Router {
 
     /**
      * Creates a request mapping for a websocket
-     * @return A route object {@link mangoo.io.routing.Route} 
+     * @return A route object {@link mangoo.io.routing.Route}
      */
     public static Route mapWebSocket() {
         return new Route(RouteType.WEBSOCKET);
@@ -42,7 +42,7 @@ public final class Router {
 
     /**
      * Creates a request mapping for a resource file, e.g. /robots.txt
-     * @return A route object {@link mangoo.io.routing.Route} 
+     * @return A route object {@link mangoo.io.routing.Route}
      */
     public static Route mapResourceFile() {
         return new Route(RouteType.RESOURCE_FILE);
@@ -50,7 +50,7 @@ public final class Router {
 
     /**
      * Creates a request mapping for resource, e.g. /assets/javascripts
-     * @return A route object {@link mangoo.io.routing.Route} 
+     * @return A route object {@link mangoo.io.routing.Route}
      */
     public static Route mapResourcePath() {
         return new Route(RouteType.RESOURCE_PATH);

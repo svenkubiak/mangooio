@@ -55,7 +55,7 @@ public final class Response {
     public String getBody() {
         return this.body;
     }
-    
+
     public byte[] getBinaryFile() {
         return this.binaryFile.clone();
     }
@@ -63,7 +63,7 @@ public final class Response {
     public String getTemplate() {
         return this.template;
     }
-    
+
     public String getBinaryFileName() {
     	return this.binaryFileName;
     }
@@ -75,7 +75,7 @@ public final class Response {
     public boolean isRedirect() {
         return this.redirect;
     }
-    
+
     public boolean isBinary() {
         return this.binary;
     }
@@ -87,14 +87,14 @@ public final class Response {
     public String getRedirectTo() {
         return this.redirectTo;
     }
-    
+
     public Map<HttpString, String> getHeaders() {
 		return headers;
 	}
 
 	/**
      * Creates a response object with HTTP status code 200
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withOk() {
@@ -103,7 +103,7 @@ public final class Response {
 
     /**
      * Creates a response object with HTTP status code 201
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withCreated() {
@@ -112,7 +112,7 @@ public final class Response {
 
     /**
      * Creates a response object with HTTP status code 404
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withNotFound() {
@@ -121,7 +121,7 @@ public final class Response {
 
     /**
      * Creates a response object with HTTP status code 401
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withForbidden() {
@@ -130,7 +130,7 @@ public final class Response {
 
     /**
      * Creates a response object with HTTP status code 403
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withUnauthorized() {
@@ -139,7 +139,7 @@ public final class Response {
 
     /**
      * Creates a response object with HTTP status code 500
-     * 
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withBadRequest() {
@@ -148,7 +148,7 @@ public final class Response {
 
     /**
      * Creates a response object with a given HTTP status code
-     * 
+     *
      * @param statusCode The status code to set
      * @return A response object {@link mangoo.io.routing.Response}
      */
@@ -158,9 +158,9 @@ public final class Response {
 
     /**
      * Creates a response object with a given url to redirect to
-     * 
+     *
      * @param redirectTo The URL to redirect to
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public static Response withRedirect(String redirectTo) {
         return new Response(redirectTo);
@@ -178,9 +178,9 @@ public final class Response {
 
     /**
      * Sets a specific template to use for the response
-     * 
+     *
      * @param template The path to the template (e.g. /mytemplate/template.ftl)
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andTemplate(String template) {
         if (StringUtils.isBlank(this.template)) {
@@ -191,9 +191,9 @@ public final class Response {
 
     /**
      * Sets a specific content type to use for the response. Default is "text/html"
-     * 
+     *
      * @param contentType The content type to use
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andContentType(String contentType) {
         this.contentType = contentType;
@@ -202,9 +202,9 @@ public final class Response {
 
     /**
      * Sets a specific charset to the response
-     * 
+     *
      * @param charset The charset to use
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andCharset(String charset) {
         this.charset = charset;
@@ -213,10 +213,10 @@ public final class Response {
 
     /**
      * Adds a value to the template that can be accessed using ${name} in the template
-     * 
+     *
      * @param name The name of the value
      * @param object The actual value
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andContent(String name, Object object) {
         this.content.put(name, object);
@@ -226,9 +226,9 @@ public final class Response {
     /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The default content type "text/html" will be used.
-     * 
+     *
      * @param body The body for the response
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andBody(String body) {
         this.body = body;
@@ -238,12 +238,12 @@ public final class Response {
     }
 
     /**
-     * Converts a given Object to JSON and passing it to the response. If an object is given, no 
+     * Converts a given Object to JSON and passing it to the response. If an object is given, no
      * template rendering will be performed and the content type for the response will be set to
      * "application/json"
-     * 
+     *
      * @param jsonObject The object to convert to JSON
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andJsonBody(Object jsonObject) {
         this.contentType = ContentType.APPLICATION_JSON.toString();
@@ -252,12 +252,12 @@ public final class Response {
 
         return this;
     }
-    
+
     /**
      * Sends a binary file to the client
-     * 
+     *
      * @param file The file to send
-     * @return A response object {@link mangoo.io.routing.Response} 
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andBinaryFile(File file) {
 		try (FileInputStream fileInputStream = new FileInputStream(file)){
@@ -268,14 +268,14 @@ public final class Response {
 		} catch (IOException e) {
 			LOG.error("Failed to handle binary file", e);
 		}
-    	
+
     	return this;
     }
 
     /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The content type "text/plain" will be used.
-     * 
+     *
      * @param text The text for the response
      */
     public Response andTextBody(String text) {
@@ -294,18 +294,18 @@ public final class Response {
 
         return this;
     }
-    
+
     /**
      * Adds an additional header to the request response. If an header
      * key already exists, it will we overwritten with the latest value.
-     * 
+     *
      * @param key The header constant from Headers class (e.g. Headers.CONTENT_TYPE)
      * @param value The header value
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andHeader(HttpString key, String value) {
     	this.headers.put(key, value);
-    	
+
     	return this;
     }
 }

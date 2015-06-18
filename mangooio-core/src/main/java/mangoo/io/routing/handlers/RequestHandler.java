@@ -20,7 +20,6 @@ import java.lang.reflect.Parameter;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -139,7 +138,7 @@ public class RequestHandler implements HttpHandler {
     private void displayException(HttpServerExchange exchange, Throwable cause) throws Exception {
         TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
         String content = templateEngine.renderException(exchange, cause);
-        
+
         exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
         exchange.getResponseSender().send(content);
     }
@@ -318,10 +317,10 @@ public class RequestHandler implements HttpHandler {
 
     private void setFlash(HttpServerExchange exchange) throws Exception {
         String cookieName = config.getString(Key.APPLICATION_NAME) + "-FLASH";
-        
+
     	if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
-            
+
             Cookie cookie = new CookieImpl(cookieName, values)
                 .setHttpOnly(true)
                 .setPath("/");
@@ -337,7 +336,7 @@ public class RequestHandler implements HttpHandler {
                 exchange.setResponseCookie(cookie);
             }
         }
-        this.flash = null; 
+        this.flash = null;
     }
 
     private Flash getFlash(HttpServerExchange exchange) throws Exception {
@@ -370,8 +369,7 @@ public class RequestHandler implements HttpHandler {
                 exchange.startBlocking();
                 FormData formData = formDataParser.parseBlocking();
 
-                for (Iterator<String> iterator = formData.iterator(); iterator.hasNext();) {
-                    String data = iterator.next();
+                for (String data : formData) {
                     for (FormData.FormValue value : formData.get(data)) {
                         if (value.isFile()) {
                             form.addFile(value.getFile());
@@ -416,7 +414,7 @@ public class RequestHandler implements HttpHandler {
             } else if ((Flash.class).equals(clazz)) {
                 parameters[index] = getFlash(exchange);
             } else if ((String.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? "" : queryParameters.get(key); 
+                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
             } else if ((int.class).equals(clazz)) {
@@ -513,7 +511,7 @@ public class RequestHandler implements HttpHandler {
             }
 
             exchange.setResponseCookie(cookie);
-            this.authentication = null; 
+            this.authentication = null;
         }
     }
 

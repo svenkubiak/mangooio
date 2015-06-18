@@ -50,7 +50,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as String or null if the key is not configured
      */
@@ -60,7 +60,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as String or the passed defautlValue if the key is not configured
@@ -71,7 +71,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as int or 0 if the key is not configured
      */
@@ -81,7 +81,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as int or the passed defautlValue if the key is not configured
@@ -92,7 +92,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as boolean or false if the key is not configured
      */
@@ -102,7 +102,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
@@ -113,7 +113,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as String or null if the key is not configured
      */
@@ -123,7 +123,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as String or the passed defautlValue if the key is not configured
@@ -134,7 +134,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as int or 0 if the key is not configured
      */
@@ -144,7 +144,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as int or the passed defautlValue if the key is not configured
@@ -155,7 +155,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as boolean or false if the key is not configured
      */
@@ -165,7 +165,7 @@ public class Config {
 
     /**
      * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
-     * 
+     *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
@@ -181,7 +181,7 @@ public class Config {
     /**
      * Checks if the application.conf stored in conf/application.conf contains an application
      * secret property (application.secret) that has at least 16 characters (128-Bit)
-     * 
+     *
      * @return True if the configuration contains an application.secret property with at least 16 characters
      */
     public boolean hasValidSecret() {
