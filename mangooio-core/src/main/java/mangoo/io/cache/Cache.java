@@ -62,14 +62,14 @@ public class Cache {
 
     /**
      * Retrieves a value for given key from the cache
-     * autocasting it to the required class
+     * autocasting it to the required type
      *
      * @param key The key on which the value is stored
      * @param clazz The class to cast to
      * @return The class to cast to to containing the cache value or null if the key is not found
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(String key, Class<T> clazz) {
+    public <T> T getTyped(String key) {
         return (T) this.cacheInstance.get(key).getObjectValue();
     }
 
