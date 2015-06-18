@@ -70,7 +70,7 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        return (T) this.cacheInstance.get(key);
+        return (T) this.cacheInstance.get(key).getObjectValue();
     }
 
     /**
