@@ -122,6 +122,13 @@ project. Once the archetpye generation is finished, change in the newly
 created project directory and execute the following command:
 
 ----------------
+mvn clean package
+----------------
+
+Once the compilation is finished, you can start the development mode, by executing the following maven
+command
+
+----------------
 mvn mangooio:run
 ----------------
 
@@ -139,6 +146,23 @@ application by opening the following URL
 ---------------------
 http://localhost:8080
 ---------------------
+
+[IMPORTANT] 
+.Using hot-compiling
+==== 
+mangoo I/O supports hot-compiling in dev mode when started with "mvn mangooio:run". This means, that when you change a source file in your IDE
+of choice the changes are available more or less instantly (actually in most cases in less than a second).
+As mangoo I/O relies on Java 8, it is important that the files are compiled with the correct flags.
+
+If you are using *Eclipse*, please make sure that you have checked the following option: +  
+Settings -> Compiler -> Check "Store information about method parameter (usable via reflection)"
+
+If you are using *IntelliJ*, please make sure that you have checked the following option: +  
+Settings -> Java Compiler -> Add additional line parameters: -> "-parameters" (without the qoutes)
+
+If you don't do this, mangoo I/O will not handle passing request parameters correctly in dev mode.
+
+====
 
 === Basic structure of a mangoo I/O application
 
