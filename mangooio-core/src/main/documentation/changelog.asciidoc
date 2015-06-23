@@ -1,6 +1,10 @@
 = Changelog
 
-== Version 1.0.0-Beta2 - xx.xx.xxxx
+== Version 1.0.0-Beta3 - Released xx.xx.xxxx
+
+* Added missing interfaces methods to archetype (svenkubiak)
+
+== Version 1.0.0-Beta2 - Released 23.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/9[#9] Refactored dev mode exception page (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/15[#15] Added version tag to documentation (PDF and HTML) (svenkubiak) 
@@ -8,7 +12,7 @@
 * Cache is not autostarted anymore (svenkubiak)
 * Fixed bug that throw NumberFormatException when passing an empty request parameter (svenkubiak)
 
-== Version 1.0.0-Beta1 - 17.07.2015
+== Version 1.0.0-Beta1 - Released 17.07.2015
 
 * Added server "Undertow" token to response (svenkubiak)
 * Added new lifecycle hook "applicationInitialized" (svenkubiak)
@@ -20,7 +24,7 @@
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 
-== Version 1.0.0-Alpha3 - 15.06.2015
+== Version 1.0.0-Alpha3 - Released 15.06.2015
 
 * https://github.com/svenkubiak/mangooio/issues/2[#2] Fixed flash passing between requests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/1[#1] Fixed failing parameter tests (svenkubiak)
@@ -30,10 +34,10 @@
 * Removed changelog from documentation and added to seperate file (svenkubiak)
 * Fixed bug that did not pass request parameter when project was generated from archetype (svenkubiak)
 
-== Version 1.0.0-Alpha2 - 11.06.2015
+== Version 1.0.0-Alpha2 - Released 11.06.2015
 
 * Added asciidoc documentation to mangooio-core (svenkubiak)
 
-== Version 1.0.0-Alpha1 - 11.06.2015
+== Version 1.0.0-Alpha1 - Released 11.06.2015
 
 * Initial release (svenkubiak)
