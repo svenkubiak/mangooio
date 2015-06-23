@@ -13,7 +13,7 @@ mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Fr
 
 Homepage: [https://mangoo.io](https://mangoo.io)  
 Documentation: [https://mangoo.io/documentation](https://mangoo.io/documentation)  
-Changelog: [https://mangoo.io/changelog](https://mangoo.io/changelog)
+Changelog: [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 Twitter: [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
 
 You can grab previous documentation versions by simply adding the version tag to the URL, e.g.   
