@@ -65,7 +65,6 @@ public class Cache {
      * autocasting it to the required type
      *
      * @param key The key on which the value is stored
-     * @param clazz The class to cast to
      * @return The class to cast to to containing the cache value or null if the key is not found
      */
     @SuppressWarnings("unchecked")

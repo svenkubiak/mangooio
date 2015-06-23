@@ -88,6 +88,7 @@ public class Crypto {
      * the size of the application.secret property length (16/24/32 characters)
      *
      * @param plainText The plain text to encrypt
+     * @param key The key to use for encryption
      * @return The encrypted text or null if encryption failed
      */
     public String encrypt(String plainText, String key) {
