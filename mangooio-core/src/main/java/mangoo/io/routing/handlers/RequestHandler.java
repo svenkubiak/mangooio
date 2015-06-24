@@ -230,6 +230,10 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (!result.isRendered()) {
+            if (result.getContent() != null && this.exchange != null && this.exchange.getContent() != null) {
+                result.getContent().putAll(this.exchange.getContent());
+            }
+
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
             result.andBody(templateEngine.render(flash, session, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), result.getTemplate(), result.getContent()));
         }

@@ -3,6 +3,7 @@ package mangoo.io.templating;
 import io.undertow.server.HttpServerExchange;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import com.google.inject.Singleton;
 import freemarker.cache.MruCacheStorage;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import freemarker.template.Version;
 
 @Singleton
@@ -64,28 +66,21 @@ public class TemplateEngine {
 
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
-        String name = null;
-        if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
-            name = templateName;
-        } else {
-            name = templateName + Default.TEMPLATE_SUFFIX.toString();
-        }
-
-        Template template = configuration.getTemplate(pathPrefix + "/" + name);
+        Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
         content.put("flash", flash);
         content.put("session", session);
         content.put("i18n", new I18nMethod(messages));
         content.put("authenticityToken", new AuthenticityTokenDirective(session));
         content.put("authenticityForm", new AuthenticityFormDirective(session));
 
-        StringWriter buffer = new StringWriter(65536);
-        template.process(content, buffer);
+        return processTemplate(content, template);
+    }
 
-        Writer writer = new StringWriter();
-        writer.write(buffer.toString());
-        writer.close();
+    @SuppressWarnings("all")
+    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
+        Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
 
-        return buffer.toString();
+        return processTemplate(content, template);
     }
 
     @SuppressWarnings("all")
@@ -111,5 +106,27 @@ public class TemplateEngine {
         template.process(content, writer);
 
         return writer.toString();
+    }
+
+    private String getTemplateName(String templateName) {
+        String name = null;
+        if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
+            name = templateName;
+        } else {
+            name = templateName + Default.TEMPLATE_SUFFIX.toString();
+        }
+
+        return name;
+    }
+
+    private String processTemplate(Map<String, Object> content, Template template) throws TemplateException, IOException {
+        StringWriter buffer = new StringWriter(65536);
+        template.process(content, buffer);
+
+        Writer writer = new StringWriter();
+        writer.write(buffer.toString());
+        writer.close();
+
+        return buffer.toString();
     }
 }

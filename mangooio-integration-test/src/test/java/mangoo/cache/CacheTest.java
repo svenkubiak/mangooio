@@ -40,10 +40,10 @@ public class CacheTest {
     	cache.add("test", TEST);
     	cache.add("test2", 1);
 
-    	String test = cache.getTyped("test");
+    	String test = cache.getTyped("test", String.class);
     	assertEquals(TEST, test);
 
-    	int foo = cache.getTyped("test2");
+    	int foo = cache.getTyped("test2", int.class);
     	assertEquals(1, foo);
     }
 }

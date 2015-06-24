@@ -68,8 +68,12 @@ public class Cache {
      * @return The class to cast to to containing the cache value or null if the key is not found
      */
     @SuppressWarnings("unchecked")
-    public <T> T getTyped(String key) {
-        return (T) this.cacheInstance.get(key).getObjectValue();
+    public <T> T getTyped(String key, Class<T> clazz) {
+        if (this.cacheInstance.get(key) != null) {
+            return (T) this.cacheInstance.get(key).getObjectValue();
+        }
+
+        return null;
     }
 
     /**

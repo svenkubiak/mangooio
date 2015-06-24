@@ -1,6 +1,10 @@
 package mangoo.io.routing.bindings;
 
 import io.undertow.server.HttpServerExchange;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import mangoo.io.authentication.Authentication;
 
 /**
@@ -13,6 +17,7 @@ public class Exchange {
     private Session session;
     private String authenticityToken;
     private Authentication authentication;
+    private Map<String, Object> content = new HashMap<String, Object>();
 
     public Exchange(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication) {
         this.httpServerExchange = httpServerExchange;
@@ -39,5 +44,13 @@ public class Exchange {
 
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    public Map<String, Object> getContent() {
+        return this.content;
+    }
+
+    public void addContent(String key, Object value) {
+        this.content.put(key, value);
     }
 }

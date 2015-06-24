@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 
 /**
  *
@@ -26,15 +27,16 @@ public class Authentication {
     private boolean remember;
     private boolean loggedOut;
 
+    @Inject
+    public Authentication(Config config) {
+        this.config = config;
+        this.expires = String.valueOf(new Date().getTime() + this.config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toInt()));
+    }
+
     public Authentication(Config config, String authenticatedUser, String expires) {
         this.config = config;
         this.expires = expires;
         this.authenticatedUser = authenticatedUser;
-    }
-
-    public Authentication(Config config) {
-        this.config = config;
-        this.expires = String.valueOf(new Date().getTime() + this.config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toInt()));
     }
 
     public String getAuthenticatedUser() {
