@@ -254,7 +254,7 @@ public final class Response {
     }
 
     /**
-     * Sends a binary file to the client
+     * Sends a binary file to the client skipping rendering
      *
      * @param file The file to send
      * @return A response object {@link mangoo.io.routing.Response}
@@ -273,13 +273,13 @@ public final class Response {
     }
     
     /**
-     * Sends binary content to the client
+     * Sends binary content to the client skipping renderin
      *
      * @param content The content to to send
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andBinaryContent(byte [] content) {
-    	this.binaryContent = content;
+    	this.binaryContent = content.clone();
     	this.binary = true;
     	this.rendered = true;
 

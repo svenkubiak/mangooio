@@ -34,7 +34,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.2</version>
+				<version>3.3</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -51,21 +51,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<createDependencyReducedPom>false</createDependencyReducedPom>
-					<filters>
-						<filter>
-							<artifact>*:*</artifact>
-							<excludes>
-								<exclude>META-INF/*.SF</exclude>
-								<exclude>META-INF/*.DSA</exclude>
-								<exclude>META-INF/*.RSA</exclude>
-							</excludes>
-						</filter>
-					</filters>
-					<finalName>mangooioapp</finalName>
-				</configuration>
+				<version>2.4</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -81,6 +67,26 @@
 									<mainClass>mangoo.io.core.Application</mainClass>
 								</transformer>
 							</transformers>
+							<artifactSet>
+								<excludes>
+									<exclude>junit:junit</exclude>
+									<exclude>com.yahoo.platform.yui:yuicompressor</exclude>
+									<exclude>rhino:js</exclude>
+									<exclude>org.hamcrest:hamcrest-core</exclude>
+								</excludes>
+							</artifactSet>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<finalName>mangooioapp</finalName>
 						</configuration>
 					</execution>
 				</executions>
