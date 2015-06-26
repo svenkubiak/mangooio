@@ -2,6 +2,7 @@
 
 == Version 1.0.0-Beta3 - Released xx.xx.xxxx
 
+* Fixed bug that did not set the correct cookie for authentication (svenkubiak)
 * Added method to add additional content to template with a filter (svenkubiak)
 * Fixed bug in authentication which caused an error when authentication was injected (svenkubiak)
 * Fixed bug in cache that throw an NPE when getType was called and value was not in cache (svenkubiak)

@@ -34,7 +34,7 @@ public final class Response {
     private String body = "";
     private String template;
     private String binaryFileName;
-    private byte[] binaryFile;
+    private byte[] binaryContent;
     private boolean binary;
     private boolean rendered;
     private boolean redirect;
@@ -56,8 +56,8 @@ public final class Response {
         return this.body;
     }
 
-    public byte[] getBinaryFile() {
-        return this.binaryFile.clone();
+    public byte[] getBinaryContent() {
+        return this.binaryContent.clone();
     }
 
     public String getTemplate() {
@@ -262,12 +262,26 @@ public final class Response {
     public Response andBinaryFile(File file) {
 		try (FileInputStream fileInputStream = new FileInputStream(file)){
 			this.binaryFileName = file.getName();
-	    	this.binaryFile = IOUtils.toByteArray(fileInputStream);
+	    	this.binaryContent = IOUtils.toByteArray(fileInputStream);
 	    	this.binary = true;
 	    	this.rendered = true;
 		} catch (IOException e) {
 			LOG.error("Failed to handle binary file", e);
 		}
+
+    	return this;
+    }
+    
+    /**
+     * Sends binary content to the client
+     *
+     * @param content The content to to send
+     * @return A response object {@link mangoo.io.routing.Response}
+     */
+    public Response andBinaryContent(byte [] content) {
+    	this.binaryContent = content;
+    	this.binary = true;
+    	this.rendered = true;
 
     	return this;
     }

@@ -320,7 +320,7 @@ public class RequestHandler implements HttpHandler {
     }
 
     private void setFlash(HttpServerExchange exchange) throws Exception {
-        String cookieName = config.getString(Key.APPLICATION_NAME) + "-FLASH";
+        String cookieName = config.getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString();
 
     	if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
@@ -345,7 +345,7 @@ public class RequestHandler implements HttpHandler {
 
     private Flash getFlash(HttpServerExchange exchange) throws Exception {
         Flash flash = null;
-        Cookie cookie = exchange.getRequestCookies().get(config.getString("application.name") + "-FLASH");
+        Cookie cookie = exchange.getRequestCookies().get(config.getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString());
         if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
             Map<String, String> values = new HashMap<String, String>();
             for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
@@ -450,7 +450,7 @@ public class RequestHandler implements HttpHandler {
 
     private Authentication getAuthentication(HttpServerExchange exchange) {
         Authentication authentication = null;
-        Cookie cookie = exchange.getRequestCookies().get(Key.AUTH_COOKIE_NAME.toString());
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString()));
         if (cookie != null) {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
@@ -476,7 +476,7 @@ public class RequestHandler implements HttpHandler {
                     Date now = new Date();
                     Date expireDate = new Date(Long.valueOf(expires));
 
-                    if (now.before(expireDate) && DigestUtils.sha512Hex(data + expires + this.config.getString(Key.APPLICATION_SECRET.toString())).equals(sign)) {
+                    if (now.before(expireDate) && DigestUtils.sha512Hex(data + expires + this.config.getString(Key.APPLICATION_SECRET)).equals(sign)) {
                         authentication = new Authentication(this.config, data, expires);
                     }
                 }
@@ -495,20 +495,21 @@ public class RequestHandler implements HttpHandler {
     private void setAuthentication(HttpServerExchange exchange) {
         if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
             Cookie cookie;
+            String cookieName = this.config.getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
             if (this.authentication.isLogout()) {
-                cookie = exchange.getRequestCookies().get(Key.AUTH_COOKIE_NAME.toString());
+                cookie = exchange.getRequestCookies().get(cookieName);
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
-                String sign = DigestUtils.sha512Hex(this.authentication.getAuthenticatedUser() + this.authentication.getExpires() + this.config.getString(Key.APPLICATION_SECRET.toString()));
+                String sign = DigestUtils.sha512Hex(this.authentication.getAuthenticatedUser() + this.authentication.getExpires() + this.config.getString(Key.APPLICATION_SECRET));
                 String value = sign + "|" + this.authentication.getExpires() + "-" + this.authentication.getAuthenticatedUser();
 
-                if (this.config.getBoolean(Key.AUTH_COOKIE_ENCRYPT.toString(), false)) {
+                if (this.config.getBoolean(Key.AUTH_COOKIE_ENCRYPT, false)) {
                     Crypto crypto = this.injector.getInstance(Crypto.class);
                     value = crypto.encrypt(value);
                 }
 
-                cookie = new CookieImpl(Key.AUTH_COOKIE_NAME.toString(), value)
+                cookie = new CookieImpl(cookieName, value)
                     .setHttpOnly(true)
                     .setPath("/")
                     .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, 86400));

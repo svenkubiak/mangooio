@@ -7,6 +7,7 @@ package mangoo.io.enums;
  */
 public enum Default {
     LANGUAGE("en"),
+    AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
     COOKIE_SUFFIX("-AUTH"),
     COOKIE_EXPIRES("86400"),
     LOCALHOST("127.0.0.1"), //NOSONAR
@@ -26,9 +27,10 @@ public enum Default {
     SCHEDULER_PREFIX("org.quartz."),
     APPLICATION_SECRET_MIN_LENGTH("16"),
     SERVER("Undertow"),
-    CACHE_NAME("mangoo"),
+    CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
-    TEMPLATE_SUFFIX(".ftl");
+    TEMPLATE_SUFFIX(".ftl"),
+    FLASH_SUFFIX("-FLASH");
 
     private final String value;
 
