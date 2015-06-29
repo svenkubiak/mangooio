@@ -6,8 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import mangoo.io.test.MangooBrowser;
+import mangoo.io.test.MangooRequest;
+import mangoo.io.test.MangooResponse;
 
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class AuthenticityControllerTest {
     
     @Test
     public void validTest() {
-        MangooResponse instance = MangooRequest.instance();
+    	MangooBrowser instance = MangooBrowser.getInstance();
         
         MangooResponse response = instance.uri("/authenticitytoken").method(Methods.GET).execute();
         String token = response.getContent();

@@ -15,8 +15,8 @@ import mangoo.io.configuration.Config;
 import mangoo.io.core.Application;
 import mangoo.io.enums.Default;
 import mangoo.io.enums.Key;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import mangoo.io.test.MangooRequest;
+import mangoo.io.test.MangooResponse;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;

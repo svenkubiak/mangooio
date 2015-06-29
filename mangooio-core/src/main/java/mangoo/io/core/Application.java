@@ -1,10 +1,9 @@
 package mangoo.io.core;
 
-import io.undertow.Undertow;
-import mangoo.io.enums.Mode;
-
 import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
+
+import mangoo.io.enums.Mode;
 
 /**
  *
@@ -15,7 +14,6 @@ public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile GreenMail fakeSMTP;
-    private static volatile Undertow undertow;
 
     private Application() {
     }
@@ -37,8 +35,6 @@ public final class Application {
         fakeSMTP = bootstrap.getFakeSMTP();
 
         bootstrap.startServer();
-        undertow = bootstrap.getServer();
-
         bootstrap.applicationStarted();
     }
 
@@ -79,13 +75,5 @@ public final class Application {
 
     public static GreenMail getFakeSMTP() {
         return fakeSMTP;
-    }
-
-    public static void stopServer() {
-        undertow.stop();
-    }
-
-    public static void stopFakeSMTP() {
-        fakeSMTP.stop();
     }
 }

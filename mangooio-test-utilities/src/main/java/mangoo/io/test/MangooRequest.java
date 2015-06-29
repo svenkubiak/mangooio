@@ -1,4 +1,4 @@
-package mangoo.io.testing;
+package mangoo.io.test;
 
 import io.undertow.util.Methods;
 
@@ -25,9 +25,5 @@ public final class MangooRequest {
     
     public static MangooResponse delete(String uri) {
         return new MangooResponse(uri, Methods.DELETE);
-    }
-    
-    public static MangooClient instance() {
-        return new MangooClient();
     }
 }

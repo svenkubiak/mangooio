@@ -192,7 +192,7 @@ public class Bootstrap {
         if (!this.error) {
             this.end = new Date().getTime();
             LOG.info(LOGO);
-            LOG.info("mangoo application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, this.end - this.start, this.mode.toString());
+            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, this.end - this.start, this.mode.toString());
             this.injector.getInstance(MangooLifecycle.class).applicationStarted();
         }
     }

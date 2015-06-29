@@ -3,8 +3,8 @@ package mangoo.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import mangoo.io.enums.ContentType;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import mangoo.io.test.MangooRequest;
+import mangoo.io.test.MangooResponse;
 
 import org.junit.Test;
 

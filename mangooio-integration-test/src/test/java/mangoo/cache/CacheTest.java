@@ -2,11 +2,12 @@ package mangoo.cache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import mangoo.io.cache.Cache;
-import mangoo.io.core.Application;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import mangoo.io.cache.Cache;
+import mangoo.io.test.MangooTest;
 
 public class CacheTest {
     private static final String TEST = "this is a test for the cache";
@@ -14,7 +15,7 @@ public class CacheTest {
 
     @Before
     public void init() {
-        cache = Application.getInjector().getInstance(Cache.class);
+        cache = MangooTest.INSTANCE.getInjector().getInstance(Cache.class);
     }
 
     @Test

@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
-import mangoo.io.testing.MangooClient;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import mangoo.io.test.MangooBrowser;
+import mangoo.io.test.MangooRequest;
+import mangoo.io.test.MangooResponse;
 
 import org.junit.Test;
 
@@ -27,7 +27,7 @@ public class AuthenticationControllerTest {
     
     @Test
     public void authenticatedTest() {
-       MangooClient instance = MangooRequest.instance();
+       MangooBrowser instance = MangooBrowser.getInstance();
        
        MangooResponse response = instance.uri("/login").method(Methods.POST).execute();
        assertNotNull(response);

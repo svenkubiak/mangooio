@@ -1,7 +1,4 @@
-package mangoo.io.testing;
-
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
+package mangoo.io.test;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,12 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mangoo.io.configuration.Config;
-import mangoo.io.core.Application;
-import mangoo.io.enums.ContentType;
-import mangoo.io.enums.Default;
-import mangoo.io.enums.Key;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -32,6 +23,13 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
+import mangoo.io.configuration.Config;
+import mangoo.io.enums.ContentType;
+import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
 
 /**
  * 
@@ -65,7 +63,7 @@ public class MangooResponse {
     }
 
     private void init () {
-        Config config = Application.getInjector().getInstance(Config.class);
+        Config config = MangooTest.INSTANCE.getInjector().getInstance(Config.class);
         
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());  

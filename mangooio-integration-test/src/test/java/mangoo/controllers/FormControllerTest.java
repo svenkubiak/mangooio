@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mangoo.io.enums.ContentType;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import mangoo.io.test.MangooRequest;
+import mangoo.io.test.MangooResponse;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
