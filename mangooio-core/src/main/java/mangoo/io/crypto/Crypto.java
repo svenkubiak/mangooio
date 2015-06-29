@@ -119,7 +119,7 @@ public class Crypto {
     }
 
     private String getSizedKey(String secret) {
-        String key = null;
+        String key = "";
         if (StringUtils.isNotBlank(secret)) {
             if (secret.length() >= KEYLENGTH_32) {
                 key = secret.substring(KEYINDEX_START, KEYLENGTH_32);

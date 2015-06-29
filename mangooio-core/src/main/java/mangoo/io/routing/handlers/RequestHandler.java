@@ -1,18 +1,5 @@
 package mangoo.io.routing.handlers;
 
-import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
-import io.undertow.server.handlers.form.FormData;
-import io.undertow.server.handlers.form.FormDataParser;
-import io.undertow.server.handlers.form.FormParserFactory;
-import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
-import io.undertow.util.StatusCodes;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -24,6 +11,32 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.boon.json.JsonFactory;
+import org.boon.json.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.inject.Injector;
+
+import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
+import io.undertow.server.handlers.form.FormData;
+import io.undertow.server.handlers.form.FormDataParser;
+import io.undertow.server.handlers.form.FormParserFactory;
+import io.undertow.util.AttachmentKey;
+import io.undertow.util.HeaderValues;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 import mangoo.io.annotations.FilterWith;
 import mangoo.io.authentication.Authentication;
 import mangoo.io.configuration.Config;
@@ -42,19 +55,6 @@ import mangoo.io.routing.bindings.Form;
 import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.TemplateEngine;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.boon.json.JsonFactory;
-import org.boon.json.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.inject.Injector;
-
 /**
  *
  * @author svenkubiak
@@ -62,6 +62,7 @@ import com.google.inject.Injector;
  */
 public class RequestHandler implements HttpHandler {
 	private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
+	private static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
     private static final String AUTHENTICITY_TOKEN = "authenticityToken";
 	private int parameterCount;
     private Class<?> controllerClass;
@@ -101,7 +102,8 @@ public class RequestHandler implements HttpHandler {
             setLocale(exchange);
             getSession(exchange);
             getAuthentication(exchange);
-
+            getFlash(exchange);
+            
             boolean continueAfterFilter = executeFilter(exchange);
             if (continueAfterFilter) {
                 Response response = getResponse(exchange);
@@ -127,20 +129,9 @@ public class RequestHandler implements HttpHandler {
             }
         } catch (Exception e) {
             LOG.error("Failed to handle request", e);
-            if (Application.inDevMode()) {
-                displayException(exchange, e.getCause());
-            } else {
-                throw new Exception();
-            }
+            exchange.putAttachment(THROWABLE, e);
+            throw new Exception();
         }
-    }
-
-    private void displayException(HttpServerExchange exchange, Throwable cause) throws Exception {
-        TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-        String content = templateEngine.renderException(exchange, cause);
-
-        exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
-        exchange.getResponseSender().send(content);
     }
 
     private void setLocale(HttpServerExchange exchange) throws Exception {
@@ -235,7 +226,7 @@ public class RequestHandler implements HttpHandler {
             }
 
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            result.andBody(templateEngine.render(flash, session, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), result.getTemplate(), result.getContent()));
+            result.andBody(templateEngine.render(this.flash, this.session, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), result.getTemplate(), result.getContent()));
         }
 
         return result;
@@ -343,7 +334,7 @@ public class RequestHandler implements HttpHandler {
         this.flash = null;
     }
 
-    private Flash getFlash(HttpServerExchange exchange) throws Exception {
+    private void getFlash(HttpServerExchange exchange) throws Exception {
         Flash flash = null;
         Cookie cookie = exchange.getRequestCookies().get(config.getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString());
         if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
@@ -361,8 +352,6 @@ public class RequestHandler implements HttpHandler {
         }
 
         this.flash = flash;
-
-        return flash;
     }
 
     private Form getForm(HttpServerExchange exchange) throws IOException {
@@ -416,7 +405,7 @@ public class RequestHandler implements HttpHandler {
             } else if ((Session.class).equals(clazz)) {
                 parameters[index] = this.session;
             } else if ((Flash.class).equals(clazz)) {
-                parameters[index] = getFlash(exchange);
+                parameters[index] = this.flash;
             } else if ((String.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz)) {

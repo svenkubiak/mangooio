@@ -2,6 +2,8 @@
 
 == Version 1.0.0-Beta4 - Released xx.xx.xxxx
 
+* Better exception handling when in dev mode (svenkubiak)
+* Fixed bug that prevented flash from bein passed to next request (svenkubiak)
 * Optimized the shade plugin to create smaller JAR files (svenkubiak)
 
 == Version 1.0.0-Beta3 - Released 26.07.2015
