@@ -150,7 +150,7 @@ public class Form {
             if (inetAddress instanceof Inet6Address) {
                 valid = true;
             }
-        } catch (UnknownHostException e) {
+        } catch (UnknownHostException e) { //NOSONAR
         	//intentionally left blank
         }
 

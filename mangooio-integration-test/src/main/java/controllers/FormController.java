@@ -11,7 +11,7 @@ public class FormController {
     public Response validateform(Form form) {
     	form.required("name");
     	form.email("email");
-    	form.exactMatch("password", "passwordconfirm");
+    	form.exactMatch("password", "passwordconfirm"); //NOSONAR
     	form.match("email2", "email2confirm");
     	form.ipv4("ipv4");
     	form.ipv6("ipv6");
