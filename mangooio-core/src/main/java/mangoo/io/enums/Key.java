@@ -32,7 +32,17 @@ public enum Key {
     COOKIE_EXPIRES("cookie.expires"),
     ERROR("error"),
     WARNING("warning"),
-    SUCCESS("success");
+    SUCCESS("success"),
+    FORM_REQUIRED("form.required"),
+    FORM_MIN("form.min"),
+    FORM_MAX("form.max"),
+    FORM_EXACT_MATCH("form.exactMatch"),
+    FORM_MATCH("form.match"),
+    FORM_EMAIL("form.email"),
+    FORM_IPV4("form.ipv4"),
+    FORM_IPV6("form.ipv6"),
+    FORM_RANGE("form.range"),
+    FORM_URL("form.url");
 
     private final String value;
 

@@ -8,16 +8,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mangoo.io.i18n.Messages;
-
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+
+import mangoo.io.enums.Key;
+import mangoo.io.i18n.Messages;
 
 /**
  *
@@ -25,12 +25,10 @@ import com.google.inject.Inject;
  *
  */
 public class Form {
-    private static final Logger LOG = LoggerFactory.getLogger(Form.class);
-    private static final int IPV4_MAX = 255;
-    private static final int IPV4_MIN = 0;
-    private static final int IPV4_PARTS = 4;
+	private static final Pattern ipv4Pattern = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
     private static final Pattern emailPattern = Pattern.compile("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?");
     private static final Pattern urlPattern = Pattern.compile("^(http|https|ftp)\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\\-\\._\\?\\,\\'/\\\\\\+&amp;%\\$#\\=~\\!])*$");
+    private boolean submitted;
     private List<File> files = new ArrayList<File>();
     private Map<String, String> values = new HashMap<String, String>();
     private Map<String, String> errors = new HashMap<String, String>();
@@ -62,13 +60,25 @@ public class Form {
     public void addFile(File file) {
         this.files.add(file);
     }
+    
+    public boolean hasError(String fieldName) {
+    	return this.errors.containsKey(fieldName);
+    }
+    
+    public String getError(String fieldName) {
+    	return (hasError(fieldName)) ? this.errors.get(fieldName) : "";
+    }
+    
+    public String getValue(String fieldName) {
+    	return this.values.get(fieldName);
+    }
 
     public void required(String fieldName) {
         Preconditions.checkNotNull(fieldName, "Fieldname is required for validation: required");
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
-            this.errors.put(fieldName, messages.get("form.required", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_REQUIRED, fieldName));
         }
     }
 
@@ -77,7 +87,7 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (value.length() < minLength) {
-            this.errors.put(fieldName, messages.get("form.min", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_MIN, fieldName, minLength));
         }
     }
 
@@ -86,7 +96,7 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (value.length() > maxLength) {
-            this.errors.put(fieldName, messages.get("form.max", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_MAX, fieldName, maxLength));
         }
     }
 
@@ -95,8 +105,8 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         String anotherValue = (get(anotherFieldName) == null) ? "" : get(anotherFieldName);
-        if (value.equals(anotherValue)) {
-            this.errors.put(fieldName, messages.get("form.exactMatch", fieldName));
+        if (StringUtils.isBlank(value) || StringUtils.isBlank(anotherValue) && !value.equals(anotherValue)) {
+            this.errors.put(fieldName, messages.get(Key.FORM_EXACT_MATCH, fieldName, anotherFieldName));
         }
     }
 
@@ -105,8 +115,8 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         String anotherValue = (get(anotherFieldName) == null) ? "" : get(anotherFieldName);
-        if (value.equalsIgnoreCase(anotherValue)) {
-            this.errors.put(fieldName, messages.get("form.match", fieldName));
+        if (StringUtils.isBlank(value) || StringUtils.isBlank(anotherValue) && !value.equalsIgnoreCase(anotherValue)) {
+            this.errors.put(fieldName, messages.get(Key.FORM_MATCH, fieldName, anotherFieldName));
         }
     }
 
@@ -115,54 +125,37 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (!emailPattern.matcher(value).matches()) {
-            this.errors.put(fieldName, messages.get("form.email", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_EMAIL, fieldName));
         }
     }
 
     public void ipv4(String fieldName) {
         Preconditions.checkNotNull(fieldName, "Fieldname is required for validation: ipv4");
 
-        boolean valid = true;
         String value = (get(fieldName) == null) ? "" : get(fieldName);
-        try {
-            String[] parts = value.split("[.]");
-            if (parts.length != IPV4_PARTS) {
-                valid = false;
-            }
+        Matcher matcher = ipv4Pattern.matcher(value);
 
-            for (String part : parts) {
-                int p = Integer.parseInt(part);
-                if(p < IPV4_MIN || p > IPV4_MAX) {
-                    valid = false;
-                }
-            }
-        } catch (NumberFormatException e) {
-            LOG.error("Invalid IPv4 address", e);
-            valid = false;
-        }
-
-        if (!valid) {
-            this.errors.put(fieldName, messages.get("form.ipv4", fieldName));
+        if (!matcher.matches()) {
+            this.errors.put(fieldName, messages.get(Key.FORM_IPV4, fieldName));
         }
     }
 
     public void ipv6(String fieldName) {
         Preconditions.checkNotNull(fieldName, "Fieldname is required for validation: ipv6");
 
-        boolean valid = true;
+        boolean valid = false;
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         try {
             InetAddress inetAddress = InetAddress.getByName(value);
             if (inetAddress instanceof Inet6Address) {
-                valid = false;
+                valid = true;
             }
         } catch (UnknownHostException e) {
-            LOG.error("Invalid IPv6 address", e);
-            valid = false;
+        	//intentionally left blank
         }
 
         if (!valid) {
-            this.errors.put(fieldName, messages.get("form.ipv6", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_IPV6, fieldName));
         }
     }
 
@@ -171,7 +164,7 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (value.length() >= minLength && value.length() <= maxLength) {
-            this.errors.put(fieldName, messages.get("form.url", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
         }
     }
 
@@ -180,11 +173,27 @@ public class Form {
 
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         if (!urlPattern.matcher(value).matches()) {
-            this.errors.put(fieldName, messages.get("form.url", fieldName));
+            this.errors.put(fieldName, messages.get(Key.FORM_URL, fieldName));
         }
     }
 
     public boolean hasErrors() {
-        return this.errors.size() > 0;
+        return this.submitted && this.errors.size() > 0;
     }
+
+    public Map<String, String> getValues() {
+        return this.values;
+    }
+
+	public boolean hasContent() {
+		return this.errors.size() > 0 && this.values.size() > 0;
+	}
+
+	public boolean isSubmitted() {
+		return submitted;
+	}
+
+	public void setSubmitted(boolean submitted) {
+		this.submitted = submitted;
+	}
 }

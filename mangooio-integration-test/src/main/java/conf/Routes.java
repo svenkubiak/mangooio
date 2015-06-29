@@ -56,6 +56,8 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/translation").onClassAndMethod(I18nController.class, "translation");
 
         Router.mapRequest(Methods.GET).toUrl("/filter").onClassAndMethod(FilterController.class, "filter");
+        
+        Router.mapRequest(Methods.POST).toUrl("/validateform").onClassAndMethod(FormController.class, "validateform");
 
         Router.mapWebSocket().toUrl("/websocket").onClass(WebSocketController.class);
 

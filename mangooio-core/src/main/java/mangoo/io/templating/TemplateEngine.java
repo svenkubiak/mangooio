@@ -15,6 +15,7 @@ import mangoo.io.core.Application;
 import mangoo.io.enums.Default;
 import mangoo.io.i18n.Messages;
 import mangoo.io.routing.bindings.Flash;
+import mangoo.io.routing.bindings.Form;
 import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.directives.AuthenticityFormDirective;
 import mangoo.io.templating.directives.AuthenticityTokenDirective;
@@ -65,8 +66,9 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
+    public String render(Flash flash, Session session, Form form, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
         Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
+        content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
         content.put("i18n", new I18nMethod(messages));

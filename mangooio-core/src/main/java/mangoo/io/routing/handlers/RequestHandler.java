@@ -74,6 +74,7 @@ public class RequestHandler implements HttpHandler {
     private Authentication authentication;
     private Session session;
     private Flash flash;
+    private Form form;
     private Config config;
     private Injector injector;
     private Exchange exchange;
@@ -103,6 +104,7 @@ public class RequestHandler implements HttpHandler {
             getSession(exchange);
             getAuthentication(exchange);
             getFlash(exchange);
+            getForm(exchange);
             
             boolean continueAfterFilter = executeFilter(exchange);
             if (continueAfterFilter) {
@@ -177,7 +179,7 @@ public class RequestHandler implements HttpHandler {
         if (this.exchange == null) {
             String authenticityToken = getRequestParameters(httpServerExchange).get(AUTHENTICITY_TOKEN);
             if (StringUtils.isBlank(authenticityToken)) {
-                authenticityToken = getForm(httpServerExchange).get(AUTHENTICITY_TOKEN);
+                authenticityToken = this.form.get(AUTHENTICITY_TOKEN);
             }
 
             this.exchange = new Exchange(httpServerExchange, this.session, authenticityToken, this.authentication);
@@ -208,28 +210,28 @@ public class RequestHandler implements HttpHandler {
     }
 
     private Response getResponse(HttpServerExchange exchange) throws Exception {
-        Response result;
+        Response response;
 
         if (this.methodParameters.isEmpty()) {
-            result = (Response) this.method.invoke(this.controller);
-            result.andTemplate(this.method.getName());
+            response = (Response) this.method.invoke(this.controller);
+            response.andTemplate(this.method.getName());
         } else {
             Object [] methodParameters = getConvertedParameters(exchange);
 
-            result = (Response) this.method.invoke(this.controller, methodParameters);
-            result.andTemplate(this.method.getName());
+            response = (Response) this.method.invoke(this.controller, methodParameters);
+            response.andTemplate(this.method.getName());
         }
 
-        if (!result.isRendered()) {
-            if (result.getContent() != null && this.exchange != null && this.exchange.getContent() != null) {
-                result.getContent().putAll(this.exchange.getContent());
+        if (!response.isRendered()) {
+            if (response.getContent() != null && this.exchange != null && this.exchange.getContent() != null) {
+                response.getContent().putAll(this.exchange.getContent());
             }
-
+            
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            result.andBody(templateEngine.render(this.flash, this.session, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), result.getTemplate(), result.getContent()));
+            response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), response.getTemplate(), response.getContent()));
         }
 
-        return result;
+        return response;
     }
 
     private Session getSession(HttpServerExchange exchange) throws Exception {
@@ -354,8 +356,8 @@ public class RequestHandler implements HttpHandler {
         this.flash = flash;
     }
 
-    private Form getForm(HttpServerExchange exchange) throws IOException {
-        Form form = this.injector.getInstance(Form.class);
+    private void getForm(HttpServerExchange exchange) throws IOException {
+        this.form = this.injector.getInstance(Form.class);
         if (exchange.getRequestMethod().equals(Methods.POST) || exchange.getRequestMethod().equals(Methods.PUT)) {
             final FormDataParser formDataParser = FormParserFactory.builder().build().createParser(exchange);
             if (formDataParser != null) {
@@ -371,10 +373,10 @@ public class RequestHandler implements HttpHandler {
                         }
                     }
                 }
+                
+                this.form.setSubmitted(true);
             }
         }
-
-        return form;
     }
 
     private Body getBody(HttpServerExchange exchange) throws IOException {
@@ -397,7 +399,7 @@ public class RequestHandler implements HttpHandler {
             Class<?> clazz = entry.getValue();
 
             if ((Form.class).equals(clazz)) {
-                parameters[index] = getForm(exchange);
+                parameters[index] = this.form;
             } else if ((Body.class).equals(clazz)) {
                 parameters[index] = getBody(exchange);
             } else if ((Authentication.class).equals(clazz)) {
