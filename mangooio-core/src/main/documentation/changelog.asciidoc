@@ -1,8 +1,13 @@
 = Changelog
 
-== Version 1.0.0-Beta4 - Released xx.xx.xxxx
+== Version 1.0.0-Beta5 - Released xx.xx.xxxx
+
+* 
+
+== Version 1.0.0-Beta4 - Released 29.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/19[#19] Fixed MangooFluent and refactored testing utilities (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/18[#18] Added default validation messages for form handling (svenkubiak)
 * Better exception handling when in dev mode (svenkubiak)
 * Fixed bug that prevented flash from bein passed to next request (svenkubiak)
 * Optimized the shade plugin to create smaller JAR files (svenkubiak)
