@@ -1,15 +1,10 @@
 package mangoo.io.routing;
 
-import io.undertow.util.HttpString;
-import io.undertow.util.StatusCodes;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import mangoo.io.enums.ContentType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
+
+import io.undertow.util.HttpString;
+import io.undertow.util.StatusCodes;
+import mangoo.io.enums.ContentType;
 
 /**
  *

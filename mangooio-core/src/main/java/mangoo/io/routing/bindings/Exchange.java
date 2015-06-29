@@ -1,10 +1,9 @@
 package mangoo.io.routing.bindings;
 
-import io.undertow.server.HttpServerExchange;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import io.undertow.server.HttpServerExchange;
 import mangoo.io.authentication.Authentication;
 
 /**

@@ -3,8 +3,6 @@ package mangoo.io.scheduler;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
-import mangoo.io.configuration.Config;
-import mangoo.io.enums.Default;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -19,6 +17,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import mangoo.io.configuration.Config;
+import mangoo.io.enums.Default;
 
 /**
  *

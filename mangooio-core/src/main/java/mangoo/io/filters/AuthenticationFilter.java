@@ -1,5 +1,9 @@
 package mangoo.io.filters;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.inject.Inject;
+
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 import mangoo.io.configuration.Config;
@@ -8,10 +12,6 @@ import mangoo.io.enums.Key;
 import mangoo.io.enums.Templates;
 import mangoo.io.interfaces.MangooControllerFilter;
 import mangoo.io.routing.bindings.Exchange;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.inject.Inject;
 
 /**
  *

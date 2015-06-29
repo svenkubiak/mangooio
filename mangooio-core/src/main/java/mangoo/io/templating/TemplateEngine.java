@@ -1,7 +1,5 @@
 package mangoo.io.templating;
 
-import io.undertow.server.HttpServerExchange;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -10,18 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import mangoo.io.core.Application;
-import mangoo.io.enums.Default;
-import mangoo.io.i18n.Messages;
-import mangoo.io.routing.bindings.Flash;
-import mangoo.io.routing.bindings.Form;
-import mangoo.io.routing.bindings.Session;
-import mangoo.io.templating.directives.AuthenticityFormDirective;
-import mangoo.io.templating.directives.AuthenticityTokenDirective;
-import mangoo.io.templating.methods.I18nMethod;
-import mangoo.io.utils.Source;
-import mangoo.io.utils.ThrowableUtils;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
@@ -33,6 +19,18 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
+import io.undertow.server.HttpServerExchange;
+import mangoo.io.core.Application;
+import mangoo.io.enums.Default;
+import mangoo.io.i18n.Messages;
+import mangoo.io.routing.bindings.Flash;
+import mangoo.io.routing.bindings.Form;
+import mangoo.io.routing.bindings.Session;
+import mangoo.io.templating.directives.AuthenticityFormDirective;
+import mangoo.io.templating.directives.AuthenticityTokenDirective;
+import mangoo.io.templating.methods.I18nMethod;
+import mangoo.io.utils.Source;
+import mangoo.io.utils.ThrowableUtils;
 
 @Singleton
 public class TemplateEngine {

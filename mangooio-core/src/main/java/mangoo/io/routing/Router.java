@@ -1,10 +1,9 @@
 package mangoo.io.routing;
 
-import io.undertow.util.HttpString;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import io.undertow.util.HttpString;
 import mangoo.io.enums.RouteType;
 
 /**

@@ -3,8 +3,6 @@ package mangoo.io.templating.methods;
 import java.util.ArrayList;
 import java.util.List;
 
-import mangoo.io.i18n.Messages;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +11,7 @@ import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import mangoo.io.i18n.Messages;
 
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {

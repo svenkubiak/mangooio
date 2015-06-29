@@ -1,10 +1,10 @@
 package mangoo.io.core;
 
-import mangoo.io.scheduler.MangooJobFactory;
-
 import org.quartz.spi.JobFactory;
 
 import com.google.inject.AbstractModule;
+
+import mangoo.io.scheduler.MangooJobFactory;
 
 /**
  *

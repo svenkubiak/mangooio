@@ -2,11 +2,6 @@ package mangoo.io.configuration;
 
 import java.util.Properties;
 
-import mangoo.io.core.Application;
-import mangoo.io.enums.Default;
-import mangoo.io.enums.Key;
-import mangoo.io.enums.Mode;
-
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
@@ -17,6 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
+
+import mangoo.io.core.Application;
+import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
+import mangoo.io.enums.Mode;
 
 /**
  *

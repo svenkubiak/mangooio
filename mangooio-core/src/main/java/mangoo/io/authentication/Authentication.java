@@ -2,10 +2,6 @@ package mangoo.io.authentication;
 
 import java.util.Date;
 
-import mangoo.io.configuration.Config;
-import mangoo.io.enums.Default;
-import mangoo.io.enums.Key;
-
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -13,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+
+import mangoo.io.configuration.Config;
+import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
 
 /**
  *

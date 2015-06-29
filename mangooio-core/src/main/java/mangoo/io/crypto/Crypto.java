@@ -1,8 +1,5 @@
 package mangoo.io.crypto;
 
-import mangoo.io.configuration.Config;
-import mangoo.io.enums.Key;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
@@ -18,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import mangoo.io.configuration.Config;
+import mangoo.io.enums.Key;
 
 /**
  * Convenient class for encryption and decryption

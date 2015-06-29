@@ -8,11 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.zip.GZIPOutputStream;
 
-import mangoo.io.configuration.Config;
-import mangoo.io.enums.Default;
-import mangoo.io.enums.Key;
-import mangoo.io.enums.Mode;
-
 import org.apache.commons.io.IOUtils;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
@@ -22,6 +17,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+
+import mangoo.io.configuration.Config;
+import mangoo.io.enums.Default;
+import mangoo.io.enums.Key;
+import mangoo.io.enums.Mode;
 
 /**
  * Convenient class for minification of css and js assets

@@ -1,10 +1,10 @@
 package mangoo.io.cache;
 
+import com.google.inject.Singleton;
+
 import mangoo.io.enums.Default;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
-import com.google.inject.Singleton;
 
 /**
  *

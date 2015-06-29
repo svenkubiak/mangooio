@@ -3,10 +3,10 @@ package mangoo.io.routing.bindings;
 import java.util.HashMap;
 import java.util.Map;
 
-import mangoo.io.core.Bootstrap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import mangoo.io.core.Bootstrap;
 
 
 /**

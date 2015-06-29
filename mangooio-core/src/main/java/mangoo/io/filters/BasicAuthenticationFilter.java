@@ -1,5 +1,10 @@
 package mangoo.io.filters;
 
+import org.bouncycastle.util.encoders.Base64;
+
+import com.google.common.base.Charsets;
+import com.google.inject.Inject;
+
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
@@ -8,11 +13,6 @@ import mangoo.io.enums.Key;
 import mangoo.io.interfaces.MangooAuthenticator;
 import mangoo.io.interfaces.MangooControllerFilter;
 import mangoo.io.routing.bindings.Exchange;
-
-import org.bouncycastle.util.encoders.Base64;
-
-import com.google.common.base.Charsets;
-import com.google.inject.Inject;
 
 /**
  *

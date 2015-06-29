@@ -4,11 +4,11 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.google.inject.Singleton;
+
 import mangoo.io.enums.Default;
 import mangoo.io.enums.Key;
 import mangoo.io.enums.Validation;
-
-import com.google.inject.Singleton;
 
 /**
  *

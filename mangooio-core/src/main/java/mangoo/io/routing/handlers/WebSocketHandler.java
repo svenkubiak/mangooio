@@ -1,11 +1,11 @@
 package mangoo.io.routing.handlers;
 
+import org.xnio.ChannelListener;
+
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import mangoo.io.core.Application;
-
-import org.xnio.ChannelListener;
 
 /**
  *
