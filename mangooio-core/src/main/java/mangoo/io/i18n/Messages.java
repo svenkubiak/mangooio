@@ -56,36 +56,36 @@ public class Messages {
         if (this.bundle.containsKey(key)) {
             return MessageFormat.format(this.bundle.getString(key), arguments);
         }
-        
+
         if (Key.FORM_REQUIRED.toString().equals(key)) {
-        	return MessageFormat.format(Validation.REQUIRED.toString(), arguments);
+            return MessageFormat.format(Validation.REQUIRED.toString(), arguments);
         } else if (Key.FORM_MIN.toString().equals(key)) {
-        	return MessageFormat.format(Validation.MIN.toString(), arguments);
+            return MessageFormat.format(Validation.MIN.toString(), arguments);
         } else if (Key.FORM_MAX.toString().equals(key)) {
-        	return MessageFormat.format(Validation.MAX.toString(), arguments);
+            return MessageFormat.format(Validation.MAX.toString(), arguments);
         } else if (Key.FORM_EXACT_MATCH.toString().equals(key)) {
-        	return MessageFormat.format(Validation.EXACT_MATCH.toString(), arguments);
+            return MessageFormat.format(Validation.EXACT_MATCH.toString(), arguments);
         } else if (Key.FORM_MATCH.toString().equals(key)) {
-        	return MessageFormat.format(Validation.MATCH.toString(), arguments);
+            return MessageFormat.format(Validation.MATCH.toString(), arguments);
         } else if (Key.FORM_EMAIL.toString().equals(key)) {
-        	return MessageFormat.format(Validation.EMAIL.toString(), arguments);
+            return MessageFormat.format(Validation.EMAIL.toString(), arguments);
         } else if (Key.FORM_IPV4.toString().equals(key)) {
-        	return MessageFormat.format(Validation.IPV4.toString(), arguments);
+            return MessageFormat.format(Validation.IPV4.toString(), arguments);
         } else if (Key.FORM_IPV6.toString().equals(key)) {
-        	return MessageFormat.format(Validation.IPV6.toString(), arguments);
+            return MessageFormat.format(Validation.IPV6.toString(), arguments);
         } else if (Key.FORM_RANGE.toString().equals(key)) {
-        	return MessageFormat.format(Validation.RANGE.toString(), arguments);
+            return MessageFormat.format(Validation.RANGE.toString(), arguments);
         } else if (Key.FORM_URL.toString().equals(key)) {
-        	return MessageFormat.format(Validation.URL.toString(), arguments);
+            return MessageFormat.format(Validation.URL.toString(), arguments);
         }
-        
+
         return "";
     }
-    
+
     /**
      * Returns a localized value for a given key stored in messages_xx.properties and passing the
      * given arguments
-     * 
+     *
      * @param key The key enum to lookup up the localized value
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured

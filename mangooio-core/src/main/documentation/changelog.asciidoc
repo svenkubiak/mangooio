@@ -2,6 +2,7 @@
 
 == Version 1.0.0-Beta5 - Released xx.xx.xxxx
 
+* https://github.com/svenkubiak/mangooio/issues/23[#23] Added form unit tests and more bindings tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/20[#20] Added convinent methods for retrieving default config values (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/24[#24] Switched from properties to yaml configuration (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/17[#17] Added preparsing of routes (svenkubiak)
