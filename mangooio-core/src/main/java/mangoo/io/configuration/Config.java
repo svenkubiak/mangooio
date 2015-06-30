@@ -237,4 +237,24 @@ public class Config {
     public Map<String, String> getAllConfigurations() {
         return this.values;
     }
+
+    public String getApplicationName() {
+        return getString(Key.APPLICATION_NAME);
+    }
+
+    public String getApplicationHost() {
+        return getString(Key.APPLICATION_HOST);
+    }
+
+    public int getApplicationPort() {
+        return getInt(Key.APPLICATION_PORT);
+    }
+
+    public String getSmtpHost() {
+        return getString(Key.SMTP_HOST);
+    }
+
+    public int getSmtpPort() {
+        return getInt(Key.SMTP_PORT);
+    }
 }
