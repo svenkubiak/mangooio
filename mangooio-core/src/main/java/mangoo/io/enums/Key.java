@@ -10,7 +10,7 @@ public enum Key {
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
     APPLICATION_MINIFY_JSFOLDER("application.minify.jsfolder"),
-    APPLICATION_MINIFY_CSSFOLDER("application.minify.css"),
+    APPLICATION_MINIFY_CSSFOLDER("application.minify.cssfolder"),
     APPLICATION_GZIP_JS("application.minify.gzipjs"),
     APPLICATION_GZIP_CSS("application.minify.gzipcss"),
     APPLICATION_SECRET("application.secret"),

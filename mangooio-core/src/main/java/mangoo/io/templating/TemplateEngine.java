@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
@@ -57,8 +57,8 @@ public class TemplateEngine {
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir")).append(File.separator)
-              .append("src").append(File.separator).append("main")
-              .append(File.separator).append("java");
+        .append("src").append(File.separator).append("main")
+        .append(File.separator).append("java");
 
         this.baseDirectory = buffer.toString();
     }

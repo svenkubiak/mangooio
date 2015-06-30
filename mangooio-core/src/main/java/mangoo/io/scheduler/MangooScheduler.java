@@ -4,6 +4,8 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.util.Map;
+
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -33,9 +35,9 @@ public class MangooScheduler {
 
     @Inject
     public MangooScheduler(MangooJobFactory quartzJobFactory, Config config) {
-        for (String property : config.getAllConfigurations().stringPropertyNames()) {
-            if (property.startsWith(Default.SCHEDULER_PREFIX.toString())) {
-                System.setProperty(property, config.getString(property));
+        for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
+            if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
+                System.setProperty(entry.getKey(), entry.getValue());
             }
         }
 

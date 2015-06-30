@@ -1,0 +1,36 @@
+default:
+    application:
+        name       : TEST 
+        secret     : myvoiceismypassword
+        language   : en
+        host       : localhost
+        port       : 8080
+        minify:
+            js        : true
+            css       : true
+            jsfolder  : /foo
+            cssfolder : /bar
+            gzipjs    : false
+            gzipcss   : false
+        auth:
+            redirect  : /login
+            cookie:
+                name    : -AUTH
+                encrypt : false
+                expires : 86400
+    cookie:
+        name       : -SESSION
+        expires    : 86400
+        encryption : false
+    smtp:
+        host       : localhost
+        port       : 25
+        username   : foo
+        password   : bar
+        ssl        : false
+        
+test:
+    application:
+        port       : 10808
+    smtp:
+        port       : 3055

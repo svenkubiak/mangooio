@@ -1,16 +1,15 @@
 package mangoo.io.configuration;
 
-import java.util.Properties;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationConverter;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
+import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
 import mangoo.io.core.Application;
@@ -24,12 +23,13 @@ import mangoo.io.enums.Mode;
  *
  */
 @Singleton
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
-    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-    private CompositeConfiguration compositeConfiguration = new CompositeConfiguration();
+    private static final Logger LOG = LoggerFactory.getLogger(Config.class);
+    private Map<String, String> values = new HashMap<String, String>();
 
     public Config() {
-        init("application.conf", Application.getMode());
+        init("application.yaml", Application.getMode());
     }
 
     public Config(String path, Mode mode) {
@@ -37,14 +37,38 @@ public class Config {
     }
 
     private void init(String configFile, Mode mode) {
+        Yaml yaml = new Yaml();
+        Map map;
         try {
-            PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration(configFile);
+            map = (Map) yaml.load(Resources.getResource(configFile).openStream());
+            Map<String, Object> defaults = (Map<String, Object>) map.get("default");
+            Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
 
-            Configuration configuration = propertiesConfiguration.subset("%" + mode.toString());
-            this.compositeConfiguration.addConfiguration(configuration);
-            this.compositeConfiguration.addConfiguration(propertiesConfiguration);
-        } catch (ConfigurationException e) {
-            LOG.error("Failed to load application.conf", e);
+            load("", defaults);
+            if (environment != null && !environment.isEmpty()) {
+                load("", environment);
+            }
+        } catch (IOException e) {
+            LOG.error("Failed to load configuration from application.yaml", e);
+        }
+    }
+
+    /**
+     * Recursively iterates over the properties and flatting out the values
+     *
+     * @param parentKey The current key
+     * @param map The map to iterate over
+     */
+    private void load(String parentKey, Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            String key = entry.getKey();
+
+            if (value instanceof Map) {
+                load(parentKey + "." + key, (Map<String, Object>) value);
+            } else {
+                this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), String.valueOf(value));
+            }
         }
     }
 
@@ -55,7 +79,7 @@ public class Config {
      * @return The configured value as String or null if the key is not configured
      */
     public String getString(String key) {
-        return this.compositeConfiguration.getString(key);
+        return this.values.get(key);
     }
 
     /**
@@ -66,7 +90,12 @@ public class Config {
      * @return The configured value as String or the passed defautlValue if the key is not configured
      */
     public String getString(String key, String defaultValue) {
-        return this.compositeConfiguration.getString(key, defaultValue);
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+
+        return value;
     }
 
     /**
@@ -76,7 +105,12 @@ public class Config {
      * @return The configured value as int or 0 if the key is not configured
      */
     public int getInt(String key) {
-        return this.compositeConfiguration.getInt(key);
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return 0;
+        }
+
+        return Integer.valueOf(value);
     }
 
     /**
@@ -87,7 +121,12 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public int getInt(String key, int defaultValue) {
-        return this.compositeConfiguration.getInt(key, defaultValue);
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+
+        return Integer.valueOf(value);
     }
 
     /**
@@ -97,7 +136,12 @@ public class Config {
      * @return The configured value as boolean or false if the key is not configured
      */
     public boolean getBoolean(String key) {
-        return this.compositeConfiguration.getBoolean(key);
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
+
+        return Boolean.valueOf(value);
     }
 
     /**
@@ -108,7 +152,12 @@ public class Config {
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
      */
     public boolean getBoolean(String key, boolean defaultValue) {
-        return this.compositeConfiguration.getBoolean(key, defaultValue);
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+
+        return Boolean.valueOf(value);
     }
 
     /**
@@ -174,10 +223,6 @@ public class Config {
         return getBoolean(key.toString(), defaultValue);
     }
 
-    public Properties getAllConfigurations() {
-        return ConfigurationConverter.getProperties(this.compositeConfiguration);
-    }
-
     /**
      * Checks if the application.conf stored in conf/application.conf contains an application
      * secret property (application.secret) that has at least 16 characters (128-Bit)
@@ -185,7 +230,11 @@ public class Config {
      * @return True if the configuration contains an application.secret property with at least 16 characters
      */
     public boolean hasValidSecret() {
-        String secret = this.compositeConfiguration.getString(Key.APPLICATION_SECRET.toString());
+        String secret = getString(Key.APPLICATION_SECRET);
         return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
+    }
+
+    public Map<String, String> getAllConfigurations() {
+        return this.values;
     }
 }
