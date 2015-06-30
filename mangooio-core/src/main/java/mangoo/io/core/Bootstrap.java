@@ -3,6 +3,7 @@ package mangoo.io.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -54,14 +56,6 @@ import mangoo.io.routing.handlers.WebSocketHandler;
  */
 public class Bootstrap {
     private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
-    private static final String VERSION = getApplicationVersion();
-    private static final String LOGO = "\n"
-            + "  _ __ ___   __ _ _ __   __ _  ___   ___  \n"
-            + " | '_ ` _ \\ / _` | '_ \\ / _` |/ _ \\ / _ \\ \n"
-            + " | | | | | | (_| | | | | (_| | (_) | (_) |\n"
-            + " |_| |_| |_|\\__,_|_| |_|\\__, |\\___/ \\___/ https://mangoo.io\n"
-            + "                         __/ |            @mangoo_io\n"
-            + "                        |___/             " + VERSION + "\n";
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Mode mode;
@@ -84,11 +78,11 @@ public class Bootstrap {
         if (StringUtils.isNotBlank(property)) {
             switch (property.toLowerCase(Locale.ENGLISH)) {
             case "dev"  : this.mode = Mode.DEV;
-                break;
+            break;
             case "test" : this.mode = Mode.TEST;
-                break;
+            break;
             default     : this.mode = Mode.PROD;
-                break;
+            break;
             }
         } else {
             this.mode = Mode.PROD;
@@ -114,26 +108,45 @@ public class Bootstrap {
                 MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName("conf.Routes"));
                 mangooRoutes.routify();
             } catch (ClassNotFoundException e) {
-                LOG.error("Failed to load routes. Check that conf/Routes.java exisits in your applicaiotn", e);
+                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your applicaiotn", e);
                 this.error = true;
             }
 
-            RoutingHandler routingHandler = Handlers.routing();
-            routingHandler.setFallbackHandler(new FallbackHandler());
             for (Route route : Router.getRoutes()) {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
-                    routingHandler.add(route.getRequestMethod(), route.getUrl(), new RequestHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
-                } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
-                    routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
+                    Class<?> controllerClass = route.getControllerClass();
+                    boolean found = false;
+                    for (Method method : controllerClass.getMethods()) {
+                        if (method.getName().equals(route.getControllerMethod())) {
+                            found = true;
+                        }
+                    }
+
+                    if (!found) {
+                        LOG.error("Could not found controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+                        this.error = true;
+                    }
                 }
             }
 
-            this.pathHandler = new PathHandler(routingHandler);
-            for (Route route : Router.getRoutes()) {
-                if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
-                    this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
-                } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
-                    this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
+            if (!this.error) {
+                RoutingHandler routingHandler = Handlers.routing();
+                routingHandler.setFallbackHandler(new FallbackHandler());
+                for (Route route : Router.getRoutes()) {
+                    if (RouteType.REQUEST.equals(route.getRouteType())) {
+                        routingHandler.add(route.getRequestMethod(), route.getUrl(), new RequestHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
+                    } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
+                        routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
+                    }
+                }
+
+                this.pathHandler = new PathHandler(routingHandler);
+                for (Route route : Router.getRoutes()) {
+                    if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
+                        this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
+                    } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
+                        this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
+                    }
                 }
             }
         }
@@ -189,7 +202,15 @@ public class Bootstrap {
     public void applicationStarted() {
         if (!this.error) {
             this.end = new Date().getTime();
-            LOG.info(LOGO);
+            String logo = "";
+            try {
+                logo = "\n" + FigletFont.convertOneLine("mangoo I/O");
+                logo = logo + "\n\nhttps://mangoo.io | @mangoo_io | " + getApplicationVersion() + "\n";
+            } catch (IOException e) {
+                //intentionally left blank //NOSONAR
+            }
+
+            LOG.info(logo);
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, this.end - this.start, this.mode.toString());
             this.injector.getInstance(MangooLifecycle.class).applicationStarted();
         }
@@ -238,6 +259,10 @@ public class Bootstrap {
 
     public Mode getMode() {
         return this.mode;
+    }
+
+    public boolean isStarted() {
+        return !this.error;
     }
 
     public Injector getInjector() {

@@ -36,6 +36,11 @@ public final class Application {
 
         bootstrap.startServer();
         bootstrap.applicationStarted();
+
+        if (!bootstrap.isStarted()) {
+            System.out.print("Failed to start mangoo I/O"); //NOSONAR
+            System.exit(1); //NOSONAR
+        }
     }
 
     /**

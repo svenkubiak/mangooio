@@ -1,8 +1,5 @@
 package conf;
 
-import io.undertow.util.Methods;
-import mangoo.io.interfaces.MangooRoutes;
-import mangoo.io.routing.Router;
 import controllers.ApplicationController;
 import controllers.AuthenticationController;
 import controllers.AuthenticityController;
@@ -14,6 +11,9 @@ import controllers.JsonController;
 import controllers.ParameterController;
 import controllers.SessionController;
 import controllers.WebSocketController;
+import io.undertow.util.Methods;
+import mangoo.io.interfaces.MangooRoutes;
+import mangoo.io.routing.Router;
 
 public class Routes implements MangooRoutes {
     @Override
@@ -56,7 +56,7 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/translation").onClassAndMethod(I18nController.class, "translation");
 
         Router.mapRequest(Methods.GET).toUrl("/filter").onClassAndMethod(FilterController.class, "filter");
-        
+
         Router.mapRequest(Methods.POST).toUrl("/validateform").onClassAndMethod(FormController.class, "validateform");
 
         Router.mapWebSocket().toUrl("/websocket").onClass(WebSocketController.class);

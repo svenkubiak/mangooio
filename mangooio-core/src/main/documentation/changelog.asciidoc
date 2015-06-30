@@ -2,7 +2,7 @@
 
 == Version 1.0.0-Beta5 - Released xx.xx.xxxx
 
-* 
+* https://github.com/svenkubiak/mangooio/issues/17[#17] Added preparsing of routes (svenkubiak)
 
 == Version 1.0.0-Beta4 - Released 29.07.2015
 

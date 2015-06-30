@@ -4,7 +4,7 @@
 			<pattern>%d{dd.MM.yyyy;HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
-	<root level="info">
+	<logger name="mangoo.io" level="INFO" additivity="false">
 		<appender-ref ref="STDOUT" />
-	</root>
+	</logger>
 </configuration>
