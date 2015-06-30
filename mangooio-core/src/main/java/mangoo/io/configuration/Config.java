@@ -29,7 +29,7 @@ public class Config {
     private Map<String, String> values = new HashMap<String, String>();
 
     public Config() {
-        init("application.yaml", Application.getMode());
+        init(Default.CONFIGURATION_FILE.toString(), Application.getMode());
     }
 
     public Config(String path, Mode mode) {
@@ -41,7 +41,7 @@ public class Config {
         Map map;
         try {
             map = (Map) yaml.load(Resources.getResource(configFile).openStream());
-            Map<String, Object> defaults = (Map<String, Object>) map.get("default");
+            Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
             Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
 
             load("", defaults);
