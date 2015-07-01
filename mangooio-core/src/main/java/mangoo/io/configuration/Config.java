@@ -329,7 +329,7 @@ public class Config {
     }
 
     public String getFlashCookieName() {
-        return getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString();
+        return getString(Key.APPLICATION_NAME) + Default.FLASH_COOKIE_SUFFIX.toString();
     }
 
     public String getSessionCookieName() {
