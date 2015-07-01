@@ -97,7 +97,7 @@ public class Bootstrap {
 
     public void prepareConfig() {
         if (!this.config.hasValidSecret()) {
-            LOG.error("Please make sure that your application.conf has an application.secret property which has at least 16 characters");
+            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
             this.error = true;
         }
     }
@@ -123,7 +123,7 @@ public class Bootstrap {
                     }
 
                     if (!found) {
-                        LOG.error("Could not found controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+                        LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
                         this.error = true;
                     }
                 }
