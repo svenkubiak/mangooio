@@ -1,11 +1,7 @@
 package mangoo.io.test;
 
-import org.fluentlenium.adapter.FluentTest;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.google.inject.Injector;
 import com.googlecode.junittoolbox.SuiteClasses;
@@ -16,21 +12,21 @@ import com.icegreen.greenmail.util.GreenMail;
 @SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")
 public class MangooRunner {
-	
+
     @Before
     public final void mangooStartup() {
-    	beforeMangooStartup();
-    	MangooTest.INSTANCE.getInstance();
+        beforeMangooStartup();
+        MangooTestInstance.IO.get();
     }
 
     public void beforeMangooStartup() {
-	}
-
-	public final Injector getInject() {
-        return MangooTest.INSTANCE.getInjector();
     }
-    
+
+    public final Injector getInject() {
+        return MangooTestInstance.IO.getInjector();
+    }
+
     public final GreenMail getFakeSMTP() {
-    	return MangooTest.INSTANCE.getFakeSMTP();
+        return MangooTestInstance.IO.getFakeSMTP();
     }
 }

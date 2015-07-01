@@ -14,15 +14,15 @@ public class MangooFluent extends FluentTest {
     @Before
     public final void mangooStartup() {
     	beforeMangooStartup();
-    	MangooTest.INSTANCE.getInjector();
+    	MangooTestInstance.IO.getInjector();
     }
 
     public final Injector getInject() {
-        return MangooTest.INSTANCE.getInjector();
+        return MangooTestInstance.IO.getInjector();
     }
     
     public final GreenMail getFakeSMTP() {
-    	return MangooTest.INSTANCE.getFakeSMTP();
+    	return MangooTestInstance.IO.getFakeSMTP();
     }
     
     public void beforeMangooStartup() {

@@ -63,7 +63,7 @@ public class MangooResponse {
     }
 
     private void init () {
-        Config config = MangooTest.INSTANCE.getInjector().getInstance(Config.class);
+        Config config = MangooTestInstance.IO.getInjector().getInstance(Config.class);
         
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());  

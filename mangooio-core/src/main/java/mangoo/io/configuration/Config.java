@@ -1,6 +1,9 @@
 package mangoo.io.configuration;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,10 +40,17 @@ public class Config {
     }
 
     private void init(String configFile, Mode mode) {
-        Yaml yaml = new Yaml();
-        Map map;
+        String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
+        InputStream inputStream = null;
         try {
-            map = (Map) yaml.load(Resources.getResource(configFile).openStream());
+            Yaml yaml = new Yaml();
+            Map map;
+            if (StringUtils.isNotBlank(configPath)) {
+                inputStream = new FileInputStream(new File(configPath));
+                map = (Map) yaml.load(inputStream);
+            } else {
+                map = (Map) yaml.load(Resources.getResource(configFile).openStream());
+            }
             Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
             Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
 
@@ -50,11 +60,19 @@ public class Config {
             }
         } catch (IOException e) {
             LOG.error("Failed to load configuration from application.yaml", e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    LOG.error("Failed to close inputstram while loading application.yaml from external config path", e);
+                }
+            }
         }
     }
 
     /**
-     * Recursively iterates over the properties and flatting out the values
+     * Recursively iterates over the yaml file and flatting out the values
      *
      * @param parentKey The current key
      * @param map The map to iterate over
@@ -256,5 +274,9 @@ public class Config {
 
     public int getSmtpPort() {
         return getInt(Key.SMTP_PORT);
+    }
+
+    public String getFlashCookieName() {
+        return getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString();
     }
 }

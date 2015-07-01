@@ -61,10 +61,10 @@ import mangoo.io.templating.TemplateEngine;
  *
  */
 public class RequestHandler implements HttpHandler {
-	private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
-	private static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
+    private static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
     private static final String AUTHENTICITY_TOKEN = "authenticityToken";
-	private int parameterCount;
+    private int parameterCount;
     private Class<?> controllerClass;
     private String controllerMethod;
     private Object controller;
@@ -105,7 +105,7 @@ public class RequestHandler implements HttpHandler {
             getAuthentication(exchange);
             getFlash(exchange);
             getForm(exchange);
-            
+
             boolean continueAfterFilter = executeFilter(exchange);
             if (continueAfterFilter) {
                 Response response = getResponse(exchange);
@@ -115,12 +115,12 @@ public class RequestHandler implements HttpHandler {
                 setAuthentication(exchange);
 
                 if (response.isRedirect()) {
-                	exchange.setResponseCode(StatusCodes.FOUND);
+                    exchange.setResponseCode(StatusCodes.FOUND);
                     exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
                     exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
                     exchange.endExchange();
                 } else if (response.isBinary()) {
-                  	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+                    exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
                 } else {
                     exchange.setResponseCode(response.getStatusCode());
                     exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
@@ -226,7 +226,7 @@ public class RequestHandler implements HttpHandler {
             if (response.getContent() != null && this.exchange != null && this.exchange.getContent() != null) {
                 response.getContent().putAll(this.exchange.getContent());
             }
-            
+
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
             response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), response.getTemplate(), response.getContent()));
         }
@@ -303,9 +303,9 @@ public class RequestHandler implements HttpHandler {
             }
 
             Cookie cookie = new CookieImpl(config.getString(Key.COOKIE_NAME), value)
-                .setHttpOnly(true)
-                .setPath("/")
-                .setMaxAge(config.getInt(Key.COOKIE_EXPIRES));
+                    .setHttpOnly(true)
+                    .setPath("/")
+                    .setMaxAge(config.getInt(Key.COOKIE_EXPIRES));
 
             exchange.setResponseCookie(cookie);
             this.session = null;
@@ -313,22 +313,20 @@ public class RequestHandler implements HttpHandler {
     }
 
     private void setFlash(HttpServerExchange exchange) throws Exception {
-        String cookieName = config.getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString();
-
-    	if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
+        if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
-            Cookie cookie = new CookieImpl(cookieName, values)
-                .setHttpOnly(true)
-                .setPath("/");
+            Cookie cookie = new CookieImpl(this.config.getFlashCookieName(), values)
+                    .setHttpOnly(true)
+                    .setPath("/");
 
             exchange.setResponseCookie(cookie);
         } else {
-            Cookie cookie = exchange.getRequestCookies().get(cookieName);
+            Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
-                    .setPath("/")
-                    .setMaxAge(0);
+                .setPath("/")
+                .setMaxAge(0);
 
                 exchange.setResponseCookie(cookie);
             }
@@ -338,7 +336,7 @@ public class RequestHandler implements HttpHandler {
 
     private void getFlash(HttpServerExchange exchange) throws Exception {
         Flash flash = null;
-        Cookie cookie = exchange.getRequestCookies().get(config.getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString());
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
         if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
             Map<String, String> values = new HashMap<String, String>();
             for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
@@ -373,7 +371,7 @@ public class RequestHandler implements HttpHandler {
                         }
                     }
                 }
-                
+
                 this.form.setSubmitted(true);
             }
         }
@@ -415,7 +413,7 @@ public class RequestHandler implements HttpHandler {
             } else if ((int.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
             } else if ((Double.class).equals(clazz)) {
-            	parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
+                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((double.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((Float.class).equals(clazz)) {
@@ -501,9 +499,9 @@ public class RequestHandler implements HttpHandler {
                 }
 
                 cookie = new CookieImpl(cookieName, value)
-                    .setHttpOnly(true)
-                    .setPath("/")
-                    .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, 86400));
+                        .setHttpOnly(true)
+                        .setPath("/")
+                        .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, 86400));
             }
 
             exchange.setResponseCookie(cookie);
