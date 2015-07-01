@@ -279,4 +279,16 @@ public class Config {
     public String getFlashCookieName() {
         return getString(Key.APPLICATION_NAME) + Default.FLASH_SUFFIX.toString();
     }
+
+    public String getSessionCookieName() {
+        return getString(Key.COOKIE_NAME, Default.SESSION_COOKIE_NAME.toString());
+    }
+
+    public String getApplicationSecret() {
+        return getString(Key.APPLICATION_SECRET);
+    }
+
+    public String getAuthenticationCookieName() {
+        return getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
+    }
 }

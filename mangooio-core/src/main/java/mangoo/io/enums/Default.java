@@ -32,7 +32,9 @@ public enum Default {
     CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
-    FLASH_SUFFIX("-FLASH");
+    FLASH_SUFFIX("-FLASH"),
+    AUTH_COOKIE_EXPIRES("3600"),
+    SESSION_COOKIE_NAME("MANGOOIO-SESSION");
 
     private final String value;
 

@@ -15,11 +15,11 @@ default:
         auth:
             redirect  : /login
             cookie:
-                name    : -AUTH
+                name    : TEST-AUTH
                 encrypt : false
-                expires : 86400
+                expires : 3600
     cookie:
-        name       : -SESSION
+        name       : TEST-SESSION
         expires    : 86400
         encryption : false
     smtp:

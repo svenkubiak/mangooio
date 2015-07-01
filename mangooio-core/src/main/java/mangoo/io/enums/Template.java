@@ -13,16 +13,16 @@ import com.google.common.io.Resources;
  * @author svenkbiak
  *
  */
-public enum Templates {
+public enum Template {
     DEFAULT;
-    private transient Logger LOG = LoggerFactory.getLogger(Templates.class); //NOSONAR
+    private transient Logger LOG = LoggerFactory.getLogger(Template.class); //NOSONAR
     private String notFoundContent;
     private String badRequestContent;
     private String unauthorizedContent;
     private String forbiddenContent;
     private String serverErrorContent;
 
-    Templates () {
+    Template () {
         try {
             this.badRequestContent = Resources.toString(Resources.getResource("defaults/400.html"), Charsets.UTF_8);
             this.unauthorizedContent = Resources.toString(Resources.getResource("defaults/401.html"), Charsets.UTF_8);

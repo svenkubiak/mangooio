@@ -7,7 +7,7 @@ import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 import mangoo.io.core.Application;
 import mangoo.io.enums.Default;
-import mangoo.io.enums.Templates;
+import mangoo.io.enums.Template;
 import mangoo.io.templating.TemplateEngine;
 
 /**
@@ -25,13 +25,13 @@ public class ExceptionHandler implements HttpHandler {
         
         if (Application.inDevMode()) {
         	Throwable throwable = exchange.getAttachment(THROWABLE);
-        	exchange.getResponseSender().send(getExceptionTemplate(exchange, throwable.getCause()));
+        	exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
         } else {
-        	exchange.getResponseSender().send(Templates.DEFAULT.internalServerError());
+        	exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
         }
     }
 
-	private String getExceptionTemplate(HttpServerExchange exchange, Throwable cause) throws Exception {
+	private String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
 	    TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
 	    return templateEngine.renderException(exchange, cause);
 	}

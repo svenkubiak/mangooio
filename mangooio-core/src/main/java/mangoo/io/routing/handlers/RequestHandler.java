@@ -236,7 +236,7 @@ public class RequestHandler implements HttpHandler {
 
     private Session getSession(HttpServerExchange exchange) throws Exception {
         Session session = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getString(Key.COOKIE_NAME));
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
@@ -264,7 +264,7 @@ public class RequestHandler implements HttpHandler {
                     Date now = new Date();
                     Date expireDate = new Date(Long.valueOf(expires));
 
-                    if (now.before(expireDate) && DigestUtils.sha384Hex(data + authenticityToken + expires + this.config.getString(Key.APPLICATION_SECRET)).equals(sign)) {
+                    if (now.before(expireDate) && DigestUtils.sha384Hex(data + authenticityToken + expires + this.config.getApplicationSecret()).equals(sign)) {
                         Map<String, String> sessionValues = new HashMap<String, String>();
                         if (StringUtils.isNotEmpty(data)) {
                             for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(data).entrySet()) {
@@ -312,6 +312,26 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
+    private void getFlash(HttpServerExchange exchange) throws Exception {
+        Flash flash = null;
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
+        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
+            Map<String, String> values = new HashMap<String, String>();
+            for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
+                values.put(entry.getKey(), entry.getValue());
+            }
+
+            flash = new Flash(values);
+            flash.setDiscard(true);
+        }
+
+        if (flash == null) {
+            flash = new Flash();
+        }
+
+        this.flash = flash;
+    }
+
     private void setFlash(HttpServerExchange exchange) throws Exception {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
@@ -332,26 +352,6 @@ public class RequestHandler implements HttpHandler {
             }
         }
         this.flash = null;
-    }
-
-    private void getFlash(HttpServerExchange exchange) throws Exception {
-        Flash flash = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
-        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
-            Map<String, String> values = new HashMap<String, String>();
-            for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
-                values.put(entry.getKey(), entry.getValue());
-            }
-
-            flash = new Flash(values);
-            flash.setDiscard(true);
-        }
-
-        if (flash == null) {
-            flash = new Flash();
-        }
-
-        this.flash = flash;
     }
 
     private void getForm(HttpServerExchange exchange) throws IOException {
@@ -439,7 +439,7 @@ public class RequestHandler implements HttpHandler {
 
     private Authentication getAuthentication(HttpServerExchange exchange) {
         Authentication authentication = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString()));
+        Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
@@ -465,7 +465,7 @@ public class RequestHandler implements HttpHandler {
                     Date now = new Date();
                     Date expireDate = new Date(Long.valueOf(expires));
 
-                    if (now.before(expireDate) && DigestUtils.sha512Hex(data + expires + this.config.getString(Key.APPLICATION_SECRET)).equals(sign)) {
+                    if (now.before(expireDate) && DigestUtils.sha512Hex(data + expires + this.config.getApplicationSecret()).equals(sign)) {
                         authentication = new Authentication(this.config, data, expires);
                     }
                 }
@@ -484,7 +484,7 @@ public class RequestHandler implements HttpHandler {
     private void setAuthentication(HttpServerExchange exchange) {
         if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
             Cookie cookie;
-            String cookieName = this.config.getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
+            String cookieName = this.config.getAuthenticationCookieName();
             if (this.authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
                 cookie.setMaxAge(0);
@@ -501,7 +501,7 @@ public class RequestHandler implements HttpHandler {
                 cookie = new CookieImpl(cookieName, value)
                         .setHttpOnly(true)
                         .setPath("/")
-                        .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, 86400));
+                        .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.AUTH_COOKIE_EXPIRES.toInt()));
             }
 
             exchange.setResponseCookie(cookie);

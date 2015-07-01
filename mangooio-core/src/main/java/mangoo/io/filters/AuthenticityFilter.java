@@ -1,7 +1,7 @@
 package mangoo.io.filters;
 
 import io.undertow.util.StatusCodes;
-import mangoo.io.enums.Templates;
+import mangoo.io.enums.Template;
 import mangoo.io.interfaces.MangooControllerFilter;
 import mangoo.io.routing.bindings.Exchange;
 
@@ -16,7 +16,7 @@ public class AuthenticityFilter implements MangooControllerFilter {
     public boolean filter(Exchange exchange) {
         if (!exchange.authenticityMatches()) {
             exchange.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
-            exchange.getHttpServerExchange().getResponseSender().send(Templates.DEFAULT.forbidden());
+            exchange.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
 
             return false;
         }
