@@ -2,6 +2,7 @@
 
 == Version 1.0.0-Beta5 - Released xx.xx.xxxx
 
+* https://github.com/svenkubiak/mangooio/issues/28[#28] Changed default expire of authentication to one hour (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/26[#26] Added option to pass an external configuration path (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/23[#23] Added form unit tests and more bindings tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/20[#20] Added convinent methods for retrieving default config values (svenkubiak)
