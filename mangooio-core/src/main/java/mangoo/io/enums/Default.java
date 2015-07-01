@@ -9,7 +9,7 @@ public enum Default {
     LANGUAGE("en"),
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
     COOKIE_SUFFIX("-AUTH"),
-    COOKIE_EXPIRES("86400"),
+    COOKIE_EXPIRES("86400000"),
     LOCALHOST("127.0.0.1"), //NOSONAR
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
@@ -33,7 +33,7 @@ public enum Default {
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
     FLASH_SUFFIX("-FLASH"),
-    AUTH_COOKIE_EXPIRES("3600"),
+    AUTH_COOKIE_EXPIRES("3600000"),
     SESSION_COOKIE_NAME("MANGOOIO-SESSION");
 
     private final String value;
@@ -49,6 +49,10 @@ public enum Default {
 
     public int toInt() {
         return Integer.valueOf(this.value);
+    }
+
+    public long toLong() {
+        return Long.valueOf(this.value);
     }
 
     public boolean toBoolean() {

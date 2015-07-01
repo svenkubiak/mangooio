@@ -20,7 +20,7 @@ public enum Key {
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_MODE("application.mode"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
-    AUTH_REDIRECT_URL("auth.redirect.url"),
+    AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
     AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
     SMTP_HOST("smtp.host"),

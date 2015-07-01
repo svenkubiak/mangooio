@@ -282,7 +282,7 @@ public class RequestHandler implements HttpHandler {
         if (session == null) {
             session = new Session();
             session.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(16));
-            session.setExpires(new Date().getTime() + config.getInt(Key.COOKIE_EXPIRES));
+            session.setExpires(new Date().getTime() + this.config.getSessionExpires());
         }
 
         this.session = session;
@@ -305,7 +305,7 @@ public class RequestHandler implements HttpHandler {
             Cookie cookie = new CookieImpl(config.getString(Key.COOKIE_NAME), value)
                     .setHttpOnly(true)
                     .setPath("/")
-                    .setMaxAge(config.getInt(Key.COOKIE_EXPIRES));
+                    .setExpires(new Date(Long.valueOf(session.getExpires())));
 
             exchange.setResponseCookie(cookie);
             this.session = null;
@@ -474,6 +474,7 @@ public class RequestHandler implements HttpHandler {
 
         if (authentication == null) {
             authentication = new Authentication(this.config);
+            authentication.setExpires(String.valueOf(new Date().getTime() + this.config.getAuthenticationExpires()));
         }
 
         this.authentication = authentication;
@@ -501,7 +502,7 @@ public class RequestHandler implements HttpHandler {
                 cookie = new CookieImpl(cookieName, value)
                         .setHttpOnly(true)
                         .setPath("/")
-                        .setMaxAge(config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.AUTH_COOKIE_EXPIRES.toInt()));
+                        .setExpires(new Date(Long.valueOf(this.authentication.getExpires())));
             }
 
             exchange.setResponseCookie(cookie);

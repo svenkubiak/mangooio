@@ -85,7 +85,7 @@ public class Config {
             if (value instanceof Map) {
                 load(parentKey + "." + key, (Map<String, Object>) value);
             } else {
-                this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), String.valueOf(value));
+                this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), (value == null) ? "" : String.valueOf(value));
             }
         }
     }
@@ -129,6 +129,37 @@ public class Config {
         }
 
         return Integer.valueOf(value);
+    }
+
+    /**
+     * Retrieves a configuration value with the given key
+     *
+     * @param key The key of the configuration value (e.g. application.name)
+     * @return The configured value as long or 0 if the key is not configured
+     */
+    public long getLong(String key) {
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return 0;
+        }
+
+        return Long.valueOf(value);
+    }
+
+    /**
+     * Retrieves a configuration value with the given key
+     *
+     * @param key The key of the configuration value (e.g. application.name)
+     * @param defaultValue The default value to return of no key is found
+     * @return The configured value as int or the passed defautlValue if the key is not configured
+     */
+    public long getLong(String key, long defaultValue) {
+        String value = this.values.get(key);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+
+        return Long.valueOf(value);
     }
 
     /**
@@ -197,6 +228,27 @@ public class Config {
      */
     public String getString(Key key, String defaultValue) {
         return getString(key.toString(), defaultValue);
+    }
+
+    /**
+     * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
+     *
+     * @param key The key of the configuration value (e.g. application.name)
+     * @return The configured value as long or null if the key is not configured
+     */
+    public long getLong(Key key) {
+        return getLong(key.toString());
+    }
+
+    /**
+     * Retrieves a configuration value with the given key constant (e.g. Key.APPLICATION_NAME)
+     *
+     * @param key The key of the configuration value (e.g. application.name)
+     * @param defaultValue The default value to return of no key is found
+     * @return The configured value as long or the passed defautlValue if the key is not configured
+     */
+    public long getLong(Key key, long defaultValue) {
+        return getLong(key.toString(), defaultValue);
     }
 
     /**
@@ -290,5 +342,13 @@ public class Config {
 
     public String getAuthenticationCookieName() {
         return getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
+    }
+
+    public long getAuthenticationExpires() {
+        return getLong(Key.AUTH_COOKIE_EXPIRES, Default.AUTH_COOKIE_EXPIRES.toLong());
+    }
+
+    public long getSessionExpires() {
+        return getLong(Key.COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toLong());
     }
 }

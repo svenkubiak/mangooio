@@ -26,7 +26,7 @@ public class AuthenticationFilter implements MangooControllerFilter{
     @Override
     public boolean filter(Exchange exchange) {
         if (!exchange.getAuthentication().hasAuthenticatedUser()) {
-            String redirect = this.config.getString(Key.AUTH_REDIRECT_URL.toString());
+            String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
             if (StringUtils.isNotBlank(redirect)) {
                 exchange.getHttpServerExchange().setResponseCode(StatusCodes.FOUND);
                 exchange.getHttpServerExchange().getResponseHeaders().put(Headers.LOCATION, redirect);
