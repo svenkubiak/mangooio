@@ -5,8 +5,9 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -56,6 +57,7 @@ import mangoo.io.routing.handlers.WebSocketHandler;
  */
 public class Bootstrap {
     private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
+    private LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Mode mode;
@@ -66,11 +68,9 @@ public class Bootstrap {
     private String host;
     private boolean error;
     private int port;
-    private long start;
-    private long end;
 
     public void prepareApplication() {
-        this.start = new Date().getTime();
+        this.start = LocalDateTime.now();
     }
 
     public void prepareMode() {
@@ -201,7 +201,6 @@ public class Bootstrap {
 
     public void applicationStarted() {
         if (!this.error) {
-            this.end = new Date().getTime();
             String logo = "";
             try {
                 logo = "\n" + FigletFont.convertOneLine("mangoo I/O");
@@ -211,7 +210,7 @@ public class Bootstrap {
             }
 
             LOG.info(logo);
-            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, this.end - this.start, this.mode.toString());
+            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
             this.injector.getInstance(MangooLifecycle.class).applicationStarted();
         }
     }

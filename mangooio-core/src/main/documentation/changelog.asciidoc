@@ -1,5 +1,9 @@
 = Changelog
 
+== Version 1.0.0-Beta6 - Released xx.xx.xxxx
+
+* https://github.com/svenkubiak/mangooio/issues/32[#32] Swtiched to Java8 DateTime API (svenkubiak)
+
 == Version 1.0.0-Beta5 - Released 01.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/29[#29] Fixed bug in authentication and session cookie generation (svenkubiak)

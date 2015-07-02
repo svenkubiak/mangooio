@@ -1,5 +1,6 @@
 package mangoo.io.routing.bindings;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class Session {
     private Map<String, String> values = new HashMap<String, String>();
     private String authenticityToken;
     private boolean changed;
-    private long expires;
+    private LocalDateTime expires;
 
     public Session() {
     }
@@ -65,12 +66,12 @@ public class Session {
         return this.values;
     }
 
-    public long getExpires() {
+    public LocalDateTime getExpires() {
         return expires;
     }
 
-    public void setExpires(long expires) {
-        this.expires = expires;
+    public void setExpires(LocalDateTime localDateTime) {
+        this.expires = localDateTime;
     }
 
     public String getAuthenticityToken() {

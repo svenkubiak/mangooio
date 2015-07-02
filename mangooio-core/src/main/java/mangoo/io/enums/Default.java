@@ -7,9 +7,11 @@ package mangoo.io.enums;
  */
 public enum Default {
     LANGUAGE("en"),
+    DATA_DELIMITER("#"),
+    DELIMITER("|"),
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
     AUTH_COOKIE_SUFFIX("-AUTH"),
-    COOKIE_EXPIRES("86400000"),
+    COOKIE_EXPIRES("86400"),
     LOCALHOST("127.0.0.1"), //NOSONAR
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
@@ -33,8 +35,12 @@ public enum Default {
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
     FLASH_COOKIE_SUFFIX("-FLASH"),
-    AUTH_COOKIE_EXPIRES("3600000"),
-    SESSION_COOKIE_NAME("MANGOOIO-SESSION");
+    AUTH_COOKIE_EXPIRES("3600"),
+    SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
+    SPLITTER("&"),
+    SEPERATOR(":"),
+    FILTER_METHOD_NAME("filter"),
+    AUTHENTICITY_TOKEN("authenticityToken");
 
     private final String value;
 

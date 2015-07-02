@@ -1,6 +1,6 @@
 package mangoo.io.authentication;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
@@ -12,7 +12,6 @@ import com.google.inject.Inject;
 
 import mangoo.io.configuration.Config;
 import mangoo.io.enums.Default;
-import mangoo.io.enums.Key;
 
 /**
  *
@@ -22,7 +21,7 @@ import mangoo.io.enums.Key;
 public class Authentication {
     private static final Logger LOG = LoggerFactory.getLogger(Authentication.class);
     private Config config;
-    private String expires;
+    private LocalDateTime expires;
     private String authenticatedUser;
     private boolean remember;
     private boolean loggedOut;
@@ -30,10 +29,10 @@ public class Authentication {
     @Inject
     public Authentication(Config config) {
         this.config = config;
-        this.expires = String.valueOf(new Date().getTime() + this.config.getInt(Key.AUTH_COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toInt()));
+        this.expires = LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires());
     }
 
-    public Authentication(Config config, String authenticatedUser, String expires) {
+    public Authentication(Config config, String authenticatedUser, LocalDateTime expires) {
         this.config = config;
         this.expires = expires;
         this.authenticatedUser = authenticatedUser;
@@ -43,12 +42,12 @@ public class Authentication {
         return this.authenticatedUser;
     }
 
-    public String getExpires() {
+    public LocalDateTime getExpires() {
         return expires;
     }
 
-    public void setExpires(String expires) {
-        this.expires = expires;
+    public void setExpires(LocalDateTime localDateTime) {
+        this.expires = localDateTime;
     }
 
     public boolean isLogout() {
