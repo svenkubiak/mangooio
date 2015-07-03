@@ -31,6 +31,7 @@ public class ExceptionHandler implements HttpHandler {
         }
     }
 
+    @SuppressWarnings("all")
     private String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
         TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
         return templateEngine.renderException(exchange, cause);
