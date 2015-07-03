@@ -57,6 +57,7 @@ import mangoo.io.routing.handlers.WebSocketHandler;
  */
 public class Bootstrap {
     private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
+    private static final int INITIAL_SIZE = 255;
     private LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
@@ -115,41 +116,53 @@ public class Bootstrap {
             for (Route route : Router.getRoutes()) {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
                     Class<?> controllerClass = route.getControllerClass();
-                    boolean found = false;
-                    for (Method method : controllerClass.getMethods()) {
-                        if (method.getName().equals(route.getControllerMethod())) {
-                            found = true;
-                        }
-                    }
-
-                    if (!found) {
-                        LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
-                        this.error = true;
-                    }
+                    checkRoute(route, controllerClass);
                 }
             }
 
             if (!this.error) {
-                RoutingHandler routingHandler = Handlers.routing();
-                routingHandler.setFallbackHandler(new FallbackHandler());
-                for (Route route : Router.getRoutes()) {
-                    if (RouteType.REQUEST.equals(route.getRouteType())) {
-                        routingHandler.add(route.getRequestMethod(), route.getUrl(), new RequestHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
-                    } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
-                        routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
-                    }
-                }
-
-                this.pathHandler = new PathHandler(routingHandler);
-                for (Route route : Router.getRoutes()) {
-                    if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
-                        this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
-                    } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
-                        this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
-                    }
-                }
+                initPathHandler();
             }
         }
+    }
+
+    private void checkRoute(Route route, Class<?> controllerClass) {
+        boolean found = false;
+        for (Method method : controllerClass.getMethods()) {
+            if (method.getName().equals(route.getControllerMethod())) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+            this.error = true;
+        }
+    }
+
+    private void initPathHandler() {
+        this.pathHandler = new PathHandler(initRoutingHandler());
+        for (Route route : Router.getRoutes()) {
+            if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
+                this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
+            } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
+                this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
+            }
+        }
+    }
+
+    private RoutingHandler initRoutingHandler() {
+        RoutingHandler routingHandler = Handlers.routing();
+        routingHandler.setFallbackHandler(new FallbackHandler());
+        for (Route route : Router.getRoutes()) {
+            if (RouteType.REQUEST.equals(route.getRouteType())) {
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new RequestHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
+            } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
+                routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
+            }
+        }
+
+        return routingHandler;
     }
 
     private ResourceHandler getResourceHandler(String postfix) {
@@ -201,7 +214,7 @@ public class Bootstrap {
 
     public void applicationStarted() {
         if (!this.error) {
-            StringBuilder logo = new StringBuilder();
+            StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
                 logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getApplicationVersion() + "\n");
             } catch (IOException e) {//NOSONAR

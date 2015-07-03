@@ -16,23 +16,23 @@ import mangoo.io.templating.TemplateEngine;
  *
  */
 public class ExceptionHandler implements HttpHandler {
-	public static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
-	
+    public static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
+
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
-        
+
         if (Application.inDevMode()) {
-        	Throwable throwable = exchange.getAttachment(THROWABLE);
-        	exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
+            Throwable throwable = exchange.getAttachment(THROWABLE);
+            exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
         } else {
-        	exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
+            exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
         }
     }
 
-	private String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
-	    TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
-	    return templateEngine.renderException(exchange, cause);
-	}
+    private String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
+        TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
+        return templateEngine.renderException(exchange, cause);
+    }
 }

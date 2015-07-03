@@ -31,6 +31,7 @@ public class MangooFluent extends FluentTest {
     }
 
     public void beforeMangooStartup() {
+        //Intentionally left blank for overwriting
     }
 
     @Override
