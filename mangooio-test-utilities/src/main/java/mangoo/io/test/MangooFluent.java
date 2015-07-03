@@ -8,26 +8,31 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 public class MangooFluent extends FluentTest {
-    public WebDriver webDriver = new HtmlUnitDriver();
+    private WebDriver webDriver = new HtmlUnitDriver();
 
     @Before
     public final void mangooStartup() {
-    	beforeMangooStartup();
-    	MangooTestInstance.IO.getInjector();
+        beforeMangooStartup();
+        MangooTestInstance.IO.getInjector();
     }
 
     public final Injector getInject() {
         return MangooTestInstance.IO.getInjector();
     }
-    
+
     public final GreenMail getFakeSMTP() {
-    	return MangooTestInstance.IO.getFakeSMTP();
+        return MangooTestInstance.IO.getFakeSMTP();
     }
-    
+
     public void beforeMangooStartup() {
-	}
-    
+    }
+
     @Override
     public WebDriver getDefaultDriver() {
         return webDriver;

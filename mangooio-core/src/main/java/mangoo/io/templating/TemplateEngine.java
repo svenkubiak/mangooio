@@ -34,11 +34,12 @@ import mangoo.io.utils.ThrowableUtils;
 
 @Singleton
 public class TemplateEngine {
+    private Configuration configuration = new Configuration(VERSION);
+    private String baseDirectory;
+    private static final int MAX_CHARS = 65536;
     private static final int ONE_SECOND = 1;
     private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 22);
-    private Configuration configuration = new Configuration(VERSION);
-    private String baseDirectory;
 
     public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
@@ -120,7 +121,7 @@ public class TemplateEngine {
     }
 
     private String processTemplate(Map<String, Object> content, Template template) throws TemplateException, IOException {
-        StringWriter buffer = new StringWriter(65536);
+        StringWriter buffer = new StringWriter(MAX_CHARS);
         template.process(content, buffer);
 
         Writer writer = new StringWriter();

@@ -201,15 +201,14 @@ public class Bootstrap {
 
     public void applicationStarted() {
         if (!this.error) {
-            String logo = "";
+            StringBuilder logo = new StringBuilder();
             try {
-                logo = "\n" + FigletFont.convertOneLine("mangoo I/O");
-                logo = logo + "\n\nhttps://mangoo.io | @mangoo_io | " + getApplicationVersion() + "\n";
-            } catch (IOException e) {
-                //intentionally left blank //NOSONAR
+                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getApplicationVersion() + "\n");
+            } catch (IOException e) {//NOSONAR
+                //intentionally left blank
             }
 
-            LOG.info(logo);
+            LOG.info(logo.toString());
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
             this.injector.getInstance(MangooLifecycle.class).applicationStarted();
         }
