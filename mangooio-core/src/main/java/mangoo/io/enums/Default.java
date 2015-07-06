@@ -9,8 +9,8 @@ public enum Default {
     LANGUAGE("en"),
     DATA_DELIMITER("#"),
     DELIMITER("|"),
+    FLASH_COOKIE_NAME("MANGOOIO-FLASH"),
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
-    AUTH_COOKIE_SUFFIX("-AUTH"),
     COOKIE_EXPIRES("86400"),
     LOCALHOST("127.0.0.1"), //NOSONAR
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
@@ -34,7 +34,6 @@ public enum Default {
     CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
-    FLASH_COOKIE_SUFFIX("-FLASH"),
     AUTH_COOKIE_EXPIRES("3600"),
     SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
     SPLITTER("&"),
