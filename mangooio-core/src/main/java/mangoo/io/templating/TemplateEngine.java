@@ -37,9 +37,9 @@ public class TemplateEngine {
     private Configuration configuration = new Configuration(VERSION);
     private String baseDirectory;
     private static final int MAX_CHARS = 65536;
-    private static final int ONE_SECOND = 1;
+    private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 22);
+    private static final Version VERSION = new Version(2, 3, 23);
 
     public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
@@ -50,9 +50,9 @@ public class TemplateEngine {
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
 
         if (Application.inDevMode()) {
-            this.configuration.setTemplateUpdateDelay(ONE_SECOND);
+            this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
         } else {
-            this.configuration.setTemplateUpdateDelay(Integer.MAX_VALUE);
+            this.configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
             this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
         }
 
