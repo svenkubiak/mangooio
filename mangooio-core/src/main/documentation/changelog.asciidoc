@@ -1,12 +1,15 @@
 = Changelog
 
-== Version 1.0.0-Beta6 - Released 03.07.2015
+== Version 1.0.0-RC2 - Released 07.07.2015
 
 * Added some more javadoc (svenkubiak)
 * Template engine does not throw generic exception anymore, throws specific ones instead (svenkubiak)
 * Version bumps (svenkubiak)
 ** undertow-core 1.2.7.Final -> 1.2.8.Final
 ** freemarker 2.3.22 -> 2.3.23 
+
+== Version 1.0.0-RC1 - Released 03.07.2015
+
 * Sonar Refactorings (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/32[#32] Switched to Java8 DateTime API (svenkubiak)
 
