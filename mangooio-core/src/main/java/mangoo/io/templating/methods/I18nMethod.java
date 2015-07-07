@@ -13,6 +13,11 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import mangoo.io.i18n.Messages;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LoggerFactory.getLogger(I18nMethod.class);

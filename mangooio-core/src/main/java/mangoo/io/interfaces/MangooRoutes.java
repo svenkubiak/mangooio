@@ -7,5 +7,8 @@ package mangoo.io.interfaces;
  */
 @FunctionalInterface
 public interface MangooRoutes {
-    void routify();
+    /**
+     * All routes for the application are definied in this method
+     */
+    public void routify();
 }
