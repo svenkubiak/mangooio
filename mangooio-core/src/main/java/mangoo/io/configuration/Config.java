@@ -41,16 +41,19 @@ public class Config {
 
     private void init(String configFile, Mode mode) {
         String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
-        InputStream inputStream = null;
+
+        Map map = null;
         try {
-            Yaml yaml = new Yaml();
-            Map map;
             if (StringUtils.isNotBlank(configPath)) {
-                inputStream = new FileInputStream(new File(configPath));
-                map = (Map) yaml.load(inputStream);
+                map = (Map) loadConfiguration(new FileInputStream(new File(configPath)));
             } else {
-                map = (Map) yaml.load(Resources.getResource(configFile).openStream());
+                map = (Map) loadConfiguration(Resources.getResource(configFile).openStream());
             }
+        } catch (IOException e) {
+            LOG.error("Failed to load application.yaml", e);
+        }
+
+        if (map != null) {
             Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
             Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
 
@@ -58,17 +61,12 @@ public class Config {
             if (environment != null && !environment.isEmpty()) {
                 load("", environment);
             }
-        } catch (IOException e) {
-            LOG.error("Failed to load configuration from application.yaml", e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    LOG.error("Failed to close inputstram while loading application.yaml from external config path", e);
-                }
-            }
         }
+    }
+
+    private Object loadConfiguration(InputStream inputStream) {
+        Yaml yaml = new Yaml();
+        return yaml.load(inputStream);
     }
 
     /**

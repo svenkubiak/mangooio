@@ -58,6 +58,7 @@ public class Messages {
             return MessageFormat.format(this.bundle.getString(key), arguments);
         }
 
+        //TODO This is very complex and needs refactoring
         if (Key.FORM_REQUIRED.toString().equals(key)) {
             return MessageFormat.format(Validation.REQUIRED.toString(), arguments);
         } else if (Key.FORM_MIN.toString().equals(key)) {

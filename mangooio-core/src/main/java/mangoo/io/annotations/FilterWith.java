@@ -13,7 +13,7 @@ import mangoo.io.interfaces.MangooControllerFilter;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface FilterWith {
     Class<? extends MangooControllerFilter>[] value();
 }
