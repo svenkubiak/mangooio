@@ -99,6 +99,12 @@ public class MangooScheduler {
         }
     }
 
+    /**
+     * Adds a new job with a given JobDetail and Trigger to the scheduler
+     *
+     * @param jobDetail The JobDetail for the Job
+     * @param trigger The Trigger for the job
+     */
     public void schedule(JobDetail jobDetail, Trigger trigger) {
         Preconditions.checkNotNull(this.scheduler, "Scheduler has not been initialized");
         Preconditions.checkNotNull(jobDetail, "JobDetail is required for schedule");
@@ -111,6 +117,16 @@ public class MangooScheduler {
         }
     }
 
+    /**
+     * Creates a new Trigger
+     *
+     * @param identity The name of the job
+     * @param cronExpression The cron expression for executing the job
+     * @param triggerGroupName The group name to store the job
+     * @param triggerDescription The trigger description for the job
+     *
+     * @return A new trigger object
+     */
     public Trigger getTrigger(String identity, String cronExpression, String triggerGroupName, String triggerDescription) {
         Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
         Preconditions.checkNotNull(cronExpression, "CronExpression is required for new trigger");
@@ -123,6 +139,15 @@ public class MangooScheduler {
                 .build();
     }
 
+    /**
+     * Creates a new JobDetail
+     *
+     * @param clazz The class where the actual execution takes place
+     * @param identity The name of the job
+     * @param jobGroupName The name of the job Group
+     *
+     * @return A new JobDetail object
+     */
     public <T extends Job> JobDetail getJobDetail(Class<T> clazz, String identity, String jobGroupName) {
         Preconditions.checkNotNull(clazz, "Class is required for new JobDetail");
         Preconditions.checkNotNull(identity, "Identity is required for new JobDetail");

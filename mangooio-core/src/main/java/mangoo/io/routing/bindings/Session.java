@@ -37,6 +37,16 @@ public class Session {
         return this.values.get(key);
     }
 
+    /**
+     * Adds a value to the cache.
+     *
+     * The following characters are not allowed either as key nor value:
+     *
+     * "|", ":" and "&"
+     *
+     * @param key The key to store the value
+     * @param value The value to store
+     */
     public void add(String key, String value) {
         if (key.contains("|") || key.contains(":") || key.contains("&")) {
             LOG.error("Invalid characters found in session key. Please note, that the key can not contain |, : or &");
@@ -48,11 +58,19 @@ public class Session {
         }
     }
 
+    /**
+     * Removes a value with a given key from the cache
+     *
+     * @param key The key to remove
+     */
     public void remove(String key) {
         this.changed = true;
         this.values.remove(key);
     }
 
+    /**
+     * Clears the complete cache
+     */
     public void clear() {
         this.changed = true;
         this.values = new HashMap<String, String>();

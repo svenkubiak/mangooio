@@ -464,6 +464,7 @@ public class RequestHandler implements HttpHandler {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
 
+            //TODO This has a high complecity and needs refactoring
             if ((Form.class).equals(clazz)) {
                 parameters[index] = this.form;
             } else if ((Body.class).equals(clazz)) {
