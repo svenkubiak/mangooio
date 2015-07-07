@@ -62,7 +62,7 @@ public class Cache {
 
     /**
      * Retrieves a value for given key from the cache
-     * autocasting it to the required type
+     * auto casting it to the required type
      *
      * @param key The key on which the value is stored
      * @return The class to cast to to containing the cache value or null if the key is not found

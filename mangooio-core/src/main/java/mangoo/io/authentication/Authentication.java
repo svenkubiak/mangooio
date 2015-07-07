@@ -100,9 +100,9 @@ public class Authentication {
     }
 
     /**
-     * Performs a login for a given username
+     * Performs a login for a given user name
      *
-     * @param username The username to login
+     * @param username The user name to login
      * @param remember If true, the user will stay logged in for (default) 2 weeks
      */
     public void login(String username, boolean remember) {
@@ -124,10 +124,10 @@ public class Authentication {
     }
 
     /**
-     * Checks if the given username is authenticated
+     * Checks if the given user name is authenticated
      *
-     * @param username The username to check
-     * @return True if the given username is authenticates
+     * @param username The user name to check
+     * @return True if the given user name is authenticates
      */
     public boolean isAuthenticated(String username) {
         Preconditions.checkNotNull(username, "Username is required for isAuthenticated");

@@ -60,10 +60,22 @@ public class Form {
         this.files.add(file);
     }
 
+    /**
+     * Checks if a give field has a validation error
+     *
+     * @param fieldName The field to check
+     * @return True if the field has a validation error, false otherwise
+     */
     public boolean hasError(String fieldName) {
         return this.errors.containsKey(fieldName);
     }
 
+    /**
+     * Retrieves the error message for a given field
+     *
+     * @param fieldName The field to check
+     * @return The error message for the field, or an empty string if no error is found
+     */
     public String getError(String fieldName) {
         return (hasError(fieldName)) ? this.errors.get(fieldName) : "";
     }
@@ -72,6 +84,11 @@ public class Form {
         return this.values.get(fieldName);
     }
 
+    /**
+     * Validates a given field to be required
+     *
+     * @param fieldName The field to check
+     */
     public void required(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -80,6 +97,12 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a given field to have a minimum length
+     *
+     * @param minLength The minimum length
+     * @param fieldName The field to check
+     */
     public void min(int minLength, String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -88,6 +111,12 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a given field to have a maximum length
+     *
+     * @param maxLength The maximum length
+     * @param fieldName The field to check
+     */
     public void max(int maxLength, String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -96,6 +125,12 @@ public class Form {
         }
     }
 
+    /**
+     * Validates to fields to exactly (case-sensitive) match
+     *
+     * @param fieldName The field to check
+     * @param anotherFieldName The field to check against
+     */
     public void exactMatch(String fieldName, String anotherFieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         String anotherValue = (get(anotherFieldName) == null) ? "" : get(anotherFieldName);
@@ -105,6 +140,12 @@ public class Form {
         }
     }
 
+    /**
+     * Validates to fields to (case-insensitive) match
+     *
+     * @param fieldName The field to check
+     * @param anotherFieldName The field to check against
+     */
     public void match(String fieldName, String anotherFieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         String anotherValue = (get(anotherFieldName) == null) ? "" : get(anotherFieldName);
@@ -114,6 +155,11 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a field to be a valid email address
+     *
+     * @param fieldName The field to check
+     */
     public void email(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -122,6 +168,11 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a field to be a valid IPv4 address
+     *
+     * @param fieldName The field to check
+     */
     public void ipv4(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
         Matcher matcher = ipv4Pattern.matcher(value);
@@ -131,6 +182,11 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a field to be a valid IPv6 address
+     *
+     * @param fieldName The field to check
+     */
     public void ipv6(String fieldName) {
         boolean valid = false;
         String value = (get(fieldName) == null) ? "" : get(fieldName);
@@ -148,6 +204,13 @@ public class Form {
         }
     }
 
+    /**
+     * Validates a field to be in a certain range
+     *
+     * @param minLength The minimum length
+     * @param maxLength The maximum length
+     * @param fieldName The field to check
+     */
     public void range(int minLength, int maxLength, String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -156,6 +219,11 @@ public class Form {
         }
     }
 
+    /**
+     * Validates field to be a valid URL
+     *
+     * @param fieldName The field to check
+     */
     public void url(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
@@ -164,6 +232,11 @@ public class Form {
         }
     }
 
+    /**
+     * Checks if any field in the validation has an error
+     *
+     * @return True if at least one field has an error, false otherwise
+     */
     public boolean hasErrors() {
         return this.submitted && this.errors.size() > 0;
     }
