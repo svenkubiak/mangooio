@@ -8,6 +8,11 @@ import org.apache.commons.io.IOUtils;
 
 import freemarker.cache.TemplateLoader;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 public class TemplateEngineLoader implements TemplateLoader {
     public static final String ESCAPE_PREFIX = "<#ftl strip_whitespace=true><#escape x as x?html>";
     public static final String ESCAPE_SUFFIX = "</#escape>";

@@ -2,6 +2,8 @@ package mangoo.io.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,12 @@ public final class ThrowableUtils {
     private ThrowableUtils() {
     }
 
+    /**
+     * Retrieves the source code file name from an StrackTraceElement
+     *
+     * @param stackTraceElement The StrackTraceElement to check
+     * @return Source code filename
+     */
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
@@ -30,16 +38,26 @@ public final class ThrowableUtils {
         }
     }
 
+    /**
+     * Retrieves the lines of code where an exception occurred
+     *
+     * @param errorLine The line number of the exception
+     * @param sourcePath The path to the source code file
+     * @return A list of source code with the exception and surrounding lines
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     @SuppressWarnings("all")
-    public static List<Source> getSources(int errorLine, String sourcePath) throws Exception {
+    public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
-            .append(File.separator)
-            .append("src")
-            .append(File.separator)
-            .append("main")
-            .append(File.separator)
-            .append("java");
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
 
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
         List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
