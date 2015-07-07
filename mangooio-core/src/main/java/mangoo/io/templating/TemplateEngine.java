@@ -1,6 +1,7 @@
 package mangoo.io.templating;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -15,9 +16,12 @@ import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
 
 import freemarker.cache.MruCacheStorage;
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 import freemarker.template.Version;
 import io.undertow.server.HttpServerExchange;
 import mangoo.io.core.Application;
@@ -65,7 +69,7 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
+    public String render(Flash flash, Session session, Form form, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
         Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
         content.put("form", form);
         content.put("flash", flash);
@@ -78,14 +82,14 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws Exception {
+    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
         Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
 
         return processTemplate(content, template);
     }
 
     @SuppressWarnings("all")
-    public String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
+    public String renderException(HttpServerExchange exchange, Throwable cause) throws FileNotFoundException, IOException, TemplateException {
         Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<String, Object>();
 
@@ -109,6 +113,13 @@ public class TemplateEngine {
         return writer.toString();
     }
 
+    /**
+     * Checks if a given template name has the current suffix and sets is
+     * if it does not exist
+     *
+     * @param templateName The name of the template file
+     * @return The template name with correct suffix
+     */
     private String getTemplateName(String templateName) {
         String name = null;
         if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
@@ -120,6 +131,16 @@ public class TemplateEngine {
         return name;
     }
 
+    /**
+     * Process a template by rendering the content into the template
+     *
+     * @param content The content to render in the template
+     * @param template The template
+     * @return A complety rendered template
+     *
+     * @throws TemplateException
+     * @throws IOException
+     */
     private String processTemplate(Map<String, Object> content, Template template) throws TemplateException, IOException {
         StringWriter buffer = new StringWriter(MAX_CHARS);
         template.process(content, buffer);
