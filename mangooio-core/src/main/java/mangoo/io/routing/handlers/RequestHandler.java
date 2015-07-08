@@ -90,6 +90,7 @@ public class RequestHandler implements HttpHandler {
         this.parameterCount = this.methodParameters.size();
         this.config = this.injector.getInstance(Config.class);
         this.globalFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooGlobalFilter.class));
+        this.mapper = JsonFactory.create();
     }
 
     @Override
@@ -464,7 +465,6 @@ public class RequestHandler implements HttpHandler {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
 
-            //TODO This has a high complecity and needs refactoring
             if ((Form.class).equals(clazz)) {
                 parameters[index] = this.form;
             } else if ((Body.class).equals(clazz)) {
@@ -477,26 +477,15 @@ public class RequestHandler implements HttpHandler {
                 parameters[index] = this.flash;
             } else if ((String.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? "" : queryParameters.get(key);
-            } else if ((Integer.class).equals(clazz)) {
+            } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
-            } else if ((int.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
-            } else if ((Double.class).equals(clazz)) {
+            } else if ((Double.class).equals(clazz) || (double.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
-            } else if ((double.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
-            } else if ((Float.class).equals(clazz)) {
+            } else if ((Float.class).equals(clazz) || (float.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
-            } else if ((float.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
-            } else if ((Long.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
-            } else if ((long.class).equals(clazz)) {
+            } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
                 parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
             } else if ((ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
-                if (this.mapper == null) {
-                    this.mapper = JsonFactory.create();
-                }
                 parameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
             }
 

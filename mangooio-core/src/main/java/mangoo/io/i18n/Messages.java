@@ -1,7 +1,9 @@
 package mangoo.io.i18n;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.google.inject.Singleton;
@@ -17,11 +19,23 @@ import mangoo.io.enums.Validation;
  */
 @Singleton
 public class Messages {
+    private Map<String, String> defaults = new HashMap<String, String>();
     private ResourceBundle bundle;
     private Locale locale;
 
     public Messages() {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
+
+        defaults.put(Key.FORM_REQUIRED.toString(), Validation.REQUIRED.toString());
+        defaults.put(Key.FORM_MIN.toString(), Validation.MIN.toString());
+        defaults.put(Key.FORM_MAX.toString(), Validation.MAX.toString());
+        defaults.put(Key.FORM_EXACT_MATCH.toString(), Validation.EXACT_MATCH.toString());
+        defaults.put(Key.FORM_MATCH.toString(), Validation.MATCH.toString());
+        defaults.put(Key.FORM_EMAIL.toString(), Validation.EMAIL.toString());
+        defaults.put(Key.FORM_IPV4.toString(), Validation.IPV4.toString());
+        defaults.put(Key.FORM_IPV6.toString(), Validation.IPV6.toString());
+        defaults.put(Key.FORM_RANGE.toString(), Validation.RANGE.toString());
+        defaults.put(Key.FORM_URL.toString(), Validation.URL.toString());
     }
 
     /**
@@ -56,29 +70,8 @@ public class Messages {
     public String get(String key, Object... arguments) {
         if (this.bundle.containsKey(key)) {
             return MessageFormat.format(this.bundle.getString(key), arguments);
-        }
-
-        //TODO This is very complex and needs refactoring
-        if (Key.FORM_REQUIRED.toString().equals(key)) {
-            return MessageFormat.format(Validation.REQUIRED.toString(), arguments);
-        } else if (Key.FORM_MIN.toString().equals(key)) {
-            return MessageFormat.format(Validation.MIN.toString(), arguments);
-        } else if (Key.FORM_MAX.toString().equals(key)) {
-            return MessageFormat.format(Validation.MAX.toString(), arguments);
-        } else if (Key.FORM_EXACT_MATCH.toString().equals(key)) {
-            return MessageFormat.format(Validation.EXACT_MATCH.toString(), arguments);
-        } else if (Key.FORM_MATCH.toString().equals(key)) {
-            return MessageFormat.format(Validation.MATCH.toString(), arguments);
-        } else if (Key.FORM_EMAIL.toString().equals(key)) {
-            return MessageFormat.format(Validation.EMAIL.toString(), arguments);
-        } else if (Key.FORM_IPV4.toString().equals(key)) {
-            return MessageFormat.format(Validation.IPV4.toString(), arguments);
-        } else if (Key.FORM_IPV6.toString().equals(key)) {
-            return MessageFormat.format(Validation.IPV6.toString(), arguments);
-        } else if (Key.FORM_RANGE.toString().equals(key)) {
-            return MessageFormat.format(Validation.RANGE.toString(), arguments);
-        } else if (Key.FORM_URL.toString().equals(key)) {
-            return MessageFormat.format(Validation.URL.toString(), arguments);
+        } else if (this.defaults.containsKey(key)) {
+            return MessageFormat.format(this.defaults.get(key), arguments);
         }
 
         return "";
