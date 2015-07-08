@@ -1716,7 +1716,11 @@ of existing extensions.
 
 MongoDB Extension
 
-* https://github.com/svenkubiak/mangoo-mongodb-module
+* https://github.com/svenkubiak/mangooio-mongodb-extension
+
+Hibernate Extension
+
+* https://github.com/svenkubiak/mangooio-hibernate-extension
 
 If you have created and extension and want it to be listed here, just
 add your extension to the above list by editing the documentation.md
