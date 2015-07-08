@@ -1,5 +1,9 @@
 package mangoo.io.routing.handlers;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import freemarker.template.TemplateException;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
@@ -32,7 +36,7 @@ public class ExceptionHandler implements HttpHandler {
     }
 
     @SuppressWarnings("all")
-    private String renderException(HttpServerExchange exchange, Throwable cause) throws Exception {
+    private String renderException(HttpServerExchange exchange, Throwable cause) throws FileNotFoundException, IOException, TemplateException {
         TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
         return templateEngine.renderException(exchange, cause);
     }

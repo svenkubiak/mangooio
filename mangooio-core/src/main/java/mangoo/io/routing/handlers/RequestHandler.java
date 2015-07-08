@@ -432,11 +432,11 @@ public class RequestHandler implements HttpHandler {
                 FormData formData = formDataParser.parseBlocking();
 
                 for (String data : formData) {
-                    for (FormData.FormValue value : formData.get(data)) {
-                        if (value.isFile()) {
-                            form.addFile(value.getFile());
+                    for (FormData.FormValue formValue : formData.get(data)) {
+                        if (formValue.isFile()) {
+                            form.addFile(formValue.getFile());
                         } else {
-                            form.add(new HttpString(data).toString(), value.getValue());
+                            form.add(new HttpString(data).toString(), formValue.getValue());
                         }
                     }
                 }
@@ -505,7 +505,7 @@ public class RequestHandler implements HttpHandler {
             requestParamater.put(entry.getKey(), entry.getValue().element());
         }
 
-        return (requestParamater == null) ? new HashMap<String, String>() : requestParamater;
+        return requestParamater;
     }
 
     private Map<String, Class<?>> getMethodParameters() {
