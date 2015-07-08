@@ -2,27 +2,25 @@
 
 .Document version
 [NOTE]
-You are reading version {version} of the documentation.
+You are reading version {version} of this documentation.
 
 Development of mangoo I/O was started in mid 2015 out of the interest on
 how difficult it would be to create an intuitiv, developer friendly,
-full stack Java framework from scratch. After the fresh new breeze of
-development for the Web with the https://www.playframework.com[Play
-Framwork - Version 1], contributing to the
+full stack java web framework from scratch. After the fresh new breeze of
+java development for the Web with the https://www.playframework.com[Play
+Framwork - Version 1], contributions to the
 http://www.ninjaframework.org[Ninja Framework] and having seen a lot of
 cumbersome "Enterprise" Applications, I thought it was time for yet
-another full stack Java Framework.
-
-As it turns out, it wasn't that difficult at all.
+another full stack java framework.
 
 The foundation of mangoo I/O is the very performant
 http://undertow.io[Undertow] web server from JBoss. On top of that,
-standard, production ready Java libraries are used - no reeinventing the
-wheel, no magic whatsoever. The main reason for using Undertow was, that
+standard, production ready java libraries are used - no reinventing of the
+wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
 it is based on non-blocking I/O in the form of
 http://xnio.jboss.org[XNIO]. And although Undertow does support the
-Servlet API, one is not bound to use it in any way. Giving the developer
-the oppertunity to work fully stateless.
+servlet API, one is not bound to use it in any way. Giving a java developer
+the opportunity to work fully stateless.
 
 mangoo I/O is highly inspired by the http://www.ninjaframework.org[Ninja
 Web Framework]. Although the mangoo I/O core is a complete custom
@@ -30,16 +28,16 @@ implementation, many of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
-* Intuitiv convention-over-configuration, making a Java developer feel
+* Intuitiv convention-over-configuration, making a java developer feel
 at home from the start
 * Highly scalable using a share-nothing stateless architecture
-* Hot-Compiling development mode to see changes instantly
+* Hot-Compiling development mode for high productivity
 * Easy to use template engine
 * Support for Web Sockets
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
-* Buil-in asset minification
+* Buil-in asset minification in development mode
 * Flexible testing tools
 * Simple Deployment and CI-Integration
 * i18N Internationalization
