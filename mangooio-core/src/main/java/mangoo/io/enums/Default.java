@@ -38,6 +38,8 @@ public enum Default {
     SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
     SPLITTER("&"),
     SEPERATOR(":"),
+    NOSNIFF("nosniff"),
+    SAMEORIGIN("SAMEORIGIN"),
     FILTER_METHOD_NAME("filter"),
     AUTHENTICITY_TOKEN("authenticityToken");
 

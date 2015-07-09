@@ -46,6 +46,7 @@ import mangoo.io.core.Application;
 import mangoo.io.crypto.Crypto;
 import mangoo.io.enums.ContentType;
 import mangoo.io.enums.Default;
+import mangoo.io.enums.Header;
 import mangoo.io.enums.Key;
 import mangoo.io.i18n.Messages;
 import mangoo.io.interfaces.MangooGlobalFilter;
@@ -125,6 +126,9 @@ public class RequestHandler implements HttpHandler {
                     exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
                 } else {
                     exchange.setResponseCode(response.getStatusCode());
+                    exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), 1);
+                    exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
+                    exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
                     exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
                     exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
                     response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));

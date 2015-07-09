@@ -1,5 +1,9 @@
 = Changelog
 
+== Version xxx - Released xx.xx.2015
+
+* Added X-XSS-Protection, X-Content-Type-Options and X-Frame-Options headers (svenkubiak)
+
 == Version 1.0.0-RC2 - Released 07.07.2015
 
 * Added some more javadoc (svenkubiak)

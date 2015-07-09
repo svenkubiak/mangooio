@@ -11,6 +11,7 @@ import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 import mangoo.io.core.Application;
 import mangoo.io.enums.Default;
+import mangoo.io.enums.Header;
 import mangoo.io.enums.Template;
 import mangoo.io.templating.TemplateEngine;
 
@@ -24,6 +25,9 @@ public class ExceptionHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), 1);
+        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
+        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
