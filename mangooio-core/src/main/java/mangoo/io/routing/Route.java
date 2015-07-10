@@ -28,6 +28,7 @@ public class Route {
      * Maps a request mapping to given URL
      *
      * @param url The URL of the request (e.g. /foo)
+     * @return A route object {@link mangoo.io.routing.Route}
      */
     public Route toUrl(String url) {
         this.url = url;

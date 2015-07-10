@@ -19,8 +19,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -33,7 +31,6 @@ import io.undertow.server.handlers.CookieImpl;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
-import io.undertow.util.AttachmentKey;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -58,14 +55,7 @@ import mangoo.io.routing.bindings.Form;
 import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.TemplateEngine;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class RequestHandler implements HttpHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(RequestHandler.class);
-    private static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
     private int parameterCount;
     private Class<?> controllerClass;
     private String controllerMethod;
@@ -97,52 +87,49 @@ public class RequestHandler implements HttpHandler {
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        try {
-            if (this.method == null) {
-                this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        if (this.method == null) {
+            this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        }
+        this.exchange = null;
+        this.session = null;
+        this.form = null;
+        this.authentication = null;
+
+        setLocale(exchange);
+        getSession(exchange);
+        getAuthentication(exchange);
+        getFlash(exchange);
+        getForm(exchange);
+
+        boolean continueAfterFilter = executeFilter(exchange);
+        if (continueAfterFilter) {
+            Response response = getResponse(exchange);
+
+            setSession(exchange);
+            setFlash(exchange);
+            setAuthentication(exchange);
+
+            if (response.isRedirect()) {
+                exchange.setResponseCode(StatusCodes.FOUND);
+                exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
+                exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+                exchange.endExchange();
+            } else if (response.isBinary()) {
+                exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+            } else {
+                exchange.setResponseCode(response.getStatusCode());
+                exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), 1);
+                exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
+                exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
+                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
+                exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+                response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+                exchange.getResponseSender().send(response.getBody());
             }
-            this.exchange = null;
-
-            setLocale(exchange);
-            getSession(exchange);
-            getAuthentication(exchange);
-            getFlash(exchange);
-            getForm(exchange);
-
-            boolean continueAfterFilter = executeFilter(exchange);
-            if (continueAfterFilter) {
-                Response response = getResponse(exchange);
-
-                setSession(exchange);
-                setFlash(exchange);
-                setAuthentication(exchange);
-
-                if (response.isRedirect()) {
-                    exchange.setResponseCode(StatusCodes.FOUND);
-                    exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-                    exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-                    exchange.endExchange();
-                } else if (response.isBinary()) {
-                    exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
-                } else {
-                    exchange.setResponseCode(response.getStatusCode());
-                    exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), 1);
-                    exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
-                    exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-                    exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-                    response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
-                    exchange.getResponseSender().send(response.getBody());
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Failed to handle request", e);
-            exchange.putAttachment(THROWABLE, e);
-            throw new Exception();
         }
     }
 
-    private void setLocale(HttpServerExchange exchange) throws Exception {
+    private void setLocale(HttpServerExchange exchange) {
         HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
         if (headerValues != null && headerValues.getFirst() != null) {
             Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
@@ -172,7 +159,7 @@ public class RequestHandler implements HttpHandler {
         return continueAfterFilter;
     }
 
-    private boolean executeGlobalFilter(HttpServerExchange exchange) throws Exception {
+    private boolean executeGlobalFilter(HttpServerExchange exchange) {
         if (this.globalFilter) {
             MangooGlobalFilter mangooGlobalFilter = this.injector.getInstance(MangooGlobalFilter.class);
             return mangooGlobalFilter.filter(getExchange(exchange));
@@ -181,7 +168,7 @@ public class RequestHandler implements HttpHandler {
         return true;
     }
 
-    private Exchange getExchange(HttpServerExchange httpServerExchange) throws Exception {
+    private Exchange getExchange(HttpServerExchange httpServerExchange) {
         if (this.exchange == null) {
             String authenticityToken = getRequestParameters(httpServerExchange).get(Default.AUTHENTICITY_TOKEN.toString());
             if (StringUtils.isBlank(authenticityToken)) {
@@ -240,7 +227,7 @@ public class RequestHandler implements HttpHandler {
         return response;
     }
 
-    private Session getSession(HttpServerExchange exchange) throws Exception {
+    private Session getSession(HttpServerExchange exchange) {
         Session session = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
         if (cookie != null) {
@@ -294,11 +281,11 @@ public class RequestHandler implements HttpHandler {
         return session;
     }
 
-    private void setSession(HttpServerExchange exchange) throws Exception {
+    private void setSession(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
             String values = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
-            String sign = DigestUtils.sha512Hex(values + session.getAuthenticityToken() + session.getExpires() + config.getString(Key.APPLICATION_SECRET));
+            String sign = DigestUtils.sha512Hex(values + this.session.getAuthenticityToken() + this.session.getExpires() + config.getApplicationSecret());
             String value = sign + Default.DELIMITER.toString() + this.session.getAuthenticityToken() + Default.DELIMITER.toString() + this.session.getExpires() + Default.DATA_DELIMITER.toString() + values;
 
             if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
@@ -312,7 +299,6 @@ public class RequestHandler implements HttpHandler {
                     .setExpires(Date.from(this.session.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
 
             exchange.setResponseCookie(cookie);
-            this.session = null;
         }
     }
 
@@ -381,11 +367,10 @@ public class RequestHandler implements HttpHandler {
             }
 
             exchange.setResponseCookie(cookie);
-            this.authentication = null;
         }
     }
 
-    private void getFlash(HttpServerExchange exchange) throws Exception {
+    private void getFlash(HttpServerExchange exchange) {
         Flash flash = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
         if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
@@ -405,7 +390,7 @@ public class RequestHandler implements HttpHandler {
         this.flash = flash;
     }
 
-    private void setFlash(HttpServerExchange exchange) throws Exception {
+    private void setFlash(HttpServerExchange exchange) {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
@@ -424,7 +409,6 @@ public class RequestHandler implements HttpHandler {
                 exchange.setResponseCookie(cookie);
             }
         }
-        this.flash = null;
     }
 
     private void getForm(HttpServerExchange exchange) throws IOException {
@@ -460,7 +444,7 @@ public class RequestHandler implements HttpHandler {
         return body;
     }
 
-    private Object[] getConvertedParameters(HttpServerExchange exchange) throws Exception {
+    private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
         Map<String, String> queryParameters = getRequestParameters(exchange);
         Object [] parameters = new Object[this.parameterCount];
 
@@ -499,7 +483,7 @@ public class RequestHandler implements HttpHandler {
         return parameters;
     }
 
-    private Map<String, String> getRequestParameters(HttpServerExchange exchange) throws Exception {
+    private Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Map<String, String> requestParamater = new HashMap<String, String>();
 
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();

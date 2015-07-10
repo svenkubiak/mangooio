@@ -45,8 +45,8 @@ public final class ThrowableUtils {
      * @param sourcePath The path to the source code file
      * @return A list of source code with the exception and surrounding lines
      *
-     * @throws FileNotFoundException
-     * @throws IOException
+     * @throws FileNotFoundException If the file is not found
+     * @throws IOException If an IO exception occurs
      */
     @SuppressWarnings("all")
     public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {

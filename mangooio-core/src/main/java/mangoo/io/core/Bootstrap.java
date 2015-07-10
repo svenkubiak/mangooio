@@ -47,7 +47,7 @@ import mangoo.io.routing.Route;
 import mangoo.io.routing.Router;
 import mangoo.io.routing.handlers.ExceptionHandler;
 import mangoo.io.routing.handlers.FallbackHandler;
-import mangoo.io.routing.handlers.RequestHandler;
+import mangoo.io.routing.handlers.DispatcherHandler;
 import mangoo.io.routing.handlers.WebSocketHandler;
 
 /**
@@ -156,7 +156,7 @@ public class Bootstrap {
         routingHandler.setFallbackHandler(new FallbackHandler());
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new RequestHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), this.injector));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }

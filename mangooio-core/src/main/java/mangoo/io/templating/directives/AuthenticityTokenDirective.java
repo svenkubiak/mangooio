@@ -26,7 +26,9 @@ public class AuthenticityTokenDirective implements TemplateDirectiveModel {
 
     @Override
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
-        Writer out = environment.getOut();
-        out.append(this.session.getAuthenticityToken());
+        if (this.session != null) {
+            Writer out = environment.getOut();
+            out.append(this.session.getAuthenticityToken());
+        }
     }
 }

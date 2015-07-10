@@ -40,10 +40,6 @@ public class Session {
     /**
      * Adds a value to the cache.
      *
-     * The following characters are not allowed either as key nor value:
-     *
-     * "|", ":" and "&"
-     *
      * @param key The key to store the value
      * @param value The value to store
      */

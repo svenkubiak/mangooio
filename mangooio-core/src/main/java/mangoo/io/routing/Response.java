@@ -64,7 +64,7 @@ public final class Response {
     }
 
     public String getBinaryFileName() {
-    	return this.binaryFileName;
+        return this.binaryFileName;
     }
 
     public Map<String, Object> getContent() {
@@ -88,10 +88,10 @@ public final class Response {
     }
 
     public Map<HttpString, String> getHeaders() {
-		return headers;
-	}
+        return headers;
+    }
 
-	/**
+    /**
      * Creates a response object with HTTP status code 200
      *
      * @return A response object {@link mangoo.io.routing.Response}
@@ -259,18 +259,18 @@ public final class Response {
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andBinaryFile(File file) {
-		try (FileInputStream fileInputStream = new FileInputStream(file)){
-			this.binaryFileName = file.getName();
-	    	this.binaryContent = IOUtils.toByteArray(fileInputStream);
-	    	this.binary = true;
-	    	this.rendered = true;
-		} catch (IOException e) {
-			LOG.error("Failed to handle binary file", e);
-		}
+        try (FileInputStream fileInputStream = new FileInputStream(file)){
+            this.binaryFileName = file.getName();
+            this.binaryContent = IOUtils.toByteArray(fileInputStream);
+            this.binary = true;
+            this.rendered = true;
+        } catch (IOException e) {
+            LOG.error("Failed to handle binary file", e);
+        }
 
-    	return this;
+        return this;
     }
-    
+
     /**
      * Sends binary content to the client skipping renderin
      *
@@ -278,11 +278,11 @@ public final class Response {
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andBinaryContent(byte [] content) {
-    	this.binaryContent = content.clone();
-    	this.binary = true;
-    	this.rendered = true;
+        this.binaryContent = content.clone();
+        this.binary = true;
+        this.rendered = true;
 
-    	return this;
+        return this;
     }
 
     /**
@@ -290,6 +290,8 @@ public final class Response {
      * performed. The content type "text/plain" will be used.
      *
      * @param text The text for the response
+     *
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andTextBody(String text) {
         this.contentType = ContentType.TEXT_PLAIN.toString();
@@ -301,6 +303,8 @@ public final class Response {
 
     /**
      * Disables template rendering, sending an empty body in the response
+     *
+     * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andEmptyBody() {
         this.rendered = true;
@@ -314,11 +318,12 @@ public final class Response {
      *
      * @param key The header constant from Headers class (e.g. Headers.CONTENT_TYPE)
      * @param value The header value
+     *
      * @return A response object {@link mangoo.io.routing.Response}
      */
     public Response andHeader(HttpString key, String value) {
-    	this.headers.put(key, value);
+        this.headers.put(key, value);
 
-    	return this;
+        return this;
     }
 }
