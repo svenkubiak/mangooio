@@ -72,8 +72,8 @@ public class RequestHandler implements HttpHandler {
     private Exchange exchange;
     private boolean globalFilter;
 
-    public RequestHandler(Class<?> controllerClass, String controllerMethod, Injector injector) {
-        this.injector = injector;
+    public RequestHandler(Class<?> controllerClass, String controllerMethod) {
+        this.injector = Application.getInjector();
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.controller = this.injector.getInstance(this.controllerClass);

@@ -41,7 +41,8 @@ public enum Default {
     NOSNIFF("nosniff"),
     SAMEORIGIN("SAMEORIGIN"),
     FILTER_METHOD_NAME("filter"),
-    AUTHENTICITY_TOKEN("authenticityToken");
+    AUTHENTICITY_TOKEN("authenticityToken"),
+    XSS_PROTECTION("1");
 
     private final String value;
 
