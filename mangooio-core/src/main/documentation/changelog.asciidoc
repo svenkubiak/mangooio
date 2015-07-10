@@ -1,7 +1,8 @@
 = Changelog
 
-== Version xxx - Released xx.xx.2015
+== Version 1.0.0-RC3 - Released xx.xx.2015
 
+* Added dispatcher handler and refactored invoking of requesthanlder (svenkubiak)
 * Added X-XSS-Protection, X-Content-Type-Options and X-Frame-Options headers (svenkubiak)
 
 == Version 1.0.0-RC2 - Released 07.07.2015
