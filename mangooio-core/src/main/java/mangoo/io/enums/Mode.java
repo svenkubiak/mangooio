@@ -1,6 +1,7 @@
 package mangoo.io.enums;
 
 /**
+ * Application modes
  *
  * @author svenkubiak
  *

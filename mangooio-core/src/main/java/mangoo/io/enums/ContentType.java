@@ -1,6 +1,7 @@
 package mangoo.io.enums;
 
 /**
+ * Content types for browser negotiation
  *
  * @author svenkubiak
  *

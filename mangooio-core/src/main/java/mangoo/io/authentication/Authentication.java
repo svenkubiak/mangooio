@@ -59,7 +59,7 @@ public class Authentication {
     }
 
     /**
-     * Hashes a given clear text password using BCrypt
+     * Hashes a given clear text password using JBCrypt
      *
      * @param password The clear text password
      * @return The hashed password
@@ -72,11 +72,11 @@ public class Authentication {
 
     /**
      * Creates a hashed value of a given clear text password and checks if the
-     * value matches a given already hashed password
+     * value matches a given, already hashed password
      *
      * @param password The clear text password
      * @param hash The previously hashed password to check
-     * @return True if the hashed password matches the hash, false otherwise
+     * @return True if the new hashed password matches the hash, false otherwise
      */
     public boolean authenticate(String password, String hash) {
         Preconditions.checkNotNull(password, "Password is required for authenticate");

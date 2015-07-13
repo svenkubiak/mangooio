@@ -1,6 +1,7 @@
 package mangoo.io.enums;
 
 /**
+ * Key strings for reading configuration propertie
  *
  * @author svenkubiak
  *
@@ -43,7 +44,8 @@ public enum Key {
     FORM_IPV4("form.ipv4"),
     FORM_IPV6("form.ipv6"),
     FORM_RANGE("form.range"),
-    FORM_URL("form.url");
+    FORM_URL("form.url"),
+    VERSION("version");
 
     private final String value;
 

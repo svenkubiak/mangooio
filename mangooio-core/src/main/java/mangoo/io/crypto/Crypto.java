@@ -45,7 +45,7 @@ public class Crypto {
      * Decrypts an given encrypted text using the application secret property (application.secret) as key
      *
      * @param encrytedText The encrypted text
-     * @return The clear text or null if decryption failed
+     * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
         return decrypt(encrytedText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
@@ -56,7 +56,7 @@ public class Crypto {
      *
      * @param encrytedText The encrypted text
      * @param key The encryption key
-     * @return The clear text or null if decryption failed
+     * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
@@ -75,7 +75,7 @@ public class Crypto {
      * the size of the application.secret property length (16/24/32 characters)
      *
      * @param plainText The plain text to encrypt
-     * @return The encrypted text or null if encryption failed
+     * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
         return encrypt(plainText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
@@ -89,7 +89,7 @@ public class Crypto {
      *
      * @param plainText The plain text to encrypt
      * @param key The key to use for encryption
-     * @return The encrypted text or null if encryption failed
+     * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
@@ -101,6 +101,12 @@ public class Crypto {
         return encrytedText;
     }
 
+    /**
+     * Encrypts or decrypts a given byte array of data
+     *
+     * @param data The data to encrypt or decrypt
+     * @return A cleartext or encrypted byte array
+     */
     private byte[] cipherData(byte[] data) {
         byte[] result = null;
         try {
@@ -118,6 +124,14 @@ public class Crypto {
         return result;
     }
 
+    /**
+     * Creates a secret for encrypt or decryption which has a length
+     * of 16, 24 or 32 characters, corresponding to 128, 192 or 256 Bits
+     *
+     *
+     * @param secret A given secret to trim
+     * @return A stirng secret with 16, 24 or 32 characters
+     */
     private String getSizedKey(String secret) {
         String key = "";
         if (StringUtils.isNotBlank(secret)) {

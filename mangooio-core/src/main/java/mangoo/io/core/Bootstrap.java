@@ -106,10 +106,10 @@ public class Bootstrap {
     public void prepareRoutes() {
         if (!this.error) {
             try {
-                MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName("conf.Routes"));
+                MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName(Default.ROUTES_CLASS.toString()));
                 mangooRoutes.routify();
             } catch (ClassNotFoundException e) {
-                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your applicaiotn", e);
+                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your application", e);
                 this.error = true;
             }
 
@@ -168,13 +168,13 @@ public class Bootstrap {
     private ResourceHandler getResourceHandler(String postfix) {
         if (StringUtils.isBlank(postfix)) {
             if (this.resourceHandler == null) {
-                this.resourceHandler = new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "files/"));
+                this.resourceHandler = new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
             }
 
             return this.resourceHandler;
         }
 
-        return new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "files" + postfix));
+        return new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + postfix));
     }
 
     public void startServer() {
@@ -197,7 +197,7 @@ public class Bootstrap {
         List<Module> modules = new ArrayList<Module>();
         if (!this.error) {
             try {
-                Class<?> module = Class.forName("conf.Module");
+                Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
                 AbstractModule abstractModule;
                 abstractModule = (AbstractModule) module.getConstructor().newInstance();
                 modules.add(abstractModule);
@@ -228,11 +228,11 @@ public class Bootstrap {
     }
 
     private static String getApplicationVersion() {
-        String version = "UNKNOWN";
+        String version = Default.VERSION.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
             Properties properties = new Properties();
             properties.load(inputStream);
-            version = String.valueOf(properties.get("version"));
+            version = String.valueOf(properties.get(Key.VERSION.toString()));
         } catch (IOException e) {
             LOG.error("Failed to get application version", e);
         }
@@ -244,7 +244,7 @@ public class Bootstrap {
         if (!this.error && !Mode.PROD.equals(Application.getMode())) {
             GreenMail greenMail = new GreenMail(new ServerSetup(
                     this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt()),
-                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), "smtp"));
+                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), Default.FAKE_SMTP_PROTOCOL.toString()));
             greenMail.start();
 
             this.fakeSMTP = greenMail;
@@ -255,7 +255,7 @@ public class Bootstrap {
         if (Mode.PROD.equals(this.mode)) {
             LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
             try {
-                URL resource = Resources.getResource("logback.prod.xml");
+                URL resource = Resources.getResource(Default.LOGBACK_PROD_FILE.toString());
                 if (resource != null) {
                     JoranConfigurator configurator = new JoranConfigurator();
                     configurator.setContext(context);

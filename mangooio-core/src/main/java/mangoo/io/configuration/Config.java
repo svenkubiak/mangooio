@@ -35,8 +35,8 @@ public class Config {
         init(Default.CONFIGURATION_FILE.toString(), Application.getMode());
     }
 
-    public Config(String path, Mode mode) {
-        init(path, mode);
+    public Config(String configFile, Mode mode) {
+        init(configFile, mode);
     }
 
     private void init(String configFile, Mode mode) {

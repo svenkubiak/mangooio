@@ -9,6 +9,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 /**
+ * Default HTML templates for standard HTTP responses
  *
  * @author svenkbiak
  *

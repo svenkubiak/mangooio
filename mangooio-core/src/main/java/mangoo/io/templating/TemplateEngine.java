@@ -50,7 +50,7 @@ public class TemplateEngine {
         this.configuration.setDefaultEncoding(Charsets.UTF_8.name());
         this.configuration.setOutputEncoding(Charsets.UTF_8.name());
         this.configuration.setLocalizedLookup(false);
-        this.configuration.setNumberFormat("0.######");
+        this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
 
         if (Application.inDevMode()) {
@@ -105,9 +105,9 @@ public class TemplateEngine {
         content.put("sourceCodePath", new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getAbsolutePath());
 
         Configuration config = new Configuration(VERSION);
-        config.setClassForTemplateLoading(this.getClass(), "/defaults/");
+        config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
 
-        Template template = config.getTemplate("exception.ftl");
+        Template template = config.getTemplate(Default.EXCEPTION_TEMPLATE_NAME.toString());
         template.process(content, writer);
 
         return writer.toString();

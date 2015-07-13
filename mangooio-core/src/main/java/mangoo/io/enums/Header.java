@@ -3,6 +3,7 @@ package mangoo.io.enums;
 import io.undertow.util.HttpString;
 
 /**
+ * Custom headers which are not part of undertow
  *
  * @author svenkubiak
  *

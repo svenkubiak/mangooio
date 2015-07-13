@@ -1,5 +1,11 @@
 package mangoo.io.enums;
 
+/**
+ * Default validation messages
+ *
+ * @author svenkubiak
+ *
+ */
 public enum Validation {
     REQUIRED("{0} is required"),
     MIN("{0} must be at least {1} characters"),

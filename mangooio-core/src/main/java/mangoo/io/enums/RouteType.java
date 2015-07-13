@@ -1,6 +1,7 @@
 package mangoo.io.enums;
 
 /**
+ * Route types for easy routing configuration
  *
  * @author svenkubiak
  *

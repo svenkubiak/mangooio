@@ -1,6 +1,7 @@
 package mangoo.io.enums;
 
 /**
+ * Default values
  *
  * @author svenkubiak
  *
@@ -42,7 +43,15 @@ public enum Default {
     SAMEORIGIN("SAMEORIGIN"),
     FILTER_METHOD_NAME("filter"),
     AUTHENTICITY_TOKEN("authenticityToken"),
-    XSS_PROTECTION("1");
+    XSS_PROTECTION("1"),
+    ROUTES_CLASS("conf.Routes"),
+    FILES_FOLDER("files"),
+    MODULE_CLASS("conf.Module"),
+    VERSION("unknown"),
+    LOGBACK_PROD_FILE("logback.prod.xml"),
+    NUMBER_FORMAT("0.######"),
+    EXCEPTION_TEMPLATE_NAME("exception.ftl"),
+    DEFAULT_TEMPLATES_DIR("/defaults/");
 
     private final String value;
 
