@@ -9,6 +9,7 @@ import io.undertow.util.AttachmentKey;
  * @author svenkubiak
  *
  */
+@SuppressWarnings("all")
 public class DispatcherHandler implements HttpHandler {
     private static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
     private Class<?> controllerClass;

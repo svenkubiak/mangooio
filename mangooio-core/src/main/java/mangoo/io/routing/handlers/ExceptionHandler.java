@@ -33,10 +33,10 @@ public class ExceptionHandler implements HttpHandler {
 
         if (Application.inDevMode()) {
             Throwable throwable = exchange.getAttachment(THROWABLE);
-            if (throwable != null) {
-                exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
-            } else {
+            if (throwable == null) {
                 exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
+            } else {
+                exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
             }
         } else {
             exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
