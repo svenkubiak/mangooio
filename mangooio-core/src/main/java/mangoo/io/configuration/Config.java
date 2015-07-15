@@ -45,7 +45,7 @@ public class Config {
         Map map = null;
         try {
             if (StringUtils.isNotBlank(configPath)) {
-                map = (Map) loadConfiguration(new FileInputStream(new File(configPath)));
+                map = (Map) loadConfiguration(new FileInputStream(new File(configPath))); //NOSONAR
             } else {
                 map = (Map) loadConfiguration(Resources.getResource(configFile).openStream());
             }
