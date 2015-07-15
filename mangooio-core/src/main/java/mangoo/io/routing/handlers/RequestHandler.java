@@ -60,7 +60,7 @@ public class RequestHandler implements HttpHandler {
     private Class<?> controllerClass;
     private String controllerMethod;
     private Object controller;
-    private Map<String, Class<?>> methodParameters;
+    private Map<String, Class<?>> parameters;
     private Method method;
     private ObjectMapper mapper;
     private Authentication authentication;
@@ -77,8 +77,8 @@ public class RequestHandler implements HttpHandler {
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.controller = this.injector.getInstance(this.controllerClass);
-        this.methodParameters = getMethodParameters();
-        this.parameterCount = this.methodParameters.size();
+        this.parameters = getMethodParameters();
+        this.parameterCount = this.parameters.size();
         this.config = this.injector.getInstance(Config.class);
         this.globalFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooGlobalFilter.class));
         this.mapper = JsonFactory.create();
@@ -88,7 +88,7 @@ public class RequestHandler implements HttpHandler {
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         if (this.method == null) {
-            this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+            this.method = this.controller.getClass().getMethod(this.controllerMethod, parameters.values().toArray(new Class[0]));
         }
         this.exchange = null;
         this.session = null;
@@ -190,8 +190,8 @@ public class RequestHandler implements HttpHandler {
                 filterWith = (FilterWith) annotation;
                 for (Class<?> clazz : filterWith.value()) {
                     if (continueAfterFilter) {
-                        Method method = clazz.getMethod(Default.FILTER_METHOD_NAME.toString(), Exchange.class);
-                        continueAfterFilter = (boolean) method.invoke(this.injector.getInstance(clazz), getExchange(exchange));
+                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD_NAME.toString(), Exchange.class);
+                        continueAfterFilter = (boolean) classMethod.invoke(this.injector.getInstance(clazz), getExchange(exchange));
                     } else {
                         return false;
                     }
@@ -205,13 +205,13 @@ public class RequestHandler implements HttpHandler {
     private Response getResponse(HttpServerExchange exchange) throws Exception {
         Response response;
 
-        if (this.methodParameters.isEmpty()) {
+        if (this.parameters.isEmpty()) {
             response = (Response) this.method.invoke(this.controller);
             response.andTemplate(this.method.getName());
         } else {
-            Object [] methodParameters = getConvertedParameters(exchange);
+            Object [] parameters = getConvertedParameters(exchange);
 
-            response = (Response) this.method.invoke(this.controller, methodParameters);
+            response = (Response) this.method.invoke(this.controller, parameters);
             response.andTemplate(this.method.getName());
         }
 
@@ -228,7 +228,7 @@ public class RequestHandler implements HttpHandler {
     }
 
     private Session getSession(HttpServerExchange exchange) {
-        Session session = null;
+        Session requestSession = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
@@ -262,23 +262,23 @@ public class RequestHandler implements HttpHandler {
                                 sessionValues.put(entry.getKey(), entry.getValue());
                             }
                         }
-                        session = new Session(sessionValues);
-                        session.setAuthenticityToken(authenticityToken);
-                        session.setExpires(expiresDate);
+                        requestSession = new Session(sessionValues);
+                        requestSession.setAuthenticityToken(authenticityToken);
+                        requestSession.setExpires(expiresDate);
                     }
                 }
             }
         }
 
-        if (session == null) {
-            session = new Session();
-            session.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(16));
-            session.setExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
+        if (requestSession == null) {
+            requestSession = new Session();
+            requestSession.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(16));
+            requestSession.setExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
-        this.session = session;
+        this.session = requestSession;
 
-        return session;
+        return requestSession;
     }
 
     private void setSession(HttpServerExchange exchange) {
@@ -303,7 +303,7 @@ public class RequestHandler implements HttpHandler {
     }
 
     private Authentication getAuthentication(HttpServerExchange exchange) {
-        Authentication authentication = null;
+        Authentication requestAuthentication = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
@@ -328,20 +328,20 @@ public class RequestHandler implements HttpHandler {
                     String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + expires + this.config.getApplicationSecret()).equals(sign)) {
-                        authentication = new Authentication(this.config, data, expiresDate);
+                        requestAuthentication = new Authentication(this.config, data, expiresDate);
                     }
                 }
             }
         }
 
-        if (authentication == null) {
-            authentication = new Authentication(this.config);
-            authentication.setExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()));
+        if (requestAuthentication == null) {
+            requestAuthentication = new Authentication(this.config);
+            requestAuthentication.setExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()));
         }
 
-        this.authentication = authentication;
+        this.authentication = requestAuthentication;
 
-        return authentication;
+        return requestAuthentication;
     }
 
     private void setAuthentication(HttpServerExchange exchange) {
@@ -371,7 +371,7 @@ public class RequestHandler implements HttpHandler {
     }
 
     private void getFlash(HttpServerExchange exchange) {
-        Flash flash = null;
+        Flash requestFlash = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
         if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
             Map<String, String> values = new HashMap<String, String>();
@@ -379,15 +379,15 @@ public class RequestHandler implements HttpHandler {
                 values.put(entry.getKey(), entry.getValue());
             }
 
-            flash = new Flash(values);
-            flash.setDiscard(true);
+            requestFlash = new Flash(values);
+            requestFlash.setDiscard(true);
         }
 
-        if (flash == null) {
-            flash = new Flash();
+        if (requestFlash == null) {
+            requestFlash = new Flash();
         }
 
-        this.flash = flash;
+        this.flash = requestFlash;
     }
 
     private void setFlash(HttpServerExchange exchange) {
@@ -449,7 +449,7 @@ public class RequestHandler implements HttpHandler {
         Object [] parameters = new Object[this.parameterCount];
 
         int index = 0;
-        for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
+        for (Map.Entry<String, Class<?>> entry : this.parameters.entrySet()) {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
 

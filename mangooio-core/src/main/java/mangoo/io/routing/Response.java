@@ -39,6 +39,16 @@ public final class Response {
     private boolean redirect;
     private int statusCode = StatusCodes.OK;
 
+    private Response(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    private Response(String redirectTo) {
+        this.redirect = true;
+        this.rendered = true;
+        this.redirectTo = redirectTo;
+    }
+
     public int getStatusCode() {
         return this.statusCode;
     }
@@ -163,16 +173,6 @@ public final class Response {
      */
     public static Response withRedirect(String redirectTo) {
         return new Response(redirectTo);
-    }
-
-    private Response(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    private Response(String redirectTo) {
-        this.redirect = true;
-        this.rendered = true;
-        this.redirectTo = redirectTo;
     }
 
     /**
