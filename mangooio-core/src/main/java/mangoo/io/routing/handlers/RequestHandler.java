@@ -215,9 +215,9 @@ public class RequestHandler implements HttpHandler {
             response = (Response) this.method.invoke(this.controller);
             response.andTemplate(this.method.getName());
         } else {
-            Object [] parameters = getConvertedParameters(exchange);
+            Object [] convertedParameters = getConvertedParameters(exchange);
 
-            response = (Response) this.method.invoke(this.controller, parameters);
+            response = (Response) this.method.invoke(this.controller, convertedParameters);
             response.andTemplate(this.method.getName());
         }
 
