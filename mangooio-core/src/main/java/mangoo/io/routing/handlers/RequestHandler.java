@@ -2,6 +2,7 @@ package mangoo.io.routing.handlers;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.inject.Injector;
 
+import freemarker.template.TemplateException;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -151,7 +153,7 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
-    private boolean executeFilter(HttpServerExchange exchange) throws Exception {
+    private boolean executeFilter(HttpServerExchange exchange) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         boolean continueAfterFilter = executeGlobalFilter(exchange);
 
         if (continueAfterFilter) {
@@ -187,7 +189,7 @@ public class RequestHandler implements HttpHandler {
         return this.exchange;
     }
 
-    private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws Exception {
+    private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         FilterWith filterWith = null;
         boolean continueAfterFilter = true;
 
@@ -208,7 +210,7 @@ public class RequestHandler implements HttpHandler {
         return continueAfterFilter;
     }
 
-    private Response getResponse(HttpServerExchange exchange) throws Exception {
+    private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, TemplateException {
         Response response;
 
         if (this.parameters.isEmpty()) {
