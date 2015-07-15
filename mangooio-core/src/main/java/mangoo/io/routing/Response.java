@@ -37,7 +37,7 @@ public final class Response {
     private boolean binary;
     private boolean rendered;
     private boolean redirect;
-    private int statusCode = StatusCodes.OK;;
+    private int statusCode = StatusCodes.OK;
 
     public int getStatusCode() {
         return this.statusCode;

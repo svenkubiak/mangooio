@@ -464,15 +464,15 @@ public class RequestHandler implements HttpHandler {
             } else if ((Flash.class).equals(clazz)) {
                 parameters[index] = this.flash;
             } else if ((String.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? "" : queryParameters.get(key);
+                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
+                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
             } else if ((Double.class).equals(clazz) || (double.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
+                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((Float.class).equals(clazz) || (float.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
+                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
             } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
-                parameters[index] = (StringUtils.isBlank(queryParameters.get(key))) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
+                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
             } else if ((ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
                 parameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
             }
