@@ -1,6 +1,7 @@
 package mangoo.io.routing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.undertow.util.HttpString;
@@ -56,6 +57,6 @@ public final class Router {
     }
 
     public static List<Route> getRoutes() {
-        return routes;
+        return Collections.unmodifiableList(routes);
     }
 }

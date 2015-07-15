@@ -32,17 +32,19 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import mangoo.io.utils.MinificationUtils;
-
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.nio.file.SensitivityWatchEventModifier; //NOSONAR
+
+import mangoo.io.utils.MinificationUtils;
 
 /**
  * This is a refactored version of
@@ -68,8 +70,8 @@ public class Watcher implements Runnable {
     public Watcher(Set<Path> watchDirectory, Set<String> includes, Set<String> excludes, Trigger trigger) throws IOException {
         this.watchService = FileSystems.getDefault().newWatchService();
         this.watchKeys = new HashMap<>();
-        this.includes = includes;
-        this.excludes = excludes;
+        this.includes = (Set<String>) Collections.unmodifiableCollection(includes);
+        this.excludes = (Set<String>) Collections.unmodifiableCollection(excludes);
         this.trigger = trigger;
         this.takeCount = new AtomicInteger(0);
         for (Path path: watchDirectory) {
@@ -112,13 +114,13 @@ public class Watcher implements Runnable {
      */
     private void register(Path path) throws IOException {
         WatchKey watchKey = path.register(
-            watchService,
-            new WatchEvent.Kind[]{
-                StandardWatchEventKinds.ENTRY_CREATE, //NOSONAR
-                StandardWatchEventKinds.ENTRY_MODIFY, //NOSONAR
-                StandardWatchEventKinds.ENTRY_DELETE //NOSONAR
-            },
-            SensitivityWatchEventModifier.HIGH);
+                watchService,
+                new WatchEvent.Kind[]{
+                        StandardWatchEventKinds.ENTRY_CREATE, //NOSONAR
+                        StandardWatchEventKinds.ENTRY_MODIFY, //NOSONAR
+                        StandardWatchEventKinds.ENTRY_DELETE //NOSONAR
+                },
+                SensitivityWatchEventModifier.HIGH);
 
         watchKeys.put(watchKey, path);
     }
@@ -199,7 +201,11 @@ public class Watcher implements Runnable {
     }
 
     private boolean isAsset(String absolutePath) {
-        return absolutePath != null && !absolutePath.contains("min") && absolutePath.endsWith("css") || absolutePath.endsWith("js");
+        if (StringUtils.isBlank(absolutePath)) {
+            return false;
+        }
+
+        return !absolutePath.contains("min") && absolutePath.endsWith("css") || absolutePath.endsWith("js");
     }
 
     public static enum RuleType {

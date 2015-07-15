@@ -77,7 +77,7 @@ public class Form {
      * @return The error message for the field, or an empty string if no error is found
      */
     public String getError(String fieldName) {
-        return (hasError(fieldName)) ? this.errors.get(fieldName) : "";
+        return hasError(fieldName) ? this.errors.get(fieldName) : "";
     }
 
     public String getValue(String fieldName) {
