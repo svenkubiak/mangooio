@@ -105,7 +105,7 @@ public class FormTest {
         assertFalse(form.hasErrors());
 
         form = getNewForm();
-        form.add("foo", "foo@bar");
+        form.add("foo", "foobar");
         form.email("foo");
 
         assertTrue(form.hasErrors());

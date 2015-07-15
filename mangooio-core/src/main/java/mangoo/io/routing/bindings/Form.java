@@ -1,17 +1,15 @@
 package mangoo.io.routing.bindings;
 
 import java.io.File;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 
 import com.google.inject.Inject;
 
@@ -24,9 +22,6 @@ import mangoo.io.i18n.Messages;
  *
  */
 public class Form {
-    private static final Pattern ipv4Pattern = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
-    private static final Pattern emailPattern = Pattern.compile("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?");
-    private static final Pattern urlPattern = Pattern.compile("^(http|https|ftp)\\://[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\\-\\._\\?\\,\\'/\\\\\\+&amp;%\\$#\\=~\\!])*$");
     private boolean submitted;
     private List<File> files = new ArrayList<File>();
     private Map<String, String> values = new HashMap<String, String>();
@@ -163,7 +158,7 @@ public class Form {
     public void email(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
-        if (!emailPattern.matcher(value).matches()) {
+        if (!EmailValidator.getInstance().isValid(value)) {
             this.errors.put(fieldName, messages.get(Key.FORM_EMAIL, fieldName));
         }
     }
@@ -175,9 +170,8 @@ public class Form {
      */
     public void ipv4(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
-        Matcher matcher = ipv4Pattern.matcher(value);
 
-        if (!matcher.matches()) {
+        if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
             this.errors.put(fieldName, messages.get(Key.FORM_IPV4, fieldName));
         }
     }
@@ -188,18 +182,9 @@ public class Form {
      * @param fieldName The field to check
      */
     public void ipv6(String fieldName) {
-        boolean valid = false;
         String value = (get(fieldName) == null) ? "" : get(fieldName);
-        try {
-            InetAddress inetAddress = InetAddress.getByName(value);
-            if (inetAddress instanceof Inet6Address) {
-                valid = true;
-            }
-        } catch (UnknownHostException e) { //NOSONAR
-            //intentionally left blank
-        }
 
-        if (!valid) {
+        if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
             this.errors.put(fieldName, messages.get(Key.FORM_IPV6, fieldName));
         }
     }
@@ -227,7 +212,7 @@ public class Form {
     public void url(String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
-        if (!urlPattern.matcher(value).matches()) {
+        if (!UrlValidator.getInstance().isValid(value)) {
             this.errors.put(fieldName, messages.get(Key.FORM_URL, fieldName));
         }
     }
