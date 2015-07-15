@@ -153,7 +153,7 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
-    private boolean executeFilter(HttpServerExchange exchange) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private boolean executeFilter(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         boolean continueAfterFilter = executeGlobalFilter(exchange);
 
         if (continueAfterFilter) {
@@ -189,7 +189,7 @@ public class RequestHandler implements HttpHandler {
         return this.exchange;
     }
 
-    private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         FilterWith filterWith = null;
         boolean continueAfterFilter = true;
 
@@ -210,7 +210,7 @@ public class RequestHandler implements HttpHandler {
         return continueAfterFilter;
     }
 
-    private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, TemplateException {
+    private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
         Response response;
 
         if (this.parameters.isEmpty()) {
