@@ -27,12 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import mangoo.build.Runner;
-import mangoo.build.Trigger;
-import mangoo.build.Watcher;
-import mangoo.io.core.Application;
-import mangoo.io.utils.MinificationUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -42,6 +36,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
+import mangoo.build.Runner;
+import mangoo.build.Trigger;
+import mangoo.build.Watcher;
+import mangoo.io.core.Application;
+import mangoo.io.utils.MinificationUtils;
 
 /**
  * This is a refactored version of
@@ -54,13 +54,13 @@ import org.apache.maven.project.MavenProject;
  *
  */
 @Mojo(name = "run",
-        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        defaultPhase = LifecyclePhase.NONE,
-        threadSafe = true)
+requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+defaultPhase = LifecyclePhase.NONE,
+threadSafe = true)
 public class MangooMojo extends AbstractMojo {
     private static final String [] DEFAULT_EXCLUDE_PATTERNS = {
-        "(.*)" + Pattern.quote(File.separator) + "templates" + Pattern.quote(File.separator) + "(.*)ftl",
-        "(.*)" + Pattern.quote(File.separator) + "assets" + Pattern.quote(File.separator) + "(.*)"
+            "(.*)" + Pattern.quote(File.separator) + "templates" + Pattern.quote(File.separator) + "(.*)ftl",
+            "(.*)" + Pattern.quote(File.separator) + "assets" + Pattern.quote(File.separator) + "(.*)"
     };
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -137,13 +137,13 @@ public class MangooMojo extends AbstractMojo {
             restartTrigger.start();
 
             Watcher watcher = new Watcher(
-                watchDirectories,
-                includesSet,
-                excludesSet,
-                restartTrigger);
+                    watchDirectories,
+                    includesSet,
+                    excludesSet,
+                    restartTrigger);
 
             machine.restart();
-            watcher.run();
+            watcher.run(); //NOSONAR
         } catch (IOException e) {
             getLog().error(e);
         }

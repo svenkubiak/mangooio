@@ -56,6 +56,12 @@ import mangoo.io.routing.bindings.Session;
 import mangoo.io.templating.TemplateEngine;
 
 public class RequestHandler implements HttpHandler {
+    private static final int AUTH_PREFIX_LENGTH = 2;
+    private static final int TOKEN_LENGTH = 16;
+    private static final int INDEX_2 = 2;
+    private static final int INDEX_1 = 1;
+    private static final int INDEX_0 = 0;
+    private static final int SESSION_PREFIX_LENGTH = 3;
     private int parameterCount;
     private Class<?> controllerClass;
     private String controllerMethod;
@@ -244,10 +250,10 @@ public class RequestHandler implements HttpHandler {
                 String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-                    if (prefixes != null && prefixes.length == 3) {
-                        sign = prefixes [0];
-                        authenticityToken = prefixes [1];
-                        expires = prefixes [2];
+                    if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
+                        sign = prefixes [INDEX_0];
+                        authenticityToken = prefixes [INDEX_1];
+                        expires = prefixes [INDEX_2];
                     }
                 }
 
@@ -272,7 +278,7 @@ public class RequestHandler implements HttpHandler {
 
         if (requestSession == null) {
             requestSession = new Session();
-            requestSession.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(16));
+            requestSession.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH));
             requestSession.setExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
@@ -318,9 +324,9 @@ public class RequestHandler implements HttpHandler {
                 String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-                    if (prefixes != null && prefixes.length == 2) {
-                        sign = prefixes [0];
-                        expires = prefixes [1];
+                    if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
+                        sign = prefixes [INDEX_0];
+                        expires = prefixes [INDEX_1];
                     }
                 }
 
@@ -446,7 +452,7 @@ public class RequestHandler implements HttpHandler {
 
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
         Map<String, String> queryParameters = getRequestParameters(exchange);
-        Object [] parameters = new Object[this.parameterCount];
+        Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
         for (Map.Entry<String, Class<?>> entry : this.parameters.entrySet()) {
@@ -454,33 +460,33 @@ public class RequestHandler implements HttpHandler {
             Class<?> clazz = entry.getValue();
 
             if ((Form.class).equals(clazz)) {
-                parameters[index] = this.form;
+                convertedParameters[index] = this.form;
             } else if ((Body.class).equals(clazz)) {
-                parameters[index] = getBody(exchange);
+                convertedParameters[index] = getBody(exchange);
             } else if ((Authentication.class).equals(clazz)) {
-                parameters[index] = this.authentication;
+                convertedParameters[index] = this.authentication;
             } else if ((Session.class).equals(clazz)) {
-                parameters[index] = this.session;
+                convertedParameters[index] = this.session;
             } else if ((Flash.class).equals(clazz)) {
-                parameters[index] = this.flash;
+                convertedParameters[index] = this.flash;
             } else if ((String.class).equals(clazz)) {
-                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
-                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
             } else if ((Double.class).equals(clazz) || (double.class).equals(clazz)) {
-                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
             } else if ((Float.class).equals(clazz) || (float.class).equals(clazz)) {
-                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
             } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
-                parameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
             } else if ((ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
-                parameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
+                convertedParameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
             }
 
             index++;
         }
 
-        return parameters;
+        return convertedParameters;
     }
 
     private Map<String, String> getRequestParameters(HttpServerExchange exchange) {
@@ -498,10 +504,10 @@ public class RequestHandler implements HttpHandler {
 
     private Map<String, Class<?>> getMethodParameters() {
         Map<String, Class<?>> methodParameters = new LinkedHashMap<String, Class<?>>();
-        for (Method method : this.controller.getClass().getDeclaredMethods()) {
-            if (method.getName().equals(this.controllerMethod) && method.getParameterCount() > 0) {
-                Parameter[] parameters = method.getParameters();
-                for (Parameter parameter : parameters) {
+        for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
+            if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
+                Parameter[] declaredParameters = declaredMethod.getParameters();
+                for (Parameter parameter : declaredParameters) {
                     methodParameters.put(parameter.getName(), parameter.getType());
                 }
                 break;
