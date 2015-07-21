@@ -1370,7 +1370,7 @@ public class AuthenticationController {
 
     @FilterWith(AuthenticationFilter.class)
     public Response secret() {
-        return Response.withOk()();
+        return Response.withOk();
     }
 }
 -----------------------------------------------
@@ -1848,15 +1848,17 @@ as a fallback value for Locale
 
 |cookie.expires |The time in seconds when the session expires |86400|
 
+|cookie.encrypt |Whether to encrypt the session cookie or not |false|
+
 |smtp.host |The host of the SMTP server |127.0.0.1|
 
 |smtp.port |The port of the SMTP server |25|
 
 |smtp.username |Username for authentication against the SMTP server
-|none |Only required when using SMTP authentication
+| |Only required when using SMTP authentication
 
 |smtp.password |Password for authentication against the SMTP server
-|none |Only required when using SMTP authentication
+| |Only required when using SMTP authentication
 
 |smtp.ssl |Whether to use SSL for connecting to the SMTP |false|
 
@@ -1870,6 +1872,6 @@ in even is the browser is closed |3600|
 not |false|
 
 |auth.login.redirect |The URL a user is redirected when not logged in
-|none|
+| |
 
 |=======================================================================
