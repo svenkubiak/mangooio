@@ -223,6 +223,18 @@ public final class Response {
     }
 
     /**
+     * Adds a map to the template that can be accessed using ${name} in the template
+     *
+     * @param name The name of the value
+     * @param map to add
+     * @return A response object {@link mangoo.io.routing.Response}
+     */
+    public Response andContent(Map<String, Object>  map) {
+        this.content = map;
+        return this;
+    }
+
+    /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The default content type "text/html" will be used.
      *
