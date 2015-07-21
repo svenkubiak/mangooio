@@ -1,13 +1,14 @@
 = Changelog
 
-== Version 1.0.0-RC4 - Released xx.xx.xxxx
+== Version 1.0.0 - Released xx.xx.xxxx
 
+* Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Added more JavaDoc (svenkubiak)
 
 == Version 1.0.0-RC3 - Released 10.07.2015
 
-* Added dispatcher handler and refactored invoking of requesthanlder (svenkubiak)
+* Added dispatcher handler and refactored invoking of requesthandler (svenkubiak)
 * Added X-XSS-Protection, X-Content-Type-Options and X-Frame-Options headers (svenkubiak)
 
 == Version 1.0.0-RC2 - Released 07.07.2015

@@ -73,7 +73,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
 
 ==== Java
 
-To make sure, that you have Java correctly installed, use the following
+To make sure that you have Java correctly installed use the following
 command
 
 java -version
@@ -88,7 +88,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
 
 ==== Maven
 
-To make sure, that you have the required maven version, check your maven
+To make sure that you have the required maven version check your maven
 installation with the following command
 
 ------------
@@ -105,7 +105,7 @@ Default locale: de_DE, platform encoding: UTF-8
 ...
 ------------------------------------------------------------------------------
 
-=== Creating a new mangoo I/O application
+=== Creating your first mangoo I/O application
 
 mangoo I/O comes with a ready-to-use Maven archetype, to get your first
 application started in no time. To create your first application execute
@@ -115,15 +115,17 @@ the following Maven command:
 mvn archetype:generate -DarchetypeGroupId=de.svenkubiak -DarchetypeArtifactId=mangooio-maven-archetype
 ------------------------------------------------------------------------------------------------------
 
-You will be promopted for your group and artifact id for your new
-project. Once the archetpye generation is finished, change in the newly
+You will be prompted for your group and artifact id for your new
+project. You also have to set an application name and an application secret.
+Make your secret "secure", as some functions, like sessions and authentication rely on it.
+Once the archetpye generation is finished, change in your newly
 created project directory and execute the following command:
 
 ----------------
 mvn clean package
 ----------------
 
-Once the compilation is finished, you can start the development mode, by executing the following maven
+Once the compilation is finished, you can start the development (dev) mode, by executing the following maven
 command
 
 ----------------
@@ -132,11 +134,14 @@ mvn mangooio:run
 
 Once maven has downloaded all required dependencies you should see the
 mangoo I/O logo showing you that your new application has started
-successuflly.
+successfully.
 
 ---------------------------------------------------------------------------------------------------------
 INFO  mangoo.io.core.Bootstrap - mangoo application started @localhost:8080 in 881 ms in dev mode. Enjoy.
 ---------------------------------------------------------------------------------------------------------
+
+[NOTE]
+Whenever you see the mangoo I/O logo the application has started successfully.
 
 Now open your default web browser an say hello to your first mangoo I/O
 application by opening the following URL
@@ -145,26 +150,27 @@ application by opening the following URL
 http://localhost:8080
 ---------------------
 
-[IMPORTANT] 
-.Using hot-compiling
-==== 
-mangoo I/O supports hot-compiling in dev mode when started with "mvn mangooio:run". This means, that when you change a source file in your IDE
-of choice the changes are available more or less instantly (actually in most cases in less than a second).
-As mangoo I/O relies on Java 8, it is important that the files are compiled with the correct flags.
+[IMPORTANT]
+.Using hot-compiling in dev mode
+====
+When in dev mode mangoo I/O supports hot-compiling. This means, that when you change a source file in your IDE
+of choice the changes are available more or less instantly (in most cases in less than a second).
+As mangoo I/O relies on Java 8, it is important that the files are compiled with the correct flags. To be more
+precise, mangoo I/O relies on the parameter flag that enables easy lookup of method parameters.
 
-If you are using *Eclipse*, please make sure that you have checked the following option: +  
+If you are using *Eclipse*, please make sure that you have checked the following option: +
 Settings -> Compiler -> Check "Store information about method parameter (usable via reflection)"
 
-If you are using *IntelliJ*, please make sure that you have checked the following option: +  
+If you are using *IntelliJ*, please make sure that you have checked the following option: +
 Settings -> Java Compiler -> Add additional line parameters: -> "-parameters" (without the qoutes)
 
-If you don't do this, mangoo I/O will not handle passing request parameters correctly in dev mode.
+If you don't do this, mangoo I/O will not handle passing request parameters at all in dev mode.
 
 ====
 
 === Basic structure of a mangoo I/O application
 
-If you have create a new mangoo I/O application via the maven archetype,
+If you have created a new mangoo I/O application via the maven archetype,
 this is the basic structure of a the application
 
 ------------------------------------------------------------------------------------------------------
@@ -176,20 +182,20 @@ this is the basic structure of a the application
         │   ├── conf
         │   │   ├── Lifecycle.java                  //Hook in the application startup process
         │   │   ├── Module.java                     //Custom Google Guice bindings
-        │   │   └── Routes.java                     //Configure your HTTP calls to classes and methods
+        │   │   └── Routes.java                     //Configuratio for HTTP requests to classes and methods
         │   └── controllers
-        │       └── ApplicationController.java
+        │       └── ApplicationController.java      //Optional example controller in an optional package
         └── resources
-            ├── application.conf                    //Application configuration
+            ├── application.yaml                    //Main application configuration
             ├── ehcache.xml                         //Cache configuration
-            ├── files                               //Serving static files and assets
-            ├── logback.prod.xml                    //Logback configuration for prod mode
+            ├── files                               //Folder for serving static files (e.g. assets, robots.txt)
+            ├── logback.prod.xml                    //Optional logback configuration for prod mode
             ├── logback.xml                         //Default logback configuration
-            ├── templates
+            ├── templates                           //Templates folder
             │   ├── ApplicationController
             │   │   └── index.ftl
-            │   └── layout.ftl                       //Bases layout for all templates
-            └── translations                         //Containg all translation files
+            │   └── layout.ftl                       //Base layout for all templates
+            └── translations                         //Translation files
                 ├── messages.properties
                 ├── messages_de.properties
                 └── messages_en.properties
@@ -207,8 +213,8 @@ Module.java
 Routes.java
 --------------
 
-The Lifecycle class is used for hooking the application startup process.
-Module class is used for you custom Google Guice bindings and the Routes
+The Lifecycle class is used for hooking into the application startup process.
+The Module class is used for you custom Google Guice bindings and the Routes
 class contains you mapped request to controllers and methods.
 
 The application must have a package src/main/resources with the
@@ -218,14 +224,14 @@ following files and folders
 /files
 /templates
 /translations
-application.conf
+application.yaml
 ehcache.xml
 logback.xml
 ----------------
 
 The /files folder contains all static files (e.g. robots.txt or JS/CSS
 assets) - see link:#16-serving-assets[16. Serving assets] for more
-information on that topic. The /templates folder contains all templates
+information on serving static files. The /templates folder contains all templates
 of your application. By convention the /templates folder has a
 layout.ftl file which contains the basic layout of your application.
 Each controller class must have a (case-sensitive) corresponding
@@ -235,22 +241,26 @@ are not rendering any template from your controller (e.g. sending JSON),
 than this is of course optional.
 
 The /translations folder contains all translation files of your
-application. Each file starts with "messages", followed by the language
+application. Each file starts with "messages", followed by a "_"  and the language
 and a .properties suffix. Even if you have no translations on your
 application, by convention there has to be at least a
 messages.properties file in your /translations folder.
 
 == Configuration
 
-mangoo I/O consist of one configuration file for your hole application.
-The application.conf file is located in the src/main/resources folder,
-along with all other files, that are not pure java. You can add and
-customize settings, simply by adding an appropraite value in the
-application.conf, for example
+mangoo I/O relies on one configuration file for your hole application.
+The application.yaml file is located in the src/main/resources folder,
+along with all other files, that are not java classes. You can add and
+customize settings, simply by adding an appropriate value in the
+application.yaml, for example
 
 ------------------------
-application.name=myValue
+application:
+  name=myValue
 ------------------------
+
+The application.yaml uses https://de.wikipedia.org/wiki/YAML[YAML] for setting
+the configuration values.
 
 There is a number of default properties which configure a mangoo I/O
 application. See link:#c-configuration-options[C. Configuration options]
@@ -266,9 +276,9 @@ are starting your mangoo application for development with
 mvn mangooio:run
 ----------------
 
-The test mode is automatically activated when executing unit test, and
-the prod mode is activated by default. You can overwrite this
-programatically, by setting a system property
+The test mode is automatically activated when executing unit test and using the
+provided mangoo I/O test utilities. The prod mode is activated by default when no
+other mode is fiven. You can overwrite this programatically, by setting a system property
 
 ----------------------------------------------
 System.setProperty("application.mode", "dev");
@@ -286,13 +296,24 @@ You can create mode specific configuration by prefxing a configuration
 value.
 
 ---------------------------------
-%test.smtp.host=localhost
-%prod.smtp.host=smtp.mydomain.com
+default:
+    application:
+        host       : localhost
+        port       : 8080
+
+test:
+    application:
+        port       : 10808
+
 ---------------------------------
 
 If no mode specific configuration is available, mangoo I/O will look up
 the non-prefixed value. If mangoo I/O can find a non-prefixed value it
 will set the default value.
+
+It is recommended to use the non-prefixed values for prod configuration
+and overwrite this values with mode specific values, keeping the configuration
+values to a minimum.
 
 == Logging
 
@@ -300,6 +321,7 @@ mangoo I/O uses http://logback.qos.ch[Logback] for logging, enabling you
 a variate of of loggers to append to. If you are familiar with log4j,
 creating a new logger instance is trivial
 
+[source,java]
 -------------------------------------------------------------------------
 private static final Logger LOG = LoggerFactory.getLogger(MyClass.class);
 -------------------------------------------------------------------------
@@ -307,17 +329,17 @@ private static final Logger LOG = LoggerFactory.getLogger(MyClass.class);
 You can configure your appenders in the logback.xml file located in
 src/main/resources. By convention, there is also a special logback
 configuration file for the prod mode. This file is called
-logback.prod.xml and automatically used, when you are in prod mode. If
-this file is not present, mangoo I/O will fallback to logback.xml
+logback.prod.xml and automatically used, when you are in prod mode. This file is
+optional and if this file is not present, mangoo I/O will fallback to logback.xml
 
 == Routing
 
 One of the main pieces of a mangoo I/O application is the mapping of
-requests to controllers and their methods. Whether if you render a
-template, sending JSON or just sending a HTTP OK. Every request has to
+requests to controllers classes and their methods. Whether if you render a
+template, sending JSON or just sending a HTTP OK, every request has to
 be mapped. This mapping is done in the Routes.java class, which you'll
-find the /conf package of your application. Request mappings can be done
-in a fluent way by using the Router class.
+find in the /conf package of your application. Request mappings can be done
+in a fluent way by using the static Router class.
 
 [source,java]
 -------------------------------------------------------------------------------------------------
@@ -336,6 +358,7 @@ just returns a HTTP Status, must return a Response. This is handled by
 using the Response class of mangoo I/O. Here is an example of how a
 controller method may look like.
 
+[source,java]
 -----------------------------
 public Response index() {
     return Response.withOk();
@@ -351,6 +374,7 @@ the client.
 mangoo I/O makes it very easy to handle request or query parameter. Lets
 imagine you have the following mapping in your route configuration
 
+[source,java]
 ----------------------------------------------------------------------------------------------------------
 Router.mapRequest(Methods.GET).toUrl("/user/{id}").onClassAndMethod(ApplicationController.class, "index");
 ----------------------------------------------------------------------------------------------------------
@@ -368,13 +392,14 @@ To access both the request parameter and the query parameter, you can
 simply add the names of the parameters along with the data type to your
 controller method
 
+[source,java]
 -------------------------------------------
 public Response index(int id, String foo) {
     return Response.withOk();
 }
 -------------------------------------------
 
-NOTE: Double and Float values are always passed with "." seperatation, either if you pass the query or request parameter with "," seperation. 
+NOTE: Double and Float values are always passed with "." separation, either if you pass the query or request parameter with "," separation.
 
 == Lifecycle
 
@@ -384,6 +409,7 @@ mangoo I/O offers the Lifecycle class, which can be found in the /conf
 package of your application. Here is an example of how the Lifecycle
 class may look like.
 
+[source,java]
 ---------------------------------------------------
 package conf;
 
@@ -403,10 +429,11 @@ public class Lifecycle implements MangooLifecycle {
 
 Please note, that the Lifecycle class doesn't have to be named
 "Lifecycle", but must implement the MangooLifecycle interface and that
-you have to bind the implementation using Google Guice in you Module
+you have to bind the implementation using Google Guice in your Module
 class. The module class is also located in the /conf package in your
-application.
+application. This class can also hold other custom Google Guice bindings.
 
+[source,java]
 --------------------------------------------------------
 package conf;
 
@@ -434,6 +461,7 @@ To access a form submitted to a controller class, you can simply pass
 the mangoo I/O Form class. Here is an example of how this might look
 like
 
+[source,java]
 ----------------------------------
 public Response index(Form form) {
     ...
@@ -441,13 +469,14 @@ public Response index(Form form) {
 
 ----------------------------------
 
-Please note, that the Form class is only avalabile if the request is
-mapped as a POST or PUT method.
+[NOTE]
+The Form class is only available if the request is mapped as a POST or PUT method.
 
 === Form validation
 
 Lets image you have the following form in your template
 
+[source,html]
 ------------------------------------------
 <form method="/save" method="post">
     <input type="text" name="firstname" />
@@ -457,9 +486,10 @@ Lets image you have the following form in your template
 ------------------------------------------
 
 No lets imagine that you want to validate, that the firstname and
-lastname from the request is not empty. mangoo I/O offers some convinent
+lastname from the request is not empty. mangoo I/O offers some convenient
 functions to validate the submitted form values.
 
+[source,java]
 ---------------------------------
 public Response form(Form form) {
     form.email("email");
@@ -485,6 +515,7 @@ can be handled or not.
 To show an error in a template, simply pass the form class back to the
 template and check for an error on a spcific field
 
+[source,html]
 -----------------------------------------
 <#if form.hasError("myField")> ... </#if>
 -----------------------------------------
@@ -492,9 +523,9 @@ template and check for an error on a spcific field
 This is useful if you want to change the CSS style or display an error
 message when the submitted form is not valid.
 
-To display a form specific message you can use the error method on a
-form
+To display a form specific message you can use the error method on a form field
 
+[source,html]
 -----------------------
 ${form.error("myField)}
 -----------------------
@@ -506,14 +537,21 @@ Firstname can not be blank
 --------------------------
 
 The error messages are defined in your messages.properties file (or for
-each language). There are some defeault messages, but they can be
+each language). There are some default error messages, but they can be
 overwritten with custom error messages. If you overwrite a form
-validation message you have to use the form.validation prefix
+validation message you have to use the form prefix
 
 --------------------------------------------------------
-form.validation.email=Please enter a valid eMail address
-form.validation.required=The field {0} can not be blank
-form.validatio.match=The fields {0} and {1} must match
+form.required={0} is required
+form.min={0} must be at least {1} characters
+form.max={0} can be max {1} characters
+form.exactMatch={0} must exactly match {1}
+form.match={0} must match {1}
+form.email={0} must be a valid eMail address
+form.ipv4={0} must be a valid IPv4 address
+form.ipv6={0} must be a valid IPv6 address
+form.range={0} must be between {1} and {2} characters
+form.url={0} must be a valid URL
 --------------------------------------------------------
 
 The prefix follows the field type (email, required, match, etc.) for the
@@ -522,18 +560,21 @@ message.
 === CSRF Protection
 
 mangoo I/O allows you to retrieve an authenticity token for protection
-against CSRF-requests. You can either get a prefilled hidden input field
-or simply the token itself.
+against https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery[CSRF].
+You can either obtain a prefilled hidden input field for your form simply
+the token itself.
 
 To get the prefilled hidden input field, use the following tag in your
 template
 
+[source,html]
 --------------------
 <@authenticityForm/>
 --------------------
 
 To get the token, use the following tag in your template
 
+[source,html]
 ---------------------
 <@authenticityToken/>
 ---------------------
@@ -543,25 +584,28 @@ token in your controller. mangoo I/O offers a filter for checking the
 correctness of the token. Just add the following filter to your
 controller class or method.
 
+[source,java]
 ------------------------------------
 FilterWith(AuthenticityFilter.class)
 ------------------------------------
 
-If the token is invalid the request will be redirected to the defailt
+If the token is invalid the request will be redirected to the default
 403 Forbidden page.
 
 == Caching
 
-mangoo I/O uses Ehcache for storing and accessing values in-memory. To
-use the cache in your application, simply inject the cache class in your
+mangoo I/O uses http://ehcache.org/[Ehcache] for storing and accessing values
+in-memory. To use the cache in your application, simply inject the cache class
+in your
 class.
 
+[source,java]
 --------------------
 @Inject
 private Cache cache;
 --------------------
 
-The cache offers some convinent functions for adding and removing values
+The cache offers some convenient functions for adding and removing values
 from the cache.
 
 You can configure your cache settings, by editing the ehcache.xml file
@@ -576,6 +620,7 @@ Framework] for creating and executing periodic tasks. To create a new
 task, create a simple Pojo that implements the Job interface from
 Quartz.
 
+[source,java]
 -----------------------------------------------------------------------------------------------------
 package jobs;
 
@@ -595,11 +640,12 @@ public class MyJob implements Job {
 }
 -----------------------------------------------------------------------------------------------------
 
-As this class is not scheduled or executed at all right now, we have to
+This class is not scheduled or executed at all right now, you have to
 tell the scheduler when to execute the task and to start the scheduler
 itself. It is recommended to use the Lifecycle for scheduling tasks and
 starting the scheduler.
 
+[source,java]
 ----------------------------------------------------------------------------------------------------------------------------------
 package conf;
 
@@ -637,13 +683,15 @@ can start the scheduler by simply calling the start method.
 === Custom Quartz Scheduler configuration
 
 If you require a custom configuration for quartz inside mangoo I/O you
-can use the application.conf to pass any options to quartz as you
+can use the application.yaml to pass any options to quartz as you
 required. Simply add the configuration option with the appropriate
 prefix org.quartz.
 
 -------------------------------------
-org.quartz.scheduler.instanceName=Foo
-org.quartz.scheduler.instanceId=Bar
+org:
+  quartz:
+    scheduler.instanceName=Foo
+    scheduler.instanceId=Bar
 -------------------------------------
 
 Check out the
@@ -655,13 +703,13 @@ Scheudler configuration documentation] for more information.
 mangoo I/O uses https://github.com/boonproject/boon[boon] for rendering
 and parsing JSON. boon is a
 http://rick-hightower.blogspot.de/2014/01/boon-json-in-five-minutes-faster-json.htm[very
-fast] JSON handler with its main focus on serializing and deserializing
-objects.
+fast] JSON handler with its main focus on serializing and deserializing of objects.
 
 === JSON output
 
-Consider for example the following class.
+Consider for example the following pojo.
 
+[source,java]
 ---------------------------------------------------------------
 package models;
 
@@ -690,9 +738,10 @@ public class Person {
 }
 ---------------------------------------------------------------
 
-To create a new Person and send it to a client you simply can do this in
+To create a new person and send it to a client you simply can do this in
 a controller
 
+[source,java]
 ----------------------------------------------------------
 package controllers;
 
@@ -709,6 +758,7 @@ public class JsonController {
 
 The output of the response will look as follows
 
+[source,json]
 --------------------------
 {
     "firstname" : "Peter",
@@ -719,15 +769,16 @@ The output of the response will look as follows
 
 === JSON input
 
-To retrieve the JSON send to mangoo I/O you have three options:
-automatic object covertion, generic object convert or the raw JSON
+To retrieve JSON send your mangoo I/O you have three options:
+automatic object serialization, generic object convert or the raw JSON
 string.
 
 ==== Automatic object convertion
 
-Consider the Person class from 10.1. and the following JSON send to
+Consider the person class from 10.1. and the following JSON send to
 mangoo I/O
 
+[source,json]
 ---------------------------
 {
     "firstname" : "Petyr",
@@ -736,9 +787,10 @@ mangoo I/O
 }
 ---------------------------
 
-To handle this JSON with automatic object convertion you can simply can
-do this in a controller
+To handle this JSON with automatic object convertion you can simply do this
+in a controller
 
+[source,java]
 -----------------------------------------------
 package controllers;
 
@@ -754,14 +806,15 @@ public class JsonController {
 -----------------------------------------------
 
 You just pass the object you want to convert from the JSON request and
-mangoo I/O automatically makes the convertion.
+mangoo I/O automatically makes the serialization to your pojo.
 
 ==== Generic object convertion
 
-If you don't have a bean you want to map the request JSON content,
-mangoo I/O offers you a generic way of retriving this content through
+If you don't have a pojo you want to map the request JSON content,
+mangoo I/O offers you a generic way of retrieving the content through
 the object body of a request
 
+[source,java]
 --------------------------------------------
 package controllers;
 
@@ -777,10 +830,11 @@ public class MyController {
 
 ==== Handle raw JSON
 
-If you don't want mangoo I/O to automatically convert an JSON input you
-can also work with the raw JSON conent. The body object contains the raw
+If you don't want mangoo I/O to automatically convert a JSON input you
+can also work with the raw JSON content. The body object contains the raw
 values of a request. Here is an example
 
+[source,java]
 -----------------------------------------
 package controllers;
 
@@ -798,10 +852,11 @@ public class MyController {
 
 mangoo I/O uses the mature and well documentated
 https://commons.apache.org/proper/commons-email/[Apache Commons Email].
-Therefore it offers some convinent functions to make sending eMails as
+mangoo I/O offers some convenient functions to make sending eMails as
 easy as possible. If you want to send an eMail via mangoo I/O you need
-the Mailer oject. This can be easily injected in your controller.
+the Mailer object. This can be easily injected in your controller.
 
+[source,java]
 ----------------------
 @Inject
 private Mailer mailer;
@@ -809,16 +864,19 @@ private Mailer mailer;
 
 The Mailer object offers three functions for sending emails: sending a
 plain text eMail, sending a html eMail and sending a multipart eMail.
-Just pass the eMail object you want to send, to the appropiate Mailer
+Just create an eMail object you want to send and pass it to the appropiate mailer
 function. You can check the
 https://commons.apache.org/proper/commons-email/userguide.html[Apache
-Commons Email documentation] on how to create the eMail objects.
+Commons Email documentation] on how to create the eMail objects you require.
 
-Please note, that you dont' have to create any configuraiton. This is
-all done via the application.conf of mangoo I/O, so you set your host,
-port, username, password and ssl usage only once. Here is an example of
-how to send a plain text message.
+[NOTE]
+You dont' have to create any SMTP configuration programmatically. This is
+all done via the application.yaml of your mangoo I/O application. So you set your host,
+port, username, password and ssl usage only once.
 
+Here is an example of how to send a plain text message.
+
+[source,java]
 ----------------------------------------------------
 package mangoo.controllers;
 
@@ -845,8 +903,9 @@ public class MailController {
 ----------------------------------------------------
 
 If you want to an eMail with a message body that is rendered from a
-Freemarker template you use the built-in TemplateEngine.
+Freemarker template you can use the mangoo I/O TemplateEngine.
 
+[source,java]
 ------------------------------------------------------------------------------------------------------------------
 package mangoo.controllers;
 
@@ -896,9 +955,10 @@ public class MailController {
 
 Genereal information on using WebScokets can be found
 http://en.wikipedia.org/wiki/WebSocket[here]. To use WebSockets in
-mangoo I/O you have to extend the MangooWebSocket class. Extending this
+mangoo I/O you have to extend the MangooWebSocket class in your WebSocket controller. Extending this
 class offers you the entry points for WebSockets methods.
 
+[source,java]
 -------------------------------------------------------------------------------------------------
 package controllers;
 
@@ -931,9 +991,10 @@ public class WebSocketController extends MangooWebSocket {
 }
 -------------------------------------------------------------------------------------------------
 
-To use WebSockets on a specific request you have to map your create
-WebSocketController in the Routes class with an appriopriate method.
+To use WebSockets on a specific request you have to map your WebSocket
+Controller in the Routes class with an appropriate method.
 
+[source,java]
 -----------------------------------------------------------------------------
 Router.mapWebSocket().toUrl("/websocket").onClass(WebSocketController.class);
 -----------------------------------------------------------------------------
@@ -946,19 +1007,21 @@ WebScoketController at the URL "/websocket".
 Translations in mangoo I/O are based on the standard Locale of java. The
 Locale is determind from each request from the Accept-Language header of
 the client browser. If the locale can not be determend from the request
-the default language of the application from application.conf will be
+the default language of the application from application.yaml will be
 used. If this configuration is not set, mangoo I/O will default to "en".
 
 If you want to force the language you, simply set the locale in a filter
 - see link:14.%20Filters[14. Filters] for more information on filters.
 
+[source,java]
 ----------------------------------
 Locale.setDefault(Locale.ENGLISH);
 ----------------------------------
 
-mangoo I/O offers you a convinent way of accessing translations. The get
+mangoo I/O offers you a convenient way of accessing translations. To get
 hold of the translations simply inject the messages class.
 
+[source,java]
 ---------------------------------------------------
 package controllers;
 
@@ -982,8 +1045,8 @@ public class I18nController {
 ---------------------------------------------------
 
 The messages class offers you two methods of retrieving translations
-from the resources bunldes. In this example a translation is called with
-and without passing parameters is called. The corresponding translation
+from the resources bundles. In this example a translation is called with
+and without passing parameters. The corresponding translation
 entries in the resource bundle would look like this
 
 -----------------------------------------------------------------
@@ -991,19 +1054,21 @@ my.translation=This is a translation
 my.othertranslation=This is a translation with the paramater: {0}
 -----------------------------------------------------------------
 
-Note the \{0} which will be replaced by the passed paramter "foo".
+Note the {0} which will be replaced by the passed paramter "foo".
 
 === Translation in templates
 
-To access translation in a template, you can us a special tag a long
-with the key for your translation.
+To access translation in a template, you can us a special tag with the key
+for your translation.
 
+[source,html]
 -------------------------
 ${i18n("my.translation")}
 -------------------------
 
 To pass a parameter to the translation simply append the parameter
 
+[source,html]
 -------------------------------------
 ${i18n("my.othertranslation", "foo")}
 -------------------------------------
@@ -1015,14 +1080,16 @@ empty value.
 
 Filters are a way of executing code before each controller or each
 method is executed. To execute a filter before a controller or method,
-you can use the @FilterWith annotation.
+you can use the @FilterWith annotation. In fact, this is the only annotation
+that comes from the mangoo I/O framework directly.
 
+[source,java]
 ---------------------------
 @FilterWith(MyFilter.class)
 ---------------------------
 
-There are two types of filters in mangoo I/O: Controller/Method filter
-and Global filter.
+There are two types of filters in mangoo I/O: Controller/Method filtera
+and a global filter.
 
 === Controller or method filter
 
@@ -1031,6 +1098,7 @@ added to a controller class the filter will be exectued on every method
 in the class. if added to a method, the filter will only be executed on
 that method.
 
+[source,java]
 ----------------------------------------------------------
 package controllers;
 
@@ -1053,11 +1121,12 @@ public class MyController {
 ----------------------------------------------------------
 
 On the above example, the Filter MyFilter will be executed when the
-token and the valid method is called. The Filter AuthenticityFilter will
-also be called, when the valid method is called.
+token() and the valid() method is called. The Filter AuthenticityFilter will
+also be called, when the valid() method is called.
 
 You can assign multiple filters to a controller or a method.
 
+[source,java]
 ----------------------------------------------------------
 @FilterWith({"MyFirstFilter.class, MySecondFilter.class"})
 ----------------------------------------------------------
@@ -1069,6 +1138,7 @@ They are executed in order.
 A controller or method filter must implement the MangooControllerFilter
 interface.
 
+[source,java]
 ---------------------------------------------------------
 package mangoo.io.filters;
 
@@ -1085,15 +1155,16 @@ public class MyFilter implements MangooControllerFilter {
 }
 ---------------------------------------------------------
 
-The main method of a filter is the filter method, which recieves the
-Exchange class. This class gives you a handy of manipulating the
-request/response cycle. A long with other convinent methods, the
-Exchange class enables you access to the Unterdow HttpServerExchange
+The main method of a filter is the filter method, which receives the
+exchange class from mangoo I/O. This class gives you a handy way of manipulating
+the request/response cycle. A long with other convenient methods, the
+exchange class enables you access to the Unterdow HttpServerExchange
 class.
 
-Here is an example in form of the AuthenticityFilter which is used for
-the CSRF checks.
+Here is an example of the AuthenticityFilter which is used for the CSRF checks,
+showing you if how to interact with the Undertow request/response cycle.
 
+[source,java]
 -----------------------------------------------------------------------------------------------------
 public class AuthenticityFilter implements MangooControllerFilter {
 
@@ -1112,18 +1183,19 @@ public class AuthenticityFilter implements MangooControllerFilter {
 -----------------------------------------------------------------------------------------------------
 
 As you can see in the example, you can change the status code, a long
-with the content of the response inside a filter.
+with the content of the response inside a filter. The exchange.getHttpServerExchange()
+offers even more method for customization.
 
 One important part in a filter is the return value. If the filter method
 returns true, it tells mangoo I/O to continue its executing and call
 further filter or the requested controller method. If the filter method
-returns false, then mangoo I/O stops the execution of further filters
-and controller method.
+returns false mangoo I/O stops the execution of further filters
+and controller method. One can say, that the request ends with the filter.
 
 === Global filter
 
 Besides the controller class or method filter, there is a special filter
-which can be executed globaly. This means, that this filter is called on
+which can be executed globally. This means, that this filter is called on
 every mapped request in the application. This is useful if you have to
 force the language for your application or if you have an application
 that does not have any public content and requires authentication for
@@ -1132,6 +1204,7 @@ every request.
 A global filter works similar to a controller or method filter, but the
 filter has to implement the MangooRequestFilter interface instead.
 
+[source,java]
 ------------------------------------------------------------
 package filters;
 
@@ -1148,6 +1221,9 @@ public class MyGlobalFilter implements MangooRequestFilter {
 }
 ------------------------------------------------------------
 
+[NOTE]
+There can only be one global filter in your mangoo I/O application.
+
 == Sessions
 
 With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
@@ -1155,13 +1231,14 @@ nothing architecture] in mind mangoo I/O uses a so called client-side
 session. This means, that all information for a specific user is stored
 on the client-side inside a cookie. The big advantage of this concept
 is, that you can scale your application very easy, because nothing
-conntects a specific user to a specific application instance. The
-downside of this archtecture is, that you can only stored limited data
-in the cookie (around 4k).
+connects a specific user to a specific mangoo I/O instance. The
+downside of this architecture is, that you can only stored limited data
+in the cookie (around 4k of data).
 
 To make use of the mangoo I/O session, you can just pass the Session
 class into your controller method.
 
+[source,java]
 ------------------------------------------------------
 package controllers;
 
@@ -1176,21 +1253,24 @@ public class SessionController {
 }
 ------------------------------------------------------
 
-The Session class offers you some convinent method for adding, deleting
-or completly erasing the session.
+The Session class offers you some convenient methods for adding, deleting
+or completly erasing session data.
 
 By default the session cookie has a lifespan of one day. This, a long
 with the name of the cookie can be configure using the following
-properties in the application.conf
+properties in the application.yaml
 
 ---------------------------------------
-cookie.name=${application.name}-SESSION
-cookie.expires=86400
+cookie:
+  expires  : 86400
 ---------------------------------------
+
+=== Session data in templates
 
 To access the set Session values, simply call the appropriate key in the
 template.
 
+[source,html]
 --------------
 ${session.foo}
 --------------
@@ -1204,14 +1284,15 @@ By default the values in the client-side cookie are signed with the
 application secret using SHA2(SHA-384), making manipulation of the
 values very hard. The security of the client-side cookie can be further
 increased by using AES encryption. To activate cookie encryption of the
-session cookie, set the following propertiy in your application.conf
+session cookie, set the following propertiy in your application.yaml
 
 ----------------------
-cookie.encryption=true
+cookie:
+  encryption  : true
 ----------------------
 
 The encryption strength is based on the length of your
-application.secret configured in your application.conf. If your
+application.secret configured in your application.yaml. If your
 application.secret is more or equal than 32 characters, AES-256 will be
 used. If you secret is more or equal than 24 characters, AES-192 will be
 used. If your secret is more or equal thant 16 characters AES-128 will
@@ -1222,10 +1303,11 @@ the strongest key possible.
 
 Specially when working with forms it is useful to pass certain
 informations (e.g. error- or success messages) to the next request. To
-do this in a stateless environment mangoo I/O uses the Flass class. This
+do this in a stateless environment, mangoo I/O uses the Flash class. This
 is basically the same mechanism as a session, but all informations
-stored in the flash cookie are disposed once the request is finished.
+are stored in a special flash cookie which is disposed once the request is finished.
 
+[source,java]
 -------------------------------------------
 package controllers;
 
@@ -1244,14 +1326,15 @@ public class FlashController {
 }
 -------------------------------------------
 
-The flash class has three convinent methods for the commonly used
+The Flash class has three convenient methods for the commonly used
 scenarios: success, warning and error. This methods will automatically
-create a key "success", "warning" or "error" in the Flash class. Besides
-that, you can pass custom values to the Flash class.
+create a key "success", "warning" or "error" in the flash class. Besides
+that, you can pass custom values to the flash class.
 
-To access the set Flash values, simply call the appropriate key in the
+To access the set flash values, simply call the appropriate key in the
 template.
 
+[source,html]
 ----------------
 ${flash.success}
 ${flash.warning}
@@ -1271,9 +1354,10 @@ and authentication process.
 === Basic authentication
 
 The HTTP Basic authentication in mangoo I/O uses a predefined filter:
-BasicAuthenticationFilter. So the first step to enable Basic
+BasicAuthenticationFilter.class. So the first step to enable Basic
 authentication would be to have a annotated controller or method.
 
+[source,java]
 -----------------------------------------------
 package controllers;
 
@@ -1292,9 +1376,10 @@ public class AuthenticationController {
 -----------------------------------------------
 
 To validate credentials passed from the client you need some place to do
-so. Therefore you have to bind the authentication process via the Google
-Guice configuration in the Module class.
+this. Therefore you have to bind the authentication process via the Google
+Guice configuration in your Module class.
 
+[source,html]
 --------------------------------------------------------------------------------------------
 package conf;
 
@@ -1316,7 +1401,7 @@ public class Module extends AbstractModule {
 
 In this example a Java 8 lambda expression is used to validate the
 passed credentials. Of coures, an instance of the MangooAuthenticator
-can be passed in any other way. Just make sure you implemnt the
+can be passed in any other way. Just make sure you implement the
 MangooAuthenticator interface and bind your implementation via the
 Module class.
 
@@ -1324,12 +1409,13 @@ Module class.
 
 mangoo I/O supports you when a custom registration with a custom login
 process is required. Although mangoo I/O does not store any credentials
-or user data for you, it gives you some handy function to making
-hangling authentication as easy as possible.
+or user data for you, it gives you some handy functions to making
+handling authentication as easy as possible.
 
 mangoo I/O offers the Authentication class which can be simply injected
 into a controller class.
 
+[source,java]
 --------------------------------------
 @Inject
 private Authentication authentication;
@@ -1337,12 +1423,13 @@ private Authentication authentication;
 
 The authentication uses http://de.wikipedia.org/wiki/Bcrypt[BCrypt]
 provided by http://www.mindrot.org/projects/jBCrypt[jBCrypt] for
-password hashing, which means, that you don't have to store a salt along
-with the user. Just the hashed password. This also means, that you have
-to hash the user password with the following provided message and store
-this hash value with the user. This hashed value can be created with the
-following method
+password hashing. This means, that you don't have to store a salt along
+with the user data. Just the hashed password. This also means, that you have
+to hash the user password with the provided function in the authentication class
+and store this hash value with the user data. This hashed value can be created with
+the following method
 
+[source,java]
 ----------------------------------
 getHashedPassword(String password)
 ----------------------------------
@@ -1353,6 +1440,7 @@ have to store it with your user. mangoo I/O does not do that for you.
 The Authentication class offers convenient functions to perform
 authentication. The main methods are
 
+[source,java]
 ------------------------------------------
 getAuthenticatedUser()
 authenticate(String password, String hash)
@@ -1361,8 +1449,9 @@ logout()
 ------------------------------------------
 
 To perform a check, if a user is authenticated mangoo I/O offers a
-predefined filter ready to user on controller classes or methods.
+predefined filter ready to use on controller classes or methods.
 
+[source,java]
 ---------------------------------------
 @FilterWith(AuthenticationFilter.class)
 ---------------------------------------
@@ -1375,25 +1464,26 @@ custom Authentication.
 
 == Handling static files and assets
 
-There is often a szenario where you have to serve static files or assets
+There is often a scenario where you have to serve static files or assets
 to the client. Take the robots.txt or CSS and JS files for example.
-mangoo I/O ofters a convinent way of doing this. The src/main/resources
-package contains a folder called /files which is the entry point for
-serving static files an assets. To serve a static file or asset you
+mangoo I/O offers a convenient way of doing this. The src/main/resources
+package must contain a folder called /files which is the entry point for
+serving static files and assets. To serve a static file or asset you
 first have to create a mapping in the Routes class. You have to decide
 if you want to serve a static file (a so called ResourceFile) or a
-complete filter with all its sub-files and sub-folders (a so called
+complete folder with all its sub-files and sub-folders (a so called
 ResourcePath)
 
+[source,java]
 ----------------------------------------------
 Router.mapResourceFile().toUrl("/robots.txt");
 Router.mapResourcePath().toUrl("/assets/");
 ----------------------------------------------
 
-The above example maps a resource file localed in
+The above example maps a resource file located in
 src/main/resources/files/robots.txt to the request URI /robots.txt and a
 resource path located in src/main/resources/files/assets/ to all
-requirest with the prefix /assets/ in the URI. For example
+requests with the prefix /assets/ in the URI. For example
 
 -------------------------------------
 http://mydomain.com/robots.txt
@@ -1403,22 +1493,24 @@ http://mydomain.com/assets/mycss.css
 === On-the-fly asset minification
 
 When in dev mode, mangoo I/O offers you the ability to minify CSS and JS
-resources on-the-fly, giving a front-end developer the oppertunity to
+resources on-the-fly, giving a front-end developer the opportunity to
 work in the raw CSS and JS files and have the minified version linked in
-the default template. Therefore, there is no need for extra minification
-or post processing before deployment to an production environment.
+the default templates of your application. Thus, there is no need for
+extra minification or post processing before deployment to a production environment.
 
 By default minification of CSS and JS resources is disabled and has to
 be enable with the following options
 
 ----------------------
-application.minify.js
-application.minify.css
+application:
+    minify:
+          js     : true
+          css    : true
 ----------------------
 
-By convention, mangoo I/O will check for changes in all files ending
-with .css or .js that have no "min" in their file name and are located
-in the following folder
+By convention, if on-the-fly minification is activated mangoo I/O will check
+for changes in all files ending with .css or .js that have no "min" in their
+file name and are located in the following folder
 
 --------------------------------
 /src/main/resources/files/assets
@@ -1431,7 +1523,7 @@ name, ending with .min.css or .min.js.
 
 == Testing
 
-mangoo I/O ships with some convinent tools for testing your application.
+mangoo I/O ships with some convenient tools for testing your application.
 Please note, that these utilities are not part of the core and come with
 a custom module. This is mainly because you want to set the scope of
 this module to "test" in your maven configuration.
@@ -1446,11 +1538,11 @@ this module to "test" in your maven configuration.
 --------------------------------------------------------
 
 There are two ways of executing unit tests with mangoo I/O. Simple unit
-tests which start the framework, execute the unit test and stopps
-framework. And a TestSuite which starts the framework once, executes all
-tests and stops the framework after all tests are finished. Buth ways
+tests which start the framework, execute the unit test and stop
+framework again and a TestSuite which starts the framework once, executes all
+tests and stops the framework after all tests are finished. Both ways
 have there advantages and disadvantages. When using simple unit tests
-the tests can be executed seperatly, a TestSuite will always run all
+the tests can be executed separately, a TestSuite will always run all
 tests. When using a TestSuite however, the framework needs to be started
 only once needing less time to execute all tests.
 
@@ -1458,10 +1550,11 @@ only once needing less time to execute all tests.
 
 As mangoo I/O is a web framework, the main focus of testing an
 application relies on testing requests and responses as well as frontend
-tests. For request and response tests, mangoo I/O offers the
-MangooRequest class with has a fluen API for executing HTTP requests.
+testing. For request and response tests, mangoo I/O offers the
+MangooRequest class with has a fluent API for executing HTTP requests.
 Here is an example for a unit test.
 
+[source,java]
 ----------------------------------------------------------------------------
 package mangoo.controllers;
 
@@ -1485,16 +1578,15 @@ public class ApplicationControllerTest extends MangooUnit {
     }
 ----------------------------------------------------------------------------
 
-Please note, that you have to extend MangooUnit. Otherwise the framework
-will not start before each unit test and your tests will fail.
+Please note, that you have to extend MangooUnit if you are not using the TestSuite.
+Otherwise the framework will not start before each unit test and your tests will fail.
 
-MangooUnit also offers convinent methods for fron-end testing. Therefore
-mangoo I/O uses
-link:FluentLenium[https://github.com/FluentLenium/FluentLenium]. If you
-have extended the MangooUnit class you are good to go for working with
-FluentLenium. Here is an example of how a FluentLenium test might look
+For frontend testing mangoo I/O uses
+link:FluentLenium[https://github.com/FluentLenium/FluentLenium].
+ Here is an example of how a FluentLenium test might look
 like.
 
+[source,java]
 ------------------------------------------------------------------
 package mangoo.controllers;
 
@@ -1503,7 +1595,7 @@ import mangoo.io.testing.MangooUnit;
 
 import org.junit.Test;
 
-public class FluentTest extends MangooUnit {
+public class FluentTest extends MangooFluent {
 
     @Test
     public void title_of_bing_should_contain_search_query_name() {
@@ -1518,10 +1610,11 @@ public class FluentTest extends MangooUnit {
 === Testing with a TestSuite
 
 Using a TestSuite is mostly suitable for situation where you want to
-startup a for e.g. a database or other proccesses only once and execute
+startup for e.g. a database or other processes only once and execute
 your tests on that instance. For using a TestSuite you need an
 entry-point for the execution which extends MangooRunner.
 
+[source,java]
 ---------------------------------------------
 package mangoo;
 
@@ -1551,7 +1644,7 @@ make Maven aware of you TestSuite class.
 
 By convention the TestSuite will execute all tests that ends with
 "*Test" in their class name. As for the unit tests you don't have to
-extend or implemnt anything additional. If you want to execute
+extend or implement anything additional. If you want to execute
 FluentLenium tests you have to use the native support for FluentLenium
 as the TestSuite does not wrap around FluentLenium in comparison to
 MangooUnit.
@@ -1586,12 +1679,12 @@ java -jar app.jar
 -----------------
 
 This will start mangoo I/O in production mode, using the prod
-configuration from your applicaiton.conf
+configuration from your application.yaml
 
-Please note: Also a the undertow server is production-ready, it is
-highly recommended to use a front-end HTTP server such as nginx or
-Apache to leverage an easy configuraiton for load-balancing, SSL
-configuration, caching, etc.
+[NOTE]
+Also Undertow is production-ready, it is recommended to use a front-end HTTP
+server such as nginx or Apache to leverage an easy configuration for
+load-balancing, SSL configuration, caching, etc.
 
 === Debian init.d script
 
@@ -1708,9 +1801,8 @@ please send an eMail to webmaster@mangoo.io so it can be fixed ASAP.
 == Extensions
 
 Extensions are a way of adding features to mangoo I/O which are not part
-of the core. The most popular example of an extension is a way to
-persist data, as this is not part of the core. Here you'll find a list
-of existing extensions.
+of the core. The most popular example of an extension is persistence,
+as this is not part of the core. Here you'll find a list of existing extensions.
 
 MongoDB Extension
 
@@ -1728,15 +1820,15 @@ https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/site[/
 [appendix]
 == Configuration options
 
-This is an overview of the default configuration options for the
-application.conf and their default values.
+This is an overview of the configuration options for the
+application.yaml and their default values.
 
 |=======================================================================
-|Optione name |Description |Default value |Note
+|*Optione name* |*Description* |*Default value* |*Note*
 |application.secret |The application secret |Random value |Must be at
 least 16 characters
 
-|application.name |The name of the application |mangooio
+|application.name |The name of the application |mangooio|
 
 |application.language |The default language of the application |en |Used
 as a fallback value for Locale
@@ -1750,11 +1842,15 @@ as a fallback value for Locale
 |application.host |The address the undertow server is running on
 |127.0.0.1 |In 99% of all cases, this is the localhost
 
-|application.port |The port the undertow server is listening on |8080
+|application.port |The port the undertow server is listening on |8080 |
 
-|smtp.host |The host of the SMTP server |127.0.0.1
+|cookie.name |The name of the session cookie |$application.name-MANGOOIO-SESSION|
 
-|smtp.port |The port of the SMTP server |25
+|cookie.expires |The time in seconds when the session expires |86400|
+
+|smtp.host |The host of the SMTP server |127.0.0.1|
+
+|smtp.port |The port of the SMTP server |25|
 
 |smtp.username |Username for authentication against the SMTP server
 |none |Only required when using SMTP authentication
@@ -1762,17 +1858,18 @@ as a fallback value for Locale
 |smtp.password |Password for authentication against the SMTP server
 |none |Only required when using SMTP authentication
 
-|smtp.ssl |Whether to use SSL for connecting to the SMTP |false
+|smtp.ssl |Whether to use SSL for connecting to the SMTP |false|
 
 |auth.cookie.name |The name of the authentication cookie
-|$\{application.name}-MANGOO-AUTH
+|$application.name-MANGOO-AUTH|
 
 |auth.cookie.expire |The time in seconds how long the user stays logged
-in even is the browser is closed |42000
+in even is the browser is closed |3600|
 
 |auth.cookie.encrypt |Whether to encrypt the authentication cookie or
-not |false
+not |false|
 
 |auth.login.redirect |The URL a user is redirected when not logged in
-|none
+|none|
+
 |=======================================================================
