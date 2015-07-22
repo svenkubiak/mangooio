@@ -1,4 +1,4 @@
-[![Maven Central](https://img.shields.io/maven-central/v/de.svenkubiak/mangooio.svg)](http://search.maven.org/#search|ga|1|mangooio)
+[![Maven Central](https://img.shields.io/maven-central/v/io.mangoo/mangooio.svg)](http://search.maven.org/#search|ga|1|io.mangoo)
 [![Travis Build Status](https://img.shields.io/travis/svenkubiak/mangooio/master.svg)](http://travis-ci.org/svenkubiak/mangooio)
 
 If this software is useful to you, you can support further development by using Flattr. Thank you!
