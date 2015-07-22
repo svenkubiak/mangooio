@@ -1,8 +1,8 @@
 package conf;
 
-import mangoo.io.interfaces.MangooLifecycle;
-
 import com.google.inject.Singleton;
+
+import io.mangoo.interfaces.MangooLifecycle;
 
 @Singleton
 public class Lifecycle implements MangooLifecycle {

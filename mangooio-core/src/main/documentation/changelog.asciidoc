@@ -2,6 +2,7 @@
 
 == Version 1.0.0 - Released xx.xx.xxxx
 
+* Refactored packaging from mangoo.io to io.mangoo (svenkubiak)
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Added more JavaDoc (svenkubiak)

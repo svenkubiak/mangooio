@@ -137,7 +137,7 @@ mangoo I/O logo showing you that your new application has started
 successfully.
 
 ---------------------------------------------------------------------------------------------------------
-INFO  mangoo.io.core.Bootstrap - mangoo application started @localhost:8080 in 881 ms in dev mode. Enjoy.
+INFO  io.mangoo.core.Bootstrap - mangoo application started @localhost:8080 in 881 ms in dev mode. Enjoy.
 ---------------------------------------------------------------------------------------------------------
 
 [NOTE]
@@ -413,7 +413,7 @@ class may look like.
 ---------------------------------------------------
 package conf;
 
-import mangoo.io.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooLifecycle;
 
 import com.google.inject.Singleton;
 
@@ -437,9 +437,9 @@ application. This class can also hold other custom Google Guice bindings.
 --------------------------------------------------------
 package conf;
 
-import mangoo.io.interfaces.MangooAuthenticator;
-import mangoo.io.interfaces.MangooRequestFilter;
-import mangoo.io.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooAuthenticator;
+import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.MangooLifecycle;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -653,8 +653,8 @@ import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
 import jobs.InfoJob;
-import mangoo.io.interfaces.MangooLifecycle;
-import mangoo.io.scheduler.MangooScheduler;
+import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.scheduler.MangooScheduler;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -745,7 +745,7 @@ a controller
 ----------------------------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 import models.Person;
 
 public class JsonController {
@@ -794,7 +794,7 @@ in a controller
 -----------------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 import models.Person;
 
 public class JsonController {
@@ -818,7 +818,7 @@ the object body of a request
 --------------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 
 public class MyController {
     public Response parse(Body body) {
@@ -838,7 +838,7 @@ values of a request. Here is an example
 -----------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 
 public class MyController {
     public Response parse(Body body) {
@@ -880,7 +880,7 @@ Here is an example of how to send a plain text message.
 ----------------------------------------------------
 package mangoo.controllers;
 
-import mangoo.io.mail.Mailer;
+import io.mangoo.mail.Mailer;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
 import com.google.inject.Inject;
@@ -912,11 +912,11 @@ package mangoo.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
-import mangoo.io.i18n.Messages;
-import mangoo.io.mail.Mailer;
-import mangoo.io.routing.bindings.Flash;
-import mangoo.io.routing.bindings.Session;
-import mangoo.io.templating.TemplateEngine;
+import io.mangoo.i18n.Messages;
+import io.mangoo.mail.Mailer;
+import io.mangoo.routing.bindings.Flash;
+import io.mangoo.routing.bindings.Session;
+import io.mangoo.templating.TemplateEngine;
 
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
@@ -966,7 +966,7 @@ import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.CloseMessage;
 import io.undertow.websockets.core.WebSocketChannel;
-import mangoo.io.interfaces.MangooWebSocket;
+import io.mangoo.interfaces.MangooWebSocket;
 
 public class WebSocketController extends MangooWebSocket {
     @Override
@@ -1027,8 +1027,8 @@ package controllers;
 
 import com.google.inject.Inject;
 
-import mangoo.io.i18n.Messages;
-import mangoo.io.routing.Response;
+import io.mangoo.i18n.Messages;
+import io.mangoo.routing.Response;
 
 public class I18nController {
 
@@ -1102,9 +1102,9 @@ that method.
 ----------------------------------------------------------
 package controllers;
 
-import mangoo.io.annotations.FilterWith;
-import mangoo.io.filters.AuthenticityFilter;
-import mangoo.io.routing.Response;
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.filters.AuthenticityFilter;
+import io.mangoo.routing.Response;
 
 @FilterWith(MyFilter.class)
 public class MyController {
@@ -1142,8 +1142,8 @@ interface.
 ---------------------------------------------------------
 package mangoo.io.filters;
 
-import mangoo.io.interfaces.MangooControllerFilter;
-import mangoo.io.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooControllerFilter;
+import io.mangoo.routing.bindings.Exchange;
 
 public class MyFilter implements MangooControllerFilter {
 
@@ -1208,8 +1208,8 @@ filter has to implement the MangooRequestFilter interface instead.
 ------------------------------------------------------------
 package filters;
 
-import mangoo.io.interfaces.MangooRequestFilter;
-import mangoo.io.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.routing.bindings.Exchange;
 
 public class MyGlobalFilter implements MangooRequestFilter {
 
@@ -1242,8 +1242,8 @@ class into your controller method.
 ------------------------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
-import mangoo.io.routing.bindings.Session;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Session;
 
 public class SessionController {
     public Response session(Session session) {
@@ -1311,8 +1311,8 @@ are stored in a special flash cookie which is disposed once the request is finis
 -------------------------------------------
 package controllers;
 
-import mangoo.io.routing.Response;
-import mangoo.io.routing.bindings.Flash;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Flash;
 
 public class FlashController {
     public Response flash(Flash flash) {
@@ -1361,10 +1361,10 @@ authentication would be to have a annotated controller or method.
 -----------------------------------------------
 package controllers;
 
-import mangoo.io.annotations.FilterWith;
-import mangoo.io.authentication.Authentication;
-import mangoo.io.filters.AuthenticationFilter;
-import mangoo.io.routing.Response;
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.authentication.Authentication;
+import io.mangoo.filters.AuthenticationFilter;
+import io.mangoo.routing.Response;
 
 public class AuthenticationController {
 
@@ -1383,7 +1383,7 @@ Guice configuration in your Module class.
 --------------------------------------------------------------------------------------------
 package conf;
 
-import mangoo.io.interfaces.MangooAuthenticator;
+import io.mangoo.interfaces.MangooAuthenticator;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
@@ -1561,8 +1561,8 @@ package mangoo.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import io.undertow.util.StatusCodes;
-import mangoo.io.testing.MangooRequest;
-import mangoo.io.testing.MangooResponse;
+import io.mangoo.testing.MangooRequest;
+import io.mangoo.testing.MangooResponse;
 
 import org.junit.Test;
 
@@ -1591,7 +1591,7 @@ like.
 package mangoo.controllers;
 
 import static org.junit.Assert.assertTrue;
-import mangoo.io.testing.MangooUnit;
+import io.mangoo.testing.MangooUnit;
 
 import org.junit.Test;
 
@@ -1618,7 +1618,7 @@ entry-point for the execution which extends MangooRunner.
 ---------------------------------------------
 package mangoo;
 
-import mangoo.io.testing.MangooRunner;
+import io.mangoo.testing.MangooRunner;
 
 public class TestSuite extends MangooRunner {
 }

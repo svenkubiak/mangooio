@@ -1,7 +1,7 @@
 package controllers;
 
-import mangoo.io.routing.Response;
-import mangoo.io.routing.bindings.Form;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Form;
 
 public class FormController {
     private static final int MIN_SIZE = 11;

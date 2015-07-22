@@ -1,6 +1,6 @@
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 
 public class ParameterController {
     private static final String FOO = "foo";

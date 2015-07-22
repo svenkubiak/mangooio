@@ -1,7 +1,7 @@
 package controllers;
 
-import mangoo.io.routing.Response;
-import mangoo.io.routing.bindings.Session;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Session;
 
 public class SessionController {
     public Response session(Session session) {

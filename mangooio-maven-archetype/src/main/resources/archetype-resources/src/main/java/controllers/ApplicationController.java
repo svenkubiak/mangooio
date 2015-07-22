@@ -2,7 +2,7 @@ package controllers;
 
 import com.google.inject.Singleton;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 
 @Singleton
 public class ApplicationController {

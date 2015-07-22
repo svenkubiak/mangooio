@@ -1,6 +1,6 @@
 package controllers;
 
-import mangoo.io.routing.Response;
+import io.mangoo.routing.Response;
 import models.Person;
 
 public class JsonController {

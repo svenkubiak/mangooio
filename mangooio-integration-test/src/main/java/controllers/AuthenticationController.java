@@ -1,9 +1,9 @@
 package controllers;
 
-import mangoo.io.annotations.FilterWith;
-import mangoo.io.authentication.Authentication;
-import mangoo.io.filters.AuthenticationFilter;
-import mangoo.io.routing.Response;
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.authentication.Authentication;
+import io.mangoo.filters.AuthenticationFilter;
+import io.mangoo.routing.Response;
 
 public class AuthenticationController {
     

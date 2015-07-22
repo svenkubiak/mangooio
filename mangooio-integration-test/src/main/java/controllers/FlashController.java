@@ -1,7 +1,7 @@
 package controllers;
 
-import mangoo.io.routing.Response;
-import mangoo.io.routing.bindings.Flash;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Flash;
 
 public class FlashController {
     private static final String SUCCESS = "success";

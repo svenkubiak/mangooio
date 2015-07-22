@@ -1,6 +1,6 @@
 package conf;
 
-import mangoo.io.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooLifecycle;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;

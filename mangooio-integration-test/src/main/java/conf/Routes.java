@@ -11,9 +11,9 @@ import controllers.JsonController;
 import controllers.ParameterController;
 import controllers.SessionController;
 import controllers.WebSocketController;
+import io.mangoo.interfaces.MangooRoutes;
+import io.mangoo.routing.Router;
 import io.undertow.util.Methods;
-import mangoo.io.interfaces.MangooRoutes;
-import mangoo.io.routing.Router;
 
 public class Routes implements MangooRoutes {
     @Override

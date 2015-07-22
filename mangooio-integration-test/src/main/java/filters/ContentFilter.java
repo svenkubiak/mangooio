@@ -1,7 +1,7 @@
 package filters;
 
-import mangoo.io.interfaces.MangooControllerFilter;
-import mangoo.io.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooControllerFilter;
+import io.mangoo.routing.bindings.Exchange;
 
 public class ContentFilter implements MangooControllerFilter {
 

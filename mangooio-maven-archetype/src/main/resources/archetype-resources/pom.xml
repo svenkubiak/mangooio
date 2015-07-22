@@ -44,7 +44,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>de.svenkubiak</groupId>
+				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
 				<version>${mangooio.version}</version>
 			</plugin>
@@ -64,7 +64,7 @@
 									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>mangoo.io.core.Application</mainClass>
+									<mainClass>io.mangoo.core.Application</mainClass>
 								</transformer>
 							</transformers>
 							<artifactSet>
@@ -94,12 +94,12 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>de.svenkubiak</groupId>
+			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
 			<version>\${mangooio.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.svenkubiak</groupId>
+			<groupId>io.mangook</groupId>
 			<artifactId>mangooio-test-utilities</artifactId>
 			<version>\${mangooio.version}</version>
 			<scope>test</scope>

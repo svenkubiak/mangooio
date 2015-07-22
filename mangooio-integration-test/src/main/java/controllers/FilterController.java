@@ -1,8 +1,8 @@
 package controllers;
 
-import mangoo.io.annotations.FilterWith;
-import mangoo.io.routing.Response;
 import filters.ContentFilter;
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.routing.Response;
 
 public class FilterController {
 

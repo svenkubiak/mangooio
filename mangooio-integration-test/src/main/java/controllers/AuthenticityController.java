@@ -1,8 +1,8 @@
 package controllers;
 
-import mangoo.io.annotations.FilterWith;
-import mangoo.io.filters.AuthenticityFilter;
-import mangoo.io.routing.Response;
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.filters.AuthenticityFilter;
+import io.mangoo.routing.Response;
 
 public class AuthenticityController {
     public Response form() {

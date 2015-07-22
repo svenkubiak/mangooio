@@ -3,11 +3,11 @@ package controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.mangoo.interfaces.MangooWebSocket;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.CloseMessage;
 import io.undertow.websockets.core.WebSocketChannel;
-import mangoo.io.interfaces.MangooWebSocket;
 
 @SuppressWarnings("all")
 public class WebSocketController extends MangooWebSocket {

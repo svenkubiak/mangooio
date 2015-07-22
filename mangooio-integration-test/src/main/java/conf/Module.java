@@ -1,13 +1,12 @@
 package conf;
 
-import mangoo.io.interfaces.MangooAuthenticator;
-import mangoo.io.interfaces.MangooGlobalFilter;
-import mangoo.io.interfaces.MangooLifecycle;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import filters.MyGlobalFilter;
+import io.mangoo.interfaces.MangooAuthenticator;
+import io.mangoo.interfaces.MangooGlobalFilter;
+import io.mangoo.interfaces.MangooLifecycle;
 
 @Singleton
 public class Module extends AbstractModule {

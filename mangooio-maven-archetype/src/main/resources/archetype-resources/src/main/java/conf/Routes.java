@@ -3,8 +3,8 @@ package conf;
 import com.google.inject.Singleton;
 
 import io.undertow.util.Methods;
-import mangoo.io.interfaces.MangooRoutes;
-import mangoo.io.routing.Router;
+import io.mangoo.interfaces.MangooRoutes;
+import io.mangoo.routing.Router;
 import controllers.ApplicationController;
 
 @Singleton
