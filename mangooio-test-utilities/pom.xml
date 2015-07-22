@@ -16,6 +16,7 @@
 			<groupId>de.svenkubiak</groupId>
 			<artifactId>mangooio-core</artifactId>
 			<version>1.0.0-RC4-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
