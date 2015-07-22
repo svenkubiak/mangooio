@@ -463,14 +463,14 @@ public class RequestHandler implements HttpHandler {
 
             if ((Form.class).equals(clazz)) {
                 convertedParameters[index] = this.form;
-            } else if ((Body.class).equals(clazz)) {
-                convertedParameters[index] = getBody(exchange);
             } else if ((Authentication.class).equals(clazz)) {
                 convertedParameters[index] = this.authentication;
             } else if ((Session.class).equals(clazz)) {
                 convertedParameters[index] = this.session;
             } else if ((Flash.class).equals(clazz)) {
                 convertedParameters[index] = this.flash;
+            } else if ((Body.class).equals(clazz)) {
+                convertedParameters[index] = getBody(exchange);
             } else if ((String.class).equals(clazz)) {
                 convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
