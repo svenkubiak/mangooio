@@ -126,7 +126,7 @@ public class RequestHandler implements HttpHandler {
                 exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
             } else {
                 exchange.setResponseCode(response.getStatusCode());
-                exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), 1);
+                exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
                 exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
                 exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
                 exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
