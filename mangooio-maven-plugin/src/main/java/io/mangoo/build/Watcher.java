@@ -32,7 +32,6 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -70,8 +69,8 @@ public class Watcher implements Runnable {
     public Watcher(Set<Path> watchDirectory, Set<String> includes, Set<String> excludes, Trigger trigger) throws IOException {
         this.watchService = FileSystems.getDefault().newWatchService();
         this.watchKeys = new HashMap<>();
-        this.includes = (Set<String>) Collections.unmodifiableCollection(includes);
-        this.excludes = (Set<String>) Collections.unmodifiableCollection(excludes);
+        this.includes = includes; //NOSONAR
+        this.excludes = excludes; //NOSONAR
         this.trigger = trigger;
         this.takeCount = new AtomicInteger(0);
         for (Path path: watchDirectory) {

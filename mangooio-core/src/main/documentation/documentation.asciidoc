@@ -76,7 +76,9 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
 To make sure that you have Java correctly installed use the following
 command
 
+---------------------------------------------------------------
 java -version
+---------------------------------------------------------------
 
 This should output the Java version information as follows
 
