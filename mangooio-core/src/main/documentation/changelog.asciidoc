@@ -1,22 +1,30 @@
 = Changelog
 
-== Version 1.0.0 - Released xx.xx.xxxx
+== Version 1.0.0
+
+Released xx.xx.xxxx
 
 * Updated documentation
 
-== Version 1.0.0-RC4 - Released 23.07.2015
+== Version 1.0.0-RC4
+
+Released 23.07.2015
 
 * Refactored packaging from mangoo.io to io.mangoo (svenkubiak)
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Added more JavaDoc (svenkubiak)
 
-== Version 1.0.0-RC3 - Released 10.07.2015
+== Version 1.0.0-RC3
+
+Released 10.07.2015
 
 * Added dispatcher handler and refactored invoking of requesthandler (svenkubiak)
 * Added X-XSS-Protection, X-Content-Type-Options and X-Frame-Options headers (svenkubiak)
 
-== Version 1.0.0-RC2 - Released 07.07.2015
+== Version 1.0.0-RC2
+
+Released 07.07.2015
 
 * Added some more javadoc (svenkubiak)
 * Template engine does not throw generic exception anymore, throws specific ones instead (svenkubiak)
@@ -24,12 +32,16 @@
 ** undertow-core 1.2.7.Final -> 1.2.8.Final
 ** freemarker 2.3.22 -> 2.3.23 
 
-== Version 1.0.0-RC1 - Released 03.07.2015
+== Version 1.0.0-RC1
+
+Released 03.07.2015
 
 * Sonar Refactorings (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/32[#32] Switched to Java8 DateTime API (svenkubiak)
 
-== Version 1.0.0-Beta5 - Released 01.07.2015
+== Version 1.0.0-Beta5
+
+Released 01.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/29[#29] Fixed bug in authentication and session cookie generation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/28[#28] Changed default expire of authentication to one hour (svenkubiak)
@@ -39,7 +51,9 @@
 * https://github.com/svenkubiak/mangooio/issues/24[#24] Switched from properties to yaml configuration (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/17[#17] Added preparsing of routes (svenkubiak)
 
-== Version 1.0.0-Beta4 - Released 29.07.2015
+== Version 1.0.0-Beta4
+
+Released 29.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/19[#19] Fixed MangooFluent and refactored testing utilities (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/18[#18] Added default validation messages for form handling (svenkubiak)
@@ -47,7 +61,9 @@
 * Fixed bug that prevented flash from bein passed to next request (svenkubiak)
 * Optimized the shade plugin to create smaller JAR files (svenkubiak)
 
-== Version 1.0.0-Beta3 - Released 26.07.2015
+== Version 1.0.0-Beta3
+
+Released 26.07.2015
 
 * Fixed bug that did not set the correct cookie for authentication (svenkubiak)
 * Fixed bug in authentication which caused an error when authentication was injected (svenkubiak)
@@ -55,7 +71,9 @@
 * Added method to add additional content to template with a filter (svenkubiak)
 * Added missing interfaces methods to maven archetype (svenkubiak)
 
-== Version 1.0.0-Beta2 - Released 23.07.2015
+== Version 1.0.0-Beta2
+
+Released 23.07.2015
 
 * https://github.com/svenkubiak/mangooio/issues/9[#9] Refactored dev mode exception page (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/15[#15] Added version tag to documentation (PDF and HTML) (svenkubiak) 
@@ -63,7 +81,9 @@
 * Cache is not autostarted anymore (svenkubiak)
 * Fixed bug that throw NumberFormatException when passing an empty request parameter (svenkubiak)
 
-== Version 1.0.0-Beta1 - Released 17.07.2015
+== Version 1.0.0-Beta1
+
+Released 17.07.2015
 
 * Added server "Undertow" token to response (svenkubiak)
 * Added new lifecycle hook "applicationInitialized" (svenkubiak)
@@ -75,7 +95,9 @@
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 
-== Version 1.0.0-Alpha3 - Released 15.06.2015
+== Version 1.0.0-Alpha3
+
+Released 15.06.2015
 
 * https://github.com/svenkubiak/mangooio/issues/2[#2] Fixed flash passing between requests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/1[#1] Fixed failing parameter tests (svenkubiak)
@@ -85,10 +107,14 @@
 * Removed changelog from documentation and added to seperate file (svenkubiak)
 * Fixed bug that did not pass request parameter when project was generated from archetype (svenkubiak)
 
-== Version 1.0.0-Alpha2 - Released 11.06.2015
+== Version 1.0.0-Alpha2
+
+Released 11.06.2015
 
 * Added asciidoc documentation to mangooio-core (svenkubiak)
 
-== Version 1.0.0-Alpha1 - Released 11.06.2015
+== Version 1.0.0-Alpha1
+
+Released 11.06.2015
 
 * Initial release (svenkubiak)
