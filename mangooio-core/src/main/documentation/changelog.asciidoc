@@ -1,5 +1,11 @@
 = Changelog
 
+== Version 1.0.0
+
+Released 31.07.2015
+
+* Updated documentation (svenkubiak)
+
 == Version 1.0.0-RC5
 
 Released 23.07.2015
