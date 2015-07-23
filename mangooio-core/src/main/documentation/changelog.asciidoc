@@ -1,10 +1,11 @@
 = Changelog
 
-== Version 1.0.0
+== Version 1.0.0-RC5
 
-Released xx.xx.xxxx
+Released 23.07.2015
 
-* Updated documentation
+* Fixed bug, that prevented dev mode from starting (svenkubiak)
+* Updated documentation (svenkubiak)
 
 == Version 1.0.0-RC4
 
