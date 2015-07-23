@@ -2,6 +2,10 @@
 
 == Version 1.0.0 - Released xx.xx.xxxx
 
+* Updated documentation
+
+== Version 1.0.0-RC4 - Released 23.07.2015
+
 * Refactored packaging from mangoo.io to io.mangoo (svenkubiak)
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
