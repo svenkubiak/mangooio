@@ -421,7 +421,7 @@ public class RequestHandler implements HttpHandler {
 
     private void getForm(HttpServerExchange exchange) throws IOException {
         this.form = this.injector.getInstance(Form.class);
-        if (exchange.getRequestMethod().equals(Methods.POST) || exchange.getRequestMethod().equals(Methods.PUT)) {
+        if (isPostOrPut(exchange)) {
             final FormDataParser formDataParser = FormParserFactory.builder().build().createParser(exchange);
             if (formDataParser != null) {
                 exchange.startBlocking();
@@ -444,12 +444,16 @@ public class RequestHandler implements HttpHandler {
 
     private Body getBody(HttpServerExchange exchange) throws IOException {
         Body body = new Body();
-        if (exchange.getRequestMethod().equals(Methods.POST) || exchange.getRequestMethod().equals(Methods.PUT)) {
+        if (isPostOrPut(exchange)) {
             exchange.startBlocking();
             body.setContent(IOUtils.toString(exchange.getInputStream()));
         }
 
         return body;
+    }
+
+    private boolean isPostOrPut(HttpServerExchange exchange) {
+        return (Methods.POST).equals(exchange.getRequestMethod()) || exchange.getRequestMethod().equals(Methods.PUT);
     }
 
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
@@ -481,7 +485,8 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
             } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
                 convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
-            } else if ((ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
+            } else if (exchange.getRequestHeaders() != null && exchange.getRequestHeaders().get(Headers.CONTENT_TYPE) != null &&
+                    (ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
                 convertedParameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
             }
 
