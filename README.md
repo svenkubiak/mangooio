@@ -52,7 +52,7 @@ at home from the start
 
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
-http://www.sonarqube.org[SonarQube] with a rule set of more than 600
+[SonarQube](http://www.sonarqube.org) with a rule set of more than 600
 checks.
 
 **Homepage**   
