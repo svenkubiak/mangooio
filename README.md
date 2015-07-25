@@ -11,13 +11,59 @@ mangoo I/O
 
 mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-Homepage: [https://mangoo.io](https://mangoo.io)  
-Documentation: [https://mangoo.io/documentation](https://mangoo.io/documentation)  
-Changelog: [https://mangoo.io/changelog](https://mangoo.io/changelog)  
-Twitter: [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
+Development of mangoo I/O was started in mid 2015 out of the interest on
+how difficult it would be to create an intuitiv, developer friendly,
+full stack java web framework from scratch. After the fresh new breeze of
+java development for the Web with the [Play
+Framwork - Version 1](https://www.playframework.com), contributions to the
+[Ninja Framework](http://www.ninjaframework.org) and having seen a lot of
+cumbersome "Enterprise" Applications, I thought it was time for yet
+another full stack java framework.
 
-You can grab previous documentation versions by simply adding the version tag to the URL, e.g.   
-https://mangoo.io/documentation/1.0.0-Alpha2
+The foundation of mangoo I/O is the very performant
+[Undertow](http://undertow.io) web server from JBoss. On top of that,
+standard, production ready java libraries are used - no reinventing of the
+wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
+it is based on non-blocking I/O in the form of
+[XNIO](http://xnio.jboss.org). And although Undertow does support the
+servlet API, one is not bound to use it in any way. Giving a java developer
+the opportunity to work fully stateless.
 
-Documentation is also available as PDF by simply adding "pdf" to the URL, e.g.  
-https://mangoo.io/documentation/pdf or https://mangoo.io/documentation/1.0.0-Alpha2/pdf
+mangoo I/O is highly inspired by the [Ninja
+Web Framework](http://www.ninjaframework.org). Although the mangoo I/O core is a complete custom
+implementation, many of the ideas and methodologies were re-used.
+
+Here are some key features of mangoo I/O in a nutshell:
+
+* Intuitiv convention-over-configuration, making a java developer feel
+at home from the start
+* Highly scalable using a share-nothing stateless architecture
+* Hot-Compiling development mode for high productivity
+* Easy to use template engine
+* Support for Web Sockets
+* Simple and self-explaining form handling and validation
+* Plain scheduling for recurring tasks
+* Easy handling of JSON in- and output
+* Buil-in asset minification in development mode
+* Flexible testing tools
+* Simple Deployment and CI-Integration
+* i18N Internationalization
+* Easy eMail handling
+
+One main focus of mangoo I/O was to have a good and well documented code
+base. Therefore, mangoo I/O is constantly checked against
+http://www.sonarqube.org[SonarQube] with a rule set of more than 600
+checks.
+
+**Homepage**   
+[https://mangoo.io](https://mangoo.io) 
+
+ 
+**Documentation**   
+[https://mangoo.io/documentation](https://mangoo.io/documentation)  
+
+**Changelog**   
+[https://mangoo.io/changelog](https://mangoo.io/changelog)  
+
+**Twitter**  
+[https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
