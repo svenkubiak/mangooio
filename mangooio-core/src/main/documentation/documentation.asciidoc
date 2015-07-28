@@ -94,12 +94,14 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
 To make sure that you have Java correctly installed use the following
 command
 
+[source,bash]
 ---------------------------------------------------------------
 java -version
 ---------------------------------------------------------------
 
 This should output the Java version information as follows
 
+[source,bash]
 ---------------------------------------------------------------
 java version "1.8.0_45"
 Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
@@ -111,12 +113,14 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
 To make sure that you have Maven correctly installed use the following
 command
 
+[source,bash]
 ------------
 mvn -version
 ------------
 
 This should output the Maven version information as follows
 
+[source,bash]
 ------------------------------------------------------------------------------
 Apache Maven 3.3.3 (...)
 Java version: 1.8.0_45, vendor: Oracle Corporation
@@ -142,13 +146,15 @@ Make your secret is "secure", as some functions, like sessions and authenticatio
 Once the archetpye generation is finished, change in your newly
 created project directory and execute the following command:
 
-----------------
+[source,bash]
+-----------------
 mvn clean package
-----------------
+-----------------
 
 Once the compilation is finished, you can start the development (dev) mode, by executing the following maven
 command
 
+[source,bash]
 ----------------
 mvn mangooio:run
 ----------------
@@ -157,6 +163,7 @@ Once Maven has downloaded all required dependencies you should see the
 mangoo I/O logo showing you that your new application has started
 successfully in dev mode.
 
+[source,bash]
 ---------------------------------------------------------------------------------------------------------
                                                 ___     __  ___
  _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \
@@ -197,7 +204,6 @@ If you don't do this, mangoo I/O will pass request parameters at all when in dev
 
 This is only required in dev mode, as compilation in all other modes is done via Maven
 and the correct flags are set via the compiler plugin.
-
 ====
 
 === Basic structure of a mangoo I/O application
@@ -293,6 +299,7 @@ along with all other files, that are not java classes. You can add and
 customize settings, simply by adding an appropriate value in the
 application.yaml, for example
 
+[source,yaml]
 ------------------------
 application:
       name   : myValue
@@ -308,6 +315,7 @@ for all configuration options and there default values.
 Config values are accessed with a dot-notation in mangoo I/O. If you have
 a config value like
 
+[source,yaml]
 ------------------------
 application:
       minify:
@@ -328,6 +336,7 @@ By convention, mangoo I/O offers three configuration modes: **dev**,
 *test* and **prod**. The dev mode is automatically activated, when you
 start your mangoo application for development with Maven for local development
 
+[source,bash]
 ----------------
 mvn mangooio:run
 ----------------
@@ -336,12 +345,14 @@ The test mode is automatically activated when executing unit test and using the
 mangoo I/O test utilities. The prod mode is activated by default when no
 other mode is given. You can overwrite this programatically, by setting a system property
 
+[source,java]
 ----------------------------------------------
 System.setProperty("application.mode", "dev");
 ----------------------------------------------
 
 or by passing a system property to the executable JAR
 
+[source,bash]
 --------------------------
 ... -Dapplication.mode=dev
 --------------------------
@@ -351,6 +362,7 @@ or by passing a system property to the executable JAR
 You can create mode specific configuration by prefxing a configuration
 value.
 
+[source,yaml]
 ---------------------------------
 default:
     application:
@@ -429,9 +441,9 @@ public Response index() {
 
 By convention mangoo I/O will lookup a template name index.ftl in the folder
 
------------------------------
+-------------------------------------------------------
 /src/main/resources/templates/CONTROLLER_NAME/index.ftl
------------------------------
+-------------------------------------------------------
 
 With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
@@ -791,6 +803,7 @@ If you require a custom configuration for quartz inside mangoo I/O you
 can use the application.yaml to pass any option to quartz. Simply add the configuration option with the appropriate
 prefix org.quartz.
 
+[source,yaml]
 -------------------------------------
 org:
   quartz:
@@ -1366,6 +1379,7 @@ By default the session cookie has a lifespan of one day. This, a long
 with the name of the cookie, can be configure using the following
 properties in the application.yaml
 
+[source,yaml]
 ---------------------------------------
 cookie:
   expires  : 86400
@@ -1392,6 +1406,7 @@ values very difficult. The security of the client-side cookie can be further
 increased by using AES encryption. To activate cookie encryption of the
 session cookie, set the following property in your application.yaml
 
+[source,yaml]
 ----------------------
 cookie:
   encryption  : true
@@ -1487,7 +1502,7 @@ To validate credentials passed from the client you need some place to do
 this. Therefore you have to bind the authentication process via the Google
 Guice configuration in your Module class.
 
-[source,html]
+[source,java]
 --------------------------------------------------------------------------------------------
 package conf;
 
@@ -1609,6 +1624,7 @@ extra minification or post processing before deployment to a production environm
 By default minification of CSS and JS resources is disabled and has to
 be enable with the following options
 
+[source,yaml]
 ----------------------
 application:
     minify:
@@ -1643,13 +1659,14 @@ Please note, that these utilities are not part of the core and come with
 a custom module. This is mainly because you want to set the scope of
 this module to "test" in your maven configuration.
 
+[source,maven]
 --------------------------------------------------------
-    <dependency>
-        <groupId>io.mangoo</groupId>
-        <artifactId>mangooio-test-utilities</artifactId>
-        <version>1.0.0</version>
-        <scope>test</scope>
-    </dependency>
+<dependency>
+    <groupId>io.mangoo</groupId>
+    <artifactId>mangooio-test-utilities</artifactId>
+    <version>1.0.0</version>
+    <scope>test</scope>
+</dependency>
 --------------------------------------------------------
 
 There are two ways of executing unit tests with mangoo I/O. Simple unit
@@ -1696,6 +1713,8 @@ public class ApplicationControllerTest extends MangooUnit {
 Please note, that you have to extend MangooUnit if you are not using the TestSuite.
 Otherwise the framework will not start before each unit test and your tests will fail.
 
+== Frontend testing
+
 For frontend testing mangoo I/O uses
 link:FluentLenium[https://github.com/FluentLenium/FluentLenium].
  Here is an example of how a FluentLenium test might look
@@ -1727,7 +1746,7 @@ public class FluentTest extends MangooFluent {
 Using a TestSuite is mostly suitable for situation where you want to
 startup for e.g. a database or other processes only once and execute
 your tests on that instance. For using a TestSuite you need an
-entry-point for the execution which extends MangooRunner.
+entry-point for the execution which extends the MangooRunner interface.
 
 [source,java]
 ---------------------------------------------
@@ -1740,9 +1759,10 @@ public class TestSuite extends MangooRunner {
 ---------------------------------------------
 
 This just needs to be an empty class for telling maven to use this Suite
-when tests are executed. Add the following plugin to your pom.xml to
-make Maven aware of you TestSuite class.
+when tests are executed. Additionally Add the following plugin to your pom.xml to
+make Maven aware of your TestSuite class.
 
+[source,maven]
 --------------------------------------------------
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
@@ -1754,7 +1774,6 @@ make Maven aware of you TestSuite class.
         </includes>
     </configuration>
 </plugin>
-
 --------------------------------------------------
 
 By convention the TestSuite will execute all tests that ends with
@@ -1764,6 +1783,8 @@ FluentLenium tests you have to use the native support for FluentLenium
 as the TestSuite does not wrap around FluentLenium in comparison to
 MangooUnit.
 
+See the https://github.com/FluentLenium/FluentLeniuhttps://github.com/FluentLenium/FluentLenium[FluentLenium documentation] on how to use FluentLenium standalone.
+
 == Deployment
 
 The full stack architecture of mangoo I/O offers the ability to create a
@@ -1772,6 +1793,7 @@ built-in Undertow server.
 
 To create a deployable JAR file, execute the following command
 
+[source,bash]
 -----------------
 mvn clean package
 -----------------
@@ -1779,16 +1801,19 @@ mvn clean package
 The https://maven.apache.org/plugins/maven-shade-plugin/[Maven Shade
 Plugin] will generate the JAR file, which you can find in the target
 directory once the maven build is complete. By default, the JAR file
-will be named "mangooioapp.jar". You can change the name in your pom.xml file in
-the Shade Plugin
+will be named "mangooioapp.jar" (if you have create your mangoo I/O project
+via the archetype). You can change the name in your pom.xml file in
+the Shade Plugin configuration.
 
---------------------------
+[source,maven]
+----------------------------------
 <finalName>mangooioapp</finalName>
---------------------------
+----------------------------------
 
 After you have deployed the jar to your production environment, you can
 start the application by executing the following command
 
+[source,bash]
 -----------------
 java -jar app.jar
 -----------------
@@ -1806,6 +1831,7 @@ load-balancing, SSL configuration, caching, etc.
 The following script is an example of how to start, stop and restart a
 mangoo I/O application as a deamon on debian.
 
+[source,bash]
 ---------------------------------------------------------------------------------------------------------------------------------------
 #!/bin/sh
 ### BEGIN INIT INFO
@@ -1891,6 +1917,7 @@ exit 0
 
 Place this script in /etc/init.d and use it as follows
 
+[source,bash]
 ------------------------------------------------
 /etc/init.d/MyScript (start|stop|restart|status)
 ------------------------------------------------
