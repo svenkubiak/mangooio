@@ -1927,19 +1927,20 @@ Hibernate Extension
 
 If you have created and extension and want it to be listed here, just
 add your extension to the above list by editing the documentation.md
-file. You can find the documentation file in mangooio-core at
+file and create a pull request on the GitHub repository. You can find the documentation file in mangooio-core at
 https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/site[/src/main/site/documentation.md].
 
 [appendix]
 == Configuration options
 
 This is an overview of the configuration options for the
-application.yaml and their default values.
+application.yaml and their default values, if the properties are note configured
+in the application.yaml file.
 
 |=======================================================================
 |*Optione name* |*Description* |*Default value* |*Note*
 |application.secret |The application secret |Random value |Must be at
-least 16 characters
+least 16 characters or manoo I/O won't start
 
 |application.name |The name of the application |mangooio|
 
@@ -1949,7 +1950,19 @@ as a fallback value for Locale
 |application.minify.js |Wether to minify javascript assets or not |false
 |Only used in dev mode
 
+|application.minify.jsfolder |The folder containing js files
+|/src/main/resources/files/assets/js |Only used in dev mode
+
+|application.minify.gzipjs |Whether to GZIP JS files or not
+|false |Only used in dev mode
+
 |application.minify.css |Wether to minify stylesheet assets or not
+|false |Only used in dev mode
+
+|application.minify.cssfolder |The folder containing css files
+|/src/main/resources/files/assets/css |Only used in dev mode
+
+|application.minify.gzipcss |Whether to GZIP CSS files or not
 |false |Only used in dev mode
 
 |application.host |The address the undertow server is running on
