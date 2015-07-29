@@ -42,7 +42,7 @@ at home from the start
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
-* Buil-in asset minification in development mode
+* Built-in asset minification in development mode
 * Flexible testing tools
 * Simple Deployment and CI-Integration
 * i18N Internationalization
@@ -63,7 +63,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Logback - Logging
 * Freemarker - Template engine
 * Quartz Scheduler - Scheduling
-* Ehcache - Cacheing
+* Ehcache - Caching
 * Boon JSON - JSON parser
 * And many more ...
 
