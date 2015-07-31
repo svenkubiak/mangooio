@@ -70,7 +70,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 **Homepage**   
 [https://mangoo.io](https://mangoo.io) 
 
-**Discussion board**
+**Discussion board**   
 [https://groups.google.com/forum/#!forum/mangooio](https://groups.google.com/forum/#!forum/mangooio)
 
 **Documentation**   
