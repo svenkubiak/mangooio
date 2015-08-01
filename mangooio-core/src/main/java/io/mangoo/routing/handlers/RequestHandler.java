@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -475,6 +476,10 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = this.flash;
             } else if ((Body.class).equals(clazz)) {
                 convertedParameters[index] = getBody(exchange);
+            } else if ((LocalDate.class).equals(clazz)) {
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : LocalDate.parse(queryParameters.get(key));
+            } else if ((LocalDateTime.class).equals(clazz)) {
+                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : LocalDateTime.parse(queryParameters.get(key));
             } else if ((String.class).equals(clazz)) {
                 convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
             } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {

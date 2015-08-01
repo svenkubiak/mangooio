@@ -482,7 +482,8 @@ public Response index(int id, String foo) {
 }
 -------------------------------------------
 
-The following method parameters are available in mangoo I/O controller methods by default
+The following method parameters are available in mangoo I/O controller methods by default and can
+be used as a request-parameter.
 
 -------------------------------------------
 String
@@ -490,15 +491,28 @@ Integer/int
 Float/float
 Double/double
 Long/long
+LocalDate
+LocalDateTime
+-------------------------------------------
+
+[NOTE]
+Double and Float values are always passed with "." separation, either if you pass the query or request parameter with "," separation.
+
+All parameters are parsed case-sensitive, which means, that if you have a method parameter "localDateTime" you have to map the
+request-parameter accordingly, e.g. /foo/{localDateTime}.
+
+[NOTE]
+LocalDate is parsed as ISO_LOCAL_DATE "yyyy-MM-dd", and LocalDateTime is parsed as ISO_LOCAL_DATE_TIME "yyyy-MM-ddThh:mm:ss".
+
+The following classes can also be used directly in controller methods, but can not be used as a request parameter
+
+-------------------------------------------
 Form
 Authentication
 Session
 Flash
 Body
 -------------------------------------------
-
-[NOTE]
-Double and Float values are always passed with "." separation, either if you pass the query or request parameter with "," separation.
 
 == Lifecycle
 
