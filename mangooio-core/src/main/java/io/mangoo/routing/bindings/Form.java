@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -93,12 +94,31 @@ public class Form {
     }
 
     /**
+     *
+     *
+     * Validates a given field to have a minimum length
+     *
+     * @param minLength The minimum length
+     * @param fieldName The field to check
+     *
+     * @deprecated use {@link #min(String fieldName, int minLength)} instead.
+     */
+    @Deprecated
+    public void min(int minLength, String fieldName) {
+        String value = (get(fieldName) == null) ? "" : get(fieldName);
+
+        if (value.length() < minLength) {
+            this.errors.put(fieldName, messages.get(Key.FORM_MIN, fieldName, minLength));
+        }
+    }
+
+    /**
      * Validates a given field to have a minimum length
      *
      * @param minLength The minimum length
      * @param fieldName The field to check
      */
-    public void min(int minLength, String fieldName) {
+    public void min(String fieldName, int minLength) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
         if (value.length() < minLength) {
@@ -111,8 +131,25 @@ public class Form {
      *
      * @param maxLength The maximum length
      * @param fieldName The field to check
+     *
+     * @deprecated use {@link #max(String fieldName, int minLength)} instead.
      */
+    @Deprecated
     public void max(int maxLength, String fieldName) {
+        String value = (get(fieldName) == null) ? "" : get(fieldName);
+
+        if (value.length() > maxLength) {
+            this.errors.put(fieldName, messages.get(Key.FORM_MAX, fieldName, maxLength));
+        }
+    }
+
+    /**
+     * Validates a given field to have a maximum length
+     *
+     * @param maxLength The maximum length
+     * @param fieldName The field to check
+     */
+    public void max(String fieldName, int maxLength) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
         if (value.length() > maxLength) {
@@ -195,12 +232,47 @@ public class Form {
      * @param minLength The minimum length
      * @param maxLength The maximum length
      * @param fieldName The field to check
+     *
+     * @deprecated use {@link #range(String fieldName, int minLength, int maxLength)} instead.
      */
+    @Deprecated
     public void range(int minLength, int maxLength, String fieldName) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
         if (value.length() < minLength || value.length() > maxLength) {
             this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
+        }
+    }
+
+    /**
+     * Validates a field to be in a certain range
+     *
+     * @param minLength The minimum length
+     * @param maxLength The maximum length
+     * @param fieldName The field to check
+     */
+    public void range(String fieldName, int minLength, int maxLength) {
+        String value = (get(fieldName) == null) ? "" : get(fieldName);
+
+        if (value.length() < minLength || value.length() > maxLength) {
+            this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
+        }
+    }
+
+    /**
+     * Validates a field by a given regular expression pattern
+     *
+     * It is required to pass a pre-compiled pattern, e.g.
+     * Pattern pattern = Pattern.compile("[a-Z,0-9]")
+     *
+     * @param pattern The pre-compiled pattern
+     * @param fieldName The field to check
+     */
+    public void regex(String fieldName, Pattern pattern) {
+        String value = (get(fieldName) == null) ? "" : get(fieldName);
+
+        if (!pattern.matcher(value).matches()) {
+            this.errors.put(fieldName, messages.get(Key.FORM_REGEX, fieldName));
         }
     }
 

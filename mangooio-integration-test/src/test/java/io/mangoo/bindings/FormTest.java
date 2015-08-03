@@ -70,13 +70,13 @@ public class FormTest {
     public void minTest() {
         Form form = getNewForm();
         form.add("foo", "bar");
-        form.min(3, "foo");
+        form.min("foo", 3);
 
         assertFalse(form.hasErrors());
 
         form = getNewForm();
         form.add("foo", "ba");
-        form.min(4, "foo");
+        form.min("foo", 4);
 
         assertTrue(form.hasErrors());
     }
@@ -85,13 +85,13 @@ public class FormTest {
     public void maxTest() {
         Form form = getNewForm();
         form.add("foo", "bar");
-        form.max(3, "foo");
+        form.max("foo", 3);
 
         assertFalse(form.hasErrors());
 
         form = getNewForm();
         form.add("foo", "bars");
-        form.max(3, "foo");
+        form.max("foo", 3);
 
         assertTrue(form.hasErrors());
     }
@@ -160,13 +160,13 @@ public class FormTest {
     public void rangeTest() {
         Form form = getNewForm();
         form.add("foo", "bar");
-        form.range(1, 3, "foo");
+        form.range("foo", 1, 3);
 
         assertFalse(form.hasErrors());
 
         form = getNewForm();
         form.add("foo", "barddddd");
-        form.range(1, 4, "foo");
+        form.range("foo", 1, 4);
 
         assertTrue(form.hasErrors());
     }

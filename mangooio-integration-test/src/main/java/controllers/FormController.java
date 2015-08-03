@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.regex.Pattern;
+
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 
@@ -18,8 +20,9 @@ public class FormController {
         form.match("email2", "email2confirm");
         form.ipv4("ipv4");
         form.ipv6("ipv6");
-        form.max(MAX_SIZE, "phone");
-        form.min(MIN_SIZE, "fax");
+        form.regex("regex", Pattern.compile("[a-z]"));
+        form.max("phone", MAX_SIZE);
+        form.min("fax", MIN_SIZE);
 
         if (!form.hasErrors()) {
             return Response.withOk().andTextBody("Fancy that!");

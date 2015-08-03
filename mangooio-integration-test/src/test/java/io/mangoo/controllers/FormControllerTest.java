@@ -15,31 +15,32 @@ import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 public class FormControllerTest {
-    
+
     @Test
     public void postTest() {
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("username", "vip"));
         parameter.add(new BasicNameValuePair("password", "secret"));
-        
+
         MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("vip;secret", response.getContent());
     }
-    
+
     @Test
     public void invalidFormTest() {
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("phone", "1234567890123"));
-        
+        parameter.add(new BasicNameValuePair("regex", "ABC"));
+
         MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
         assertNotNull(response.getContent());
-        
+
         String [] lines = response.getContent().split(System.getProperty("line.separator"));
         assertEquals("name is required", lines[0]);
         assertEquals("email must be a valid eMail address", lines[1]);
@@ -49,8 +50,9 @@ public class FormControllerTest {
         assertEquals("ipv6 must be a valid IPv6 address", lines[5]);
         assertEquals("phone can be max 12 characters", lines[6]);
         assertEquals("fax must be at least 11 characters", lines[7]);
+        assertEquals("regex is invalid", lines[8]);
     }
-    
+
     @Test
     public void validFormTest() {
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
@@ -64,7 +66,8 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("ipv6", "2001:db8:85a3:8d3:1319:8a2e:370:7348"));
         parameter.add(new BasicNameValuePair("phone", "abcdef"));
         parameter.add(new BasicNameValuePair("fax", "abchdjskcjsa"));
-        
+        parameter.add(new BasicNameValuePair("regex", "a"));
+
         MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("Fancy that!", response.getContent());

@@ -45,7 +45,8 @@ public enum Key {
     FORM_IPV6("form.ipv6"),
     FORM_RANGE("form.range"),
     FORM_URL("form.url"),
-    VERSION("version");
+    FORM_REGEX("form.regex"),
+    VERSION("version"),;
 
     private final String value;
 

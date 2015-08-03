@@ -36,6 +36,7 @@ public class Messages {
         defaults.put(Key.FORM_IPV6.toString(), Validation.IPV6.toString());
         defaults.put(Key.FORM_RANGE.toString(), Validation.RANGE.toString());
         defaults.put(Key.FORM_URL.toString(), Validation.URL.toString());
+        defaults.put(Key.FORM_REGEX.toString(), Validation.REGEX.toString());
     }
 
     /**
