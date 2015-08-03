@@ -645,6 +645,19 @@ With the form class you can check if a field exists, check an email
 address, etc. The hasErrors() method shows you if the form is valid and
 can be handled or not.
 
+mangoo I/O supports the following validations out of the box
+
+* Required
+* Minimum
+* Maximum
+* Match (case-insensitive)
+* Exact match (case-sensitive)
+* E-Mail
+* IPv4
+* IPv6
+* Range
+* Regular expression
+
 === Showing error messages in a template
 
 To show an error in a template, simply check for an error on a spcific field
@@ -686,6 +699,7 @@ form.ipv4={0} must be a valid IPv4 address
 form.ipv6={0} must be a valid IPv6 address
 form.range={0} must be between {1} and {2} characters
 form.url={0} must be a valid URL
+form.regex={0} is invalid
 --------------------------------------------------------
 
 The prefix follows the field type (email, required, match, etc.) for the
