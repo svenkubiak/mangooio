@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -143,11 +144,7 @@ public class RequestHandler implements HttpHandler {
         if (headerValues != null && headerValues.getFirst() != null) {
             Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
             if (split != null) {
-                String language = split.iterator().next();
-                if (StringUtils.isBlank(language)) {
-                    language = this.config.getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
-                }
-
+                String language = Optional.ofNullable(split.iterator().next()).orElse(this.config.getApplicationLanguage());
                 Locale.setDefault(Locale.forLanguageTag(language.substring(0, 1)));
                 Application.getInjector().getInstance(Messages.class).reload();
             }

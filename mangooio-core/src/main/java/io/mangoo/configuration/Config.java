@@ -361,4 +361,8 @@ public class Config {
     public boolean getFlashCookieSecure() {
         return getSessionCookieSecure();
     }
+
+    public String getApplicationLanguage() {
+        return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
+    }
 }
