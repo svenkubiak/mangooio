@@ -24,6 +24,7 @@ public enum Key {
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
     AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
+    AUTH_COOKIE_SECURE("auth.cookie.secure"),
     SMTP_HOST("smtp.host"),
     SMTP_PORT("smtp.port"),
     SMTP_USERNAME("smtp.username"),
@@ -32,6 +33,7 @@ public enum Key {
     COOKIE_NAME("cookie.name"),
     COOKIE_ENCRYPTION("cookie.encryption"),
     COOKIE_EXPIRES("cookie.expires"),
+    COOKIE_SECURE("cookie.secure"),
     ERROR("error"),
     WARNING("warning"),
     SUCCESS("success"),
@@ -46,7 +48,7 @@ public enum Key {
     FORM_RANGE("form.range"),
     FORM_URL("form.url"),
     FORM_REGEX("form.regex"),
-    VERSION("version"),;
+    VERSION("version");
 
     private final String value;
 

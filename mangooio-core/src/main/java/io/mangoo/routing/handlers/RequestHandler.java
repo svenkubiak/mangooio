@@ -303,6 +303,7 @@ public class RequestHandler implements HttpHandler {
             }
 
             Cookie cookie = new CookieImpl(config.getString(Key.COOKIE_NAME), value)
+                    .setSecure(this.config.getSessionCookieSecure())
                     .setHttpOnly(true)
                     .setPath("/")
                     .setExpires(Date.from(this.session.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
@@ -370,6 +371,7 @@ public class RequestHandler implements HttpHandler {
                 }
 
                 cookie = new CookieImpl(cookieName, value)
+                        .setSecure(this.config.getAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setPath("/")
                         .setExpires(Date.from(this.authentication.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
@@ -404,6 +406,7 @@ public class RequestHandler implements HttpHandler {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
             Cookie cookie = new CookieImpl(this.config.getFlashCookieName(), values)
+                    .setSecure(this.config.getFlashCookieSecure())
                     .setHttpOnly(true)
                     .setPath("/");
 
@@ -412,6 +415,7 @@ public class RequestHandler implements HttpHandler {
             Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
+                .setSecure(this.config.getFlashCookieSecure())
                 .setPath("/")
                 .setMaxAge(0);
 

@@ -2023,13 +2023,15 @@ as a fallback value for Locale
 |application.host |The address the undertow server is running on
 |127.0.0.1 |In 99% of all cases, this is the localhost
 
-|application.port |The port the undertow server is listening on |8080 |
+|application.port |The port the undertow server is listening on |8080|
 
 |cookie.name |The name of the session cookie |$application.name-MANGOOIO-SESSION|
 
 |cookie.expires |The time in seconds when the session expires |86400|
 
 |cookie.encrypt |Whether to encrypt the session cookie or not |false|
+
+|cookie.secure |Whether to set the secure flag for the session cookie or not |false|
 
 |smtp.host |The host of the SMTP server |127.0.0.1|
 
@@ -2051,6 +2053,8 @@ in even is the browser is closed |3600|
 
 |auth.cookie.encrypt |Whether to encrypt the authentication cookie or
 not |false|
+
+|auth.cookie.secure |Whether to set the secure flag for the auth cookie or not |false|
 
 |auth.login.redirect |The URL a user is redirected when not logged in
 | |

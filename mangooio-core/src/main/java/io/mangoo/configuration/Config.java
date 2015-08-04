@@ -349,4 +349,16 @@ public class Config {
     public long getSessionExpires() {
         return getLong(Key.COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toLong());
     }
+
+    public boolean getSessionCookieSecure() {
+        return getBoolean(Key.COOKIE_SECURE, Default.COOKIE_SECURE.toBoolean());
+    }
+
+    public boolean getAuthenticationCookieSecure() {
+        return getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
+    }
+
+    public boolean getFlashCookieSecure() {
+        return getSessionCookieSecure();
+    }
 }

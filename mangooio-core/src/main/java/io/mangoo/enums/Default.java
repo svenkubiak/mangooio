@@ -52,7 +52,9 @@ public enum Default {
     NUMBER_FORMAT("0.######"),
     EXCEPTION_TEMPLATE_NAME("exception.ftl"),
     DEFAULT_TEMPLATES_DIR("/defaults/"),
-    X_XSS_PPROTECTION("1");
+    X_XSS_PPROTECTION("1"),
+    COOKIE_SECURE("false"),
+    AUTH_COOKIE_SECURE("false");
 
     private final String value;
 
