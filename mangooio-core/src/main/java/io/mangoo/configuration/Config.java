@@ -350,7 +350,7 @@ public class Config {
         return getLong(Key.COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toLong());
     }
 
-    public boolean getSessionCookieSecure() {
+    public boolean isSessionCookieSecure() {
         return getBoolean(Key.COOKIE_SECURE, Default.COOKIE_SECURE.toBoolean());
     }
 
@@ -358,8 +358,8 @@ public class Config {
         return getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
     }
 
-    public boolean getFlashCookieSecure() {
-        return getSessionCookieSecure();
+    public boolean isFlashCookieSecure() {
+        return isSessionCookieSecure();
     }
 
     public String getApplicationLanguage() {
