@@ -364,6 +364,9 @@ public class RequestHandler implements HttpHandler {
             String cookieName = this.config.getAuthenticationCookieName();
             if (this.authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
+                cookie.setSecure(this.config.getAuthenticationCookieSecure());
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
