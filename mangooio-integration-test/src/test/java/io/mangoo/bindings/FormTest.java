@@ -79,6 +79,18 @@ public class FormTest {
         form.min("foo", 4);
 
         assertTrue(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "5");
+        form.min("foo", 1);
+
+        assertFalse(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "3");
+        form.min("foo", 5);
+
+        assertTrue(form.hasErrors());
     }
 
     @Test
@@ -92,6 +104,18 @@ public class FormTest {
         form = getNewForm();
         form.add("foo", "bars");
         form.max("foo", 3);
+
+        assertTrue(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "3");
+        form.max("foo", 5);
+
+        assertFalse(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "7");
+        form.max("foo", 6);
 
         assertTrue(form.hasErrors());
     }
@@ -167,6 +191,18 @@ public class FormTest {
         form = getNewForm();
         form.add("foo", "barddddd");
         form.range("foo", 1, 4);
+
+        assertTrue(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "10");
+        form.range("foo", 1, 11);
+
+        assertFalse(form.hasErrors());
+
+        form = getNewForm();
+        form.add("foo", "23");
+        form.range("foo", 10, 20);
 
         assertTrue(form.hasErrors());
     }

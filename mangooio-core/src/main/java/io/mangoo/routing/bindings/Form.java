@@ -118,11 +118,17 @@ public class Form {
      * @param minLength The minimum length
      * @param fieldName The field to check
      */
-    public void min(String fieldName, int minLength) {
+    public void min(String fieldName, double minLength) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
-        if (value.length() < minLength) {
-            this.errors.put(fieldName, messages.get(Key.FORM_MIN, fieldName, minLength));
+        if (StringUtils.isNumeric(value)) {
+            if (Double.valueOf(value) < minLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_MIN, fieldName, minLength));
+            }
+        } else {
+            if (value.length() < minLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_MIN, fieldName, minLength));
+            }
         }
     }
 
@@ -149,11 +155,17 @@ public class Form {
      * @param maxLength The maximum length
      * @param fieldName The field to check
      */
-    public void max(String fieldName, int maxLength) {
+    public void max(String fieldName, double maxLength) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
-        if (value.length() > maxLength) {
-            this.errors.put(fieldName, messages.get(Key.FORM_MAX, fieldName, maxLength));
+        if (StringUtils.isNumeric(value)) {
+            if (Double.valueOf(value) > maxLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_MAX, fieldName, maxLength));
+            }
+        } else {
+            if (value.length() > maxLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_MAX, fieldName, maxLength));
+            }
         }
     }
 
@@ -254,8 +266,15 @@ public class Form {
     public void range(String fieldName, int minLength, int maxLength) {
         String value = (get(fieldName) == null) ? "" : get(fieldName);
 
-        if (value.length() < minLength || value.length() > maxLength) {
-            this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
+        if (StringUtils.isNumeric(value)) {
+            double doubleValue = Double.valueOf(value);
+            if (doubleValue < minLength || doubleValue > maxLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
+            }
+        } else {
+            if (value.length() < minLength || value.length() > maxLength) {
+                this.errors.put(fieldName, messages.get(Key.FORM_RANGE, fieldName, minLength, maxLength));
+            }
         }
     }
 
