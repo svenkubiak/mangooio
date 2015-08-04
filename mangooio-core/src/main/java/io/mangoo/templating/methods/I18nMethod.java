@@ -58,7 +58,7 @@ public class I18nMethod implements TemplateMethodModelEx {
 
     public void logError(String messageKey, String messageValue) {
         if (messageKey.equals(messageValue)) {
-            LOG.error("Message key {} missing. Using key as value inside template - but this is most likely not what you want.", messageKey);
+            LOG.error("Message key {} is missing. Using key as value inside template - but this is most likely not what you want.", messageKey);
         }
     }
 }

@@ -1,7 +1,6 @@
 package io.mangoo.templating.directives;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 import freemarker.core.Environment;
@@ -27,8 +26,7 @@ public class AuthenticityTokenDirective implements TemplateDirectiveModel {
     @Override
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
         if (this.session != null) {
-            Writer out = environment.getOut();
-            out.append(this.session.getAuthenticityToken());
+            environment.getOut().append(this.session.getAuthenticityToken());
         }
     }
 }
