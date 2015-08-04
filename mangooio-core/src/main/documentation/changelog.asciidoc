@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* Add a method for adding a complete content map to the template (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/36[#36] Validation now works for numeric values as well (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/37[#37] Added option to set the secure flag for session and auth cookie (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/35[#35] Added method for regular expression to validation (svenkubiak)

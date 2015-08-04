@@ -272,7 +272,7 @@ public final class Response {
     }
 
     /**
-     * Sends binary content to the client skipping renderin
+     * Sends binary content to the client skipping rendering
      *
      * @param content The content to to send
      * @return A response object {@link io.mangoo.routing.Response}
@@ -323,6 +323,19 @@ public final class Response {
      */
     public Response andHeader(HttpString key, String value) {
         this.headers.put(key, value);
+
+        return this;
+    }
+
+    /**
+     * Adds an additional content map to the content rendered in the template.
+     * Already existing values with the same key are overwritten.
+     *
+     * @param content The content map to add
+     * @return A response object {@link mangoo.io.routing.Response}
+     */
+    public Response andContent(Map<String, Object> content) {
+        this.content.putAll(content);
 
         return this;
     }
