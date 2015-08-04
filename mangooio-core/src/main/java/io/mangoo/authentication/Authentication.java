@@ -80,7 +80,7 @@ public class Authentication {
      */
     public boolean authenticate(String password, String hash) {
         Preconditions.checkNotNull(password, "Password is required for authenticate");
-        Preconditions.checkNotNull(password, "Hashed password is required for authenticate");
+        Preconditions.checkNotNull(hash, "Hashed password is required for authenticate");
 
         boolean authenticated = false;
         try {
