@@ -99,7 +99,7 @@
 			<version>\${mangooio.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.mangook</groupId>
+			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-test-utilities</artifactId>
 			<version>\${mangooio.version}</version>
 			<scope>test</scope>
