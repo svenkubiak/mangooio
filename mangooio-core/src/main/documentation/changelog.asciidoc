@@ -12,6 +12,12 @@
 * Version bumps (svenkubiak)
 ** doctester-core 1.1.6 -> 1.1.8
 
+== Version 1.0.1
+
+[small]#Released at 05.08.2015#
+
+* Fixed typo in archetype that prevented archetype from building (svenkubiak)
+
 == Version 1.0.0
 
 [small]#Released at 31.07.2015#

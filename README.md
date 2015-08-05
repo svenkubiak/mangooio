@@ -55,10 +55,24 @@ base. Therefore, mangoo I/O is constantly checked against
 [SonarQube](http://www.sonarqube.org) with a rule set of more than 600
 checks.
 
+Here are some used libraries and their purpose in mangoo I/O.
+
+* Maven - Dependency management, built-system, packaging
+* Undertow - Web Server
+* Google Guice - Dependency injection
+* Logback - Logging
+* Freemarker - Template engine
+* Quartz Scheduler - Scheduling
+* Ehcache - Caching
+* Boon JSON - JSON parser
+* And many more ...
+
 **Homepage**   
 [https://mangoo.io](https://mangoo.io) 
 
- 
+**Discussion board**   
+[https://groups.google.com/forum/#!forum/mangooio](https://groups.google.com/forum/#!forum/mangooio)
+
 **Documentation**   
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
 
