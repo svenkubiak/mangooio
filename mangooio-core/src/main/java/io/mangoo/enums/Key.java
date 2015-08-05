@@ -25,6 +25,7 @@ public enum Key {
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
     AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
     AUTH_COOKIE_SECURE("auth.cookie.secure"),
+    CACHE_CLASS("cache.class"),
     SMTP_HOST("smtp.host"),
     SMTP_PORT("smtp.port"),
     SMTP_USERNAME("smtp.username"),
