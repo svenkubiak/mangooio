@@ -35,6 +35,7 @@ Here are some key features of mangoo I/O in a nutshell:
 
 * Intuitiv convention-over-configuration, making a java developer feel
 at home from the start
+* Supports Multiple Caching Frameworks (EhCache, Redis, Hazelcast and Memcached)
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
@@ -63,7 +64,6 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Logback - Logging
 * Freemarker - Template engine
 * Quartz Scheduler - Scheduling
-* Ehcache - Caching
 * Boon JSON - JSON parser
 * And many more ...
 

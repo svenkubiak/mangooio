@@ -54,10 +54,12 @@ public enum Default {
     DEFAULT_TEMPLATES_DIR("/defaults/"),
     X_XSS_PPROTECTION("1"),
     COOKIE_SECURE("false"),
-    CACHE_CLASS("ehcache"),
+    CACHE_TYPE("ehcache"),
     AUTH_COOKIE_SECURE("false"),
     EHCACHE("ehcache"),
-    MEMCACHED("memcached");
+    MEMCACHED("memcached"),
+    HAZELCAST("hazelcast"),
+    REDIS("redis");
 
     private final String value;
 

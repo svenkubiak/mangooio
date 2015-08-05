@@ -3,6 +3,8 @@ package io.mangoo.cache;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import io.mangoo.interfaces.MangooCache;
+
 /**
  *
  * @author svenkubiak

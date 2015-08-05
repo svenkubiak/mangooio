@@ -25,7 +25,7 @@ public enum Key {
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
     AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
     AUTH_COOKIE_SECURE("auth.cookie.secure"),
-    CACHE_CLASS("cache.class"),
+    CACHE_TYPE("cache.class"),
     SMTP_HOST("smtp.host"),
     SMTP_PORT("smtp.port"),
     SMTP_USERNAME("smtp.username"),
@@ -49,7 +49,10 @@ public enum Key {
     FORM_RANGE("form.range"),
     FORM_URL("form.url"),
     FORM_REGEX("form.regex"),
-    VERSION("version");
+    VERSION("version"),
+    CACHE_MEMCACHED_HOSTS("cache.memcached.hosts"),
+    CACHE_MEMCACHED_USER("cache.memcached.user"),
+    CACHE_MEMCACHED_PASSWORD("cache.memcached.password");
 
     private final String value;
 

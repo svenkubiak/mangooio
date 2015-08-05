@@ -1,7 +1,9 @@
 package io.mangoo.cache.impl;
 
-import io.mangoo.cache.MangooCache;
+import com.google.inject.Singleton;
+
 import io.mangoo.enums.Default;
+import io.mangoo.interfaces.MangooCache;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -11,6 +13,7 @@ import net.sf.ehcache.Element;
  * @author svenkubiak
  *
  */
+@Singleton
 public class EhCacheImpl implements MangooCache {
     private Cache cache;
 
