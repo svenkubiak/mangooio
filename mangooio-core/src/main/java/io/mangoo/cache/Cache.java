@@ -1,5 +1,8 @@
 package io.mangoo.cache;
 
+import java.io.NotSerializableException;
+import java.io.Serializable;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -20,10 +23,12 @@ public class Cache {
     }
 
     public void add(String key, Object value) {
+        check(value);
         mangooCache.add(key, value);
     }
 
     public void add(String key, Object value, int expiration) {
+        check(value);
         mangooCache.add(key, value);
     }
 
@@ -38,5 +43,11 @@ public class Cache {
 
     public void clear() {
         mangooCache.clear();
+    }
+
+    private void check(Object value) {
+        if (value != null && !(value instanceof Serializable)) {
+            new NotSerializableException("Cannot cache a non-serializable value of type " + value.getClass().getName());
+        }
     }
 }
