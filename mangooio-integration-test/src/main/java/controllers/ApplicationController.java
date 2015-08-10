@@ -35,6 +35,10 @@ public class ApplicationController {
         return Response.withUnauthorized().andEmptyBody();
     }
 
+    public Response etag() {
+        return Response.withOk().andTextBody("foo").andEtag();
+    }
+
     public Response binary() {
         URL url = this.getClass().getResource("/attachment.txt");
         File file = new File(url.getFile());

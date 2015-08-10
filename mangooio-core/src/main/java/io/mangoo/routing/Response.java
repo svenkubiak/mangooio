@@ -34,6 +34,7 @@ public final class Response {
     private String template;
     private String binaryFileName;
     private byte[] binaryContent;
+    private boolean etag;
     private boolean binary;
     private boolean rendered;
     private boolean redirect;
@@ -71,6 +72,10 @@ public final class Response {
 
     public String getTemplate() {
         return this.template;
+    }
+
+    public boolean isETag() {
+        return this.etag;
     }
 
     public String getBinaryFileName() {
@@ -336,6 +341,22 @@ public final class Response {
      */
     public Response andContent(Map<String, Object> content) {
         this.content.putAll(content);
+
+        return this;
+    }
+
+    /**
+     * Adds an ETag header to the response by hashing (MD5) the response body.
+     *
+     * Be aware that for every request the hash has to be generated. This will
+     * most likely increase CPU usage.
+     *
+     * See <a href="https://en.wikipedia.org/wiki/HTTP_ETag">https://en.wikipedia.org/wiki/HTTP_ETag</a>
+     *
+     * @return A response object {@link mangoo.io.routing.Response}
+     */
+    public Response andEtag() {
+        this.etag = true;
 
         return this;
     }
