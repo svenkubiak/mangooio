@@ -8,8 +8,8 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
-import io.mangoo.interfaces.MangooControllerFilter;
-import io.mangoo.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.bindings.Request;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -18,23 +18,23 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
-public class AuthenticationFilter implements MangooControllerFilter{
+public class AuthenticationFilter implements MangooFilter {
 
     @Inject
     private Config config;
 
     @Override
-    public boolean filter(Exchange exchange) {
-        if (!exchange.getAuthentication().hasAuthenticatedUser()) {
+    public boolean continueRequest(Request request) {
+        if (!request.getAuthentication().hasAuthenticatedUser()) {
             String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
             if (StringUtils.isNotBlank(redirect)) {
-                exchange.getHttpServerExchange().setResponseCode(StatusCodes.FOUND);
-                exchange.getHttpServerExchange().getResponseHeaders().put(Headers.LOCATION, redirect);
-                exchange.getHttpServerExchange().endExchange();
+                request.getHttpServerExchange().setResponseCode(StatusCodes.FOUND);
+                request.getHttpServerExchange().getResponseHeaders().put(Headers.LOCATION, redirect);
+                request.getHttpServerExchange().endExchange();
             } else {
-                exchange.getHttpServerExchange().getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
-                exchange.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
-                exchange.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
+                request.getHttpServerExchange().getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
+                request.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
+                request.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
             }
 
             return false;

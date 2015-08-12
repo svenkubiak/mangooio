@@ -6,14 +6,21 @@ import io.mangoo.routing.bindings.Exchange;
  *
  * @author svenkubiak
  *
+ * @deprecated As of release 1.1.0, replaced by {@link #MangooRequestFilter}
+ *
  */
 @FunctionalInterface
+@Deprecated
 public interface MangooGlobalFilter {
     /**
      * Executes a filter before every request
      *
      * @param exchange An exchange object containing request informations
-     * @return True if the request should continue, false if the request schould stop after this filter
+     * @return True if the request should continue, false if the request should stop after this filter
+     *
+     * @deprecated use {@link #continueRequest(Request request)} from MangooRequestFilter instead.
+     *
      */
+    @Deprecated
     public boolean filter(Exchange exchange);
 }

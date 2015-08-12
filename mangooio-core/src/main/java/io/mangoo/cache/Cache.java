@@ -3,10 +3,11 @@ package io.mangoo.cache;
 import java.io.NotSerializableException;
 import java.io.Serializable;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.interfaces.MangooCache;
+import io.mangoo.enums.Default;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  *
@@ -15,34 +16,46 @@ import io.mangoo.interfaces.MangooCache;
  */
 @Singleton
 public class Cache {
-    private MangooCache mangooCache;
+    private net.sf.ehcache.Cache cache;
 
-    @Inject
-    public Cache(MangooCache mangooCache) {
-        this.mangooCache = mangooCache;
+    public Cache() {
+        CacheManager cm = CacheManager.getInstance();
+        cm.addCacheIfAbsent(Default.CACHE_NAME.toString());
+        this.cache = cm.getCache(Default.CACHE_NAME.toString());
     }
 
     public void add(String key, Object value) {
         check(value);
-        mangooCache.add(key, value);
+        this.cache.put(new Element(key, value));
     }
 
     public void add(String key, Object value, int expiration) {
         check(value);
-        mangooCache.add(key, value);
+        Element element = new Element(key, value);
+        element.setTimeToLive(expiration);
+
+        this.cache.put(element);
     }
 
     public Object get(String key) {
-        return mangooCache.get(key);
+        if (this.cache.get(key) != null) {
+            return this.cache.get(key).getObjectValue();
+        }
+
+        return null;
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        return mangooCache.get(key, clazz);
+        if (this.cache.get(key) != null) {
+            return (T) this.cache.get(key).getObjectValue();
+        }
+
+        return null;
     }
 
     public void clear() {
-        mangooCache.clear();
+        this.cache.removeAll();
     }
 
     private void check(Object value) {

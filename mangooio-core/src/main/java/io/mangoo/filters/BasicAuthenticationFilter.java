@@ -8,8 +8,8 @@ import com.google.inject.Inject;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Key;
 import io.mangoo.interfaces.MangooAuthenticator;
-import io.mangoo.interfaces.MangooControllerFilter;
-import io.mangoo.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
@@ -19,7 +19,7 @@ import io.undertow.util.StatusCodes;
  * @author skubiak
  *
  */
-public class BasicAuthenticationFilter implements MangooControllerFilter {
+public class BasicAuthenticationFilter implements MangooFilter {
     private static final int CREDENTIALS_LENGTH = 2;
 
     @Inject
@@ -29,8 +29,8 @@ public class BasicAuthenticationFilter implements MangooControllerFilter {
     private MangooAuthenticator mangooAuthenticator;
 
     @Override
-    public boolean filter(Exchange exchange) {
-        HeaderValues headerValues = exchange.getHttpServerExchange().getRequestHeaders().get(Headers.AUTHORIZATION_STRING);
+    public boolean continueRequest(Request request) {
+        HeaderValues headerValues = request.getHttpServerExchange().getRequestHeaders().get(Headers.AUTHORIZATION_STRING);
 
         String username = null;
         String password = null;
@@ -49,9 +49,9 @@ public class BasicAuthenticationFilter implements MangooControllerFilter {
         }
 
         if (!mangooAuthenticator.validCredentials(username, password)) {
-            exchange.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
-            exchange.getHttpServerExchange().getResponseHeaders().add(Headers.WWW_AUTHENTICATE, "Basic realm=" + config.getString(Key.APPLICATION_NAME));
-            exchange.getHttpServerExchange().getResponseSender().send("");
+            request.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
+            request.getHttpServerExchange().getResponseHeaders().add(Headers.WWW_AUTHENTICATE, "Basic realm=" + config.getString(Key.APPLICATION_NAME));
+            request.getHttpServerExchange().getResponseSender().send("");
 
             return false;
         }

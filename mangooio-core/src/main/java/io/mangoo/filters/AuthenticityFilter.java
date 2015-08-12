@@ -1,8 +1,8 @@
 package io.mangoo.filters;
 
 import io.mangoo.enums.Template;
-import io.mangoo.interfaces.MangooControllerFilter;
-import io.mangoo.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.bindings.Request;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -10,13 +10,13 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
-public class AuthenticityFilter implements MangooControllerFilter {
+public class AuthenticityFilter implements MangooFilter {
 
     @Override
-    public boolean filter(Exchange exchange) {
-        if (!exchange.authenticityMatches()) {
-            exchange.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
-            exchange.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
+    public boolean continueRequest(Request request) {
+        if (!request.authenticityMatches()) {
+            request.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
+            request.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
 
             return false;
         }

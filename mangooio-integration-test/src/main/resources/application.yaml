@@ -34,3 +34,9 @@ test:
         port       : 10808
     smtp:
         port       : 3055
+
+dev:
+    application:
+        port       : 50000
+    smtp:
+        port       : 3125

@@ -1,13 +1,13 @@
 package filters;
 
-import io.mangoo.interfaces.MangooControllerFilter;
-import io.mangoo.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.bindings.Request;
 
-public class ContentFilter implements MangooControllerFilter {
+public class ContentFilter implements MangooFilter {
 
     @Override
-    public boolean filter(Exchange exchange) {
-        exchange.addContent("foo", "bar");
+    public boolean continueRequest(Request request) {
+        request.getPayload().addContent("foo", "bar");
 
         return true;
     }

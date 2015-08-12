@@ -1,12 +1,12 @@
 package filters;
 
-import io.mangoo.interfaces.MangooGlobalFilter;
-import io.mangoo.routing.bindings.Exchange;
+import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.routing.bindings.Request;
 
-public class MyGlobalFilter implements MangooGlobalFilter {
+public class MyGlobalFilter implements MangooRequestFilter {
 
     @Override
-    public boolean filter(Exchange exchange) {
+    public boolean continueRequest(Request request) {
         return true;
     }
 

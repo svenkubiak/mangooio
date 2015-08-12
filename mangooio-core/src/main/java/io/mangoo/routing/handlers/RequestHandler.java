@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -35,17 +34,17 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooGlobalFilter;
+import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Body;
-import io.mangoo.routing.bindings.Exchange;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -56,8 +55,6 @@ import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
-import io.undertow.util.StatusCodes;
 
 public class RequestHandler implements HttpHandler {
     private static final int AUTH_PREFIX_LENGTH = 2;
@@ -79,8 +76,8 @@ public class RequestHandler implements HttpHandler {
     private Form form;
     private Config config;
     private Injector injector;
-    private Exchange exchange;
-    private boolean globalFilter;
+    private Request request;
+    private boolean requestFilter;
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod) {
         this.injector = Application.getInjector();
@@ -90,57 +87,28 @@ public class RequestHandler implements HttpHandler {
         this.parameters = getMethodParameters();
         this.parameterCount = this.parameters.size();
         this.config = this.injector.getInstance(Config.class);
-        this.globalFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooGlobalFilter.class));
+        this.requestFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
         this.mapper = JsonFactory.create();
     }
 
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if (this.method == null) {
-            this.method = this.controller.getClass().getMethod(this.controllerMethod, parameters.values().toArray(new Class[0]));
-        }
-        this.exchange = null;
-        this.session = null;
-        this.form = null;
-        this.authentication = null;
+        this.method = this.controller.getClass().getMethod(this.controllerMethod, parameters.values().toArray(new Class[0]));
 
         setLocale(exchange);
         getSession(exchange);
         getAuthentication(exchange);
         getFlash(exchange);
         getForm(exchange);
+        getRequest(exchange);
 
-        boolean continueAfterFilter = executeFilter(exchange);
-        if (continueAfterFilter) {
-            Response response = getResponse(exchange);
-
+        if (continueRequest(exchange)) {
             setSession(exchange);
             setFlash(exchange);
             setAuthentication(exchange);
 
-            if (response.isRedirect()) {
-                exchange.setResponseCode(StatusCodes.FOUND);
-                exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-                exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-                exchange.endExchange();
-            } else if (response.isBinary()) {
-                exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
-            } else {
-                exchange.setResponseCode(response.getStatusCode());
-                exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
-                exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
-                exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
-                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-                exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-
-                if (response.isETag()) {
-                    exchange.getResponseHeaders().put(Headers.ETAG, DigestUtils.md5Hex(response.getBody()));
-                }
-
-                response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
-                exchange.getResponseSender().send(response.getBody());
-            }
+            RequestUtils.handleResponse(exchange, getResponse(exchange));
         }
     }
 
@@ -156,53 +124,49 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
-    private boolean executeFilter(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        boolean continueAfterFilter = executeGlobalFilter(exchange);
+    private boolean continueRequest(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        boolean continueRequest = executeRequestFilter(exchange);
 
-        if (continueAfterFilter) {
-            continueAfterFilter = executeFilter(this.controllerClass.getAnnotations(), exchange);
+        if (continueRequest) {
+            continueRequest = executeFilter(this.controllerClass.getAnnotations(), exchange);
         }
 
-        if (continueAfterFilter) {
-            continueAfterFilter = executeFilter(this.method.getAnnotations(), exchange);
+        if (continueRequest) {
+            continueRequest = executeFilter(this.method.getAnnotations(), exchange);
         }
 
-        return continueAfterFilter;
+        return continueRequest;
     }
 
-    private boolean executeGlobalFilter(HttpServerExchange exchange) {
-        if (this.globalFilter) {
-            MangooGlobalFilter mangooGlobalFilter = this.injector.getInstance(MangooGlobalFilter.class);
-            return mangooGlobalFilter.filter(getExchange(exchange));
+    private boolean executeRequestFilter(HttpServerExchange exchange) {
+        if (this.requestFilter) {
+            MangooRequestFilter mangooRequestFilter = this.injector.getInstance(MangooRequestFilter.class);
+            return mangooRequestFilter.continueRequest(this.request);
         }
 
         return true;
     }
 
-    private Exchange getExchange(HttpServerExchange httpServerExchange) {
-        if (this.exchange == null) {
-            String authenticityToken = getRequestParameters(httpServerExchange).get(Default.AUTHENTICITY_TOKEN.toString());
-            if (StringUtils.isBlank(authenticityToken)) {
-                authenticityToken = this.form.get(Default.AUTHENTICITY_TOKEN.toString());
-            }
-
-            this.exchange = new Exchange(httpServerExchange, this.session, authenticityToken, this.authentication);
+    private void getRequest(HttpServerExchange httpServerExchange) {
+        String authenticityToken = RequestUtils.getRequestParameters(httpServerExchange).get(Default.AUTHENTICITY_TOKEN.toString());
+        if (StringUtils.isBlank(authenticityToken)) {
+            authenticityToken = this.form.get(Default.AUTHENTICITY_TOKEN.toString());
         }
 
-        return this.exchange;
+        this.request = new Request(httpServerExchange, this.session, authenticityToken, this.authentication);
     }
 
     private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         FilterWith filterWith = null;
-        boolean continueAfterFilter = true;
+        boolean continueRequest = true;
 
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().equals(FilterWith.class)) {
                 filterWith = (FilterWith) annotation;
                 for (Class<?> clazz : filterWith.value()) {
-                    if (continueAfterFilter) {
-                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD_NAME.toString(), Exchange.class);
-                        continueAfterFilter = (boolean) classMethod.invoke(this.injector.getInstance(clazz), getExchange(exchange));
+                    if (continueRequest) {
+                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class);
+                        continueRequest = (boolean) classMethod.invoke(this.injector.getInstance(clazz), this.request);
                     } else {
                         return false;
                     }
@@ -210,7 +174,7 @@ public class RequestHandler implements HttpHandler {
             }
         }
 
-        return continueAfterFilter;
+        return continueRequest;
     }
 
     private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
@@ -227,8 +191,8 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (!response.isRendered()) {
-            if (response.getContent() != null && this.exchange != null && this.exchange.getContent() != null) {
-                response.getContent().putAll(this.exchange.getContent());
+            if (response.getContent() != null && this.request != null && this.request.getPayload() != null && this.request.getPayload().getContent() != null) {
+                response.getContent().putAll(this.request.getPayload().getContent());
             }
 
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
@@ -443,7 +407,7 @@ public class RequestHandler implements HttpHandler {
 
     private void getForm(HttpServerExchange exchange) throws IOException {
         this.form = this.injector.getInstance(Form.class);
-        if (isPostOrPut(exchange)) {
+        if (RequestUtils.isPostOrPut(exchange)) {
             final FormDataParser formDataParser = FormParserFactory.builder().build().createParser(exchange);
             if (formDataParser != null) {
                 exchange.startBlocking();
@@ -466,7 +430,7 @@ public class RequestHandler implements HttpHandler {
 
     private Body getBody(HttpServerExchange exchange) throws IOException {
         Body body = new Body();
-        if (isPostOrPut(exchange)) {
+        if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
             body.setContent(IOUtils.toString(exchange.getInputStream()));
         }
@@ -474,12 +438,8 @@ public class RequestHandler implements HttpHandler {
         return body;
     }
 
-    private boolean isPostOrPut(HttpServerExchange exchange) {
-        return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
-    }
-
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
-        Map<String, String> queryParameters = getRequestParameters(exchange);
+        Map<String, String> queryParameters = RequestUtils.getRequestParameters(exchange);
         Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
@@ -495,7 +455,9 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = this.session;
             } else if ((Flash.class).equals(clazz)) {
                 convertedParameters[index] = this.flash;
-            } else if ((Body.class).equals(clazz)) {
+            } else if ((Request.class).equals(clazz)) {
+                convertedParameters[index] = this.request;
+            }else if ((Body.class).equals(clazz)) {
                 convertedParameters[index] = getBody(exchange);
             } else if ((LocalDate.class).equals(clazz)) {
                 convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : LocalDate.parse(queryParameters.get(key));
@@ -520,19 +482,6 @@ public class RequestHandler implements HttpHandler {
         }
 
         return convertedParameters;
-    }
-
-    private Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Map<String, String> requestParamater = new HashMap<String, String>();
-
-        Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
-        queryParameters.putAll(exchange.getPathParameters());
-
-        for (Map.Entry<String, Deque<String>> entry : queryParameters.entrySet()) {
-            requestParamater.put(entry.getKey(), entry.getValue().element());
-        }
-
-        return requestParamater;
     }
 
     private Map<String, Class<?>> getMethodParameters() {
