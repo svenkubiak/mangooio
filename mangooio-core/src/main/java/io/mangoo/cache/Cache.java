@@ -4,12 +4,18 @@ import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.CacheBuilder;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
 
 /**
  *
@@ -21,8 +27,12 @@ public class Cache {
     private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
     com.google.common.cache.Cache<String, Object> cache;
 
-    public Cache() {
-        this.cache = CacheBuilder.newBuilder().build();
+    @Inject
+    public Cache(Config config) {
+        this.cache = CacheBuilder.newBuilder()
+                .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
+                .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS)
+                .build();
     }
 
     /**

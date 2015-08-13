@@ -50,9 +50,8 @@ public enum Key {
     FORM_URL("form.url"),
     FORM_REGEX("form.regex"),
     VERSION("version"),
-    CACHE_MEMCACHED_HOSTS("cache.memcached.hosts"),
-    CACHE_MEMCACHED_USER("cache.memcached.user"),
-    CACHE_MEMCACHED_PASSWORD("cache.memcached.password");
+    CACHE_MAX_SIZE("cache.maxsize"),
+    CACHE_EXPIRES("cache.expires");
 
     private final String value;
 

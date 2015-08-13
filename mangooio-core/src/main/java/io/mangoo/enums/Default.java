@@ -61,7 +61,9 @@ public enum Default {
     EHCACHE("ehcache"),
     MEMCACHED("memcached"),
     HAZELCAST("hazelcast"),
-    REDIS("redis");
+    REDIS("redis"),
+    CACHE_MAX_SIZE("5000"),
+    CACHE_EXPIRES("3600");
 
     private final String value;
 

@@ -2029,6 +2029,10 @@ as a fallback value for Locale
 
 |cookie.secure |Whether to set the secure flag for the session cookie or not |false|
 
+|cache.maxsize |The maximum number of elements in the cache |5000|
+
+|cache.expires |Duration after which an element is removed from the cache if it is not accessed.|3600|
+
 |smtp.host |The host of the SMTP server |127.0.0.1|
 
 |smtp.port |The port of the SMTP server |25|
