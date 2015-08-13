@@ -94,8 +94,6 @@ public class Form {
     }
 
     /**
-     *
-     *
      * Validates a given field to have a minimum length
      *
      * @param minLength The minimum length

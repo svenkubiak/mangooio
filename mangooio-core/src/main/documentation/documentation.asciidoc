@@ -35,7 +35,6 @@ Here are some key features of mangoo I/O in a nutshell:
 
 * Intuitiv convention-over-configuration, making a java developer feel
 at home from the start
-* Supports Multiple Caching Frameworks (EhCache, Redis, Hazelcast and Memcached)
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
@@ -225,7 +224,6 @@ this is the basic structure of a the application
         │       └── ApplicationController.java
         └── resources
             ├── application.yaml
-            ├── ehcache.xml
             ├── files
             ├── logback.prod.xml
             ├── logback.xml
@@ -263,7 +261,6 @@ following files and folders
 /templates
 /translations
 application.yaml
-ehcache.xml
 logback.xml
 ----------------
 
@@ -287,8 +284,7 @@ messages.properties file in your /translations folder.
 It is recommended to have the controllers in a controller package, but not required
 as the mapping is done in the Routes class and mangoo I/O doesn't require this.
 
-If you don't want to use a cache the ehcache.xml file is optional, as long with
-the logback.xml file. If you don't not provide a logback.xml file, the logback
+If you don't not provide a logback.xml file, the logback
 will fallback to a default configuration provided with the logback package.
 
 == Configuration
@@ -741,7 +737,7 @@ If the token is invalid the request will be redirected to the default
 
 == Caching
 
-mangoo I/O uses http://ehcache.org/[Ehcache] for storing and accessing values
+mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] for storing and accessing values
 in-memory. To use the cache in your application, simply inject the cache class.
 
 [source,java]
@@ -755,7 +751,7 @@ from the cache.
 
 You can configure your cache settings, by editing the ehcache.xml file
 located in src/main/resources in your mangoo I/O application. Check out
-the http://ehcache.org/generated/2.10.0/html/ehc-all[Ehcache
+the https://github.com/google/guava/wiki[Guava
 documentation] on how to customize your cache.
 
 == Scheduling
