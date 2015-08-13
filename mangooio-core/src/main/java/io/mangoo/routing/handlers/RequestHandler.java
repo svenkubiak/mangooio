@@ -34,6 +34,7 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
@@ -55,6 +56,7 @@ import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
+import io.undertow.util.StatusCodes;
 
 public class RequestHandler implements HttpHandler {
     private static final int AUTH_PREFIX_LENGTH = 2;
@@ -67,9 +69,9 @@ public class RequestHandler implements HttpHandler {
     private Class<?> controllerClass;
     private String controllerMethod;
     private Object controller;
-    private Map<String, Class<?>> parameters;
+    private Map<String, Class<?>> methodParameters;
     private Method method;
-    private ObjectMapper mapper;
+    private ObjectMapper opjectMapper;
     private Authentication authentication;
     private Session session;
     private Flash flash;
@@ -77,24 +79,26 @@ public class RequestHandler implements HttpHandler {
     private Config config;
     private Injector injector;
     private Request request;
-    private boolean requestFilter;
+    private boolean hasRequestFilter;
+    private Map<String, String> requestParameter;
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod) {
         this.injector = Application.getInjector();
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.controller = this.injector.getInstance(this.controllerClass);
-        this.parameters = getMethodParameters();
-        this.parameterCount = this.parameters.size();
+        this.methodParameters = getMethodParameters();
+        this.parameterCount = this.methodParameters.size();
         this.config = this.injector.getInstance(Config.class);
-        this.requestFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.mapper = JsonFactory.create();
+        this.hasRequestFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
+        this.opjectMapper = JsonFactory.create();
     }
 
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.method = this.controller.getClass().getMethod(this.controllerMethod, parameters.values().toArray(new Class[0]));
+        this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
         getSession(exchange);
@@ -104,11 +108,19 @@ public class RequestHandler implements HttpHandler {
         getRequest(exchange);
 
         if (continueRequest(exchange)) {
-            setSession(exchange);
-            setFlash(exchange);
-            setAuthentication(exchange);
+            Response response = getResponse(exchange);
 
-            RequestUtils.handleResponse(exchange, getResponse(exchange));
+            setSessionCookie(exchange);
+            setFlashCookie(exchange);
+            setAuthenticationCookie(exchange);
+
+            if (response.isRedirect()) {
+                handleRedirectResponse(exchange, response);
+            } else if (response.isBinary()) {
+                handleBinaryResponse(exchange, response);
+            } else {
+                handleRenderedResponse(exchange, response);
+            }
         }
     }
 
@@ -124,22 +136,42 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Execute filters if exists in the following order:
+     * RequestFilter, ControllerFilter, MethodFilter
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if the request should continue after filter execution, false otherwise
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     private boolean continueRequest(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        //execute global request filter if exist
         boolean continueRequest = executeRequestFilter(exchange);
 
         if (continueRequest) {
+            //execute filter on controller level
             continueRequest = executeFilter(this.controllerClass.getAnnotations(), exchange);
         }
 
         if (continueRequest) {
+            //execute filter on method level
             continueRequest = executeFilter(this.method.getAnnotations(), exchange);
         }
 
         return continueRequest;
     }
 
+    /**
+     * Executes a global request filter if exists
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if the request should continue after filter execution, false otherwise
+     */
     private boolean executeRequestFilter(HttpServerExchange exchange) {
-        if (this.requestFilter) {
+        if (this.hasRequestFilter) {
             MangooRequestFilter mangooRequestFilter = this.injector.getInstance(MangooRequestFilter.class);
             return mangooRequestFilter.continueRequest(this.request);
         }
@@ -147,15 +179,31 @@ public class RequestHandler implements HttpHandler {
         return true;
     }
 
-    private void getRequest(HttpServerExchange httpServerExchange) {
-        String authenticityToken = RequestUtils.getRequestParameters(httpServerExchange).get(Default.AUTHENTICITY_TOKEN.toString());
+    /**
+     * Creates a new request object containing the current request data
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
+    private void getRequest(HttpServerExchange exchange) {
+        String authenticityToken = this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString());
         if (StringUtils.isBlank(authenticityToken)) {
             authenticityToken = this.form.get(Default.AUTHENTICITY_TOKEN.toString());
         }
 
-        this.request = new Request(httpServerExchange, this.session, authenticityToken, this.authentication);
+        this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter);
     }
 
+    /**
+     * Executes all filters on controller and method level
+     *
+     * @param annotations An array of @FilterWith annotated classes and methods
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if the request should continue after filter execution, false otherwise
+     *
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         FilterWith filterWith = null;
         boolean continueRequest = true;
@@ -177,10 +225,22 @@ public class RequestHandler implements HttpHandler {
         return continueRequest;
     }
 
+    /**
+     * Invokes the controller methods and retrives the response which
+     * is later send to the client
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return A response object
+     *
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IOException
+     * @throws TemplateException
+     */
     private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
         Response response;
 
-        if (this.parameters.isEmpty()) {
+        if (this.methodParameters.isEmpty()) {
             response = (Response) this.method.invoke(this.controller);
             response.andTemplate(this.method.getName());
         } else {
@@ -191,9 +251,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (!response.isRendered()) {
-            if (response.getContent() != null && this.request != null && this.request.getPayload() != null && this.request.getPayload().getContent() != null) {
-                response.getContent().putAll(this.request.getPayload().getContent());
-            }
+            response.getContent().putAll(this.request.getPayload().getContent());
 
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
             response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), response.getTemplate(), response.getContent()));
@@ -256,7 +314,7 @@ public class RequestHandler implements HttpHandler {
         return requestSession;
     }
 
-    private void setSession(HttpServerExchange exchange) {
+    private void setSessionCookie(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
             String values = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
@@ -327,7 +385,7 @@ public class RequestHandler implements HttpHandler {
         return requestAuthentication;
     }
 
-    private void setAuthentication(HttpServerExchange exchange) {
+    private void setAuthenticationCookie(HttpServerExchange exchange) {
         if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
             Cookie cookie;
             String cookieName = this.config.getAuthenticationCookieName();
@@ -382,7 +440,7 @@ public class RequestHandler implements HttpHandler {
         this.flash = requestFlash;
     }
 
-    private void setFlash(HttpServerExchange exchange) {
+    private void setFlashCookie(HttpServerExchange exchange) {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
@@ -428,6 +486,14 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Retrieves the complete request body from the request
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return A body object containing the request body
+     *
+     * @throws IOException
+     */
     private Body getBody(HttpServerExchange exchange) throws IOException {
         Body body = new Body();
         if (RequestUtils.isPostOrPut(exchange)) {
@@ -439,11 +505,10 @@ public class RequestHandler implements HttpHandler {
     }
 
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
-        Map<String, String> queryParameters = RequestUtils.getRequestParameters(exchange);
         Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
-        for (Map.Entry<String, Class<?>> entry : this.parameters.entrySet()) {
+        for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
 
@@ -460,22 +525,22 @@ public class RequestHandler implements HttpHandler {
             }else if ((Body.class).equals(clazz)) {
                 convertedParameters[index] = getBody(exchange);
             } else if ((LocalDate.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : LocalDate.parse(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : LocalDate.parse(this.requestParameter.get(key));
             } else if ((LocalDateTime.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : LocalDateTime.parse(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : LocalDateTime.parse(this.requestParameter.get(key));
             } else if ((String.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? "" : queryParameters.get(key);
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : this.requestParameter.get(key);
             } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Integer.valueOf(0) : Integer.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Integer.valueOf(0) : Integer.valueOf(this.requestParameter.get(key));
             } else if ((Double.class).equals(clazz) || (double.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Double.valueOf(0) : Double.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Double.valueOf(0) : Double.valueOf(this.requestParameter.get(key));
             } else if ((Float.class).equals(clazz) || (float.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Float.valueOf(0) : Float.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Float.valueOf(0) : Float.valueOf(this.requestParameter.get(key));
             } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(queryParameters.get(key)) ? Long.valueOf(0) : Long.valueOf(queryParameters.get(key));
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Long.valueOf(0) : Long.valueOf(this.requestParameter.get(key));
             } else if (exchange.getRequestHeaders() != null && exchange.getRequestHeaders().get(Headers.CONTENT_TYPE) != null &&
                     (ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
-                convertedParameters[index] = this.mapper.readValue(getBody(exchange).asString(), clazz);
+                convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
             }
 
             index++;
@@ -497,5 +562,32 @@ public class RequestHandler implements HttpHandler {
         }
 
         return methodParameters;
+    }
+
+    private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
+        exchange.setResponseCode(StatusCodes.FOUND);
+        exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.endExchange();
+    }
+
+    private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
+        exchange.setResponseCode(response.getStatusCode());
+        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
+        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
+        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+
+        if (response.isETag()) {
+            exchange.getResponseHeaders().put(Headers.ETAG, DigestUtils.md5Hex(response.getBody()));
+        }
+
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        exchange.getResponseSender().send(response.getBody());
+    }
+
+    private void handleBinaryResponse(HttpServerExchange exchange, Response response) {
+        exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
     }
 }
