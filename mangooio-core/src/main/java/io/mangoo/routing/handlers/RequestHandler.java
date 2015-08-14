@@ -578,16 +578,28 @@ public class RequestHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-
-        if (response.isETag()) {
-            exchange.getResponseHeaders().put(Headers.ETAG, DigestUtils.md5Hex(response.getBody()));
-        }
-
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
-        exchange.getResponseSender().send(response.getBody());
+        exchange.getResponseSender().send(getBody(exchange, response));
     }
 
     private void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+    }
+
+    private String getBody(HttpServerExchange exchange, Response response) {
+        String body = response.getBody();
+        if (response.isETag()) {
+            String modified = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
+            String etag = DigestUtils.md5Hex(response.getBody());
+            if (StringUtils.isNotBlank(modified) && StringUtils.isNotBlank(etag) && modified.equals(etag)) {
+                exchange.setResponseCode(StatusCodes.NOT_MODIFIED);
+                body = "";
+            } else {
+                exchange.getResponseHeaders().put(Headers.ETAG, etag);
+                exchange.getResponseSender().send(response.getBody());
+            }
+        }
+
+        return body;
     }
 }

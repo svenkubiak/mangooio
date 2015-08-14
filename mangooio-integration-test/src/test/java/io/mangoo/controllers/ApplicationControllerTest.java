@@ -24,6 +24,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
 import io.undertow.util.FileUtils;
+import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -161,5 +162,20 @@ public class ApplicationControllerTest {
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("2007-12-03T10:15:30", response.getContent());
+    }
+
+    @Test
+    public void eTagTest() {
+        MangooResponse response = MangooRequest.get("/etag").execute();
+
+        assertNotNull(response);
+
+        String etag = response.getHttpResponse().getFirstHeader(Headers.ETAG_STRING).getValue();
+        assertNotNull(etag);
+
+        response = MangooRequest.get("/etag").header(Headers.IF_NONE_MATCH_STRING, etag).execute();
+
+        assertEquals(StatusCodes.NOT_MODIFIED, response.getStatusCode());
+        assertEquals("", response.getContent());
     }
 }

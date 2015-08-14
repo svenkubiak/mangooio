@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -42,7 +43,7 @@ public class MangooResponse {
     private String responseUrl;
     private String responseUri;
     private HttpString responseMethod;
-    private String responseContent;
+    private String responseContent = "";
     private HttpResponse httpResponse;
     private ContentType responseContentType;
     private String responseRequestBody;
@@ -148,7 +149,10 @@ public class MangooResponse {
             } else {
                 this.httpResponse = this.httpClient.execute(request);
             }
-            this.responseContent = EntityUtils.toString(this.httpResponse.getEntity());
+            HttpEntity httpEntity = this.httpResponse.getEntity();
+            if (httpEntity != null) {
+                this.responseContent = EntityUtils.toString(this.httpResponse.getEntity());
+            }
         } catch (IOException e) {
             LOG.error("Failed to execute request to " + responseUrl, e);
         }
