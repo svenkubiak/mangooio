@@ -48,8 +48,8 @@ public class FormControllerTest {
         assertEquals("password must exactly match passwordconfirm", lines[3]);
         assertEquals("ipv4 must be a valid IPv4 address", lines[4]);
         assertEquals("ipv6 must be a valid IPv6 address", lines[5]);
-        assertEquals("phone can be max 12 characters", lines[6]);
-        assertEquals("fax must be at least 11 characters", lines[7]);
+        assertEquals("phone must have a size of max 12", lines[6]);
+        assertEquals("fax must have a least a size of 11", lines[7]);
         assertEquals("regex is invalid", lines[8]);
     }
 
