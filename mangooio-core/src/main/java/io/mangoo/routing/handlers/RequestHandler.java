@@ -568,6 +568,7 @@ public class RequestHandler implements HttpHandler {
         exchange.setResponseCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.endExchange();
     }
 
@@ -578,12 +579,18 @@ public class RequestHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.getResponseSender().send(getBody(exchange, response));
     }
 
-    private void handleBinaryResponse(HttpServerExchange exchange, Response response) {
-        exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+    private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
+        exchange.startBlocking();
+        exchange.setResponseCode(response.getStatusCode());
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTETE_STREAM.toString());
+        exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + response.getBinaryFileName());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
+        exchange.getOutputStream().write(response.getBinaryContent());
     }
 
     private String getBody(HttpServerExchange exchange, Response response) {
@@ -596,7 +603,6 @@ public class RequestHandler implements HttpHandler {
                 body = "";
             } else {
                 exchange.getResponseHeaders().put(Headers.ETAG, etag);
-                exchange.getResponseSender().send(response.getBody());
             }
         }
 
