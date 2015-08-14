@@ -1,10 +1,10 @@
 package io.mangoo.routing.bindings;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.mangoo.authentication.Authentication;
-import io.mangoo.routing.Payload;
+import io.mangoo.core.Application;
+import io.mangoo.interfaces.MangooValidator;
 import io.undertow.server.HttpServerExchange;
 
 /**
@@ -12,13 +12,14 @@ import io.undertow.server.HttpServerExchange;
  * @author svenkubiak
  *
  */
-public class Request {
+public class Request implements MangooValidator {
     private HttpServerExchange httpServerExchange;
     private Payload payload;
     private Session session;
     private String authenticityToken;
     private Authentication authentication;
-    private Map<String, String> parameter = new HashMap<String, String>();
+    private Validator validator;
+    private Map<String, String> parameter;
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter) {
         this.httpServerExchange = httpServerExchange;
@@ -26,7 +27,9 @@ public class Request {
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;
         this.payload = new Payload();
+        this.validator = Application.getInjector().getInstance(Validator.class);
         this.parameter = parameter;
+        this.validator.setValues(parameter);
     }
 
     public HttpServerExchange getHttpServerExchange() {
@@ -55,5 +58,15 @@ public class Request {
 
     public Map<String, String> getParameter() {
         return this.parameter;
+    }
+
+    @Override
+    public Validator validation() {
+        return this.validator;
+    }
+
+    @Override
+    public String getError(String name) {
+        return this.validator.hasError(name) ? this.validator.getError(name) : "";
     }
 }

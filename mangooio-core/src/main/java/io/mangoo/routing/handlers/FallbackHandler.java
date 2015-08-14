@@ -14,6 +14,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class FallbackHandler implements HttpHandler {
+
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.XSS_PROTECTION.toInt());

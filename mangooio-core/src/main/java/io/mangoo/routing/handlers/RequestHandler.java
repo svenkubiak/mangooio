@@ -187,7 +187,7 @@ public class RequestHandler implements HttpHandler {
     private void getRequest(HttpServerExchange exchange) {
         String authenticityToken = this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString());
         if (StringUtils.isBlank(authenticityToken)) {
-            authenticityToken = this.form.get(Default.AUTHENTICITY_TOKEN.toString());
+            authenticityToken = this.form.getValue(Default.AUTHENTICITY_TOKEN.toString());
         }
 
         this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter);
@@ -476,7 +476,7 @@ public class RequestHandler implements HttpHandler {
                         if (formValue.isFile()) {
                             form.addFile(formValue.getFile());
                         } else {
-                            form.add(new HttpString(data).toString(), formValue.getValue());
+                            form.addValue(new HttpString(data).toString(), formValue.getValue());
                         }
                     }
                 }

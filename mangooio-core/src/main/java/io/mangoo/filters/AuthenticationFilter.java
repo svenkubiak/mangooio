@@ -1,5 +1,7 @@
 package io.mangoo.filters;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
@@ -20,8 +22,12 @@ import io.undertow.util.StatusCodes;
  */
 public class AuthenticationFilter implements MangooFilter {
 
-    @Inject
     private Config config;
+
+    @Inject
+    public AuthenticationFilter (Config config) {
+        this.config = Objects.requireNonNull(config, "Config can not be null");
+    }
 
     @Override
     public boolean continueRequest(Request request) {

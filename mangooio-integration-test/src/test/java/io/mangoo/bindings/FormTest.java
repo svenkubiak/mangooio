@@ -20,190 +20,190 @@ public class FormTest {
     @Test
     public void exactMatchTest() {
         Form form = getNewForm();
-        form.add("foo", "BlA");
-        form.add("bar", "BlA");
-        form.exactMatch("foo", "bar");
+        form.addValue("foo", "BlA");
+        form.addValue("bar", "BlA");
+        form.validation().exactMatch("foo", "bar");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "BlA");
-        form.add("bar", "Bla");
-        form.exactMatch("foo", "bar");
+        form.addValue("foo", "BlA");
+        form.addValue("bar", "Bla");
+        form.validation().exactMatch("foo", "bar");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void MatchTest() {
         Form form = getNewForm();
-        form.add("foo", "BLA");
-        form.add("bar", "bla");
-        form.match("foo", "bar");
+        form.addValue("foo", "BLA");
+        form.addValue("bar", "bla");
+        form.validation().match("foo", "bar");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "BLA");
-        form.add("bar", "bla2");
-        form.match("foo", "bar");
+        form.addValue("foo", "BLA");
+        form.addValue("bar", "bla2");
+        form.validation().match("foo", "bar");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void requiredTest() {
         Form form = getNewForm();
-        form.add("foo", "bar");
-        form.required("foo");
+        form.addValue("foo", "bar");
+        form.validation().required("foo");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "");
-        form.required("foo");
+        form.addValue("foo", "");
+        form.validation().required("foo");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void minTest() {
         Form form = getNewForm();
-        form.add("foo", "bar");
-        form.min("foo", 3);
+        form.addValue("foo", "bar");
+        form.validation().min("foo", 3);
 
-        assertFalse(form.hasErrors());
-
-        form = getNewForm();
-        form.add("foo", "ba");
-        form.min("foo", 4);
-
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "5");
-        form.min("foo", 1);
+        form.addValue("foo", "ba");
+        form.validation().min("foo", 4);
 
-        assertFalse(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "3");
-        form.min("foo", 5);
+        form.addValue("foo", "5");
+        form.validation().min("foo", 1);
 
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
+
+        form = getNewForm();
+        form.addValue("foo", "3");
+        form.validation().min("foo", 5);
+
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void maxTest() {
         Form form = getNewForm();
-        form.add("foo", "bar");
-        form.max("foo", 3);
+        form.addValue("foo", "bar");
+        form.validation().max("foo", 3);
 
-        assertFalse(form.hasErrors());
-
-        form = getNewForm();
-        form.add("foo", "bars");
-        form.max("foo", 3);
-
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "3");
-        form.max("foo", 5);
+        form.addValue("foo", "bars");
+        form.validation().max("foo", 3);
 
-        assertFalse(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "7");
-        form.max("foo", 6);
+        form.addValue("foo", "3");
+        form.validation().max("foo", 5);
 
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
+
+        form = getNewForm();
+        form.addValue("foo", "7");
+        form.validation().max("foo", 6);
+
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void emailTest() {
         Form form = getNewForm();
-        form.add("foo", "foo@bar.com");
-        form.email("foo");
+        form.addValue("foo", "foo@bar.com");
+        form.validation().email("foo");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "foobar");
-        form.email("foo");
+        form.addValue("foo", "foobar");
+        form.validation().email("foo");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void urlTest() {
         Form form = getNewForm();
-        form.add("foo", "https://mangoo.io");
-        form.url("foo");
+        form.addValue("foo", "https://mangoo.io");
+        form.validation().url("foo");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "htps://mangoo.io");
-        form.url("foo");
+        form.addValue("foo", "htps://mangoo.io");
+        form.validation().url("foo");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void ipv4Test() {
         Form form = getNewForm();
-        form.add("foo", "192.168.2.1");
-        form.ipv4("foo");
+        form.addValue("foo", "192.168.2.1");
+        form.validation().ipv4("foo");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "501.15.1.2.1");
-        form.ipv4("foo");
+        form.addValue("foo", "501.15.1.2.1");
+        form.validation().ipv4("foo");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void ipv6Test() {
         Form form = getNewForm();
-        form.add("foo", "001:db8:85a3:8d3:1319:8a2e:370:7348");
-        form.ipv6("foo");
+        form.addValue("foo", "001:db8:85a3:8d3:1319:8a2e:370:7348");
+        form.validation().ipv6("foo");
 
-        assertFalse(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "001:db8:85a3:8d3:1319:8a2e:7348");
-        form.ipv6("foo");
+        form.addValue("foo", "001:db8:85a3:8d3:1319:8a2e:7348");
+        form.validation().ipv6("foo");
 
-        assertTrue(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
     }
 
     @Test
     public void rangeTest() {
         Form form = getNewForm();
-        form.add("foo", "bar");
-        form.range("foo", 1, 3);
+        form.addValue("foo", "bar");
+        form.validation().range("foo", 1, 3);
 
-        assertFalse(form.hasErrors());
-
-        form = getNewForm();
-        form.add("foo", "barddddd");
-        form.range("foo", 1, 4);
-
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "10");
-        form.range("foo", 1, 11);
+        form.addValue("foo", "barddddd");
+        form.validation().range("foo", 1, 4);
 
-        assertFalse(form.hasErrors());
+        assertTrue(form.validation().hasErrors());
 
         form = getNewForm();
-        form.add("foo", "23");
-        form.range("foo", 10, 20);
+        form.addValue("foo", "10");
+        form.validation().range("foo", 1, 11);
 
-        assertTrue(form.hasErrors());
+        assertFalse(form.validation().hasErrors());
+
+        form = getNewForm();
+        form.addValue("foo", "23");
+        form.validation().range("foo", 10, 20);
+
+        assertTrue(form.validation().hasErrors());
     }
 }

@@ -26,17 +26,17 @@ public class Messages {
     public Messages() {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
 
-        defaults.put(Key.FORM_REQUIRED.toString(), Validation.REQUIRED.toString());
-        defaults.put(Key.FORM_MIN.toString(), Validation.MIN.toString());
-        defaults.put(Key.FORM_MAX.toString(), Validation.MAX.toString());
-        defaults.put(Key.FORM_EXACT_MATCH.toString(), Validation.EXACT_MATCH.toString());
-        defaults.put(Key.FORM_MATCH.toString(), Validation.MATCH.toString());
-        defaults.put(Key.FORM_EMAIL.toString(), Validation.EMAIL.toString());
-        defaults.put(Key.FORM_IPV4.toString(), Validation.IPV4.toString());
-        defaults.put(Key.FORM_IPV6.toString(), Validation.IPV6.toString());
-        defaults.put(Key.FORM_RANGE.toString(), Validation.RANGE.toString());
-        defaults.put(Key.FORM_URL.toString(), Validation.URL.toString());
-        defaults.put(Key.FORM_REGEX.toString(), Validation.REGEX.toString());
+        defaults.put(Key.VALIDATION_REQUIRED.toString(), Validation.REQUIRED.toString());
+        defaults.put(Key.VALIDATION_MIN.toString(), Validation.MIN.toString());
+        defaults.put(Key.VALIDATION_MAX.toString(), Validation.MAX.toString());
+        defaults.put(Key.VALIDATION_EXACT_MATCH.toString(), Validation.EXACT_MATCH.toString());
+        defaults.put(Key.VALIDATION_MATCH.toString(), Validation.MATCH.toString());
+        defaults.put(Key.VALIDATION_EMAIL.toString(), Validation.EMAIL.toString());
+        defaults.put(Key.VALIDATION_IPV4.toString(), Validation.IPV4.toString());
+        defaults.put(Key.VALIDATION_IPV6.toString(), Validation.IPV6.toString());
+        defaults.put(Key.VALIDATION_RANGE.toString(), Validation.RANGE.toString());
+        defaults.put(Key.VALIDATION_URL.toString(), Validation.URL.toString());
+        defaults.put(Key.VALIDATION_REGEX.toString(), Validation.REGEX.toString());
     }
 
     /**

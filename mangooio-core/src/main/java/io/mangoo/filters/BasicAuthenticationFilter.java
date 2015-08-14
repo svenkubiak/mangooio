@@ -1,5 +1,7 @@
 package io.mangoo.filters;
 
+import java.util.Objects;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
@@ -22,11 +24,14 @@ import io.undertow.util.StatusCodes;
 public class BasicAuthenticationFilter implements MangooFilter {
     private static final int CREDENTIALS_LENGTH = 2;
 
-    @Inject
     private Config config;
+    private MangooAuthenticator mangooAuthenticator;
 
     @Inject
-    private MangooAuthenticator mangooAuthenticator;
+    public BasicAuthenticationFilter(Config config, MangooAuthenticator mangooAuthenticator) {
+        this.config = Objects.requireNonNull(config, "Config can not be null");
+        this.mangooAuthenticator = Objects.requireNonNull(mangooAuthenticator, "MangooAuthenticator can not be null");
+    }
 
     @Override
     public boolean continueRequest(Request request) {

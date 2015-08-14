@@ -1,4 +1,4 @@
-package io.mangoo.routing;
+package io.mangoo.routing.bindings;
 
 import java.util.HashMap;
 import java.util.Map;
