@@ -25,7 +25,7 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
-    com.google.common.cache.Cache<String, Object> cache;
+    private com.google.common.cache.Cache<String, Object> cache;
 
     @Inject
     public Cache(Config config) {
@@ -166,7 +166,11 @@ public class Cache {
      */
     private void check(Object value) {
         if (value != null && !(value instanceof Serializable)) {
-            new NotSerializableException("Cannot cache a non-serializable value of type " + value.getClass().getName());
+            try {
+                throw new NotSerializableException("Cannot cache a non-serializable value of type " + value.getClass().getName());
+            } catch (NotSerializableException e) {
+                LOG.error("Failed to check serialization for caching", e);
+            }
         }
     }
 }

@@ -14,12 +14,15 @@ import io.undertow.util.Methods;
  */
 public final class RequestUtils {
 
+    private RequestUtils() {
+    }
+
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Map<String, String> requestParamater = new HashMap<String, String>();
 
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element()));
+        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
 
         return requestParamater;
     }

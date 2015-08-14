@@ -107,7 +107,7 @@ public class RequestHandler implements HttpHandler {
         getForm(exchange);
         getRequest(exchange);
 
-        if (continueRequest(exchange)) {
+        if (continueRequest()) {
             Response response = getResponse(exchange);
 
             setSessionCookie(exchange);
@@ -147,18 +147,18 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private boolean continueRequest(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private boolean continueRequest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         //execute global request filter if exist
-        boolean continueRequest = executeRequestFilter(exchange);
+        boolean continueRequest = executeRequestFilter();
 
         if (continueRequest) {
             //execute filter on controller level
-            continueRequest = executeFilter(this.controllerClass.getAnnotations(), exchange);
+            continueRequest = executeFilter(this.controllerClass.getAnnotations());
         }
 
         if (continueRequest) {
             //execute filter on method level
-            continueRequest = executeFilter(this.method.getAnnotations(), exchange);
+            continueRequest = executeFilter(this.method.getAnnotations());
         }
 
         return continueRequest;
@@ -170,7 +170,7 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request should continue after filter execution, false otherwise
      */
-    private boolean executeRequestFilter(HttpServerExchange exchange) {
+    private boolean executeRequestFilter() {
         if (this.hasRequestFilter) {
             MangooRequestFilter mangooRequestFilter = this.injector.getInstance(MangooRequestFilter.class);
             return mangooRequestFilter.continueRequest(this.request);
@@ -204,7 +204,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private boolean executeFilter(Annotation[] annotations, HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private boolean executeFilter(Annotation[] annotations) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         FilterWith filterWith = null;
         boolean continueRequest = true;
 

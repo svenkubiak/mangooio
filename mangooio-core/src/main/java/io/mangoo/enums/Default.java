@@ -17,7 +17,7 @@ public enum Default {
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
     SMTP_PORT("25"),
-    SMTP_SSL("false"),
+    SMTP_SSL("false"), //NOSONAR
     APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
     ASSETS_PATH("src/main/resources/files/assets/"),
@@ -55,9 +55,9 @@ public enum Default {
     EXCEPTION_TEMPLATE_NAME("exception.ftl"),
     DEFAULT_TEMPLATES_DIR("/defaults/"),
     X_XSS_PPROTECTION("1"),
-    COOKIE_SECURE("false"),
+    COOKIE_SECURE("false"), //NOSONAR
     CACHE_TYPE("ehcache"),
-    AUTH_COOKIE_SECURE("false"),
+    AUTH_COOKIE_SECURE("false"), //NOSONAR
     EHCACHE("ehcache"),
     MEMCACHED("memcached"),
     HAZELCAST("hazelcast"),

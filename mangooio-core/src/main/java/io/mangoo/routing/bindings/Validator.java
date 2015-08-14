@@ -281,7 +281,7 @@ public class Validator {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
-            double doubleValue = Double.valueOf(value);
+            double doubleValue = Double.parseDouble(value);
             if (doubleValue < minLength || doubleValue > maxLength) {
                 this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
             }
