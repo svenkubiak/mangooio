@@ -13,6 +13,9 @@
 * https://github.com/svenkubiak/mangooio/issues/34[#34] Added LocalDate and LocalDateTime as request parameter (svenkubiak)
 * Version bumps (svenkubiak)
 ** doctester-core 1.1.6 -> 1.1.8
+** snakeyaml 1.15 -> 1.16
+** junit-toolbox 2.1 -> 2.2
+** undertow 1.2.9.Final -> 1.2.10.Final
 
 == Version 1.0.1
 

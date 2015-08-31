@@ -32,6 +32,7 @@ import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Binding;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
@@ -511,36 +512,63 @@ public class RequestHandler implements HttpHandler {
         for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
+            Binding binding = RequestUtils.getBinding(clazz);
 
-            if ((Form.class).equals(clazz)) {
-                convertedParameters[index] = this.form;
-            } else if ((Authentication.class).equals(clazz)) {
-                convertedParameters[index] = this.authentication;
-            } else if ((Session.class).equals(clazz)) {
-                convertedParameters[index] = this.session;
-            } else if ((Flash.class).equals(clazz)) {
-                convertedParameters[index] = this.flash;
-            } else if ((Request.class).equals(clazz)) {
-                convertedParameters[index] = this.request;
-            }else if ((Body.class).equals(clazz)) {
-                convertedParameters[index] = getBody(exchange);
-            } else if ((LocalDate.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : LocalDate.parse(this.requestParameter.get(key));
-            } else if ((LocalDateTime.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : LocalDateTime.parse(this.requestParameter.get(key));
-            } else if ((String.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? "" : this.requestParameter.get(key);
-            } else if ((Integer.class).equals(clazz) || (int.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Integer.valueOf(0) : Integer.valueOf(this.requestParameter.get(key));
-            } else if ((Double.class).equals(clazz) || (double.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Double.valueOf(0) : Double.valueOf(this.requestParameter.get(key));
-            } else if ((Float.class).equals(clazz) || (float.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Float.valueOf(0) : Float.valueOf(this.requestParameter.get(key));
-            } else if ((Long.class).equals(clazz) || (long.class).equals(clazz)) {
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? Long.valueOf(0) : Long.valueOf(this.requestParameter.get(key));
-            } else if (exchange.getRequestHeaders() != null && exchange.getRequestHeaders().get(Headers.CONTENT_TYPE) != null &&
-                    (ContentType.APPLICATION_JSON.toString()).equals(exchange.getRequestHeaders().get(Headers.CONTENT_TYPE).element())) {
+            if (binding != null) {
+                switch (binding) {
+                case FORM:
+                    convertedParameters[index] = this.form;
+                    break;
+                case AUTHENTICATION:
+                    convertedParameters[index] = this.authentication;
+                    break;
+                case SESSION:
+                    convertedParameters[index] = this.session;
+                    break;
+                case FLASH:
+                    convertedParameters[index] = this.flash;
+                    break;
+                case REQUEST:
+                    convertedParameters[index] = this.request;
+                    break;
+                case BODY:
+                    convertedParameters[index] = getBody(exchange);
+                    break;
+                case LOCALDATE:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDate.parse(this.requestParameter.get(key));
+                    break;
+                case LOCALDATETIME:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDateTime.parse(this.requestParameter.get(key));
+                    break;
+                case STRING:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : this.requestParameter.get(key);
+                    break;
+                case INTEGER:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
+                    break;
+                case INT:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
+                    break;
+                case DOUBLE:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
+                    break;
+                case DOUBLE_PRIMITIVE:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
+                    break;
+                case FLOAT:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
+                    break;
+                case FLOAT_PRIMITIVE:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
+                    break;
+                case LONG:
+                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
+                    break;
+                }
+            } else if (RequestUtils.isJSONRequest(exchange)) {
                 convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
+            } else {
+                throw new IOException("Unknown controller parameter: " + clazz.getName());
             }
 
             index++;
