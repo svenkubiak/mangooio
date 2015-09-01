@@ -33,4 +33,14 @@ public enum Binding {
     public String toString() {
         return this.value;
     }
+
+    public static Binding fromString(String value) {
+        for (Binding binding : Binding.values()) {
+            if (binding.toString().equalsIgnoreCase(value)) {
+                return binding;
+            }
+        }
+
+        return null;
+    }
 }

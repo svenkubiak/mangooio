@@ -512,7 +512,7 @@ public class RequestHandler implements HttpHandler {
         for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
-            Binding binding = RequestUtils.getBinding(clazz);
+            Binding binding = Binding.fromString(clazz.getName());
 
             if (binding != null) {
                 switch (binding) {
