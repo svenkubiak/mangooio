@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -565,7 +565,7 @@ public class RequestHandler implements HttpHandler {
             } else if (RequestUtils.isJSONRequest(exchange)) {
                 convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
             } else {
-                throw new IOException("Unknown controller parameter: " + clazz.getName());
+                new IOException("Unknown controller parameter: " + clazz.getName());
             }
 
             index++;
@@ -575,18 +575,15 @@ public class RequestHandler implements HttpHandler {
     }
 
     private Map<String, Class<?>> getMethodParameters() {
-        Map<String, Class<?>> methodParameters = new LinkedHashMap<String, Class<?>>();
+        Map<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
         for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
-                Parameter[] declaredParameters = declaredMethod.getParameters();
-                for (Parameter parameter : declaredParameters) {
-                    methodParameters.put(parameter.getName(), parameter.getType());
-                }
+                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
                 break;
             }
         }
 
-        return methodParameters;
+        return parameters;
     }
 
     private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
