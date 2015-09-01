@@ -564,8 +564,6 @@ public class RequestHandler implements HttpHandler {
                 }
             } else if (RequestUtils.isJSONRequest(exchange)) {
                 convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
-            } else {
-                new IOException("Unknown controller parameter: " + clazz.getName());
             }
 
             index++;
