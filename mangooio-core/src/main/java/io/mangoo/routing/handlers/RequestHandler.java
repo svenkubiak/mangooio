@@ -616,9 +616,9 @@ public class RequestHandler implements HttpHandler {
     private String getBody(HttpServerExchange exchange, Response response) {
         String body = response.getBody();
         if (response.isETag()) {
-            String modified = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
-            String etag = DigestUtils.md5Hex(response.getBody());
-            if (StringUtils.isNotBlank(modified) && StringUtils.isNotBlank(etag) && modified.equals(etag)) {
+            String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
+            String etag = DigestUtils.md5Hex(body);
+            if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setResponseCode(StatusCodes.NOT_MODIFIED);
                 body = "";
             } else {
