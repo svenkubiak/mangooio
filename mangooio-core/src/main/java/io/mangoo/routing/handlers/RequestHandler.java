@@ -576,7 +576,7 @@ public class RequestHandler implements HttpHandler {
         Map<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
         for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
-                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
+                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType())); //NOSONAR
                 break;
             }
         }
