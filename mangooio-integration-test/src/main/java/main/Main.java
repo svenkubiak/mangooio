@@ -2,7 +2,7 @@ package main;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
 
-public class Main {
+public final class Main {
 
     private Main(){
     }

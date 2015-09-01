@@ -543,26 +543,23 @@ public class RequestHandler implements HttpHandler {
                 case STRING:
                     convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : this.requestParameter.get(key);
                     break;
+                case INT_PRIMITIVE:
                 case INTEGER:
                     convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
                     break;
-                case INT:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
-                    break;
+                case DOUBLE_PRIMITIVE:
                 case DOUBLE:
                     convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
                     break;
-                case DOUBLE_PRIMITIVE:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
-                    break;
+                case FLOAT_PRIMITIVE:
                 case FLOAT:
                     convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
                     break;
-                case FLOAT_PRIMITIVE:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
-                    break;
+                case LONG_PRIMITIVE:
                 case LONG:
                     convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
+                    break;
+                default:
                     break;
                 }
             } else if (RequestUtils.isJSONRequest(exchange)) {

@@ -25,11 +25,11 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
-    private com.google.common.cache.Cache<String, Object> cache;
+    private com.google.common.cache.Cache<String, Object> localCache;
 
     @Inject
     public Cache(Config config) {
-        this.cache = CacheBuilder.newBuilder()
+        this.localCache = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
                 .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS)
                 .build();
@@ -43,7 +43,7 @@ public class Cache {
      */
     public void add(String key, Object value) {
         check(value);
-        this.cache.put(key, value);
+        this.localCache.put(key, value);
     }
 
     /**
@@ -74,7 +74,7 @@ public class Cache {
     public Object get(String key, Callable<? extends Object> callable) {
         Object object = null;
         try {
-            object = this.cache.get(key, callable);
+            object = this.localCache.get(key, callable);
         } catch (ExecutionException e) {
             LOG.error("Failed to get Cached value", e);
         }
@@ -89,7 +89,7 @@ public class Cache {
      * @return The stored value or null if not present
      */
     public Object get(String key) {
-        return this.cache.getIfPresent(key);
+        return this.localCache.getIfPresent(key);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Cache {
      * @param key The key for the cached value
      */
     public void remove(String key) {
-        this.cache.invalidate(key);
+        this.localCache.invalidate(key);
     }
 
     /**
@@ -107,14 +107,14 @@ public class Cache {
      * @return Cache size
      */
     public long size() {
-        return this.cache.size();
+        return this.localCache.size();
     }
 
     /**
      * Clears the complete cache by invalidating all entries
      */
     public void clear() {
-        this.cache.invalidateAll();
+        this.localCache.invalidateAll();
     }
 
     /**
@@ -128,8 +128,8 @@ public class Cache {
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
         Object object = null;
-        if (this.cache.getIfPresent(key) != null) {
-            object = this.cache.getIfPresent(key);
+        if (this.localCache.getIfPresent(key) != null) {
+            object = this.localCache.getIfPresent(key);
         }
 
         return (T) object;
@@ -148,9 +148,9 @@ public class Cache {
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz, Callable<? extends Object> callable) {
         Object object = null;
-        if (this.cache.getIfPresent(key) != null) {
+        if (this.localCache.getIfPresent(key) != null) {
             try {
-                object = this.cache.get(key, callable);
+                object = this.localCache.get(key, callable);
             } catch (ExecutionException e) {
                 LOG.error("Failed to get Cached value", e);
             }
