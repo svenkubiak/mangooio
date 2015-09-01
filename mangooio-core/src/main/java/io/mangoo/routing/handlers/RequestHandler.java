@@ -59,6 +59,11 @@ import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
+/**
+ *
+ * @author skubiak
+ *
+ */
 public class RequestHandler implements HttpHandler {
     private static final int AUTH_PREFIX_LENGTH = 2;
     private static final int TOKEN_LENGTH = 16;
@@ -125,6 +130,12 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Retrieves the locale from the current request or sets a default one and
+     * triggers a reload of the Messages class if the locale has changed.
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
     private void setLocale(HttpServerExchange exchange) {
         HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
         if (headerValues != null && headerValues.getFirst() != null) {
@@ -464,6 +475,13 @@ public class RequestHandler implements HttpHandler {
         }
     }
 
+    /**
+     * Retrieves the form parameter from a request
+     *
+     * @param exchange The Undertow HttpServerExchange
+     *
+     * @throws IOException
+     */
     private void getForm(HttpServerExchange exchange) throws IOException {
         this.form = this.injector.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
@@ -505,6 +523,14 @@ public class RequestHandler implements HttpHandler {
         return body;
     }
 
+    /**
+     * Creates an array with the request controller method parameter and sets the appropriate values
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return an array with the request controller method parameter and sets the appropriate values
+     *
+     * @throws IOException
+     */
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
         Object [] convertedParameters = new Object[this.parameterCount];
 
@@ -572,6 +598,11 @@ public class RequestHandler implements HttpHandler {
         return convertedParameters;
     }
 
+    /**
+     * Converts the method parameter of a mapped controller method to a map
+     *
+     * @return A Map containing the declared methods of the method parameters and ther class type
+     */
     private Map<String, Class<?>> getMethodParameters() {
         Map<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
         for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
@@ -584,6 +615,12 @@ public class RequestHandler implements HttpHandler {
         return parameters;
     }
 
+    /**
+     * Handles a redirect response to the client by sending a 403 status code to the client
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param response The response object
+     */
     private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setResponseCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
@@ -592,6 +629,12 @@ public class RequestHandler implements HttpHandler {
         exchange.endExchange();
     }
 
+    /**
+     * Handles a rendered response to the client by sending the rendered body from the response object
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param response The response object
+     */
     private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setResponseCode(response.getStatusCode());
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
@@ -603,6 +646,15 @@ public class RequestHandler implements HttpHandler {
         exchange.getResponseSender().send(getBody(exchange, response));
     }
 
+    /**
+     * Handles a binary response to the client by sending the binary content from the response
+     * to the undertow output stream
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @param response The response object
+     *
+     * @throws IOException
+     */
     private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
         exchange.startBlocking();
         exchange.setResponseCode(response.getStatusCode());
@@ -613,6 +665,13 @@ public class RequestHandler implements HttpHandler {
         exchange.getOutputStream().write(response.getBinaryContent());
     }
 
+    /**
+     * Retrieves the body of the request and checks i an ETag needs to be handled
+     *
+     * @param exchange The HttpServerExchange
+     * @param response The Response object
+     * @return The body from the response object or an empty body if etag matches NONE_MATCH header
+     */
     private String getBody(HttpServerExchange exchange, Response response) {
         String body = response.getBody();
         if (response.isETag()) {

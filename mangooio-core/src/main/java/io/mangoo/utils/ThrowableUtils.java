@@ -33,9 +33,9 @@ public final class ThrowableUtils {
         if (position > 0) {
             packageName = packageName.substring(0, position);
             return packageName.replace(".", File.separator) + File.separator + stackTraceElement.getFileName();
-        } else {
-            return stackTraceElement.getFileName();
         }
+
+        return stackTraceElement.getFileName();
     }
 
     /**
