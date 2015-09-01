@@ -4,18 +4,22 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* Partially refactored RequestHandler (svenkubiak)
 * Refactored EhCache to Guava Cache (svenkubiak)
 * Added ETag support for dynamic content (svenkubiak)
 * Added a method for adding a complete content map to the template (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/40[#40] Added handling of multiple parameters in controller method (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/39[#39] Added methods for parameter validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/36[#36] Validation now works for numeric values as well (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/37[#37] Added option to set the secure flag for session and auth cookie (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/35[#35] Added method for regular expression to validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/34[#34] Added LocalDate and LocalDateTime as request parameter (svenkubiak)
+* Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** doctester-core 1.1.6 -> 1.1.8
 ** snakeyaml 1.15 -> 1.16
 ** junit-toolbox 2.1 -> 2.2
-** undertow 1.2.9.Final -> 1.2.10.Final
+** undertow 1.2.9.Final -> 1.2.11.Final
 
 == Version 1.0.1
 
