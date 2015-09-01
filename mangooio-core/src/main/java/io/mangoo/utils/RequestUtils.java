@@ -1,12 +1,9 @@
 package io.mangoo.utils;
 
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import io.mangoo.enums.Binding;
 import io.mangoo.enums.ContentType;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -19,8 +16,6 @@ import io.undertow.util.Methods;
  *
  */
 public final class RequestUtils {
-    public static List<Binding> bindings = Arrays.asList(Binding.values());
-
     private RequestUtils() {
     }
 
