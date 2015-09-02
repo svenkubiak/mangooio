@@ -13,7 +13,6 @@ public interface MangooFilter {
      * Executes a filter on a controller class or method
      *
      * @param request An request object containing request data
-     * @param exchange An exchange object for adding response informations
      *
      * @return True if the request should continue, false if the request should stop after this filter
      */

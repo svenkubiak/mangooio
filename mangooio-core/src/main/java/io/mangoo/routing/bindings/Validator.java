@@ -141,7 +141,7 @@ public class Validator {
      * Validates to fields to exactly (case-sensitive) match
      *
      * @param name The field to check
-     * @param anothername The field to check against
+     * @param anotherName The field to check against
      */
     public void exactMatch(String name, String anotherName) {
         exactMatch(name, anotherName, messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName));
@@ -151,7 +151,7 @@ public class Validator {
      * Validates to fields to exactly (case-sensitive) match
      *
      * @param name The field to check
-     * @param anothername The field to check against
+     * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
     public void exactMatch(String name, String anotherName, String message) {
@@ -167,7 +167,7 @@ public class Validator {
      * Validates to fields to (case-insensitive) match
      *
      * @param name The field to check
-     * @param anothername The field to check against
+     * @param anotherName The field to check against
      */
     public void match(String name, String anotherName) {
         match(name, anotherName, messages.get(Key.VALIDATION_MATCH, name, anotherName));
@@ -177,7 +177,7 @@ public class Validator {
      * Validates to fields to (case-insensitive) match
      *
      * @param name The field to check
-     * @param anothername The field to check against
+     * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
     public void match(String name, String anotherName, String message) {
@@ -336,6 +336,7 @@ public class Validator {
      * Validates field to be a valid URL
      *
      * @param name The field to check
+     * @param message A custom error message instead of the default one
      */
     public void url(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");

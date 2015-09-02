@@ -10,7 +10,7 @@ import io.undertow.server.HttpServerExchange;
  *
  * @author svenkubiak
  *
- * @deprecated As of release 1.1.0, replaced by {@link #Payload}
+ * @deprecated As of release 1.1.0, replaced by Payload
  *
  */
 @Deprecated

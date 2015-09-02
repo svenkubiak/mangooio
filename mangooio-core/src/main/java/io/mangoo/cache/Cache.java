@@ -123,7 +123,7 @@ public class Cache {
      *
      * @param key The key for the cached value
      * @param clazz The class to convert the value to
-     * @return
+     * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
@@ -143,7 +143,7 @@ public class Cache {
      * @param key The key for the cached value
      * @param clazz The class to convert the value to
      * @param callable The callable to invoke when the value is not found
-     * @return
+     * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz, Callable<? extends Object> callable) {

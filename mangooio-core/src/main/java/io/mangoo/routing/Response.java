@@ -337,7 +337,7 @@ public final class Response {
      * Already existing values with the same key are overwritten.
      *
      * @param content The content map to add
-     * @return A response object {@link mangoo.io.routing.Response}
+     * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(Map<String, Object> content) {
         this.content.putAll(content);
@@ -353,7 +353,7 @@ public final class Response {
      *
      * See <a href="https://en.wikipedia.org/wiki/HTTP_ETag">https://en.wikipedia.org/wiki/HTTP_ETag</a>
      *
-     * @return A response object {@link mangoo.io.routing.Response}
+     * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andEtag() {
         this.etag = true;
