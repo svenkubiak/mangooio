@@ -22,7 +22,8 @@ public enum Binding {
     DOUBLE("java.lang.Double"),
     DOUBLE_PRIMITIVE("double"),
     LOCALDATETIME("java.time.LocalDateTime"),
-    AUTHENTICATION("io.mangoo.authentication.Authentication");
+    AUTHENTICATION("io.mangoo.authentication.Authentication"),
+    UNDEFINED("undefined");
 
     private final String value;
 

@@ -403,7 +403,7 @@ public class RequestHandler implements HttpHandler {
             String cookieName = this.config.getAuthenticationCookieName();
             if (this.authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
-                cookie.setSecure(this.config.getAuthenticationCookieSecure());
+                cookie.setSecure(this.config.isAuthenticationCookieSecure());
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
@@ -422,7 +422,7 @@ public class RequestHandler implements HttpHandler {
                 }
 
                 cookie = new CookieImpl(cookieName, value)
-                        .setSecure(this.config.getAuthenticationCookieSecure())
+                        .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setPath("/")
                         .setExpires(Date.from(this.authentication.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
@@ -535,12 +535,15 @@ public class RequestHandler implements HttpHandler {
         Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
+        boolean isJSONRequest = RequestUtils.isJSONRequest(exchange);
         for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
-            Binding binding = Binding.fromString(clazz.getName());
+            Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
-            if (binding != null) {
+            if (isJSONRequest) {
+                convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
+            } else {
                 switch (binding) {
                 case FORM:
                     convertedParameters[index] = this.form;
@@ -588,8 +591,6 @@ public class RequestHandler implements HttpHandler {
                 default:
                     break;
                 }
-            } else if (RequestUtils.isJSONRequest(exchange)) {
-                convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
             }
 
             index++;
@@ -676,7 +677,7 @@ public class RequestHandler implements HttpHandler {
         String body = response.getBody();
         if (response.isETag()) {
             String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
-            String etag = DigestUtils.md5Hex(body);
+            String etag = DigestUtils.md5Hex(body); //NOSONAR
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setResponseCode(StatusCodes.NOT_MODIFIED);
                 body = "";

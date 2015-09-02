@@ -354,7 +354,7 @@ public class Config {
         return getBoolean(Key.COOKIE_SECURE, Default.COOKIE_SECURE.toBoolean());
     }
 
-    public boolean getAuthenticationCookieSecure() {
+    public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
     }
 
