@@ -365,4 +365,8 @@ public class Config {
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
     }
+
+    public boolean isAdministrationEnabled() {
+        return getBoolean(Key.APPLICATION_ADMINISTRATION, Default.APPLICATION_ADMINISTRATION.toBoolean());
+    }
 }

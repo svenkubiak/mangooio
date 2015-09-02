@@ -25,11 +25,11 @@ public enum Template {
 
     Template () {
         try {
-            this.badRequestContent = Resources.toString(Resources.getResource("defaults/400.html"), Charsets.UTF_8);
-            this.unauthorizedContent = Resources.toString(Resources.getResource("defaults/401.html"), Charsets.UTF_8);
-            this.forbiddenContent = Resources.toString(Resources.getResource("defaults/403.html"), Charsets.UTF_8);
-            this.notFoundContent = Resources.toString(Resources.getResource("defaults/404.html"), Charsets.UTF_8);
-            this.serverErrorContent = Resources.toString(Resources.getResource("defaults/500.html"), Charsets.UTF_8);
+            this.badRequestContent = Resources.toString(Resources.getResource("templates/defaults/400.html"), Charsets.UTF_8);
+            this.unauthorizedContent = Resources.toString(Resources.getResource("templates/defaults/401.html"), Charsets.UTF_8);
+            this.forbiddenContent = Resources.toString(Resources.getResource("templates/defaults/403.html"), Charsets.UTF_8);
+            this.notFoundContent = Resources.toString(Resources.getResource("templates/defaults/404.html"), Charsets.UTF_8);
+            this.serverErrorContent = Resources.toString(Resources.getResource("templates/defaults/500.html"), Charsets.UTF_8);
         } catch (IOException e) {
             LOG.error("Failed to load default templates", e);
         }

@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -10,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,6 +28,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import io.mangoo.configuration.Config;
+import io.mangoo.controllers.AdminController;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -154,6 +153,11 @@ public class Bootstrap {
     private RoutingHandler initRoutingHandler() {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
+
+        Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(AdminController.class, "routes");
+        Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(AdminController.class, "config");
+        Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(AdminController.class, "health");
+
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
                 routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod()));
@@ -216,7 +220,7 @@ public class Bootstrap {
         if (!this.error) {
             StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
-                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getApplicationVersion() + "\n");
+                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + Application.getVersion() + "\n");
             } catch (IOException e) {//NOSONAR
                 //intentionally left blank
             }
@@ -225,19 +229,6 @@ public class Bootstrap {
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
             this.injector.getInstance(MangooLifecycle.class).applicationStarted();
         }
-    }
-
-    private static String getApplicationVersion() {
-        String version = Default.VERSION.toString();
-        try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            version = String.valueOf(properties.get(Key.VERSION.toString()));
-        } catch (IOException e) {
-            LOG.error("Failed to get application version", e);
-        }
-
-        return version;
     }
 
     public void startFakeSMTP() {

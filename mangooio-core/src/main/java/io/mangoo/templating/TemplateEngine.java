@@ -32,6 +32,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.directives.AuthenticityFormDirective;
 import io.mangoo.templating.directives.AuthenticityTokenDirective;
 import io.mangoo.templating.methods.I18nMethod;
+import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.Source;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
@@ -69,8 +70,8 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, String pathPrefix, String templateName, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
-        Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
+    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+        Template template = configuration.getTemplate(templatePath);
         content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
@@ -83,7 +84,7 @@ public class TemplateEngine {
 
     @SuppressWarnings("all")
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
-        Template template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
+        Template template = configuration.getTemplate(pathPrefix + "/" + RequestUtils.getTemplateName(templateName));
 
         return processTemplate(content, template);
     }
@@ -111,24 +112,6 @@ public class TemplateEngine {
         template.process(content, writer);
 
         return writer.toString();
-    }
-
-    /**
-     * Checks if a given template name has the current suffix and sets is
-     * if it does not exist
-     *
-     * @param templateName The name of the template file
-     * @return The template name with correct suffix
-     */
-    private String getTemplateName(String templateName) {
-        String name = null;
-        if (templateName.endsWith(Default.TEMPLATE_SUFFIX.toString())) {
-            name = templateName;
-        } else {
-            name = templateName + Default.TEMPLATE_SUFFIX.toString();
-        }
-
-        return name;
     }
 
     /**

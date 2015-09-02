@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.mangoo.enums.ContentType;
+import io.mangoo.enums.Default;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
@@ -33,6 +34,17 @@ public final class RequestUtils {
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
 
         return requestParamater;
+    }
+
+    /**
+     * Checks if a given template name has the current suffix and sets is
+     * if it does not exist
+     *
+     * @param templateName The name of the template file
+     * @return The template name with correct suffix
+     */
+    public static String getTemplateName(String templateName) {
+        return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : templateName + Default.TEMPLATE_SUFFIX.toString();
     }
 
     /**

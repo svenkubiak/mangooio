@@ -31,7 +31,8 @@ default:
         
 test:
     application:
-        port       : 10808
+        port           : 10808
+        administration : true
     smtp:
         port       : 3055
 

@@ -20,6 +20,7 @@ public enum Key {
     APPLICATION_HOST("application.host"),
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_MODE("application.mode"),
+    APPLICATION_ADMINISTRATION("application.administration"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),

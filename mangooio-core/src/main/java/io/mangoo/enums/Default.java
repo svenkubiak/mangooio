@@ -63,7 +63,8 @@ public enum Default {
     HAZELCAST("hazelcast"),
     REDIS("redis"),
     CACHE_MAX_SIZE("5000"),
-    CACHE_EXPIRES("3600");
+    CACHE_EXPIRES("3600"),
+    APPLICATION_ADMINISTRATION("false");
 
     private final String value;
 

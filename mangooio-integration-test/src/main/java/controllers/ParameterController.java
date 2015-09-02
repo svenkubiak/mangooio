@@ -4,8 +4,8 @@ import io.mangoo.routing.Response;
 
 public class ParameterController {
     private static final String FOO = "foo";
-    private static final String PARAM_TEMPLATE = "param.ftl";
-    private static final String MULTIPARAM_TEMPLATE = "multiparam.ftl";
+    private static final String PARAM_TEMPLATE = "/ParameterController/param.ftl";
+    private static final String MULTIPARAM_TEMPLATE = "/ParameterController/multiparam.ftl";
 
     public Response stringParam(String foo) {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);

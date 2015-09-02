@@ -254,22 +254,23 @@ public class RequestHandler implements HttpHandler {
 
         if (this.methodParameters.isEmpty()) {
             response = (Response) this.method.invoke(this.controller);
-            response.andTemplate(this.method.getName());
         } else {
             Object [] convertedParameters = getConvertedParameters(exchange);
-
             response = (Response) this.method.invoke(this.controller, convertedParameters);
-            response.andTemplate(this.method.getName());
         }
 
         if (!response.isRendered()) {
             response.getContent().putAll(this.request.getPayload().getContent());
 
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), this.controllerClass.getSimpleName(), response.getTemplate(), response.getContent()));
+            response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(response), response.getContent()));
         }
 
         return response;
+    }
+
+    private String getTemplatePath(Response response) {
+        return StringUtils.isBlank(response.getTemplate()) ? this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName()) : response.getTemplate();
     }
 
     private Session getSession(HttpServerExchange exchange) {
