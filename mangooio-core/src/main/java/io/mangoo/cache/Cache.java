@@ -164,11 +164,12 @@ public class Cache {
      *
      * @param value The value to check
      */
+    @SuppressWarnings("all")
     private void check(Object value) {
         if (value != null && !(value instanceof Serializable)) {
             try {
                 throw new NotSerializableException("Cannot cache a non-serializable value of type " + value.getClass().getName());
-            } catch (NotSerializableException e) {
+            } catch (Exception e) {
                 LOG.error("Failed to check serialization for caching", e);
             }
         }
