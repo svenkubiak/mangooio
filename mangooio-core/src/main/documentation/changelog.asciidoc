@@ -8,6 +8,7 @@
 * Refactored EhCache to Guava Cache (svenkubiak)
 * Added ETag support for dynamic content (svenkubiak)
 * Added a method for adding a complete content map to the template (svenkubiak)
+* Added administrative URLs @health, @routes and @config (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/40[#40] Added handling of multiple parameters in controller method (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/39[#39] Added methods for parameter validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/36[#36] Validation now works for numeric values as well (svenkubiak)
