@@ -445,6 +445,23 @@ With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
 the client.
 
+=== ETag support for dynamic content
+
+ETag or entity tag enables web application to make use of cached resources by allowing conditional requests from the client.
+This is widely used for static resources like CSS or JS files.
+
+mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
+following method at the returning response in your controller method.
+
+[source,java]
+-----------------------------
+public Response index() {
+    return Response.withOk().andETag();
+}
+-----------------------------
+
+For more information on how ETag works, click https://en.wikipedia.org/wiki/HTTP_ETag[here].
+
 === Request and query parameter
 
 mangoo I/O makes it very easy to handle request or query parameter. Lets
