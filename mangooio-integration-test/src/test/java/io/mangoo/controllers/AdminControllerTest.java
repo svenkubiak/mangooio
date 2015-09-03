@@ -33,12 +33,22 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void reoutesTest() {
+    public void routesTest() {
         MangooResponse response = MangooRequest.get("/@routes").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertTrue(response.getContent().contains("routes"));
+    }
+
+    @Test
+    public void cacheTest() {
+        MangooResponse response = MangooRequest.get("/@cache").execute();
+
+        assertNotNull(response);
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertTrue(response.getContent().contains("cache"));
     }
 }

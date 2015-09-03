@@ -32,7 +32,11 @@ default:
 test:
     application:
         port           : 10808
-        administration : true
+        admin:
+              health   : true
+              config   : true
+              cache    : true
+              routes   : true
     smtp:
         port       : 3055
 
