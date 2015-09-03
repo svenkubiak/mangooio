@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Key;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 
@@ -77,8 +78,13 @@ public class AdminController {
             return Response.withNotFound();
         }
 
+        Map<String, String> configurations = config.getAllConfigurations();
+        configurations.remove(Key.APPLICATION_SECRET.toString());
+        configurations.remove(Key.SMTP_USERNAME.toString());
+        configurations.remove(Key.SMTP_PASSWORD.toString());
+
         return Response.withOk()
-                .andContent("configuration", config.getAllConfigurations())
+                .andContent("configuration", configurations)
                 .andTemplate("defaults/config.ftl")
                 .andEtag();
     }

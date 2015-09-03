@@ -510,6 +510,41 @@ Flash
 Body
 -------------------------------------------
 
+=== Administrative URLs
+
+mangoo I/O offers administrative URLs, which enables you to check certain application information via a web interface. The
+following administrative URLs are available
+
+-------------------------------------------
+/@routes
+/@config
+/@cache
+/@health
+-------------------------------------------
+
+==== /@routes
+
+Displays a list of all configured routes and their corresponding controllers and methods.
+
+==== /@config
+
+Displays a list of all configured properties and their corresponding values.
+
+[WARNING]
+For security reasons the properties "application.secret", "smtp.username" and "smtp.password" is not available via the @config route.
+
+==== /@cache
+
+Displays a list of cache statistics inclue cache hits, cache misses, etc.
+
+==== /@health
+
+Displays a simple health check by returning "alive".
+
+[NOTE]
+By default, the administrative URLs are enabled in dev mode and disabled in test and prod mode.
+
+
 == Lifecycle
 
 In some cases it is useful to hook into the startup process of a mangoo
@@ -2020,6 +2055,14 @@ as a fallback value for Locale
 |127.0.0.1 |In 99% of all cases, this is the localhost
 
 |application.port |The port the undertow server is listening on |8080|
+
+|application.admin.health |Enable or disable administrative /@health url |false|
+
+|application.admin.routes |Enable or disable administrative /@routes url |false|
+
+|application.admin.config |Enable or disable administrative /@config url |false|
+
+|application.admin.cache |Enable or disable administrative /@cache url |false|
 
 |cookie.name |The name of the session cookie |$application.name-MANGOOIO-SESSION|
 
