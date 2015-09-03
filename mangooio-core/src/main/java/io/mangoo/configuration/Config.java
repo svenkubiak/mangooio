@@ -303,7 +303,7 @@ public class Config {
     }
 
     public Map<String, String> getAllConfigurations() {
-        return this.values;
+        return new HashMap(this.values);
     }
 
     public String getApplicationName() {
