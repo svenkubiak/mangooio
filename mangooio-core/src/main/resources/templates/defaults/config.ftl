@@ -5,22 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Application configuration</title>
-    <style><#include "css/bootstrap.min.css"></style>
+    <style><#include "css/skeleton.min.css"></style>
   <body>
     <div class="container">
       <div class="row">
-      <div class="col-md-12">
+      <div class="twelve columns">
           <h1>Configuration options</h1>
       </div>
       </div>
       <div class="row">
-      <div class="col-md-12">
-	      <div class="input-group"><span class="input-group-addon">Filter</span><input id="filter" type="text" class="form-control" placeholder="Start typing what you are looking for..."></div>
+      <div class="twelve columns">
+	      <div><input id="filter" type="text" class="u-full-width" placeholder="Start typing what you are looking for..."></div>
       </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
-          	<table class="table table-hover">
+        <div class="twelve columns">
+          	<table class="u-full-width">
 			<thead>
 			<tr>
 				<th data-sort="string"><b>Key</b></th>
@@ -41,7 +41,6 @@
 	</div>
   </body>
   <script type="text/javascript"><#include "js/jquery.min.js"></script>
-  <script type="text/javascript"><#include "js/bootstrap.min.js"></script>
   <script type="text/javascript"><#include "js/stupidtable.min.js"></script>
   <script>
   $(document).ready(function(){

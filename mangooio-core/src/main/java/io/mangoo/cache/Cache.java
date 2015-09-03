@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -157,6 +158,15 @@ public class Cache {
         }
 
         return (T) object;
+    }
+
+    /**
+     * Retrieves the cache statistics
+     *
+     * @return CacheStats containing cache statistics
+     */
+    public CacheStats getStats () {
+        return this.localCache.stats();
     }
 
     /**

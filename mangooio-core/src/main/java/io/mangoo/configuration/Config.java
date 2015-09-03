@@ -366,7 +366,19 @@ public class Config {
         return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
     }
 
-    public boolean isAdministrationEnabled() {
-        return getBoolean(Key.APPLICATION_ADMINISTRATION, Default.APPLICATION_ADMINISTRATION.toBoolean());
+    public boolean isAdminHealthEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_HEALTH, Default.APPLICATION_ADMIN_HEALTH.toBoolean());
+    }
+
+    public boolean isAdminRoutesEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_ROUTES, Default.APPLICATION_ADMIN_ROUTES.toBoolean());
+    }
+
+    public boolean isAdminCacheEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_CACHE, Default.APPLICATION_ADMIN_CACHE.toBoolean());
+    }
+
+    public boolean isAdminConfigEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_CONFIG, Default.APPLICATION_ADMIN_CONFIG.toBoolean());
     }
 }

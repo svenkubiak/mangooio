@@ -157,6 +157,7 @@ public class Bootstrap {
         Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(AdminController.class, "routes");
         Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(AdminController.class, "config");
         Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(AdminController.class, "health");
+        Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(AdminController.class, "cache");
 
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

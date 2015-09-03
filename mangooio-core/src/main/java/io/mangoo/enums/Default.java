@@ -64,7 +64,10 @@ public enum Default {
     REDIS("redis"),
     CACHE_MAX_SIZE("5000"),
     CACHE_EXPIRES("3600"),
-    APPLICATION_ADMINISTRATION("false");
+    APPLICATION_ADMIN_HEALTH("false"),
+    APPLICATION_ADMIN_CACHE("false"),
+    APPLICATION_ADMIN_CONFIG("false"),
+    APPLICATION_ADMIN_ROUTES("false");
 
     private final String value;
 
