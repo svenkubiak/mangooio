@@ -54,17 +54,17 @@ public class AdminController {
         CacheStats cacheStats = cache.getStats();
 
         Map<String, Object> stats = new HashMap<String, Object>();
-        stats.put("average load penalty", cacheStats.averageLoadPenalty());
-        stats.put("eviction count", cacheStats.evictionCount());
-        stats.put("hit count", cacheStats.hitCount());
-        stats.put("hit rate", cacheStats.hitRate());
-        stats.put("load count", cacheStats.loadCount());
-        stats.put("load exception count", cacheStats.loadExceptionCount());
-        stats.put("load exception rate", cacheStats.loadExceptionRate());
-        stats.put("load success rate", cacheStats.loadSuccessCount());
-        stats.put("miss count", cacheStats.missCount());
-        stats.put("request count", cacheStats.requestCount());
-        stats.put("total load time", cacheStats.totalLoadTime());
+        stats.put("Average load penalty", cacheStats.averageLoadPenalty());
+        stats.put("Eviction count", cacheStats.evictionCount());
+        stats.put("Hit count", cacheStats.hitCount());
+        stats.put("Hit rate", cacheStats.hitRate());
+        stats.put("Load count", cacheStats.loadCount());
+        stats.put("Load exception count", cacheStats.loadExceptionCount());
+        stats.put("Load exception rate", cacheStats.loadExceptionRate());
+        stats.put("Load success rate", cacheStats.loadSuccessCount());
+        stats.put("Miss count", cacheStats.missCount());
+        stats.put("Request count", cacheStats.requestCount());
+        stats.put("Total load time in ns", cacheStats.totalLoadTime());
 
         return Response.withOk()
                 .andContent("stats", stats)
