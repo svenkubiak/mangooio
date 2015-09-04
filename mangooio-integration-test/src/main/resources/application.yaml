@@ -4,7 +4,7 @@ default:
         secret     : myvoiceismypassword
         language   : en
         host       : localhost
-        port       : 8080
+        port       : 9898
         minify:
             js        : true
             css       : true
