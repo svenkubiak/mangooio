@@ -255,6 +255,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         invoked.andContent(response.getContent());
+        invoked.andHeaders(response.getHeaders());
         if (!invoked.isRendered()) {
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
             invoked.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(invoked), invoked.getContent()));

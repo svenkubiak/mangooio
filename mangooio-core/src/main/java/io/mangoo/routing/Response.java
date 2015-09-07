@@ -351,6 +351,19 @@ public final class Response {
     }
 
     /**
+     * Adds an additional header map to the response.
+     * Already existing values with the same key are overwritten.
+     *
+     * @param headers The headers map to add
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
+    public Response andHeaders(Map<HttpString, String> headers) {
+        this.headers.putAll(headers);
+
+        return this;
+    }
+
+    /**
      * Adds an ETag header to the response by hashing (MD5) the response body.
      *
      * Be aware that for every request the hash has to be generated. This will
@@ -366,6 +379,13 @@ public final class Response {
         return this;
     }
 
+    /**
+     * Tells a filter that the response ends and that the request handler
+     * should not execute further filters by sending the current response
+     * to the client. This is only used within a filter.
+     *
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
     public Response end() {
         this.endResponse = true;
 
