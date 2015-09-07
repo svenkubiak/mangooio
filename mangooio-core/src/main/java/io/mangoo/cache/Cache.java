@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
@@ -26,11 +27,11 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
-    private com.google.common.cache.Cache<String, Object> localCache;
+    private com.google.common.cache.Cache<String, Object> guavaCache;
 
     @Inject
     public Cache(Config config) {
-        this.localCache = CacheBuilder.newBuilder()
+        this.guavaCache = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
                 .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS)
                 .build();
@@ -44,7 +45,10 @@ public class Cache {
      */
     public void add(String key, Object value) {
         check(value);
-        this.localCache.put(key, value);
+        Preconditions.checkNotNull(key, "A key is required for a new cache entry");
+        Preconditions.checkNotNull(value, "A value is required for a new cache entry");
+
+        this.guavaCache.put(key, value);
     }
 
     /**
@@ -73,9 +77,11 @@ public class Cache {
      * @return The stored value or null if not present
      */
     public Object get(String key, Callable<? extends Object> callable) {
+        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+
         Object object = null;
         try {
-            object = this.localCache.get(key, callable);
+            object = this.guavaCache.get(key, callable);
         } catch (ExecutionException e) {
             LOG.error("Failed to get Cached value", e);
         }
@@ -90,7 +96,9 @@ public class Cache {
      * @return The stored value or null if not present
      */
     public Object get(String key) {
-        return this.localCache.getIfPresent(key);
+        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+
+        return this.guavaCache.getIfPresent(key);
     }
 
     /**
@@ -99,7 +107,9 @@ public class Cache {
      * @param key The key for the cached value
      */
     public void remove(String key) {
-        this.localCache.invalidate(key);
+        Preconditions.checkNotNull(key, "A key is required for removing a cache entry");
+
+        this.guavaCache.invalidate(key);
     }
 
     /**
@@ -108,14 +118,14 @@ public class Cache {
      * @return Cache size
      */
     public long size() {
-        return this.localCache.size();
+        return this.guavaCache.size();
     }
 
     /**
      * Clears the complete cache by invalidating all entries
      */
     public void clear() {
-        this.localCache.invalidateAll();
+        this.guavaCache.invalidateAll();
     }
 
     /**
@@ -128,9 +138,11 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
+        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+
         Object object = null;
-        if (this.localCache.getIfPresent(key) != null) {
-            object = this.localCache.getIfPresent(key);
+        if (this.guavaCache.getIfPresent(key) != null) {
+            object = this.guavaCache.getIfPresent(key);
         }
 
         return (T) object;
@@ -148,10 +160,12 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz, Callable<? extends Object> callable) {
+        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+
         Object object = null;
-        if (this.localCache.getIfPresent(key) != null) {
+        if (this.guavaCache.getIfPresent(key) != null) {
             try {
-                object = this.localCache.get(key, callable);
+                object = this.guavaCache.get(key, callable);
             } catch (ExecutionException e) {
                 LOG.error("Failed to get Cached value", e);
             }
@@ -166,7 +180,7 @@ public class Cache {
      * @return CacheStats containing cache statistics
      */
     public CacheStats getStats () {
-        return this.localCache.stats();
+        return this.guavaCache.stats();
     }
 
     /**
