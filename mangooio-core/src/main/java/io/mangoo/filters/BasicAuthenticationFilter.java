@@ -2,6 +2,7 @@ package io.mangoo.filters;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
@@ -11,10 +12,9 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.Key;
 import io.mangoo.interfaces.MangooAuthenticator;
 import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
-import io.undertow.util.StatusCodes;
 
 /**
  *
@@ -34,14 +34,11 @@ public class BasicAuthenticationFilter implements MangooFilter {
     }
 
     @Override
-    public boolean continueRequest(Request request) {
-        HeaderValues headerValues = request.getHttpServerExchange().getRequestHeaders().get(Headers.AUTHORIZATION_STRING);
-
+    public Response execute(Request request, Response response) {
         String username = null;
         String password = null;
-        String authInfo = null;
-        if (headerValues != null) {
-            authInfo = headerValues.get(0);
+        String authInfo = request.getHeader(Headers.AUTHORIZATION);
+        if (StringUtils.isNotBlank(authInfo)) {
             authInfo = authInfo.replace("Basic", "");
             authInfo = authInfo.trim();
             authInfo = new String(Base64.decode(authInfo), Charsets.UTF_8);
@@ -54,13 +51,12 @@ public class BasicAuthenticationFilter implements MangooFilter {
         }
 
         if (!mangooAuthenticator.validCredentials(username, password)) {
-            request.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
-            request.getHttpServerExchange().getResponseHeaders().add(Headers.WWW_AUTHENTICATE, "Basic realm=" + config.getString(Key.APPLICATION_NAME));
-            request.getHttpServerExchange().getResponseSender().send("");
-
-            return false;
+            return Response.withUnauthorized()
+                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=" + config.getString(Key.APPLICATION_NAME))
+                    .andEmptyBody()
+                    .end();
         }
 
-        return true;
+        return response;
     }
 }

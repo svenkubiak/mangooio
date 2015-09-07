@@ -1,5 +1,6 @@
 package io.mangoo.interfaces;
 
+import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 
 /**
@@ -9,12 +10,5 @@ import io.mangoo.routing.bindings.Request;
  */
 @FunctionalInterface
 public interface MangooRequestFilter {
-    /**
-     * Executes a global filter on every mapped request
-     *
-     * @param request An request object containing request data
-     *
-     * @return True if the request should continue, false if the request should stop after this filter
-     */
-    public boolean continueRequest(Request request);
+    public Response execute(Request request, Response reponse);
 }

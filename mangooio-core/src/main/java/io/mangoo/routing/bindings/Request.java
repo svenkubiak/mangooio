@@ -16,7 +16,6 @@ import io.undertow.util.HttpString;
  */
 public class Request implements MangooValidator {
     private HttpServerExchange httpServerExchange;
-    private Payload payload;
     private Session session;
     private String authenticityToken;
     private Authentication authentication;
@@ -28,14 +27,9 @@ public class Request implements MangooValidator {
         this.session = session;
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;
-        this.payload = new Payload();
         this.validator = Application.getInjector().getInstance(Validator.class);
         this.parameter = parameter;
         this.validator.setValues(parameter);
-    }
-
-    public HttpServerExchange getHttpServerExchange() {
-        return httpServerExchange;
     }
 
     public Session getSession() {
@@ -48,10 +42,6 @@ public class Request implements MangooValidator {
 
     public Authentication getAuthentication() {
         return authentication;
-    }
-
-    public Payload getPayload() {
-        return payload;
     }
 
     public String getParameter(String key) {

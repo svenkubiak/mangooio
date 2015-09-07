@@ -34,6 +34,7 @@ public final class Response {
     private String template;
     private String binaryFileName;
     private byte[] binaryContent;
+    private boolean endResponse;
     private boolean etag;
     private boolean binary;
     private boolean rendered;
@@ -96,6 +97,10 @@ public final class Response {
 
     public boolean isRendered() {
         return this.rendered;
+    }
+
+    public boolean isEndResponse() {
+        return this.endResponse;
     }
 
     public String getRedirectTo() {
@@ -357,6 +362,12 @@ public final class Response {
      */
     public Response andEtag() {
         this.etag = true;
+
+        return this;
+    }
+
+    public Response end() {
+        this.endResponse = true;
 
         return this;
     }

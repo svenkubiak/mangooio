@@ -7,13 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.undertow.util.Headers;
-import io.undertow.util.StatusCodes;
 
 /**
  *
@@ -30,22 +28,16 @@ public class AuthenticationFilter implements MangooFilter {
     }
 
     @Override
-    public boolean continueRequest(Request request) {
+    public Response execute(Request request, Response response) {
         if (!request.getAuthentication().hasAuthenticatedUser()) {
             String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
             if (StringUtils.isNotBlank(redirect)) {
-                request.getHttpServerExchange().setResponseCode(StatusCodes.FOUND);
-                request.getHttpServerExchange().getResponseHeaders().put(Headers.LOCATION, redirect);
-                request.getHttpServerExchange().endExchange();
+                return Response.withRedirect(redirect).end();
             } else {
-                request.getHttpServerExchange().getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
-                request.getHttpServerExchange().setResponseCode(StatusCodes.UNAUTHORIZED);
-                request.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
+                return Response.withUnauthorized().andBody(Template.DEFAULT.forbidden()).end();
             }
-
-            return false;
         }
 
-        return true;
+        return response;
     }
 }

@@ -113,20 +113,18 @@ public class RequestHandler implements HttpHandler {
         getForm(exchange);
         getRequest(exchange);
 
-        if (continueRequest()) {
-            Response response = getResponse(exchange);
+        Response response = getResponse(exchange);
 
-            setSessionCookie(exchange);
-            setFlashCookie(exchange);
-            setAuthenticationCookie(exchange);
+        setSessionCookie(exchange);
+        setFlashCookie(exchange);
+        setAuthenticationCookie(exchange);
 
-            if (response.isRedirect()) {
-                handleRedirectResponse(exchange, response);
-            } else if (response.isBinary()) {
-                handleBinaryResponse(exchange, response);
-            } else {
-                handleRenderedResponse(exchange, response);
-            }
+        if (response.isRedirect()) {
+            handleRedirectResponse(exchange, response);
+        } else if (response.isBinary()) {
+            handleBinaryResponse(exchange, response);
+        } else {
+            handleRenderedResponse(exchange, response);
         }
     }
 
@@ -153,42 +151,39 @@ public class RequestHandler implements HttpHandler {
      * RequestFilter, ControllerFilter, MethodFilter
      *
      * @param exchange The Undertow HttpServerExchange
-     * @return True if the request should continue after filter execution, false otherwise
+     * @return A Response object that will be merged to the final response or null
      *
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
+     * @throws TemplateException
+     * @throws IOException
      */
-    private boolean continueRequest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        //execute global request filter if exist
-        boolean continueRequest = executeRequestFilter();
-
-        if (continueRequest) {
-            //execute filter on controller level
-            continueRequest = executeFilter(this.controllerClass.getAnnotations());
-        }
-
-        if (continueRequest) {
-            //execute filter on method level
-            continueRequest = executeFilter(this.method.getAnnotations());
-        }
-
-        return continueRequest;
-    }
-
-    /**
-     * Executes a global request filter if exists
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return True if the request should continue after filter execution, false otherwise
-     */
-    private boolean executeRequestFilter() {
+    private Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+        //execute global request filter
+        Response response = Response.withOk();
         if (this.hasRequestFilter) {
             MangooRequestFilter mangooRequestFilter = this.injector.getInstance(MangooRequestFilter.class);
-            return mangooRequestFilter.continueRequest(this.request);
+            response = mangooRequestFilter.execute(this.request, response);
         }
 
-        return true;
+        if (response.isEndResponse()) {
+            return response;
+        }
+
+        //execute controller filters
+        response = executeFilter(this.controllerClass.getAnnotations(), response);
+        if (response.isEndResponse()) {
+            return response;
+        }
+
+        //execute method filters
+        response = executeFilter(this.method.getAnnotations(), response);
+        if (response.isEndResponse()) {
+            return response;
+        }
+
+        return invokeController(exchange, response);
     }
 
     /**
@@ -209,6 +204,7 @@ public class RequestHandler implements HttpHandler {
      * Executes all filters on controller and method level
      *
      * @param annotations An array of @FilterWith annotated classes and methods
+     * @param response
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request should continue after filter execution, false otherwise
      *
@@ -216,32 +212,31 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private boolean executeFilter(Annotation[] annotations) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    private Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         FilterWith filterWith = null;
-        boolean continueRequest = true;
-
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().equals(FilterWith.class)) {
                 filterWith = (FilterWith) annotation;
                 for (Class<?> clazz : filterWith.value()) {
-                    if (continueRequest) {
-                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class);
-                        continueRequest = (boolean) classMethod.invoke(this.injector.getInstance(clazz), this.request);
+                    if (!response.isEndResponse()) {
+                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
+                        response = (Response) classMethod.invoke(this.injector.getInstance(clazz), this.request, response);
                     } else {
-                        return false;
+                        return response;
                     }
                 }
             }
         }
 
-        return continueRequest;
+        return response;
     }
 
     /**
-     * Invokes the controller methods and retrives the response which
+     * Invokes the controller methods and retrieves the response which
      * is later send to the client
      *
      * @param exchange The Undertow HttpServerExchange
+     * @param response2
      * @return A response object
      *
      * @throws IllegalAccessException
@@ -249,24 +244,23 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      * @throws TemplateException
      */
-    private Response getResponse(HttpServerExchange exchange) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
-        Response response;
+    private Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+        Response invoked;
 
         if (this.methodParameters.isEmpty()) {
-            response = (Response) this.method.invoke(this.controller);
+            invoked = (Response) this.method.invoke(this.controller);
         } else {
             Object [] convertedParameters = getConvertedParameters(exchange);
-            response = (Response) this.method.invoke(this.controller, convertedParameters);
+            invoked = (Response) this.method.invoke(this.controller, convertedParameters);
         }
 
-        if (!response.isRendered()) {
-            response.getContent().putAll(this.request.getPayload().getContent());
-
+        invoked.andContent(response.getContent());
+        if (!invoked.isRendered()) {
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            response.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(response), response.getContent()));
+            invoked.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(invoked), invoked.getContent()));
         }
 
-        return response;
+        return invoked;
     }
 
     private String getTemplatePath(Response response) {

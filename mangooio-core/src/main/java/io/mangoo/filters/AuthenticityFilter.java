@@ -2,8 +2,8 @@ package io.mangoo.filters;
 
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.undertow.util.StatusCodes;
 
 /**
  *
@@ -13,14 +13,11 @@ import io.undertow.util.StatusCodes;
 public class AuthenticityFilter implements MangooFilter {
 
     @Override
-    public boolean continueRequest(Request request) {
+    public Response execute(Request request, Response response) {
         if (!request.authenticityMatches()) {
-            request.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
-            request.getHttpServerExchange().getResponseSender().send(Template.DEFAULT.forbidden());
-
-            return false;
+            return Response.withForbidden().andBody(Template.DEFAULT.forbidden()).end();
         }
 
-        return true;
+        return response;
     }
 }
