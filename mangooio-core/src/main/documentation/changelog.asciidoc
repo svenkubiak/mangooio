@@ -2,7 +2,7 @@
 
 == Version 1.1.0
 
-[small]#Released at xx.xx.xxxx#
+[small]#Released at 15.09.2015#
 
 * Refactored RequestHandler (svenkubiak)
 * Refactored EhCache to Guava Cache (svenkubiak)
