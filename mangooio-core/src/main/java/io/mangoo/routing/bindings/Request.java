@@ -6,6 +6,8 @@ import io.mangoo.authentication.Authentication;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HeaderMap;
+import io.undertow.util.HttpString;
 
 /**
  *
@@ -68,5 +70,13 @@ public class Request implements MangooValidator {
     @Override
     public String getError(String name) {
         return this.validator.hasError(name) ? this.validator.getError(name) : "";
+    }
+
+    public HeaderMap getHeaders() {
+        return this.httpServerExchange.getRequestHeaders();
+    }
+
+    public String getHeader(HttpString headerName) {
+        return (this.httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : this.httpServerExchange.getRequestHeaders().get(headerName).element();
     }
 }
