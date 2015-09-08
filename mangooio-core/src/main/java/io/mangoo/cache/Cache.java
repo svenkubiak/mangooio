@@ -27,6 +27,8 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
+    private static final String VALUE_REQUIRED = "A valid value is required";
+    private static final String KEY_REQUIRED = "A valid key is required";
     private com.google.common.cache.Cache<String, Object> guavaCache;
 
     @Inject
@@ -45,8 +47,8 @@ public class Cache {
      */
     public void add(String key, Object value) {
         check(value);
-        Preconditions.checkNotNull(key, "A key is required for a new cache entry");
-        Preconditions.checkNotNull(value, "A value is required for a new cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
+        Preconditions.checkNotNull(value, VALUE_REQUIRED);
 
         this.guavaCache.put(key, value);
     }
@@ -77,7 +79,7 @@ public class Cache {
      * @return The stored value or null if not present
      */
     public Object get(String key, Callable<? extends Object> callable) {
-        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         Object object = null;
         try {
@@ -96,7 +98,7 @@ public class Cache {
      * @return The stored value or null if not present
      */
     public Object get(String key) {
-        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         return this.guavaCache.getIfPresent(key);
     }
@@ -107,7 +109,7 @@ public class Cache {
      * @param key The key for the cached value
      */
     public void remove(String key) {
-        Preconditions.checkNotNull(key, "A key is required for removing a cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         this.guavaCache.invalidate(key);
     }
@@ -138,7 +140,7 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         Object object = null;
         if (this.guavaCache.getIfPresent(key) != null) {
@@ -160,7 +162,7 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz, Callable<? extends Object> callable) {
-        Preconditions.checkNotNull(key, "A key is required for retrieving a cache entry");
+        Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         Object object = null;
         if (this.guavaCache.getIfPresent(key) != null) {

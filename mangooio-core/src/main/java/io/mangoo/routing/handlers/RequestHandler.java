@@ -218,11 +218,11 @@ public class RequestHandler implements HttpHandler {
             if (annotation.annotationType().equals(FilterWith.class)) {
                 filterWith = (FilterWith) annotation;
                 for (Class<?> clazz : filterWith.value()) {
-                    if (!response.isEndResponse()) {
+                    if (response.isEndResponse()) {
+                        return response;
+                    } else {
                         Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
                         response = (Response) classMethod.invoke(this.injector.getInstance(clazz), this.request, response);
-                    } else {
-                        return response;
                     }
                 }
             }
