@@ -151,7 +151,7 @@ public class RequestHandler implements HttpHandler {
      * RequestFilter, ControllerFilter, MethodFilter
      *
      * @param exchange The Undertow HttpServerExchange
-     * @return A Response object that will be merged to the final response or null
+     * @return A Response object that will be merged to the final response
      *
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
@@ -245,23 +245,23 @@ public class RequestHandler implements HttpHandler {
      * @throws TemplateException
      */
     private Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
-        Response invoked;
+        Response invokedResponse;
 
         if (this.methodParameters.isEmpty()) {
-            invoked = (Response) this.method.invoke(this.controller);
+            invokedResponse = (Response) this.method.invoke(this.controller);
         } else {
             Object [] convertedParameters = getConvertedParameters(exchange);
-            invoked = (Response) this.method.invoke(this.controller, convertedParameters);
+            invokedResponse = (Response) this.method.invoke(this.controller, convertedParameters);
         }
 
-        invoked.andContent(response.getContent());
-        invoked.andHeaders(response.getHeaders());
-        if (!invoked.isRendered()) {
+        invokedResponse.andContent(response.getContent());
+        invokedResponse.andHeaders(response.getHeaders());
+        if (!invokedResponse.isRendered()) {
             TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            invoked.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(invoked), invoked.getContent()));
+            invokedResponse.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(invokedResponse), invokedResponse.getContent()));
         }
 
-        return invoked;
+        return invokedResponse;
     }
 
     private String getTemplatePath(Response response) {
