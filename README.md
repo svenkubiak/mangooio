@@ -53,7 +53,8 @@ at home from the start
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
 [SonarQube](http://www.sonarqube.org) with a rule set of more than 600
-checks.
+checks. Additionally each build is checked against [Loader.io](https://loader.io/) to ensure, that
+code changes don't decrease the framework performance.
 
 Here are some used libraries and their purpose in mangoo I/O.
 
@@ -63,7 +64,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Logback - Logging
 * Freemarker - Template engine
 * Quartz Scheduler - Scheduling
-* Ehcache - Caching
+* Guava Cache - Caching
 * Boon JSON - JSON parser
 * And many more ...
 
