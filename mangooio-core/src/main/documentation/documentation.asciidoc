@@ -1203,7 +1203,7 @@ the default language of the application from application.yaml will be
 used. If this configuration is not set, mangoo I/O will default to "en".
 
 If you want to force the language you, simply set the locale in a filter
-- see link:14.%20Filters[14. Filters] for more information on filters.
+- see link:#14-filters[14. Filters] for more information on filters.
 
 [source,java]
 ----------------------------------
