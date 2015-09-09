@@ -531,15 +531,14 @@ public class RequestHandler implements HttpHandler {
         Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
-        boolean isJSONRequest = RequestUtils.isJSONRequest(exchange);
-        for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
-            String key = entry.getKey();
-            Class<?> clazz = entry.getValue();
-            Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
+        if (RequestUtils.isJSONRequest(exchange)) {
+            convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), this.methodParameters.entrySet().iterator().next().getValue());
+        } else {
+            for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
+                String key = entry.getKey();
+                Class<?> clazz = entry.getValue();
+                Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
-            if (isJSONRequest) {
-                convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), clazz);
-            } else {
                 switch (binding) {
                 case FORM:
                     convertedParameters[index] = this.form;
@@ -587,9 +586,9 @@ public class RequestHandler implements HttpHandler {
                 default:
                     break;
                 }
-            }
 
-            index++;
+                index++;
+            }
         }
 
         return convertedParameters;
