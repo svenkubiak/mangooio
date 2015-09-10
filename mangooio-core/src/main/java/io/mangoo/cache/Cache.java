@@ -33,10 +33,15 @@ public class Cache {
 
     @Inject
     public Cache(Config config) {
-        this.guavaCache = CacheBuilder.newBuilder()
+        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
-                .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS)
-                .build();
+                .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS);
+
+        if (config.isAdminCacheEnabled()) {
+            cacheBuilder.recordStats();
+        }
+
+        this.guavaCache = cacheBuilder.build();
     }
 
     /**
