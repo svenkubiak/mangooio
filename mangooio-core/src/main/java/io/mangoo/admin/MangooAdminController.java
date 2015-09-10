@@ -33,8 +33,7 @@ public class MangooAdminController {
         }
 
         return Response.withOk()
-                .andTextBody("alive")
-                .andEtag();
+                .andTextBody("alive");
     }
 
     public Response routes() {
@@ -44,8 +43,7 @@ public class MangooAdminController {
 
         return Response.withOk()
                 .andContent("routes", Router.getRoutes())
-                .andTemplate("defaults/routes.ftl")
-                .andEtag();
+                .andTemplate("defaults/routes.ftl");
     }
 
     public Response cache() {
@@ -70,8 +68,7 @@ public class MangooAdminController {
 
         return Response.withOk()
                 .andContent("stats", stats)
-                .andTemplate("defaults/cache.ftl")
-                .andEtag();
+                .andTemplate("defaults/cache.ftl");
     }
 
     public Response config() {
@@ -86,7 +83,6 @@ public class MangooAdminController {
 
         return Response.withOk()
                 .andContent("configuration", configurations)
-                .andTemplate("defaults/config.ftl")
-                .andEtag();
+                .andTemplate("defaults/config.ftl");
     }
 }

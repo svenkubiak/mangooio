@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import freemarker.template.TemplateException;
 import io.mangoo.core.Application;
+import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Template;
@@ -25,6 +26,7 @@ public class ExceptionHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.XSS_PROTECTION.toInt());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
