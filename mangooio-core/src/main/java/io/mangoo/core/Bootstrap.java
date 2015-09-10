@@ -27,8 +27,8 @@ import com.icegreen.greenmail.util.ServerSetup;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
+import io.mangoo.admin.MangooAdminController;
 import io.mangoo.configuration.Config;
-import io.mangoo.controllers.AdminController;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -154,10 +154,10 @@ public class Bootstrap {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
-        Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(AdminController.class, "routes");
-        Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(AdminController.class, "config");
-        Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(AdminController.class, "health");
-        Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(AdminController.class, "cache");
+        Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(MangooAdminController.class, "routes");
+        Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(MangooAdminController.class, "config");
+        Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(MangooAdminController.class, "health");
+        Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(MangooAdminController.class, "cache");
 
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

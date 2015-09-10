@@ -35,7 +35,7 @@
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
 		<developerConnection>scm:git:git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<url>github.com:svenkubiak/mangooio.git</url>
-		<tag>1.1.0-RC3</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<name>mangoo I/O</name>
 	<description>Intuitive, Lightweight Full Stack Java Web Framework.</description>

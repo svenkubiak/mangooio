@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.boon.json.JsonFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,9 +191,8 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andTemplate(String template) {
-        if (StringUtils.isBlank(this.template)) {
-            this.template = template;
-        }
+        this.template = template;
+
         return this;
     }
 
@@ -206,6 +204,7 @@ public final class Response {
      */
     public Response andContentType(String contentType) {
         this.contentType = contentType;
+
         return this;
     }
 
@@ -217,6 +216,7 @@ public final class Response {
      */
     public Response andCharset(String charset) {
         this.charset = charset;
+
         return this;
     }
 
@@ -229,6 +229,7 @@ public final class Response {
      */
     public Response andContent(String name, Object object) {
         this.content.put(name, object);
+
         return this;
     }
 

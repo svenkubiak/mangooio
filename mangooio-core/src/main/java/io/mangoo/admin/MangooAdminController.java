@@ -1,4 +1,4 @@
-package io.mangoo.controllers;
+package io.mangoo.admin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Template;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 
@@ -18,7 +19,7 @@ import io.mangoo.routing.Router;
  * @author svenkubiak
  *
  */
-public class AdminController {
+public class MangooAdminController {
 
     @Inject
     private Config config;
@@ -28,7 +29,7 @@ public class AdminController {
 
     public Response health() {
         if (!Application.inDevMode() && !config.isAdminHealthEnabled()) {
-            return Response.withNotFound();
+            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
         }
 
         return Response.withOk()
@@ -38,7 +39,7 @@ public class AdminController {
 
     public Response routes() {
         if (!Application.inDevMode() && !config.isAdminRoutesEnabled()) {
-            return Response.withNotFound();
+            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
         }
 
         return Response.withOk()
@@ -49,7 +50,7 @@ public class AdminController {
 
     public Response cache() {
         if (!Application.inDevMode() && !config.isAdminCacheEnabled()) {
-            return Response.withNotFound();
+            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
         }
 
         CacheStats cacheStats = cache.getStats();
@@ -75,7 +76,7 @@ public class AdminController {
 
     public Response config() {
         if (!Application.inDevMode() && !config.isAdminConfigEnabled()) {
-            return Response.withNotFound();
+            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
         }
 
         Map<String, String> configurations = config.getAllConfigurations();
