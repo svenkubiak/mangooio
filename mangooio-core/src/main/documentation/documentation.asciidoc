@@ -59,7 +59,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * Maven - Dependency management, built-system, packaging
 * Undertow - Web Server
-* Google Guice - Dependency injection and cacheing
+* Google Guice - Dependency injection and caching
 * Logback - Logging
 * Freemarker - Template engine
 * Quartz Scheduler - Scheduling
@@ -397,23 +397,65 @@ will overwrite the default value.
 By convention all default values are for the prod mode and will be overwritten, when
 a mode specific value is found. This keeps the configuration values to a minimum.
 
-== Logging
+== Lifecycle
 
-mangoo I/O uses http://logback.qos.ch[Logback] for logging, enabling you
-a variate of loggers to append to. If you are familiar with Log4j,
-creating a new logger instance is trivial.
+In some cases it is useful to hook into the startup process of a mangoo
+I/O application (e.g. for starting a database connection). For this cases
+mangoo I/O offers the Lifecycle class, which can be found in the /conf
+package of your application. Here is an example of how the Lifecycle
+class may look like.
 
 [source,java]
--------------------------------------------------------------------------
-private static final Logger LOG = LoggerFactory.getLogger(MyClass.class);
--------------------------------------------------------------------------
+---------------------------------------------------
+package conf;
 
-You can configure your appenders in the logback.xml file located in
-src/main/resources. By convention, there is also a special logback
-configuration file for the prod mode. This file is called
-logback.prod.xml and automatically used, when you are in prod mode. This file is
-optional and if this file is not present, mangoo I/O will fallback to logback.xml
-and further fallback to the logback settings from the logback base package.
+import com.google.inject.Singleton;
+
+import io.mangoo.interfaces.MangooLifecycle;
+
+@Singleton
+public class Lifecycle implements MangooLifecycle {
+
+    @Override
+    public void applicationInitialized() {
+        // Do nothing for now
+    }
+
+    @Override
+    public void applicationStarted() {
+        // Do nothing for now
+    }
+}
+---------------------------------------------------
+
+[NOTE]
+The Lifecycle class doesn't have to be named
+"Lifecycle", but the class must implement the MangooLifecycle interface and
+you have to bind the implementation using Google Guice in your Module
+class. The module class is also located in the /conf package in your
+application. This class can also hold other custom Google Guice bindings.
+
+[source,java]
+--------------------------------------------------------
+package conf;
+
+import io.mangoo.interfaces.MangooAuthenticator;
+import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.MangooLifecycle;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
+
+import filters.MyGlobalFilter;
+
+@Singleton
+public class Module extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(MangooLifecycle.class).to(Lifecycle.class);
+    }
+}
+--------------------------------------------------------
 
 == Routing
 
@@ -437,7 +479,7 @@ ApplicationController class will be called.
 [NOTE]
 The Routes class has to implement the MangooRoutes interface to work properly.
 
-=== Controller methods
+=== Controllers
 
 Every controller method, whether it renders a template, sends JSON or
 just returns a HTTP Status, must return a Response object. This is handled by
@@ -460,27 +502,6 @@ By convention mangoo I/O will lookup a template name index.ftl in the following 
 With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
 the client.
-
-=== ETag support for dynamic content
-
-"ETag" or "entity tag" enables web application to make use of cached resources by allowing conditional requests from the client.
-This is widely used for static resources like CSS or JS files.
-
-mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
-following method at the returning response in your controller method.
-
-[NOTE]
-If you are using a front-end HTTP server, please check the documentation on how it
-handles ETag, as the popular nginx web server https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip/[deliberately strips ETags] once gzip is applied.
-
-[source,java]
------------------------------
-public Response index() {
-    return Response.withOk().andETag();
-}
------------------------------
-
-For more information on how ETag works, click https://en.wikipedia.org/wiki/HTTP_ETag[here].
 
 === Request and query parameter
 
@@ -548,6 +569,31 @@ Body
 Request
 -------------------------------------------
 
+=== Special parameter
+
+TBD
+
+=== ETag for dynamic content
+
+"ETag" or "entity tag" enables web application to make use of cached resources by allowing conditional requests from the client.
+This is widely used for static resources like CSS or JS files.
+
+mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
+following method at the returning response in your controller method.
+
+[NOTE]
+If you are using a front-end HTTP server, please check the documentation on how it
+handles ETag, as the popular nginx web server https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip/[deliberately strips ETags] once gzip is applied.
+
+[source,java]
+-----------------------------
+public Response index() {
+    return Response.withOk().andETag();
+}
+-----------------------------
+
+For more information on how ETag works, click https://en.wikipedia.org/wiki/HTTP_ETag[here].
+
 === Administrative URLs
 
 mangoo I/O offers administrative URLs, which enables you to check certain application information via a web interface. The
@@ -583,66 +629,6 @@ Displays a list of cache statistics including cache hits, cache misses, etc.
 ==== /@health
 
 Displays a simple health check by returning "alive".
-
-== Lifecycle
-
-In some cases it is useful to hook into the startup process of a mangoo
-I/O application (e.g. for starting a database connection). For this cases
-mangoo I/O offers the Lifecycle class, which can be found in the /conf
-package of your application. Here is an example of how the Lifecycle
-class may look like.
-
-[source,java]
----------------------------------------------------
-package conf;
-
-import com.google.inject.Singleton;
-
-import io.mangoo.interfaces.MangooLifecycle;
-
-@Singleton
-public class Lifecycle implements MangooLifecycle {
-
-    @Override
-    public void applicationInitialized() {
-        // Do nothing for now
-    }
-
-    @Override
-    public void applicationStarted() {
-        // Do nothing for now
-    }
-}
----------------------------------------------------
-
-[NOTE]
-The Lifecycle class doesn't have to be named
-"Lifecycle", but the class must implement the MangooLifecycle interface and
-you have to bind the implementation using Google Guice in your Module
-class. The module class is also located in the /conf package in your
-application. This class can also hold other custom Google Guice bindings.
-
-[source,java]
---------------------------------------------------------
-package conf;
-
-import io.mangoo.interfaces.MangooAuthenticator;
-import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.interfaces.MangooLifecycle;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
-
-import filters.MyGlobalFilter;
-
-@Singleton
-public class Module extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(MangooLifecycle.class).to(Lifecycle.class);
-    }
-}
---------------------------------------------------------
 
 == Form handling
 
@@ -809,130 +795,6 @@ FilterWith(AuthenticityFilter.class)
 If the token is invalid the request will be redirected to a default
 403 Forbidden page.
 
-== Caching
-
-mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] for storing and accessing values
-in-memory. To use the cache in your application, simply inject the cache class.
-
-[source,java]
---------------------
-@Inject
-private Cache cache;
---------------------
-
-The cache offers some convenient functions for adding and removing values
-from the cache.
-
-Check out the https://github.com/google/guava/wiki[Guava
-documentation] on how to configure the cache.
-
-To use the cache, simply add or remove an entry by a specific key.
-
-[source,java]
---------------------
-String foo = cache.get("myvalue", String.class);
---------------------
-
-One cool thing about the guava cache, is the option to pass a callable if the value is
-not found in the cache.
-
-[source,java]
---------------------
-// If the key wasn't in the "easy to compute" group, we need to
-// do things the hard way.
-  cache.get("myvalue", new Callable<Value>() {
-    @Override
-    public Value call() throws AnyException {
-      return doThingsTheHardWay(key);
-    }
-  });
---------------------
-
-== Scheduling
-
-mangoo I/O uses the http://quartz-scheduler.org[Quartz Scheduler
-Framework] for creating and executing periodic tasks. To create a new
-task, create a simple Pojo that implements the Job interface from
-Quartz.
-
-[source,java]
------------------------------------------------------------------------------------------------------
-package jobs;
-
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import com.google.inject.Singleton;
-
-@Singleton
-public class MyJob implements Job {
-
-    @Override
-    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        //Do nothing for now
-    }
-}
------------------------------------------------------------------------------------------------------
-
-As this job is not scheduled or executed at all right now, you have to
-tell the scheduler when to execute the task and to start the scheduler
-itself. It is recommended to use the Lifecycle for scheduling tasks and
-starting the scheduler.
-
-[source,java]
-----------------------------------------------------------------------------------------------------------------------------------
-package conf;
-
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-
-import jobs.InfoJob;
-import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.scheduler.MangooScheduler;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-@Singleton
-public class Lifecycle implements MangooLifecycle {
-
-    @Inject
-    private MangooScheduler mangooScheduler;
-
-    @Override
-    public void applicationStarted() {
-        JobDetail jobDetail = mangooScheduler.getJobDetail(MyJob.class, "MyJobDetail", "MyJobGroup");
-        Trigger trigger = mangooScheduler.getTrigger("MyJobTrigger", "15 15 15 15 * ?", "MyTriggerGroup", "MyTriggerDescription");
-
-        mangooScheduler.schedule(jobDetail, trigger);
-        mangooScheduler.start();
-    }
-}
-----------------------------------------------------------------------------------------------------------------------------------
-
-To schedule the previously defined class, you have to create a JobDetail
-and a Trigger which you pass to the scheduler. Once that is done, you
-can start the scheduler by simply calling the start method.
-
-=== Custom Quartz Scheduler configuration
-
-If you require a custom configuration for quartz inside mangoo I/O you
-can use the application.yaml to pass any option to quartz. Simply add the configuration option with the appropriate
-prefix org.quartz.
-
-[source,yaml]
--------------------------------------
-org:
-  quartz:
-    scheduler.instanceName=Foo
-    scheduler.instanceId=Bar
--------------------------------------
-
-Check out the
-http://quartz-scheduler.org/generated/2.2.1/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
-Scheudler configuration documentation] for more information.
-
 == Working with JSON
 
 mangoo I/O uses https://github.com/boonproject/boon[boon] for parsing JSON. boon is a
@@ -1082,6 +944,299 @@ public class MyController {
     }
 }
 -----------------------------------------
+
+== Filters
+
+Filters are a way of executing code before each controller or each
+method is executed. To execute a filter before a controller or method,
+you can use the @FilterWith annotation. In fact, this is the only annotation
+that comes from the mangoo I/O framework directly.
+
+[source,java]
+---------------------------
+@FilterWith(MyFilter.class)
+---------------------------
+
+There are two types of filters in mangoo I/O: Controller/Method filters
+and a global filter.
+
+=== Controller or method filter
+
+As mentioned, a filter can be added to a controller class or method. If
+added to a controller class the filter will be exectued on every method
+in the class. If added to a method, the filter will only be executed on
+that method.
+
+[source,java]
+----------------------------------------------------------
+package controllers;
+
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.filters.AuthenticityFilter;
+import io.mangoo.routing.Response;
+
+@FilterWith(MyFilter.class)
+public class MyController {
+
+    public Response token() {
+        return Response.withOk().andContent("foo", "bar");
+    }
+
+    @FilterWith(AuthenticityFilter.class)
+    public Response valid() {
+        return Response.withOk().andContent("foo", "bar");
+    }
+}
+----------------------------------------------------------
+
+On the above example, the Filter MyFilter will be executed when the
+token() and the valid() method is called. The Filter AuthenticityFilter will
+also be called, when the valid() method is called.
+
+You can assign multiple filters to a controller or a method.
+
+[source,java]
+----------------------------------------------------------
+@FilterWith({"MyFirstFilter.class, MySecondFilter.class"})
+----------------------------------------------------------
+
+They are executed in order.
+
+==== Creating a filter
+
+A controller or method filter must implement the MangooFilter
+interface.
+
+[source,java]
+---------------------------------------------------------
+package mangoo.io.filters;
+
+import io.mangoo.interfaces.MangooControllerFilter;
+import io.mangoo.routing.bindings.Exchange;
+
+public class MyFilter implements MangooFilter {
+
+    @Override
+    public Response filter(Request request, Response response) {
+        //Do nothing for now
+        return response;
+    }
+}
+---------------------------------------------------------
+
+The main method of a filter is the filter method, which receives the
+exchange class from mangoo I/O. This class gives you a handy way of manipulating
+the request/response cycle. A long with other convenient methods, the
+exchange class enables you access to the Unterdow HttpServerExchange
+class.
+
+Here is an example of the AuthenticityFilter which is used for the CSRF checks,
+showing you how to interact with the Undertow request/response cycle.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+public class AuthenticityFilter implements MangooControllerFilter {
+
+    @Override
+    public boolean filter(Exchange exchange) {
+        if (!exchange.authenticityMatches()) {
+            exchange.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
+            exchange.getHttpServerExchange().getResponseSender().send(Templates.DEFAULT.forbidden());
+
+            return false;
+        }
+
+        return true;
+    }
+}
+-----------------------------------------------------------------------------------------------------
+
+As you can see in the example, you can change the status code, a long
+with the content of the response inside a filter. The exchange.getHttpServerExchange()
+offers even more method for customization.
+
+See the http://undertow.io/undertow-docs/undertow-docs-1.2.0/index.html[Undertow documentation] for
+more information on the HttpServerExchange.
+
+One important part in a filter is the return value. If the filter method
+returns true, it tells mangoo I/O to continue its executing and call
+further filters. If the filter method
+returns false mangoo I/O stops the execution of further filters
+and controller method. One can say, that the request ends with the filter.
+
+=== Global filter
+
+Besides the controller class or method filter, there is a special filter
+which can be executed globally. This means, that this filter is called on
+every mapped request in the Routes class. This is useful if, for example, you have to
+force the language for your application or if you have an application
+that does not have any public content and requires authentication for
+every request.
+
+A global filter works similar to a controller or method filter, but the
+filter has to implement the MangooRequestFilter interface instead.
+
+[source,java]
+------------------------------------------------------------
+package filters;
+
+import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.routing.bindings.Exchange;
+
+public class MyGlobalFilter implements MangooRequestFilter {
+
+    @Override
+    public execute filter(Request request, Response response) {
+        //Do nothing for now
+        return response;
+    }
+}
+------------------------------------------------------------
+
+[NOTE]
+There can only be one global filter in your mangoo I/O application.
+
+== Logging
+
+mangoo I/O uses http://logback.qos.ch[Logback] for logging, enabling you
+a variate of loggers to append to. If you are familiar with Log4j,
+creating a new logger instance is trivial.
+
+[source,java]
+-------------------------------------------------------------------------
+private static final Logger LOG = LoggerFactory.getLogger(MyClass.class);
+-------------------------------------------------------------------------
+
+You can configure your appenders in the logback.xml file located in
+src/main/resources. By convention, there is also a special logback
+configuration file for the prod mode. This file is called
+logback.prod.xml and automatically used, when you are in prod mode. This file is
+optional and if this file is not present, mangoo I/O will fallback to logback.xml
+and further fallback to the logback settings from the logback base package.
+
+== Caching
+
+mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] for storing and accessing values
+in-memory. To use the cache in your application, simply inject the cache class.
+
+[source,java]
+--------------------
+@Inject
+private Cache cache;
+--------------------
+
+The cache offers some convenient functions for adding and removing values
+from the cache.
+
+Check out the https://github.com/google/guava/wiki[Guava
+documentation] on how to configure the cache.
+
+To use the cache, simply add or remove an entry by a specific key.
+
+[source,java]
+--------------------
+String foo = cache.get("myvalue", String.class);
+--------------------
+
+One cool thing about the guava cache, is the option to pass a callable if the value is
+not found in the cache.
+
+[source,java]
+--------------------
+// If the key wasn't in the "easy to compute" group, we need to
+// do things the hard way.
+  cache.get("myvalue", new Callable<Value>() {
+    @Override
+    public Value call() throws AnyException {
+      return doThingsTheHardWay(key);
+    }
+  });
+--------------------
+
+== Scheduling
+
+mangoo I/O uses the http://quartz-scheduler.org[Quartz Scheduler
+Framework] for creating and executing periodic tasks. To create a new
+task, create a simple Pojo that implements the Job interface from
+Quartz.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+package jobs;
+
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import com.google.inject.Singleton;
+
+@Singleton
+public class MyJob implements Job {
+
+    @Override
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        //Do nothing for now
+    }
+}
+-----------------------------------------------------------------------------------------------------
+
+As this job is not scheduled or executed at all right now, you have to
+tell the scheduler when to execute the task and to start the scheduler
+itself. It is recommended to use the Lifecycle for scheduling tasks and
+starting the scheduler.
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------
+package conf;
+
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+
+import jobs.InfoJob;
+import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.scheduler.MangooScheduler;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@Singleton
+public class Lifecycle implements MangooLifecycle {
+
+    @Inject
+    private MangooScheduler mangooScheduler;
+
+    @Override
+    public void applicationStarted() {
+        JobDetail jobDetail = mangooScheduler.getJobDetail(MyJob.class, "MyJobDetail", "MyJobGroup");
+        Trigger trigger = mangooScheduler.getTrigger("MyJobTrigger", "15 15 15 15 * ?", "MyTriggerGroup", "MyTriggerDescription");
+
+        mangooScheduler.schedule(jobDetail, trigger);
+        mangooScheduler.start();
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------------
+
+To schedule the previously defined class, you have to create a JobDetail
+and a Trigger which you pass to the scheduler. Once that is done, you
+can start the scheduler by simply calling the start method.
+
+=== Custom Quartz Scheduler configuration
+
+If you require a custom configuration for quartz inside mangoo I/O you
+can use the application.yaml to pass any option to quartz. Simply add the configuration option with the appropriate
+prefix org.quartz.
+
+[source,yaml]
+-------------------------------------
+org:
+  quartz:
+    scheduler.instanceName=Foo
+    scheduler.instanceId=Bar
+-------------------------------------
+
+Check out the
+http://quartz-scheduler.org/generated/2.2.1/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
+Scheudler configuration documentation] for more information.
 
 == Sending eMails
 
@@ -1311,157 +1466,6 @@ ${i18n("my.othertranslation", "foo")}
 If no key is found in the resource bundle the template will output an
 empty value.
 
-== Filters
-
-Filters are a way of executing code before each controller or each
-method is executed. To execute a filter before a controller or method,
-you can use the @FilterWith annotation. In fact, this is the only annotation
-that comes from the mangoo I/O framework directly.
-
-[source,java]
----------------------------
-@FilterWith(MyFilter.class)
----------------------------
-
-There are two types of filters in mangoo I/O: Controller/Method filters
-and a global filter.
-
-=== Controller or method filter
-
-As mentioned, a filter can be added to a controller class or method. If
-added to a controller class the filter will be exectued on every method
-in the class. If added to a method, the filter will only be executed on
-that method.
-
-[source,java]
-----------------------------------------------------------
-package controllers;
-
-import io.mangoo.annotations.FilterWith;
-import io.mangoo.filters.AuthenticityFilter;
-import io.mangoo.routing.Response;
-
-@FilterWith(MyFilter.class)
-public class MyController {
-
-    public Response token() {
-        return Response.withOk().andContent("foo", "bar");
-    }
-
-    @FilterWith(AuthenticityFilter.class)
-    public Response valid() {
-        return Response.withOk().andContent("foo", "bar");
-    }
-}
-----------------------------------------------------------
-
-On the above example, the Filter MyFilter will be executed when the
-token() and the valid() method is called. The Filter AuthenticityFilter will
-also be called, when the valid() method is called.
-
-You can assign multiple filters to a controller or a method.
-
-[source,java]
-----------------------------------------------------------
-@FilterWith({"MyFirstFilter.class, MySecondFilter.class"})
-----------------------------------------------------------
-
-They are executed in order.
-
-==== Creating a filter
-
-A controller or method filter must implement the MangooFilter
-interface.
-
-[source,java]
----------------------------------------------------------
-package mangoo.io.filters;
-
-import io.mangoo.interfaces.MangooControllerFilter;
-import io.mangoo.routing.bindings.Exchange;
-
-public class MyFilter implements MangooFilter {
-
-    @Override
-    public Response filter(Request request, Response response) {
-        //Do nothing for now
-        return response;
-    }
-}
----------------------------------------------------------
-
-The main method of a filter is the filter method, which receives the
-exchange class from mangoo I/O. This class gives you a handy way of manipulating
-the request/response cycle. A long with other convenient methods, the
-exchange class enables you access to the Unterdow HttpServerExchange
-class.
-
-Here is an example of the AuthenticityFilter which is used for the CSRF checks,
-showing you how to interact with the Undertow request/response cycle.
-
-[source,java]
------------------------------------------------------------------------------------------------------
-public class AuthenticityFilter implements MangooControllerFilter {
-
-    @Override
-    public boolean filter(Exchange exchange) {
-        if (!exchange.authenticityMatches()) {
-            exchange.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
-            exchange.getHttpServerExchange().getResponseSender().send(Templates.DEFAULT.forbidden());
-
-            return false;
-        }
-
-        return true;
-    }
-}
------------------------------------------------------------------------------------------------------
-
-As you can see in the example, you can change the status code, a long
-with the content of the response inside a filter. The exchange.getHttpServerExchange()
-offers even more method for customization.
-
-See the http://undertow.io/undertow-docs/undertow-docs-1.2.0/index.html[Undertow documentation] for
-more information on the HttpServerExchange.
-
-One important part in a filter is the return value. If the filter method
-returns true, it tells mangoo I/O to continue its executing and call
-further filters. If the filter method
-returns false mangoo I/O stops the execution of further filters
-and controller method. One can say, that the request ends with the filter.
-
-=== Global filter
-
-Besides the controller class or method filter, there is a special filter
-which can be executed globally. This means, that this filter is called on
-every mapped request in the Routes class. This is useful if, for example, you have to
-force the language for your application or if you have an application
-that does not have any public content and requires authentication for
-every request.
-
-A global filter works similar to a controller or method filter, but the
-filter has to implement the MangooRequestFilter interface instead.
-
-[source,java]
-------------------------------------------------------------
-package filters;
-
-import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.routing.bindings.Exchange;
-
-public class MyGlobalFilter implements MangooRequestFilter {
-
-    @Override
-    public execute filter(Request request, Response response) {
-        //Do nothing for now
-        return response;
-    }
-}
-------------------------------------------------------------
-
-[NOTE]
-There can only be one global filter in your mangoo I/O application.
-
 == Sessions
 
 With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
@@ -1571,7 +1575,7 @@ scenarios: success, warning and error. This methods will automatically
 create a key "success", "warning" or "error" in the flash class. Besides
 that, you can pass custom values to the flash class.
 
-== Flash in templates
+=== Flash in templates
 
 To access the flash values, simply call the appropriate key in your
 template.
@@ -1832,33 +1836,6 @@ public class ApplicationControllerTest extends MangooUnit {
 Please note, that you have to extend MangooUnit if you are not using the TestSuite.
 Otherwise the framework will not start before each unit test and your tests will fail.
 
-== Frontend testing
-
-For frontend testing mangoo I/O uses
-https://github.com/FluentLenium/FluentLenium[FluentLenium]. Here is an example of how a FluentLenium test might look
-like.
-
-[source,java]
-------------------------------------------------------------------
-package mangoo.controllers;
-
-import static org.junit.Assert.assertTrue;
-import io.mangoo.testing.MangooUnit;
-
-import org.junit.Test;
-
-public class FluentTest extends MangooFluent {
-
-    @Test
-    public void title_of_bing_should_contain_search_query_name() {
-        goTo("http://www.bing.com");
-        fill("#sb_form_q").with("FluentLenium");
-        submit("#sb_form_go");
-        assertTrue(title().contains("FluentLenium"));
-    }
-}
-------------------------------------------------------------------
-
 === Testing with a TestSuite
 
 Using a TestSuite is mostly suitable for situation where you want to
@@ -1902,6 +1879,33 @@ as the TestSuite does not wrap around FluentLenium in comparison to
 MangooUnit for simple unit tests.
 
 See the https://github.com/FluentLenium/FluentLeniuhttps://github.com/FluentLenium/FluentLenium[FluentLenium documentation] on how to use FluentLenium standalone.
+
+=== Frontend testing
+
+For frontend testing mangoo I/O uses
+https://github.com/FluentLenium/FluentLenium[FluentLenium]. Here is an example of how a FluentLenium test might look
+like.
+
+[source,java]
+------------------------------------------------------------------
+package mangoo.controllers;
+
+import static org.junit.Assert.assertTrue;
+import io.mangoo.testing.MangooUnit;
+
+import org.junit.Test;
+
+public class FluentTest extends MangooFluent {
+
+    @Test
+    public void title_of_bing_should_contain_search_query_name() {
+        goTo("http://www.bing.com");
+        fill("#sb_form_q").with("FluentLenium");
+        submit("#sb_form_go");
+        assertTrue(title().contains("FluentLenium"));
+    }
+}
+------------------------------------------------------------------
 
 == Deployment
 
