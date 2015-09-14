@@ -503,7 +503,7 @@ With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
 the client.
 
-=== Request and query parameter
+=== Parameters
 
 mangoo I/O makes it very easy to handle request or query parameter. Lets
 imagine you have the following mapping in your Routes class.
@@ -561,17 +561,489 @@ LocalDate is parsed as ISO_LOCAL_DATE "yyyy-MM-dd", and LocalDateTime is parsed 
 The following classes can also be used directly in controller methods, but can not be used as a request or query parameter
 
 -------------------------------------------
-Form
-Authentication
-Session
-Flash
-Body
 Request
+Session
+Form
+Flash
+Authentication
+Body
 -------------------------------------------
 
-=== Special parameter
+=== Request
 
-TBD
+The request class is a special object which can be passed into a controller method. It enables you
+access to header and URL values a long with additional information about the request. To gain
+access to the request object, simply pass it to your controller method.
+
+[source,java]
+-------------------------------------------
+public Response index(Request request) {
+    //Do something useful with the request
+    return Response.withOk();
+}
+-------------------------------------------
+
+The request class is also useful when you have multiple query or request parameter which you don't want to
+name in your controller method header. To access a query or request parameter simply call the getter for
+the parameter.
+
+[source,java]
+-------------------------------------------
+public Response index(Request request) {
+    String foo = request.getParameter("foo");
+    return Response.withOk();
+}
+-------------------------------------------
+
+==== Request parameter validation
+
+As an additional feature on the request object, you can validate incoming parameters. Just like
+<<Form handling>> you can access a Validator class, which can perform specific checks on the request
+parameter.
+
+[source,java]
+-------------------------------------------
+public Response index(Request request) {
+  request.validation().email("foo");
+  request.validation().required("bar");
+
+  if (!request.validation().hasErrors()) {
+     //Handle request
+  } else {
+     //Do nothing
+  }
+  ...
+}
+-------------------------------------------
+
+With this validation you can check an incoming request and return specific error messages, for e.g. as JSON.
+
+[source,java]
+-------------------------------------------
+public Response index(Request request) {
+  request.validation().email("foo");
+  request.validation().required("bar");
+
+  if (!request.validation().hasErrors()) {
+     //Handle request
+  } else {
+     return Response.withBadRequest()
+        .andJSONBody(request.validation.getErrors());
+  }
+  ...
+}
+-------------------------------------------
+
+The error messages for the request use the same key as the form handling. Check
+the documentation on <<Form handling>> for more information on how to customize
+the specific error messages.
+
+=== Form handling
+
+To access a form submitted to a controller class, you can simply pass
+the mangoo I/O Form class. Here is an example of how this might look
+like
+
+[source,java]
+----------------------------------
+public Response index(Form form) {
+    ...
+}
+
+----------------------------------
+
+The Form class offers you convenient methods for accessing form values from you template.
+
+[source,java]
+----------------------------------
+public Response index(Form form) {
+    File file = form.getFile();
+    List<File> = form.getFiles();
+    String firstname = form.get("firstname");
+    ...
+}
+
+----------------------------------
+
+[NOTE]
+The Form class is only available if the request is mapped as a POST or PUT method.
+
+The Form class is automatically available in the template so you don't
+have to pass the class to your template.
+
+==== Form validation
+
+Lets image you have the following form in a template
+
+[source,html]
+------------------------------------------
+<form method="/save" method="post">
+    <input type="text" name="firstname" />
+    <input type="text" name="lastname" />
+    <input type="text" name="email" />
+</form>
+------------------------------------------
+
+No lets imagine that you want to validate, that the firstname and
+lastname from the request is not empty. mangoo I/O offers some convenient
+functions to validate the submitted form values.
+
+[source,java]
+---------------------------------
+public Response form(Form form) {
+    form.validation().email("email");
+    form.validation().required("firstname");
+    form.validation().required("lastname");
+
+    if (!form.validation().hasErrors()) {
+        //Handle form
+    } else {
+        //Do nothing
+    }
+
+    ...
+}
+---------------------------------
+
+With the form class you can check if a field exists, check an eMail
+address, etc. The hasErrors() method shows you if the form is valid and
+can be handled or not.
+
+mangoo I/O supports the following validations out of the box
+
+* Required
+* Minimum
+* Maximum
+* Match (case-insensitive)
+* Exact match (case-sensitive)
+* E-Mail
+* IPv4
+* IPv6
+* Range
+* Regular expression
+
+==== Showing error messages in a template
+
+To show an error in a template, simply check for an error on a spcific field
+
+[source,html]
+-----------------------------------------
+<#if form.hasError("myField")> ... </#if>
+-----------------------------------------
+
+This is useful if you want to change the CSS style or display an error
+message when the submitted form is invalid.
+
+To display a form specific error you can use the error method on a form field
+
+[source,html]
+-----------------------
+${form.error("myField)}
+-----------------------
+
+This will display e.g.
+
+--------------------------
+Firstname can not be blank
+--------------------------
+
+The error messages are defined in your messages.properties file (or for
+each language). There are some default error messages, but they can be
+overwritten with custom error messages. If you overwrite a
+validation message you have to use the appropriate prefix
+
+--------------------------------------------------------
+validation.required={0} is required
+validation.min={0} must be at least {1} characters
+validation.max={0} can be max {1} characters
+validation.exactMatch={0} must exactly match {1}
+validation.match={0} must match {1}
+validation.email={0} must be a valid eMail address
+validation.ipv4={0} must be a valid IPv4 address
+validation.ipv6={0} must be a valid IPv6 address
+validation.range={0} must be between {1} and {2} characters
+validation.url={0} must be a valid URL
+validation.regex={0} is invalid
+--------------------------------------------------------
+
+The prefix follows the field type (email, required, match, etc.) for the
+message.
+
+==== CSRF Protection
+
+mangoo I/O allows you to retrieve an authenticity token for protection
+against https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery[CSRF].
+You can either obtain a prefilled hidden input field or the token itself.
+
+To get the prefilled hidden input field, use the following tag in your
+template
+
+[source,html]
+--------------------
+<@authenticityForm/>
+--------------------
+
+To get the token, use the following tag in your template
+
+[source,html]
+---------------------
+<@authenticityToken/>
+---------------------
+
+If you use either the form or the token you might want to check the
+token in your controller. mangoo I/O offers a filter for checking the
+correctness of the token. Just add the following filter to your
+controller class or method.
+
+[source,java]
+------------------------------------
+FilterWith(AuthenticityFilter.class)
+------------------------------------
+
+If the token is invalid the request will be redirected to a default
+403 Forbidden page.
+
+=== Sessions
+
+With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
+nothing architecture] in mind mangoo I/O uses a so called client-side
+session. This means, that all information for a specific user is stored
+on the client-side inside a cookie. The big advantage of this concept
+is, that you can scale your application very easy, because nothing
+connects a specific user to a specific mangoo I/O instance. The
+downside of this architecture is, that you can only stored limited data
+in the cookie (around 4k of data).
+
+To make use of the mangoo I/O session, you can just pass the Session
+class into your controller method.
+
+[source,java]
+------------------------------------------------------
+package controllers;
+
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Session;
+
+public class SessionController {
+    public Response session(Session session) {
+        session.add("foo", "this is a session value");
+        return Response.withOk().andEmptyBody();
+    }
+}
+------------------------------------------------------
+
+The Session class offers you some convenient methods for adding, deleting
+or completly erasing session data.
+
+By default the session cookie has a lifespan of one day (86400 seconds). This, a long
+with the name of the cookie, can be configure using the following
+properties in the application.yaml
+
+[source,yaml]
+---------------------------------------
+cookie:
+  expires  : 86400
+---------------------------------------
+
+==== Session data in templates
+
+To access the Session values, simply call the appropriate key in your
+template.
+
+[source,html]
+--------------
+${session.foo}
+--------------
+
+The Session class is automatically available in the template so you
+don't have to pass the class to the template via a controller.
+
+==== Session encryption
+
+By default the values in the client-side cookie are signed with the
+application secret using SHA2(SHA-512), making manipulation of the
+values very difficult. The security of the client-side cookie can be further
+increased by using AES encryption. To activate cookie encryption of the
+session cookie, set the following property in your application.yaml
+
+[source,yaml]
+----------------------
+cookie:
+  encryption  : true
+----------------------
+
+The encryption strength is based on the length of your
+application.secret configured in your application.yaml. If your
+application.secret is more or equal than 32 characters, AES-256 will be
+used. If you secret is more or equal than 24 characters, AES-192 will be
+used. If your secret is more or equal than 16 characters AES-128 will
+be used. The mangoo I/O framework will automatically determine and use
+the strongest key possible.
+
+=== Flash
+
+Specially when working with forms it is useful to pass certain
+informations (e.g. error- or success messages) to the next request. To
+do this in a stateless environment, mangoo I/O uses the Flash class. This
+is basically the same mechanism as a session, but all informations
+are stored in a special flash cookie which is disposed once the request is finished.
+
+[source,java]
+-------------------------------------------
+package controllers;
+
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Flash;
+
+public class FlashController {
+    public Response flash(Flash flash) {
+        flash.success("this is a success");
+        flash.warning("this is a warning");
+        flash.error("this is an error");
+        flash.add("foo", "bar");
+
+       return Response.withRedirect("/");
+    }
+}
+-------------------------------------------
+
+The Flash class has three convenient methods for the commonly used
+scenarios: success, warning and error. This methods will automatically
+create a key "success", "warning" or "error" in the flash class. Besides
+that, you can pass custom values to the flash class.
+
+==== Flash in templates
+
+To access the flash values, simply call the appropriate key in your
+template.
+
+[source,html]
+----------------
+${flash.success}
+${flash.warning}
+${flash.error}
+${flash.foo}
+----------------
+
+The Flash class is automatically available in the template so you don't
+have to pass the class to the template via a controller.
+
+=== Authentication
+
+mangoo I/O comes with two authentication implementations out of the box: HTTP Basic
+authentication and custom authentication where you have a custom login
+and authentication process ready to use.
+
+==== Basic authentication
+
+The HTTP Basic authentication in mangoo I/O uses a predefined filter:
+BasicAuthenticationFilter.class. So the first step to enable Basic
+authentication would be to have a annotated controller or method.
+
+[source,java]
+-----------------------------------------------
+package controllers;
+
+import io.mangoo.annotations.FilterWith;
+import io.mangoo.authentication.Authentication;
+import io.mangoo.filters.AuthenticationFilter;
+import io.mangoo.routing.Response;
+
+public class AuthenticationController {
+
+    @FilterWith(AuthenticationFilter.class)
+    public Response secret() {
+        return Response.withOk();
+    }
+}
+-----------------------------------------------
+
+To validate credentials passed from the client you need some place to do
+this. Therefore you have to bind the authentication process via the Google
+Guice configuration in your Module class.
+
+[source,java]
+--------------------------------------------------------------------------------------------
+package conf;
+
+import io.mangoo.interfaces.MangooAuthenticator;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
+
+@Singleton
+public class Module extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(MangooAuthenticator.class).toInstance(
+                (username, password) -> ("foo").equals(username) && ("bar").equals(password)
+        );
+    }
+}
+--------------------------------------------------------------------------------------------
+
+In this example a Java 8 lambda expression is used to validate the
+passed credentials. Of coures, an instance of the MangooAuthenticator
+can be passed in any other way. Just make sure you implement the
+MangooAuthenticator interface and bind your implementation via the
+Module class.
+
+==== Custom authentication
+
+mangoo I/O supports you when a custom registration with a custom login
+process is required. Although mangoo I/O does not store any credentials
+or user data for you, it gives you some handy functions to make
+handling of authentication as easy as possible.
+
+mangoo I/O offers the Authentication class which can be simply injected
+into a controller class.
+
+[source,java]
+--------------------------------------
+@Inject
+private Authentication authentication;
+--------------------------------------
+
+The authentication uses http://de.wikipedia.org/wiki/Bcrypt[BCrypt]
+provided by http://www.mindrot.org/projects/jBCrypt[jBCrypt] for
+password hashing. This means, that you don't have to store a salt along
+with the user data, just the hashed password. This also means, that you have
+to hash the user password with the provided function in the authentication class
+and store this hash value along with your user data. This hashed value can be created with
+the following method
+
+[source,java]
+----------------------------------
+getHashedPassword(String password)
+----------------------------------
+
+After you create the hash of the cleartext password of your user, you
+have to store it with your user data. mangoo I/O does not do that for you.
+
+The Authentication class offers convenient functions to perform
+authentication. The main methods are
+
+[source,java]
+------------------------------------------
+getAuthenticatedUser()
+authenticate(String password, String hash)
+login(String username, boolean remember)
+logout()
+------------------------------------------
+
+To perform a check, if a user is authenticated mangoo I/O offers a
+predefined filter ready to use on controller classes or methods.
+
+[source,java]
+---------------------------------------
+@FilterWith(AuthenticationFilter.class)
+---------------------------------------
+
+Check the JavaDoc of the Authentication class to get more information on
+how the methods work. Also check the custom configuration options for
+the Authentication class in link:#c-configuration-options[C.
+Configuration options]. All options with the prefix "auth" configure
+custom Authentication.
 
 === ETag for dynamic content
 
@@ -629,171 +1101,6 @@ Displays a list of cache statistics including cache hits, cache misses, etc.
 ==== /@health
 
 Displays a simple health check by returning "alive".
-
-== Form handling
-
-To access a form submitted to a controller class, you can simply pass
-the mangoo I/O Form class. Here is an example of how this might look
-like
-
-[source,java]
-----------------------------------
-public Response index(Form form) {
-    ...
-}
-
-----------------------------------
-
-The Form class offers you convenient methods for accessing form values from you template.
-
-[source,java]
-----------------------------------
-public Response index(Form form) {
-    File file = form.getFile();
-    List<File> = form.getFiles();
-    String firstname = form.get("firstname");
-    ...
-}
-
-----------------------------------
-
-[NOTE]
-The Form class is only available if the request is mapped as a POST or PUT method.
-
-The Form class is automatically available in the template so you don't
-have to pass the class to your template.
-
-=== Form validation
-
-Lets image you have the following form in a template
-
-[source,html]
-------------------------------------------
-<form method="/save" method="post">
-    <input type="text" name="firstname" />
-    <input type="text" name="lastname" />
-    <input type="text" name="email" />
-</form>
-------------------------------------------
-
-No lets imagine that you want to validate, that the firstname and
-lastname from the request is not empty. mangoo I/O offers some convenient
-functions to validate the submitted form values.
-
-[source,java]
----------------------------------
-public Response form(Form form) {
-    form.validation().email("email");
-    form.validation().required("firstname");
-    form.validation().required("lastname");
-
-    if (!form.validation().hasErrors()) {
-        //Handle form
-    } else {
-        //Do nothing
-    }
-
-    ...
-}
----------------------------------
-
-With the form class you can check if a field exists, check an eMail
-address, etc. The hasErrors() method shows you if the form is valid and
-can be handled or not.
-
-mangoo I/O supports the following validations out of the box
-
-* Required
-* Minimum
-* Maximum
-* Match (case-insensitive)
-* Exact match (case-sensitive)
-* E-Mail
-* IPv4
-* IPv6
-* Range
-* Regular expression
-
-=== Showing error messages in a template
-
-To show an error in a template, simply check for an error on a spcific field
-
-[source,html]
------------------------------------------
-<#if form.hasError("myField")> ... </#if>
------------------------------------------
-
-This is useful if you want to change the CSS style or display an error
-message when the submitted form is invalid.
-
-To display a form specific error you can use the error method on a form field
-
-[source,html]
------------------------
-${form.error("myField)}
------------------------
-
-This will display e.g.
-
---------------------------
-Firstname can not be blank
---------------------------
-
-The error messages are defined in your messages.properties file (or for
-each language). There are some default error messages, but they can be
-overwritten with custom error messages. If you overwrite a
-validation message you have to use the appropriate prefix
-
---------------------------------------------------------
-validation.required={0} is required
-validation.min={0} must be at least {1} characters
-validation.max={0} can be max {1} characters
-validation.exactMatch={0} must exactly match {1}
-validation.match={0} must match {1}
-validation.email={0} must be a valid eMail address
-validation.ipv4={0} must be a valid IPv4 address
-validation.ipv6={0} must be a valid IPv6 address
-validation.range={0} must be between {1} and {2} characters
-validation.url={0} must be a valid URL
-validation.regex={0} is invalid
---------------------------------------------------------
-
-The prefix follows the field type (email, required, match, etc.) for the
-message.
-
-=== CSRF Protection
-
-mangoo I/O allows you to retrieve an authenticity token for protection
-against https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery[CSRF].
-You can either obtain a prefilled hidden input field or the token itself.
-
-To get the prefilled hidden input field, use the following tag in your
-template
-
-[source,html]
---------------------
-<@authenticityForm/>
---------------------
-
-To get the token, use the following tag in your template
-
-[source,html]
----------------------
-<@authenticityToken/>
----------------------
-
-If you use either the form or the token you might want to check the
-token in your controller. mangoo I/O offers a filter for checking the
-correctness of the token. Just add the following filter to your
-controller class or method.
-
-[source,java]
-------------------------------------
-FilterWith(AuthenticityFilter.class)
-------------------------------------
-
-If the token is invalid the request will be redirected to a default
-403 Forbidden page.
 
 == Working with JSON
 
@@ -1465,248 +1772,6 @@ ${i18n("my.othertranslation", "foo")}
 
 If no key is found in the resource bundle the template will output an
 empty value.
-
-== Sessions
-
-With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
-nothing architecture] in mind mangoo I/O uses a so called client-side
-session. This means, that all information for a specific user is stored
-on the client-side inside a cookie. The big advantage of this concept
-is, that you can scale your application very easy, because nothing
-connects a specific user to a specific mangoo I/O instance. The
-downside of this architecture is, that you can only stored limited data
-in the cookie (around 4k of data).
-
-To make use of the mangoo I/O session, you can just pass the Session
-class into your controller method.
-
-[source,java]
-------------------------------------------------------
-package controllers;
-
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Session;
-
-public class SessionController {
-    public Response session(Session session) {
-        session.add("foo", "this is a session value");
-        return Response.withOk().andEmptyBody();
-    }
-}
-------------------------------------------------------
-
-The Session class offers you some convenient methods for adding, deleting
-or completly erasing session data.
-
-By default the session cookie has a lifespan of one day (86400 seconds). This, a long
-with the name of the cookie, can be configure using the following
-properties in the application.yaml
-
-[source,yaml]
----------------------------------------
-cookie:
-  expires  : 86400
----------------------------------------
-
-=== Session data in templates
-
-To access the Session values, simply call the appropriate key in your
-template.
-
-[source,html]
---------------
-${session.foo}
---------------
-
-The Session class is automatically available in the template so you
-don't have to pass the class to the template via a controller.
-
-=== Session encryption
-
-By default the values in the client-side cookie are signed with the
-application secret using SHA2(SHA-512), making manipulation of the
-values very difficult. The security of the client-side cookie can be further
-increased by using AES encryption. To activate cookie encryption of the
-session cookie, set the following property in your application.yaml
-
-[source,yaml]
-----------------------
-cookie:
-  encryption  : true
-----------------------
-
-The encryption strength is based on the length of your
-application.secret configured in your application.yaml. If your
-application.secret is more or equal than 32 characters, AES-256 will be
-used. If you secret is more or equal than 24 characters, AES-192 will be
-used. If your secret is more or equal than 16 characters AES-128 will
-be used. The mangoo I/O framework will automatically determine and use
-the strongest key possible.
-
-== Flash
-
-Specially when working with forms it is useful to pass certain
-informations (e.g. error- or success messages) to the next request. To
-do this in a stateless environment, mangoo I/O uses the Flash class. This
-is basically the same mechanism as a session, but all informations
-are stored in a special flash cookie which is disposed once the request is finished.
-
-[source,java]
--------------------------------------------
-package controllers;
-
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Flash;
-
-public class FlashController {
-    public Response flash(Flash flash) {
-        flash.success("this is a success");
-        flash.warning("this is a warning");
-        flash.error("this is an error");
-        flash.add("foo", "bar");
-
-       return Response.withRedirect("/");
-    }
-}
--------------------------------------------
-
-The Flash class has three convenient methods for the commonly used
-scenarios: success, warning and error. This methods will automatically
-create a key "success", "warning" or "error" in the flash class. Besides
-that, you can pass custom values to the flash class.
-
-=== Flash in templates
-
-To access the flash values, simply call the appropriate key in your
-template.
-
-[source,html]
-----------------
-${flash.success}
-${flash.warning}
-${flash.error}
-${flash.foo}
-----------------
-
-The Flash class is automatically available in the template so you don't
-have to pass the class to the template via a controller.
-
-== Authentication
-
-mangoo I/O comes with two authentication implementations out of the box: HTTP Basic
-authentication and custom authentication where you have a custom login
-and authentication process ready to use.
-
-=== Basic authentication
-
-The HTTP Basic authentication in mangoo I/O uses a predefined filter:
-BasicAuthenticationFilter.class. So the first step to enable Basic
-authentication would be to have a annotated controller or method.
-
-[source,java]
------------------------------------------------
-package controllers;
-
-import io.mangoo.annotations.FilterWith;
-import io.mangoo.authentication.Authentication;
-import io.mangoo.filters.AuthenticationFilter;
-import io.mangoo.routing.Response;
-
-public class AuthenticationController {
-
-    @FilterWith(AuthenticationFilter.class)
-    public Response secret() {
-        return Response.withOk();
-    }
-}
------------------------------------------------
-
-To validate credentials passed from the client you need some place to do
-this. Therefore you have to bind the authentication process via the Google
-Guice configuration in your Module class.
-
-[source,java]
---------------------------------------------------------------------------------------------
-package conf;
-
-import io.mangoo.interfaces.MangooAuthenticator;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
-
-@Singleton
-public class Module extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(MangooAuthenticator.class).toInstance(
-                (username, password) -> ("foo").equals(username) && ("bar").equals(password)
-        );
-    }
-}
---------------------------------------------------------------------------------------------
-
-In this example a Java 8 lambda expression is used to validate the
-passed credentials. Of coures, an instance of the MangooAuthenticator
-can be passed in any other way. Just make sure you implement the
-MangooAuthenticator interface and bind your implementation via the
-Module class.
-
-=== Custom authentication
-
-mangoo I/O supports you when a custom registration with a custom login
-process is required. Although mangoo I/O does not store any credentials
-or user data for you, it gives you some handy functions to make
-handling of authentication as easy as possible.
-
-mangoo I/O offers the Authentication class which can be simply injected
-into a controller class.
-
-[source,java]
---------------------------------------
-@Inject
-private Authentication authentication;
---------------------------------------
-
-The authentication uses http://de.wikipedia.org/wiki/Bcrypt[BCrypt]
-provided by http://www.mindrot.org/projects/jBCrypt[jBCrypt] for
-password hashing. This means, that you don't have to store a salt along
-with the user data, just the hashed password. This also means, that you have
-to hash the user password with the provided function in the authentication class
-and store this hash value along with your user data. This hashed value can be created with
-the following method
-
-[source,java]
-----------------------------------
-getHashedPassword(String password)
-----------------------------------
-
-After you create the hash of the cleartext password of your user, you
-have to store it with your user data. mangoo I/O does not do that for you.
-
-The Authentication class offers convenient functions to perform
-authentication. The main methods are
-
-[source,java]
-------------------------------------------
-getAuthenticatedUser()
-authenticate(String password, String hash)
-login(String username, boolean remember)
-logout()
-------------------------------------------
-
-To perform a check, if a user is authenticated mangoo I/O offers a
-predefined filter ready to use on controller classes or methods.
-
-[source,java]
----------------------------------------
-@FilterWith(AuthenticationFilter.class)
----------------------------------------
-
-Check the JavaDoc of the Authentication class to get more information on
-how the methods work. Also check the custom configuration options for
-the Authentication class in link:#c-configuration-options[C.
-Configuration options]. All options with the prefix "auth" configure
-custom Authentication.
 
 == Handling static files and assets
 
