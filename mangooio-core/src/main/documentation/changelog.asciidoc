@@ -9,6 +9,7 @@
 * Added ETag support for dynamic content (svenkubiak)
 * Added a method for adding a complete content map to a template (svenkubiak)
 * Added administrative URLs @health, @routes, @cache and @config (svenkubiak)
+* Updated Documentation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/52[#52] Refactored filters (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/40[#40] Added handling of multiple parameters in controller method (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/39[#39] Added methods for parameter validation (svenkubiak)
@@ -16,7 +17,6 @@
 * https://github.com/svenkubiak/mangooio/issues/35[#35] Added method for regular expression to validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/34[#34] Added LocalDate and LocalDateTime as request parameter (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/36[#36] Validation now works for numeric values (svenkubiak)
-* Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** doctester-core 1.1.6 -> 1.1.8
 ** snakeyaml 1.15 -> 1.16
@@ -66,7 +66,7 @@
 * Template engine does not throw generic exception anymore, throws specific ones instead (svenkubiak)
 * Version bumps (svenkubiak)
 ** undertow-core 1.2.7.Final -> 1.2.8.Final
-** freemarker 2.3.22 -> 2.3.23 
+** freemarker 2.3.22 -> 2.3.23
 
 == Version 1.0.0-RC1
 
@@ -112,8 +112,8 @@
 [small]#Released at 23.07.2015#
 
 * https://github.com/svenkubiak/mangooio/issues/9[#9] Refactored dev mode exception page (svenkubiak)
-* https://github.com/svenkubiak/mangooio/issues/15[#15] Added version tag to documentation (PDF and HTML) (svenkubiak) 
-* https://github.com/svenkubiak/mangooio/issues/16[#16] Fixed bug that result in wrong compilation when in dev mode (svenkubiak) 
+* https://github.com/svenkubiak/mangooio/issues/15[#15] Added version tag to documentation (PDF and HTML) (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/16[#16] Fixed bug that result in wrong compilation when in dev mode (svenkubiak)
 * Cache is not autostarted anymore (svenkubiak)
 * Fixed bug that throw NumberFormatException when passing an empty request parameter (svenkubiak)
 
@@ -124,10 +124,10 @@
 * Added server "Undertow" token to response (svenkubiak)
 * Added new lifecycle hook "applicationInitialized" (svenkubiak)
 * Fixed bug that checked mode for testing incorrectly (svenkubiak)
-* https://github.com/svenkubiak/mangooio/issues/10[#10] Added option to add additional headers to response (svenkubiak) 
-* https://github.com/svenkubiak/mangooio/issues/12[#12] Added option to autocast cache values (svenkubiak) 
-* https://github.com/svenkubiak/mangooio/issues/11[#11] Application name and secret is now generated from user input (svenkubiak) 
-* https://github.com/svenkubiak/mangooio/issues/13[#13] Archetype now takes root project version on generation (svenkubiak) 
+* https://github.com/svenkubiak/mangooio/issues/10[#10] Added option to add additional headers to response (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/12[#12] Added option to autocast cache values (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/11[#11] Application name and secret is now generated from user input (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/13[#13] Archetype now takes root project version on generation (svenkubiak)
 * Updated documentation (svenkubiak)
 * Sonar refactorings (svenkubiak)
 
