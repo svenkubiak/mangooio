@@ -457,7 +457,7 @@ public class Module extends AbstractModule {
 }
 --------------------------------------------------------
 
-== Routing
+== Routes
 
 One of the main pieces of a mangoo I/O application is the mapping of
 requests URLs to controllers classes and their methods. Whether you are rendering a
@@ -479,7 +479,7 @@ ApplicationController class will be called.
 [NOTE]
 The Routes class has to implement the MangooRoutes interface to work properly.
 
-=== Controllers
+== Controllers
 
 Every controller method, whether it renders a template, sends JSON or
 just returns a HTTP Status, must return a Response object. This is handled by
@@ -503,7 +503,7 @@ With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
 the client.
 
-=== Parameters
+== Request and query parameters
 
 mangoo I/O makes it very easy to handle request or query parameter. Lets
 imagine you have the following mapping in your Routes class.
@@ -569,7 +569,7 @@ Authentication
 Body
 -------------------------------------------
 
-=== Request
+== Request values
 
 The request class is a special object which can be passed into a controller method. It enables you
 access to header and URL values a long with additional information about the request. To gain
@@ -595,7 +595,7 @@ public Response index(Request request) {
 }
 -------------------------------------------
 
-==== Request parameter validation
+==== Request validation
 
 As an additional feature on the request object, you can validate incoming parameters. Just like
 <<Form handling>> you can access a Validator class, which can perform specific checks on the request
@@ -638,7 +638,7 @@ The error messages for the request use the same key as the form handling. Check
 the documentation on <<Form handling>> for more information on how to customize
 the specific error messages.
 
-=== Form handling
+== Form handling
 
 To access a form submitted to a controller class, you can simply pass
 the mangoo I/O Form class. Here is an example of how this might look
@@ -671,7 +671,7 @@ The Form class is only available if the request is mapped as a POST or PUT metho
 The Form class is automatically available in the template so you don't
 have to pass the class to your template.
 
-==== Form validation
+=== Form validation
 
 Lets image you have the following form in a template
 
@@ -722,7 +722,7 @@ mangoo I/O supports the following validations out of the box
 * Range
 * Regular expression
 
-==== Showing error messages in a template
+=== Showing error messages in a template
 
 To show an error in a template, simply check for an error on a spcific field
 
@@ -769,7 +769,7 @@ validation.regex={0} is invalid
 The prefix follows the field type (email, required, match, etc.) for the
 message.
 
-==== CSRF Protection
+=== CSRF Protection
 
 mangoo I/O allows you to retrieve an authenticity token for protection
 against https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery[CSRF].
@@ -803,7 +803,7 @@ FilterWith(AuthenticityFilter.class)
 If the token is invalid the request will be redirected to a default
 403 Forbidden page.
 
-=== Sessions
+== Sessions
 
 With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
 nothing architecture] in mind mangoo I/O uses a so called client-side
@@ -845,7 +845,7 @@ cookie:
   expires  : 86400
 ---------------------------------------
 
-==== Session data in templates
+=== Session data in templates
 
 To access the Session values, simply call the appropriate key in your
 template.
@@ -858,7 +858,7 @@ ${session.foo}
 The Session class is automatically available in the template so you
 don't have to pass the class to the template via a controller.
 
-==== Session encryption
+=== Session encryption
 
 By default the values in the client-side cookie are signed with the
 application secret using SHA2(SHA-512), making manipulation of the
@@ -880,7 +880,7 @@ used. If your secret is more or equal than 16 characters AES-128 will
 be used. The mangoo I/O framework will automatically determine and use
 the strongest key possible.
 
-=== Flash
+== Flash
 
 Specially when working with forms it is useful to pass certain
 informations (e.g. error- or success messages) to the next request. To
@@ -912,7 +912,7 @@ scenarios: success, warning and error. This methods will automatically
 create a key "success", "warning" or "error" in the flash class. Besides
 that, you can pass custom values to the flash class.
 
-==== Flash in templates
+=== Flash in templates
 
 To access the flash values, simply call the appropriate key in your
 template.
@@ -928,13 +928,13 @@ ${flash.foo}
 The Flash class is automatically available in the template so you don't
 have to pass the class to the template via a controller.
 
-=== Authentication
+== Authentication
 
 mangoo I/O comes with two authentication implementations out of the box: HTTP Basic
 authentication and custom authentication where you have a custom login
 and authentication process ready to use.
 
-==== Basic authentication
+=== Basic authentication
 
 The HTTP Basic authentication in mangoo I/O uses a predefined filter:
 BasicAuthenticationFilter.class. So the first step to enable Basic
@@ -988,7 +988,7 @@ can be passed in any other way. Just make sure you implement the
 MangooAuthenticator interface and bind your implementation via the
 Module class.
 
-==== Custom authentication
+=== Custom authentication
 
 mangoo I/O supports you when a custom registration with a custom login
 process is required. Although mangoo I/O does not store any credentials
@@ -1045,7 +1045,7 @@ the Authentication class in link:#c-configuration-options[C.
 Configuration options]. All options with the prefix "auth" configure
 custom Authentication.
 
-=== ETag for dynamic content
+== ETag for dynamic content
 
 "ETag" or "entity tag" enables web application to make use of cached resources by allowing conditional requests from the client.
 This is widely used for static resources like CSS or JS files.
@@ -1066,7 +1066,7 @@ public Response index() {
 
 For more information on how ETag works, click https://en.wikipedia.org/wiki/HTTP_ETag[here].
 
-=== Administrative URLs
+== Administrative URLs
 
 mangoo I/O offers administrative URLs, which enables you to check certain application information via a web interface. The
 following administrative URLs are available
