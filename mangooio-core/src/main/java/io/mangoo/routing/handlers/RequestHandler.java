@@ -654,7 +654,7 @@ public class RequestHandler implements HttpHandler {
     private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
         exchange.startBlocking();
         exchange.setResponseCode(response.getStatusCode());
-        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTETE_STREAM.toString());
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + response.getBinaryFileName());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
