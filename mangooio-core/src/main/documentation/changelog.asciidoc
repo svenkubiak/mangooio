@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* Fixed bug that did not show exception in frontend in dev mode (svenkubiak)
 * Fixed typo in ContentType enum (svenkubiak)
 
 == Version 1.1.1

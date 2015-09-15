@@ -53,7 +53,7 @@ public enum Default {
     LOGBACK_PROD_FILE("logback.prod.xml"),
     NUMBER_FORMAT("0.######"),
     EXCEPTION_TEMPLATE_NAME("exception.ftl"),
-    DEFAULT_TEMPLATES_DIR("/defaults/"),
+    DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     X_XSS_PPROTECTION("1"),
     COOKIE_SECURE("false"), //NOSONAR
     CACHE_TYPE("ehcache"),

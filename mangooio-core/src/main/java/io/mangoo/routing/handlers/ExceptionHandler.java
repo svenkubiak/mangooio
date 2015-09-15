@@ -12,7 +12,6 @@ import io.mangoo.enums.Template;
 import io.mangoo.templating.TemplateEngine;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -22,8 +21,6 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ExceptionHandler implements HttpHandler {
-    public static final AttachmentKey<Throwable> THROWABLE = AttachmentKey.create(Throwable.class);
-
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
@@ -34,7 +31,7 @@ public class ExceptionHandler implements HttpHandler {
         exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
         if (Application.inDevMode()) {
-            Throwable throwable = exchange.getAttachment(THROWABLE);
+            Throwable throwable = exchange.getAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE);
             if (throwable == null) {
                 exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
             } else {
