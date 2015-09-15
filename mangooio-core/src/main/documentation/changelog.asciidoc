@@ -1,8 +1,15 @@
 = Changelog
 
-== Version 1.1.0
+
+== Version 1.1.1
 
 [small]#Released at 15.09.2015#
+
+* Updated Documentation (svenkubiak)
+
+== Version 1.1.0
+
+[small]#Released at 14.09.2015#
 
 * Refactored RequestHandler (svenkubiak)
 * Refactored EhCache to Guava Cache (svenkubiak)
