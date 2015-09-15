@@ -29,7 +29,7 @@ public class MangooAdminController {
 
     public Response health() {
         if (!Application.inDevMode() && !config.isAdminHealthEnabled()) {
-            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
+            return notFound();
         }
 
         return Response.withOk()
@@ -38,7 +38,7 @@ public class MangooAdminController {
 
     public Response routes() {
         if (!Application.inDevMode() && !config.isAdminRoutesEnabled()) {
-            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
+            return notFound();
         }
 
         return Response.withOk()
@@ -48,7 +48,7 @@ public class MangooAdminController {
 
     public Response cache() {
         if (!Application.inDevMode() && !config.isAdminCacheEnabled()) {
-            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
+            return notFound();
         }
 
         CacheStats cacheStats = cache.getStats();
@@ -73,7 +73,7 @@ public class MangooAdminController {
 
     public Response config() {
         if (!Application.inDevMode() && !config.isAdminConfigEnabled()) {
-            return Response.withNotFound().andBody(Template.DEFAULT.notFound());
+            return notFound();
         }
 
         Map<String, String> configurations = config.getAllConfigurations();
@@ -84,5 +84,9 @@ public class MangooAdminController {
         return Response.withOk()
                 .andContent("configuration", configurations)
                 .andTemplate("defaults/config.ftl");
+    }
+
+    private Response notFound() {
+        return Response.withNotFound().andBody(Template.DEFAULT.notFound());
     }
 }
