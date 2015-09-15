@@ -1331,51 +1331,42 @@ public class MyFilter implements MangooFilter {
 }
 ---------------------------------------------------------
 
-The main method of a filter is the filter method, which receives the
-exchange class from mangoo I/O. This class gives you a handy way of manipulating
-the request/response cycle. A long with other convenient methods, the
-exchange class enables you access to the Unterdow HttpServerExchange
-class.
+The main method of a filter is the execute method, which receives the
+request and response class from mangoo I/O. This classes give you a handy way
+of manipulating the response as it is passed to other filters and
+merged with the response of your controller, if you don't end the request at some
+point in the filter.
 
-Here is an example of the AuthenticityFilter which is used for the CSRF checks,
-showing you how to interact with the Undertow request/response cycle.
+Here is an example of the AuthenticityFilter which is used for the CSRF checks.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
 public class AuthenticityFilter implements MangooControllerFilter {
 
     @Override
-    public boolean filter(Exchange exchange) {
-        if (!exchange.authenticityMatches()) {
-            exchange.getHttpServerExchange().setResponseCode(StatusCodes.FORBIDDEN);
-            exchange.getHttpServerExchange().getResponseSender().send(Templates.DEFAULT.forbidden());
-
-            return false;
+    public Response execute(Request request, Response response) {
+        if (!request.authenticityMatches()) {
+            return Response.withForbidden().andBody(Template.DEFAULT.forbidden()).end();
         }
 
-        return true;
+        return response;
     }
 }
 -----------------------------------------------------------------------------------------------------
 
 As you can see in the example, you can change the status code, a long
-with the content of the response inside a filter. The exchange.getHttpServerExchange()
-offers even more method for customization.
+with the content of the response inside a filter. The end() method tells mangoo I/O that i should
+end the response at this point and should not execute further filters or controllers.
 
-See the http://undertow.io/undertow-docs/undertow-docs-1.2.0/index.html[Undertow documentation] for
-more information on the HttpServerExchange.
-
-One important part in a filter is the return value. If the filter method
-returns true, it tells mangoo I/O to continue its executing and call
-further filters. If the filter method
-returns false mangoo I/O stops the execution of further filters
-and controller method. One can say, that the request ends with the filter.
+Please note, that you always have to return the response object. Return null will result
+most certainly in an exception.
 
 === Global filter
 
 Besides the controller class or method filter, there is a special filter
 which can be executed globally. This means, that this filter is called on
-every mapped request in the Routes class. This is useful if, for example, you have to
+every mapped request in the Routes class for controller classes and methods.
+This is useful if, for example, you have to
 force the language for your application or if you have an application
 that does not have any public content and requires authentication for
 every request.
@@ -1393,8 +1384,8 @@ import io.mangoo.routing.bindings.Exchange;
 public class MyGlobalFilter implements MangooRequestFilter {
 
     @Override
-    public execute filter(Request request, Response response) {
-        //Do nothing for now
+    public execute execute(Request request, Response response) {
+         Locale.setDefault(Locale.ENGLISH);
         return response;
     }
 }
