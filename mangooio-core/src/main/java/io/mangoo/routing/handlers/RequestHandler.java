@@ -67,9 +67,9 @@ import io.undertow.util.StatusCodes;
 public class RequestHandler implements HttpHandler {
     private static final int AUTH_PREFIX_LENGTH = 2;
     private static final int TOKEN_LENGTH = 16;
-    private static final int INDEX_2 = 2;
-    private static final int INDEX_1 = 1;
     private static final int INDEX_0 = 0;
+    private static final int INDEX_1 = 1;
+    private static final int INDEX_2 = 2;
     private static final int SESSION_PREFIX_LENGTH = 3;
     private int parameterCount;
     private Class<?> controllerClass;
@@ -324,16 +324,16 @@ public class RequestHandler implements HttpHandler {
 
     private void setSessionCookie(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
-            String values = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
+            String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
             StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(values + this.session.getAuthenticityToken() + this.session.getExpires() + this.config.getApplicationSecret()))
+                    .append(DigestUtils.sha512Hex(data + this.session.getAuthenticityToken() + this.session.getExpires() + this.config.getApplicationSecret()))
                     .append(Default.DELIMITER.toString())
                     .append(this.session.getAuthenticityToken())
                     .append(Default.DELIMITER.toString())
                     .append(this.session.getExpires())
                     .append(Default.DATA_DELIMITER.toString())
-                    .append(values);
+                    .append(data);
 
             String value = buffer.toString();
             if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
