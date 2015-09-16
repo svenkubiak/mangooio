@@ -4,7 +4,7 @@ jdk:
 script: "mvn clean test -Dgpg.skip=true"
 notifications:
   email: sk@svenkubiak.de
-before_install:
-  - pip install codecov
+before_script:
+  - pip install --user codecov
 after_success:
   - codecov
