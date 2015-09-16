@@ -1337,6 +1337,15 @@ of manipulating the response as it is passed to other filters and
 merged with the response of your controller, if you don't end the request at some
 point in the filter.
 
+All returned response object from your filter are passed to the next filter in the following order:
+
+1. Global filter
+2. Controller filters
+3. Method filters
+
+[NOTE]
+Only the header and content values are merged with the response object returned from your controller.
+
 Here is an example of the AuthenticityFilter which is used for the CSRF checks.
 
 [source,java]
