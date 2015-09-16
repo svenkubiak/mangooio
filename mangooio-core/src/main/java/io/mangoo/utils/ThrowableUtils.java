@@ -65,7 +65,7 @@ public final class ThrowableUtils {
         int index = 0;
         List<Source> sources = new ArrayList<Source>();
         for (String line : lines) {
-            if ( (index + 5 > errorLine) && (index - 3 < errorLine) ) {
+            if ( (index + 8 > errorLine) && (index - 6 < errorLine) ) {
                 sources.add(new Source((index + 1) == errorLine, index + 1, line));
             }
             index++;

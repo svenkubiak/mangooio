@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.common.base.Charsets;
@@ -103,7 +104,9 @@ public class TemplateEngine {
         content.put("url", exchange.getRequestURI());
         content.put("method", exchange.getRequestMethod());
         content.put("line", stackTraceElement.getLineNumber());
-        content.put("sourceCodePath", new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getAbsolutePath());
+        content.put("causeSource", cause.toString());
+        content.put("stackTraces", cause.getStackTrace());
+        content.put("sourceCodePath", StringUtils.substringAfter(new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
 
         Configuration config = new Configuration(VERSION);
         config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
