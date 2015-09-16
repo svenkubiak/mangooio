@@ -11,7 +11,11 @@ public class ParameterController {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
 
-    public Response doubleParam(double foo) {
+    public Response doubleParam(Double foo) {
+        return Response.withOk().andTextBody(String.valueOf(foo));
+    }
+
+    public Response doublePrimitiveParam(double foo) {
         return Response.withOk().andTextBody(String.valueOf(foo));
     }
 
@@ -19,7 +23,23 @@ public class ParameterController {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
 
-    public Response floatParam(float foo) {
+    public Response integerParam(Integer foo) {
+        return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
+    }
+
+    public Response floatParam(Float foo) {
+        return Response.withOk().andTextBody(String.valueOf(foo));
+    }
+
+    public Response floatPrimitiveParam(float foo) {
+        return Response.withOk().andTextBody(String.valueOf(foo));
+    }
+
+    public Response longParam(Long foo) {
+        return Response.withOk().andTextBody(String.valueOf(foo));
+    }
+
+    public Response longPrimitiveParam(long foo) {
         return Response.withOk().andTextBody(String.valueOf(foo));
     }
 

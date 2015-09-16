@@ -41,9 +41,14 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/invalid").onClassAndMethod(AuthenticityController.class, "invalid");
 
         Router.mapRequest(Methods.GET).toUrl("/string/{foo}").onClassAndMethod(ParameterController.class, "stringParam");
-        Router.mapRequest(Methods.GET).toUrl("/double/{foo}").onClassAndMethod(ParameterController.class, "doubleParam");
         Router.mapRequest(Methods.GET).toUrl("/int/{foo}").onClassAndMethod(ParameterController.class, "intParam");
+        Router.mapRequest(Methods.GET).toUrl("/integer/{foo}").onClassAndMethod(ParameterController.class, "integerParam");
+        Router.mapRequest(Methods.GET).toUrl("/doublePrimitive/{foo}").onClassAndMethod(ParameterController.class, "doublePrimitiveParam");
+        Router.mapRequest(Methods.GET).toUrl("/double/{foo}").onClassAndMethod(ParameterController.class, "doubleParam");
         Router.mapRequest(Methods.GET).toUrl("/float/{foo}").onClassAndMethod(ParameterController.class, "floatParam");
+        Router.mapRequest(Methods.GET).toUrl("/floatPrimitive/{foo}").onClassAndMethod(ParameterController.class, "floatPrimitiveParam");
+        Router.mapRequest(Methods.GET).toUrl("/longPrimitive/{foo}").onClassAndMethod(ParameterController.class, "longPrimitiveParam");
+        Router.mapRequest(Methods.GET).toUrl("/long/{foo}").onClassAndMethod(ParameterController.class, "longParam");
         Router.mapRequest(Methods.GET).toUrl("/multiple/{foo}/{bar}").onClassAndMethod(ParameterController.class, "multipleParam");
         Router.mapRequest(Methods.GET).toUrl("/path").onClassAndMethod(ParameterController.class, "pathParam");
 
