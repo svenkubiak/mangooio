@@ -48,7 +48,7 @@ public class ApplicationController {
     }
 
     public Response request(Request request) {
-        return Response.withOk().andEmptyBody();
+        return Response.withOk().andTextBody(request.getURI());
     }
 
     public Response header() {

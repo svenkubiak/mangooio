@@ -48,8 +48,9 @@ public class ApplicationControllerTest {
         MangooResponse response = MangooRequest.get("/request").execute();
 
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals("text/plain; charset=UTF-8", response.getContentType());
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("/request", response.getContent());
     }
 
     @Test
