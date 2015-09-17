@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HttpString;
 
 public class ApplicationController {
@@ -44,6 +45,10 @@ public class ApplicationController {
         File file = new File(url.getFile());
 
         return Response.withOk().andBinaryFile(file);
+    }
+
+    public Response request(Request request) {
+        return Response.withOk().andEmptyBody();
     }
 
     public Response header() {

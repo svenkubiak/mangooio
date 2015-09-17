@@ -531,64 +531,64 @@ public class RequestHandler implements HttpHandler {
         Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
-        if (RequestUtils.isJSONRequest(exchange)) {
-            convertedParameters[index] = this.opjectMapper.readValue(getBody(exchange).asString(), this.methodParameters.entrySet().iterator().next().getValue());
-        } else {
-            for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
-                String key = entry.getKey();
-                Class<?> clazz = entry.getValue();
-                Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
+        for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
+            String key = entry.getKey();
+            Class<?> clazz = entry.getValue();
+            Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
-                switch (binding) {
-                case FORM:
-                    convertedParameters[index] = this.form;
-                    break;
-                case AUTHENTICATION:
-                    convertedParameters[index] = this.authentication;
-                    break;
-                case SESSION:
-                    convertedParameters[index] = this.session;
-                    break;
-                case FLASH:
-                    convertedParameters[index] = this.flash;
-                    break;
-                case REQUEST:
-                    convertedParameters[index] = this.request;
-                    break;
-                case BODY:
-                    convertedParameters[index] = getBody(exchange);
-                    break;
-                case LOCALDATE:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDate.parse(this.requestParameter.get(key));
-                    break;
-                case LOCALDATETIME:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDateTime.parse(this.requestParameter.get(key));
-                    break;
-                case STRING:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : this.requestParameter.get(key);
-                    break;
-                case INT_PRIMITIVE:
-                case INTEGER:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
-                    break;
-                case DOUBLE_PRIMITIVE:
-                case DOUBLE:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
-                    break;
-                case FLOAT_PRIMITIVE:
-                case FLOAT:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
-                    break;
-                case LONG_PRIMITIVE:
-                case LONG:
-                    convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
-                    break;
-                default:
-                    break;
-                }
-
-                index++;
+            switch (binding) {
+            case FORM:
+                convertedParameters[index] = this.form;
+                break;
+            case AUTHENTICATION:
+                convertedParameters[index] = this.authentication;
+                break;
+            case SESSION:
+                convertedParameters[index] = this.session;
+                break;
+            case FLASH:
+                convertedParameters[index] = this.flash;
+                break;
+            case REQUEST:
+                convertedParameters[index] = this.request;
+                break;
+            case BODY:
+                convertedParameters[index] = getBody(exchange);
+                break;
+            case LOCALDATE:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDate.parse(this.requestParameter.get(key));
+                break;
+            case LOCALDATETIME:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDateTime.parse(this.requestParameter.get(key));
+                break;
+            case STRING:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : this.requestParameter.get(key);
+                break;
+            case INT_PRIMITIVE:
+            case INTEGER:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
+                break;
+            case DOUBLE_PRIMITIVE:
+            case DOUBLE:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
+                break;
+            case FLOAT_PRIMITIVE:
+            case FLOAT:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
+                break;
+            case LONG_PRIMITIVE:
+            case LONG:
+                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
+                break;
+            case UNDEFINED:
+                convertedParameters[index] = RequestUtils.isJSONRequest(exchange) ? this.opjectMapper.readValue(getBody(exchange).asString(), clazz) : null;
+                break;
+            default:
+                convertedParameters[index] = null;
+                break;
             }
+
+            index++;
         }
 
         return convertedParameters;

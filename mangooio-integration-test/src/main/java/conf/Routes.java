@@ -29,11 +29,14 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/localdate/{localDate}").onClassAndMethod(ApplicationController.class, "localdate");
         Router.mapRequest(Methods.GET).toUrl("/localdatetime/{localDateTime}").onClassAndMethod(ApplicationController.class, "localdatetime");
         Router.mapRequest(Methods.GET).toUrl("/etag").onClassAndMethod(ApplicationController.class, "etag");
+        Router.mapRequest(Methods.GET).toUrl("/request").onClassAndMethod(ApplicationController.class, "request");
 
         Router.mapRequest(Methods.POST).toUrl("/form").onClassAndMethod(FormController.class, "form");
 
         Router.mapRequest(Methods.GET).toUrl("/render").onClassAndMethod(JsonController.class, "render");
         Router.mapRequest(Methods.POST).toUrl("/parse").onClassAndMethod(JsonController.class, "parse");
+        Router.mapRequest(Methods.POST).toUrl("/body").onClassAndMethod(JsonController.class, "body");
+        Router.mapRequest(Methods.POST).toUrl("/requestAndJson").onClassAndMethod(JsonController.class, "requestAndJson");
 
         Router.mapRequest(Methods.GET).toUrl("/authenticityform").onClassAndMethod(AuthenticityController.class, "form");
         Router.mapRequest(Methods.GET).toUrl("/authenticitytoken").onClassAndMethod(AuthenticityController.class, "token");

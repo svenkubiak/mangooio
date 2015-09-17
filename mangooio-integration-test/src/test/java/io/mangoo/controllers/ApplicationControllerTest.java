@@ -44,6 +44,15 @@ public class ApplicationControllerTest {
     }
 
     @Test
+    public void requestTest() {
+        MangooResponse response = MangooRequest.get("/request").execute();
+
+        assertNotNull(response);
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.OK, response.getStatusCode());
+    }
+
+    @Test
     public void indexTestWithContent() {
         MangooResponse response = MangooRequest.get("/").execute();
 

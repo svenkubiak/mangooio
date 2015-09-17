@@ -2,8 +2,9 @@
 
 == Version 1.1.2
 
-[small]#Released at xx.xx.xxxx#
+[small]#Released at 17.09.2015#
 
+* Fixed a NPE when a Request object and JSON was required in a controller method (svenkubiak)
 * Refactored dev mode exception template (svenkubiak)
 * Fixed bug that did not show exception in frontend in dev mode (svenkubiak)
 * Fixed typo in ContentType enum (svenkubiak)
