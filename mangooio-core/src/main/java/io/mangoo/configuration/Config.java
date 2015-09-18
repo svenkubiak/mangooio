@@ -381,4 +381,8 @@ public class Config {
     public boolean isAdminConfigEnabled() {
         return getBoolean(Key.APPLICATION_ADMIN_CONFIG, Default.APPLICATION_ADMIN_CONFIG.toBoolean());
     }
+
+    public boolean isAdminMetricsEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_METRICS, Default.APPLICATION_ADMIN_METRICS.toBoolean());
+    }
 }

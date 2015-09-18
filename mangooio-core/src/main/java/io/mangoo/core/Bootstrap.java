@@ -158,6 +158,7 @@ public class Bootstrap {
         Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(MangooAdminController.class, "config");
         Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(MangooAdminController.class, "health");
         Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(MangooAdminController.class, "cache");
+        Router.mapRequest(Methods.GET).toUrl("/@metrics").onClassAndMethod(MangooAdminController.class, "metrics");
 
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

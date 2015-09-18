@@ -43,5 +43,11 @@ test:
 dev:
     application:
         port       : 50000
+        admin:
+                  health   : true
+                  config   : true
+                  cache    : true
+                  routes   : true
+                  metrics  : true        
     smtp:
         port       : 3125

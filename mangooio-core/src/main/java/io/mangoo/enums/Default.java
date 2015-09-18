@@ -67,7 +67,8 @@ public enum Default {
     APPLICATION_ADMIN_HEALTH("false"),
     APPLICATION_ADMIN_CACHE("false"),
     APPLICATION_ADMIN_CONFIG("false"),
-    APPLICATION_ADMIN_ROUTES("false");
+    APPLICATION_ADMIN_ROUTES("false"),
+    APPLICATION_ADMIN_METRICS("false");
 
     private final String value;
 

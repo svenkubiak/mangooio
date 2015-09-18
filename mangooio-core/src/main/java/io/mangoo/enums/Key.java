@@ -24,6 +24,7 @@ public enum Key {
     APPLICATION_ADMIN_CACHE("application.admin.cache"),
     APPLICATION_ADMIN_ROUTES("application.admin.routes"),
     APPLICATION_ADMIN_CONFIG("application.admin.config"),
+    APPLICATION_ADMIN_METRICS("application.admin.metrics"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),

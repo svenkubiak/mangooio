@@ -1,5 +1,8 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
+import io.mangoo.routing.listeners.MetricsListener;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -12,14 +15,20 @@ import io.undertow.server.HttpServerExchange;
 public class DispatcherHandler implements HttpHandler {
     private Class<?> controllerClass;
     private String controllerMethod;
+    private Config config;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
+        this.config = Application.getInjector().getInstance(Config.class);
     }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        if (config.isAdminMetricsEnabled()) {
+            exchange.addExchangeCompleteListener(Application.getInjector().getInstance(MetricsListener.class));
+        }
+
         RequestHandler requestHandler = new RequestHandler(this.controllerClass, this.controllerMethod);
         requestHandler.handleRequest(exchange);
     }

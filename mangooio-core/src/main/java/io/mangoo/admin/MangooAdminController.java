@@ -20,12 +20,16 @@ import io.mangoo.routing.Router;
  *
  */
 public class MangooAdminController {
-
-    @Inject
     private Config config;
+    private Cache cache;
+    private Metrics metrics;
 
     @Inject
-    private Cache cache;
+    public MangooAdminController(Config config, Cache cache, Metrics metrics) {
+        this.config = config;
+        this.cache = cache;
+        this.metrics = metrics;
+    }
 
     public Response health() {
         if (!Application.inDevMode() && !config.isAdminHealthEnabled()) {
@@ -84,6 +88,16 @@ public class MangooAdminController {
         return Response.withOk()
                 .andContent("configuration", configurations)
                 .andTemplate("defaults/config.ftl");
+    }
+
+    public Response metrics() {
+        if (!Application.inDevMode() && !config.isAdminConfigEnabled()) {
+            return notFound();
+        }
+
+        return Response.withOk()
+                .andContent("metrics", metrics)
+                .andTemplate("defaults/metrics.ftl");
     }
 
     private Response notFound() {
