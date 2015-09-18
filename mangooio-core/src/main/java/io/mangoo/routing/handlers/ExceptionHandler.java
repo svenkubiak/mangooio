@@ -1,9 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import freemarker.template.TemplateException;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
@@ -31,20 +27,17 @@ public class ExceptionHandler implements HttpHandler {
         exchange.setResponseCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
         if (Application.inDevMode()) {
+            TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
             Throwable throwable = exchange.getAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE);
             if (throwable == null) {
                 exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
+            } else if (throwable.getCause() == null) {
+                exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, true));
             } else {
-                exchange.getResponseSender().send(renderException(exchange, throwable.getCause()));
+                exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, false));
             }
         } else {
             exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
         }
-    }
-
-    @SuppressWarnings("all")
-    private String renderException(HttpServerExchange exchange, Throwable cause) throws FileNotFoundException, IOException, TemplateException {
-        TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
-        return templateEngine.renderException(exchange, cause);
     }
 }

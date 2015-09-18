@@ -91,22 +91,27 @@ public class TemplateEngine {
     }
 
     @SuppressWarnings("all")
-    public String renderException(HttpServerExchange exchange, Throwable cause) throws FileNotFoundException, IOException, TemplateException {
+    public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws FileNotFoundException, IOException, TemplateException {
         Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<String, Object>();
+        content.put("templateException", templateException);
 
-        StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
-        String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
+        if (templateException) {
+            content.put("exceptions", cause.getMessage().split("\n"));
+        } else {
+            StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
+            String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
 
-        List<Source> sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
-        content.put("sources", sources);
-        content.put("cause", ExceptionUtils.getMessage(cause));
-        content.put("url", exchange.getRequestURI());
-        content.put("method", exchange.getRequestMethod());
-        content.put("line", stackTraceElement.getLineNumber());
-        content.put("causeSource", cause.toString());
-        content.put("stackTraces", cause.getStackTrace());
-        content.put("sourceCodePath", StringUtils.substringAfter(new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+            List<Source> sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
+            content.put("sources", sources);
+            content.put("cause", ExceptionUtils.getMessage(cause));
+            content.put("url", exchange.getRequestURI());
+            content.put("method", exchange.getRequestMethod());
+            content.put("line", stackTraceElement.getLineNumber());
+            content.put("causeSource", cause.toString());
+            content.put("stackTraces", cause.getStackTrace());
+            content.put("sourceCodePath", StringUtils.substringAfter(new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+        }
 
         Configuration config = new Configuration(VERSION);
         config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
