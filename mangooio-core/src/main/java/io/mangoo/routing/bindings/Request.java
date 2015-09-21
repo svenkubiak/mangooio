@@ -2,6 +2,8 @@ package io.mangoo.routing.bindings;
 
 import java.util.Map;
 
+import org.boon.json.JsonFactory;
+
 import io.mangoo.authentication.Authentication;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
@@ -17,17 +19,19 @@ import io.undertow.util.HttpString;
  */
 public class Request implements MangooValidator {
     private HttpServerExchange httpServerExchange;
+    private String body;
     private Session session;
     private String authenticityToken;
     private Authentication authentication;
     private Validator validator;
     private Map<String, String> parameter;
 
-    public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter) {
+    public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
         this.httpServerExchange = httpServerExchange;
         this.session = session;
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;
+        this.body = body;
         this.validator = Application.getInjector().getInstance(Validator.class);
         this.parameter = parameter;
         this.validator.setValues(parameter);
@@ -37,7 +41,24 @@ public class Request implements MangooValidator {
      * @return The current session
      */
     public Session getSession() {
-        return session;
+        return this.session;
+    }
+
+    /**
+     *
+     * @return The request body
+     */
+    public String getBody() {
+        return this.body;
+    }
+
+    /**
+     *
+     * @return The request body as Json Map<String, Object>
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getBodyasJson() {
+        return JsonFactory.create().readValue(this.body, Map.class);
     }
 
     /**

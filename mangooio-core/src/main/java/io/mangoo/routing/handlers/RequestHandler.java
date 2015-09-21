@@ -41,7 +41,6 @@ import io.mangoo.enums.Key;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Body;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
@@ -89,6 +88,7 @@ public class RequestHandler implements HttpHandler {
     private Request request;
     private boolean hasRequestFilter;
     private Map<String, String> requestParameter;
+    private String body = "";
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod) {
         this.injector = Application.getInjector();
@@ -113,6 +113,7 @@ public class RequestHandler implements HttpHandler {
         getAuthentication(exchange);
         getFlash(exchange);
         getForm(exchange);
+        getRequestBody(exchange);
         getRequest(exchange);
 
         Response response = getResponse(exchange);
@@ -199,7 +200,7 @@ public class RequestHandler implements HttpHandler {
             authenticityToken = this.form.getValue(Default.AUTHENTICITY_TOKEN.toString());
         }
 
-        this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter);
+        this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter, this.body);
     }
 
     /**
@@ -514,14 +515,11 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private Body getBody(HttpServerExchange exchange) throws IOException {
-        Body body = new Body();
+    private void getRequestBody(HttpServerExchange exchange) throws IOException {
         if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
-            body.setContent(IOUtils.toString(exchange.getInputStream()));
+            this.body = IOUtils.toString(exchange.getInputStream());
         }
-
-        return body;
     }
 
     /**
@@ -557,9 +555,6 @@ public class RequestHandler implements HttpHandler {
             case REQUEST:
                 convertedParameters[index] = this.request;
                 break;
-            case BODY:
-                convertedParameters[index] = getBody(exchange);
-                break;
             case LOCALDATE:
                 convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDate.parse(this.requestParameter.get(key));
                 break;
@@ -586,7 +581,7 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
                 break;
             case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJSONRequest(exchange) ? this.opjectMapper.readValue(getBody(exchange).asString(), clazz) : null;
+                convertedParameters[index] = RequestUtils.isJSONRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
                 break;
             default:
                 convertedParameters[index] = null;
@@ -644,7 +639,7 @@ public class RequestHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-        exchange.getResponseSender().send(getBody(exchange, response));
+        exchange.getResponseSender().send(getResponseBody(exchange, response));
     }
 
     /**
@@ -673,7 +668,7 @@ public class RequestHandler implements HttpHandler {
      * @param response The Response object
      * @return The body from the response object or an empty body if etag matches NONE_MATCH header
      */
-    private String getBody(HttpServerExchange exchange, Response response) {
+    private String getResponseBody(HttpServerExchange exchange, Response response) {
         String body = response.getBody();
         if (response.isETag()) {
             String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);

@@ -566,7 +566,6 @@ Session
 Form
 Flash
 Authentication
-Body
 -------------------------------------------
 
 == Request values
@@ -1224,10 +1223,11 @@ the object body of a request to a Map<String, Object>.
 package controllers;
 
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Request;
 
 public class MyController {
-    public Response parse(Body body) {
-        Map<String, Object> myjson = body.asJSON();
+    public Response parse(Request request) {
+        Map<String, Object> myjson = request.getBodyAsJSON();
         String foo = json.get("firstname");
     }
 }
@@ -1244,10 +1244,11 @@ values of a request. Here is an example
 package controllers;
 
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Request;
 
 public class MyController {
-    public Response parse(Body body) {
-        String content = body.asString();
+    public Response parse(Request request) {
+        String body = request.getBody();
         ...
     }
 }
