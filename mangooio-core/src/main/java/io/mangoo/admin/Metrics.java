@@ -13,13 +13,13 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class Metrics {
-    private final Map<Integer, LongAdder> metrics = new HashMap<Integer, LongAdder>();
+    private final Map<Integer, LongAdder> metricsCount = new HashMap<Integer, LongAdder>();
 
     public void inc(int responseCode) {
-        this.metrics.computeIfAbsent(responseCode, (t) -> new LongAdder()).increment();
+        this.metricsCount.computeIfAbsent(responseCode, t -> new LongAdder()).increment();
     }
 
     public Map<Integer, LongAdder> getMetrics() {
-        return this.metrics;
+        return this.metricsCount;
     }
 }
