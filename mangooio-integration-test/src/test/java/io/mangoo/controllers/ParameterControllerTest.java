@@ -2,11 +2,10 @@ package io.mangoo.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
-
 import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
+
+import org.junit.Test;
 
 /**
  *
@@ -21,6 +20,11 @@ public class ParameterControllerTest {
 
         assertNotNull(response.getContent());
         assertEquals("bar", response.getContent());
+        
+        response = MangooRequest.get("/string/tüsätö").execute();
+
+        assertNotNull(response.getContent());
+        assertEquals("tüsätö", response.getContent());
     }
 
     @Test

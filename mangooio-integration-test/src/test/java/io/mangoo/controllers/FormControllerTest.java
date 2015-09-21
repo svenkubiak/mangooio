@@ -2,6 +2,9 @@ package io.mangoo.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import io.mangoo.enums.ContentType;
+import io.mangoo.test.MangooRequest;
+import io.mangoo.test.MangooResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +12,6 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
-
-import io.mangoo.enums.ContentType;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
 
 /**
  *
@@ -30,6 +29,17 @@ public class FormControllerTest {
         MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("vip;secret", response.getContent());
+    }
+    
+    @Test
+    public void encodingTest() {
+        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+        parameter.add(new BasicNameValuePair("username", "süpöä"));
+        parameter.add(new BasicNameValuePair("password", "#+ß§"));
+
+        MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
+        assertNotNull(response.getContent());
+        assertEquals("süpöä;#+ß§", response.getContent());
     }
 
     @Test

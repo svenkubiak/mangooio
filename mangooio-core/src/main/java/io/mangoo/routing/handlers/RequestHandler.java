@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.boon.json.JsonFactory;
 import org.boon.json.ObjectMapper;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.inject.Injector;
@@ -54,6 +55,7 @@ import io.undertow.server.handlers.CookieImpl;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
+import io.undertow.server.handlers.form.FormParserFactory.Builder;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -481,7 +483,10 @@ public class RequestHandler implements HttpHandler {
     private void getForm(HttpServerExchange exchange) throws IOException {
         this.form = this.injector.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
-            final FormDataParser formDataParser = FormParserFactory.builder().build().createParser(exchange);
+            Builder builder = FormParserFactory.builder();
+            builder.setDefaultCharset(Charsets.UTF_8.name());
+
+            final FormDataParser formDataParser = builder.build().createParser(exchange);
             if (formDataParser != null) {
                 exchange.startBlocking();
                 FormData formData = formDataParser.parseBlocking();
