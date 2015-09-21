@@ -10,7 +10,7 @@
     <div class="container">
       <div class="row">
       <div class="twelve columns">
-          <h1>Configured routes</h1>
+          <h1>Request metrics</h1>
       </div>
       </div>
       <div class="row">
@@ -31,9 +31,9 @@
 			<#list metrics?keys as prop>
 				<tr>
 					<td>${prop}</td>
-					<td></td>
+					<td>${metrics?api.get(prop)}</td>
 				</tr>
-				</#list>
+			</#list>
 		  	</tbody>
 		  </table>
         </div>

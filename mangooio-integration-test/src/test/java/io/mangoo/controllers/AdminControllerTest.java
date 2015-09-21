@@ -51,4 +51,14 @@ public class AdminControllerTest {
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertTrue(response.getContent().contains("cache"));
     }
+
+    @Test
+    public void metricsTest() {
+        MangooResponse response = MangooRequest.get("/@metrics").execute();
+
+        assertNotNull(response);
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertTrue(response.getContent().contains("metrics"));
+    }
 }

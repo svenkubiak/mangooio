@@ -22,13 +22,11 @@ import io.mangoo.routing.Router;
 public class MangooAdminController {
     private Config config;
     private Cache cache;
-    private Metrics metrics;
 
     @Inject
-    public MangooAdminController(Config config, Cache cache, Metrics metrics) {
+    public MangooAdminController(Config config, Cache cache) {
         this.config = config;
         this.cache = cache;
-        this.metrics = metrics;
     }
 
     public Response health() {
@@ -93,8 +91,9 @@ public class MangooAdminController {
             return notFound();
         }
 
+        Metrics metrics = Application.getInjector().getInstance(Metrics.class);
         return Response.withOk()
-                .andContent("metrics", metrics)
+                .andContent("metrics", metrics.getMetrics())
                 .andTemplate("defaults/metrics.ftl");
     }
 
