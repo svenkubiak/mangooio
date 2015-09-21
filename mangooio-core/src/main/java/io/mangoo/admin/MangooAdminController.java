@@ -82,8 +82,6 @@ public class MangooAdminController {
 
         Map<String, String> configurations = config.getAllConfigurations();
         configurations.remove(Key.APPLICATION_SECRET.toString());
-        configurations.remove(Key.SMTP_USERNAME.toString());
-        configurations.remove(Key.SMTP_PASSWORD.toString());
 
         return Response.withOk()
                 .andContent("configuration", configurations)
