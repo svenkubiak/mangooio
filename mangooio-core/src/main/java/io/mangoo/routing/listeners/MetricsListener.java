@@ -1,15 +1,19 @@
 package io.mangoo.routing.listeners;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.admin.Metrics;
-import io.undertow.server.ExchangeCompletionListener;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.ResponseCommitListener;
 
 @Singleton
-public class MetricsListener implements ExchangeCompletionListener {
+public class MetricsListener implements ResponseCommitListener {
     private Metrics metrics;
+    private List<String> blacklist = Arrays.asList("/@cache", "/@metrics", "/@config", "/@routes", "/@health");
 
     @Inject
     public MetricsListener(Metrics metrics) {
@@ -17,7 +21,9 @@ public class MetricsListener implements ExchangeCompletionListener {
     }
 
     @Override
-    public void exchangeEvent(HttpServerExchange exchange, NextListener nextListener) {
-        this.metrics.inc(exchange.getResponseCode());
+    public void beforeCommit(HttpServerExchange exchange) {
+        if (!blacklist.contains(exchange.getRequestURI())) {
+            this.metrics.inc(exchange.getResponseCode());
+        }
     }
 }

@@ -26,7 +26,7 @@ public class DispatcherHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         if (this.metrics) {
-            exchange.addExchangeCompleteListener(Application.getInjector().getInstance(MetricsListener.class));
+            exchange.addResponseCommitListener(Application.getInjector().getInstance(MetricsListener.class));
         }
 
         RequestHandler requestHandler = new RequestHandler(this.controllerClass, this.controllerMethod);
