@@ -1092,7 +1092,8 @@ Displays a list of all configured routes and their corresponding controllers and
 Displays a list of all configured properties and their corresponding values.
 
 [WARNING]
-For security reasons the properties "application.secret", "smtp.username" and "smtp.password" is not available via the @config route.
+Please be very careful with @config, as it exposes your configuration to the web.
+For security reasons the properties "application.secret" is not available via the @config route.
 
 ==== /@cache
 

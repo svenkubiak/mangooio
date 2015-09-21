@@ -30,6 +30,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
@@ -122,7 +123,7 @@ public class MangooResponse {
                 if (StringUtils.isNotBlank(this.responseRequestBody)) {
                     httpPost.setEntity(new StringEntity(this.responseRequestBody));
                 } else {
-                    httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter));
+                    httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
                 }
             } catch (UnsupportedEncodingException e) {
                 LOG.error("Failed to create HttpPost request", e);
@@ -136,7 +137,7 @@ public class MangooResponse {
 
     private MangooResponse doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
-            request.setHeader("Content-Type", responseContentType.toString());
+            request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
         }
 
         for (Map.Entry<String, String> entry : this.headers.entrySet()) {
