@@ -20,9 +20,17 @@ default:
             expires : 3600
     oauth:
         twitter:
-            key       : kcfkZ30touFa1bQ812WaLhsnz
-            secret    : ov01NMFidE7sYWHlC4oaTKJ9R4bgntJB6JrSsYbV4d8x2IO9N5
-            callback  : http://localhost:50000/authenticate?oauth=twitter           
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=twitter      
+        google:
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=google 
+        facebook:
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=facebook                            
     cookie:
         name       : TEST-SESSION
         expires    : 86400
