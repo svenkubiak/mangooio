@@ -38,9 +38,7 @@ public class OAuthLoginFilter implements MangooFilter {
             if (OAuthProvider.TWITTER.toString().equals(oauth)) {
                 Token requestToken = oAuthService.getRequestToken();
                 url = oAuthService.getAuthorizationUrl(requestToken);
-            } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
-                url = oAuthService.getAuthorizationUrl(null);
-            } else if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
+            } else if (OAuthProvider.GOOGLE.toString().equals(oauth) || OAuthProvider.FACEBOOK.toString().equals(oauth)) {
                 url = oAuthService.getAuthorizationUrl(null);
             }
 

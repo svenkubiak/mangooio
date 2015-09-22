@@ -71,7 +71,7 @@ public class OAuthCallbackFilter implements MangooFilter {
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getUsername());
+                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.FACEBOOK.toString());
             }
         }
     }
@@ -96,7 +96,7 @@ public class OAuthCallbackFilter implements MangooFilter {
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getUsername());
+                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.GOOGLE.toString());
             }
         }
     }
@@ -123,7 +123,7 @@ public class OAuthCallbackFilter implements MangooFilter {
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getUsername());
+                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.TWITTER.toString());
             }
         }
     }
