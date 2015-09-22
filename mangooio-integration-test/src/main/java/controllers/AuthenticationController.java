@@ -5,7 +5,6 @@ import io.mangoo.authentication.Authentication;
 import io.mangoo.filters.AuthenticationFilter;
 import io.mangoo.filters.OAuthCallbackFilter;
 import io.mangoo.filters.OAuthLoginFilter;
-import io.mangoo.models.OAuthUser;
 import io.mangoo.routing.Response;
 
 public class AuthenticationController {
@@ -16,20 +15,23 @@ public class AuthenticationController {
     }
 
     @FilterWith(OAuthLoginFilter.class)
-    public Response login(Authentication authentication) {
-        authentication.login("user", false);
+    public Response login() {
         return Response.withOk().andEmptyBody();
     }
 
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
-        OAuthUser oAuthUser = authentication.getOAuthUser();
-        if (oAuthUser != null) {
-            authentication.login(oAuthUser.getUsername(), false);
+        if (authentication.hasAuthenticatedUser()) {
+            authentication.login(authentication.getAuthenticatedUser(), false);
             return Response.withRedirect("/authenticationrequired");
         }
 
         return Response.withOk().andEmptyBody();
+    }
+
+    public Response doLogin(Authentication authentication) {
+        authentication.login("foo", false);
+        return Response.withRedirect("/authenticationrequired");
     }
 
     public Response logout(Authentication authentication) {

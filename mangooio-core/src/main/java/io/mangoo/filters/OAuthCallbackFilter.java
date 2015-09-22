@@ -9,6 +9,7 @@ import org.scribe.oauth.OAuthService;
 
 import com.google.inject.Inject;
 
+import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.models.OAuthUser;
@@ -48,7 +49,10 @@ public class OAuthCallbackFilter implements MangooFilter {
             org.scribe.model.Response scribeResponse = oAuthRequest.send();
             if (scribeResponse.isSuccessful()) {
                 OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody());
-                request.getAuthentication().setOAuthUser(oAuthUser);
+
+                Authentication authentication = request.getAuthentication();
+                authentication.setOAuthUser(oAuthUser);
+                authentication.setAuthenticatedUser(oAuthUser.getUsername());
             }
         }
 

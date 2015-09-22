@@ -57,6 +57,7 @@ public class Routes implements MangooRoutes {
 
         Router.mapRequest(Methods.GET).toUrl("/session").onClassAndMethod(SessionController.class, "session");
 
+        Router.mapRequest(Methods.POST).toUrl("/dologin").onClassAndMethod(AuthenticationController.class, "doLogin");
         Router.mapRequest(Methods.GET).toUrl("/authenticationrequired").onClassAndMethod(AuthenticationController.class, "notauthenticated");
         Router.mapRequest(Methods.GET).toUrl("/login").onClassAndMethod(AuthenticationController.class, "login");
         Router.mapRequest(Methods.GET).toUrl("/authenticate").onClassAndMethod(AuthenticationController.class, "authenticate");

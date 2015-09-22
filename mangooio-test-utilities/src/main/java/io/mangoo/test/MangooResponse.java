@@ -71,6 +71,7 @@ public class MangooResponse {
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
+        this.cookieStore.clear();
         this.responseUrl = "http://" + host + ":" + port;
         this.httpClient = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore).build();
         this.httpClientNoRedirects = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore).disableRedirectHandling().build();

@@ -44,6 +44,10 @@ public class Authentication {
         return this.authenticatedUser;
     }
 
+    public String setAuthenticatedUser(String username) {
+        return this.authenticatedUser = username;
+    }
+
     public LocalDateTime getExpires() {
         return expires;
     }
@@ -58,6 +62,14 @@ public class Authentication {
 
     public boolean isRemember() {
         return remember;
+    }
+
+    public void setOAuthUser(OAuthUser oAuthUser) {
+        this.oAuthUser = oAuthUser;
+    }
+
+    public OAuthUser getOAuthUser() {
+        return this.oAuthUser;
     }
 
     /**
@@ -135,13 +147,5 @@ public class Authentication {
         Preconditions.checkNotNull(username, "Username is required for isAuthenticated");
 
         return username.equals(this.authenticatedUser);
-    }
-
-    public void setOAuthUser(OAuthUser oAuthUser) {
-        this.oAuthUser = oAuthUser;
-    }
-
-    public OAuthUser getOAuthUser() {
-        return this.oAuthUser;
     }
 }
