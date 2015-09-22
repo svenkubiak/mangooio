@@ -1,6 +1,5 @@
 package io.mangoo.filters;
 
-import org.apache.commons.lang3.StringUtils;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
@@ -33,11 +32,10 @@ public class OAuthCallbackFilter implements MangooFilter {
 
     @Override
     public Response execute(Request request, Response response) {
-        String oauthToken = request.getParameter("oauth_token");
-        String oauthVerifier = request.getParameter("oauth_verifier");
-
-        if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier)) {
-            OAuthService oAuthService = RequestUtils.createOAuthService(request.getParameter("oauth"), this.config);
+        OAuthService oAuthService = RequestUtils.createOAuthService(request.getParameter("oauth"), this.config);
+        if (oAuthService != null) {
+            String oauthToken = request.getParameter("oauth_token");
+            String oauthVerifier = request.getParameter("oauth_verifier");
 
             Token requestToken = new Token(oauthToken, oauthVerifier);
             Verifier verifier = new Verifier(oauthVerifier);

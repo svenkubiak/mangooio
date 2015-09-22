@@ -2,6 +2,7 @@ package io.mangoo.filters;
 
 import java.net.URI;
 
+import org.apache.commons.lang3.StringUtils;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
 
@@ -29,12 +30,20 @@ public class OAuthLoginFilter implements MangooFilter {
 
     @Override
     public Response execute(Request request, Response response) {
+        String oauth = request.getParameter("oauth");
         OAuthService oAuthService = RequestUtils.createOAuthService(request.getParameter("oauth"), this.config);
         if (oAuthService != null) {
-            Token requestToken = oAuthService.getRequestToken();
-            String url = oAuthService.getAuthorizationUrl(requestToken);
+            String url = null;
+            if (("twitter").equals(oauth)) {
+                Token requestToken = oAuthService.getRequestToken();
+                url = oAuthService.getAuthorizationUrl(requestToken);
+            } else if (("google").equals(oauth)) {
+                url = oAuthService.getAuthorizationUrl(null);
+            }
 
-            return Response.withRedirect(URI.create(url).toString()).end();
+            if (StringUtils.isNotBlank(url)) {
+                return Response.withRedirect(URI.create(url).toString()).end();
+            }
         }
 
         return response;

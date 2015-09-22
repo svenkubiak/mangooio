@@ -7,10 +7,10 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.FacebookApi;
-import org.scribe.builder.api.GoogleApi;
 import org.scribe.builder.api.TwitterApi;
 import org.scribe.oauth.OAuthService;
 
+import io.mangoo.authentication.Google2Api;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
@@ -99,7 +99,8 @@ public final class RequestUtils {
                 break;
             case "google":
                 serviceBuilder = new ServiceBuilder()
-                .provider(GoogleApi.class)
+                .provider(Google2Api.class)
+                .scope("profile")
                 .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
                 .apiKey(config.getString(Key.OAUTH_GOOGLE_KEY))
                 .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET));
