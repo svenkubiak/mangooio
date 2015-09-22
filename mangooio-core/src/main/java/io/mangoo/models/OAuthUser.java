@@ -6,14 +6,20 @@ package io.mangoo.models;
  *
  */
 public class OAuthUser {
+    private String id;
     private String oAuthResponse;
     private String username;
     private String picture;
 
-    public OAuthUser(String oAuthResponse, String username, String picture) {
+    public OAuthUser(String id, String oAuthResponse, String username, String picture) {
+        this.id = id;
         this.oAuthResponse = oAuthResponse;
         this.picture = picture;
         this.username = username;
+    }
+
+    public String getId() {
+        return this.id;
     }
 
     public String getOAuthResponse() {

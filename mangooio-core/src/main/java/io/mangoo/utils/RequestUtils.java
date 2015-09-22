@@ -15,6 +15,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.oauth.OAuthProvider;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
@@ -26,6 +27,8 @@ import io.undertow.util.Methods;
  *
  */
 public final class RequestUtils {
+    private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+
     private RequestUtils() {
     }
 
@@ -89,29 +92,25 @@ public final class RequestUtils {
     public static OAuthService createOAuthService(String oauth, Config config) {
         ServiceBuilder serviceBuilder = null;
         if (StringUtils.isNotBlank(oauth) && config != null) {
-            switch (oauth) {
-            case "twitter":
+            if (OAuthProvider.TWITTER.toString().equals(oauth)) {
                 serviceBuilder = new ServiceBuilder()
-                .provider(TwitterApi.class)
-                .callback(config.getString(Key.OAUTH_TWITTER_CALLBACK))
-                .apiKey(config.getString(Key.OAUTH_TWITTER_KEY))
-                .apiSecret(config.getString(Key.OAUTH_TWITTER_SECRET));
-                break;
-            case "google":
+                        .provider(TwitterApi.class)
+                        .callback(config.getString(Key.OAUTH_TWITTER_CALLBACK))
+                        .apiKey(config.getString(Key.OAUTH_TWITTER_KEY))
+                        .apiSecret(config.getString(Key.OAUTH_TWITTER_SECRET));
+            } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
                 serviceBuilder = new ServiceBuilder()
-                .provider(Google2Api.class)
-                .scope("profile")
-                .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
-                .apiKey(config.getString(Key.OAUTH_GOOGLE_KEY))
-                .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET));
-                break;
-            case "facebook":
+                        .provider(Google2Api.class)
+                        .scope(SCOPE)
+                        .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
+                        .apiKey(config.getString(Key.OAUTH_GOOGLE_KEY))
+                        .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET));
+            } else if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
                 serviceBuilder = new ServiceBuilder()
-                .provider(FacebookApi.class)
-                .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
-                .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
-                .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET));
-                break;
+                        .provider(FacebookApi.class)
+                        .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
+                        .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
+                        .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET));
             }
         }
 

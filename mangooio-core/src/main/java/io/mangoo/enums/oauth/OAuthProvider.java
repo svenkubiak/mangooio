@@ -1,4 +1,4 @@
-package io.mangoo.enums;
+package io.mangoo.enums.oauth;
 
 /**
  *

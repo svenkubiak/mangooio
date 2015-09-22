@@ -10,8 +10,9 @@ import io.mangoo.routing.Response;
 public class AuthenticationController {
 
     @FilterWith(AuthenticationFilter.class)
-    public Response notauthenticated() {
-        return Response.withOk().andEmptyBody();
+    public Response notauthenticated(Authentication authentication) {
+        return Response.withOk()
+                .andTextBody(authentication.getAuthenticatedUser());
     }
 
     @FilterWith(OAuthLoginFilter.class)

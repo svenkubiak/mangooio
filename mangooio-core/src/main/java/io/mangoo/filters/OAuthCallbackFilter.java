@@ -1,9 +1,6 @@
 package io.mangoo.filters;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
-import org.boon.json.JsonFactory;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
@@ -11,11 +8,13 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 import com.google.inject.Inject;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.OAuthProvider;
-import io.mangoo.enums.OAuthResource;
+import io.mangoo.enums.oauth.OAuthProvider;
+import io.mangoo.enums.oauth.OAuthResource;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.routing.Response;
@@ -28,7 +27,9 @@ import io.mangoo.utils.RequestUtils;
  *
  */
 public class OAuthCallbackFilter implements MangooFilter {
-
+    private static final String OAUTH_VERIFIER = "oauth_verifier";
+    private static final String OAUTH_TOKEN = "oauth_token";
+    private static final String CODE = "code";
     private Config config;
 
     @Inject
@@ -50,9 +51,13 @@ public class OAuthCallbackFilter implements MangooFilter {
         return response;
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Executes an OAuth authentication to the Facebook API
+     *
+     * @param request The current request
+     */
     private void facebookOAuth(Request request) {
-        String code = request.getParameter("code");
+        String code = request.getParameter(CODE);
         OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK.toString(), this.config);
 
         if (StringUtils.isNotBlank(code) && oAuthService != null) {
@@ -61,8 +66,8 @@ public class OAuthCallbackFilter implements MangooFilter {
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.FACEBOOK.toString());
             if (scribeResponse.isSuccessful()) {
-                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
-                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("name"), (String) json.get("picture"));
+                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
+                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.name"), readContext.read("$.picture.data.url"));
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
@@ -71,9 +76,13 @@ public class OAuthCallbackFilter implements MangooFilter {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Executes an OAuth authentication to the Google API
+     *
+     * @param request The current request
+     */
     private void googleOAuth(Request request) {
-        String code = request.getParameter("code");
+        String code = request.getParameter(CODE);
         OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE.toString(), this.config);
 
         if (StringUtils.isNotBlank(code) && oAuthService != null) {
@@ -82,8 +91,8 @@ public class OAuthCallbackFilter implements MangooFilter {
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.GOOGLE.toString());
             if (scribeResponse.isSuccessful()) {
-                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
-                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("name"), (String) json.get("picture"));
+                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
+                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.name"), readContext.read("$.picture"));
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
@@ -92,10 +101,14 @@ public class OAuthCallbackFilter implements MangooFilter {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Executes an OAuth authentication to the Twitter API
+     *
+     * @param request The current request
+     */
     private void twitterOAuth(Request request) {
-        String oauthToken = request.getParameter("oauth_token");
-        String oauthVerifier = request.getParameter("oauth_verifier");
+        String oauthToken = request.getParameter(OAUTH_TOKEN);
+        String oauthVerifier = request.getParameter(OAUTH_VERIFIER);
         OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER.toString(), this.config);
 
         if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService != null) {
@@ -105,8 +118,8 @@ public class OAuthCallbackFilter implements MangooFilter {
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.TWITTER.toString());
             if (scribeResponse.isSuccessful()) {
-                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
-                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("screen_name"), (String) json.get("profile_image_url_https"));
+                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
+                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.screen_name"), readContext.read("$.profile_image_url_https"));
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
@@ -115,6 +128,15 @@ public class OAuthCallbackFilter implements MangooFilter {
         }
     }
 
+    /**
+     * Executes a OAuth request to an OAuth resource
+     *
+     * @param oAuthService An OAuth service
+     * @param accessToken An accessToken
+     * @param resource The resource to access
+     *
+     * @return The response of the OAuth request
+     */
     private org.scribe.model.Response getResourceResponse(OAuthService oAuthService, Token accessToken, String resource) {
         OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, resource);
         oAuthService.signRequest(accessToken, oAuthRequest);
