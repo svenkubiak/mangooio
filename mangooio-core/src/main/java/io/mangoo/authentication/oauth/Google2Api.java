@@ -1,4 +1,4 @@
-package io.mangoo.authentication;
+package io.mangoo.authentication.oauth;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +25,6 @@ import org.scribe.utils.Preconditions;
  *
  */
 public class Google2Api extends DefaultApi20 {
-
     private static final String AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=%s&redirect_uri=%s";
     private static final String SCOPED_AUTHORIZE_URL = AUTHORIZE_URL + "&scope=%s";
 
@@ -43,13 +42,11 @@ public class Google2Api extends DefaultApi20 {
                 Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
 
                 Matcher matcher = Pattern.compile("\"access_token\" : \"([^&\"]+)\"").matcher(response);
-                if (matcher.find())
-                {
+                if (matcher.find()) {
                     String token = OAuthEncoder.decode(matcher.group(1));
                     return new Token(token, "", response);
                 }
-                else
-                {
+                else {
                     throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
                 }
             }
@@ -58,7 +55,6 @@ public class Google2Api extends DefaultApi20 {
 
     @Override
     public String getAuthorizationUrl(OAuthConfig config) {
-        // Append scope if present
         if (config.hasScope()) {
             return String.format(SCOPED_AUTHORIZE_URL, config.getApiKey(),
                     OAuthEncoder.encode(config.getCallback()),
@@ -80,7 +76,6 @@ public class Google2Api extends DefaultApi20 {
     }
 
     private class GoogleOAuth2Service extends OAuth20ServiceImpl {
-
         private static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
         private static final String GRANT_TYPE = "grant_type";
         private DefaultApi20 api;
@@ -115,5 +110,4 @@ public class Google2Api extends DefaultApi20 {
             return api.getAccessTokenExtractor().extract(response.getBody());
         }
     }
-
 }

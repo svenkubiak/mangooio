@@ -1,23 +1,19 @@
 package io.mangoo.models;
 
-import java.util.Map;
-
-import org.boon.json.JsonFactory;
-
 /**
  *
  * @author svenkubiak
  *
  */
-@SuppressWarnings("unchecked")
 public class OAuthUser {
     private String oAuthResponse;
     private String username;
+    private String picture;
 
-    public OAuthUser(String oAuthResponse) {
+    public OAuthUser(String oAuthResponse, String username, String picture) {
         this.oAuthResponse = oAuthResponse;
-        Map<String, Object> json = JsonFactory.create().readValue(this.oAuthResponse, Map.class);
-        this.username = (String) json.get("screen_name");
+        this.picture = picture;
+        this.username = username;
     }
 
     public String getOAuthResponse() {
@@ -26,5 +22,9 @@ public class OAuthUser {
 
     public String getUsername(){
         return this.username;
+    }
+
+    public String getPicture() {
+        return this.picture;
     }
 }

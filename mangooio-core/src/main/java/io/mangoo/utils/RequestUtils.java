@@ -10,7 +10,7 @@ import org.scribe.builder.api.FacebookApi;
 import org.scribe.builder.api.TwitterApi;
 import org.scribe.oauth.OAuthService;
 
-import io.mangoo.authentication.Google2Api;
+import io.mangoo.authentication.oauth.Google2Api;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;

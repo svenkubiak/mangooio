@@ -1,5 +1,9 @@
 package io.mangoo.filters;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.boon.json.JsonFactory;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
@@ -10,6 +14,8 @@ import com.google.inject.Inject;
 
 import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
+import io.mangoo.enums.OAuthProvider;
+import io.mangoo.enums.OAuthResource;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.routing.Response;
@@ -32,28 +38,87 @@ public class OAuthCallbackFilter implements MangooFilter {
 
     @Override
     public Response execute(Request request, Response response) {
-        OAuthService oAuthService = RequestUtils.createOAuthService(request.getParameter("oauth"), this.config);
-        if (oAuthService != null) {
-            String oauthToken = request.getParameter("oauth_token");
-            String oauthVerifier = request.getParameter("oauth_verifier");
+        String oauth = request.getParameter("oauth");
+        if (OAuthProvider.TWITTER.toString().equals(oauth)) {
+            twitterOAuth(request);
+        } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
+            googleOAuth(request);
+        } else if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
+            facebookOAuth(request);
+        }
 
-            Token requestToken = new Token(oauthToken, oauthVerifier);
-            Verifier verifier = new Verifier(oauthVerifier);
+        return response;
+    }
 
-            Token accessToken = oAuthService.getAccessToken(requestToken, verifier);
-            OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, "https://api.twitter.com/1.1/account/verify_credentials.json");
-            oAuthService.signRequest(accessToken, oAuthRequest);
+    @SuppressWarnings("unchecked")
+    private void facebookOAuth(Request request) {
+        String code = request.getParameter("code");
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK.toString(), this.config);
 
-            org.scribe.model.Response scribeResponse = oAuthRequest.send();
+        if (StringUtils.isNotBlank(code) && oAuthService != null) {
+            Verifier verifier = new Verifier(code);
+            Token accessToken = oAuthService.getAccessToken(null, verifier);
+
+            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.FACEBOOK.toString());
             if (scribeResponse.isSuccessful()) {
-                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody());
+                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
+                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("name"), (String) json.get("picture"));
 
                 Authentication authentication = request.getAuthentication();
                 authentication.setOAuthUser(oAuthUser);
                 authentication.setAuthenticatedUser(oAuthUser.getUsername());
             }
         }
+    }
 
-        return response;
+    @SuppressWarnings("unchecked")
+    private void googleOAuth(Request request) {
+        String code = request.getParameter("code");
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE.toString(), this.config);
+
+        if (StringUtils.isNotBlank(code) && oAuthService != null) {
+            Verifier verifier = new Verifier(code);
+            Token accessToken = oAuthService.getAccessToken(null, verifier);
+
+            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.GOOGLE.toString());
+            if (scribeResponse.isSuccessful()) {
+                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
+                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("name"), (String) json.get("picture"));
+
+                Authentication authentication = request.getAuthentication();
+                authentication.setOAuthUser(oAuthUser);
+                authentication.setAuthenticatedUser(oAuthUser.getUsername());
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void twitterOAuth(Request request) {
+        String oauthToken = request.getParameter("oauth_token");
+        String oauthVerifier = request.getParameter("oauth_verifier");
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER.toString(), this.config);
+
+        if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService != null) {
+            Token requestToken = new Token(oauthToken, oauthVerifier);
+            Verifier verifier = new Verifier(oauthVerifier);
+            Token accessToken = oAuthService.getAccessToken(requestToken, verifier);
+
+            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.TWITTER.toString());
+            if (scribeResponse.isSuccessful()) {
+                Map<String, Object> json = JsonFactory.create().readValue(scribeResponse.getBody(), Map.class);
+                OAuthUser oAuthUser = new OAuthUser(scribeResponse.getBody(), (String) json.get("screen_name"), (String) json.get("profile_image_url_https"));
+
+                Authentication authentication = request.getAuthentication();
+                authentication.setOAuthUser(oAuthUser);
+                authentication.setAuthenticatedUser(oAuthUser.getUsername());
+            }
+        }
+    }
+
+    private org.scribe.model.Response getResourceResponse(OAuthService oAuthService, Token accessToken, String resource) {
+        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, resource);
+        oAuthService.signRequest(accessToken, oAuthRequest);
+
+        return oAuthRequest.send();
     }
 }

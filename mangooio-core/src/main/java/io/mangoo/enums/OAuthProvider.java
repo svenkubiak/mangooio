@@ -1,9 +1,14 @@
 package io.mangoo.enums;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 public enum OAuthProvider {
-    TWITTER("https://api.twitter.com/1.1/account/verify_credentials.json"),
-    GOOGLE("https://api.twitter.com/1.1/account/verify_credentials.json"),
-    FACEBOOK("https://api.twitter.com/1.1/account/verify_credentials.json");
+    TWITTER("twitter"),
+    GOOGLE("google"),
+    FACEBOOK("facebook");
 
     private final String value;
 
@@ -11,7 +16,8 @@ public enum OAuthProvider {
         this.value = value;
     }
 
-    public String getUrl() {
+    @Override
+    public String toString() {
         return this.value;
     }
 }
