@@ -20,16 +20,16 @@ default:
             expires : 3600
     oauth:
         twitter:
-            key       : NDxBG7NkOwaUmHu12cfw
-            secret    : wmBmRwVfn5vD0P5h9AOqke4EaTHNknFWiaBzDsKfhY
+            key       : ###
+            secret    : ###
             callback  : http://localhost:50000/authenticate?oauth=twitter      
         google:
-            key       : 5677252054-ugu70j4vrcmal7rq16felt5nrutrrudo.apps.googleusercontent.com
-            secret    : 7inYUsWpyhZRgycUoBMKHycq
+            key       : ###
+            secret    : ###
             callback  : http://localhost:50000/authenticate?oauth=google 
         facebook:
-            key       : 395853980624480
-            secret    : 9e141f1754d009514d700478213a4788
+            key       : ###
+            secret    : ###
             callback  : http://localhost:50000/authenticate?oauth=facebook                            
     cookie:
         name       : TEST-SESSION
