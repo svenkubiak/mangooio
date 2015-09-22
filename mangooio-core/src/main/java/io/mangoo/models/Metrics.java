@@ -1,4 +1,4 @@
-package io.mangoo.admin;
+package io.mangoo.models;
 
 import java.util.HashMap;
 import java.util.Map;

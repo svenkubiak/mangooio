@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.admin.Metrics;
+import io.mangoo.models.Metrics;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.ResponseCommitListener;
 

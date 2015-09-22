@@ -12,12 +12,17 @@ default:
             cssfolder : /bar
             gzipjs    : false
             gzipcss   : false
-        auth:
-            redirect  : /login
-            cookie:
-                name    : TEST-AUTH
-                encrypt : false
-                expires : 3600
+    auth:
+        redirect  : /login
+        cookie:
+            name    : TEST-AUTH
+            encrypt : false
+            expires : 3600
+    oauth:
+        twitter:
+            key       : kcfkZ30touFa1bQ812WaLhsnz
+            secret    : ov01NMFidE7sYWHlC4oaTKJ9R4bgntJB6JrSsYbV4d8x2IO9N5
+            callback  : http://localhost:50000/authenticate?oauth=twitter           
     cookie:
         name       : TEST-SESSION
         expires    : 86400

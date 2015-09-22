@@ -27,6 +27,7 @@ import freemarker.template.Version;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.i18n.Messages;
+import io.mangoo.models.Source;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
@@ -34,7 +35,6 @@ import io.mangoo.templating.directives.AuthenticityFormDirective;
 import io.mangoo.templating.directives.AuthenticityTokenDirective;
 import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.Source;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 

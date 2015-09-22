@@ -57,7 +57,7 @@ public class Request implements MangooValidator {
      * @return The request body as Json Map<String, Object>
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getBodyasJson() {
+    public Map<String, Object> getBodyAsJson() {
         return JsonFactory.create().readValue(this.body, Map.class);
     }
 

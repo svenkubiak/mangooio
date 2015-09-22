@@ -34,7 +34,7 @@ public class ExceptionHandler implements HttpHandler {
             } else if (throwable.getCause() == null) {
                 exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, true));
             } else {
-                exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, false));
+                exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable.getCause(), false));
             }
         } else {
             exchange.getResponseSender().send(Template.DEFAULT.internalServerError());

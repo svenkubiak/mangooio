@@ -56,7 +56,16 @@ public enum Key {
     VALIDATION_REGEX("validation.regex"),
     VERSION("version"),
     CACHE_MAX_SIZE("cache.maxsize"),
-    CACHE_EXPIRES("cache.expires");
+    CACHE_EXPIRES("cache.expires"),
+    OAUTH_TWITTER_KEY("oauth.twitter.key"),
+    OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
+    OAUTH_TWITTER_CALLBACK("oauth.twitter.callback"),
+    OAUTH_GOOGLE_KEY("oauth.google.key"),
+    OAUTH_GOOGLE_SECRET("oauth.google.secret"),
+    OAUTH_GOOGLE_CALLBACK("oauth.google.callback"),
+    OAUTH_FACEBOOK_KEY("oauth.facebook.key"),
+    OAUTH_FACEBOOK_SECRET("oauth.facebook.secret"),
+    OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback");
 
     private final String value;
 

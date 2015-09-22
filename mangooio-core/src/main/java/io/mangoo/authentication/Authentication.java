@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
+import io.mangoo.models.OAuthUser;
 
 /**
  *
@@ -23,6 +24,7 @@ public class Authentication {
     private Config config;
     private LocalDateTime expires;
     private String authenticatedUser;
+    private OAuthUser oAuthUser;
     private boolean remember;
     private boolean loggedOut;
 
@@ -133,5 +135,13 @@ public class Authentication {
         Preconditions.checkNotNull(username, "Username is required for isAuthenticated");
 
         return username.equals(this.authenticatedUser);
+    }
+
+    public void setOAuthUser(OAuthUser oAuthUser) {
+        this.oAuthUser = oAuthUser;
+    }
+
+    public OAuthUser getOAuthUser() {
+        return this.oAuthUser;
     }
 }

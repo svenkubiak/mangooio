@@ -11,6 +11,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
+import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 

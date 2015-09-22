@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Charsets;
 
+import io.mangoo.models.Source;
+
 /**
  *
  * @author svenkubiak
@@ -59,16 +61,18 @@ public final class ThrowableUtils {
         .append(File.separator)
         .append("java");
 
-        File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
-        List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
-
-        int index = 0;
         List<Source> sources = new ArrayList<Source>();
-        for (String line : lines) {
-            if ( (index + 8 > errorLine) && (index - 6 < errorLine) ) {
-                sources.add(new Source((index + 1) == errorLine, index + 1, line));
+        File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
+        if (templateFile.exists()) {
+            List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
+
+            int index = 0;
+            for (String line : lines) {
+                if ( (index + 8 > errorLine) && (index - 6 < errorLine) ) {
+                    sources.add(new Source((index + 1) == errorLine, index + 1, line));
+                }
+                index++;
             }
-            index++;
         }
 
         return sources;

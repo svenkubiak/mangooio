@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.models;
 
 /**
  *
