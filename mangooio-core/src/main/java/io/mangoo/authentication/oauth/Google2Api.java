@@ -45,8 +45,7 @@ public class Google2Api extends DefaultApi20 {
                 if (matcher.find()) {
                     String token = OAuthEncoder.decode(matcher.group(1));
                     return new Token(token, "", response);
-                }
-                else {
+                } else {
                     throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
                 }
             }
@@ -76,7 +75,7 @@ public class Google2Api extends DefaultApi20 {
     }
 
     private class GoogleOAuth2Service extends OAuth20ServiceImpl {
-        private static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
+        private static final String AUTHORIZATION_CODE = "authorization_code";
         private static final String GRANT_TYPE = "grant_type";
         private DefaultApi20 api;
         private OAuthConfig config;
@@ -96,7 +95,7 @@ public class Google2Api extends DefaultApi20 {
                 request.addBodyParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
                 request.addBodyParameter(OAuthConstants.CODE, verifier.getValue());
                 request.addBodyParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
-                request.addBodyParameter(GRANT_TYPE, GRANT_TYPE_AUTHORIZATION_CODE);
+                request.addBodyParameter(GRANT_TYPE, AUTHORIZATION_CODE);
                 break;
             case GET:
             default:
@@ -104,7 +103,9 @@ public class Google2Api extends DefaultApi20 {
                 request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
                 request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
                 request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
-                if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+                if (config.hasScope()) {
+                    request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+                }
             }
             Response response = request.send();
 

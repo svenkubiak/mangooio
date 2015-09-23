@@ -669,18 +669,18 @@ public class RequestHandler implements HttpHandler {
      * @return The body from the response object or an empty body if etag matches NONE_MATCH header
      */
     private String getResponseBody(HttpServerExchange exchange, Response response) {
-        String body = response.getBody();
+        String responseBody = response.getBody();
         if (response.isETag()) {
             String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
-            String etag = DigestUtils.md5Hex(body); //NOSONAR
+            String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setResponseCode(StatusCodes.NOT_MODIFIED);
-                body = "";
+                responseBody = "";
             } else {
                 exchange.getResponseHeaders().put(Headers.ETAG, etag);
             }
         }
 
-        return body;
+        return responseBody;
     }
 }
