@@ -1044,6 +1044,120 @@ the Authentication class in link:#c-configuration-options[C.
 Configuration options]. All options with the prefix "auth" configure
 custom Authentication.
 
+=== OAuth
+
+mangoo I/O supports authentication with OAuth for https://twitter.com[Twitter], https://google.com[Google] and https://facebook.com[Facebook]
+in a fluent. You may know this feature as "Sign in with ...". The OAuth feature
+integrates smoothly in the previously mentioned Authentication class.
+
+==== Preconditions
+
+In order to start an implementation for OAuth with mangoo I/O you first need an
+application key and an application secret. Check the developer pages for https://apps.twitter.com[Twitter], https://console.developers.google.com[Google] and https://developers.facebook.com[Facebook]
+on how to create an app and get the required informations. Once you have the key and secret
+simply add it to you application.yml
+
+---------------------------------------
+default:
+  application:
+    ...
+
+  oauth:
+    twitter:
+        key       : ###
+        secret    : ###
+        callback  : http://localhost:8080/authenticat?oauth=twitter
+    google:
+        key       : ###
+        secret    : ###
+        callback  : http://localhost:8080/authenticat?oauth=google
+    facebook:
+        key       : ###
+        secret    : ###
+        callback  : http://localhost:8080/authenticat?oauth=facebook
+---------------------------------------
+
+There is a third required configuration, which you have to defined yousrelf. This is the callback property
+which defines the URL where you do the actual authentication and  the login of your user.
+
+[INFO]
+As OAuth authentication integrates into mangoo I/O authentication mechanism, you can combine "normal" authentication and OAuth authentication.
+
+==== Setting the filters
+
+When working with OAuth authentication in mangoo I/O you have to user two filters: OAuthLoginFilter and OAuthCallbackFilter. We'll start with the OAuthLoginFilter.
+
+Let's imagine that you have a login page where the user can click on a link to open a registration page and login with his account or via OAuth to a supported
+mangoo I/O OAuth provider. Let's assume, that this page is available via /login and maps to a method in a controller controller.
+
+[source, java]
+---------------------------------------
+...
+
+@FilterWith(OAuthLoginFilter.class)
+public Response login() {
+  return Response.withOk();
+}
+---------------------------------------
+
+As you can see, the method is annotated with the OAuthLoginFilter and does nothing fancy - just rendering a template. To enable your
+user to start an OAuth authentication, create a link to the same login with a query parameter set to the OAuth provider name.
+
+[source, html]
+---------------------------------------
+<a href="/login?oauth=twitter">Authenticate via Twitter</a>
+<a href="/login?oauth=google">Authenticate via Google</a>
+<a href="/login?oauth=facebook">Authenticate via Facebook</a>
+---------------------------------------
+
+If the user clicks on one of the links, the filter intercepts the link and starts a simple redirect to the OAuth provider to start
+the OAuth authentication.
+
+After the user has done the authentication at the OAuth provider, he has to return to your page somehow. This is where the callback
+property comes in place. The callback URL is passed, when the user is previously redirected so the OAuth service does now where to
+send the user, once OAuth authentication is complete.
+
+Let's assume, that the /authentication URL maps to a method in a controller.
+
+[source, java]
+---------------------------------------
+...
+
+@FilterWith(OAuthCallbackFilter.class)
+public Response authenticate(Authentication authentication) {
+  if (authentication.hasAuthenticatedUser()) {
+    OAuthUser oAuthUser = authentication.getOAuthUser();
+    if (oAuthUser != null) {
+      String response = oAuthUser.getOAuthReponse();
+      String id = oAuthUser.getId();
+      String username = oAuthUser.getUsername();
+      String picture = oAuthUser.getPicutre();
+    }
+
+    ...
+
+    authentication.login(username, false);
+
+    return Response.withRedirect("/");
+  }
+
+  return Response.withRedirect("login");
+}
+---------------------------------------
+
+As you can see the authentication method calls the same method (hasAuthenticatedUser) as the normal authentication process. If your
+user authenticated successfully via OAuth you also have an additional object called OAuthUser in the authentication class. If
+the authentication via OAuth fails or the user did not login via OAuth the OAuthUser object is null.
+
+The OAuthUser is prefilled with some generic information that all supported mangoo I/O OAuth provider support. Please note,
+that email is not one of this property. Thus, you have to ask the user for the email address if you require this information
+in you application. You also have to connect the via OAuth authenticated user to your user mangement. This can, for example, done
+by storing the OAuth id of the user along with the OAuth provider (@twitter, @goolge or @facebook). But how you handle this
+is completily up to you.
+
+You can also access the original OAuthResponse by calling the appropriate getter which gives you a string representation of the
+JSON reponse from the OAuth provider.
+
 == ETag for dynamic content
 
 "ETag" or "entity tag" enables web application to make use of cached resources by allowing conditional requests from the client.
@@ -1227,8 +1341,26 @@ import io.mangoo.routing.bindings.Request;
 
 public class MyController {
     public Response parse(Request request) {
-        Map<String, Object> myjson = request.getBodyAsJSON();
+        Map<String, Object> myjson = request.getBodyAsJsonMap();
         String foo = json.get("firstname");
+    }
+}
+--------------------------------------------
+
+You can also get hold of the JSON using the great https://github.com/jayway/JsonPath[JsonPath] library.
+
+[source,java]
+--------------------------------------------
+package controllers;
+
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Request;
+import com.jayway.jsonpath.ReadContext;
+
+public class MyController {
+    public Response parse(Request request) {
+        ReadContext readContext = request.getBodyAsJsonPath();
+        String foo = readContext.read("$.firstname");
     }
 }
 --------------------------------------------
