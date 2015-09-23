@@ -26,6 +26,12 @@ import io.mangoo.utils.RequestUtils;
  *
  */
 public class OAuthCallbackFilter implements MangooFilter {
+    private static final String PROFILE_IMAGE_URL_HTTPS = "$.profile_image_url_https";
+    private static final String SCREEN_NAME = "$.screen_name";
+    private static final String PICTURE = "$.picture";
+    private static final String PICTURE_DATA_URL = "$.picture.data.url";
+    private static final String NAME = "$.name";
+    private static final String ID = "$.id";
     private static final String OAUTH_VERIFIER = "oauth_verifier";
     private static final String OAUTH_TOKEN = "oauth_token";
     private static final String CODE = "code";
@@ -67,7 +73,7 @@ public class OAuthCallbackFilter implements MangooFilter {
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponseBody);
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponseBody, readContext.read("$.name"), readContext.read("$.picture.data.url")));
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
             }
         }
     }
@@ -89,7 +95,7 @@ public class OAuthCallbackFilter implements MangooFilter {
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponseBody, readContext.read("$.name"), readContext.read("$.picture")));
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
             }
         }
     }
@@ -113,7 +119,7 @@ public class OAuthCallbackFilter implements MangooFilter {
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.screen_name"), readContext.read("$.profile_image_url_https")));
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponse.getBody(), readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
             }
         }
     }

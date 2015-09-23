@@ -107,6 +107,7 @@ public class Google2Api extends DefaultApi20 {
                 if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
             }
             Response response = request.send();
+
             return api.getAccessTokenExtractor().extract(response.getBody());
         }
     }
