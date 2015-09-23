@@ -44,10 +44,6 @@ public class Authentication {
         return this.authenticatedUser;
     }
 
-    public String setAuthenticatedUser(String username) {
-        return this.authenticatedUser = username;
-    }
-
     public LocalDateTime getExpires() {
         return expires;
     }
@@ -134,7 +130,7 @@ public class Authentication {
      * @return True if authentication contains an authenticated user, false otherwise
      */
     public boolean hasAuthenticatedUser() {
-        return StringUtils.isNotBlank(this.authenticatedUser);
+        return StringUtils.isNotBlank(this.authenticatedUser) || this.oAuthUser != null;
     }
 
     /**

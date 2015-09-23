@@ -4,6 +4,9 @@ import java.util.Map;
 
 import org.boon.json.JsonFactory;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
+
 import io.mangoo.authentication.Authentication;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
@@ -54,11 +57,19 @@ public class Request implements MangooValidator {
 
     /**
      *
-     * @return The request body as Json Map<String, Object>
+     * @return The request body as Map object
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getBodyAsJson() {
+    public Map<String, Object> getBodyAsJsonMap() {
         return JsonFactory.create().readValue(this.body, Map.class);
+    }
+
+    /**
+     *
+     * @return The request body as JsonPath object
+     */
+    public ReadContext getBodyAsJsonPath() {
+        return JsonPath.parse(this.body);
     }
 
     /**

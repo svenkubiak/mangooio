@@ -1,4 +1,4 @@
-package io.mangoo.filters;
+package io.mangoo.filters.oauth;
 
 import java.net.URI;
 

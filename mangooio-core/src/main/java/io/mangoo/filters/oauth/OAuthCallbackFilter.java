@@ -1,4 +1,4 @@
-package io.mangoo.filters;
+package io.mangoo.filters.oauth;
 
 import org.apache.commons.lang3.StringUtils;
 import org.scribe.model.OAuthRequest;
@@ -11,7 +11,6 @@ import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.mangoo.enums.oauth.OAuthResource;
@@ -65,13 +64,10 @@ public class OAuthCallbackFilter implements MangooFilter {
             Token accessToken = oAuthService.getAccessToken(null, verifier);
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.FACEBOOK.toString());
-            if (scribeResponse.isSuccessful()) {
-                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.name"), readContext.read("$.picture.data.url"));
-
-                Authentication authentication = request.getAuthentication();
-                authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.FACEBOOK.toString());
+            String scribeResponseBody = scribeResponse.getBody();
+            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                ReadContext readContext = JsonPath.parse(scribeResponseBody);
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponseBody, readContext.read("$.name"), readContext.read("$.picture.data.url")));
             }
         }
     }
@@ -90,13 +86,10 @@ public class OAuthCallbackFilter implements MangooFilter {
             Token accessToken = oAuthService.getAccessToken(null, verifier);
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.GOOGLE.toString());
-            if (scribeResponse.isSuccessful()) {
+            String scribeResponseBody = scribeResponse.getBody();
+            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.name"), readContext.read("$.picture"));
-
-                Authentication authentication = request.getAuthentication();
-                authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.GOOGLE.toString());
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponseBody, readContext.read("$.name"), readContext.read("$.picture")));
             }
         }
     }
@@ -117,13 +110,10 @@ public class OAuthCallbackFilter implements MangooFilter {
             Token accessToken = oAuthService.getAccessToken(requestToken, verifier);
 
             org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.TWITTER.toString());
-            if (scribeResponse.isSuccessful()) {
+            String scribeResponseBody = scribeResponse.getBody();
+            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                OAuthUser oAuthUser = new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.screen_name"), readContext.read("$.profile_image_url_https"));
-
-                Authentication authentication = request.getAuthentication();
-                authentication.setOAuthUser(oAuthUser);
-                authentication.setAuthenticatedUser(oAuthUser.getId() + "@" + OAuthProvider.TWITTER.toString());
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read("$.id"), scribeResponse.getBody(), readContext.read("$.screen_name"), readContext.read("$.profile_image_url_https")));
             }
         }
     }
