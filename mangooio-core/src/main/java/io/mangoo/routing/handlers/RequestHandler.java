@@ -71,6 +71,7 @@ public class RequestHandler implements HttpHandler {
     private static final int INDEX_0 = 0;
     private static final int INDEX_1 = 1;
     private static final int INDEX_2 = 2;
+    private static final int INDEX_3 = 3;
     private static final int SESSION_PREFIX_LENGTH = 3;
     private int parameterCount;
     private Class<?> controllerClass;
@@ -195,11 +196,7 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void getRequest(HttpServerExchange exchange) {
-        String authenticityToken = this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString());
-        if (StringUtils.isBlank(authenticityToken)) {
-            authenticityToken = this.form.getValue(Default.AUTHENTICITY_TOKEN.toString());
-        }
-
+        String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.getValue(Default.AUTHENTICITY_TOKEN.toString()));
         this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter, this.body);
     }
 
@@ -298,28 +295,54 @@ public class RequestHandler implements HttpHandler {
                 String sign = null;
                 String expires = null;
                 String authenticityToken = null;
+                String version = null;
                 String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+
+                    /**
+                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
+                     * introduced with version 1.2.0 for cookie versioning.
+                     */
                     if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
                         sign = prefixes [INDEX_0];
                         authenticityToken = prefixes [INDEX_1];
                         expires = prefixes [INDEX_2];
+                    } else if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH + 1) {
+                        sign = prefixes [INDEX_0];
+                        authenticityToken = prefixes [INDEX_1];
+                        expires = prefixes [INDEX_2];
+                        version = prefixes [INDEX_3];
                     }
                 }
 
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires) && StringUtils.isNotBlank(authenticityToken)) {
                     String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()).equals(sign)) {
-                        Map<String, String> sessionValues = new HashMap<String, String>();
-                        if (StringUtils.isNotEmpty(data)) {
-                            for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                sessionValues.put(entry.getKey(), entry.getValue());
+
+                    /**
+                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
+                     */
+                    if (StringUtils.isBlank(version)) {
+                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()).equals(sign)) {
+                            Map<String, String> sessionValues = new HashMap<String, String>();
+                            if (StringUtils.isNotEmpty(data)) {
+                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
+                                    sessionValues.put(entry.getKey(), entry.getValue());
+                                }
                             }
+                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                         }
-                        requestSession = new Session(sessionValues, authenticityToken, expiresDate);
+                    } else {
+                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                            Map<String, String> sessionValues = new HashMap<String, String>();
+                            if (StringUtils.isNotEmpty(data)) {
+                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
+                                    sessionValues.put(entry.getKey(), entry.getValue());
+                                }
+                            }
+                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
+                        }
                     }
                 }
             }
@@ -341,14 +364,17 @@ public class RequestHandler implements HttpHandler {
         if (this.session != null && this.session.hasChanges()) {
             String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
+            String version = this.config.getApplicationCookieVersion();
             String authenticityToken = this.session.getAuthenticityToken();
             LocalDateTime expires = this.session.getExpires();
             StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()))
+                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()))
                     .append(Default.DELIMITER.toString())
                     .append(authenticityToken)
                     .append(Default.DELIMITER.toString())
                     .append(expires)
+                    .append(Default.DELIMITER.toString())
+                    .append(version)
                     .append(Default.DATA_DELIMITER.toString())
                     .append(data);
 
@@ -449,7 +475,7 @@ public class RequestHandler implements HttpHandler {
             } else {
                 String authenticatedUser = this.authentication.getAuthenticatedUser();
                 LocalDateTime expires = this.authentication.getExpires();
-                String version = this.config.getCookieVersion();
+                String version = this.config.getAuthCookieVersion();
                 String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret());
 
                 StringBuilder buffer = new StringBuilder()

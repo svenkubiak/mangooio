@@ -390,7 +390,11 @@ public class Config {
         return getBoolean(Key.AUTH_COOKIE_ENCRYPT, Default.AUTH_COOKIE_ENCRYPT.toBoolean());
     }
 
-    public String getCookieVersion() {
+    public String getAuthCookieVersion() {
         return getString(Key.AUTH_COOKIE_VERSION, Default.AUTH_COOKIE_VERSION.toString());
+    }
+
+    public String getApplicationCookieVersion() {
+        return getString(Key.APPLICATION_COOKIE_VERSION, Default.APPLICATION_COOKIE_VERSION.toString());
     }
 }
