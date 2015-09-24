@@ -1,6 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.boon.json.JsonFactory;
 
@@ -30,7 +31,7 @@ public class Request implements MangooValidator {
     private Map<String, String> parameter;
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
-        this.httpServerExchange = httpServerExchange;
+        this.httpServerExchange = Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
         this.session = session;
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;

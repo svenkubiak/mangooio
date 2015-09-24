@@ -2,6 +2,7 @@ package io.mangoo.admin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
@@ -26,8 +27,8 @@ public class MangooAdminController {
 
     @Inject
     public MangooAdminController(Config config, Cache cache) {
-        this.config = config;
-        this.cache = cache;
+        this.config = Objects.requireNonNull(config, "config is required for mangooAdminController");
+        this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");;
     }
 
     public Response health() {

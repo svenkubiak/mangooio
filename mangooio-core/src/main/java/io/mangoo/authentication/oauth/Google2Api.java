@@ -35,20 +35,7 @@ public class Google2Api extends DefaultApi20 {
 
     @Override
     public AccessTokenExtractor getAccessTokenExtractor() {
-        return new AccessTokenExtractor() {
-            @Override
-            public Token extract(String response) {
-                Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
-
-                Matcher matcher = Pattern.compile("\"access_token\" : \"([^&\"]+)\"").matcher(response);
-                if (matcher.find()) {
-                    String token = OAuthEncoder.decode(matcher.group(1));
-                    return new Token(token, "", response);
-                } else {
-                    throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
-                }
-            }
-        };
+        return new GoogleApi2AccessTokenExtractor();
     }
 
     @Override
@@ -72,6 +59,21 @@ public class Google2Api extends DefaultApi20 {
     public OAuthService createService(OAuthConfig config) {
         return new GoogleOAuth2Service(this, config);
     }
+
+    private class GoogleApi2AccessTokenExtractor implements AccessTokenExtractor {
+        @Override
+        public Token extract(String response) {
+            Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
+
+            Matcher matcher = Pattern.compile("\"access_token\" : \"([^&\"]+)\"").matcher(response);
+            if (matcher.find()) {
+                String token = OAuthEncoder.decode(matcher.group(1));
+                return new Token(token, "", response);
+            } else {
+                throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
+            }
+        }
+    };
 
     private class GoogleOAuth2Service extends OAuth20ServiceImpl {
         private static final String AUTHORIZATION_CODE = "authorization_code";

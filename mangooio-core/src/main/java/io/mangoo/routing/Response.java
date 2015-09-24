@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.boon.json.JsonFactory;
@@ -47,7 +48,7 @@ public final class Response {
     private Response(String redirectTo) {
         this.redirect = true;
         this.rendered = true;
-        this.redirectTo = redirectTo;
+        this.redirectTo = Objects.requireNonNull(redirectTo, "redirectTo can not be null");
     }
 
     public int getStatusCode() {

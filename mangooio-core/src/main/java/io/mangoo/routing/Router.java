@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
 
@@ -19,6 +21,8 @@ public final class Router {
     }
 
     public static void addRoute(Route route) {
+        Preconditions.checkNotNull(route, "route is required for addRoute");
+
         routes.add(route);
     }
 
@@ -29,6 +33,8 @@ public final class Router {
      * @return A route object {@link io.mangoo.routing.Route}
      */
     public static Route mapRequest(HttpString requestMethod) {
+        Preconditions.checkNotNull(requestMethod, "requestMethod is required for addRoute");
+
         return new Route(requestMethod);
     }
 

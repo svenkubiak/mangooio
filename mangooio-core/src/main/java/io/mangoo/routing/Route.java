@@ -1,5 +1,7 @@
 package io.mangoo.routing;
 
+import java.util.Objects;
+
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
 
@@ -17,7 +19,7 @@ public class Route {
 
     public Route(HttpString requestMethod) {
         this.routeType = RouteType.REQUEST;
-        this.requestMethod = requestMethod;
+        this.requestMethod = Objects.requireNonNull(requestMethod, "requestMethod can not be null");
     }
 
     public Route(RouteType routeType) {
