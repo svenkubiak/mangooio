@@ -71,7 +71,7 @@ public enum Default {
     APPLICATION_ADMIN_METRICS("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
-    APPLICATION_COOKIE_VERSION("0");
+    COOKIE_VERSION("0");
 
     private final String value;
 

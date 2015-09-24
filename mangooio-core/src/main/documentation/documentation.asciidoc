@@ -879,6 +879,30 @@ used. If your secret is more or equal than 16 characters AES-128 will
 be used. The mangoo I/O framework will automatically determine and use
 the strongest key possible.
 
+=== Session cookie versioning
+
+As mentioned, the session data is stored at the client side in a cookie.
+
+There may be situations where you are required to invalidate this cookie at the client side. For
+this situations, mangoo I/O offers you the ability of cookie versioning. Basically, cookie
+versioning is based on an additional number which is stored in the cookie. Once this number
+changes, the signing of the cookie fails and the user is required to create a new cookie
+by creating a new session. By default, this version number starts with 0. You can increase or change
+this number by setting the appropriate property in the application.yml.
+
+[source,yaml]
+----------------------
+application:
+      cookie:
+          version : 1
+----------------------
+
+Once you set this new version, the session cookie on the client side will be invalidated and
+the user gets a new session cookie with the current version.
+
+[WARN]
+Be very careful with this feature, as it directly effects the user experience of your users.
+
 == Flash
 
 Specially when working with forms it is useful to pass certain
@@ -1157,6 +1181,30 @@ is completily up to you.
 
 You can also access the original OAuthResponse by calling the appropriate getter which gives you a string representation of the
 JSON reponse from the OAuth provider.
+
+=== Authentication cookie versioning
+
+As mentioned, the authentication data is stored at the client side in a cookie.
+
+There may be situations where you are required to invalidate this cookie at the client side. For
+this situations, mangoo I/O offers you the ability of cookie versioning. Basically, cookie
+versioning is based on an additional number which is stored in the cookie. Once this number
+changes, the signing of the cookie fails and the user is required to create a new cookie
+by creating a new authentication. By default, this version number starts with 0. You can increase or change
+this number by setting the appropriate property in the application.yml.
+
+[source,yaml]
+----------------------
+auth:
+  cookie:
+      version : 1
+----------------------
+
+Once you set this new version, the authentication cookie on the client side will be invalidated and
+the user gets a new authentication cookie with the new version once he signs in again.
+
+[WARN]
+Be very careful with this feature, as it directly effects the user experience of your users.
 
 == ETag for dynamic content
 
@@ -2328,6 +2376,8 @@ as a fallback value for Locale
 
 |application.admin.cache |Enable or disable administrative /@cache url |false|
 
+|cookie.version |Sets the version of a session cookie |0|
+
 |cookie.name |The name of the session cookie |$application.name-MANGOOIO-SESSION|
 
 |cookie.expires |The time in seconds when the session expires |86400|
@@ -2360,6 +2410,8 @@ in even is the browser is closed |3600|
 
 |auth.cookie.encrypt |Whether to encrypt the authentication cookie or
 not |false|
+
+|auth.cookie.version |Sets the version of an authentication cookie |0|
 
 |auth.cookie.secure |Whether to set the secure flag for the auth cookie or not |false|
 

@@ -364,7 +364,7 @@ public class RequestHandler implements HttpHandler {
         if (this.session != null && this.session.hasChanges()) {
             String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
-            String version = this.config.getApplicationCookieVersion();
+            String version = this.config.getCookieVersion();
             String authenticityToken = this.session.getAuthenticityToken();
             LocalDateTime expires = this.session.getExpires();
             StringBuilder buffer = new StringBuilder()

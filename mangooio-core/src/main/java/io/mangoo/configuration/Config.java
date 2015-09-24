@@ -394,7 +394,7 @@ public class Config {
         return getString(Key.AUTH_COOKIE_VERSION, Default.AUTH_COOKIE_VERSION.toString());
     }
 
-    public String getApplicationCookieVersion() {
-        return getString(Key.APPLICATION_COOKIE_VERSION, Default.APPLICATION_COOKIE_VERSION.toString());
+    public String getCookieVersion() {
+        return getString(Key.COOKIE_VERSION, Default.COOKIE_VERSION.toString());
     }
 }
