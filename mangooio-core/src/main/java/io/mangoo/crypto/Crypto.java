@@ -1,5 +1,7 @@
 package io.mangoo.crypto;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -38,7 +41,7 @@ public class Crypto {
 
     @Inject
     public Crypto(Config config) {
-        this.config = config;
+        this.config = Objects.requireNonNull(config, "config can not be null");
     }
 
     /**
@@ -48,6 +51,8 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
+        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
+
         return decrypt(encrytedText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
     }
 
@@ -59,6 +64,9 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
+        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
+        Preconditions.checkNotNull(key, "key can not be null");
+
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
 
         String plainText = null;
@@ -78,7 +86,9 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        return encrypt(plainText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
+        Preconditions.checkNotNull(plainText, "plainText can not be null");
+
+        return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
     }
 
     /**
@@ -92,6 +102,9 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
+        Preconditions.checkNotNull(plainText, "plainText can not be null");
+        Preconditions.checkNotNull(key, "key can not be null");
+
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
 
         String encrytedText = null;

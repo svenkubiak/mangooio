@@ -33,6 +33,8 @@ public class Cache {
 
     @Inject
     public Cache(Config config) {
+        Preconditions.checkNotNull(config, "config can not be null");
+
         CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
                 .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS);

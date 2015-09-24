@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
@@ -36,6 +37,9 @@ public class Config {
     }
 
     public Config(String configFile, Mode mode) {
+        Preconditions.checkNotNull(configFile, "configFile can not be null");
+        Preconditions.checkNotNull(mode, "mode can not be null");
+
         init(configFile, mode);
     }
 
@@ -396,5 +400,9 @@ public class Config {
 
     public String getCookieVersion() {
         return getString(Key.COOKIE_VERSION, Default.COOKIE_VERSION.toString());
+    }
+
+    public boolean isSmtpSSL() {
+        return getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
     }
 }

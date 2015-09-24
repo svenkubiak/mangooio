@@ -1,11 +1,14 @@
 package io.mangoo.mail;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.MultiPartEmail;
+import org.scribe.utils.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +16,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
 /**
@@ -32,11 +34,11 @@ public class Mailer {
 
     @Inject
     public Mailer(Config config) {
-        this.config = config;
+        this.config = Objects.requireNonNull(config, "config can not be null");
 
-        this.host = this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString());
-        this.port = this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt());
-        this.ssl = this.config.getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
+        this.host = this.config.getSmtpHost();
+        this.port = this.config.getSmtpPort();
+        this.ssl = this.config.isSmtpSSL();
 
         String username = this.config.getString(Key.SMTP_USERNAME, null);
         String password = this.config.getString(Key.SMTP_PASSWORD, null);
@@ -53,6 +55,8 @@ public class Mailer {
      * @param email The email to send
      */
     public void send(Email email) {
+        Preconditions.checkNotNull(email, "email can not be null");
+
         email.setHostName(this.host);
         email.setSmtpPort(this.port);
         email.setAuthenticator(this.defaultAuthenticator);
@@ -73,6 +77,8 @@ public class Mailer {
      * @param multiPartEmail The multi part email to send
      */
     public void send(MultiPartEmail multiPartEmail) {
+        Preconditions.checkNotNull(multiPartEmail, "multiPartEmail can not be null");
+
         multiPartEmail.setHostName(this.host);
         multiPartEmail.setSmtpPort(this.port);
         multiPartEmail.setAuthenticator(this.defaultAuthenticator);
@@ -93,6 +99,8 @@ public class Mailer {
      * @param htmlEmail The HTML email to send
      */
     public void send(HtmlEmail htmlEmail) {
+        Preconditions.checkNotNull(htmlEmail, "htmlEmail can not be null");
+
         htmlEmail.setHostName(this.host);
         htmlEmail.setSmtpPort(this.port);
         htmlEmail.setAuthenticator(this.defaultAuthenticator);

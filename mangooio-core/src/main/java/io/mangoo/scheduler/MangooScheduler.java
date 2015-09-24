@@ -35,6 +35,9 @@ public class MangooScheduler {
 
     @Inject
     public MangooScheduler(MangooJobFactory quartzJobFactory, Config config) {
+        Preconditions.checkNotNull(quartzJobFactory, "quartzJobFactory can not be null");
+        Preconditions.checkNotNull(config, "config can not be null");
+
         for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
             if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
                 System.setProperty(entry.getKey(), entry.getValue());
