@@ -385,4 +385,12 @@ public class Config {
     public boolean isAdminMetricsEnabled() {
         return getBoolean(Key.APPLICATION_ADMIN_METRICS, Default.APPLICATION_ADMIN_METRICS.toBoolean());
     }
+
+    public boolean isAuthenticationCookieEncrypt() {
+        return getBoolean(Key.AUTH_COOKIE_ENCRYPT, Default.AUTH_COOKIE_ENCRYPT.toBoolean());
+    }
+
+    public String getCookieVersion() {
+        return getString(Key.AUTH_COOKIE_VERSION, Default.AUTH_COOKIE_VERSION.toString());
+    }
 }

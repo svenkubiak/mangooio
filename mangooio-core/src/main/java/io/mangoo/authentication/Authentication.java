@@ -8,9 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.models.OAuthUser;
 
@@ -21,49 +19,69 @@ import io.mangoo.models.OAuthUser;
  */
 public class Authentication {
     private static final Logger LOG = LoggerFactory.getLogger(Authentication.class);
-    private Config config;
     private LocalDateTime expires;
     private String authenticatedUser;
     private OAuthUser oAuthUser;
     private boolean remember;
     private boolean loggedOut;
 
-    @Inject
-    public Authentication(Config config) {
-        this.config = config;
-        this.expires = LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires());
-    }
-
-    public Authentication(Config config, String authenticatedUser, LocalDateTime expires) {
-        this.config = config;
+    public Authentication(LocalDateTime expires, String authenticatedUser) {
         this.expires = expires;
         this.authenticatedUser = authenticatedUser;
     }
 
+    /**
+     * Retrieves the current authenticated user
+     *
+     * @return The username of the current authenticated user or null
+     */
     public String getAuthenticatedUser() {
         return this.authenticatedUser;
     }
 
+    /**
+     * Returns the LocalDateTime when the authentication expires
+     *
+     * @return A LocalDateTime object or null if unset
+     */
     public LocalDateTime getExpires() {
         return expires;
     }
 
-    public void setExpires(LocalDateTime localDateTime) {
-        this.expires = localDateTime;
-    }
-
+    /**
+     * @return True if the user wants to logout, false otherwise
+     */
     public boolean isLogout() {
         return loggedOut;
     }
 
+    /**
+     *
+     * @return True if the user wants to stay logged in, false otherwise
+     */
     public boolean isRemember() {
         return remember;
     }
 
+    /**
+     * Sets an OAuthUser to the current authentication. Can only be set
+     * once!
+     *
+     * @param oAuthUser An OAuthUser
+     */
     public void setOAuthUser(OAuthUser oAuthUser) {
-        this.oAuthUser = oAuthUser;
+        if (this.oAuthUser == null) {
+            this.oAuthUser = oAuthUser;
+        }
     }
 
+    /**
+     * Retrieves the current OAuthUser from the authentication
+     * Note: This is only available during a OAuth authentication in a
+     * method that is annotated with @OAuthCallbackFilter
+     *
+     * @return The current OAuthUser instance or null if undefined
+     */
     public OAuthUser getOAuthUser() {
         return this.oAuthUser;
     }

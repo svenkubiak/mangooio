@@ -267,11 +267,24 @@ public class RequestHandler implements HttpHandler {
         return invokedResponse;
     }
 
+    /**
+     * Returns the complete path to the template based on the
+     * controller and method name
+     *
+     * @param response The current response
+     *
+     * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
+     */
     private String getTemplatePath(Response response) {
         return StringUtils.isBlank(response.getTemplate()) ? this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName()) : response.getTemplate();
     }
 
-    private Session getSession(HttpServerExchange exchange) {
+    /**
+     * Retrieves the current session from the HttpServerExchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
+    private void getSession(HttpServerExchange exchange) {
         Session requestSession = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
         if (cookie != null) {
@@ -306,96 +319,122 @@ public class RequestHandler implements HttpHandler {
                                 sessionValues.put(entry.getKey(), entry.getValue());
                             }
                         }
-                        requestSession = new Session(sessionValues);
-                        requestSession.setAuthenticityToken(authenticityToken);
-                        requestSession.setExpires(expiresDate);
+                        requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                     }
                 }
             }
         }
 
         if (requestSession == null) {
-            requestSession = new Session();
-            requestSession.setAuthenticityToken(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH));
-            requestSession.setExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
+            requestSession = new Session(new HashMap<String, String>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
         this.session = requestSession;
-
-        return requestSession;
     }
 
+    /**
+     * Sets the session cookie to the current HttpServerExchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
     private void setSessionCookie(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
             String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
 
+            String authenticityToken = this.session.getAuthenticityToken();
+            LocalDateTime expires = this.session.getExpires();
             StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(data + this.session.getAuthenticityToken() + this.session.getExpires() + this.config.getApplicationSecret()))
+                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()))
                     .append(Default.DELIMITER.toString())
-                    .append(this.session.getAuthenticityToken())
+                    .append(authenticityToken)
                     .append(Default.DELIMITER.toString())
-                    .append(this.session.getExpires())
+                    .append(expires)
                     .append(Default.DATA_DELIMITER.toString())
                     .append(data);
 
             String value = buffer.toString();
-            if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
-                Crypto crypto = this.injector.getInstance(Crypto.class);
-                value = crypto.encrypt(value);
+            if (this.config.isAuthenticationCookieEncrypt()) {
+                value = this.injector.getInstance(Crypto.class).encrypt(value);
             }
 
             Cookie cookie = new CookieImpl(this.config.getString(Key.COOKIE_NAME), value)
                     .setSecure(this.config.isSessionCookieSecure())
                     .setHttpOnly(true)
                     .setPath("/")
-                    .setExpires(Date.from(this.session.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
+                    .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
 
             exchange.setResponseCookie(cookie);
         }
     }
 
-    private Authentication getAuthentication(HttpServerExchange exchange) {
+    /**
+     * Retrieves the current authentication from the HttpServerExchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
+    private void getAuthentication(HttpServerExchange exchange) {
         Authentication requestAuthentication = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
-                if (this.config.getBoolean(Key.AUTH_COOKIE_ENCRYPT.toString(), false)) {
-                    Crypto crypto = this.injector.getInstance(Crypto.class);
-                    cookieValue = crypto.decrypt(cookieValue);
+                if (this.config.isAuthenticationCookieEncrypt()) {
+                    cookieValue = this.injector.getInstance(Crypto.class).decrypt(cookieValue);
                 }
 
                 String sign = null;
                 String expires = null;
+                String version = null;
                 String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+
+                    /**
+                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
+                     * introduced with version 1.2.0 for cookie versioning.
+                     */
                     if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
                         sign = prefixes [INDEX_0];
                         expires = prefixes [INDEX_1];
+                    } else if (prefixes != null && prefixes.length == (AUTH_PREFIX_LENGTH + 1)) {
+                        sign = prefixes [INDEX_0];
+                        expires = prefixes [INDEX_1];
+                        version = prefixes [INDEX_2];
                     }
                 }
 
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
-                    String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
+                    String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + expires + this.config.getApplicationSecret()).equals(sign)) {
-                        requestAuthentication = new Authentication(this.config, data, expiresDate);
+
+                    /**
+                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
+                     */
+                    if (StringUtils.isBlank(version)) {
+                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + this.config.getApplicationSecret()).equals(sign)) {
+                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
+                        }
+                    } else {
+                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
+                        }
                     }
                 }
             }
         }
 
         if (requestAuthentication == null) {
-            requestAuthentication = new Authentication(this.config);
-            requestAuthentication.setExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()));
+            requestAuthentication = new Authentication(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()), null);
         }
 
         this.authentication = requestAuthentication;
-
-        return requestAuthentication;
     }
 
+    /**
+     * Sets the authentication cookie to the current HttpServerExchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
     private void setAuthenticationCookie(HttpServerExchange exchange) {
         if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
             Cookie cookie;
@@ -408,15 +447,22 @@ public class RequestHandler implements HttpHandler {
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
+                String authenticatedUser = this.authentication.getAuthenticatedUser();
+                LocalDateTime expires = this.authentication.getExpires();
+                String version = this.config.getCookieVersion();
+                String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret());
+
                 StringBuilder buffer = new StringBuilder()
-                        .append(DigestUtils.sha512Hex(this.authentication.getAuthenticatedUser() + this.authentication.getExpires() + this.config.getApplicationSecret()))
+                        .append(sign)
                         .append(Default.DELIMITER.toString())
-                        .append(this.authentication.getExpires())
+                        .append(expires)
+                        .append(Default.DELIMITER.toString())
+                        .append(version)
                         .append(Default.DATA_DELIMITER.toString())
-                        .append(this.authentication.getAuthenticatedUser());
+                        .append(authenticatedUser);
 
                 String value = buffer.toString();
-                if (this.config.getBoolean(Key.AUTH_COOKIE_ENCRYPT, false)) {
+                if (this.config.isAuthenticationCookieEncrypt()) {
                     value = this.injector.getInstance(Crypto.class).encrypt(value);
                 }
 
@@ -424,13 +470,18 @@ public class RequestHandler implements HttpHandler {
                         .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setPath("/")
-                        .setExpires(Date.from(this.authentication.getExpires().atZone(ZoneId.systemDefault()).toInstant()));
+                        .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
             }
 
             exchange.setResponseCookie(cookie);
         }
     }
 
+    /**
+     * Retrieves the flash cookie from the current
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
     private void getFlash(HttpServerExchange exchange) {
         Flash requestFlash = null;
         Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
@@ -451,6 +502,11 @@ public class RequestHandler implements HttpHandler {
         this.flash = requestFlash;
     }
 
+    /**
+     * Sets the flash cookie to current HttpServerExchange
+     *
+     * @param exchange The Undertow HttpServerExchange
+     */
     private void setFlashCookie(HttpServerExchange exchange) {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
@@ -495,9 +551,9 @@ public class RequestHandler implements HttpHandler {
                 for (String data : formData) {
                     for (FormData.FormValue formValue : formData.get(data)) {
                         if (formValue.isFile()) {
-                            form.addFile(formValue.getFile());
+                            this.form.addFile(formValue.getFile());
                         } else {
-                            form.addValue(new HttpString(data).toString(), formValue.getValue());
+                            this.form.addValue(new HttpString(data).toString(), formValue.getValue());
                         }
                     }
                 }

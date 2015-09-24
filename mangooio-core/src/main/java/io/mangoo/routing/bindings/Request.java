@@ -35,9 +35,9 @@ public class Request implements MangooValidator {
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;
         this.body = body;
-        this.validator = Application.getInjector().getInstance(Validator.class);
         this.parameter = parameter;
-        this.validator.setValues(parameter);
+        this.validator = Application.getInjector().getInstance(Validator.class);
+        this.validator.setValues(this.parameter);
     }
 
     /**
@@ -106,16 +106,6 @@ public class Request implements MangooValidator {
      */
     public Map<String, String> getParameter() {
         return this.parameter;
-    }
-
-    @Override
-    public Validator validation() {
-        return this.validator;
-    }
-
-    @Override
-    public String getError(String name) {
-        return this.validator.hasError(name) ? this.validator.getError(name) : "";
     }
 
     /**
@@ -214,5 +204,15 @@ public class Request implements MangooValidator {
      */
     public String getPath() {
         return this.httpServerExchange.getRequestPath();
+    }
+
+    @Override
+    public Validator validation() {
+        return this.validator;
+    }
+
+    @Override
+    public String getError(String name) {
+        return this.validator.hasError(name) ? this.validator.getError(name) : "";
     }
 }

@@ -3,12 +3,12 @@ package io.mangoo.routing.bindings;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.mangoo.core.Bootstrap;
-
 
 /**
  *
@@ -17,16 +17,15 @@ import io.mangoo.core.Bootstrap;
  */
 public class Session {
     private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values;
     private String authenticityToken;
     private boolean changed;
     private LocalDateTime expires;
 
-    public Session() {
-    }
-
-    public Session(Map<String, String> values) {
-        this.values = values;
+    public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
+        this.values = Optional.ofNullable(values).orElse(new HashMap<String, String>());
+        this.authenticityToken = authenticityToken;
+        this.expires = expires;
     }
 
     public boolean hasContent() {
@@ -35,6 +34,14 @@ public class Session {
 
     public String get(String key) {
         return this.values.get(key);
+    }
+
+    public Map<String, String> getValues() {
+        return this.values;
+    }
+
+    public LocalDateTime getExpires() {
+        return this.expires;
     }
 
     /**
@@ -72,28 +79,18 @@ public class Session {
         this.values = new HashMap<String, String>();
     }
 
+    /**
+     * @return True if a session values has change, be removed or the session has been cleared, false otherwise
+     */
     public boolean hasChanges() {
         return this.changed;
     }
 
-    public Map<String, String> getValues() {
-        return this.values;
-    }
-
-    public LocalDateTime getExpires() {
-        return expires;
-    }
-
-    public void setExpires(LocalDateTime localDateTime) {
-        this.expires = localDateTime;
-    }
-
+    /**
+     * @return The current authenticity token and marks the session as changed
+     */
     public String getAuthenticityToken() {
         this.changed = true;
-        return authenticityToken;
-    }
-
-    public void setAuthenticityToken(String authenticityToken) {
-        this.authenticityToken = authenticityToken;
+        return this.authenticityToken;
     }
 }

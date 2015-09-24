@@ -9,11 +9,16 @@ import org.junit.Test;
 
 import io.mangoo.routing.bindings.Session;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 public class SessionTest {
 
     @Test
     public void testContent() {
-        Session session = new Session();
+        Session session = new Session(null, null, null);
         assertFalse(session.hasContent());
 
         session.add("foo", "bar");
@@ -22,7 +27,7 @@ public class SessionTest {
 
     @Test
     public void testRemove() {
-        Session session = new Session();
+        Session session = new Session(null, null, null);
         session.add("foo", "bar");
 
         assertEquals("bar", session.get("foo"));
@@ -33,7 +38,7 @@ public class SessionTest {
 
     @Test
     public void testClear() {
-        Session session = new Session();
+        Session session = new Session(null, null, null);
         session.add("foo", "bar");
         session.add("bla", "foobar");
 
