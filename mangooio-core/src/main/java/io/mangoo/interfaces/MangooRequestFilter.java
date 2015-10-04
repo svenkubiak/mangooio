@@ -10,5 +10,5 @@ import io.mangoo.routing.bindings.Request;
  */
 @FunctionalInterface
 public interface MangooRequestFilter {
-    public Response execute(Request request, Response reponse);
+    public Response execute(Request request, Response response);
 }

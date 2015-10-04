@@ -8,6 +8,7 @@
 * https://github.com/svenkubiak/mangooio/issues/57[#57] Added OAuth to authentication (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/61[#61] Move Body to Request (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/58[#58] Added @metrics administrative URL (svenkubiak)
+* Fixed typo in MangooRequestFilter interface (svenkubiak)
 * Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** undertow 1.2.12.Final -> 1.3.xx.Final
