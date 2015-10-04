@@ -13,6 +13,13 @@
 * Version bumps (svenkubiak)
 ** undertow 1.2.12.Final -> 1.3.xx.Final
 
+== Version 1.1.4
+
+[small]#Released at 04.10.2015#
+
+* Fixed bug when sending binary content (svenkubiak)
+* ExceptionHandler now preserves root cause when exception occurs (svenkubiak)
+
 == Version 1.1.3
 
 [small]#Released at 21.09.2015#
