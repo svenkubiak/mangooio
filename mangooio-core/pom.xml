@@ -43,6 +43,31 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<show>public</show>
+					<nohelp>true</nohelp>
+					<header>svenkubiak, ${project.version}</header>
+					<footer>svenkubiak, ${project.version}</footer>
+					<doctitle>svenkubiak, ${project.version}</doctitle>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-publish-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<checkoutDirectory>${project.build.directory}/scmpublish</checkoutDirectory>
+					<checkinComment>Publishing javadoc for ${project.artifactId}:${project.version}</checkinComment>
+					<content>${project.reporting.outputDirectory}/apidocs</content>
+					<skipDeletedFiles>true</skipDeletedFiles>
+					<pubScmUrl>scm:git:git@github.com:svenkubiak/mangooio.git</pubScmUrl>
+					<scmBranch>gh-pages</scmBranch>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
 				<version>1.4</version>
 				<configuration>
