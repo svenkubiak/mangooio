@@ -81,5 +81,8 @@ Here are some used libraries and their purpose in mangoo I/O.
 **Changelog**   
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 
+**Apidocs**   
+[http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)  
+
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
