@@ -13,20 +13,20 @@ import io.undertow.util.Headers;
  *
  */
 public class BinaryHandler implements HttpHandler {
-	private Response response;
-	
-	public BinaryHandler(Response response) {
-		this.response = response;
-	}
+    private Response response;
+    
+    public BinaryHandler(Response response) {
+        this.response = response;
+    }
 
-	@Override
-	public void handleRequest(HttpServerExchange exchange) throws Exception {
+    @Override
+    public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
         exchange.setStatusCode(this.response.getStatusCode());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-        exchange.getOutputStream().write(this.response.getBinaryContent());		
-	}
+        exchange.getOutputStream().write(this.response.getBinaryContent());        
+    }
 }

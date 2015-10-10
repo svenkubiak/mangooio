@@ -109,8 +109,8 @@ public class RequestHandler implements HttpHandler {
             exchange.dispatch(this);
             return;
         }
-    	
-    	this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        
+        this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
@@ -738,7 +738,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
-    	exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+        exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
     }
 
     /**

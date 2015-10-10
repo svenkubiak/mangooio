@@ -28,7 +28,7 @@ public class MangooAdminController {
     @Inject
     public MangooAdminController(Config config, Cache cache) {
         this.config = Objects.requireNonNull(config, "config is required for mangooAdminController");
-        this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");;
+        this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");
     }
 
     public Response health() {
