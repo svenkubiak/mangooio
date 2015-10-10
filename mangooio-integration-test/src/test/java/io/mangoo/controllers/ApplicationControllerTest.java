@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -23,7 +24,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
-import io.undertow.util.FileUtils;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -152,7 +152,7 @@ public class ApplicationControllerTest {
             httpclient.close();
         }
 
-        assertEquals("This is an attachment", FileUtils.readFile(file));
+        assertEquals("This is an attachment", FileUtils.readFileToString(file));
         assertTrue(file.delete());
     }
 

@@ -22,7 +22,7 @@ public class BinaryHandler implements HttpHandler {
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
-        exchange.setResponseCode(this.response.getStatusCode());
+        exchange.setStatusCode(this.response.getStatusCode());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());

@@ -23,7 +23,7 @@ public class MetricsListener implements ResponseCommitListener {
     @Override
     public void beforeCommit(HttpServerExchange exchange) {
         if (!blacklist.contains(exchange.getRequestURI())) {
-            this.metrics.inc(exchange.getResponseCode());
+            this.metrics.inc(exchange.getStatusCode());
         }
     }
 }

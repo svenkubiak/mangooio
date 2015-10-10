@@ -105,7 +105,12 @@ public class RequestHandler implements HttpHandler {
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        if (RequestUtils.isPostOrPut(exchange) && exchange.isInIoThread()) {
+            exchange.dispatch(this);
+            return;
+        }
+    	
+    	this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
@@ -576,7 +581,7 @@ public class RequestHandler implements HttpHandler {
                 for (String data : formData) {
                     for (FormData.FormValue formValue : formData.get(data)) {
                         if (formValue.isFile()) {
-                            this.form.addFile(formValue.getFile());
+                            this.form.addFile(formValue.getPath().toFile());
                         } else {
                             this.form.addValue(new HttpString(data).toString(), formValue.getValue());
                         }
@@ -699,7 +704,7 @@ public class RequestHandler implements HttpHandler {
      * @param response The response object
      */
     private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
-        exchange.setResponseCode(StatusCodes.FOUND);
+        exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
@@ -713,7 +718,7 @@ public class RequestHandler implements HttpHandler {
      * @param response The response object
      */
     private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
-        exchange.setResponseCode(response.getStatusCode());
+        exchange.setStatusCode(response.getStatusCode());
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
@@ -749,7 +754,7 @@ public class RequestHandler implements HttpHandler {
             String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
             String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
-                exchange.setResponseCode(StatusCodes.NOT_MODIFIED);
+                exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
                 responseBody = "";
             } else {
                 exchange.getResponseHeaders().put(Headers.ETAG, etag);
