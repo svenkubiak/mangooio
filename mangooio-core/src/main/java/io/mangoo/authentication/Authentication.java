@@ -24,6 +24,9 @@ public class Authentication {
     private OAuthUser oAuthUser;
     private boolean remember;
     private boolean loggedOut;
+    
+    public Authentication() {
+    }
 
     public Authentication(LocalDateTime expires, String authenticatedUser) {
         this.expires = expires;
