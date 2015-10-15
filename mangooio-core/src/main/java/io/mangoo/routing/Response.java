@@ -40,6 +40,9 @@ public final class Response {
     private boolean rendered;
     private boolean redirect;
     private int statusCode = StatusCodes.OK;
+    
+    public Response(){
+    }
 
     private Response(int statusCode) {
         this.statusCode = statusCode;

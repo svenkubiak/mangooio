@@ -21,6 +21,9 @@ public class Session {
     private String authenticityToken;
     private boolean changed;
     private LocalDateTime expires;
+    
+    public Session(){
+    }
 
     public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
         this.values = Optional.ofNullable(values).orElse(new HashMap<String, String>());
