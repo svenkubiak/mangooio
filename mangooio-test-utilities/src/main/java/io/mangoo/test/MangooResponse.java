@@ -15,8 +15,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
@@ -131,6 +133,24 @@ public class MangooResponse {
             }
 
             return doRequest(httpPost);
+        } else if (this.responseMethod.equals(Methods.PUT)) {
+            HttpPut httpPut = new HttpPut(responseUrl + responseUri);
+
+            try {
+                if (StringUtils.isNotBlank(this.responseRequestBody)) {
+                    httpPut.setEntity(new StringEntity(this.responseRequestBody));
+                } else {
+                    httpPut.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
+                }
+            } catch (UnsupportedEncodingException e) {
+                LOG.error("Failed to create HttpPut request", e);
+            }
+
+            return doRequest(httpPut);     
+        } else if (this.responseMethod.equals(Methods.DELETE)) {
+            HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
+
+            return doRequest(httpDelete);
         }
 
         return this;

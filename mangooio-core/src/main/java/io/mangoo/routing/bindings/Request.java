@@ -29,6 +29,9 @@ public class Request implements MangooValidator {
     private Authentication authentication;
     private Validator validator;
     private Map<String, String> parameter;
+    
+    public Request(){
+    }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
         this.httpServerExchange = Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");

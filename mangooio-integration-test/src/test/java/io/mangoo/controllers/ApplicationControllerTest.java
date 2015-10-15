@@ -188,4 +188,36 @@ public class ApplicationControllerTest {
         assertEquals(StatusCodes.NOT_MODIFIED, response.getStatusCode());
         assertEquals("", response.getContent());
     }
+    
+    @Test 
+    public void postTest() {
+        MangooResponse response = MangooRequest.post("/post").requestBody("winter is coming!").execute();
+        
+        assertNotNull(response);
+        assertEquals("winter is coming!", response.getContent());
+    }
+    
+    @Test 
+    public void putTest() {
+        MangooResponse response = MangooRequest.put("/put").requestBody("king of the north!").execute();
+        
+        assertNotNull(response);
+        assertEquals("king of the north!", response.getContent());
+    }
+    
+    @Test 
+    public void jsonPathPostTest() {
+        MangooResponse response = MangooRequest.post("/jsonpathpost").requestBody("{\"foo\":\"bar\"}").execute();
+        
+        assertNotNull(response);
+        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+    }
+    
+    @Test 
+    public void jsonPathPutTest() {
+        MangooResponse response = MangooRequest.put("/jsonpathput").requestBody("{\"foo\":\"bar\"}").execute();
+        
+        assertNotNull(response);
+        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+    }
 }

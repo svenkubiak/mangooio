@@ -50,7 +50,23 @@ public class ApplicationController {
     public Response request(Request request) {
         return Response.withOk().andTextBody(request.getURI());
     }
+    
+    public Response post(Request request) {
+        return Response.withOk().andTextBody(request.getBody());
+    }
 
+    public Response put(Request request) {
+        return Response.withOk().andTextBody(request.getBody());
+    }
+
+    public Response jsonPathPost(Request request) {
+        return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
+    }
+    
+    public Response jsonPathPut(Request request) {
+        return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
+    }
+    
     public Response header() {
         return Response
                 .withOk()
