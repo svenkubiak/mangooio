@@ -67,6 +67,14 @@ public class ApplicationController {
         return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
     }
     
+    public Response jsonBoonPost(Request request) {
+        return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
+    }
+    
+    public Response jsonBoonPut(Request request) {
+        return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
+    }
+    
     public Response header() {
         return Response
                 .withOk()

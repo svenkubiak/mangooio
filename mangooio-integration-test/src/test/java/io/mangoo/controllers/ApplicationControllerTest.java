@@ -220,4 +220,20 @@ public class ApplicationControllerTest {
         assertNotNull(response);
         assertEquals("{\"foo\":\"bar\"}", response.getContent());
     }
+    
+    @Test 
+    public void jsonBoonPostTest() {
+        MangooResponse response = MangooRequest.post("/jsonboonpost").requestBody("{\"foo\":\"bar\"}").execute();
+        
+        assertNotNull(response);
+        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+    }
+    
+    @Test 
+    public void jsonBoonPutTest() {
+        MangooResponse response = MangooRequest.put("/jsonboonput").requestBody("{\"foo\":\"bar\"}").execute();
+        
+        assertNotNull(response);
+        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+    }
 }

@@ -34,6 +34,8 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.PUT).toUrl("/put").onClassAndMethod(ApplicationController.class, "put");
         Router.mapRequest(Methods.POST).toUrl("/jsonpathpost").onClassAndMethod(ApplicationController.class, "post");
         Router.mapRequest(Methods.PUT).toUrl("/jsonpathput").onClassAndMethod(ApplicationController.class, "put");
+        Router.mapRequest(Methods.POST).toUrl("/jsonboonpost").onClassAndMethod(ApplicationController.class, "post");
+        Router.mapRequest(Methods.PUT).toUrl("/jsonboonput").onClassAndMethod(ApplicationController.class, "put");   
         
         Router.mapRequest(Methods.POST).toUrl("/form").onClassAndMethod(FormController.class, "form");
 
