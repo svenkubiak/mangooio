@@ -45,7 +45,7 @@ at home from the start
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
-* Buil-in asset minification in development mode
+* Built-in asset minification in development mode
 * Flexible testing tools
 * Simple Deployment and CI-Integration
 * i18N Internationalization
@@ -59,14 +59,14 @@ code changes don't decrease the framework performance.
 
 Here are some used libraries and their purpose in mangoo I/O.
 
-* Maven - Dependency management, built-system, packaging
-* Undertow - Web Server
-* Google Guice - Dependency injection
-* Logback - Logging
-* Freemarker - Template engine
-* Quartz Scheduler - Scheduling
-* Guava Cache - Caching
-* Boon JSON - JSON parser
+* [Maven](https://maven.apache.org/) - Dependency management, built-system, packaging
+* [Undertow](http://undertow.io/) - Web Server
+* [Google Guice](https://github.com/google/guice) - Dependency injection
+* [Logback](http://logback.qos.ch/) - Logging
+* [Freemarker](http://freemarker.org/) - Template engine
+* [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
+* [Google Guava](https://github.com/google/guava) - Caching
+* [Boon JSON](https://github.com/boonproject/boon) - JSON parser
 * And many more ...
 
 **Homepage**   
