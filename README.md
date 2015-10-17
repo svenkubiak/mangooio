@@ -69,6 +69,9 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Boon JSON](https://github.com/boonproject/boon) - JSON parser
 * And many more ...
 
+**mangoo I/O in 2 Minutes**   
+[Google Presentation](https://docs.google.com/presentation/d/1wzWMA_3ePu8HUjVfBk0QagwyO7ZaIkrZWGdqRePt2is) 
+
 **Homepage**   
 [https://mangoo.io](https://mangoo.io) 
 
