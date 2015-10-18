@@ -6,7 +6,10 @@ import org.quartz.JobExecutionException;
 
 import com.google.inject.Singleton;
 
+import io.mangoo.annotations.Schedule;
+
 @Singleton
+@Schedule(cron = "0 0 3 * * ?")
 public class InfoJob implements Job {
 
     @Override

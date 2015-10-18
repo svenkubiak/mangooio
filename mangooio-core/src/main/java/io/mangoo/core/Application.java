@@ -3,7 +3,9 @@ package io.mangoo.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.Set;
 
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import com.google.common.io.Resources;
 import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
 
+import io.mangoo.annotations.Schedule;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -45,6 +48,7 @@ public final class Application {
         bootstrap.startFakeSMTP();
         fakeSMTP = bootstrap.getFakeSMTP();
 
+        bootstrap.startScheduler();
         bootstrap.startServer();
         bootstrap.applicationStarted();
 

@@ -151,7 +151,7 @@ public class MangooScheduler {
      *
      * @return A new JobDetail object
      */
-    public <T extends Job> JobDetail getJobDetail(Class<T> clazz, String identity, String jobGroupName) {
+    public <T extends Job> JobDetail getJobDetail(Class<? extends Job> clazz, String identity, String jobGroupName) {
         Preconditions.checkNotNull(clazz, "Class is required for new JobDetail");
         Preconditions.checkNotNull(identity, "Identity is required for new JobDetail");
         Preconditions.checkNotNull(jobGroupName, "JobeGroupName is required for new JobDetail");

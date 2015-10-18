@@ -9,8 +9,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +33,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import io.mangoo.admin.MangooAdminController;
+import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -41,6 +47,7 @@ import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
+import io.mangoo.scheduler.MangooScheduler;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.RoutingHandler;
@@ -241,6 +248,20 @@ public class Bootstrap {
             greenMail.start();
 
             this.fakeSMTP = greenMail;
+        }
+    }
+    
+    public void startScheduler() {
+        Set<Class<?>> jobs = new Reflections().getTypesAnnotatedWith(Schedule.class);
+        if (jobs != null && !jobs.isEmpty()) {
+            MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
+            for (Class<?> clazz : jobs) {
+                Schedule declaredAnnotation = clazz.getDeclaredAnnotation(Schedule.class);
+                JobDetail jobDetail = mangooScheduler.getJobDetail(clazz.asSubclass(Job.class), clazz.getSimpleName(), "mangooSchedulderGroup");
+                Trigger trigger = mangooScheduler.getTrigger(clazz.getSimpleName() + "trigger", declaredAnnotation.cron(), "mangooSchedulerTriggerGroup", ""); 
+                mangooScheduler.schedule(jobDetail, trigger);
+            }
+            mangooScheduler.start();
         }
     }
 
