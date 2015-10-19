@@ -69,6 +69,7 @@ public enum Default {
     APPLICATION_ADMIN_CONFIG("false"),
     APPLICATION_ADMIN_ROUTES("false"),
     APPLICATION_ADMIN_METRICS("false"),
+    APPLICATION_ADMIN_SCHEDULER("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
     COOKIE_VERSION("0"),

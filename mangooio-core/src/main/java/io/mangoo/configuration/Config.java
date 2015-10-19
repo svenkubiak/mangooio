@@ -390,6 +390,10 @@ public class Config {
         return getBoolean(Key.APPLICATION_ADMIN_METRICS, Default.APPLICATION_ADMIN_METRICS.toBoolean());
     }
 
+    public boolean isAdminSchedulerEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_SCHEDULER, Default.APPLICATION_ADMIN_SCHEDULER.toBoolean());
+    }
+    
     public boolean isAuthenticationCookieEncrypt() {
         return getBoolean(Key.AUTH_COOKIE_ENCRYPT, Default.AUTH_COOKIE_ENCRYPT.toBoolean());
     }

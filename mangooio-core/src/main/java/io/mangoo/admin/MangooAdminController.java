@@ -1,8 +1,20 @@
 package io.mangoo.admin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.Trigger.TriggerState;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
@@ -10,11 +22,14 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
+import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
+import io.mangoo.scheduler.MangooScheduler;
 
 /**
  *
@@ -22,13 +37,16 @@ import io.mangoo.routing.Router;
  *
  */
 public class MangooAdminController {
+    private static final Logger LOG = LoggerFactory.getLogger(MangooAdminController.class);
     private Config config;
+    private MangooScheduler mangooScheduler;
     private Cache cache;
 
     @Inject
-    public MangooAdminController(Config config, Cache cache) {
+    public MangooAdminController(Config config, Cache cache, MangooScheduler mangooScheduler) {
         this.config = Objects.requireNonNull(config, "config is required for mangooAdminController");
         this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");
+        this.mangooScheduler = Objects.requireNonNull(mangooScheduler, "mangooScheduler is required for mangooAdminController");
     }
 
     public Response health() {
@@ -97,6 +115,31 @@ public class MangooAdminController {
         return Response.withOk()
                 .andContent("metrics", metrics.getMetrics())
                 .andTemplate("defaults/metrics.ftl");
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Response scheduler() {
+        if (!Application.inDevMode() && !config.isAdminSchedulerEnabled()) {
+            return notFound();
+        }
+
+        Scheduler scheduler = this.mangooScheduler.getScheduler();
+        List<Job> jobs = new ArrayList<Job>();
+        try {
+            Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
+            for (JobKey jobKey : jobKeys) {
+                List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+                Trigger trigger = triggers.get(0);  
+                TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                jobs.add(new Job((TriggerState.PAUSED.equals(triggerState)) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
+            }
+        } catch (SchedulerException e) {
+            LOG.error("Failed to get jobs from scheduler", e);
+        }
+        
+        return Response.withOk()
+                .andContent("jobs", jobs)
+                .andTemplate("defaults/scheduler.ftl");
     }
 
     private Response notFound() {

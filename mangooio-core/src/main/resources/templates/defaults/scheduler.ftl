@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Application metrics</title>
+    <title>Application scheduler</title>
     <style><#include "css/skeleton.min.css"></style>
   <body>
     <div class="container">
       <div class="row">
       <div class="twelve columns">
-          <h1>Request metrics</h1>
+          <h1>Scheduler</h1>
       </div>
       </div>
       <div class="row">
@@ -23,16 +23,20 @@
           	<table class="u-full-width">
 			<thead>
 			<tr>
-				<th data-sort="string"><b>Status code</b></th>
-				<th data-sort="string"><b>Count</b></th>
+				<th data-sort="string"><b>Name</b></th>
+				<th data-sort="string"><b>Active</b></th>
+				<th data-sort="string"><b>Description</b></th>
+				<th data-sort="string"><b>Last execution</b></th>
+				<th data-sort="string"><b>Next execution</b></th>
 			</tr>
 			</thead>
 			<tbody class="searchable">
-			<#list metrics?keys as prop>
-				<tr>
-					<td>${prop}</td>
-					<td>${metrics?api.get(prop)}</td>
-				</tr>
+			<#list jobs as job>
+				<td>${job.name}</td>
+				<td>${job.active?string('yes', 'no')}</td>
+				<td>${job.description}</td>
+				<td><#if job.previousFireTime??>${job.previousFireTime}<#else>-</#if></td>
+				<td>${job.nextFireTime?string('dd.MM.yyyy HH:mm:ss')}</td>
 			</#list>
 		  	</tbody>
 		  </table>
