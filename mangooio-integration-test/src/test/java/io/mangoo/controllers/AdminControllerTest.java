@@ -65,7 +65,7 @@ public class AdminControllerTest {
     @Test
     public void schedulerTest() {
         MangooResponse response = MangooRequest.get("/@scheduler").execute();
-
+        
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertEquals(StatusCodes.OK, response.getStatusCode());

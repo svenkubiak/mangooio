@@ -12,21 +12,21 @@ public class Job {
     public Job(boolean active, String name, String description, Date nextFireTime, Date previousFireTime) {
         this.active = active;
         this.name = name;
-        this.nextFireTime = (Date) nextFireTime.clone();
-        this.previousFireTime = (Date) previousFireTime.clone();
+        this.nextFireTime = (nextFireTime != null) ? (Date) nextFireTime.clone() : null;
+        this.previousFireTime = (previousFireTime != null) ? (Date) previousFireTime.clone() : null;
         this.description = description;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Date getNextFireTime() {
-        return (Date) nextFireTime.clone();
+        return (this.nextFireTime != null) ? (Date) nextFireTime.clone() : null;
     }
 
     public Date getPreviousFireTime() {
-        return (Date) previousFireTime.clone();
+        return (this.previousFireTime != null) ? (Date) previousFireTime.clone() : null;
     }
 
     public String getDescription() {
