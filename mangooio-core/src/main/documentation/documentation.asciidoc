@@ -1653,6 +1653,10 @@ scheduling is the default way of using the quartz scheduler.
 To create a new task, create a simple Pojo that implements the Job interface from
 the Quartz package.
 
+[WARN]
+By convention all automatically scheduled jobs have to be placed in a package called "jobs" for this
+feature to work
+
 [source,java]
 -----------------------------------------------------------------------------------------------------
 package jobs;

@@ -48,6 +48,12 @@ public class MangooAdminFilter implements MangooFilter {
         return Response.withNotFound().andEmptyBody().end();
     }
     
+    /**
+     * Checks via a basic HTTP authentication if user is authenticated
+     * 
+     * @param request The current HTTP request
+     * @return True if credentials are valid, false otherwise
+     */
     private boolean isAuthenticated(Request request) {
         String username = null;
         String password = null;
@@ -70,6 +76,12 @@ public class MangooAdminFilter implements MangooFilter {
                config.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
     }
 
+    /**
+     * Checks if a administrative URL enabled
+     * 
+     * @param url The url to check
+     * @return True if in dev mode or specificaly enabled, false otherwise
+     */
     private boolean urlIsEnabled(String url) {
         boolean enabled;
         switch (url) {

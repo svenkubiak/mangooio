@@ -36,8 +36,8 @@ import io.mangoo.scheduler.MangooScheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
-    private Config config;
     private MangooScheduler mangooScheduler;
+    private Config config;
     private Cache cache;
 
     @Inject
