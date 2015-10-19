@@ -2,6 +2,11 @@ package io.mangoo.models;
 
 import java.util.Date;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class Job {
     private boolean active;
     private String name;
@@ -22,18 +27,18 @@ public class Job {
     }
 
     public Date getNextFireTime() {
-        return (this.nextFireTime != null) ? (Date) nextFireTime.clone() : null;
+        return (this.nextFireTime != null) ? (Date) this.nextFireTime.clone() : null;
     }
 
     public Date getPreviousFireTime() {
-        return (this.previousFireTime != null) ? (Date) previousFireTime.clone() : null;
+        return (this.previousFireTime != null) ? (Date) this.previousFireTime.clone() : null;
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public boolean isActive() {
-        return active;
+        return this.active;
     }
 }
