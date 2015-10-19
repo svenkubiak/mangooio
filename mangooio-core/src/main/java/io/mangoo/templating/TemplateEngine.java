@@ -54,10 +54,10 @@ public class TemplateEngine {
         this.configuration.setLocalizedLookup(false);
         this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
-
+        this.configuration.setAPIBuiltinEnabled(true);
+        
         if (Application.inDevMode()) {
             this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
-            this.configuration.setAPIBuiltinEnabled(true);
         } else {
             this.configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
             this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
