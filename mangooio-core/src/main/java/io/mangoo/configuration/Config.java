@@ -405,4 +405,8 @@ public class Config {
     public boolean isSmtpSSL() {
         return getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
     }
+
+    public boolean isSchedulerAutostart() {
+        return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
+    }
 }

@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Schedule {
-    String cron() default "";
+    String cron();
+    String description() default "";
 }

@@ -1438,8 +1438,7 @@ public class MyController {
 
 Filters are a way of executing code before each controller or each
 method is executed. To execute a filter before a controller or method,
-you can use the @FilterWith annotation. In fact, this is the only annotation
-that comes from the mangoo I/O framework directly.
+you can use the @FilterWith annotation.
 
 [source,java]
 ---------------------------
@@ -1645,10 +1644,50 @@ not found in the cache.
 == Scheduling
 
 mangoo I/O uses the http://quartz-scheduler.org[Quartz Scheduler
-Framework] for creating and executing periodic tasks. To create a new
-task, create a simple Pojo that implements the Job interface from
-Quartz.
+Framework] for creating and executing periodic tasks. The integration comes in two
+flavors: automatic scheduler start and manual scheduler start. Where the automatic
+scheduling is the default way of using the quartz scheduler.
 
+=== Automatic scheduler start
+
+To create a new task, create a simple Pojo that implements the Job interface from
+the Quartz package.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+package jobs;
+
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import com.google.inject.Singleton;
+
+@Singleton
+@Schedule(cron = "0 0 3 * * ?", description = "This is a job description")
+public class MyJob implements Job {
+
+    @Override
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        //Do nothing for now
+    }
+}
+-----------------------------------------------------------------------------------------------------
+
+To schedule the job, add the @Schedule annotation, which requires a cron expression for the execution and an
+optional description of the job. 
+
+[NOTE]
+Scheduling a job only works with cron expression.
+
+Once mangoo I/O starts, it will automatically pick up the @Schedule annotated classes, adds them
+to the scheduler and starts the scheduler.
+
+=== Manual scheduler start
+
+Again, start with creating a new task, by creating a simple Pojo, except *without* the @Schedule 
+annotation
+ 
 [source,java]
 -----------------------------------------------------------------------------------------------------
 package jobs;
@@ -2365,6 +2404,9 @@ as a fallback value for Locale
 
 |application.host |The address the undertow server is running on
 |127.0.0.1 |In 99% of all cases, this is the localhost
+
+|scheduler.autostart |Wether to autostart the scheduler or not
+|true |
 
 |application.port |The port the undertow server is listening on |8080|
 

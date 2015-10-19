@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
@@ -57,7 +58,8 @@ import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
 
 /**
- *
+ * Convenient methods for everything to start up the framework
+ * 
  * @author svenkubiak
  *
  */
@@ -252,16 +254,26 @@ public class Bootstrap {
     }
     
     public void startScheduler() {
-        Set<Class<?>> jobs = new Reflections().getTypesAnnotatedWith(Schedule.class);
-        if (jobs != null && !jobs.isEmpty()) {
-            MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
-            for (Class<?> clazz : jobs) {
-                Schedule declaredAnnotation = clazz.getDeclaredAnnotation(Schedule.class);
-                JobDetail jobDetail = mangooScheduler.getJobDetail(clazz.asSubclass(Job.class), clazz.getSimpleName(), "mangooSchedulderGroup");
-                Trigger trigger = mangooScheduler.getTrigger(clazz.getSimpleName() + "trigger", declaredAnnotation.cron(), "mangooSchedulerTriggerGroup", ""); 
-                mangooScheduler.schedule(jobDetail, trigger);
+        if (!this.error) {
+            Set<Class<?>> jobs = new Reflections().getTypesAnnotatedWith(Schedule.class);
+            if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
+                MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
+                for (Class<?> clazz : jobs) {
+                    Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
+                    if (CronExpression.isValidExpression(schedule.cron())) {
+                        JobDetail jobDetail = mangooScheduler.getJobDetail(clazz.asSubclass(Job.class), clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString());
+                        Trigger trigger = mangooScheduler.getTrigger(clazz.getSimpleName() + "-trigger", schedule.cron(), Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description()); 
+                        mangooScheduler.schedule(jobDetail, trigger);      
+                        LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
+                    } else {
+                        LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
+                        this.error = true;
+                    }
+                }
+                if (!this.error) {
+                    mangooScheduler.start();                    
+                }
             }
-            mangooScheduler.start();
         }
     }
 

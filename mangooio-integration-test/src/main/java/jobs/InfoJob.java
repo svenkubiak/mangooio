@@ -9,7 +9,7 @@ import com.google.inject.Singleton;
 import io.mangoo.annotations.Schedule;
 
 @Singleton
-@Schedule(cron = "0 0 3 * * ?")
+@Schedule(cron = "0 0 3 * * ?", description = "This is a job description")
 public class InfoJob implements Job {
 
     @Override

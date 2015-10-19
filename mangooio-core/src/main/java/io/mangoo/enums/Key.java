@@ -1,7 +1,7 @@
 package io.mangoo.enums;
 
 /**
- * Key strings for reading configuration propertie
+ * Key strings for reading configuration properties
  *
  * @author svenkubiak
  *
@@ -67,7 +67,8 @@ public enum Key {
     OAUTH_GOOGLE_CALLBACK("oauth.google.callback"),
     OAUTH_FACEBOOK_KEY("oauth.facebook.key"),
     OAUTH_FACEBOOK_SECRET("oauth.facebook.secret"),
-    OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback");
+    OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
+    SCHEDULER_AUTOSTART("scheduler.autostart");
 
     private final String value;
 

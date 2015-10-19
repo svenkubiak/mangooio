@@ -1,7 +1,7 @@
 package io.mangoo.enums;
 
 /**
- * Default values
+ * Default application values
  *
  * @author svenkubiak
  *
@@ -71,7 +71,10 @@ public enum Default {
     APPLICATION_ADMIN_METRICS("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
-    COOKIE_VERSION("0");
+    COOKIE_VERSION("0"),
+    SCHEDULER_AUTOSTART("true"),
+    SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
+    SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup");
 
     private final String value;
 
