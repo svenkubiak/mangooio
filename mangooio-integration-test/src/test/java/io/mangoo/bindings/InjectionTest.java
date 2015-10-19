@@ -13,6 +13,7 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.scheduler.MangooScheduler;
 import io.mangoo.test.MangooTestInstance;
 
 /**
@@ -35,5 +36,6 @@ public class InjectionTest {
         MangooTestInstance.IO.getInjector().getInstance(Mailer.class);
         MangooTestInstance.IO.getInjector().getInstance(Response.class);
         MangooTestInstance.IO.getInjector().getInstance(Request.class);
+        MangooTestInstance.IO.getInjector().getInstance(MangooScheduler.class);
     }
 }
