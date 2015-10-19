@@ -75,7 +75,8 @@ public enum Default {
     COOKIE_VERSION("0"),
     SCHEDULER_AUTOSTART("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
-    SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup");
+    SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
+    BASICAUTH_CREDENTIALS_LENGTH("2");
 
     private final String value;
 

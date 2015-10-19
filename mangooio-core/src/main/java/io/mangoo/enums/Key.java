@@ -26,6 +26,8 @@ public enum Key {
     APPLICATION_ADMIN_CONFIG("application.admin.config"),
     APPLICATION_ADMIN_METRICS("application.admin.metrics"),
     APPLICATION_ADMIN_SCHEDULER("application.admin.scheduler"),
+    APPLICATION_ADMIN_USERNAME("application.admin.username"),
+    APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),

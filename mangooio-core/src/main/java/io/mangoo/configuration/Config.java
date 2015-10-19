@@ -413,4 +413,16 @@ public class Config {
     public boolean isSchedulerAutostart() {
         return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
     }
+
+    public boolean isAdminAuthenticationEnabled() {
+        return StringUtils.isNotBlank(getString(Key.APPLICATION_ADMIN_USERNAME)) && StringUtils.isNotBlank(getString(Key.APPLICATION_ADMIN_PASSWORD));
+    }
+
+    public String getAdminAuthenticationUser() {
+        return getString(Key.APPLICATION_ADMIN_USERNAME);
+    }
+    
+    public String getAdminAuthenticationPassword() {
+        return getString(Key.APPLICATION_ADMIN_PASSWORD);
+    }    
 }
