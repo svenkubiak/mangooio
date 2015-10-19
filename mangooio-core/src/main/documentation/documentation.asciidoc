@@ -1237,6 +1237,7 @@ following administrative URLs are available
 /@config
 /@cache
 /@health
+/@scheduler
 -------------------------------------------
 
 [NOTE]
@@ -1263,6 +1264,26 @@ Displays a list of cache statistics including cache hits, cache misses, etc.
 ==== /@health
 
 Displays a simple health check by returning "alive".
+
+==== /@scheduler
+
+Displays a list of schedules jobs, their last and their next execution time.
+
+=== Authentication for administrative URLs
+
+By default no authentication is enabled for accessing the administrative URLs. This can be
+enabled by setting a username and a password in the application.yaml. This will tell the
+administrative URLs controller to check for a Basic HTTP authentication.
+
+[source,yaml]
+---------------------------------------------------------------
+application:
+	admin:
+    	username : admin
+        password : c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec
+---------------------------------------------------------------
+
+The password parameter expects a SHA512 hashed value.
 
 == Working with JSON
 
