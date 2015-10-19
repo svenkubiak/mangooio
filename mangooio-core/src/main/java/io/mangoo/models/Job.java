@@ -12,8 +12,8 @@ public class Job {
     public Job(boolean active, String name, String description, Date nextFireTime, Date previousFireTime) {
         this.active = active;
         this.name = name;
-        this.nextFireTime = nextFireTime;
-        this.previousFireTime = previousFireTime;
+        this.nextFireTime = (Date) nextFireTime.clone();
+        this.previousFireTime = (Date) previousFireTime.clone();
         this.description = description;
     }
 
@@ -22,11 +22,11 @@ public class Job {
     }
 
     public Date getNextFireTime() {
-        return nextFireTime;
+        return (Date) nextFireTime.clone();
     }
 
     public Date getPreviousFireTime() {
-        return previousFireTime;
+        return (Date) previousFireTime.clone();
     }
 
     public String getDescription() {

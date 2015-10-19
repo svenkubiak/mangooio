@@ -86,7 +86,7 @@ public class MangooAdminFilter implements MangooFilter {
         boolean enabled;
         switch (url) {
         case "@routes":
-            enabled = Application.inDevMode() || this.config.isAdminCacheEnabled();
+            enabled = Application.inDevMode() || this.config.isAdminRoutesEnabled();
             break;
         case "@config":
             enabled = Application.inDevMode() || this.config.isAdminConfigEnabled();
