@@ -38,6 +38,11 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @Singleton
 public class TemplateEngine {
     private Configuration configuration = new Configuration(VERSION);
