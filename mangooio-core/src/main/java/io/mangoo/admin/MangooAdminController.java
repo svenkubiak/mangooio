@@ -36,15 +36,13 @@ import io.mangoo.scheduler.MangooScheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
-    private MangooScheduler mangooScheduler;
     private Config config;
     private Cache cache;
 
     @Inject
-    public MangooAdminController(Config config, Cache cache, MangooScheduler mangooScheduler) {
+    public MangooAdminController(Config config, Cache cache) {
         this.config = Objects.requireNonNull(config, "config is required for mangooAdminController");
         this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");
-        this.mangooScheduler = Objects.requireNonNull(mangooScheduler, "mangooScheduler is required for mangooAdminController");
     }
 
     public Response health() {
@@ -97,7 +95,7 @@ public class MangooAdminController {
     }
     
     public Response scheduler() throws SchedulerException {
-        Scheduler scheduler = this.mangooScheduler.getScheduler();
+        Scheduler scheduler = Application.getInjector().getInstance(MangooScheduler.class).getScheduler();
 
         List<Job> jobs = new ArrayList<Job>();
         Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));

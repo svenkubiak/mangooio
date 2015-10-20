@@ -24,7 +24,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 /**
- * Convenient class for minification of css and js assets
+ * Convenient class for minification of CSS and JS files
  * Based on
  * https://github.com/davidB/yuicompressor-maven-plugin/blob/master/src/main/java/net_alchim31_maven_yuicompressor/YuiCompressorMojo.java
  *
@@ -87,17 +87,8 @@ public final class MinificationUtils {
         } catch (IOException e) {
             LOG.error("Failed to minify JS", e);
         } finally {
-            try {
-                if (inputStreamReader != null) {
-                    inputStreamReader.close();
-                }
-
-                if (outputStreamWriter != null) {
-                    outputStreamWriter.close();
-                }
-            } catch (IOException e) {
-                LOG.error("Failed to close reader/writer while minifing JS", e);
-            }
+            IOUtils.closeQuietly(inputStreamReader);
+            IOUtils.closeQuietly(outputStreamWriter);
         }
     }
 
@@ -125,17 +116,8 @@ public final class MinificationUtils {
         } catch (IOException e) {
             LOG.error("Failed to minify CSS", e);
         } finally {
-            try {
-                if (inputStreamReader != null) {
-                    inputStreamReader.close();
-                }
-
-                if (outputStreamWriter != null) {
-                    outputStreamWriter.close();
-                }
-            } catch (IOException e) {
-                LOG.error("Failed to close reader/writer while minifing CSS", e);
-            }
+            IOUtils.closeQuietly(inputStreamReader);
+            IOUtils.closeQuietly(outputStreamWriter);
         }
     }
 
@@ -171,17 +153,8 @@ public final class MinificationUtils {
         } catch (IOException e) {
             LOG.error("Failed to create gzipped file", e);
         } finally {
-            try {
-                if (outpuStream != null) {
-                    outpuStream.close();
-                }
-
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                LOG.error("Failed to close streams while creating gzipped file", e);
-            }
+            IOUtils.closeQuietly(outpuStream);
+            IOUtils.closeQuietly(inputStream);
         }
     }
 

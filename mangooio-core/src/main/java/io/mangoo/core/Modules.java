@@ -7,7 +7,8 @@ import com.google.inject.AbstractModule;
 import io.mangoo.scheduler.MangooJobFactory;
 
 /**
- *
+ * Framework specific Google Guice Modules
+ * 
  * @author svenkubiak
  *
  */

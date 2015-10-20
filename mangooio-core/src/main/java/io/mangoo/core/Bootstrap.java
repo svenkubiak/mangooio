@@ -1,6 +1,7 @@
 package io.mangoo.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -9,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +60,7 @@ import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
 
 /**
- * Convenient methods for everything to start up the framework
+ * Convenient methods for everything to start up a mangoo I/O application
  * 
  * @author svenkubiak
  *
@@ -69,23 +71,21 @@ public class Bootstrap {
     private LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
-    private Mode mode;
-    private Undertow undertow;
-    private GreenMail fakeSMTP;
-    private Injector injector;
     private Config config;
     private String host;
+    private Mode mode;
+    private Injector injector;
     private boolean error;
     private int port;
-
-    public void prepareApplication() {
+    
+    public Bootstrap() {
         this.start = LocalDateTime.now();
     }
 
-    public void prepareMode() {
-        String property = System.getProperty(Key.APPLICATION_MODE.toString());
-        if (StringUtils.isNotBlank(property)) {
-            switch (property.toLowerCase(Locale.ENGLISH)) {
+    public Mode prepareMode() {
+        String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
+        if (StringUtils.isNotBlank(applicationMode)) {
+            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
             case "dev"  : this.mode = Mode.DEV;
             break;
             case "test" : this.mode = Mode.TEST;
@@ -96,15 +96,21 @@ public class Bootstrap {
         } else {
             this.mode = Mode.PROD;
         }
+        
+        return this.mode;
     }
 
-    public void prepareInjector() {
+    public Injector prepareInjector() {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
-        this.config = this.injector.getInstance(Config.class);
-        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();
+        return this.injector;
+    }
+    
+    public void applicationInitialized() {
+        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();        
     }
 
     public void prepareConfig() {
+        this.config = this.injector.getInstance(Config.class);
         if (!this.config.hasValidSecret()) {
             LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
             this.error = true;
@@ -193,7 +199,7 @@ public class Bootstrap {
         return new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + postfix));
     }
 
-    public void startServer() {
+    public void startUndertow() {
         if (!this.error) {
             this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
             this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
@@ -204,8 +210,6 @@ public class Bootstrap {
                     .build();
 
             server.start();
-
-            this.undertow = server;
         }
     }
 
@@ -228,36 +232,41 @@ public class Bootstrap {
         return modules;
     }
 
-    public void applicationStarted() {
+    public void showLogo() {
         if (!this.error) {
             StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
-                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + Application.getVersion() + "\n");
+                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getVersion() + "\n");
             } catch (IOException e) {//NOSONAR
                 //intentionally left blank
             }
 
             LOG.info(logo.toString());
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
-            this.injector.getInstance(MangooLifecycle.class).applicationStarted();
-        }
-    }
-
-    public void startFakeSMTP() {
-        if (!this.error && !Mode.PROD.equals(Application.getMode())) {
-            GreenMail greenMail = new GreenMail(new ServerSetup(
-                    this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt()),
-                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), Default.FAKE_SMTP_PROTOCOL.toString()));
-            greenMail.start();
-
-            this.fakeSMTP = greenMail;
         }
     }
     
-    public void startScheduler() {
+    public void applicationStarted() {
+        this.injector.getInstance(MangooLifecycle.class).applicationStarted();
+    }
+
+    public GreenMail startGreenMail() {
+        GreenMail greenMail = null;
+        if (!this.error && !Mode.PROD.equals(Application.getMode())) {
+            greenMail = new GreenMail(new ServerSetup(
+                    this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt()),
+                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), Default.FAKE_SMTP_PROTOCOL.toString()));
+            greenMail.start();
+        }
+        
+        return greenMail;
+    }
+    
+    public void startQuartzScheduler() {
         if (!this.error) {
             Set<Class<?>> jobs = new Reflections("jobs").getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
+                System.out.println("fooo");
                 MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
                 for (Class<?> clazz : jobs) {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
@@ -294,24 +303,21 @@ public class Bootstrap {
             }
         }
     }
+    
+    private String getVersion() {
+        String version = Default.VERSION.toString();
+        try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            version = String.valueOf(properties.get(Key.VERSION.toString()));
+        } catch (IOException e) {
+            LOG.error("Failed to get application version", e);
+        }
 
-    public Mode getMode() {
-        return this.mode;
+        return version;
     }
 
-    public boolean isStarted() {
+    public boolean isApplicationStarted() {
         return !this.error;
-    }
-
-    public Injector getInjector() {
-        return this.injector;
-    }
-
-    public GreenMail getFakeSMTP() {
-        return this.fakeSMTP;
-    }
-
-    public Undertow getServer() {
-        return this.undertow;
     }
 }

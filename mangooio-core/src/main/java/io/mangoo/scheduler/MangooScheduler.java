@@ -44,7 +44,7 @@ public class MangooScheduler {
             }
         }
 
-        final SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         try {
             this.scheduler = schedulerFactory.getScheduler();
             this.scheduler.setJobFactory(quartzJobFactory);

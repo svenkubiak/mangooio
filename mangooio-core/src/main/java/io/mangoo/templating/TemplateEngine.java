@@ -76,6 +76,23 @@ public class TemplateEngine {
         this.baseDirectory = buffer.toString();
     }
 
+    /**
+     * Renders a template for a specific controller class and method
+     * 
+     * @param flash The current flash
+     * @param session The current session
+     * @param form The current Form
+     * @param messages The current messages 
+     * @param templatePath The path to the template to render
+     * @param content The content map which is passed to the template
+     * @return A rendered template
+     * 
+     * @throws TemplateNotFoundException
+     * @throws MalformedTemplateNameException
+     * @throws ParseException
+     * @throws IOException
+     * @throws TemplateException
+     */
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
         Template template = configuration.getTemplate(templatePath);
@@ -96,6 +113,18 @@ public class TemplateEngine {
         return processTemplate(content, template);
     }
 
+    /**
+     * When in dev mode, this method is used to pass the framework exception to the frontend
+     * 
+     * @param exchange A HttpServerExchange instance
+     * @param cause The throwable cause
+     * @param templateException True if the exceptions occurs during exception rendering, false otherwise
+     * @return A rendered template
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws TemplateException
+     */
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws FileNotFoundException, IOException, TemplateException {
         Writer writer = new StringWriter();

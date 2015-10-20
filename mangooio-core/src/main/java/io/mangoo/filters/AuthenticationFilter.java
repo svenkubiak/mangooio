@@ -19,7 +19,6 @@ import io.mangoo.routing.bindings.Request;
  *
  */
 public class AuthenticationFilter implements MangooFilter {
-
     private Config config;
 
     @Inject

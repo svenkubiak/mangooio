@@ -15,7 +15,7 @@ public enum MangooTestInstance {
     MangooTestInstance() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
-        this.fakeSMTP = Application.getFakeSMTP();
+        this.fakeSMTP = Application.getGreenMail();
         this.injector = Application.getInjector();
     }
 

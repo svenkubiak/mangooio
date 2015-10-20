@@ -11,7 +11,6 @@ import io.mangoo.routing.bindings.Request;
  *
  */
 public class AuthenticityFilter implements MangooFilter {
-
     @Override
     public Response execute(Request request, Response response) {
         if (!request.authenticityMatches()) {

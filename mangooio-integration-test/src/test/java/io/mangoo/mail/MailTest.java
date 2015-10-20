@@ -23,7 +23,7 @@ public class MailTest {
     @Before
     public void init() {
         mailer = Application.getInjector().getInstance(Mailer.class);
-        fakeSMTP = Application.getFakeSMTP();
+        fakeSMTP = Application.getGreenMail();
     }
     
     @Test

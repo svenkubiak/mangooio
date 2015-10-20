@@ -12,7 +12,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- *
+ * Factory method for passing Scheduler job instance to the Google Guice injector 
+ * 
  * @author svenkubiak
  *
  */

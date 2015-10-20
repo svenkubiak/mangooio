@@ -11,7 +11,6 @@ import io.mangoo.annotations.Schedule;
 @Singleton
 @Schedule(cron = "0 0 3 * * ?", description = "This is a job description")
 public class InfoJob implements Job {
-
     @Override
     public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         //Do nothing for now

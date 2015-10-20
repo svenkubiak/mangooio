@@ -78,8 +78,8 @@ public class MangooAdminFilter implements MangooFilter {
     /**
      * Checks if a administrative URL enabled
      * 
-     * @param url The url to check
-     * @return True enabled via application.yaml, false otherwise
+     * @param url The URL to check
+     * @return True when enabled via application.yaml, false otherwise
      */
     private boolean isURLEnabled(String url) {
         boolean enabled;
