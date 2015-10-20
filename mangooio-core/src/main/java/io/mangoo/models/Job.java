@@ -1,6 +1,7 @@
 package io.mangoo.models;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 
@@ -17,8 +18,8 @@ public class Job {
     public Job(boolean active, String name, String description, Date nextFireTime, Date previousFireTime) {
         this.active = active;
         this.name = name;
-        this.nextFireTime = (nextFireTime != null) ? (Date) nextFireTime.clone() : null;
-        this.previousFireTime = (previousFireTime != null) ? (Date) previousFireTime.clone() : null;
+        this.nextFireTime = Optional.ofNullable(nextFireTime).orElse((Date) (nextFireTime.clone()));
+        this.previousFireTime = Optional.ofNullable(previousFireTime).orElse((Date) (nextFireTime.clone()));
         this.description = description;
     }
 
@@ -27,11 +28,11 @@ public class Job {
     }
 
     public Date getNextFireTime() {
-        return (this.nextFireTime != null) ? (Date) this.nextFireTime.clone() : null;
+        return (this.nextFireTime == null) ? null : (Date) this.nextFireTime.clone();
     }
 
     public Date getPreviousFireTime() {
-        return (this.previousFireTime != null) ? (Date) this.previousFireTime.clone() : null;
+        return (this.previousFireTime == null) ? null : (Date) this.previousFireTime.clone();
     }
 
     public String getDescription() {

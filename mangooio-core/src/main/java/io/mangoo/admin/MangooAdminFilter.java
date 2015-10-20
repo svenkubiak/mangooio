@@ -11,7 +11,6 @@ import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
@@ -30,11 +29,11 @@ public class MangooAdminFilter implements MangooFilter {
     public MangooAdminFilter(Config config) {
         this.config = Objects.requireNonNull(config, "config can not be null");
     }
-
+    
     @Override
     public Response execute(Request request, Response response) {
         String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
-        if (urlIsEnabled(url)) {
+        if (isURLEnabled(url)) {
             if (config.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
                   return Response.withUnauthorized()
                           .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
@@ -80,28 +79,28 @@ public class MangooAdminFilter implements MangooFilter {
      * Checks if a administrative URL enabled
      * 
      * @param url The url to check
-     * @return True if in dev mode or specificaly enabled, false otherwise
+     * @return True enabled via application.yaml, false otherwise
      */
-    private boolean urlIsEnabled(String url) {
+    private boolean isURLEnabled(String url) {
         boolean enabled;
         switch (url) {
         case "@routes":
-            enabled = Application.inDevMode() || this.config.isAdminRoutesEnabled();
+            enabled = this.config.isAdminRoutesEnabled();
             break;
         case "@config":
-            enabled = Application.inDevMode() || this.config.isAdminConfigEnabled();
+            enabled = this.config.isAdminConfigEnabled();
             break;
         case "@health":
-            enabled = Application.inDevMode() || this.config.isAdminHealthEnabled();
+            enabled = this.config.isAdminHealthEnabled();
             break; 
         case "@cache":
-            enabled = Application.inDevMode() || this.config.isAdminCacheEnabled();
+            enabled = this.config.isAdminCacheEnabled();
             break;      
         case "@metrics":
-            enabled = Application.inDevMode() || this.config.isAdminMetricsEnabled();
+            enabled = this.config.isAdminMetricsEnabled();
             break;  
         case "@scheduler":
-            enabled = Application.inDevMode() || this.config.isAdminSchedulerEnabled();
+            enabled = this.config.isAdminSchedulerEnabled();
             break;  
         default:
             enabled = false;

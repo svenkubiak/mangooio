@@ -12,7 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -23,6 +26,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -45,11 +49,11 @@ public class MangooResponse {
     private static final Logger LOG = LoggerFactory.getLogger(MangooResponse.class);
     private String responseUrl;
     private String responseUri;
-    private HttpString responseMethod;
+    private String responseRequestBody;
     private String responseContent = "";
+    private HttpString responseMethod;
     private HttpResponse httpResponse;
     private ContentType responseContentType;
-    private String responseRequestBody;
     private boolean responseDisbaleRedirects;
     private List<NameValuePair> postParameter = new ArrayList<NameValuePair>();
     private CookieStore cookieStore = new BasicCookieStore();
@@ -111,6 +115,21 @@ public class MangooResponse {
 
     public MangooResponse method(HttpString method) {
         this.responseMethod = method;
+        return this;
+    }
+    
+    public MangooResponse authentication(String username, String password) {
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+        
+        this.httpClient = HttpClientBuilder.create()
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .setDefaultCookieStore(this.cookieStore).build();
+        
+        this.httpClientNoRedirects = HttpClientBuilder.create()
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .setDefaultCookieStore(this.cookieStore).disableRedirectHandling().build();
+        
         return this;
     }
 

@@ -2443,6 +2443,12 @@ as a fallback value for Locale
 
 |application.admin.cache |Enable or disable administrative /@cache url |false|
 
+|application.admin.scheduler |Enable or disable administrative /@scheduler url |false|
+
+|application.admin.username |The username for all administrative URLs ||
+
+|application.admin.password |The password for all administrative URLs as SHA512 hashed value ||
+
 |cookie.version |Sets the version of a session cookie |0|
 
 |cookie.name |The name of the session cookie |$application.name-MANGOOIO-SESSION|

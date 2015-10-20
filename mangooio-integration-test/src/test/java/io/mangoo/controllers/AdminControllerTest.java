@@ -15,60 +15,78 @@ public class AdminControllerTest {
     @Test
     public void healthTest() {
         MangooResponse response = MangooRequest.get("/@health").execute();
-
         assertNotNull(response);
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+        
+        response = MangooRequest.get("/@health").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/plain; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("alive"));
     }
 
     @Test
     public void configTest() {
         MangooResponse response = MangooRequest.get("/@config").execute();
-
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+        
+        response = MangooRequest.get("/@config").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("config"));
     }
 
     @Test
     public void routesTest() {
         MangooResponse response = MangooRequest.get("/@routes").execute();
-
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+        
+        response = MangooRequest.get("/@routes").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("routes"));
     }
 
     @Test
     public void cacheTest() {
         MangooResponse response = MangooRequest.get("/@cache").execute();
-
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+
+        response = MangooRequest.get("/@cache").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("cache"));
     }
 
     @Test
     public void metricsTest() {
         MangooResponse response = MangooRequest.get("/@metrics").execute();
-
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+
+        response = MangooRequest.get("/@metrics").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("metrics"));
     }
     
     @Test
     public void schedulerTest() {
         MangooResponse response = MangooRequest.get("/@scheduler").execute();
-        
         assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
+        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+
+        response = MangooRequest.get("/@scheduler").authentication("admin", "admin").execute();
+        assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("text/html; charset=UTF-8", response.getContentType());
         assertTrue(response.getContent().contains("scheduler"));
     }
 }
