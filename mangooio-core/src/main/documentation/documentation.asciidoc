@@ -2435,15 +2435,15 @@ as a fallback value for Locale
 
 |application.port |The port the undertow server is listening on |8080|
 
-|application.admin.health |Enable or disable administrative /@health url |false|
+|application.admin.health |Enable or disable administrative /@health URL |false|
 
-|application.admin.routes |Enable or disable administrative /@routes url |false|
+|application.admin.routes |Enable or disable administrative /@routes URL |false|
 
-|application.admin.config |Enable or disable administrative /@config url |false|
+|application.admin.config |Enable or disable administrative /@config URL |false|
 
-|application.admin.cache |Enable or disable administrative /@cache url |false|
+|application.admin.cache |Enable or disable administrative /@cache URL |false|
 
-|application.admin.scheduler |Enable or disable administrative /@scheduler url |false|
+|application.admin.scheduler |Enable or disable administrative /@scheduler URL |false|
 
 |application.admin.username |The username for all administrative URLs ||
 
@@ -2461,7 +2461,7 @@ as a fallback value for Locale
 
 |cache.maxsize |The maximum number of elements in the cache |5000|
 
-|cache.expires |Duration in seconds after which an element is removed from the cache if it is not accessed.|3600|
+|cache.expires |Duration in seconds after which an element is removed from the cache if it is not accessed|3600|
 
 |smtp.host |The host of the SMTP server |127.0.0.1|
 
