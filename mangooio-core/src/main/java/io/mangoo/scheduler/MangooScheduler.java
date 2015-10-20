@@ -5,6 +5,7 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -31,11 +32,13 @@ import io.mangoo.enums.Default;
 @Singleton
 public class MangooScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(MangooScheduler.class);
+    private boolean initialized;
     private Scheduler scheduler;
+    private MangooJobFactory mangooJobFactory;
 
     @Inject
-    public MangooScheduler(MangooJobFactory quartzJobFactory, Config config) {
-        Preconditions.checkNotNull(quartzJobFactory, "quartzJobFactory can not be null");
+    public MangooScheduler(MangooJobFactory mangooJobFactory, Config config) {
+        this.mangooJobFactory = Objects.requireNonNull(mangooJobFactory, "quartzJobFactory can not be null");
         Preconditions.checkNotNull(config, "config can not be null");
 
         for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
@@ -43,23 +46,32 @@ public class MangooScheduler {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
         }
-
+    }
+    
+    private void initialize() {
         SchedulerFactory schedulerFactory = new StdSchedulerFactory();
         try {
             this.scheduler = schedulerFactory.getScheduler();
-            this.scheduler.setJobFactory(quartzJobFactory);
+            this.scheduler.setJobFactory(this.mangooJobFactory);
+            this.initialized = true;
         } catch (SchedulerException e) {
             LOG.error("Failed to get scheduler from schedulerFactory", e);
         }
     }
 
     public Scheduler getScheduler() {
+        if (!initialized) {
+            initialize();
+        }
+        
         return this.scheduler;
     }
 
     public void start() {
-        Preconditions.checkNotNull(this.scheduler, "Scheduler has not been initialized");
-
+        if (!initialized) {
+            initialize();
+        }
+        
         try {
             this.scheduler.start();
             if (this.scheduler.isStarted()) {
@@ -73,7 +85,9 @@ public class MangooScheduler {
     }
 
     public void shutdown() {
-        Preconditions.checkNotNull(this.scheduler);
+        if (!initialized) {
+            initialize();
+        }
 
         try {
             this.scheduler.shutdown();
@@ -88,7 +102,9 @@ public class MangooScheduler {
     }
 
     public void standby() {
-        Preconditions.checkNotNull(this.scheduler);
+        if (!initialized) {
+            initialize();
+        }
 
         try {
             this.scheduler.standby();
@@ -109,9 +125,12 @@ public class MangooScheduler {
      * @param trigger The Trigger for the job
      */
     public void schedule(JobDetail jobDetail, Trigger trigger) {
-        Preconditions.checkNotNull(this.scheduler, "Scheduler has not been initialized");
         Preconditions.checkNotNull(jobDetail, "JobDetail is required for schedule");
         Preconditions.checkNotNull(trigger, "trigger is required for schedule");
+        
+        if (!initialized) {
+            initialize();
+        }
 
         try {
             this.scheduler.scheduleJob(jobDetail, trigger);
@@ -134,6 +153,10 @@ public class MangooScheduler {
         Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
         Preconditions.checkNotNull(cronExpression, "CronExpression is required for new trigger");
         Preconditions.checkNotNull(triggerGroupName, "TriggerGroupName is required for new trigger");
+        
+        if (!initialized) {
+            initialize();
+        }
 
         return newTrigger()
                 .withIdentity(identity, triggerGroupName)
@@ -155,6 +178,10 @@ public class MangooScheduler {
         Preconditions.checkNotNull(clazz, "Class is required for new JobDetail");
         Preconditions.checkNotNull(identity, "Identity is required for new JobDetail");
         Preconditions.checkNotNull(jobGroupName, "JobeGroupName is required for new JobDetail");
+        
+        if (!initialized) {
+            initialize();
+        }
 
         return newJob(clazz)
                 .withIdentity(identity, jobGroupName)
