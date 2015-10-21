@@ -424,5 +424,9 @@ public class Config {
     
     public String getAdminAuthenticationPassword() {
         return getString(Key.APPLICATION_ADMIN_PASSWORD);
+    }
+
+    public String getSchedulerPackage() {
+        return getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
     }    
 }
