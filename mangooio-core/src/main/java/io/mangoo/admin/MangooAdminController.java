@@ -95,15 +95,16 @@ public class MangooAdminController {
     }
     
     public Response scheduler() throws SchedulerException {
+        List<Job> jobs = new ArrayList<Job>();        
         Scheduler scheduler = Application.getInjector().getInstance(MangooScheduler.class).getScheduler();
-
-        List<Job> jobs = new ArrayList<Job>();
-        Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
-        for (JobKey jobKey : jobKeys) {
-            List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-            Trigger trigger = triggers.get(0);  
-            TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
-            jobs.add(new Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
+        if (scheduler != null) {
+            Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
+            for (JobKey jobKey : jobKeys) {
+                List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                Trigger trigger = triggers.get(0);  
+                TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                jobs.add(new Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
+            }
         }
         
         return Response.withOk()
