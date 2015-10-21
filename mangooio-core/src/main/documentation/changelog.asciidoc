@@ -7,6 +7,7 @@
 * https://github.com/svenkubiak/mangooio/issues/73[#73] Added Basic HTTP authentication for administrative URLs (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/72[#72] Added @scheduler administrative URL (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/71[#71] Added autostart option to scheduler (svenkubiak)
+* Code cleanup, refactorings and more javadoc (svenkubiak)
 * Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** yyy -> xxx
