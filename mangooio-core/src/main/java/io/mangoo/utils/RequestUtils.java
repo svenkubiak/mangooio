@@ -43,7 +43,6 @@ public final class RequestUtils {
         Preconditions.checkNotNull(exchange, "HttpServerExchange can not be null");
         
         Map<String, String> requestParamater = new HashMap<String, String>();
-
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
@@ -134,8 +133,8 @@ public final class RequestUtils {
     /**
      * Returns an OAuthProvider based on a given string
      * 
-     * @param oauth The string to lookup the enum
-     * @return OAuthProvider enum
+     * @param oauth The string to lookup the OAuthProvider Enum
+     * @return OAuthProvider Enum
      */
     public static OAuthProvider getOAuthProvider(String oauth) {
         OAuthProvider oAuthProvider = null;
