@@ -25,7 +25,6 @@ import org.boon.json.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.inject.Injector;
 
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
@@ -84,21 +83,19 @@ public class RequestHandler implements HttpHandler {
     private Flash flash;
     private Form form;
     private Config config;
-    private Injector injector;
     private Request request;
     private boolean hasRequestFilter;
     private Map<String, String> requestParameter;
     private String body = "";
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod) {
-        this.injector = Application.getInjector();
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
-        this.controller = this.injector.getInstance(this.controllerClass);
+        this.controller = Application.getInstance(this.controllerClass);
         this.methodParameters = getMethodParameters();
         this.parameterCount = this.methodParameters.size();
-        this.config = this.injector.getInstance(Config.class);
-        this.hasRequestFilter = this.injector.getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
+        this.config = Application.getInstance(Config.class);
+        this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
         this.opjectMapper = JsonFactory.create();
     }
 
@@ -149,7 +146,7 @@ public class RequestHandler implements HttpHandler {
             if (split != null) {
                 String language = Optional.ofNullable(split.iterator().next()).orElse(this.config.getApplicationLanguage());
                 Locale.setDefault(Locale.forLanguageTag(language.substring(0, 1)));
-                this.injector.getInstance(Messages.class).reload();
+                Application.getInstance(Messages.class).reload();
             }
         }
     }
@@ -171,7 +168,7 @@ public class RequestHandler implements HttpHandler {
         //execute global request filter
         Response response = Response.withOk();
         if (this.hasRequestFilter) {
-            MangooRequestFilter mangooRequestFilter = this.injector.getInstance(MangooRequestFilter.class);
+            MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
             response = mangooRequestFilter.execute(this.request, response);
         }
 
@@ -226,7 +223,7 @@ public class RequestHandler implements HttpHandler {
                         return response;
                     } else {
                         Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                        response = (Response) classMethod.invoke(this.injector.getInstance(clazz), this.request, response);
+                        response = (Response) classMethod.invoke(Application.getInstance(clazz), this.request, response);
                     }
                 }
             }
@@ -261,8 +258,8 @@ public class RequestHandler implements HttpHandler {
         invokedResponse.andContent(response.getContent());
         invokedResponse.andHeaders(response.getHeaders());
         if (!invokedResponse.isRendered()) {
-            TemplateEngine templateEngine = this.injector.getInstance(TemplateEngine.class);
-            invokedResponse.andBody(templateEngine.render(this.flash, this.session, this.form, this.injector.getInstance(Messages.class), getTemplatePath(invokedResponse), invokedResponse.getContent()));
+            TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
+            invokedResponse.andBody(templateEngine.render(this.flash, this.session, this.form, Application.getInstance(Messages.class), getTemplatePath(invokedResponse), invokedResponse.getContent()));
         }
 
         return invokedResponse;
@@ -292,7 +289,7 @@ public class RequestHandler implements HttpHandler {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
                 if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
-                    Crypto crypto = this.injector.getInstance(Crypto.class);
+                    Crypto crypto = Application.getInstance(Crypto.class);
                     cookieValue = crypto.decrypt(cookieValue);
                 }
 
@@ -384,7 +381,7 @@ public class RequestHandler implements HttpHandler {
 
             String value = buffer.toString();
             if (this.config.isAuthenticationCookieEncrypt()) {
-                value = this.injector.getInstance(Crypto.class).encrypt(value);
+                value = Application.getInstance(Crypto.class).encrypt(value);
             }
 
             Cookie cookie = new CookieImpl(this.config.getString(Key.COOKIE_NAME), value)
@@ -409,7 +406,7 @@ public class RequestHandler implements HttpHandler {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue)) {
                 if (this.config.isAuthenticationCookieEncrypt()) {
-                    cookieValue = this.injector.getInstance(Crypto.class).decrypt(cookieValue);
+                    cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
                 }
 
                 String sign = null;
@@ -493,7 +490,7 @@ public class RequestHandler implements HttpHandler {
 
                 String value = buffer.toString();
                 if (this.config.isAuthenticationCookieEncrypt()) {
-                    value = this.injector.getInstance(Crypto.class).encrypt(value);
+                    value = Application.getInstance(Crypto.class).encrypt(value);
                 }
 
                 cookie = new CookieImpl(cookieName, value)
@@ -568,7 +565,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     private void getForm(HttpServerExchange exchange) throws IOException {
-        this.form = this.injector.getInstance(Form.class);
+        this.form = Application.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
             Builder builder = FormParserFactory.builder();
             builder.setDefaultCharset(Charsets.UTF_8.name());

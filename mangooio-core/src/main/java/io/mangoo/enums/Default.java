@@ -76,7 +76,8 @@ public enum Default {
     SCHEDULER_AUTOSTART("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
     SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
-    BASICAUTH_CREDENTIALS_LENGTH("2");
+    BASICAUTH_CREDENTIALS_LENGTH("2"),
+    OAUTH_REQUEST_PARAMETER("oauth");
 
     private final String value;
 

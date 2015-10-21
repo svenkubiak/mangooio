@@ -20,13 +20,13 @@ public class DispatcherHandler implements HttpHandler {
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
-        this.metrics = Application.getInjector().getInstance(Config.class).isAdminMetricsEnabled();
+        this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
     }
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         if (this.metrics) {
-            exchange.addResponseCommitListener(Application.getInjector().getInstance(MetricsListener.class));
+            exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
         }
 
         RequestHandler requestHandler = new RequestHandler(this.controllerClass, this.controllerMethod);

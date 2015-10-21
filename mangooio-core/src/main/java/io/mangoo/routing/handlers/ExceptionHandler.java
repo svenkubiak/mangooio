@@ -36,7 +36,7 @@ public class ExceptionHandler implements HttpHandler {
             exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
             if (Application.inDevMode()) {
-                TemplateEngine templateEngine = Application.getInjector().getInstance(TemplateEngine.class);
+                TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
                 
                 if (throwable == null) {
                     exchange.getResponseSender().send(Template.DEFAULT.internalServerError());

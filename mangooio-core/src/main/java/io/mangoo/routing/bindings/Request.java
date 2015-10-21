@@ -40,7 +40,7 @@ public class Request implements MangooValidator {
         this.authentication = authentication;
         this.body = body;
         this.parameter = parameter;
-        this.validator = Application.getInjector().getInstance(Validator.class);
+        this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
     }
 

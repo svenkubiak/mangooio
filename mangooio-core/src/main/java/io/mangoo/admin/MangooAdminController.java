@@ -87,7 +87,7 @@ public class MangooAdminController {
     }
 
     public Response metrics() {
-        Metrics metrics = Application.getInjector().getInstance(Metrics.class);
+        Metrics metrics = Application.getInstance(Metrics.class);
         
         return Response.withOk()
                 .andContent("metrics", metrics.getMetrics())
@@ -96,7 +96,7 @@ public class MangooAdminController {
     
     public Response scheduler() throws SchedulerException {
         List<Job> jobs = new ArrayList<Job>();        
-        Scheduler scheduler = Application.getInjector().getInstance(MangooScheduler.class).getScheduler();
+        Scheduler scheduler = Application.getInstance(MangooScheduler.class).getScheduler();
         if (scheduler != null) {
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
             for (JobKey jobKey : jobKeys) {

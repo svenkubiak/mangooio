@@ -22,7 +22,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
 
     @Override
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
-        channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInjector().getInstance(this.controllerClass));
+        channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
         channel.resumeReceives();
     }
 }

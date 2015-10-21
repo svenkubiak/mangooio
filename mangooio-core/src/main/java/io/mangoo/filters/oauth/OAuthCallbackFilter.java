@@ -7,11 +7,10 @@ import org.scribe.model.Verb;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
-import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.mangoo.enums.oauth.OAuthResource;
 import io.mangoo.interfaces.MangooFilter;
@@ -35,22 +34,20 @@ public class OAuthCallbackFilter implements MangooFilter {
     private static final String OAUTH_VERIFIER = "oauth_verifier";
     private static final String OAUTH_TOKEN = "oauth_token";
     private static final String CODE = "code";
-    private Config config;
-
-    @Inject
-    public OAuthCallbackFilter(Config config) {
-        this.config = config;
-    }
 
     @Override
     public Response execute(Request request, Response response) {
-        String oauth = request.getParameter("oauth");
-        if (OAuthProvider.TWITTER.toString().equals(oauth)) {
+        OAuthProvider oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
+        switch (oAuthProvider) {
+        case TWITTER:
             twitterOAuth(request);
-        } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
+            break;
+        case GOOGLE:
             googleOAuth(request);
-        } else if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
+            break;
+        case FACEBOOK:
             facebookOAuth(request);
+            break;            
         }
 
         return response;
@@ -63,7 +60,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      */
     private void facebookOAuth(Request request) {
         String code = request.getParameter(CODE);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK.toString(), this.config);
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
 
         if (StringUtils.isNotBlank(code) && oAuthService != null) {
             Verifier verifier = new Verifier(code);
@@ -85,7 +82,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      */
     private void googleOAuth(Request request) {
         String code = request.getParameter(CODE);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE.toString(), this.config);
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
 
         if (StringUtils.isNotBlank(code) && oAuthService != null) {
             Verifier verifier = new Verifier(code);
@@ -108,7 +105,7 @@ public class OAuthCallbackFilter implements MangooFilter {
     private void twitterOAuth(Request request) {
         String oauthToken = request.getParameter(OAUTH_TOKEN);
         String oauthVerifier = request.getParameter(OAUTH_VERIFIER);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER.toString(), this.config);
+        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER);
 
         if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService != null) {
             Token requestToken = new Token(oauthToken, oauthVerifier);

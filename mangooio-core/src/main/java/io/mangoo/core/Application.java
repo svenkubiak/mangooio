@@ -1,5 +1,6 @@
 package io.mangoo.core;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
 import com.icegreen.greenmail.util.GreenMail;
 
@@ -66,15 +67,38 @@ public final class Application {
         return Mode.TEST.equals(mode);
     }
 
+    /**
+     * Returns the current mode the application is running in
+     * 
+     * @return Enum Mode
+     */
     public static Mode getMode() {
         return mode;
     }
 
+    /**
+     * Returns the Google Guice Injector
+     * 
+     * @return Google Guice injector instance
+     */
     public static Injector getInjector() {
         return injector;
     }
 
     public static GreenMail getGreenMail() {
         return greenMail;
+    }
+    
+    /**
+     * Short form for getting an Goolge Guice injected class by
+     * calling injector.getInstance(...)
+     * 
+     * @param clazz The class to retrieve from the injector
+     * @return An instance of the requested class
+     */
+    public static <T> T getInstance(Class<T> clazz) {
+        Preconditions.checkNotNull(clazz, "Missing class instance for getInstance");
+        
+        return injector.getInstance(clazz);
     }
 }

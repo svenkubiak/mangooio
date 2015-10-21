@@ -5,7 +5,6 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -22,6 +21,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 
 /**
@@ -34,11 +34,9 @@ import io.mangoo.enums.Default;
 public class MangooScheduler {
     private static final Logger LOG = LoggerFactory.getLogger(MangooScheduler.class);
     private Scheduler scheduler;
-    private MangooJobFactory mangooJobFactory;
 
     @Inject
-    public MangooScheduler(MangooJobFactory mangooJobFactory, Config config) {
-        this.mangooJobFactory = Objects.requireNonNull(mangooJobFactory, "quartzJobFactory can not be null");
+    public MangooScheduler(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
 
         for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
@@ -98,15 +96,15 @@ public class MangooScheduler {
     }
 
     /**
-     * Prepares the scheduler for being starting by create a 
-     * scheduler instance from scheduler factory
+     * Prepares the scheduler for being started by creating a 
+     * scheduler instance from quartz scheduler factory
      */
     private void initialize() {
         if (this.scheduler == null) {
             SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             try {
                 this.scheduler = schedulerFactory.getScheduler();
-                this.scheduler.setJobFactory(this.mangooJobFactory);                
+                this.scheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));                
             } catch (SchedulerException e) {
                 LOG.error("Failed to initialize scheduler", e);    
             }
