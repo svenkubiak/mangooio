@@ -28,6 +28,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class RequestUtils {
+    private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
 
     private RequestUtils() {
@@ -40,7 +41,7 @@ public final class RequestUtils {
      * @return A single map contain both request and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, "HttpServerExchange can not be null");
+        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
         
         Map<String, String> requestParamater = new HashMap<String, String>();
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
@@ -70,7 +71,7 @@ public final class RequestUtils {
      * @return True if the request is a POST or a PUT request, false otherwise
      */
     public static boolean isPostOrPut(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, "HttpServerExchange can not be null");
+        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
         
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
     }
@@ -82,7 +83,7 @@ public final class RequestUtils {
      * @return True if the request content-type contains application/json, false otherwise
      */
     public static boolean isJSONRequest(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, "HttpServerExchange can not be null");
+        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
         
         HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
@@ -122,7 +123,9 @@ public final class RequestUtils {
             .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
             .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
             .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET));
-            break;            
+            break;       
+        default:
+            break;
         }
 
         return (serviceBuilder == null) ? null : serviceBuilder.build();

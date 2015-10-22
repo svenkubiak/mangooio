@@ -47,7 +47,9 @@ public class OAuthCallbackFilter implements MangooFilter {
             break;
         case FACEBOOK:
             facebookOAuth(request);
-            break;            
+            break;     
+        default:
+            break;
         }
 
         return response;

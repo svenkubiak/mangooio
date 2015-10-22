@@ -35,6 +35,8 @@ public class OAuthLoginFilter implements MangooFilter {
                 case FACEBOOK:
                     url = oAuthService.getAuthorizationUrl(null);
                     break;
+                default:
+                break;                
                 }
 
                 if (StringUtils.isNotBlank(url)) {
