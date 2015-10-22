@@ -20,7 +20,7 @@ public class Job {
         this.active = active;
         this.name = name;
         this.nextFireTime = Optional.ofNullable(nextFireTime).orElse((Date) (nextFireTime.clone()));
-        this.previousFireTime = Optional.ofNullable(previousFireTime).orElse((Date) (nextFireTime.clone()));
+        this.previousFireTime = Optional.ofNullable(previousFireTime).orElse((Date) (previousFireTime.clone()));
         this.description = description;
     }
 
