@@ -87,11 +87,11 @@ public class TemplateEngine {
      * @param content The content map which is passed to the template
      * @return A rendered template
      * 
-     * @throws TemplateNotFoundException
-     * @throws MalformedTemplateNameException
-     * @throws ParseException
-     * @throws IOException
-     * @throws TemplateException
+     * @throws TemplateNotFoundException TemplateNotFoundException
+     * @throws MalformedTemplateNameException MalformedTemplateNameException
+     * @throws ParseException ParseException
+     * @throws IOException IOException
+     * @throws TemplateException TemplateException
      */
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
@@ -121,9 +121,9 @@ public class TemplateEngine {
      * @param templateException True if the exceptions occurs during exception rendering, false otherwise
      * @return A rendered template
      * 
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws TemplateException
+     * @throws FileNotFoundException FileNotFoundException
+     * @throws IOException IOException
+     * @throws TemplateException TemplateException
      */
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws FileNotFoundException, IOException, TemplateException {
@@ -162,10 +162,10 @@ public class TemplateEngine {
      *
      * @param content The content to render in the template
      * @param template The template
-     * @return A complety rendered template
+     * @return A completely rendered template
      *
-     * @throws TemplateExceptions
-     * @throws IOException
+     * @throws TemplateExceptions TemplateExceptions
+     * @throws IOException IOException
      */
     private String processTemplate(Map<String, Object> content, Template template) throws TemplateException, IOException {
         StringWriter buffer = new StringWriter(MAX_CHARS);

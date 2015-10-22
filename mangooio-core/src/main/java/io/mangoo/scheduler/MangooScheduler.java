@@ -189,6 +189,7 @@ public class MangooScheduler {
      * @param clazz The class where the actual execution takes place
      * @param identity The name of the job
      * @param groupName The name of the job Group
+     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A new JobDetail object
      */
@@ -210,6 +211,7 @@ public class MangooScheduler {
      * @param identity The name of the job
      * @param groupName The name of the job Group
      * @param clazz The class where the actual execution takes place
+     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A new JobDetail object
      */

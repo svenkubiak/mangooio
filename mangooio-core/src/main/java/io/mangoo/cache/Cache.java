@@ -143,6 +143,8 @@ public class Cache {
      *
      * @param key The key for the cached value
      * @param clazz The class to convert the value to
+     * @param <T> JavaDoc requires this (just ignore it)
+     * 
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
@@ -165,6 +167,8 @@ public class Cache {
      * @param key The key for the cached value
      * @param clazz The class to convert the value to
      * @param callable The callable to invoke when the value is not found
+     * @param <T> JavaDoc requires this (just ignore it)
+     * 
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")

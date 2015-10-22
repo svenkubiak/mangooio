@@ -94,6 +94,8 @@ public final class Application {
      * calling injector.getInstance(...)
      * 
      * @param clazz The class to retrieve from the injector
+     * @param <T> JavaDoc requires this (just ignore it)
+     * 
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
