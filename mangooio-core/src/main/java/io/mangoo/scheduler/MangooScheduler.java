@@ -6,11 +6,11 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Map;
 
+import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class MangooScheduler {
     /**
      * Returns the current scheduler instance
      * 
-     * @return Scheduler instance, null if no jobs are scheduled or scheduler is not started
+     * @return Scheduler instance, null if scheduler is not initialize or started
      */
     public Scheduler getScheduler() {
         return this.scheduler;
@@ -70,6 +70,8 @@ public class MangooScheduler {
     }
 
     public void shutdown() {
+        Preconditions.checkNotNull(this.scheduler, "Scheduler is not initialized or started");
+        
         try {
             this.scheduler.shutdown();
             if (this.scheduler.isShutdown()) {
@@ -83,6 +85,8 @@ public class MangooScheduler {
     }
 
     public void standby() {
+        Preconditions.checkNotNull(this.scheduler, "Scheduler is not initialized or started");
+        
         try {
             this.scheduler.standby();
             if (this.scheduler.isInStandbyMode()) {
@@ -101,9 +105,8 @@ public class MangooScheduler {
      */
     private void initialize() {
         if (this.scheduler == null) {
-            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             try {
-                this.scheduler = schedulerFactory.getScheduler();
+                this.scheduler = new StdSchedulerFactory().getScheduler();
                 this.scheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));                
             } catch (SchedulerException e) {
                 LOG.error("Failed to initialize scheduler", e);    
@@ -132,6 +135,8 @@ public class MangooScheduler {
     /**
      * Creates a new Trigger
      *
+     * @deprecated  As of release 1.3.0, replaced by {@link #createTrigger()}
+     * 
      * @param identity The name of the job
      * @param cronExpression The cron expression for executing the job
      * @param triggerGroupName The group name to store the job
@@ -139,6 +144,7 @@ public class MangooScheduler {
      *
      * @return A new trigger object
      */
+    @Deprecated
     public Trigger getTrigger(String identity, String cronExpression, String triggerGroupName, String triggerDescription) {
         Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
         Preconditions.checkNotNull(cronExpression, "CronExpression is required for new trigger");
@@ -150,9 +156,35 @@ public class MangooScheduler {
                 .withDescription(triggerDescription)
                 .build();
     }
+    
+    /**
+     * Creates a new quartz scheduler Trigger, which can be used to
+     * schedule a new job by passing it into {@link #schedule()}
+     * 
+     * @param identity The name of the trigger
+     * @param groupName The trigger group name
+     * @param description The trigger description
+     * @param cron The cron expression for the trigger
+     * 
+     * @return A new Trigger object
+     */
+    public Trigger createTrigger(String identity, String groupName, String description, String cron) {
+        Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
+        Preconditions.checkNotNull(groupName, "groupName is required for new trigger");
+        Preconditions.checkNotNull(cron, "cron is required for new trigger");
+        Preconditions.checkArgument(CronExpression.isValidExpression(cron), "cron expression is invalid");
 
+        return newTrigger()
+                .withIdentity(identity, groupName)
+                .withSchedule(cronSchedule(cron))
+                .withDescription(description)
+                .build();
+    }
+    
     /**
      * Creates a new JobDetail
+     * 
+     * @deprecated  As of release 1.3.0, replaced by {@link #createJobDetail()}
      *
      * @param clazz The class where the actual execution takes place
      * @param identity The name of the job
@@ -160,13 +192,34 @@ public class MangooScheduler {
      *
      * @return A new JobDetail object
      */
-    public <T extends Job> JobDetail getJobDetail(Class<? extends Job> clazz, String identity, String jobGroupName) {
+    @Deprecated
+    public <T extends Job> JobDetail getJobDetail(Class<? extends Job> clazz, String identity, String groupName) {
         Preconditions.checkNotNull(clazz, "Class is required for new JobDetail");
         Preconditions.checkNotNull(identity, "Identity is required for new JobDetail");
-        Preconditions.checkNotNull(jobGroupName, "JobeGroupName is required for new JobDetail");
+        Preconditions.checkNotNull(groupName, "JobeGroupName is required for new JobDetail");
 
         return newJob(clazz)
-                .withIdentity(identity, jobGroupName)
+                .withIdentity(identity, groupName)
+                .build();
+    }
+    
+    /**
+     * Creates a new quartz scheduler JobDetail, which can be used to
+     * schedule a new job by passing it into {@link #schedule()}
+     *
+     * @param identity The name of the job
+     * @param jobGroupName The name of the job Group
+     * @param clazz The class where the actual execution takes place
+     *
+     * @return A new JobDetail object
+     */
+    public <T extends Job> JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
+        Preconditions.checkNotNull(identity, "identity is required for new JobDetail");
+        Preconditions.checkNotNull(groupName, "groupName is required for new JobDetail");
+        Preconditions.checkNotNull(clazz, "clazz is required for new JobDetail");
+        
+        return newJob(clazz)
+                .withIdentity(identity, groupName)
                 .build();
     }
 }

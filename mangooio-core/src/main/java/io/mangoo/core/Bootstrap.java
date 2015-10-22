@@ -271,8 +271,8 @@ public class Bootstrap {
                 for (Class<?> clazz : jobs) {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
-                        JobDetail jobDetail = mangooScheduler.getJobDetail(clazz.asSubclass(Job.class), clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString());
-                        Trigger trigger = mangooScheduler.getTrigger(clazz.getSimpleName() + "-trigger", schedule.cron(), Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description()); 
+                        JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                        Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron()); 
                         mangooScheduler.schedule(jobDetail, trigger);      
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
