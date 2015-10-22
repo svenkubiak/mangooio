@@ -140,6 +140,8 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/myFile.jsf?foo=bar HTTP/1.1 -&gt; 'http://localhost:8080/myFile.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my+File.jsf'
+     * 
+     * @return The request URI
      */
     public String getURI() {
         return this.httpServerExchange.getRequestURI();
@@ -150,6 +152,8 @@ public class Request implements MangooValidator {
      * but does not include query string.
      *
      * This is not decoded.
+     * 
+     * @return The request URL
      */
     public String getURL() {
         return this.httpServerExchange.getRequestURL();
@@ -205,6 +209,8 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my File.jsf'
+     * 
+     * @return The request path
      */
     public String getPath() {
         return this.httpServerExchange.getRequestPath();

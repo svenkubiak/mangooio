@@ -164,7 +164,7 @@ public class TemplateEngine {
      * @param template The template
      * @return A complety rendered template
      *
-     * @throws TemplateException
+     * @throws TemplateExceptions
      * @throws IOException
      */
     private String processTemplate(Map<String, Object> content, Template template) throws TemplateException, IOException {

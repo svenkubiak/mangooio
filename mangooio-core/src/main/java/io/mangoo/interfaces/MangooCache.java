@@ -13,7 +13,7 @@ public interface MangooCache {
      * @param key The key to store the value
      * @param value The actual value to store
      */
-    void add(String key, Object value);
+    public void add(String key, Object value);
 
     /**
      * Adds a value with the given key to the cache and
@@ -23,7 +23,7 @@ public interface MangooCache {
      * @param value The actual value to store
      * @param expiration The time after which the value gets evicted in seconds
      */
-    void add(String key, Object value, int expiration);
+    public void add(String key, Object value, int expiration);
 
     /**
      * Retrieves a value for a given key from the cache
@@ -31,7 +31,7 @@ public interface MangooCache {
      * @param key The key on which the value is stored
      * @return The retrieved value or null if the key is not found
      */
-    Object get(String key);
+    public Object get(String key);
 
     /**
      * Retrieves a value for given key from the cache
@@ -41,10 +41,10 @@ public interface MangooCache {
      * @param clazz The class to cast to
      * @return The class to cast to to containing the cache value or null if the key is not found
      */
-    <T> T get(String key, Class<T> clazz);
+    public <T> T get(String key, Class<T> clazz);
 
     /**
      * Clears the complete cache by removing all entries
      */
-    void clear();
+    public void clear();
 }

@@ -135,7 +135,7 @@ public class MangooScheduler {
     /**
      * Creates a new Trigger
      *
-     * @deprecated  As of release 1.3.0, replaced by {@link #createTrigger()}
+     * @deprecated  As of release 1.3.0, replaced by {@link #createTrigger(String, String, String, String) createTrigger}
      * 
      * @param identity The name of the job
      * @param cronExpression The cron expression for executing the job
@@ -159,7 +159,7 @@ public class MangooScheduler {
     
     /**
      * Creates a new quartz scheduler Trigger, which can be used to
-     * schedule a new job by passing it into {@link #schedule()}
+     * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
      * 
      * @param identity The name of the trigger
      * @param groupName The trigger group name
@@ -184,11 +184,11 @@ public class MangooScheduler {
     /**
      * Creates a new JobDetail
      * 
-     * @deprecated  As of release 1.3.0, replaced by {@link #createJobDetail()}
+     * @deprecated  As of release 1.3.0, replaced by {@link #createJobDetail(String, String, Class) createJobDetail}
      *
      * @param clazz The class where the actual execution takes place
      * @param identity The name of the job
-     * @param jobGroupName The name of the job Group
+     * @param groupName The name of the job Group
      *
      * @return A new JobDetail object
      */
@@ -205,10 +205,10 @@ public class MangooScheduler {
     
     /**
      * Creates a new quartz scheduler JobDetail, which can be used to
-     * schedule a new job by passing it into {@link #schedule()}
+     * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
      *
      * @param identity The name of the job
-     * @param jobGroupName The name of the job Group
+     * @param groupName The name of the job Group
      * @param clazz The class where the actual execution takes place
      *
      * @return A new JobDetail object
