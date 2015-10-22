@@ -92,8 +92,7 @@ public final class RequestUtils {
     /**
      * Creates an OAuthService for authentication a user with OAuth
      *
-     * @param oauth The OAuth provider (twitter, google or facebook)
-     * @param config The application configuration
+     * @param oAuthProvider The OAuth provider Enum
      * @return An OAuthService object or null if creating failed
      */
     public static OAuthService createOAuthService(OAuthProvider oAuthProvider) {
