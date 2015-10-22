@@ -73,7 +73,7 @@ public class Google2Api extends DefaultApi20 {
                 throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
             }
         }
-    };
+    }
 
     private class GoogleOAuth2Service extends OAuth20ServiceImpl {
         private static final String AUTHORIZATION_CODE = "authorization_code";

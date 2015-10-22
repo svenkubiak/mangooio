@@ -48,7 +48,7 @@ public class ExceptionHandler implements HttpHandler {
             } else {
                 exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
             }
-        } catch (Exception e) {
+        } catch (Exception e) { //NOSONAR
             if (throwable ==  null) {
                 LOG.error(MESSAGE, e);
             } else {
