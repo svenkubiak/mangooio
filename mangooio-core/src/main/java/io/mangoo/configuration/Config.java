@@ -22,7 +22,9 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 /**
- *
+ * Main configuration class for all properties
+ * configure in application.yaml
+ * 
  * @author svenkubiak
  *
  */
@@ -33,17 +35,17 @@ public class Config {
     private Map<String, String> values = new HashMap<String, String>();
 
     public Config() {
-        init(Default.CONFIGURATION_FILE.toString(), Application.getMode());
+        prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
     }
 
     public Config(String configFile, Mode mode) {
         Preconditions.checkNotNull(configFile, "configFile can not be null");
         Preconditions.checkNotNull(mode, "mode can not be null");
 
-        init(configFile, mode);
+        prepare(configFile, mode);
     }
 
-    private void init(String configFile, Mode mode) {
+    private void prepare(String configFile, Mode mode) {
         String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
 
         Map map = null;

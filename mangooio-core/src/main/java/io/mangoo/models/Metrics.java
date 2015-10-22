@@ -7,7 +7,8 @@ import java.util.concurrent.atomic.LongAdder;
 import com.google.inject.Singleton;
 
 /**
- *
+ * Base class for counting system metrics
+ * 
  * @author svenkubiak
  *
  */

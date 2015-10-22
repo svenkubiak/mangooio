@@ -14,7 +14,8 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.RequestUtils;
 
 /**
- *
+ * OAuth Login filter for redirecting to the OAuth provider
+ * 
  * @author svenkubiak
  *
  */

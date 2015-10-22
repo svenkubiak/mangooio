@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import io.mangoo.interfaces.MangooFilter;
 
 /**
- * Annotation for request and controller filter
+ * Filter annotation for request and controller filter
  * 
  * @author svenkubiak
  *

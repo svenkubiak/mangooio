@@ -20,7 +20,8 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
 /**
- *
+ * Google Guava based cache implementation
+ * 
  * @author svenkubiak
  *
  */

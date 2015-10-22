@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.quartz.JobKey;
@@ -15,7 +14,6 @@ import org.quartz.Trigger.TriggerState;
 import org.quartz.impl.matchers.GroupMatcher;
 
 import com.google.common.cache.CacheStats;
-import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
@@ -30,21 +28,13 @@ import io.mangoo.routing.Router;
 import io.mangoo.scheduler.MangooScheduler;
 
 /**
- *
+ * Controller class for administrative URLs
+ * 
  * @author svenkubiak
  *
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
-    private Config config;
-    private Cache cache;
-
-    @Inject
-    public MangooAdminController(Config config, Cache cache) {
-        this.config = Objects.requireNonNull(config, "config is required for mangooAdminController");
-        this.cache = Objects.requireNonNull(cache, "cache is required for mangooAdminController");
-    }
-
     public Response health() {
         return Response.withOk()
                 .andTextBody("alive");
@@ -57,7 +47,7 @@ public class MangooAdminController {
     }
 
     public Response cache() {
-        CacheStats cacheStats = cache.getStats();
+        CacheStats cacheStats = Application.getInstance(Cache.class).getStats();
 
         Map<String, Object> stats = new HashMap<String, Object>();
         stats.put("Average load penalty", cacheStats.averageLoadPenalty());
@@ -78,7 +68,7 @@ public class MangooAdminController {
     }
 
     public Response config() {
-        Map<String, String> configurations = config.getAllConfigurations();
+        Map<String, String> configurations = Application.getInstance(Config.class).getAllConfigurations();
         configurations.remove(Key.APPLICATION_SECRET.toString());
 
         return Response.withOk()

@@ -20,7 +20,8 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.RequestUtils;
 
 /**
- *
+ * Callback filter when returning from an OAuth authentication
+ * 
  * @author svenkubiak
  *
  */

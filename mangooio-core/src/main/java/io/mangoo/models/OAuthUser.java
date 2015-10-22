@@ -1,7 +1,8 @@
 package io.mangoo.models;
 
 /**
- *
+ * Base class for an OAuthUser
+ * 
  * @author svenkubiak
  *
  */

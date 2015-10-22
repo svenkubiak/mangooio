@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for scheduling jobs 
+ * Scheduler annotation for scheduling jobs 
  * 
  * @author svenkubiak
  *

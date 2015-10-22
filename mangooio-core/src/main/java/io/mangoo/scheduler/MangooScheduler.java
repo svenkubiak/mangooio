@@ -25,7 +25,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 
 /**
- * Convenient class for interacting with quartz scheduler
+ * Convenient class for interacting with the quartz scheduler
  * 
  * @author svenkubiak
  *

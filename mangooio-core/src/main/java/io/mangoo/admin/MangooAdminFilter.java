@@ -18,6 +18,7 @@ import io.mangoo.routing.bindings.Request;
 import io.undertow.util.Headers;
 
 /**
+ * Authentication filter for administrative URLs
  * 
  * @author svenkubiak
  *

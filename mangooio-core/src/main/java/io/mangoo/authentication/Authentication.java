@@ -13,15 +13,16 @@ import io.mangoo.enums.Default;
 import io.mangoo.models.OAuthUser;
 
 /**
- *
+ * Convinient class for handling authentication
+ * 
  * @author svenkubiak
  *
  */
 public class Authentication {
     private static final Logger LOG = LoggerFactory.getLogger(Authentication.class);
     private LocalDateTime expires;
-    private String authenticatedUser;
     private OAuthUser oAuthUser;
+    private String authenticatedUser;
     private boolean remember;
     private boolean loggedOut;
     
@@ -67,8 +68,8 @@ public class Authentication {
     }
 
     /**
-     * Sets an OAuthUser to the current authentication. Can only be set
-     * once!
+     * Sets an OAuthUser to the current authentication.
+     * Can only be set once!
      *
      * @param oAuthUser An OAuthUser
      */

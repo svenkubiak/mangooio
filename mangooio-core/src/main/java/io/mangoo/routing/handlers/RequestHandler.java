@@ -59,7 +59,8 @@ import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
 /**
- *
+ * Main class that handles all controller requests
+ * 
  * @author skubiak
  *
  */

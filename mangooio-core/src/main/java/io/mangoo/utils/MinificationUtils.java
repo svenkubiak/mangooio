@@ -25,6 +25,7 @@ import io.mangoo.enums.Mode;
 
 /**
  * Convenient class for minification of CSS and JS files
+ * 
  * Based on
  * https://github.com/davidB/yuicompressor-maven-plugin/blob/master/src/main/java/net_alchim31_maven_yuicompressor/YuiCompressorMojo.java
  *

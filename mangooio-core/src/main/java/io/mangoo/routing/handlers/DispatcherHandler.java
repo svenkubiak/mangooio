@@ -29,7 +29,6 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
         }
 
-        RequestHandler requestHandler = new RequestHandler(this.controllerClass, this.controllerMethod);
-        requestHandler.handleRequest(exchange);
+        new RequestHandler(this.controllerClass, this.controllerMethod).handleRequest(exchange);
     }
 }

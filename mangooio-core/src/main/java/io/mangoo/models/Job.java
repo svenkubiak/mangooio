@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
+ * Base class that holds scheduled job information
  * 
  * @author svenkubiak
  *

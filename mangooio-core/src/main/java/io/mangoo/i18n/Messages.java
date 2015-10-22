@@ -13,7 +13,8 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Validation;
 
 /**
- *
+ * Convinient class for handling translations
+ * 
  * @author skubiak
  *
  */

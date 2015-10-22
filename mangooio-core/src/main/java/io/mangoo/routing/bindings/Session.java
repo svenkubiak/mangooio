@@ -48,7 +48,7 @@ public class Session {
     }
 
     /**
-     * Adds a value to the cache.
+     * Adds a value to the session.
      *
      * @param key The key to store the value
      * @param value The value to store
@@ -65,7 +65,7 @@ public class Session {
     }
 
     /**
-     * Removes a value with a given key from the cache
+     * Removes a value with a given key from the session
      *
      * @param key The key to remove
      */
@@ -75,7 +75,7 @@ public class Session {
     }
 
     /**
-     * Clears the complete cache
+     * Clears the complete session
      */
     public void clear() {
         this.changed = true;

@@ -1,7 +1,8 @@
 package io.mangoo.models;
 
 /**
- *
+ * Base class for holding exception information
+ * 
  * @author svenkubiak
  *
  */

@@ -1,14 +1,12 @@
 package io.mangoo.filters;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.interfaces.MangooAuthenticator;
@@ -18,20 +16,12 @@ import io.mangoo.routing.bindings.Request;
 import io.undertow.util.Headers;
 
 /**
- *
+ * Filter for basic HTTP authentication
+ * 
  * @author skubiak
  *
  */
 public class BasicAuthenticationFilter implements MangooFilter {
-    private Config config;
-    private MangooAuthenticator mangooAuthenticator;
-
-    @Inject
-    public BasicAuthenticationFilter(Config config, MangooAuthenticator mangooAuthenticator) {
-        this.config = Objects.requireNonNull(config, "Config can not be null");
-        this.mangooAuthenticator = Objects.requireNonNull(mangooAuthenticator, "MangooAuthenticator can not be null");
-    }
-
     @Override
     public Response execute(Request request, Response response) {
         String username = null;
@@ -49,9 +39,9 @@ public class BasicAuthenticationFilter implements MangooFilter {
             }
         }
 
-        if (!mangooAuthenticator.validCredentials(username, password)) {
+        if (!Application.getInstance(MangooAuthenticator.class).validCredentials(username, password)) {
             return Response.withUnauthorized()
-                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=" + config.getString(Key.APPLICATION_NAME))
+                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=" + Application.getInstance(Config.class).getString(Key.APPLICATION_NAME))
                     .andEmptyBody()
                     .end();
         }

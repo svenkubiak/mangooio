@@ -21,6 +21,7 @@ import org.scribe.utils.Preconditions;
 /**
  * Google OAuth2.0
  * Released under the same license as scribe (MIT License)
+ * 
  * @author yincrash
  *
  */
