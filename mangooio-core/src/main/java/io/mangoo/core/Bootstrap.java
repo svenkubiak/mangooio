@@ -266,7 +266,6 @@ public class Bootstrap {
         if (!this.error) {
             Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
-                System.out.println("fooo");
                 MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
                 for (Class<?> clazz : jobs) {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
