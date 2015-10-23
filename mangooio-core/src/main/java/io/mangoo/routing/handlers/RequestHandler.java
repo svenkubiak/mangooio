@@ -65,13 +65,13 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private static final int AUTH_PREFIX_LENGTH = 2;
+    private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int TOKEN_LENGTH = 16;
     private static final int INDEX_0 = 0;
     private static final int INDEX_1 = 1;
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
-    private static final int SESSION_PREFIX_LENGTH = 3;
+    private static final int SESSION_PREFIX_LENGTH = 4;
     private int parameterCount;
     private Class<?> controllerClass;
     private String controllerMethod;
@@ -302,15 +302,8 @@ public class RequestHandler implements HttpHandler {
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
 
-                    /**
-                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
-                     * introduced with version 1.2.0 for cookie versioning.
-                     */
+
                     if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        authenticityToken = prefixes [INDEX_1];
-                        expires = prefixes [INDEX_2];
-                    } else if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH + 1) {
                         sign = prefixes [INDEX_0];
                         authenticityToken = prefixes [INDEX_1];
                         expires = prefixes [INDEX_2];
@@ -322,29 +315,14 @@ public class RequestHandler implements HttpHandler {
                     String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    /**
-                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
-                     */
-                    if (StringUtils.isBlank(version)) {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()).equals(sign)) {
-                            Map<String, String> sessionValues = new HashMap<String, String>();
-                            if (StringUtils.isNotEmpty(data)) {
-                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                    sessionValues.put(entry.getKey(), entry.getValue());
-                                }
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                        Map<String, String> sessionValues = new HashMap<String, String>();
+                        if (StringUtils.isNotEmpty(data)) {
+                            for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
+                                sessionValues.put(entry.getKey(), entry.getValue());
                             }
-                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                         }
-                    } else {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                            Map<String, String> sessionValues = new HashMap<String, String>();
-                            if (StringUtils.isNotEmpty(data)) {
-                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                    sessionValues.put(entry.getKey(), entry.getValue());
-                                }
-                            }
-                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
-                        }
+                        requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                     }
                 }
             }
@@ -417,14 +395,7 @@ public class RequestHandler implements HttpHandler {
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
 
-                    /**
-                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
-                     * introduced with version 1.2.0 for cookie versioning.
-                     */
                     if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        expires = prefixes [INDEX_1];
-                    } else if (prefixes != null && prefixes.length == (AUTH_PREFIX_LENGTH + 1)) {
                         sign = prefixes [INDEX_0];
                         expires = prefixes [INDEX_1];
                         version = prefixes [INDEX_2];
@@ -435,17 +406,8 @@ public class RequestHandler implements HttpHandler {
                     String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    /**
-                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
-                     */
-                    if (StringUtils.isBlank(version)) {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + this.config.getApplicationSecret()).equals(sign)) {
-                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
-                        }
-                    } else {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
-                        }
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                        requestAuthentication = new Authentication(expiresDate, authenticatedUser);
                     }
                 }
             }
