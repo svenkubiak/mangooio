@@ -133,31 +133,6 @@ public class MangooScheduler {
     }
     
     /**
-     * Creates a new Trigger
-     *
-     * @deprecated  As of release 1.3.0, replaced by {@link #createTrigger(String, String, String, String) createTrigger}
-     * 
-     * @param identity The name of the job
-     * @param cronExpression The cron expression for executing the job
-     * @param triggerGroupName The group name to store the job
-     * @param triggerDescription The trigger description for the job
-     *
-     * @return A new trigger object
-     */
-    @Deprecated
-    public Trigger getTrigger(String identity, String cronExpression, String triggerGroupName, String triggerDescription) {
-        Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
-        Preconditions.checkNotNull(cronExpression, "CronExpression is required for new trigger");
-        Preconditions.checkNotNull(triggerGroupName, "TriggerGroupName is required for new trigger");
-
-        return newTrigger()
-                .withIdentity(identity, triggerGroupName)
-                .withSchedule(cronSchedule(cronExpression))
-                .withDescription(triggerDescription)
-                .build();
-    }
-    
-    /**
      * Creates a new quartz scheduler Trigger, which can be used to
      * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
      * 
@@ -178,29 +153,6 @@ public class MangooScheduler {
                 .withIdentity(identity, groupName)
                 .withSchedule(cronSchedule(cron))
                 .withDescription(description)
-                .build();
-    }
-    
-    /**
-     * Creates a new JobDetail
-     * 
-     * @deprecated  As of release 1.3.0, replaced by {@link #createJobDetail(String, String, Class) createJobDetail}
-     *
-     * @param clazz The class where the actual execution takes place
-     * @param identity The name of the job
-     * @param groupName The name of the job Group
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return A new JobDetail object
-     */
-    @Deprecated
-    public <T extends Job> JobDetail getJobDetail(Class<? extends Job> clazz, String identity, String groupName) {
-        Preconditions.checkNotNull(clazz, "Class is required for new JobDetail");
-        Preconditions.checkNotNull(identity, "Identity is required for new JobDetail");
-        Preconditions.checkNotNull(groupName, "JobeGroupName is required for new JobDetail");
-
-        return newJob(clazz)
-                .withIdentity(identity, groupName)
                 .build();
     }
     

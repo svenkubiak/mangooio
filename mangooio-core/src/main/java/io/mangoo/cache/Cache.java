@@ -62,22 +62,6 @@ public class Cache {
     }
 
     /**
-     * Adds a value to cache with an expiration time in seconds
-     *
-     * @param key The key for the cached value
-     * @param value The value to store
-     * @param expiration The time of expiration in seconds
-     *
-     * @deprecated Eviction of single cache elements has been
-     * removed, use {@link #add(String key, Object value)} instead.
-     */
-    @Deprecated
-    public void add(String key, Object value, int expiration) {
-        check(value);
-        add(key, value);
-    }
-
-    /**
      * Retrieves a value with a given key from the cache. If the value
      *  is not found the callable will be called to retrieve the value
      *

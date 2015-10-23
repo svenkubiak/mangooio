@@ -41,8 +41,6 @@ public enum Default {
     SEPERATOR(":"),
     NOSNIFF("nosniff"),
     SAMEORIGIN("SAMEORIGIN"),
-    @Deprecated
-    FILTER_METHOD_NAME("filter"),
     FILTER_METHOD("execute"),
     AUTHENTICITY_TOKEN("authenticityToken"),
     XSS_PROTECTION("1"),
