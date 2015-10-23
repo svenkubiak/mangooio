@@ -3,9 +3,9 @@ package io.mangoo.authentication;
 import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -19,7 +19,7 @@ import io.mangoo.models.OAuthUser;
  *
  */
 public class Authentication {
-    private static final Logger LOG = LoggerFactory.getLogger(Authentication.class);
+    private static final Logger LOG = LogManager.getLogger(Authentication.class);
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
     private String authenticatedUser;

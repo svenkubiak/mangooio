@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.boon.json.JsonFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 
@@ -24,7 +24,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public final class Response {
-    private static final Logger LOG = LoggerFactory.getLogger(Response.class);
+    private static final Logger LOG = LogManager.getLogger(Response.class);
     private Map<HttpString, String> headers = new HashMap<HttpString, String>();
     private Map<String, Object> content = new HashMap<String, Object>();
     private String redirectTo;

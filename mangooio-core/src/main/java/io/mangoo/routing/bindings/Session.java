@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.mangoo.core.Bootstrap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -16,7 +14,7 @@ import io.mangoo.core.Bootstrap;
  *
  */
 public class Session {
-    private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
+    private static final Logger LOG = LogManager.getLogger(Session.class);
     private Map<String, String> values;
     private String authenticityToken;
     private boolean changed;

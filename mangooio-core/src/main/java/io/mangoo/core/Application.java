@@ -25,7 +25,6 @@ public final class Application {
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
         bootstrap.applicationInitialized();
-        bootstrap.prepareLogging();
         bootstrap.prepareConfig();
         bootstrap.prepareRoutes();
         greenMail = bootstrap.startGreenMail();

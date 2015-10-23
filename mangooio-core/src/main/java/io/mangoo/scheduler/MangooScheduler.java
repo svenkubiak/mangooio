@@ -6,6 +6,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -13,8 +15,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -32,7 +32,7 @@ import io.mangoo.enums.Default;
  */
 @Singleton
 public class MangooScheduler {
-    private static final Logger LOG = LoggerFactory.getLogger(MangooScheduler.class);
+    private static final Logger LOG = LogManager.getLogger(MangooScheduler.class);
     private Scheduler scheduler;
 
     @Inject

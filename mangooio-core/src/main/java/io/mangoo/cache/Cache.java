@@ -6,8 +6,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -27,7 +27,7 @@ import io.mangoo.enums.Key;
  */
 @Singleton
 public class Cache {
-    private static final Logger LOG = LoggerFactory.getLogger(Cache.class);
+    private static final Logger LOG = LogManager.getLogger(Cache.class);
     private static final String VALUE_REQUIRED = "A valid value is required";
     private static final String KEY_REQUIRED = "A valid key is required";
     private com.google.common.cache.Cache<String, Object> guavaCache;

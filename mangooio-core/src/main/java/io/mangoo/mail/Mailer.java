@@ -8,9 +8,9 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.MultiPartEmail;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.scribe.utils.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -25,7 +25,7 @@ import io.mangoo.enums.Key;
  */
 @Singleton
 public class Mailer {
-    private static final Logger LOG = LoggerFactory.getLogger(Mailer.class);
+    private static final Logger LOG = LogManager.getLogger(Mailer.class);
     private DefaultAuthenticator defaultAuthenticator;
     private Config config;
     private String host;

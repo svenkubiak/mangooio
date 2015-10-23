@@ -37,9 +37,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.nio.file.SensitivityWatchEventModifier; //NOSONAR
 
@@ -57,7 +57,7 @@ import io.mangoo.utils.MinificationUtils;
  */
 @SuppressWarnings({"restriction", "unchecked"})
 public class Watcher implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(Watcher.class);
+    private static final Logger LOG = LogManager.getLogger(Watcher.class);
     private final Trigger trigger;
     private final Set<String> includes;
     private final Set<String> excludes;

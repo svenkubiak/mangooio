@@ -3,6 +3,8 @@ package io.mangoo.crypto;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.engines.AESEngine;
@@ -11,8 +13,6 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.encoders.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -30,7 +30,7 @@ import io.mangoo.enums.Key;
  */
 @Singleton
 public class Crypto {
-    private static final Logger LOG = LoggerFactory.getLogger(Crypto.class);
+    private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final int KEYINDEX_START = 0;
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;

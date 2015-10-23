@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.base.Preconditions;
@@ -31,7 +31,7 @@ import io.mangoo.enums.Mode;
 @Singleton
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
-    private static final Logger LOG = LoggerFactory.getLogger(Config.class);
+    private static final Logger LOG = LogManager.getLogger(Config.class);
     private Map<String, String> values = new HashMap<String, String>();
 
     public Config() {

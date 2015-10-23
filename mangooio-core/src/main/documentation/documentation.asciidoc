@@ -60,7 +60,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Maven - Dependency management, built-system, packaging
 * Undertow - Web Server
 * Google Guice - Dependency injection and caching
-* Logback - Logging
+* Log4j 2 - Logging
 * Freemarker - Template engine
 * Quartz Scheduler - Scheduling
 * Boon JSON - JSON parser
@@ -225,8 +225,7 @@ this is the basic structure of a the application
         └── resources
             ├── application.yaml
             ├── files
-            ├── logback.prod.xml
-            ├── logback.xml
+            ├── log4j2.xml
             ├── templates
             │   ├── ApplicationController
             │   │   └── index.ftl
@@ -261,7 +260,7 @@ following files and folders
 /templates
 /translations
 application.yaml
-logback.xml
+log4j2.xml
 ----------------
 
 The /files folder contains all static files (e.g. robots.txt or JS/CSS
@@ -284,8 +283,8 @@ messages.properties file in your /translations folder. Even if this file is empt
 It is recommended to have the controllers in a controller package, but not required
 as the mapping is done in the Routes class and mangoo I/O doesn't require this.
 
-If you don't provide a logback.xml file, then logback
-will fallback to a default configuration provided with the logback base package.
+If you don't provide a log4j2.xml file, then Log4j2
+will fallback to a default configuration provided with the Log4j2 base package.
 
 == Configuration
 
@@ -1607,21 +1606,19 @@ There can only be one global filter in your mangoo I/O application.
 
 == Logging
 
-mangoo I/O uses http://logback.qos.ch[Logback] for logging, enabling you
-a variate of loggers to append to. If you are familiar with Log4j,
+mangoo I/O uses https://logging.apache.org/log4j/2.x/[Log4j2] for logging, enabling you
+a variate of loggers to append to. If you are familiar with Log4j2,
 creating a new logger instance is trivial.
 
 [source,java]
 -------------------------------------------------------------------------
-private static final Logger LOG = LoggerFactory.getLogger(MyClass.class);
+private static final Logger LOG = LogManager.getLogger(MyClass.class);
 -------------------------------------------------------------------------
 
-You can configure your appenders in the logback.xml file located in
-src/main/resources. By convention, there is also a special logback
-configuration file for the prod mode. This file is called
-logback.prod.xml and automatically used, when you are in prod mode. This file is
-optional and if this file is not present, mangoo I/O will fallback to logback.xml
-and further fallback to the logback settings from the logback base package.
+You can configure your appenders in the log4j2.xml file located in
+src/main/resources. If you want to pass a custom log4j2.xml for e.g. different environments
+you can simply set a "log4j.configurationFile" system property which will be picked up by Log4j2 and 
+overwrite the appenders configured in the log4j2.xml file located in src/main/resources.
 
 == Caching
 

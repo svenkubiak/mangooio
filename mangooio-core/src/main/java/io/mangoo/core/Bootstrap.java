@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -14,13 +13,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
@@ -32,9 +31,6 @@ import com.google.inject.Stage;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
 import io.mangoo.admin.MangooAdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -66,7 +62,7 @@ import io.undertow.util.Methods;
  *
  */
 public class Bootstrap {
-    private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
+    private static final Logger LOG = LogManager.getLogger(Bootstrap.class);
     private static final int INITIAL_SIZE = 255;
     private LocalDateTime start;
     private PathHandler pathHandler;
@@ -282,23 +278,6 @@ public class Bootstrap {
                 if (!this.error) {
                     mangooScheduler.start();                    
                 }
-            }
-        }
-    }
-
-    public void prepareLogging() {
-        if (Mode.PROD.equals(this.mode)) {
-            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-            try {
-                URL resource = Resources.getResource(Default.LOGBACK_PROD_FILE.toString());
-                if (resource != null) {
-                    JoranConfigurator configurator = new JoranConfigurator();
-                    configurator.setContext(context);
-                    context.reset();
-                    configurator.doConfigure(resource);
-                }
-            } catch (JoranException | IllegalArgumentException e) { //NOSONAR
-                //intentionally left blank
             }
         }
     }

@@ -62,7 +62,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Maven](https://maven.apache.org/) - Dependency management, built-system, packaging
 * [Undertow](http://undertow.io/) - Web Server
 * [Google Guice](https://github.com/google/guice) - Dependency injection
-* [Logback](http://logback.qos.ch/) - Logging
+* [Log4j 2](https://logging.apache.org/log4j/2.x/) - Logging
 * [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
 * [Google Guava](https://github.com/google/guava) - Caching
