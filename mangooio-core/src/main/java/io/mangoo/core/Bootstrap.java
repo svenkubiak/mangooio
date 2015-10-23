@@ -28,8 +28,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
 
 import io.mangoo.admin.MangooAdminController;
 import io.mangoo.annotations.Schedule;
@@ -244,18 +242,6 @@ public class Bootstrap {
     
     public void applicationStarted() {
         this.injector.getInstance(MangooLifecycle.class).applicationStarted();
-    }
-
-    public GreenMail startGreenMail() {
-        GreenMail greenMail = null;
-        if (!this.error && !Mode.PROD.equals(Application.getMode())) {
-            greenMail = new GreenMail(new ServerSetup(
-                    this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt()),
-                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), Default.FAKE_SMTP_PROTOCOL.toString()));
-            greenMail.start();
-        }
-        
-        return greenMail;
     }
     
     public void startQuartzScheduler() {

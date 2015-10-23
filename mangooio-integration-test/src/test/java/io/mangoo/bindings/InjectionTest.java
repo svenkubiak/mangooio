@@ -7,7 +7,6 @@ import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
-import io.mangoo.mail.Mailer;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -33,7 +32,6 @@ public class InjectionTest {
         MangooTestInstance.IO.getInjector().getInstance(Crypto.class);
         MangooTestInstance.IO.getInjector().getInstance(Config.class);
         MangooTestInstance.IO.getInjector().getInstance(Messages.class);
-        MangooTestInstance.IO.getInjector().getInstance(Mailer.class);
         MangooTestInstance.IO.getInjector().getInstance(Response.class);
         MangooTestInstance.IO.getInjector().getInstance(Request.class);
         MangooTestInstance.IO.getInjector().getInstance(MangooScheduler.class);

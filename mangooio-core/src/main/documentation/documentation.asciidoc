@@ -46,7 +46,6 @@ at home from the start
 * Flexible testing tools
 * Simple Deployment and CI-Integration
 * i18N Internationalization
-* Easy eMail handling
 
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
@@ -1796,108 +1795,6 @@ Check out the
 http://quartz-scheduler.org/generated/2.2.1/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
 Scheudler configuration documentation] for more information.
 
-== Sending eMails
-
-mangoo I/O uses the mature and well documentated
-https://commons.apache.org/proper/commons-email/[Apache Commons Email].
-to make sending eMails as easy as possible. If you want to send an eMail via mangoo I/O you need
-the Mailer object. This can be easily injected in your controller.
-
-[source,java]
-----------------------
-@Inject
-private Mailer mailer;
-----------------------
-
-The Mailer object offers three functions for sending emails: sending a
-plain text eMail, sending a html eMail and sending a multipart eMail.
-Just create an eMail object you want to send and pass it to the appropiate mailer
-function. You can check the
-https://commons.apache.org/proper/commons-email/userguide.html[Apache
-Commons Email documentation] on how to create the eMail objects you require.
-
-[NOTE]
-You don't have to create any SMTP configuration programmatically as shown in the
-Apache Commons Email documentation. This is all done via the application.yaml and passed to the Mailer class of your mangoo
-I/O application, so you can set your host, port, username, password and ssl usage only once.
-
-Here is an example of how to send a plain text message.
-
-[source,java]
-----------------------------------------------------
-package mangoo.controllers;
-
-import io.mangoo.mail.Mailer;
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.SimpleEmail;
-import com.google.inject.Inject;
-
-public class MailController {
-
-    @Inject
-    private Mailer mailer;
-
-    public void mail() {
-        Email email = new SimpleEmail();
-        email.setFrom("user@gmail.com");
-        email.setSubject("TestMail");
-        email.setMsg("This is a test mail ... :-)");
-        email.addTo("foo@bar.com");
-
-        mailer.send(email);
-    }
-}
-----------------------------------------------------
-
-If you want an eMail with a message body that is rendered from a
-template you can use the mangoo I/O TemplateEngine.
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------
-package mangoo.controllers;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import io.mangoo.i18n.Messages;
-import io.mangoo.mail.Mailer;
-import io.mangoo.routing.bindings.Flash;
-import io.mangoo.routing.bindings.Session;
-import io.mangoo.templating.TemplateEngine;
-
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.SimpleEmail;
-
-import com.google.inject.Inject;
-
-public class MailController {
-
-    @Inject
-    private Mailer mailer;
-
-    @Inject
-    private TemplateEngine templateEngine;
-
-    @Inject
-    private Messages messages;
-
-    public void mail(Flash flash, Session session) {
-        Map<String, Object> content = new HashMap<String, Object>();
-        content.put("foo", "bar");
-
-        String message = templateEngine.render(flash, session, messages, "/myPackage", "myMailTemplate", content);
-
-        Email email = new SimpleEmail();
-        email.setFrom("user@gmail.com");
-        email.setSubject("TestMail");
-        email.setMsg(message);
-        email.addTo("foo@bar.com");
-
-        mailer.send(email);
-    }
-}
-------------------------------------------------------------------------------------------------------------------
-
 == Using WebSockets
 
 Genereal information on using WebScokets can be found
@@ -2392,6 +2289,10 @@ Hibernate Extension
 
 * https://github.com/svenkubiak/mangooio-hibernate-extension
 
+e-Mail Extension
+
+* https://github.com/svenkubiak/mangooio-email-extension
+
 If you have created and extension and want it to be listed here, just
 add your extension to the above list by editing the documentation.md
 file and create a pull request on the GitHub repository. You can find the documentation file in mangooio-core at
@@ -2470,18 +2371,6 @@ as a fallback value for Locale
 |cache.maxsize |The maximum number of elements in the cache |5000|
 
 |cache.expires |Duration in seconds after which an element is removed from the cache if it is not accessed|3600|
-
-|smtp.host |The host of the SMTP server |127.0.0.1|
-
-|smtp.port |The port of the SMTP server |25|
-
-|smtp.username |Username for authentication against the SMTP server
-| |Only required when using SMTP authentication
-
-|smtp.password |Password for authentication against the SMTP server
-| |Only required when using SMTP authentication
-
-|smtp.ssl |Whether to use SSL for connecting to the SMTP |false|
 
 |auth.cookie.name |The name of the authentication cookie
 |$application.name-MANGOO-AUTH|

@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import com.google.inject.Injector;
 import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
-import com.icegreen.greenmail.util.GreenMail;
 
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"**/*Test.class"})
@@ -24,9 +23,5 @@ public class MangooRunner {
 
     public final Injector getInject() {
         return MangooTestInstance.IO.getInjector();
-    }
-
-    public final GreenMail getFakeSMTP() {
-        return MangooTestInstance.IO.getFakeSMTP();
     }
 }

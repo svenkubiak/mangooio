@@ -6,7 +6,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.google.inject.Injector;
-import com.icegreen.greenmail.util.GreenMail;
 
 /**
  *
@@ -24,10 +23,6 @@ public class MangooFluent extends FluentTest {
 
     public final Injector getInject() {
         return MangooTestInstance.IO.getInjector();
-    }
-
-    public final GreenMail getFakeSMTP() {
-        return MangooTestInstance.IO.getFakeSMTP();
     }
 
     public void beforeMangooStartup() {

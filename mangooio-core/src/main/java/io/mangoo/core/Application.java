@@ -2,7 +2,6 @@ package io.mangoo.core;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
-import com.icegreen.greenmail.util.GreenMail;
 
 import io.mangoo.enums.Mode;
 
@@ -15,7 +14,6 @@ import io.mangoo.enums.Mode;
 public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
-    private static volatile GreenMail greenMail;
 
     private Application() {
     }
@@ -27,7 +25,6 @@ public final class Application {
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
         bootstrap.prepareRoutes();
-        greenMail = bootstrap.startGreenMail();
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
         bootstrap.showLogo();
@@ -82,10 +79,6 @@ public final class Application {
      */
     public static Injector getInjector() {
         return injector;
-    }
-
-    public static GreenMail getGreenMail() {
-        return greenMail;
     }
     
     /**
