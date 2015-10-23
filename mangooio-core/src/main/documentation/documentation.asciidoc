@@ -1612,6 +1612,9 @@ creating a new logger instance is trivial.
 
 [source,java]
 -------------------------------------------------------------------------
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 private static final Logger LOG = LogManager.getLogger(MyClass.class);
 -------------------------------------------------------------------------
 
