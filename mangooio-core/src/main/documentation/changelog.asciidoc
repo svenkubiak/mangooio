@@ -13,9 +13,15 @@
 * Version bumps (svenkubiak)
 ** xxx -> yyy
 
-== Version 1.3.0
+== Version 1.3.1
 
 [small]#Released at xx.xx.xxxx#
+
+* Fixed bug that displayed the wrong previous firing time on @scheduler (svenkubiak)
+
+== Version 1.3.0
+
+[small]#Released at 22.10.2015#
 
 * https://github.com/svenkubiak/mangooio/issues/73[#73] Added Basic HTTP authentication for administrative URLs (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/72[#72] Added @scheduler administrative URL (svenkubiak)

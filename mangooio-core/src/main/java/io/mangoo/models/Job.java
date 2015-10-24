@@ -1,7 +1,6 @@
 package io.mangoo.models;
 
 import java.util.Date;
-import java.util.Optional;
 
 /**
  * Base class that holds scheduled job information
@@ -19,8 +18,8 @@ public class Job {
     public Job(boolean active, String name, String description, Date nextFireTime, Date previousFireTime) {
         this.active = active;
         this.name = name;
-        this.nextFireTime = Optional.ofNullable(nextFireTime).orElse((Date) (nextFireTime.clone()));
-        this.previousFireTime = Optional.ofNullable(previousFireTime).orElse((Date) (nextFireTime.clone()));
+        this.nextFireTime = (nextFireTime == null) ? null : (Date) nextFireTime.clone();
+        this.previousFireTime =  (previousFireTime == null) ? null : (Date) previousFireTime.clone();
         this.description = description;
     }
 
