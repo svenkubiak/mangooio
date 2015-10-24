@@ -109,9 +109,9 @@ public class RequestHandler implements HttpHandler {
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
-        getSession(exchange);
-        getAuthentication(exchange);
-        getFlash(exchange);
+        getSessionCookie(exchange);
+        getAuthenticationCookie(exchange);
+        getFlashCookie(exchange);
         getForm(exchange);
         getRequestBody(exchange);
         getRequest(exchange);
@@ -280,17 +280,17 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getSession(HttpServerExchange exchange) {
+    private void getSessionCookie(HttpServerExchange exchange) {
         Session requestSession = null;
         Cookie cookie = exchange.getRequestCookies().get(ConfigUtils.getSessionCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue)) {
+            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (ConfigUtils.isSessionCookieEncrypt()) {
                     Crypto crypto = Application.getInstance(Crypto.class);
                     cookieValue = crypto.decrypt(cookieValue);
                 }
-
+                
                 String sign = null;
                 String expires = null;
                 String authenticityToken = null;
@@ -339,7 +339,6 @@ public class RequestHandler implements HttpHandler {
     private void setSessionCookie(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
             String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
-
             String version = ConfigUtils.getCookieVersion();
             String authenticityToken = this.session.getAuthenticityToken();
             LocalDateTime expires = this.session.getExpires();
@@ -360,6 +359,7 @@ public class RequestHandler implements HttpHandler {
             }
 
             Cookie cookie = new CookieImpl(ConfigUtils.getSessionCookieName())
+                    .setValue(value)
                     .setSecure(ConfigUtils.isSessionCookieSecure())
                     .setHttpOnly(true)
                     .setPath("/")
@@ -374,12 +374,12 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getAuthentication(HttpServerExchange exchange) {
+    private void getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication requestAuthentication = null;
         Cookie cookie = exchange.getRequestCookies().get(ConfigUtils.getAuthenticationCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue)) {
+            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (ConfigUtils.isAuthenticationCookieEncrypt()) {
                     cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
                 }
@@ -468,17 +468,20 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getFlash(HttpServerExchange exchange) {
+    private void getFlashCookie(HttpServerExchange exchange) {
         Flash requestFlash = null;
         Cookie cookie = exchange.getRequestCookies().get(ConfigUtils.getFlashCookieName());
-        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
-            Map<String, String> values = new HashMap<String, String>();
-            for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
-                values.put(entry.getKey(), entry.getValue());
-            }
+        if (cookie != null){
+            String cookieValue = cookie.getValue();
+            if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
+                Map<String, String> values = new HashMap<String, String>();
+                for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
+                    values.put(entry.getKey(), entry.getValue());
+                }
 
-            requestFlash = new Flash(values);
-            requestFlash.setDiscard(true);
+                requestFlash = new Flash(values);
+                requestFlash.setDiscard(true);
+            }
         }
 
         if (requestFlash == null) {

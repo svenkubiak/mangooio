@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.utils.ConfigUtils;

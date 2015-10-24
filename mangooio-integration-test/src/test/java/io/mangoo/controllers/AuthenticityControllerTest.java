@@ -37,28 +37,28 @@ public class AuthenticityControllerTest {
         assertEquals(16, response.getContent().length());
     }
     
-//    @Test
-//    public void validTest() {
-//    	MangooBrowser instance = MangooBrowser.getInstance();
-//        
-//        MangooResponse response = instance.uri("/authenticitytoken").method(Methods.GET).execute();
-//        String token = response.getContent();
-//        assertNotNull(token);
-//        assertEquals(16, token.length());
-//        
-//        response = instance.uri("/valid?authenticityToken=" + token).method(Methods.GET).execute();
-//        assertEquals(StatusCodes.OK, response.getStatusCode());
-//        assertEquals("bar", response.getContent());
-//    }
-//    
-//    @Test
-//    public void invalidTest() {
-//        MangooResponse response = MangooRequest.get("/authenticitytoken").execute();
-//        assertNotNull(response.getContent());
-//        assertEquals(16, response.getContent().length());
-//
-//        response = MangooRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
-//        assertEquals(StatusCodes.FORBIDDEN, response.getStatusCode());
-//        assertFalse(response.getContent().contains("bar"));
-//    }
+    @Test
+    public void validTest() {
+    	MangooBrowser instance = MangooBrowser.getInstance();
+        
+        MangooResponse response = instance.uri("/authenticitytoken").method(Methods.GET).execute();
+        String token = response.getContent();
+        assertNotNull(token);
+        assertEquals(16, token.length());
+        
+        response = instance.uri("/valid?authenticityToken=" + token).method(Methods.GET).execute();
+        assertEquals(StatusCodes.OK, response.getStatusCode());
+        assertEquals("bar", response.getContent());
+    }
+    
+    @Test
+    public void invalidTest() {
+        MangooResponse response = MangooRequest.get("/authenticitytoken").execute();
+        assertNotNull(response.getContent());
+        assertEquals(16, response.getContent().length());
+
+        response = MangooRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        assertEquals(StatusCodes.FORBIDDEN, response.getStatusCode());
+        assertFalse(response.getContent().contains("bar"));
+    }
 }

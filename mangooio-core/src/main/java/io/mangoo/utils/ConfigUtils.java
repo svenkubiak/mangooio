@@ -2,6 +2,8 @@ package io.mangoo.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
@@ -15,6 +17,10 @@ import io.mangoo.enums.Key;
  */
 public final class ConfigUtils {
     private static Config config = Application.getInstance(Config.class);
+    
+    private ConfigUtils() {
+        Preconditions.checkNotNull(config, "config can not be null");
+    }
     
     public static String getApplicationName() {
         return config.getString(Key.APPLICATION_NAME);

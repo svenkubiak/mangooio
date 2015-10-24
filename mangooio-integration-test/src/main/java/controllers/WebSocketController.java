@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.mangoo.interfaces.MangooWebSocket;
-import io.mangoo.routing.handlers.ExceptionHandler;
 import io.undertow.websockets.core.BufferedBinaryMessage;
 import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.CloseMessage;
