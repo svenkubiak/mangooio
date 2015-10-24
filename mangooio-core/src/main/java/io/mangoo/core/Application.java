@@ -22,6 +22,7 @@ public final class Application {
         Bootstrap bootstrap = new Bootstrap();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
+        bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
         bootstrap.prepareRoutes();

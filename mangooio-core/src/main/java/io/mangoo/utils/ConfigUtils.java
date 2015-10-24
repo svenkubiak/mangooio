@@ -34,14 +34,6 @@ public final class ConfigUtils {
         return config.getInt(Key.APPLICATION_PORT);
     }
 
-    public static String getSmtpHost() {
-        return config.getString(Key.SMTP_HOST);
-    }
-
-    public static int getSmtpPort() {
-        return config.getInt(Key.SMTP_PORT);
-    }
-
     public static String getFlashCookieName() {
         return Default.FLASH_COOKIE_NAME.toString();
     }
@@ -116,10 +108,6 @@ public final class ConfigUtils {
 
     public static String getCookieVersion() {
         return config.getString(Key.COOKIE_VERSION, Default.COOKIE_VERSION.toString());
-    }
-
-    public static boolean isSmtpSSL() {
-        return config.getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
     }
 
     public static boolean isSchedulerAutostart() {

@@ -16,13 +16,10 @@ public enum Default {
     LOCALHOST("127.0.0.1"), //NOSONAR
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
-    SMTP_PORT("25"),
-    SMTP_SSL("false"), //NOSONAR
     APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
     ASSETS_PATH("src/main/resources/files/assets/"),
     CONFIG_PATH("/src/main/resources/application.yaml"),
-    FAKE_SMTP_PROTOCOL("smtp"),
     STYLESHEET_FOLDER("stylesheets"),
     JAVSCRIPT_FOLDER("javascripts"),
     CONFIGURATION_FILE("application.yaml"),

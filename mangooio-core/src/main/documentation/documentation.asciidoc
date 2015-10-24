@@ -1627,9 +1627,23 @@ private static final Logger LOG = LogManager.getLogger(MyClass.class);
 -------------------------------------------------------------------------
 
 You can configure your appenders in the log4j2.xml file located in
-src/main/resources. If you want to pass a custom log4j2.xml for e.g. different environments
-you can simply set a "log4j.configurationFile" system property which will be picked up by Log4j2 and 
-overwrite the appenders configured in the log4j2.xml file located in src/main/resources.
+src/main/resources which is present by default if you created you project from the 
+mangoo I/O archtype.
+
+You can always use the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
+from log4j2 for loading the configuration file. However, mangoo I/O offers you an additional feature, specially when
+working with different environments. When mangoo I/O starts it will look for an environment specific log4j2 configuration
+file in the form of  
+
+[source]
+-------------------------------------------------------------------------
+log4j2.dev.xml
+-------------------------------------------------------------------------
+
+This can of course also be set for prod and test mode.
+
+If mangoo I/O does not find such a file, it will fall back to the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
+from log4j2. 
 
 == Caching
 
