@@ -36,7 +36,7 @@ public enum Default {
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
-    SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
+    COOKIE_NAME("MANGOOIO-SESSION"),
     SPLITTER("&"),
     SEPERATOR(":"),
     NOSNIFF("nosniff"),

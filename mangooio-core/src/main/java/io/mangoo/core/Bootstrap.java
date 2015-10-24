@@ -45,6 +45,7 @@ import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.utils.ConfigUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.RoutingHandler;
@@ -105,7 +106,7 @@ public class Bootstrap {
 
     public void prepareConfig() {
         this.config = this.injector.getInstance(Config.class);
-        if (!this.config.hasValidSecret()) {
+        if (!ConfigUtils.hasValidSecret()) {
             LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
             this.error = true;
         }
@@ -246,8 +247,8 @@ public class Bootstrap {
     
     public void startQuartzScheduler() {
         if (!this.error) {
-            Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
-            if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
+            Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
+            if (jobs != null && !jobs.isEmpty() && ConfigUtils.isSchedulerAutostart()) {
                 MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
                 for (Class<?> clazz : jobs) {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);

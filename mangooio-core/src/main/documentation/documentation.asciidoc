@@ -339,6 +339,15 @@ config.getString("application.minify.js");
 config.getString(Key.APPLICATION_MINIFY_JS);
 ------------------------
 
+=== Utility class
+
+mangoo I/O ships with an utility class for easy access of some configuration values.
+
+[source,java]
+----------------
+ConfigUtils.getApplicationName();
+----------------
+
 === Modes
 
 By convention, mangoo I/O offers three configuration modes: **dev**,

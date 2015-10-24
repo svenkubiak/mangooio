@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Key;
+import io.mangoo.utils.ConfigUtils;
 
 /**
  * Convenient class for encryption and decryption
@@ -88,7 +89,7 @@ public class Crypto {
     public String encrypt(String plainText) {
         Preconditions.checkNotNull(plainText, "plainText can not be null");
 
-        return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
+        return encrypt(plainText, getSizedKey(ConfigUtils.getApplicationSecret()));
     }
 
     /**

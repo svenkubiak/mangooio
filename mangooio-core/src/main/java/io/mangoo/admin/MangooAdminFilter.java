@@ -1,6 +1,5 @@
 package io.mangoo.admin;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -8,13 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.utils.ConfigUtils;
 import io.undertow.util.Headers;
 
 /**
@@ -24,18 +22,11 @@ import io.undertow.util.Headers;
  *
  */
 public class MangooAdminFilter implements MangooFilter {
-    private Config config;
-    
-    @Inject
-    public MangooAdminFilter(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
-    }
-    
     @Override
     public Response execute(Request request, Response response) {
         String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
         if (isURLEnabled(url)) {
-            if (config.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
+            if (ConfigUtils.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
                   return Response.withUnauthorized()
                           .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
                           .andEmptyBody()
@@ -72,8 +63,8 @@ public class MangooAdminFilter implements MangooFilter {
         
         return StringUtils.isNotBlank(username) && 
                StringUtils.isNotBlank(password) &&
-               config.getAdminAuthenticationUser().equals(username) &&
-               config.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
+               ConfigUtils.getAdminAuthenticationUser().equals(username) &&
+               ConfigUtils.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
     }
 
     /**
@@ -86,22 +77,22 @@ public class MangooAdminFilter implements MangooFilter {
         boolean enabled;
         switch (url) {
         case "@routes":
-            enabled = this.config.isAdminRoutesEnabled();
+            enabled = ConfigUtils.isAdminRoutesEnabled();
             break;
         case "@config":
-            enabled = this.config.isAdminConfigEnabled();
+            enabled = ConfigUtils.isAdminConfigEnabled();
             break;
         case "@health":
-            enabled = this.config.isAdminHealthEnabled();
+            enabled = ConfigUtils.isAdminHealthEnabled();
             break; 
         case "@cache":
-            enabled = this.config.isAdminCacheEnabled();
+            enabled = ConfigUtils.isAdminCacheEnabled();
             break;      
         case "@metrics":
-            enabled = this.config.isAdminMetricsEnabled();
+            enabled = ConfigUtils.isAdminMetricsEnabled();
             break;  
         case "@scheduler":
-            enabled = this.config.isAdminSchedulerEnabled();
+            enabled = ConfigUtils.isAdminSchedulerEnabled();
             break;  
         default:
             enabled = false;

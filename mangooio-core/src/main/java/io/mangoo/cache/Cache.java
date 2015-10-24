@@ -18,6 +18,7 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.utils.ConfigUtils;
 
 /**
  * Google Guava based cache implementation
@@ -40,7 +41,7 @@ public class Cache {
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
                 .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS);
 
-        if (config.isAdminCacheEnabled()) {
+        if (ConfigUtils.isAdminCacheEnabled()) {
             cacheBuilder.recordStats();
         }
 
