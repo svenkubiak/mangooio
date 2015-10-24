@@ -61,7 +61,7 @@ public class Google2Api extends DefaultApi20 {
         return new GoogleOAuth2Service(this, config);
     }
 
-    private class GoogleApi2AccessTokenExtractor implements AccessTokenExtractor {
+    private static class GoogleApi2AccessTokenExtractor implements AccessTokenExtractor {
         @Override
         public Token extract(String response) {
             Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
