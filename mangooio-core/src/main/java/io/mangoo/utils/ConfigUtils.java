@@ -14,22 +14,7 @@ import io.mangoo.enums.Key;
  *
  */
 public final class ConfigUtils {
-    private static Config config;
-    
-    private ConfigUtils() {
-        config = Application.getInstance(Config.class);
-    }
-
-    /**
-     * Checks if the application.conf stored in conf/application.conf contains an application
-     * secret property (application.secret) that has at least 16 characters (128-Bit)
-     *
-     * @return True if the configuration contains an application.secret property with at least 16 characters
-     */
-    public static boolean hasValidSecret() {
-        String secret = config.getString(Key.APPLICATION_SECRET);
-        return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
-    }
+    private static Config config = Application.getInstance(Config.class);
     
     public static String getApplicationName() {
         return config.getString(Key.APPLICATION_NAME);

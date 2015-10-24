@@ -297,7 +297,21 @@ public class Config {
         return getBoolean(key.toString(), defaultValue);
     }
 
+    /**
+     * @return All configuration options of the current environment
+     */
     public Map<String, String> getAllConfigurations() {
         return new HashMap(this.values);
+    }
+
+    /**
+     * Checks if the application.conf stored in conf/application.conf contains an application
+     * secret property (application.secret) that has at least 16 characters (128-Bit)
+     *
+     * @return True if the configuration contains an application.secret property with at least 16 characters
+     */
+    public boolean hasValidSecret() {
+        String secret = getString(Key.APPLICATION_SECRET);
+        return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
     }
 }

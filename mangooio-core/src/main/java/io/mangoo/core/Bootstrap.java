@@ -106,7 +106,7 @@ public class Bootstrap {
 
     public void prepareConfig() {
         this.config = this.injector.getInstance(Config.class);
-        if (!ConfigUtils.hasValidSecret()) {
+        if (!this.config.hasValidSecret()) {
             LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
             this.error = true;
         }

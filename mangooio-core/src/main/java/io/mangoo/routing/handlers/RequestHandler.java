@@ -299,7 +299,6 @@ public class RequestHandler implements HttpHandler {
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
 
-
                     if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
                         sign = prefixes [INDEX_0];
                         authenticityToken = prefixes [INDEX_1];
