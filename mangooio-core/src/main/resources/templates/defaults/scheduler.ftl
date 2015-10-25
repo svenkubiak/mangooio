@@ -32,11 +32,13 @@
 			</thead>
 			<tbody class="searchable">
 			<#list jobs as job>
-				<td>${job.name}</td>
-				<td>${job.active?string('yes', 'no')}</td>
-				<td>${job.description}</td>
-				<td><#if job.previousFireTime??>${job.previousFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
-				<td><#if job.nextFireTime??>${job.nextFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
+				<tr>
+					<td>${job.name}</td>
+					<td>${job.active?string('yes', 'no')}</td>
+					<td>${job.description}</td>
+					<td><#if job.previousFireTime??>${job.previousFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
+					<td><#if job.nextFireTime??>${job.nextFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
+				</tr>
 			</#list>
 		  	</tbody>
 		  </table>
