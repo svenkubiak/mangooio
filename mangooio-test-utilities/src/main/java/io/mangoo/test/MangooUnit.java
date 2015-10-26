@@ -4,6 +4,11 @@ import org.junit.Before;
 
 import com.google.inject.Injector;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @SuppressWarnings("all")
 public class MangooUnit {
 

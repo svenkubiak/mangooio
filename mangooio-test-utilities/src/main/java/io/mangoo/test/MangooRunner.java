@@ -7,6 +7,11 @@ import com.google.inject.Injector;
 import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")

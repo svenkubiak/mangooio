@@ -6,6 +6,11 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public enum MangooTestInstance {
     IO;
     private Injector injector;
@@ -22,5 +27,9 @@ public enum MangooTestInstance {
 
     public Injector getInjector() {
         return this.injector;
+    }
+    
+    public <T> T getInstance(Class<T> clazz) {
+        return this.injector.getInstance(clazz);
     }
 }
