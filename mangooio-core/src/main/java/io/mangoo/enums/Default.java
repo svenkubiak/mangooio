@@ -73,7 +73,8 @@ public enum Default {
     SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
     BASICAUTH_CREDENTIALS_LENGTH("2"),
     OAUTH_REQUEST_PARAMETER("oauth"),
-    SCHEDULER_PACKAGE("jobs");
+    SCHEDULER_PACKAGE("jobs"),
+    COOKIE_ENCRYPTION("false");
 
     private final String value;
 
