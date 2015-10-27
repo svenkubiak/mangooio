@@ -4,11 +4,13 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/74[#74] Refactored test utilities (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/64[#64] Move to log4j2 for logging (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/53[#53] Extracted Mailer to own extension (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/66[#66] Removed all redundant legacy code  (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/45[#45] Removed all @deprecated methods and classes (svenkubiak)
 * Added new ConfigUtils class for easy access to configuration values (svenkubiak)
+* Code cleanup, refactorings and more javadoc (svenkubiak)
 * Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** undertow-core 1.3.3.Final -> 1.3.4.Final

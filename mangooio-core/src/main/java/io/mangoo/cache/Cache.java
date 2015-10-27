@@ -2,7 +2,9 @@ package io.mangoo.cache;
 
 import java.io.NotSerializableException;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -58,42 +60,8 @@ public class Cache {
         check(value);
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
-
+        
         this.guavaCache.put(key, value);
-    }
-
-    /**
-     * Retrieves a value with a given key from the cache. If the value
-     *  is not found the callable will be called to retrieve the value
-     *
-     * @param key The key for the cached value
-     * @param callable The callable to invoke when the value is not found
-     *
-     * @return The stored value or null if not present
-     */
-    public Object get(String key, Callable<? extends Object> callable) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
-
-        Object object = null;
-        try {
-            object = this.guavaCache.get(key, callable);
-        } catch (ExecutionException e) {
-            LOG.error("Failed to get Cached value", e);
-        }
-
-        return object;
-    }
-
-    /**
-     * Retrieves a value with a given key from the cache
-     *
-     * @param key The key for the cached value
-     * @return The stored value or null if not present
-     */
-    public Object get(String key) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
-
-        return this.guavaCache.getIfPresent(key);
     }
 
     /**
@@ -128,21 +96,16 @@ public class Cache {
      * a given class
      *
      * @param key The key for the cached value
-     * @param clazz The class to convert the value to
      * @param <T> JavaDoc requires this (just ignore it)
      * 
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(String key, Class<T> clazz) {
+    public <T> T get(String key) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
 
-        Object object = null;
-        if (this.guavaCache.getIfPresent(key) != null) {
-            object = this.guavaCache.getIfPresent(key);
-        }
-
-        return (T) object;
+        Object object = this.guavaCache.getIfPresent(key);
+        return object == null ? null : (T) object;
     }
 
     /**
@@ -151,18 +114,18 @@ public class Cache {
      * will be called to retrieve the value.
      *
      * @param key The key for the cached value
-     * @param clazz The class to convert the value to
      * @param callable The callable to invoke when the value is not found
      * @param <T> JavaDoc requires this (just ignore it)
      * 
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(String key, Class<T> clazz, Callable<? extends Object> callable) {
+    public <T> T get(String key, Callable<? extends Object> callable) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
+        Preconditions.checkNotNull(callable,  "callable can not be null");
 
-        Object object = null;
-        if (this.guavaCache.getIfPresent(key) != null) {
+        Object object = this.guavaCache.getIfPresent(key);
+        if (object == null) {
             try {
                 object = this.guavaCache.get(key, callable);
             } catch (ExecutionException e) {
@@ -170,7 +133,25 @@ public class Cache {
             }
         }
 
-        return (T) object;
+        return object == null ? null : (T) object;
+    }
+    
+    /**
+     * Adds a complete map of objects to the cache
+     * 
+     * @param map The map to add
+     */
+    public void addAll(Map<String, Object> map) {
+        Preconditions.checkNotNull(map, "map can not be null");
+     
+        this.guavaCache.putAll(map);
+    }
+    
+    /**
+     * @return The complete content of the cache
+     */
+    public ConcurrentMap<String, Object> getAll() {
+        return this.guavaCache.asMap();
     }
 
     /**
