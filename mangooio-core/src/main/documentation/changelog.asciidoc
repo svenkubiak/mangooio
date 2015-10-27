@@ -11,7 +11,9 @@
 * Added new ConfigUtils class for easy access to configuration values (svenkubiak)
 * Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
-** xxx -> yyy
+** undertow-core 1.3.3.Final -> 1.3.4.Final
+** fluent-hc 4.4.1 -> 4.5.1
+** fluentlenium-core 0.10.3 -> 0.10.6 
 
 == Version 1.3.1
 
