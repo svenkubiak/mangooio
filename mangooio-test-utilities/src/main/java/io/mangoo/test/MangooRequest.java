@@ -11,19 +11,43 @@ public final class MangooRequest {
     private MangooRequest() {
     }
 
-    public static MangooResponse get(String uri) {
+    /**
+     * Creates a new HTTP GET request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static MangooResponse GET(String uri) {
         return new MangooResponse(uri, Methods.GET);
     }
     
-    public static MangooResponse post(String uri) {
+    /**
+     * Creates a new HTTP POST request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static MangooResponse POST(String uri) {
         return new MangooResponse(uri, Methods.POST);
     }
 
-    public static MangooResponse put(String uri) {
+    /**
+     * Creates a new HTTP PUT request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static MangooResponse PUT(String uri) {
         return new MangooResponse(uri, Methods.PUT);
     }
     
-    public static MangooResponse delete(String uri) {
+    /**
+     * Creates a new HTTP DELETE request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static MangooResponse DELETE(String uri) {
         return new MangooResponse(uri, Methods.DELETE);
     }
 }

@@ -16,7 +16,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -29,8 +28,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
@@ -46,7 +45,7 @@ import io.undertow.util.Methods;
  *
  */
 public class MangooResponse {
-    private static final Logger LOG = LoggerFactory.getLogger(MangooResponse.class);
+    private static final Logger LOG = LogManager.getLogger(MangooResponse.class);
     private String responseUrl;
     private String responseUri;
     private String responseRequestBody;
@@ -54,13 +53,12 @@ public class MangooResponse {
     private HttpString responseMethod;
     private HttpResponse httpResponse;
     private ContentType responseContentType;
-    private boolean responseDisbaleRedirects;
+    private HttpClientBuilder httpClientBuilder;
     private List<NameValuePair> postParameter = new ArrayList<NameValuePair>();
     private CookieStore cookieStore = new BasicCookieStore();
-    private HttpClient httpClient;
-    private HttpClient httpClientNoRedirects;
     private Map<String, String> headers = new HashMap<String, String>();
-
+    private boolean responseDisbaleRedirects;
+    
     public MangooResponse (String uri, HttpString method) {
         this.responseUri = uri;
         this.responseMethod = method;
@@ -72,73 +70,120 @@ public class MangooResponse {
     }
 
     private void init () {
-        Config config = MangooTestInstance.IO.getInjector().getInstance(Config.class);
+        Config config = MangooInstance.TEST.getInstance(Config.class);
 
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
         this.cookieStore.clear();
         this.responseUrl = "http://" + host + ":" + port;
-        this.httpClient = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore).build();
-        this.httpClientNoRedirects = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore).disableRedirectHandling().build();
+        this.httpClientBuilder = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore);
     }
 
-    public MangooResponse contentType(ContentType contentType) {
+    /**
+     * Sets the ContentType of the request
+     * 
+     * @param contentType The content type to use
+     * @return MangooResponse 
+     */
+    public MangooResponse withContentType(ContentType contentType) {
         this.responseContentType = contentType;
         return this;
     }
 
-    public MangooResponse requestBody(String requestBody) {
+    /**
+     * Sets the RequestBody of the request
+     * 
+     * @param requestBody The request body to use
+     * @return MangooResponse 
+     */
+    public MangooResponse withRequestBody(String requestBody) {
         this.responseRequestBody = requestBody;
         return this;
     }
 
-    public MangooResponse postParameters(List<NameValuePair> postParameter) {
+    /**
+     * Sets Post parameter to the request
+     * 
+     * @param postParameter A list of post parameter
+     * @return MangooResponse
+     */
+    public MangooResponse withPostParameters(List<NameValuePair> postParameter) {
         this.postParameter = Collections.unmodifiableList(postParameter);
         return this;
     }
 
-    public MangooResponse disableRedirects(boolean disableRedirects) {
+    /**
+     * Disables redirects when the request is executed
+     * 
+     * @param disableRedirects true or false
+     * @return MangooResponse
+     */
+    public MangooResponse withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
         return this;
     }
 
-    public MangooResponse uri(String uri) {
+    /**
+     * Sets the URI to be executed by the request
+     * 
+     * @param uri The URI to call
+     * @return MangooResponse
+     */
+    public MangooResponse withUri(String uri) {
         this.responseUri = uri;
         return this;
     }
-
-    public MangooResponse header(String name, String value) {
-        this.headers.put(name, value);
-        return this;
-    }
-
-    public MangooResponse method(HttpString method) {
+    
+    /**
+     * Sets the HTTP method to execute the request with
+     * 
+     * @param method The HTTP Method 
+     * @return MangooResponse
+     */
+    public MangooResponse withMethod(HttpString method) {
         this.responseMethod = method;
         return this;
     }
+
+    /**
+     * Adds an additional header to the request
+     * 
+     * @param name The name of the header
+     * @param value The value of the header
+     * @return MangooResponse
+     */
+    public MangooResponse withHeader(String name, String value) {
+        this.headers.put(name, value);
+        return this;
+    }
     
-    public MangooResponse authentication(String username, String password) {
+    /**
+     * Sets Basic HTTP Authentication the the request
+     * 
+     * @param username The username
+     * @param password The password
+     * @return MangooResponse
+     */
+    public MangooResponse withBasicauthentication(String username, String password) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-        
-        this.httpClient = HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(credentialsProvider)
-                .setDefaultCookieStore(this.cookieStore).build();
-        
-        this.httpClientNoRedirects = HttpClientBuilder.create()
-                .setDefaultCredentialsProvider(credentialsProvider)
-                .setDefaultCookieStore(this.cookieStore).disableRedirectHandling().build();
+        this.httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultCookieStore(this.cookieStore);
         
         return this;
     }
 
+    /**
+     * Execute the HTTP request
+     * 
+     * @return MangooResponse
+     */
     public MangooResponse execute() {
-        if (this.responseMethod.equals(Methods.GET)) {
+        if ((Methods.GET).equals(this.responseMethod)) {
             HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
 
             return doRequest(httpGet);
-        } else if (this.responseMethod.equals(Methods.POST)) {
+        } else if ((Methods.POST).equals(this.responseMethod)) {
             HttpPost httpPost = new HttpPost(responseUrl + responseUri);
 
             try {
@@ -152,7 +197,7 @@ public class MangooResponse {
             }
 
             return doRequest(httpPost);
-        } else if (this.responseMethod.equals(Methods.PUT)) {
+        } else if ((Methods.PUT).equals(this.responseMethod)) {
             HttpPut httpPut = new HttpPut(responseUrl + responseUri);
 
             try {
@@ -166,7 +211,7 @@ public class MangooResponse {
             }
 
             return doRequest(httpPut);     
-        } else if (this.responseMethod.equals(Methods.DELETE)) {
+        } else if ((Methods.DELETE.equals(this.responseMethod))) {
             HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
 
             return doRequest(httpDelete);
@@ -175,24 +220,29 @@ public class MangooResponse {
         return this;
     }
 
+    /**
+     * Performs the actual HTTP request
+     * 
+     * @param request The HTTP request
+     * @return MangooResponse
+     */
     private MangooResponse doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
             request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
         }
 
-        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
-            request.setHeader(entry.getKey(), entry.getValue());
-        }
+        this.headers.entrySet().forEach((entry) -> request.setHeader(entry.getKey(), entry.getValue()));
 
+        if (responseDisbaleRedirects) {
+            this.httpClientBuilder.disableRedirectHandling();
+        } 
+        
         try {
-            if (this.responseDisbaleRedirects) {
-                this.httpResponse = this.httpClientNoRedirects.execute(request);
-            } else {
-                this.httpResponse = this.httpClient.execute(request);
-            }
+            this.httpResponse = this.httpClientBuilder.build().execute(request);
+            
             HttpEntity httpEntity = this.httpResponse.getEntity();
             if (httpEntity != null) {
-                this.responseContent = EntityUtils.toString(this.httpResponse.getEntity());
+                this.responseContent = EntityUtils.toString(httpEntity);
             }
         } catch (IOException e) {
             LOG.error("Failed to execute request to " + responseUrl, e);
@@ -200,27 +250,45 @@ public class MangooResponse {
 
         return this;
     }
-
+    
+    /**
+     * @return The response content
+     */
     public String getContent() {
         return this.responseContent;
     }
 
+    /**
+     * @return The HTTP response object
+     */
     public HttpResponse getHttpResponse() {
         return this.httpResponse;
     }
 
+    /**
+     * @return The status code of the response
+     */
     public int getStatusCode() {
         return this.httpResponse.getStatusLine().getStatusCode();
     }
 
+    /**
+     * @return The response cookie or an empty list
+     */
     public List<Cookie> getCookies() {
         return (this.cookieStore.getCookies() == null) ? new ArrayList<Cookie>() : this.cookieStore.getCookies();
     }
 
+    /**
+     * @return The content type of the response
+     */
     public String getContentType() {
         return this.httpResponse.getEntity().getContentType().getValue();
     }
 
+    /**
+     * @return The response URL
+     */
     public String getResponseUrl() {
         return responseUrl;
     }

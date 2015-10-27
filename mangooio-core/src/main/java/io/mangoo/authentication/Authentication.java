@@ -123,7 +123,7 @@ public class Authentication {
 
         return authenticated;
     }
-
+    
     /**
      * Performs a logout of the currently authenticated user
      */
@@ -144,6 +144,15 @@ public class Authentication {
             this.authenticatedUser = username;
             this.remember = remember;
         }
+    }
+    
+    /**
+     * Convenient method that calls login(username, false)
+     * 
+     * @param username The user name to login
+     */
+    public void login(String username) {
+        login(username, false);
     }
 
     /**

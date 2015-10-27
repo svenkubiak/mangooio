@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.mangoo.routing.bindings.Validator;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.MangooInstance;
 
 public class ValidatorTest {
     private Validator validator;
@@ -30,7 +30,7 @@ public class ValidatorTest {
 
     @Before
     public void setup () {
-        validator = MangooTestInstance.IO.getInjector().getInstance(Validator.class);
+        validator = MangooInstance.TEST.getInjector().getInstance(Validator.class);
     }
 
     @Test

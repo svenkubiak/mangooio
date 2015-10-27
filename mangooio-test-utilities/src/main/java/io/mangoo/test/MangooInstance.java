@@ -11,18 +11,17 @@ import io.mangoo.enums.Mode;
  * @author svenkubiak
  *
  */
-public enum MangooTestInstance {
-    IO;
+public enum MangooInstance {
+    TEST;
     private Injector injector;
 
-    MangooTestInstance() {
+    MangooInstance() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
         this.injector = Application.getInjector();
     }
 
-    public MangooTestInstance get() {
-        return IO;
+    public void start() {
     }
 
     public Injector getInjector() {

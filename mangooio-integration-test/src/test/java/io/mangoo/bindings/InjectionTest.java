@@ -13,7 +13,7 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.scheduler.MangooScheduler;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.MangooInstance;
 
 /**
  * 
@@ -24,16 +24,16 @@ public class InjectionTest {
 
     @Test
     public void testInjection() {
-        MangooTestInstance.IO.getInjector().getInstance(Form.class);
-        MangooTestInstance.IO.getInjector().getInstance(Authentication.class);
-        MangooTestInstance.IO.getInjector().getInstance(Session.class);
-        MangooTestInstance.IO.getInjector().getInstance(Flash.class);
-        MangooTestInstance.IO.getInjector().getInstance(Cache.class);
-        MangooTestInstance.IO.getInjector().getInstance(Crypto.class);
-        MangooTestInstance.IO.getInjector().getInstance(Config.class);
-        MangooTestInstance.IO.getInjector().getInstance(Messages.class);
-        MangooTestInstance.IO.getInjector().getInstance(Response.class);
-        MangooTestInstance.IO.getInjector().getInstance(Request.class);
-        MangooTestInstance.IO.getInjector().getInstance(MangooScheduler.class);
+        MangooInstance.TEST.getInjector().getInstance(Form.class);
+        MangooInstance.TEST.getInjector().getInstance(Authentication.class);
+        MangooInstance.TEST.getInjector().getInstance(Session.class);
+        MangooInstance.TEST.getInjector().getInstance(Flash.class);
+        MangooInstance.TEST.getInjector().getInstance(Cache.class);
+        MangooInstance.TEST.getInjector().getInstance(Crypto.class);
+        MangooInstance.TEST.getInjector().getInstance(Config.class);
+        MangooInstance.TEST.getInjector().getInstance(Messages.class);
+        MangooInstance.TEST.getInjector().getInstance(Response.class);
+        MangooInstance.TEST.getInjector().getInstance(Request.class);
+        MangooInstance.TEST.getInjector().getInstance(MangooScheduler.class);
     }
 }

@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.mangoo.cache.Cache;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.MangooInstance;
 
 public class CacheTest {
     private static final String TEST = "this is a test for the cache";
@@ -15,7 +15,7 @@ public class CacheTest {
 
     @Before
     public void init() {
-        cache = MangooTestInstance.IO.getInjector().getInstance(Cache.class);
+        cache = MangooInstance.TEST.getInjector().getInstance(Cache.class);
     }
 
     @Test

@@ -6,12 +6,12 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.MangooInstance;
 
 public class FormTest {
 
     private Form getNewForm() {
-        Form form = MangooTestInstance.IO.getInjector().getInstance(Form.class);
+        Form form = MangooInstance.TEST.getInjector().getInstance(Form.class);
         form.setSubmitted(true);
 
         return form;

@@ -12,7 +12,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.Key;
 import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.MangooInstance;
 
 /**
  * 
@@ -22,10 +22,10 @@ import io.mangoo.test.MangooTestInstance;
 public class SessionControllerTest {
     @Test
     public void sessionTest() {
-        Config config = MangooTestInstance.IO.getInjector().getInstance(Config.class);
+        Config config = MangooInstance.TEST.getInjector().getInstance(Config.class);
         String cookieName = config.getString(Key.COOKIE_NAME);
         
-        MangooResponse response = MangooRequest.get("/session").execute();
+        MangooResponse response = MangooRequest.GET("/session").execute();
         List<Cookie> cookies = response.getCookies();
         
         assertNotNull(cookies);

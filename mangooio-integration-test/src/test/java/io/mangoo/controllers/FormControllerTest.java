@@ -26,7 +26,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("username", "vip"));
         parameter.add(new BasicNameValuePair("password", "secret"));
 
-        MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
+        MangooResponse response = MangooRequest.POST("/form").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).withPostParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("vip;secret", response.getContent());
     }
@@ -37,7 +37,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("username", "süpöä"));
         parameter.add(new BasicNameValuePair("password", "#+ß§"));
 
-        MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
+        MangooResponse response = MangooRequest.POST("/form").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).withPostParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("süpöä;#+ß§", response.getContent());
     }
@@ -48,7 +48,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("phone", "1234567890123"));
         parameter.add(new BasicNameValuePair("regex", "ABC"));
 
-        MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
+        MangooResponse response = MangooRequest.POST("/validateform").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).withPostParameters(parameter).execute();
         assertNotNull(response.getContent());
 
         String [] lines = response.getContent().split(System.getProperty("line.separator"));
@@ -78,7 +78,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("fax", "abchdjskcjsa"));
         parameter.add(new BasicNameValuePair("regex", "a"));
 
-        MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
+        MangooResponse response = MangooRequest.POST("/validateform").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).withPostParameters(parameter).execute();
         assertNotNull(response.getContent());
         assertEquals("Fancy that!", response.getContent());
     }

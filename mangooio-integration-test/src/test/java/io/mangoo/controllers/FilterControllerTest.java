@@ -14,7 +14,7 @@ public class FilterControllerTest {
 
     @Test
     public void testContentFiler() {
-        MangooResponse response = MangooRequest.get("/filter").execute();
+        MangooResponse response = MangooRequest.GET("/filter").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
@@ -23,7 +23,7 @@ public class FilterControllerTest {
 
     @Test
     public void testHeaderFilter() {
-        MangooResponse response = MangooRequest.get("/headerfilter").execute();
+        MangooResponse response = MangooRequest.GET("/headerfilter").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());

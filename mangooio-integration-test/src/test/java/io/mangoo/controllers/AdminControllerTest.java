@@ -14,11 +14,11 @@ public class AdminControllerTest {
 
     @Test
     public void healthTest() {
-        MangooResponse response = MangooRequest.get("/@health").execute();
+        MangooResponse response = MangooRequest.GET("/@health").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
         
-        response = MangooRequest.get("/@health").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@health").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/plain; charset=UTF-8", response.getContentType());
@@ -27,11 +27,11 @@ public class AdminControllerTest {
 
     @Test
     public void configTest() {
-        MangooResponse response = MangooRequest.get("/@config").execute();
+        MangooResponse response = MangooRequest.GET("/@config").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
         
-        response = MangooRequest.get("/@config").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@config").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -40,11 +40,11 @@ public class AdminControllerTest {
 
     @Test
     public void routesTest() {
-        MangooResponse response = MangooRequest.get("/@routes").execute();
+        MangooResponse response = MangooRequest.GET("/@routes").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
         
-        response = MangooRequest.get("/@routes").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@routes").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -53,11 +53,11 @@ public class AdminControllerTest {
 
     @Test
     public void cacheTest() {
-        MangooResponse response = MangooRequest.get("/@cache").execute();
+        MangooResponse response = MangooRequest.GET("/@cache").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
 
-        response = MangooRequest.get("/@cache").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@cache").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -66,11 +66,11 @@ public class AdminControllerTest {
 
     @Test
     public void metricsTest() {
-        MangooResponse response = MangooRequest.get("/@metrics").execute();
+        MangooResponse response = MangooRequest.GET("/@metrics").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
 
-        response = MangooRequest.get("/@metrics").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@metrics").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -79,11 +79,11 @@ public class AdminControllerTest {
     
     @Test
     public void schedulerTest() {
-        MangooResponse response = MangooRequest.get("/@scheduler").execute();
+        MangooResponse response = MangooRequest.GET("/@scheduler").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
 
-        response = MangooRequest.get("/@scheduler").authentication("admin", "admin").execute();
+        response = MangooRequest.GET("/@scheduler").withBasicauthentication("admin", "admin").execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertEquals("text/html; charset=UTF-8", response.getContentType());

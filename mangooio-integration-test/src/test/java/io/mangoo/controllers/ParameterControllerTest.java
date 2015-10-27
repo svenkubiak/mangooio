@@ -16,12 +16,12 @@ public class ParameterControllerTest {
 
     @Test
     public void stringTest() {
-        MangooResponse response = MangooRequest.get("/string/bar").execute();
+        MangooResponse response = MangooRequest.GET("/string/bar").execute();
 
         assertNotNull(response.getContent());
         assertEquals("bar", response.getContent());
         
-        response = MangooRequest.get("/string/tüsätö").execute();
+        response = MangooRequest.GET("/string/tüsätö").execute();
 
         assertNotNull(response.getContent());
         assertEquals("tüsätö", response.getContent());
@@ -29,7 +29,7 @@ public class ParameterControllerTest {
 
     @Test
     public void doublePrimitiveTest() {
-        MangooResponse response = MangooRequest.get("/doublePrimitive/1.42").execute();
+        MangooResponse response = MangooRequest.GET("/doublePrimitive/1.42").execute();
 
         assertNotNull(response.getContent());
         assertEquals("1.42", response.getContent());
@@ -37,7 +37,7 @@ public class ParameterControllerTest {
 
     @Test
     public void doubleTest() {
-        MangooResponse response = MangooRequest.get("/double/1.42").execute();
+        MangooResponse response = MangooRequest.GET("/double/1.42").execute();
 
         assertNotNull(response.getContent());
         assertEquals("1.42", response.getContent());
@@ -45,7 +45,7 @@ public class ParameterControllerTest {
 
     @Test
     public void intTest() {
-        MangooResponse response = MangooRequest.get("/int/42").execute();
+        MangooResponse response = MangooRequest.GET("/int/42").execute();
 
         assertNotNull(response.getContent());
         assertEquals("42", response.getContent());
@@ -53,7 +53,7 @@ public class ParameterControllerTest {
 
     @Test
     public void integerTest() {
-        MangooResponse response = MangooRequest.get("/integer/42").execute();
+        MangooResponse response = MangooRequest.GET("/integer/42").execute();
 
         assertNotNull(response.getContent());
         assertEquals("42", response.getContent());
@@ -61,7 +61,7 @@ public class ParameterControllerTest {
 
     @Test
     public void floatTest() {
-        MangooResponse response = MangooRequest.get("/float/1.24").execute();
+        MangooResponse response = MangooRequest.GET("/float/1.24").execute();
 
         assertNotNull(response.getContent());
         assertEquals("1.24", response.getContent());
@@ -69,7 +69,7 @@ public class ParameterControllerTest {
 
     @Test
     public void floatPrimitiveTest() {
-        MangooResponse response = MangooRequest.get("/floatPrimitive/1.24").execute();
+        MangooResponse response = MangooRequest.GET("/floatPrimitive/1.24").execute();
 
         assertNotNull(response.getContent());
         assertEquals("1.24", response.getContent());
@@ -77,7 +77,7 @@ public class ParameterControllerTest {
 
     @Test
     public void longTest() {
-        MangooResponse response = MangooRequest.get("/long/60000").execute();
+        MangooResponse response = MangooRequest.GET("/long/60000").execute();
 
         assertNotNull(response.getContent());
         assertEquals("60000", response.getContent());
@@ -85,7 +85,7 @@ public class ParameterControllerTest {
 
     @Test
     public void longPrimitiveTest() {
-        MangooResponse response = MangooRequest.get("/longPrimitive/6000").execute();
+        MangooResponse response = MangooRequest.GET("/longPrimitive/6000").execute();
 
         assertNotNull(response.getContent());
         assertEquals("6000", response.getContent());
@@ -93,7 +93,7 @@ public class ParameterControllerTest {
 
     @Test
     public void multipleTest() {
-        MangooResponse response = MangooRequest.get("/multiple/bar/1").execute();
+        MangooResponse response = MangooRequest.GET("/multiple/bar/1").execute();
 
         assertNotNull(response.getContent());
         assertEquals("bar:1", response.getContent());
@@ -101,7 +101,7 @@ public class ParameterControllerTest {
 
     @Test
     public void pathTest() {
-        MangooResponse response = MangooRequest.get("/path?foo=bar").execute();
+        MangooResponse response = MangooRequest.GET("/path?foo=bar").execute();
 
         assertNotNull(response.getContent());
         assertEquals("bar", response.getContent());

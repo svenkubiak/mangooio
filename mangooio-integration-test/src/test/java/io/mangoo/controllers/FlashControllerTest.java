@@ -12,7 +12,7 @@ import io.undertow.util.Methods;
 public class FlashControllerTest {
     @Test
     public void formTest() {
-        MangooResponse response = MangooBrowser.getInstance().uri("/flash").method(Methods.GET).execute();
+        MangooResponse response = MangooBrowser.open().withUri("/flash").withMethod(Methods.GET).execute();
 
         assertNotNull(response);
         assertEquals("simpleerrorwarningsuccess", response.getContent());

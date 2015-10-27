@@ -7,9 +7,6 @@
 	</parent>
 	<artifactId>mangooio-test-utilities</artifactId>
 	<packaging>jar</packaging>
-	<properties>
-		<maven.version>3.3.3</maven.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>io.mangoo</groupId>

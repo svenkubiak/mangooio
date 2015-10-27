@@ -20,7 +20,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void notAuthenticatedTest() {
-        MangooResponse response = MangooRequest.get("/authenticationrequired").disableRedirects(true).execute();
+        MangooResponse response = MangooRequest.GET("/authenticationrequired").withDisableRedirects(true).execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.FOUND, response.getStatusCode());
@@ -28,21 +28,21 @@ public class AuthenticationControllerTest {
 
     @Test
     public void authenticatedTest() {
-        MangooBrowser instance = MangooBrowser.getInstance();
+        MangooBrowser instance = MangooBrowser.open();
 
-        MangooResponse response = instance.uri("/dologin").method(Methods.POST).execute();
+        MangooResponse response = instance.withUri("/dologin").withMethod(Methods.POST).execute();
         assertNotNull(response);
         assertEquals(StatusCodes.FOUND, response.getStatusCode());
 
-        response = instance.uri("/authenticationrequired").disableRedirects(true).method(Methods.GET).execute();
+        response = instance.withUri("/authenticationrequired").withDisableRedirects(true).withMethod(Methods.GET).execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
 
-        response = instance.uri("/logout").method(Methods.GET).execute();
+        response = instance.withUri("/logout").withMethod(Methods.GET).execute();
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
 
-        response = instance.uri("/authenticationrequired").method(Methods.GET).execute();
+        response = instance.withUri("/authenticationrequired").withMethod(Methods.GET).execute();
         assertNotNull(response);
         assertEquals(StatusCodes.FOUND, response.getStatusCode());
     }
