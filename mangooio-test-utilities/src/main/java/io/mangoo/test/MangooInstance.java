@@ -15,14 +15,20 @@ import io.mangoo.enums.Mode;
  */
 public enum MangooInstance {
     TEST;
-
+    private boolean started;
+    
     MangooInstance() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
+        this.started = true;
     }
 
     public void start() {
         //intentionally left blank
+    }
+    
+    public boolean isStarted() {
+        return this.started;
     }
 
     public Injector getInjector() {

@@ -12,11 +12,13 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  */
 public class MangooFluent extends FluentTest {
     private WebDriver webDriver = new HtmlUnitDriver();
-
+    
     @Before
     public final void mangooStartup() {
-        beforeMangooStartup();
-        MangooInstance.TEST.start();
+        if (!MangooInstance.TEST.isStarted()) {
+            beforeMangooStartup();
+            MangooInstance.TEST.start();
+        }
     }
 
     @Override

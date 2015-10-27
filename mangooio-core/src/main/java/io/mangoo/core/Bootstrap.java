@@ -62,7 +62,7 @@ import io.undertow.util.Methods;
  */
 public class Bootstrap {
     private static final int INITIAL_SIZE = 255;
-    private Logger logger;
+    private static volatile Logger LOG; //NOSONAR
     private LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
@@ -101,7 +101,7 @@ public class Bootstrap {
             System.setProperty("log4j.configurationFile", configurationFile);            
         }
         
-        this.logger = LogManager.getLogger(Bootstrap.class);
+        LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
     }
     
     public Injector prepareInjector() {
@@ -116,7 +116,7 @@ public class Bootstrap {
     public void prepareConfig() {
         this.config = this.injector.getInstance(Config.class);
         if (!this.config.hasValidSecret()) {
-            this.logger.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
+            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
             this.error = true;
         }
     }
@@ -127,7 +127,7 @@ public class Bootstrap {
                 MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName(Default.ROUTES_CLASS.toString()));
                 mangooRoutes.routify();
             } catch (ClassNotFoundException e) {
-                this.logger.error("Failed to load routes. Please check, that conf/Routes.java exisits in your application", e);
+                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your application", e);
                 this.error = true;
             }
 
@@ -153,7 +153,7 @@ public class Bootstrap {
         }
 
         if (!found) {
-            this.logger.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+            LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
             this.error = true;
         }
     }
@@ -228,7 +228,7 @@ public class Bootstrap {
                 modules.add(new Modules());
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-                this.logger.error("Failed to load modules. Check that conf/Module.java exisits in your application", e);
+                LOG.error("Failed to load modules. Check that conf/Module.java exisits in your application", e);
                 this.error = true;
             }
         }
@@ -245,8 +245,8 @@ public class Bootstrap {
                 //intentionally left blank
             }
 
-            this.logger.info(logo.toString());
-            this.logger.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
+            LOG.info(logo.toString());
+            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
     
@@ -265,9 +265,9 @@ public class Bootstrap {
                         JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
                         Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron()); 
                         mangooScheduler.schedule(jobDetail, trigger);      
-                        this.logger.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
+                        LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
-                        this.logger.error("Invalid or missing cron expression for job: " + clazz.getName());
+                        LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         this.error = true;
                     }
                 }
@@ -285,7 +285,7 @@ public class Bootstrap {
             properties.load(inputStream);
             version = String.valueOf(properties.get(Key.VERSION.toString()));
         } catch (IOException e) {
-            this.logger.error("Failed to get application version", e);
+            LOG.error("Failed to get application version", e);
         }
 
         return version;
