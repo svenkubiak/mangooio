@@ -22,7 +22,6 @@ import org.quartz.Trigger;
 import org.reflections.Reflections;
 
 import com.github.lalyos.jfiglet.FigletFont;
-import com.google.common.base.MoreObjects;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -62,7 +61,7 @@ import io.undertow.util.Methods;
  *
  */
 public class Bootstrap {
-    private static Logger LOG; //NOSONAR
+    private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
     private LocalDateTime start;
     private PathHandler pathHandler;
@@ -98,11 +97,7 @@ public class Bootstrap {
 
     public void prepareLogger() {
         String configurationFile = "log4j2." + this.mode.toString() + ".xml";
-        ClassLoader loader = MoreObjects.firstNonNull(
-                Thread.currentThread().getContextClassLoader(),
-                Resources.class.getClassLoader());
-        
-        if (loader.getResource(configurationFile) != null) {
+        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
             System.setProperty("log4j.configurationFile", configurationFile);            
         }
         

@@ -1,5 +1,7 @@
 package io.mangoo.test;
 
+import org.scribe.utils.Preconditions;
+
 import com.google.inject.Injector;
 
 import io.mangoo.core.Application;
@@ -13,12 +15,10 @@ import io.mangoo.enums.Mode;
  */
 public enum MangooInstance {
     TEST;
-    private Injector injector;
 
     MangooInstance() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
-        this.injector = Application.getInjector();
     }
 
     public void start() {
@@ -26,10 +26,11 @@ public enum MangooInstance {
     }
 
     public Injector getInjector() {
-        return this.injector;
+        return Application.getInjector();
     }
     
     public <T> T getInstance(Class<T> clazz) {
-        return this.injector.getInstance(clazz);
+        Preconditions.checkNotNull(clazz, "clazz can not be null");
+        return Application.getInjector().getInstance(clazz);
     }
 }

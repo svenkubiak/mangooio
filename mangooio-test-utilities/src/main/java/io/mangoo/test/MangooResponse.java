@@ -31,6 +31,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
@@ -87,6 +89,8 @@ public class MangooResponse {
      * @return MangooResponse 
      */
     public MangooResponse withContentType(ContentType contentType) {
+        Preconditions.checkNotNull(contentType, "contentType can not be null");
+        
         this.responseContentType = contentType;
         return this;
     }
@@ -109,6 +113,8 @@ public class MangooResponse {
      * @return MangooResponse
      */
     public MangooResponse withPostParameters(List<NameValuePair> postParameter) {
+        Preconditions.checkNotNull(postParameter, "postParameter can not be null");
+        
         this.postParameter = Collections.unmodifiableList(postParameter);
         return this;
     }
@@ -131,6 +137,8 @@ public class MangooResponse {
      * @return MangooResponse
      */
     public MangooResponse withUri(String uri) {
+        Preconditions.checkNotNull(uri, "uri can not be null");
+        
         this.responseUri = uri;
         return this;
     }
@@ -142,6 +150,8 @@ public class MangooResponse {
      * @return MangooResponse
      */
     public MangooResponse withMethod(HttpString method) {
+        Preconditions.checkNotNull(method, "method can not be null");
+        
         this.responseMethod = method;
         return this;
     }
@@ -154,6 +164,9 @@ public class MangooResponse {
      * @return MangooResponse
      */
     public MangooResponse withHeader(String name, String value) {
+        Preconditions.checkNotNull(name, "name can not be null");
+        Preconditions.checkNotNull(value, "value can not be null");
+        
         this.headers.put(name, value);
         return this;
     }
@@ -166,6 +179,9 @@ public class MangooResponse {
      * @return MangooResponse
      */
     public MangooResponse withBasicauthentication(String username, String password) {
+        Preconditions.checkNotNull(username, "username can not be null");
+        Preconditions.checkNotNull(password, "password can not be null");
+        
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
         this.httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultCookieStore(this.cookieStore);
