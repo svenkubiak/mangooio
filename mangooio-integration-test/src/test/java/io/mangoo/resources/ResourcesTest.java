@@ -13,7 +13,7 @@ public class ResourcesTest {
     
     @Test
     public void testResourceFile() {
-        MangooResponse response = MangooRequest.GET("/robots.txt").execute();
+        MangooResponse response = MangooRequest.get("/robots.txt").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
@@ -21,7 +21,7 @@ public class ResourcesTest {
     
     @Test
     public void testResourcePath() {
-        MangooResponse response = MangooRequest.GET("/assets/javascripts/jquery.min.js").execute();
+        MangooResponse response = MangooRequest.get("/assets/javascripts/jquery.min.js").execute();
         
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());

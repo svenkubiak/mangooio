@@ -62,7 +62,7 @@ import io.undertow.util.Methods;
  *
  */
 public class Bootstrap {
-    private static Logger LOG;
+    private static Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
     private LocalDateTime start;
     private PathHandler pathHandler;

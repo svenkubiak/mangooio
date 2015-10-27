@@ -25,7 +25,7 @@ public class SessionControllerTest {
         Config config = MangooInstance.TEST.getInjector().getInstance(Config.class);
         String cookieName = config.getString(Key.COOKIE_NAME);
         
-        MangooResponse response = MangooRequest.GET("/session").execute();
+        MangooResponse response = MangooRequest.get("/session").execute();
         List<Cookie> cookies = response.getCookies();
         
         assertNotNull(cookies);

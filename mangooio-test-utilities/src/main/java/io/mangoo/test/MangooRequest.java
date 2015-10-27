@@ -17,7 +17,7 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse GET(String uri) {
+    public static MangooResponse get(String uri) {
         return new MangooResponse(uri, Methods.GET);
     }
     
@@ -27,7 +27,7 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse POST(String uri) {
+    public static MangooResponse post(String uri) {
         return new MangooResponse(uri, Methods.POST);
     }
 
@@ -37,7 +37,7 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse PUT(String uri) {
+    public static MangooResponse put(String uri) {
         return new MangooResponse(uri, Methods.PUT);
     }
     
@@ -47,7 +47,7 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse DELETE(String uri) {
+    public static MangooResponse delete(String uri) {
         return new MangooResponse(uri, Methods.DELETE);
     }
 }

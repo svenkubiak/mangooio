@@ -36,7 +36,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void indexTest() {
-        MangooResponse response = MangooRequest.GET("/").execute();
+        MangooResponse response = MangooRequest.get("/").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -45,7 +45,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void requestTest() {
-        MangooResponse response = MangooRequest.GET("/request").execute();
+        MangooResponse response = MangooRequest.get("/request").execute();
 
         assertNotNull(response);
         assertEquals("text/plain; charset=UTF-8", response.getContentType());
@@ -55,7 +55,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void indexTestWithContent() {
-        MangooResponse response = MangooRequest.GET("/").execute();
+        MangooResponse response = MangooRequest.get("/").execute();
 
         assertNotNull(response);
         assertEquals("This is a test!", response.getContent());
@@ -63,7 +63,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void redirectTestWithoutRedirect() {
-        MangooResponse response = MangooRequest.GET("/redirect").withDisableRedirects(true).execute();
+        MangooResponse response = MangooRequest.get("/redirect").withDisableRedirects(true).execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.FOUND, response.getStatusCode());
@@ -71,7 +71,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void redirectTestWithRedirect() {
-        MangooResponse response = MangooRequest.GET("/redirect").execute();
+        MangooResponse response = MangooRequest.get("/redirect").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
@@ -79,7 +79,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void textTest() {
-        MangooResponse response = MangooRequest.GET("/text").execute();
+        MangooResponse response = MangooRequest.get("/text").execute();
 
         assertNotNull(response);
         assertEquals("text/plain; charset=UTF-8", response.getContentType());
@@ -88,7 +88,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void notFoundTest() {
-        MangooResponse response = MangooRequest.GET("/foo").execute();
+        MangooResponse response = MangooRequest.get("/foo").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -97,7 +97,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void forbiddenTest() {
-        MangooResponse response = MangooRequest.GET("/forbidden").execute();
+        MangooResponse response = MangooRequest.get("/forbidden").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -106,7 +106,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void badRequestTest() throws InterruptedException {
-        MangooResponse response = MangooRequest.GET("/badrequest").execute();
+        MangooResponse response = MangooRequest.get("/badrequest").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -115,7 +115,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void unauthorizedTest() {
-        MangooResponse response = MangooRequest.GET("/unauthorized").execute();
+        MangooResponse response = MangooRequest.get("/unauthorized").execute();
 
         assertNotNull(response);
         assertEquals("text/html; charset=UTF-8", response.getContentType());
@@ -124,7 +124,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void headerTest() {
-        MangooResponse response = MangooRequest.GET("/header").execute();
+        MangooResponse response = MangooRequest.get("/header").execute();
 
         assertNotNull(response);
         assertEquals("Access-Control-Allow-Origin: https://mangoo.io", response.getHttpResponse().getFirstHeader("Access-Control-Allow-Origin").toString());
@@ -158,7 +158,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void localDateTest() {
-        MangooResponse response = MangooRequest.GET("/localdate/2007-12-03").execute();
+        MangooResponse response = MangooRequest.get("/localdate/2007-12-03").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
@@ -167,7 +167,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void localDateTimeTest() {
-        MangooResponse response = MangooRequest.GET("/localdatetime/2007-12-03T10:15:30").execute();
+        MangooResponse response = MangooRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.OK, response.getStatusCode());
@@ -176,14 +176,14 @@ public class ApplicationControllerTest {
 
     @Test
     public void eTagTest() {
-        MangooResponse response = MangooRequest.GET("/etag").execute();
+        MangooResponse response = MangooRequest.get("/etag").execute();
 
         assertNotNull(response);
 
         String etag = response.getHttpResponse().getFirstHeader(Headers.ETAG_STRING).getValue();
         assertNotNull(etag);
 
-        response = MangooRequest.GET("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
+        response = MangooRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
 
         assertEquals(StatusCodes.NOT_MODIFIED, response.getStatusCode());
         assertEquals("", response.getContent());
@@ -191,7 +191,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void postTest() {
-        MangooResponse response = MangooRequest.POST("/post").withRequestBody("winter is coming!").execute();
+        MangooResponse response = MangooRequest.post("/post").withRequestBody("winter is coming!").execute();
         
         assertNotNull(response);
         assertEquals("winter is coming!", response.getContent());
@@ -199,7 +199,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void putTest() {
-        MangooResponse response = MangooRequest.PUT("/put").withRequestBody("king of the north!").execute();
+        MangooResponse response = MangooRequest.put("/put").withRequestBody("king of the north!").execute();
         
         assertNotNull(response);
         assertEquals("king of the north!", response.getContent());
@@ -207,7 +207,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void jsonPathPostTest() {
-        MangooResponse response = MangooRequest.POST("/jsonpathpost").withRequestBody("{\"foo\":\"bar\"}").execute();
+        MangooResponse response = MangooRequest.post("/jsonpathpost").withRequestBody("{\"foo\":\"bar\"}").execute();
         
         assertNotNull(response);
         assertEquals("{\"foo\":\"bar\"}", response.getContent());
@@ -215,7 +215,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void jsonPathPutTest() {
-        MangooResponse response = MangooRequest.PUT("/jsonpathput").withRequestBody("{\"foo\":\"bar\"}").execute();
+        MangooResponse response = MangooRequest.put("/jsonpathput").withRequestBody("{\"foo\":\"bar\"}").execute();
         
         assertNotNull(response);
         assertEquals("{\"foo\":\"bar\"}", response.getContent());
@@ -223,7 +223,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void jsonBoonPostTest() {
-        MangooResponse response = MangooRequest.POST("/jsonboonpost").withRequestBody("{\"foo\":\"bar\"}").execute();
+        MangooResponse response = MangooRequest.post("/jsonboonpost").withRequestBody("{\"foo\":\"bar\"}").execute();
         
         assertNotNull(response);
         assertEquals("{\"foo\":\"bar\"}", response.getContent());
@@ -231,7 +231,7 @@ public class ApplicationControllerTest {
     
     @Test 
     public void jsonBoonPutTest() {
-        MangooResponse response = MangooRequest.PUT("/jsonboonput").withRequestBody("{\"foo\":\"bar\"}").execute();
+        MangooResponse response = MangooRequest.put("/jsonboonput").withRequestBody("{\"foo\":\"bar\"}").execute();
         
         assertNotNull(response);
         assertEquals("{\"foo\":\"bar\"}", response.getContent());

@@ -22,6 +22,7 @@ public enum MangooInstance {
     }
 
     public void start() {
+        //intentionally left blank
     }
 
     public Injector getInjector() {

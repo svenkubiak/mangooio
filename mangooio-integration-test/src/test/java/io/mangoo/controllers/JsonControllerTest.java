@@ -20,7 +20,7 @@ public class JsonControllerTest {
 
     @Test
     public void renderTest() {
-        MangooResponse response = MangooRequest.GET("/render").execute();
+        MangooResponse response = MangooRequest.get("/render").execute();
 
         assertNotNull(response.getContent());
         assertEquals(json, response.getContent());
@@ -28,7 +28,7 @@ public class JsonControllerTest {
 
     @Test
     public void parseTest() {
-        MangooResponse response = MangooRequest.POST("/parse").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
+        MangooResponse response = MangooRequest.post("/parse").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
 
         assertNotNull(response.getContent());
         assertEquals("Peter;Parker;24", response.getContent());
@@ -36,17 +36,17 @@ public class JsonControllerTest {
 
     @Test
     public void bodyTest() {
-        MangooResponse response = MangooRequest.POST("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody("").execute();
+        MangooResponse response = MangooRequest.post("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody("").execute();
 
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertNotNull(response.getContent());
 
-        response = MangooRequest.POST("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody(null).execute();
+        response = MangooRequest.post("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody(null).execute();
 
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertNotNull(response.getContent());
 
-        response = MangooRequest.POST("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
+        response = MangooRequest.post("/body").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
 
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertNotNull(response.getContent());
@@ -55,7 +55,7 @@ public class JsonControllerTest {
 
     @Test
     public void requestAndJsonTest() {
-        MangooResponse response = MangooRequest.POST("/requestAndJson").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
+        MangooResponse response = MangooRequest.post("/requestAndJson").withContentType(ContentType.APPLICATION_JSON).withRequestBody(json).execute();
 
         assertEquals(StatusCodes.OK, response.getStatusCode());
         assertNotNull(response.getContent());

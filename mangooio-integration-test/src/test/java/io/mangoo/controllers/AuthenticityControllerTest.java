@@ -22,7 +22,7 @@ public class AuthenticityControllerTest {
     
     @Test
     public void formTest() {
-        MangooResponse response = MangooRequest.GET("/authenticityform").execute();
+        MangooResponse response = MangooRequest.get("/authenticityform").execute();
 
         assertNotNull(response);
         assertTrue(response.getContent().startsWith("<input type=\"hidden\" value=\""));
@@ -31,7 +31,7 @@ public class AuthenticityControllerTest {
     
     @Test
     public void tokenTest() {
-        MangooResponse response = MangooRequest.GET("/authenticitytoken").execute();
+        MangooResponse response = MangooRequest.get("/authenticitytoken").execute();
         
         assertNotNull(response.getContent());
         assertEquals(16, response.getContent().length());
@@ -53,11 +53,11 @@ public class AuthenticityControllerTest {
     
     @Test
     public void invalidTest() {
-        MangooResponse response = MangooRequest.GET("/authenticitytoken").execute();
+        MangooResponse response = MangooRequest.get("/authenticitytoken").execute();
         assertNotNull(response.getContent());
         assertEquals(16, response.getContent().length());
 
-        response = MangooRequest.GET("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        response = MangooRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
         assertEquals(StatusCodes.FORBIDDEN, response.getStatusCode());
         assertFalse(response.getContent().contains("bar"));
     }

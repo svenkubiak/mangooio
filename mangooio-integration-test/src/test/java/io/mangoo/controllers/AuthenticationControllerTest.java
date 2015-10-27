@@ -20,7 +20,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void notAuthenticatedTest() {
-        MangooResponse response = MangooRequest.GET("/authenticationrequired").withDisableRedirects(true).execute();
+        MangooResponse response = MangooRequest.get("/authenticationrequired").withDisableRedirects(true).execute();
 
         assertNotNull(response);
         assertEquals(StatusCodes.FOUND, response.getStatusCode());

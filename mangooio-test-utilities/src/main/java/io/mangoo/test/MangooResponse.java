@@ -211,7 +211,7 @@ public class MangooResponse {
             }
 
             return doRequest(httpPut);     
-        } else if ((Methods.DELETE.equals(this.responseMethod))) {
+        } else if ((Methods.DELETE).equals(this.responseMethod)) {
             HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
 
             return doRequest(httpDelete);
@@ -231,7 +231,7 @@ public class MangooResponse {
             request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
         }
 
-        this.headers.entrySet().forEach((entry) -> request.setHeader(entry.getKey(), entry.getValue()));
+        this.headers.entrySet().forEach(entry -> request.setHeader(entry.getKey(), entry.getValue())); //NOSONAR
 
         if (responseDisbaleRedirects) {
             this.httpClientBuilder.disableRedirectHandling();
