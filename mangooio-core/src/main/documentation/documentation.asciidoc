@@ -2400,6 +2400,9 @@ as a fallback value for Locale
 |auth.cookie.expire |The time in seconds how long the user stays logged
 in even is the browser is closed |3600|
 
+|auth.cookie.remember.expire |The time in seconds how long the user stays logged
+in if remember is set with true when logging in |1209600|
+
 |auth.cookie.encrypt |Whether to encrypt the authentication cookie or
 not |false|
 

@@ -67,6 +67,7 @@ public enum Default {
     APPLICATION_ADMIN_SCHEDULER("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
+    AUTH_COOKIE_REMEMBER_EXPIRES("1209600"),
     COOKIE_VERSION("0"),
     SCHEDULER_AUTOSTART("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),

@@ -216,5 +216,12 @@ public final class ConfigUtils {
      */
     public static boolean isSessionCookieEncrypt() {
         return config.getBoolean(Key.COOKIE_ENCRYPTION, Default.COOKIE_ENCRYPTION.toBoolean());
+    }
+
+    /**
+     * @return auth.cookie.remember.expires from application.yaml or default value if undefined
+     */
+    public static long getAuthenticationRememberExpires() {
+        return config.getLong(Key.AUTH_COOKIE_REMEMBER_EXPIRES, Default.AUTH_COOKIE_REMEMBER_EXPIRES.toLong());
     }    
 }

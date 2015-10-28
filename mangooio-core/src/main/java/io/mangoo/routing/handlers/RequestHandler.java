@@ -434,7 +434,7 @@ public class RequestHandler implements HttpHandler {
                 cookie.setDiscard(true);
             } else {
                 String authenticatedUser = this.authentication.getAuthenticatedUser();
-                LocalDateTime expires = this.authentication.getExpires();
+                LocalDateTime expires = (this.authentication.isRemember()) ? LocalDateTime.now().plusSeconds(ConfigUtils.getAuthenticationRememberExpires()) : this.authentication.getExpires();
                 String version = ConfigUtils.getAuthCookieVersion();
                 String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret());
 
