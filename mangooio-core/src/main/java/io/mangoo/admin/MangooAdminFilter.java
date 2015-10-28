@@ -9,6 +9,7 @@ import org.bouncycastle.util.encoders.Base64;
 import com.google.common.base.Charsets;
 
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -36,7 +37,9 @@ public class MangooAdminFilter implements MangooFilter {
             return response;
         }
         
-        return Response.withNotFound().andEmptyBody().end();
+        return Response.withNotFound()
+                .andBody(Template.DEFAULT.notFound())
+                .end();
     }
     
     /**
@@ -68,7 +71,7 @@ public class MangooAdminFilter implements MangooFilter {
     }
 
     /**
-     * Checks if a administrative URL enabled
+     * Checks if an administrative URL is enabled
      * 
      * @param url The URL to check
      * @return True when enabled via application.yaml, false otherwise
