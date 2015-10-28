@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import io.mangoo.interfaces.MangooValidator;
@@ -24,7 +24,9 @@ public class Form implements MangooValidator {
 
     @Inject
     public Form (Validator validator) {
-        this.validator = Objects.requireNonNull(validator, "Validator can not be null");
+        Preconditions.checkNotNull(validator, "Validator can not be null");
+        
+        this.validator = validator;
     }
 
     @Override

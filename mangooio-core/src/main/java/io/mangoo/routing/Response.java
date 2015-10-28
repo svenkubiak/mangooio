@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -54,9 +53,10 @@ public final class Response {
     }
 
     private Response(String redirectTo) {
+        Preconditions.checkNotNull(redirectTo, "redirectTo can not be null");
         this.redirect = true;
         this.rendered = true;
-        this.redirectTo = Objects.requireNonNull(redirectTo, "redirectTo can not be null");
+        this.redirectTo = redirectTo;
     }
 
     public int getStatusCode() {

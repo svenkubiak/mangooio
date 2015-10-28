@@ -139,8 +139,9 @@ public final class RequestUtils {
      * @return OAuthProvider Enum
      */
     public static OAuthProvider getOAuthProvider(String oauth) {
-        OAuthProvider oAuthProvider = null;
+        Preconditions.checkNotNull(oauth, "oauth can not be null");
         
+        OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
         } else if (OAuthProvider.TWITTER.toString().equals(oauth)) {

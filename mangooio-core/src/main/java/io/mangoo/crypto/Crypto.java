@@ -1,7 +1,5 @@
 package io.mangoo.crypto;
 
-import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +40,9 @@ public class Crypto {
 
     @Inject
     public Crypto(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
+        Preconditions.checkNotNull(config, "config can not be null");
+        
+        this.config = config;
     }
 
     /**

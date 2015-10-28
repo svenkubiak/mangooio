@@ -21,6 +21,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Template;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
@@ -43,7 +44,7 @@ public class MangooAdminController {
     public Response routes() {
         return Response.withOk()
                 .andContent("routes", Router.getRoutes())
-                .andTemplate("defaults/routes.ftl");
+                .andTemplate(Template.DEFAULT.routesTemplate());
     }
 
     public Response cache() {
@@ -64,7 +65,7 @@ public class MangooAdminController {
 
         return Response.withOk()
                 .andContent("stats", stats)
-                .andTemplate("defaults/cache.ftl");
+                .andTemplate(Template.DEFAULT.cacheTemplate());
     }
 
     public Response config() {
@@ -73,7 +74,7 @@ public class MangooAdminController {
 
         return Response.withOk()
                 .andContent("configuration", configurations)
-                .andTemplate("defaults/config.ftl");
+                .andTemplate(Template.DEFAULT.configTemplate());
     }
 
     public Response metrics() {
@@ -81,7 +82,7 @@ public class MangooAdminController {
         
         return Response.withOk()
                 .andContent("metrics", metrics.getMetrics())
-                .andTemplate("defaults/metrics.ftl");
+                .andTemplate(Template.DEFAULT.metricsTemplate());
     }
     
     public Response scheduler() throws SchedulerException {
@@ -99,6 +100,6 @@ public class MangooAdminController {
         
         return Response.withOk()
                 .andContent("jobs", jobs)
-                .andTemplate("defaults/scheduler.ftl");
+                .andTemplate(Template.DEFAULT.schedulerTemplate());
     }
 }

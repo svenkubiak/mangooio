@@ -1,10 +1,10 @@
 package io.mangoo.routing.bindings;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.boon.json.JsonFactory;
 
+import com.google.common.base.Preconditions;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -34,7 +34,9 @@ public class Request implements MangooValidator {
     }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
-        this.httpServerExchange = Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
+        Preconditions.checkNotNull(httpServerExchange, "httpServerExchange can not be null");
+        
+        this.httpServerExchange = httpServerExchange;
         this.session = session;
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;

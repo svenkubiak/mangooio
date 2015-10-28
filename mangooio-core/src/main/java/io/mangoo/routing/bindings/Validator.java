@@ -2,7 +2,6 @@ package io.mangoo.routing.bindings;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -11,6 +10,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import io.mangoo.enums.Key;
@@ -28,7 +28,9 @@ public class Validator {
 
     @Inject
     public Validator(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, "Messages can not be null");
+        Preconditions.checkNotNull(messages, "Messages can not be null");
+        
+        this.messages = messages;
     }
 
     /**
