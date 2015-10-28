@@ -1,5 +1,7 @@
 package io.mangoo.routing.handlers;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.core.Application;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.utils.ConfigUtils;
@@ -18,6 +20,9 @@ public class DispatcherHandler implements HttpHandler {
     private boolean metrics;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
+        Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
+        Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
+        
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.metrics = ConfigUtils.isAdminMetricsEnabled();

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,6 +25,8 @@ public class MetricsListener implements ResponseCommitListener {
 
     @Inject
     public MetricsListener(Metrics metrics) {
+        Preconditions.checkNotNull(metrics, "metrics can not be null");
+        
         this.metrics = metrics;
     }
 

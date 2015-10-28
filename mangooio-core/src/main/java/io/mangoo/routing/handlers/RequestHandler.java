@@ -24,6 +24,7 @@ import org.boon.json.ObjectMapper;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 
 import freemarker.template.TemplateException;
@@ -88,6 +89,9 @@ public class RequestHandler implements HttpHandler {
     private String body = "";
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod) {
+        Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
+        Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
+        
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.controller = Application.getInstance(this.controllerClass);

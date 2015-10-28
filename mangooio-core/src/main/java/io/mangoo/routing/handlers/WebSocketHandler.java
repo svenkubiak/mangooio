@@ -2,6 +2,8 @@ package io.mangoo.routing.handlers;
 
 import org.xnio.ChannelListener;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.core.Application;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
@@ -17,6 +19,8 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
     private Class<?> controllerClass;
 
     public WebSocketHandler(Class<?> controllerClass) {
+        Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
+        
         this.controllerClass = controllerClass;
     }
 
