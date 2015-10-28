@@ -147,7 +147,8 @@ public class Authentication {
     }
     
     /**
-     * Convenient method that calls login(username, false)
+     * Convenient method that calls {@link #login(String, boolean) login} with
+     * remember set to false
      * 
      * @param username The user name to login
      */

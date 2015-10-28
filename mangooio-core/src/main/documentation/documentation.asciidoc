@@ -1248,9 +1248,8 @@ following administrative URLs are available
 -------------------------------------------
 
 [NOTE]
-By default, the administrative URLs are enabled in dev mode and disabled in test and prod mode. You
-can enable each administrative URL by setting the appropriate configuration value in your application.yaml.
-see <<Configuration options>> for more information on this.
+By default, the administrative URLs are disabled in all modes. You can enable each administrative URL by
+setting the appropriate configuration value in your application.yaml. See <<Configuration options>> for more information on this.
 
 ==== /@routes
 
