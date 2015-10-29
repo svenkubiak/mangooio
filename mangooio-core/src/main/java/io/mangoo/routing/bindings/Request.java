@@ -6,6 +6,7 @@ import java.util.Map;
 import org.boon.json.JsonFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -30,12 +31,15 @@ public class Request implements MangooValidator {
     private Authentication authentication;
     private Validator validator;
     private Map<String, String> parameter;
+    private Map<String, Cookie> cookies;
     
     public Request(){
     }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
         Preconditions.checkNotNull(httpServerExchange, "httpServerExchange can not be null");
+        
+        
         
         this.httpServerExchange = httpServerExchange;
         this.session = session;
@@ -45,6 +49,8 @@ public class Request implements MangooValidator {
         this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
+        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<String, Cookie>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
+        
     }
 
     /**
@@ -163,14 +169,20 @@ public class Request implements MangooValidator {
     }
 
     /**
-     * @return A mutable map of request cookies
+     * @return An immutable map of request cookies
      */
     public Map<String, Cookie> getCookies() {
-        return this.httpServerExchange.getRequestCookies() == null ? new HashMap<String, Cookie>() : this.httpServerExchange.getRequestCookies();
+        return this.cookies;
     }
     
+    /**
+     * Retrieves a single cookie from the request
+     * 
+     * @param name The name of the cookie
+     * @return The Cookie
+     */
     public Cookie getCookie(String name) {
-        
+        return this.cookies.get(name);
     }
     
     /**
