@@ -117,7 +117,7 @@ public class RequestHandler implements HttpHandler {
         getForm(exchange);
         getRequestBody(exchange);
         getRequest(exchange);
-
+        
         Response response = getResponse(exchange);
         response.getCookies().forEach(cookie -> exchange.setResponseCookie(cookie));
 

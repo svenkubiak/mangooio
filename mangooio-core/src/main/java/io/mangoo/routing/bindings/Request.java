@@ -1,5 +1,6 @@
 package io.mangoo.routing.bindings;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.boon.json.JsonFactory;
@@ -60,7 +61,7 @@ public class Request implements MangooValidator {
     public String getBody() {
         return this.body;
     }
-
+    
     /**
      *
      * @return The request body as Map object
@@ -165,9 +166,13 @@ public class Request implements MangooValidator {
      * @return A mutable map of request cookies
      */
     public Map<String, Cookie> getCookies() {
-        return this.httpServerExchange.getRequestCookies();
+        return this.httpServerExchange.getRequestCookies() == null ? new HashMap<String, Cookie>() : this.httpServerExchange.getRequestCookies();
     }
-
+    
+    public Cookie getCookie(String name) {
+        
+    }
+    
     /**
      * Get the request URI scheme.  Normally this is one of {@code http} or {@code https}.
      *
