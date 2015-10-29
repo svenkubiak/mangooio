@@ -39,14 +39,14 @@ public class ExceptionHandler implements HttpHandler {
                 TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
                 
                 if (throwable == null) {
-                    exchange.getResponseSender().send(Template.DEFAULT.internalServerErrorContent());
+                    exchange.getResponseSender().send(Template.DEFAULT.serverErrorContent());
                 } else if (throwable.getCause() == null) {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, true));
                 } else {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable.getCause(), false));
                 }
             } else {
-                exchange.getResponseSender().send(Template.DEFAULT.internalServerErrorContent());
+                exchange.getResponseSender().send(Template.DEFAULT.serverErrorContent());
             }
         } catch (Exception e) { //NOSONAR
             if (throwable ==  null) {

@@ -6,9 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -44,11 +42,11 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.ConfigUtils;
+import io.mangoo.utils.CookieBuilder;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
@@ -200,7 +198,7 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void getRequest(HttpServerExchange exchange) {
-        String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.getValue(Default.AUTHENTICITY_TOKEN.toString()));
+        String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.get(Default.AUTHENTICITY_TOKEN.toString()));
         this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter, this.body);
     }
 
@@ -362,13 +360,14 @@ public class RequestHandler implements HttpHandler {
             if (ConfigUtils.isAuthenticationCookieEncrypt()) {
                 value = Application.getInstance(Crypto.class).encrypt(value);
             }
-
-            Cookie cookie = new CookieImpl(ConfigUtils.getSessionCookieName())
-                    .setValue(value)
-                    .setSecure(ConfigUtils.isSessionCookieSecure())
-                    .setHttpOnly(true)
-                    .setPath("/")
-                    .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+            
+            Cookie cookie = CookieBuilder.create()
+                .name(ConfigUtils.getSessionCookieName())
+                .value(value)
+                .secure(ConfigUtils.isSessionCookieSecure())
+                .httpOnly(true)
+                .expires(expires)
+                .build();
 
             exchange.setResponseCookie(cookie);
         }
@@ -439,7 +438,7 @@ public class RequestHandler implements HttpHandler {
                 cookie.setDiscard(true);
             } else {
                 String authenticatedUser = this.authentication.getAuthenticatedUser();
-                LocalDateTime expires = (this.authentication.isRemember()) ? LocalDateTime.now().plusSeconds(ConfigUtils.getAuthenticationRememberExpires()) : this.authentication.getExpires();
+                LocalDateTime expires = this.authentication.isRemember() ? LocalDateTime.now().plusSeconds(ConfigUtils.getAuthenticationRememberExpires()) : this.authentication.getExpires();
                 String version = ConfigUtils.getAuthCookieVersion();
                 String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret());
 
@@ -457,11 +456,13 @@ public class RequestHandler implements HttpHandler {
                     value = Application.getInstance(Crypto.class).encrypt(value);
                 }
 
-                cookie = new CookieImpl(cookieName, value)
-                        .setSecure(ConfigUtils.isAuthenticationCookieSecure())
-                        .setHttpOnly(true)
-                        .setPath("/")
-                        .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+                cookie = CookieBuilder.create()
+                        .name(cookieName)
+                        .value(value)
+                        .secure(ConfigUtils.isAuthenticationCookieSecure())
+                        .httpOnly(true)
+                        .expires(expires)
+                        .build();
             }
 
             exchange.setResponseCookie(cookie);
@@ -505,10 +506,12 @@ public class RequestHandler implements HttpHandler {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
             String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
-            Cookie cookie = new CookieImpl(ConfigUtils.getFlashCookieName(), values)
-                    .setSecure(ConfigUtils.isFlashCookieSecure())
-                    .setHttpOnly(true)
-                    .setPath("/");
+            Cookie cookie = CookieBuilder.create()
+                    .name(ConfigUtils.getFlashCookieName())
+                    .value(values)
+                    .secure(ConfigUtils.isFlashCookieSecure())
+                    .httpOnly(true)
+                    .build();
 
             exchange.setResponseCookie(cookie);
         } else {

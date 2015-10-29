@@ -1,7 +1,13 @@
 package io.mangoo.bindings;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -205,5 +211,117 @@ public class FormTest {
         form.validation().range("foo", 10, 20);
 
         assertTrue(form.validation().hasErrors());
+    }
+    
+    @Test
+    public void getTest() {
+        Form form = getNewForm();
+        form.addValue("foo", "bar");
+        
+        assertEquals("bar", form.get("foo"));
+        assertNull(form.get("bla"));
+    }
+    
+    @Test
+    public void getStringTest() {
+        Form form = getNewForm();
+        form.addValue("foo", "bar");
+        
+        Optional<String> optional = form.getString("bla");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getString("foo");
+        assertEquals("bar", optional.get());
+    }
+    
+    @Test
+    public void getBooleanTest() {
+        Form form = getNewForm();
+        form.addValue("foo-true", "true");
+        form.addValue("foo-false", "false");
+        form.addValue("foo-1", "1");
+        form.addValue("foo-0", "0");
+        form.addValue("foo", "nomnomnom");
+        
+        Optional<Boolean> optional = form.getBoolean("bla");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getBoolean("foo");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getBoolean("foo-true");
+        assertTrue(optional.get());
+        
+        optional = form.getBoolean("foo-1");
+        assertTrue(optional.get());
+        
+        optional = form.getBoolean("foo-false");
+        assertFalse(optional.get());
+        
+        optional = form.getBoolean("foo-0");
+        assertFalse(optional.get());
+    }
+    
+    @Test
+    public void getIntegerTest() {
+        Form form = getNewForm();
+        form.addValue("foo-1", "1");
+        form.addValue("foo", "nomnomnom");
+        
+        Optional<Integer> optional = form.getInteger("bla");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getInteger("foo-1");
+        assertTrue(1 == optional.get());
+        
+        optional = form.getInteger("foo");
+        assertFalse(optional.isPresent());      
+    }
+    
+    @Test
+    public void getDoubleTest() {
+        Form form = getNewForm();
+        form.addValue("foo-1", "1.234");
+        form.addValue("foo", "nomnomnom");
+        
+        Optional<Double> optional = form.getDouble("bla");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getDouble("foo-1");
+        assertTrue(1.234 == optional.get());
+        
+        optional = form.getDouble("foo");
+        assertFalse(optional.isPresent());      
+    }
+    
+    @Test
+    public void getFloatTest() {
+        Form form = getNewForm();
+        form.addValue("foo-1", "1.0");
+        form.addValue("foo", "nomnomnom");
+        
+        Optional<Float> optional = form.getFloat("bla");
+        assertFalse(optional.isPresent());
+        
+        optional = form.getFloat("foo-1");
+        assertTrue(1.0 == optional.get());
+        
+        optional = form.getFloat("foo");
+        assertFalse(optional.isPresent());      
+    }
+    
+    @Test
+    public void fileTest() {
+        File file = new File(UUID.randomUUID().toString());
+        
+        Form form = getNewForm();
+        form.addFile(file);
+        
+        Optional<File> optional = form.getFile();
+        
+        assertTrue(optional.isPresent());
+        assertTrue(1 == form.getFiles().size());
+        
+        file.delete();
     }
 }

@@ -22,12 +22,12 @@ public enum Template {
     private String badRequestContent;
     private String unauthorizedContent;
     private String forbiddenContent;
-    private String internalServerErrorContent;
+    private String serverErrorContent;
     private String notFoundTemplate = "defaults/404.html";
     private String badRequestTemplate = "defaults/400.html";
     private String unauthorizedTemplate = "defaults/401.html";
     private String forbiddenTemplate = "defaults/403.html";
-    private String internalServerErrorTemplate = "defaults/500.html";
+    private String serverErrorTemplate = "defaults/500.html";
     private String routesTemplate = "defaults/routes.ftl";
     private String cacheTemplate = "defaults/cache.ftl";
     private String configTemplate = "defaults/config.ftl";
@@ -40,7 +40,7 @@ public enum Template {
             this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.badRequestTemplate), Charsets.UTF_8);
             this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.unauthorizedTemplate), Charsets.UTF_8);
             this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.forbiddenTemplate), Charsets.UTF_8);
-            this.internalServerErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.internalServerErrorTemplate), Charsets.UTF_8);
+            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.serverErrorTemplate), Charsets.UTF_8);
         } catch (IOException e) {
             LOG.error("Failed to load default templates", e);
         }
@@ -77,8 +77,8 @@ public enum Template {
     /**
      * @return The content of the default internal server error template
      */
-    public String internalServerErrorContent() {
-        return this.internalServerErrorContent;
+    public String serverErrorContent() {
+        return this.serverErrorContent;
     }
     
     /**
@@ -112,8 +112,8 @@ public enum Template {
     /**
      * @return The relative path of the internal server error template
      */
-    public String internalServerErrorTemplate() {
-        return this.internalServerErrorTemplate;
+    public String serverErrorTemplate() {
+        return this.serverErrorTemplate;
     }
     
     /**
