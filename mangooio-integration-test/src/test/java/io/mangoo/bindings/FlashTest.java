@@ -42,4 +42,33 @@ public class FlashTest {
         flash.add("foo", "bar");
         assertTrue(flash.hasContent());
     }
+    
+    @Test
+    public void testInvalidCharacters() {
+        Flash flash = new Flash();
+        
+        flash.add("|", "foo");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add(":", "foo");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add("&", "foo");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add(" ", "foo");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add("foo", "|");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add("foo", ":");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add("foo", "&");
+        assertTrue(flash.getValues().size() == 0);
+        
+        flash.add("foo", " ");
+        assertTrue(flash.getValues().size() == 0);
+    }
 }

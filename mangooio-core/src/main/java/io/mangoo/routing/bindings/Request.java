@@ -39,8 +39,6 @@ public class Request implements MangooValidator {
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
         Preconditions.checkNotNull(httpServerExchange, "httpServerExchange can not be null");
         
-        
-        
         this.httpServerExchange = httpServerExchange;
         this.session = session;
         this.authenticityToken = authenticityToken;
@@ -50,7 +48,6 @@ public class Request implements MangooValidator {
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
         this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<String, Cookie>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
-        
     }
 
     /**

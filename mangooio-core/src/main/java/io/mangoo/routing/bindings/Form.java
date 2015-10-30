@@ -76,10 +76,10 @@ public class Form implements MangooValidator {
     /**
      * Retrieves an optional boolean value corresponding to the name of the form element
      * 
-     * 0 -> false
-     * 1 -> true
-     * "true" -> true
-     * "false" -> false
+     * 0 maps to false
+     * 1 maps to true
+     * "true" maps to true
+     * "false" maps to false
      * 
      * @param key The name of the form element
      * @return Optional of Boolean

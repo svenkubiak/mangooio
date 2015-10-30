@@ -46,4 +46,33 @@ public class SessionTest {
         assertNull(session.get("foo"));
         assertNull(session.get("bla"));
     }
+    
+    @Test
+    public void testInvalidCharacters() {
+        Session session = new Session(null, null, null);
+        
+        session.add("|", "foo");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add(":", "foo");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add("&", "foo");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add(" ", "foo");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add("foo", "|");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add("foo", ":");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add("foo", "&");
+        assertTrue(session.getValues().size() == 0);
+        
+        session.add("foo", " ");
+        assertTrue(session.getValues().size() == 0);
+    }
 }

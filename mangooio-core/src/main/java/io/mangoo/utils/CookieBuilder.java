@@ -35,7 +35,7 @@ public class CookieBuilder {
      * 
      * Default is ""
      * 
-     * @param name
+     * @param name The name of the cookie
      * @return CookieBuilder instance
      */
     public CookieBuilder name(String name) {
@@ -48,7 +48,7 @@ public class CookieBuilder {
      * 
      * Default is ""
      * 
-     * @param value
+     * @param value The value of the cookie
      * @return CookieBuilder instance
      */
     public CookieBuilder value(String value) {
@@ -61,7 +61,7 @@ public class CookieBuilder {
      * 
      * Default is /
      * 
-     * @param path
+     * @param path The path of the cookie
      * @return CookieBuilder instance
      */
     public CookieBuilder path(String path) {
@@ -74,7 +74,7 @@ public class CookieBuilder {
      * 
      * Default is now plus 1 day
      * 
-     * @param expires
+     * @param expires The expires LocalDateTime
      * @return CookieBuilder instance
      */
     public CookieBuilder expires(LocalDateTime expires) {
@@ -87,7 +87,7 @@ public class CookieBuilder {
      * 
      * Default value is null
      * 
-     * @param maxAge
+     * @param maxAge The max age of the cookie
      * @return CookieBuilder instance
      */
     public CookieBuilder maxAge(Integer maxAge) {
@@ -100,7 +100,7 @@ public class CookieBuilder {
      * 
      * Default is null
      * 
-     * @param domain
+     * @param domain The domain of the cookie
      * @return CookieBuilder instance
      */
     public CookieBuilder domain(String domain) {
@@ -113,7 +113,7 @@ public class CookieBuilder {
      * 
      * Default is false
      * 
-     * @param discard 
+     * @param discard True if cookie should be discard, false otherwise
      * @return CookieBuilder instance
      */
     public CookieBuilder discard(boolean discard) {
@@ -127,7 +127,7 @@ public class CookieBuilder {
      * 
      * Default is false
      * 
-     * @param secure
+     * @param secure True if the cookie can only be used via HTTPS, false otherwise
      * @return CookieBuilder instance
      */
     public CookieBuilder secure(boolean secure) {
@@ -141,7 +141,7 @@ public class CookieBuilder {
      * 
      * Default is false
      * 
-     * @param httpOnly
+     * @param httpOnly True if the cookie can only be send via HTTP, false otherwise
      * @return CookieBuilder instance
      */
     public CookieBuilder httpOnly(boolean httpOnly) {
@@ -150,7 +150,6 @@ public class CookieBuilder {
     }
     
     public Cookie build() {
-        
         Cookie cookie = new CookieImpl(this.cookieName)
                 .setValue(this.cookieValue)
                 .setDiscard(this.cookieDiscard)
