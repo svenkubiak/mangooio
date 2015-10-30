@@ -18,7 +18,7 @@ public class CookieBuilder {
     private String cookiePath = "/";
     private String cookieDomain;
     private Integer cookieMaxAge;
-    private LocalDateTime cookieExpires = LocalDateTime.now().plusSeconds(86400);
+    private LocalDateTime cookieExpires = LocalDateTime.now().plusDays(1);
     private boolean cookieDiscard;
     private boolean cookieSecure;
     private boolean cookieHttpOnly;
@@ -157,7 +157,7 @@ public class CookieBuilder {
                 .setHttpOnly(this.cookieHttpOnly)
                 .setPath(this.cookiePath)
                 .setExpires((this.cookieExpires == null) ?
-                        Date.from(LocalDateTime.now().plusSeconds(86400).atZone(ZoneId.systemDefault()).toInstant()) : 
+                        Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant()) : 
                         Date.from(this.cookieExpires.atZone(ZoneId.systemDefault()).toInstant()));
         
         if (this.cookieDomain != null) {
