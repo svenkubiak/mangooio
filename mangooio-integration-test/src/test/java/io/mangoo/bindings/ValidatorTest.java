@@ -12,6 +12,11 @@ import org.junit.Test;
 import io.mangoo.routing.bindings.Validator;
 import io.mangoo.test.MangooInstance;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class ValidatorTest {
     private Validator validator;
     private static final String URL = "url";

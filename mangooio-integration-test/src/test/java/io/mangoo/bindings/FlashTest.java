@@ -8,6 +8,11 @@ import org.junit.Test;
 
 import io.mangoo.routing.bindings.Flash;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class FlashTest {
 
     @Test
