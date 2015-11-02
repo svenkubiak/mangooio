@@ -14,6 +14,11 @@ import org.junit.Test;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.test.MangooInstance;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class FormTest {
 
     private Form getNewForm() {
@@ -24,7 +29,7 @@ public class FormTest {
     }
 
     @Test
-    public void exactMatchTest() {
+    public void testExactMatch() {
         Form form = getNewForm();
         form.addValue("foo", "BlA");
         form.addValue("bar", "BlA");
@@ -41,7 +46,7 @@ public class FormTest {
     }
 
     @Test
-    public void MatchTest() {
+    public void testMatch() {
         Form form = getNewForm();
         form.addValue("foo", "BLA");
         form.addValue("bar", "bla");
@@ -58,7 +63,7 @@ public class FormTest {
     }
 
     @Test
-    public void requiredTest() {
+    public void testRequired() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         form.validation().required("foo");
@@ -73,7 +78,7 @@ public class FormTest {
     }
 
     @Test
-    public void minTest() {
+    public void testMin() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         form.validation().min("foo", 3);
@@ -100,7 +105,7 @@ public class FormTest {
     }
 
     @Test
-    public void maxTest() {
+    public void testMax() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         form.validation().max("foo", 3);
@@ -127,7 +132,7 @@ public class FormTest {
     }
 
     @Test
-    public void emailTest() {
+    public void testEmail() {
         Form form = getNewForm();
         form.addValue("foo", "foo@bar.com");
         form.validation().email("foo");
@@ -142,7 +147,7 @@ public class FormTest {
     }
 
     @Test
-    public void urlTest() {
+    public void TestUrl() {
         Form form = getNewForm();
         form.addValue("foo", "https://mangoo.io");
         form.validation().url("foo");
@@ -157,7 +162,7 @@ public class FormTest {
     }
 
     @Test
-    public void ipv4Test() {
+    public void testIpv4() {
         Form form = getNewForm();
         form.addValue("foo", "192.168.2.1");
         form.validation().ipv4("foo");
@@ -172,7 +177,7 @@ public class FormTest {
     }
 
     @Test
-    public void ipv6Test() {
+    public void testIpv6() {
         Form form = getNewForm();
         form.addValue("foo", "001:db8:85a3:8d3:1319:8a2e:370:7348");
         form.validation().ipv6("foo");
@@ -187,7 +192,7 @@ public class FormTest {
     }
 
     @Test
-    public void rangeTest() {
+    public void testRange() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         form.validation().range("foo", 1, 3);
@@ -214,7 +219,7 @@ public class FormTest {
     }
     
     @Test
-    public void getTest() {
+    public void testGet() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         
@@ -223,7 +228,7 @@ public class FormTest {
     }
     
     @Test
-    public void getStringTest() {
+    public void testGetString() {
         Form form = getNewForm();
         form.addValue("foo", "bar");
         
@@ -235,7 +240,7 @@ public class FormTest {
     }
     
     @Test
-    public void getBooleanTest() {
+    public void testGetBoolean() {
         Form form = getNewForm();
         form.addValue("foo-true", "true");
         form.addValue("foo-false", "false");
@@ -263,7 +268,7 @@ public class FormTest {
     }
     
     @Test
-    public void getIntegerTest() {
+    public void testGetInteger() {
         Form form = getNewForm();
         form.addValue("foo-1", "1");
         form.addValue("foo", "nomnomnom");
@@ -279,7 +284,7 @@ public class FormTest {
     }
     
     @Test
-    public void getDoubleTest() {
+    public void testGetDouble() {
         Form form = getNewForm();
         form.addValue("foo-1", "1.234");
         form.addValue("foo", "nomnomnom");
@@ -295,7 +300,7 @@ public class FormTest {
     }
     
     @Test
-    public void getFloatTest() {
+    public void testGetFloat() {
         Form form = getNewForm();
         form.addValue("foo-1", "1.0");
         form.addValue("foo", "nomnomnom");
@@ -311,7 +316,7 @@ public class FormTest {
     }
     
     @Test
-    public void fileTest() {
+    public void testFile() {
         File file = new File(UUID.randomUUID().toString());
         
         Form form = getNewForm();

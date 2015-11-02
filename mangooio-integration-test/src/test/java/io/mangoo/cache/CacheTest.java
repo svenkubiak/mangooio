@@ -12,6 +12,11 @@ import org.junit.Test;
 
 import io.mangoo.test.MangooInstance;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class CacheTest {
     private static final String TEST = "this is a test for the cache";
 	private static Cache cache;
@@ -22,14 +27,14 @@ public class CacheTest {
     }
 
     @Test
-    public void addTest() {
+    public void testAdd() {
         cache.add("test", TEST);
 
         assertEquals(cache.get("test"), TEST);
     }
 
     @Test
-    public void clearTest() {
+    public void testClear() {
         cache.add("test", TEST);
 
         assertEquals(cache.get("test"), TEST);
@@ -40,7 +45,7 @@ public class CacheTest {
     }
 
     @Test
-    public void castTest() {
+    public void testCast() {
     	cache.add("test", TEST);
     	cache.add("test2", 1);
 
@@ -52,7 +57,7 @@ public class CacheTest {
     }
     
     @Test
-    public void getAllTest() {
+    public void testGetAll() {
         cache.add("test", TEST);
         cache.add("test2", 1);
         
@@ -62,7 +67,7 @@ public class CacheTest {
     }
     
     @Test
-    public void putAllTest() {
+    public void testPutAll() {
         ConcurrentMap<String, Object> concurrentMap = new ConcurrentHashMap<String, Object>();
         concurrentMap.put("test", TEST);
         concurrentMap.put("test2", 1);
