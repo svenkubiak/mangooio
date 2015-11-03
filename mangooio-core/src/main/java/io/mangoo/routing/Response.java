@@ -32,7 +32,7 @@ public final class Response {
     private Map<String, Object> content = new HashMap<String, Object>();
     private List<Cookie> cookies = new ArrayList<Cookie>(); 
     private String redirectTo;
-    private String contentType = ContentType.TEXT_HTML.toString();
+    private String contentType = ContentType.TEXT_PLAIN.toString();
     private String charset = Charsets.UTF_8.name();
     private String body = "";
     private String template;
@@ -261,6 +261,7 @@ public final class Response {
     public Response andBody(String body) {
         this.body = body;
         this.rendered = true;
+        this.contentType = ContentType.TEXT_HTML.toString();
 
         return this;
     }
@@ -355,6 +356,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andEmptyBody() {
+        this.contentType = ContentType.TEXT_PLAIN.toString();
         this.rendered = true;
 
         return this;

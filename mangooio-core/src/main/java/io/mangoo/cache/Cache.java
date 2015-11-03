@@ -1,7 +1,5 @@
 package io.mangoo.cache;
 
-import java.io.NotSerializableException;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
@@ -57,7 +55,6 @@ public class Cache {
      * @param value The value to store
      */
     public void add(String key, Object value) {
-        check(value);
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
         
@@ -161,21 +158,5 @@ public class Cache {
      */
     public CacheStats getStats () {
         return this.guavaCache.stats();
-    }
-
-    /**
-     * Check if a value is serializable and ready to store in the cache
-     *
-     * @param value The value to check
-     */
-    @SuppressWarnings("all")
-    private void check(Object value) {
-        if (value != null && !(value instanceof Serializable)) {
-            try {
-                throw new NotSerializableException("Cannot cache a non-serializable value of type " + value.getClass().getName());
-            } catch (Exception e) {
-                LOG.error("Failed to check serialization for caching", e);
-            }
-        }
     }
 }

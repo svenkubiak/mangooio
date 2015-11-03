@@ -26,8 +26,6 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/unauthorized").onClassAndMethod(ApplicationController.class, "unauthorized");
         Router.mapRequest(Methods.GET).toUrl("/binary").onClassAndMethod(ApplicationController.class, "binary");
         Router.mapRequest(Methods.GET).toUrl("/header").onClassAndMethod(ApplicationController.class, "header");
-        Router.mapRequest(Methods.GET).toUrl("/localdate/{localDate}").onClassAndMethod(ApplicationController.class, "localdate");
-        Router.mapRequest(Methods.GET).toUrl("/localdatetime/{localDateTime}").onClassAndMethod(ApplicationController.class, "localdatetime");
         Router.mapRequest(Methods.GET).toUrl("/etag").onClassAndMethod(ApplicationController.class, "etag");
         Router.mapRequest(Methods.GET).toUrl("/request").onClassAndMethod(ApplicationController.class, "request");
         Router.mapRequest(Methods.POST).toUrl("/post").onClassAndMethod(ApplicationController.class, "post");
@@ -60,7 +58,9 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.GET).toUrl("/long/{foo}").onClassAndMethod(ParameterController.class, "longParam");
         Router.mapRequest(Methods.GET).toUrl("/multiple/{foo}/{bar}").onClassAndMethod(ParameterController.class, "multipleParam");
         Router.mapRequest(Methods.GET).toUrl("/path").onClassAndMethod(ParameterController.class, "pathParam");
-
+        Router.mapRequest(Methods.GET).toUrl("/localdate/{localDate}").onClassAndMethod(ParameterController.class, "localdate");
+        Router.mapRequest(Methods.GET).toUrl("/localdatetime/{localDateTime}").onClassAndMethod(ParameterController.class, "localdatetime");
+        
         Router.mapRequest(Methods.GET).toUrl("/session").onClassAndMethod(SessionController.class, "session");
 
         Router.mapRequest(Methods.POST).toUrl("/dologin").onClassAndMethod(AuthenticationController.class, "doLogin");

@@ -1,20 +1,30 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooBrowser;
+import io.mangoo.test.MangooRequest;
 import io.mangoo.test.MangooResponse;
-import io.undertow.util.Methods;
+import io.undertow.util.StatusCodes;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class FlashControllerTest {
     @Test
-    public void formTest() {
-        MangooResponse response = MangooBrowser.open().withUri("/flash").withMethod(Methods.GET).execute();
+    public void testFlash() {
+        //given
+        MangooResponse response = MangooRequest.get("/flash").execute();
 
-        assertNotNull(response);
-        assertEquals("simpleerrorwarningsuccess", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("simpleerrorwarningsuccess"));
     }
 }

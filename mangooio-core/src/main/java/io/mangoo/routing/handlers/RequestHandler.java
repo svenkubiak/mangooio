@@ -141,15 +141,21 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void setLocale(HttpServerExchange exchange) {
+        Messages messages = Application.getInstance(Messages.class);
         HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
         if (headerValues != null && headerValues.getFirst() != null) {
             Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
             if (split != null) {
-                String language = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(language.substring(0, 1)));
-                Application.getInstance(Messages.class).reload();
+                String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
+                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2)));
+            } else {
+                Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));    
             }
+        } else {
+            Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
         }
+        
+        messages.reload();
     }
 
     /**

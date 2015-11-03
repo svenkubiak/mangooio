@@ -1,7 +1,9 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
@@ -19,31 +21,57 @@ import io.undertow.util.StatusCodes;
 public class AuthenticationControllerTest {
 
     @Test
-    public void notAuthenticatedTest() {
-        MangooResponse response = MangooRequest.get("/authenticationrequired").withDisableRedirects(true).execute();
+    public void testNotAuthenticated() {
+        //given
+        MangooResponse response = MangooRequest.get("/authenticationrequired")
+                .withDisableRedirects(true)
+                .execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.FOUND, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
     }
 
     @Test
-    public void authenticatedTest() {
+    public void testAuthenticated() {
+        //given
         MangooBrowser instance = MangooBrowser.open();
 
-        MangooResponse response = instance.withUri("/dologin").withMethod(Methods.POST).execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.FOUND, response.getStatusCode());
+        //when
+        MangooResponse response = instance.withUri("/dologin")
+                .withMethod(Methods.POST)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
 
-        response = instance.withUri("/authenticationrequired").withDisableRedirects(true).withMethod(Methods.GET).execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
+        //when
+        response = instance.withUri("/authenticationrequired")
+                .withDisableRedirects(true)
+                .withMethod(Methods.GET)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
-        response = instance.withUri("/logout").withMethod(Methods.GET).execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
+        //when
+        response = instance.withUri("/logout")
+                .withMethod(Methods.GET)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
-        response = instance.withUri("/authenticationrequired").withMethod(Methods.GET).execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.FOUND, response.getStatusCode());
+        //when
+        response = instance.withUri("/authenticationrequired")
+                .withMethod(Methods.GET)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
     }
 }

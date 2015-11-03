@@ -1,8 +1,7 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -10,13 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
-import org.junit.Before;
 import org.junit.Test;
 
-import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
+import io.mangoo.utils.ConfigUtils;
 
 /**
  *
@@ -24,26 +19,17 @@ import io.mangoo.enums.Key;
  *
  */
 public class WebSocketControllerTest {
-    private static String host;
-    private static int port;
-
-    @Before
-    public void init() {
-        Application.getInjector();
-        Config config = Application.getInjector().getInstance(Config.class);
-
-        host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
-    }
 
     @Test
-    public void testStartAndBuild() throws Exception {
+    public void testWebSocketConnection() throws Exception {
+        //given
+        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocket";
         WebSocketClientFactory factory = new WebSocketClientFactory();
+
+        //when
         factory.start();
-
         WebSocketClient client = new WebSocketClient(factory);
-
-        WebSocket.Connection connection = client.open(new URI("ws://" + host + ":" + port + "/websocket"), new WebSocket.OnTextMessage() {
+        WebSocket.Connection connection = client.open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // open notification
@@ -59,11 +45,11 @@ public class WebSocketControllerTest {
                 // handle incoming message
             }
         }).get(5, TimeUnit.SECONDS);
-
-        String message = "Hello World";
-        connection.sendMessage(message);
-        connection.sendMessage(message.getBytes(), 0, 0);
-        assertThat(connection, is(notNullValue()));
+        connection.sendMessage("Hello World");
+        connection.sendMessage("Hello World".getBytes(), 0, 0);
+        
+        //then
+        assertThat(connection.isOpen(), equalTo(true));
         connection.close();
     }
 }

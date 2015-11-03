@@ -287,12 +287,38 @@ public class MangooResponse {
     public int getStatusCode() {
         return this.httpResponse.getStatusLine().getStatusCode();
     }
+    
+    /**
+     * Retrieves a specific header with the given name
+     * 
+     * @param name The name of the header
+     * @return The value of the header or null if not found
+     */
+    public String getHeader(String name) {
+        return (this.httpResponse.getFirstHeader(name) == null ) ? null : this.httpResponse.getFirstHeader(name).getValue();
+    }
 
     /**
      * @return The response cookie or an empty list
      */
     public List<Cookie> getCookies() {
         return (this.cookieStore.getCookies() == null) ? new ArrayList<Cookie>() : this.cookieStore.getCookies();
+    }
+    
+    /**
+     * Retrieves the cookie from the cookie store with a given name
+     * 
+     * @param name The name of the cookie
+     * @return A Cookie or null if non found by name
+     */
+    public Cookie getCookie(String name) {
+        for (Cookie cookie : this.cookieStore.getCookies()) {
+            if (name.equals(cookie.getName())) {
+                return cookie;
+            }
+        }
+        
+        return null;
     }
 
     /**

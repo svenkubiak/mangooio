@@ -1,7 +1,9 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
@@ -10,23 +12,32 @@ import io.mangoo.test.MangooResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class FilterControllerTest {
 
     @Test
-    public void testContentFiler() {
+    public void testFilterWithAdditionalContent() {
+        //given
         MangooResponse response = MangooRequest.get("/filter").execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("bar", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("bar"));
     }
 
     @Test
-    public void testHeaderFilter() {
+    public void testFilterWithAdditionalHeader() {
+        //given
         MangooResponse response = MangooRequest.get("/headerfilter").execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("12", response.getHttpResponse().getFirstHeader(Headers.CONTENT_MD5_STRING).getValue());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader(Headers.CONTENT_MD5_STRING), equalTo("12"));
     }
 }

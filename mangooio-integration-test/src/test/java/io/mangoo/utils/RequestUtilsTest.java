@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
@@ -15,14 +16,25 @@ public class RequestUtilsTest {
 
     @Test
     public void testGetTemplateName() {
-        assertEquals("template.ftl", RequestUtils.getTemplateName("template.ftl"));
-        assertEquals("template.ftl", RequestUtils.getTemplateName("template"));
+        //given
+        String name1 = RequestUtils.getTemplateName("template.ftl");
+        String name2 = RequestUtils.getTemplateName("template");
+        
+        //then
+        assertThat(name1, equalTo("template.ftl"));
+        assertThat(name2, equalTo("template.ftl"));
     }
     
     @Test
     public void testGetOAuthProvider() {
-        assertEquals(OAuthProvider.TWITTER, RequestUtils.getOAuthProvider("twitter"));
-        assertEquals(OAuthProvider.GOOGLE, RequestUtils.getOAuthProvider("google"));
-        assertEquals(OAuthProvider.FACEBOOK, RequestUtils.getOAuthProvider("facebook"));
+        //given
+        OAuthProvider twitter = RequestUtils.getOAuthProvider("twitter");
+        OAuthProvider google = RequestUtils.getOAuthProvider("google");
+        OAuthProvider facebook = RequestUtils.getOAuthProvider("facebook");
+        
+        //then
+        assertThat(twitter, equalTo(OAuthProvider.TWITTER));
+        assertThat(google, equalTo(OAuthProvider.GOOGLE));
+        assertThat(facebook, equalTo(OAuthProvider.FACEBOOK));
     }
 }

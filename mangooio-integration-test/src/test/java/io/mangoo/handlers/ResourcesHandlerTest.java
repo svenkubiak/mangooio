@@ -1,4 +1,4 @@
-package io.mangoo.controllers;
+package io.mangoo.handlers;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -16,42 +16,38 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
-public class I18nControllerTest {
+public class ResourcesHandlerTest {
     
     @Test
-    public void testWithOutAdditionalHeader() {
+    public void testResourceFile() {
         //given
-        MangooResponse response = MangooRequest.get("/translation").execute();
-        
+        MangooResponse response = MangooRequest.get("/robots.txt").execute();
+
         //then
         assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo("text/plain"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("welcome"));
     }
     
     @Test
-    public void testWithAdditionalHeaderDe() {
+    public void testResourcePathJavaScript() {
         //given
-        MangooResponse response = MangooRequest.get("/translation")
-                .withHeader("Accept-Language", "de-DE")
-                .execute();
+        MangooResponse response = MangooRequest.get("/assets/javascripts/jquery.min.js").execute();
         
         //then
         assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo("application/javascript"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("willkommen"));
     }
     
     @Test
-    public void testWithAdditionalHeaderEn() {
+    public void testResourcePathStylesheet() {
         //given
-        MangooResponse response = MangooRequest.get("/translation")
-                .withHeader("Accept-Language", "en-US")
-                .execute();
+        MangooResponse response = MangooRequest.get("/assets/stylesheets/css.css").execute();
         
         //then
         assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo("text/css"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("welcome"));
     }
 }

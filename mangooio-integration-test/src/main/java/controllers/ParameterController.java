@@ -1,5 +1,9 @@
 package controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import io.mangoo.routing.Response;
 
 public class ParameterController {
@@ -49,5 +53,17 @@ public class ParameterController {
 
     public Response pathParam(String foo) {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
+    }
+    
+    public Response localdate(LocalDate localDate) {
+        return Response
+                .withOk()
+                .andTextBody(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+    }
+
+    public Response localdatetime(LocalDateTime localDateTime) {
+        return Response
+                .withOk()
+                .andTextBody(localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 }

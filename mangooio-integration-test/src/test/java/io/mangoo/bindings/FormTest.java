@@ -1,12 +1,12 @@
 package io.mangoo.bindings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -20,6 +20,14 @@ import io.mangoo.test.MangooInstance;
  *
  */
 public class FormTest {
+    private static final String INVALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:7348";
+    private static final String VALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:370:7348";
+    private static final String INVALID_IPV4_ADDRESS = "501.15.1.2.1";
+    private static final String VALID_IPV4_ADDRESS = "192.168.2.1";
+    private static final String VALID_URL = "https://mangoo.io";
+    private static final String INVALID_URL = "https:/mangoo.io";
+    private static final String BAR = "bar";
+    private static final String FOO = "foo";
 
     private Form getNewForm() {
         Form form = MangooInstance.TEST.getInjector().getInstance(Form.class);
@@ -29,303 +37,380 @@ public class FormTest {
     }
 
     @Test
-    public void testExactMatch() {
+    public void testValidExactMatch() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "BlA");
-        form.addValue("bar", "BlA");
-        form.validation().exactMatch("foo", "bar");
+        
+        //when
+        form.addValue(FOO, "BlA");
+        form.addValue(BAR, "BlA");
+        form.validation().exactMatch(FOO, BAR);
 
-        assertFalse(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidExactMatch() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "BlA");
+        form.addValue(BAR, "Bla");
+        form.validation().exactMatch(FOO, BAR);
 
-        form = getNewForm();
-        form.addValue("foo", "BlA");
-        form.addValue("bar", "Bla");
-        form.validation().exactMatch("foo", "bar");
-
-        assertTrue(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
     }
 
     @Test
-    public void testMatch() {
+    public void testValidMatch() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "BLA");
-        form.addValue("bar", "bla");
-        form.validation().match("foo", "bar");
+        
+        //when
+        form.addValue(FOO, "BLA");
+        form.addValue(BAR, "bla");
+        form.validation().match(FOO, BAR);
 
-        assertFalse(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidMatch() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "BLA");
+        form.addValue(BAR, "bla2");
+        form.validation().match(FOO, BAR);
 
-        form = getNewForm();
-        form.addValue("foo", "BLA");
-        form.addValue("bar", "bla2");
-        form.validation().match("foo", "bar");
-
-        assertTrue(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
     }
 
     @Test
-    public void testRequired() {
+    public void testValidRequired() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "bar");
-        form.validation().required("foo");
+        
+        //when
+        form.addValue(FOO, BAR);
+        form.validation().required(FOO);
 
-        assertFalse(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidRequired() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "");
+        form.validation().required(FOO);
 
-        form = getNewForm();
-        form.addValue("foo", "");
-        form.validation().required("foo");
-
-        assertTrue(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
     }
 
     @Test
-    public void testMin() {
+    public void testValidMin() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "bar");
-        form.validation().min("foo", 3);
+        
+        //when
+        form.addValue(FOO, BAR);
+        form.validation().min(FOO, 3);
 
-        assertFalse(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidMin() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "ba");
+        form.validation().min(FOO, 4);
 
-        form = getNewForm();
-        form.addValue("foo", "ba");
-        form.validation().min("foo", 4);
-
-        assertTrue(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "5");
-        form.validation().min("foo", 1);
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "3");
-        form.validation().min("foo", 5);
-
-        assertTrue(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
     }
 
     @Test
-    public void testMax() {
+    public void testValidMax() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "bar");
-        form.validation().max("foo", 3);
+        
+        //when
+        form.addValue(FOO, BAR);
+        form.validation().max(FOO, 3);
 
-        assertFalse(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidMax() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "bars");
+        form.validation().max(FOO, 3);
 
-        form = getNewForm();
-        form.addValue("foo", "bars");
-        form.validation().max("foo", 3);
-
-        assertTrue(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "3");
-        form.validation().max("foo", 5);
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "7");
-        form.validation().max("foo", 6);
-
-        assertTrue(form.validation().hasErrors());
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
     }
 
     @Test
-    public void testEmail() {
+    public void testValidEmail() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "foo@bar.com");
-        form.validation().email("foo");
+        
+        //when
+        form.addValue(FOO, "foo@bar.com");
+        form.validation().email(FOO);
 
-        assertFalse(form.validation().hasErrors());
-
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+        
         form = getNewForm();
-        form.addValue("foo", "foobar");
-        form.validation().email("foo");
-
-        assertTrue(form.validation().hasErrors());
-    }
-
-    @Test
-    public void TestUrl() {
-        Form form = getNewForm();
-        form.addValue("foo", "https://mangoo.io");
-        form.validation().url("foo");
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "htps://mangoo.io");
-        form.validation().url("foo");
-
-        assertTrue(form.validation().hasErrors());
-    }
-
-    @Test
-    public void testIpv4() {
-        Form form = getNewForm();
-        form.addValue("foo", "192.168.2.1");
-        form.validation().ipv4("foo");
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "501.15.1.2.1");
-        form.validation().ipv4("foo");
-
-        assertTrue(form.validation().hasErrors());
-    }
-
-    @Test
-    public void testIpv6() {
-        Form form = getNewForm();
-        form.addValue("foo", "001:db8:85a3:8d3:1319:8a2e:370:7348");
-        form.validation().ipv6("foo");
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "001:db8:85a3:8d3:1319:8a2e:7348");
-        form.validation().ipv6("foo");
-
-        assertTrue(form.validation().hasErrors());
-    }
-
-    @Test
-    public void testRange() {
-        Form form = getNewForm();
-        form.addValue("foo", "bar");
-        form.validation().range("foo", 1, 3);
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "barddddd");
-        form.validation().range("foo", 1, 4);
-
-        assertTrue(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "10");
-        form.validation().range("foo", 1, 11);
-
-        assertFalse(form.validation().hasErrors());
-
-        form = getNewForm();
-        form.addValue("foo", "23");
-        form.validation().range("foo", 10, 20);
+        form.addValue(FOO, "foobar");
+        form.validation().email(FOO);
 
         assertTrue(form.validation().hasErrors());
     }
     
     @Test
-    public void testGet() {
+    public void testInvalidEmail() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "bar");
         
-        assertEquals("bar", form.get("foo"));
-        assertNull(form.get("bla"));
+        //when
+        form.addValue(FOO, "foobar");
+        form.validation().email(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
+    }
+
+    @Test
+    public void TestValidUrl() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, VALID_URL);
+        form.validation().url(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void TestInvalidUrl() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, INVALID_URL);
+        form.validation().url(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
+    }
+
+    @Test
+    public void testValidIpv4Address() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, VALID_IPV4_ADDRESS);
+        form.validation().ipv4(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidIpv4Address() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, INVALID_IPV4_ADDRESS);
+        form.validation().ipv4(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
+    }
+
+    @Test
+    public void testValidIpv6Address() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, VALID_IPV6_ADDRESS);
+        form.validation().ipv6(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidIpv6Address() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, INVALID_IPV6_ADDRESS);
+        form.validation().ipv6(FOO);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
+    }
+
+    @Test
+    public void testValidRange() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, BAR);
+        form.validation().range(FOO, 1, 3);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidRange() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, "barddddd");
+        form.validation().range(FOO, 1, 4);
+
+        //then
+        assertThat(form.validation().hasErrors(), equalTo(true));
+    }
+    
+    @Test
+    public void testValidGetValue() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, BAR);
+        
+        //then
+        assertThat(form.get(FOO), not(nullValue()));
+        assertThat(form.get(FOO), equalTo(BAR));
+    }
+    
+    @Test
+    public void testInvalidGetValue() {
+        //given
+        Form form = getNewForm();
+        
+        //when
+        form.addValue(FOO, BAR);
+        
+        //then
+        assertThat(form.get("fnu"), equalTo(null));
     }
     
     @Test
     public void testGetString() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo", "bar");
         
-        Optional<String> optional = form.getString("bla");
-        assertFalse(optional.isPresent());
-        
-        optional = form.getString("foo");
-        assertEquals("bar", optional.get());
+        //when
+        form.addValue(FOO, BAR);
+
+        //then
+        assertThat(form.getString(FOO), not(nullValue()));
+        assertThat(form.getString(FOO).get(), equalTo(BAR));
     }
     
     @Test
     public void testGetBoolean() {
+        //given
         Form form = getNewForm();
+        
+        //when
         form.addValue("foo-true", "true");
         form.addValue("foo-false", "false");
         form.addValue("foo-1", "1");
         form.addValue("foo-0", "0");
-        form.addValue("foo", "nomnomnom");
         
-        Optional<Boolean> optional = form.getBoolean("bla");
-        assertFalse(optional.isPresent());
-        
-        optional = form.getBoolean("foo");
-        assertFalse(optional.isPresent());
-        
-        optional = form.getBoolean("foo-true");
-        assertTrue(optional.get());
-        
-        optional = form.getBoolean("foo-1");
-        assertTrue(optional.get());
-        
-        optional = form.getBoolean("foo-false");
-        assertFalse(optional.get());
-        
-        optional = form.getBoolean("foo-0");
-        assertFalse(optional.get());
+        //then
+        assertThat(form.getBoolean("foo-true").get(), equalTo(true));
+        assertThat(form.getBoolean("foo-1").get(), equalTo(true));
+        assertThat(form.getBoolean("foo-false").get(), equalTo(false));
+        assertThat(form.getBoolean("foo-0").get(), equalTo(false));
     }
     
     @Test
     public void testGetInteger() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo-1", "1");
-        form.addValue("foo", "nomnomnom");
         
-        Optional<Integer> optional = form.getInteger("bla");
-        assertFalse(optional.isPresent());
+        //when
+        form.addValue(FOO, "1");
         
-        optional = form.getInteger("foo-1");
-        assertTrue(1 == optional.get());
-        
-        optional = form.getInteger("foo");
-        assertFalse(optional.isPresent());      
+        //then
+        assertThat(form.getInteger(FOO).get(), equalTo(1));
     }
     
     @Test
     public void testGetDouble() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo-1", "1.234");
-        form.addValue("foo", "nomnomnom");
         
-        Optional<Double> optional = form.getDouble("bla");
-        assertFalse(optional.isPresent());
-        
-        optional = form.getDouble("foo-1");
-        assertTrue(1.234 == optional.get());
-        
-        optional = form.getDouble("foo");
-        assertFalse(optional.isPresent());      
+        //when
+        form.addValue(FOO, "1.234");
+
+        //then
+        assertThat(form.getDouble(FOO).get(), equalTo(1.234));
     }
     
     @Test
     public void testGetFloat() {
+        //given
         Form form = getNewForm();
-        form.addValue("foo-1", "1.0");
-        form.addValue("foo", "nomnomnom");
         
-        Optional<Float> optional = form.getFloat("bla");
-        assertFalse(optional.isPresent());
-        
-        optional = form.getFloat("foo-1");
-        assertTrue(1.0 == optional.get());
-        
-        optional = form.getFloat("foo");
-        assertFalse(optional.isPresent());      
+        //when
+        form.addValue(FOO, "1.0");
+
+        //then
+        assertThat(form.getFloat(FOO).get(), equalTo(1.0F));
     }
     
     @Test
     public void testFile() {
+        //given
+        Form form = getNewForm();
         File file = new File(UUID.randomUUID().toString());
         
-        Form form = getNewForm();
+        //when
         form.addFile(file);
         
-        Optional<File> optional = form.getFile();
-        
-        assertTrue(optional.isPresent());
-        assertTrue(1 == form.getFiles().size());
+        //then
+        assertThat(form.getFile(), not(nullValue()));
+        assertThat(form.getFile().isPresent(), equalTo(true));
+        assertThat(form.getFiles().size(), equalTo(1));
         
         file.delete();
     }

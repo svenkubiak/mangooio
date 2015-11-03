@@ -1,9 +1,7 @@
 package io.mangoo.bindings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
@@ -16,63 +14,82 @@ import io.mangoo.routing.bindings.Session;
  */
 public class SessionTest {
 
+    private static final String BAR = "bar";
+    private static final String FOO = "foo";
+
+    private Session getNewSession() {
+        return new Session(null, null, null);
+    }
+    
+    @Test
+    public void testNoContent() {
+        //given
+        Session session = getNewSession();
+        
+        //then
+        assertThat(session.hasContent(), equalTo(false));        
+    }
+    
     @Test
     public void testContent() {
-        Session session = new Session(null, null, null);
-        assertFalse(session.hasContent());
+        //given
+        Session session = getNewSession();
 
-        session.add("foo", "bar");
-        assertTrue(session.hasContent());
+        //when
+        session.add(FOO, BAR);
+
+        //then
+        assertThat(session.hasContent(), equalTo(true));    
+        assertThat(session.get(FOO), equalTo(BAR));   
+        assertThat(session.hasChanges(), equalTo(true));
     }
 
     @Test
     public void testRemove() {
+        //given
         Session session = new Session(null, null, null);
-        session.add("foo", "bar");
+        
+        //when
+        session.add(FOO, BAR);
+        session.remove(FOO);
 
-        assertEquals("bar", session.get("foo"));
-
-        session.remove("foo");
-        assertNull(session.get("foo"));
+        //then
+        assertThat(session.hasContent(), equalTo(false));    
+        assertThat(session.get(FOO), equalTo(null));
+        assertThat(session.hasChanges(), equalTo(true));
     }
 
     @Test
     public void testClear() {
+        //given
         Session session = new Session(null, null, null);
-        session.add("foo", "bar");
-        session.add("bla", "foobar");
-
+        
+        //when
+        session.add(FOO, BAR);
         session.clear();
-        assertNull(session.get("foo"));
-        assertNull(session.get("bla"));
+        
+        //then
+        assertThat(session.hasContent(), equalTo(false));    
+        assertThat(session.get(FOO), equalTo(null));
+        assertThat(session.hasChanges(), equalTo(true));
     }
     
     @Test
     public void testInvalidCharacters() {
-        Session session = new Session(null, null, null);
+        //given
+        Session session = getNewSession();
         
-        session.add("|", "foo");
-        assertTrue(session.getValues().size() == 0);
+        //when
+        session.add("|", FOO);
+        session.add(":", FOO);
+        session.add("&", FOO);
+        session.add(" ", FOO);
+        session.add(FOO, "|");
+        session.add(FOO, ":");
+        session.add(FOO, "&");
+        session.add(FOO, " ");
         
-        session.add(":", "foo");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add("&", "foo");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add(" ", "foo");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add("foo", "|");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add("foo", ":");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add("foo", "&");
-        assertTrue(session.getValues().size() == 0);
-        
-        session.add("foo", " ");
-        assertTrue(session.getValues().size() == 0);
+        //then
+        assertThat(session.hasContent(), equalTo(false)); 
     }
 }

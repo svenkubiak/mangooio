@@ -2,9 +2,6 @@ package controllers;
 
 import java.io.File;
 import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -80,17 +77,5 @@ public class ApplicationController {
                 .withOk()
                 .andEmptyBody()
                 .andHeader(new HttpString("Access-Control-Allow-Origin"), "https://mangoo.io");
-    }
-
-    public Response localdate(LocalDate localDate) {
-        return Response
-                .withOk()
-                .andTextBody(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
-    }
-
-    public Response localdatetime(LocalDateTime localDateTime) {
-        return Response
-                .withOk()
-                .andTextBody(localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
     }
 }

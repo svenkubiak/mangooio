@@ -1,8 +1,10 @@
 package io.mangoo.bindings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
@@ -14,66 +16,116 @@ import io.mangoo.routing.bindings.Flash;
  *
  */
 public class FlashTest {
+    private static final String MYMESSAGE = "mymessage";
+    private static final String CUSTOM_MESSAGE = "This is my custom message";
+    private static final String SUCCESS_MESSAGE = "This is a success message!";
+    private static final String WARNING_MESSAGE = "This is a warning message!";
+    private static final String ERROR_MESSAGE = "This is an error message!";
 
     @Test
-    public void testSuccess() {
+    public void testSuccessMessage() {
+        //given
         Flash flash = new Flash();
-        flash.setSuccess("success");
+        
+        //when
+        flash.setSuccess(SUCCESS_MESSAGE);
 
-        assertEquals("success", flash.get("success"));
+        //then
+        assertThat(flash.get("success"), equalToIgnoringWhiteSpace(SUCCESS_MESSAGE));
     }
 
     @Test
-    public void testWarning() {
+    public void testWarningMessage() {
+        //given
         Flash flash = new Flash();
-        flash.setWarning("warning");
 
-        assertEquals("warning", flash.get("warning"));
+        //when
+        flash.setWarning(WARNING_MESSAGE);
+
+        //then
+        assertThat(flash.get("warning"), equalToIgnoringWhiteSpace(WARNING_MESSAGE));
     }
 
     @Test
-    public void testError() {
+    public void testErrorMessage() {
+        //given
         Flash flash = new Flash();
-        flash.setError("error");
+        
+        //when
+        flash.setError(ERROR_MESSAGE);
 
-        assertEquals("error", flash.get("error"));
+        //then
+        assertThat(flash.get("error"), equalToIgnoringWhiteSpace(ERROR_MESSAGE));
     }
 
+    @Test
+    public void testNoContent() {
+        //given
+        Flash flash = new Flash();
+        
+        //then
+        assertThat(flash.hasContent(), equalTo(false));
+    }
+    
     @Test
     public void testContent() {
+        //given
         Flash flash = new Flash();
-        assertFalse(flash.hasContent());
+        
+        //when
+        flash.add(MYMESSAGE, CUSTOM_MESSAGE);
 
-        flash.add("foo", "bar");
-        assertTrue(flash.hasContent());
+        //then
+        assertThat(flash.hasContent(), equalTo(true));
+        assertThat(flash.get(MYMESSAGE), equalToIgnoringWhiteSpace(CUSTOM_MESSAGE));
     }
     
     @Test
     public void testInvalidCharacters() {
+        //given
+        Flash flash = new Flash();
+
+        //when
+        flash.add("|", "foo");
+        flash.add(":", "foo");
+        flash.add("&", "foo");
+        flash.add(" ", "foo");
+        flash.add("foo", "|");
+        flash.add("foo", ":");
+        flash.add("foo", "&");
+        flash.add("foo", " ");
+        
+        //then
+        assertThat(flash.hasContent(), equalTo(false));
+    }
+    
+    @Test
+    public void testNoDiscard() {
+        //given
         Flash flash = new Flash();
         
-        flash.add("|", "foo");
-        assertTrue(flash.getValues().size() == 0);
+        //then
+        assertThat(flash.isDiscard(), equalTo(false));
+    }
+    
+    @Test
+    public void testValues() {
+        //given
+        Flash flash = new Flash();
         
-        flash.add(":", "foo");
-        assertTrue(flash.getValues().size() == 0);
+        //then
+        assertThat(flash.getValues(), not(nullValue()));
+    }
+    
+    @Test
+    public void testDiscard() {
+        //given
+        Flash flash = new Flash();
         
-        flash.add("&", "foo");
-        assertTrue(flash.getValues().size() == 0);
+        //when
+        flash.setDiscard(true);
         
-        flash.add(" ", "foo");
-        assertTrue(flash.getValues().size() == 0);
-        
-        flash.add("foo", "|");
-        assertTrue(flash.getValues().size() == 0);
-        
-        flash.add("foo", ":");
-        assertTrue(flash.getValues().size() == 0);
-        
-        flash.add("foo", "&");
-        assertTrue(flash.getValues().size() == 0);
-        
-        flash.add("foo", " ");
-        assertTrue(flash.getValues().size() == 0);
+        //then
+        assertThat(flash.isDiscard(), equalTo(true));
     }
 }

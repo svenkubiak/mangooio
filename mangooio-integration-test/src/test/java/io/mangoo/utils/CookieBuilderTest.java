@@ -1,8 +1,9 @@
 package io.mangoo.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,8 +21,11 @@ import io.undertow.server.handlers.Cookie;
 public class CookieBuilderTest {
 
     @Test
-    public void testBuilder() {
+    public void testCookieBuilder() {
+        //given
         LocalDateTime now = LocalDateTime.now();
+        
+        //when
         Cookie cookie = CookieBuilder.create()
                 .name("foo")
                 .value("bar")
@@ -34,15 +38,16 @@ public class CookieBuilderTest {
                 .httpOnly(true)
                 .build();
         
-        assertNotNull(cookie);
-        assertEquals("foo", cookie.getName());
-        assertEquals("bar", cookie.getValue());
-        assertEquals("/foobar", cookie.getPath());
-        assertEquals("www.foo.com", cookie.getDomain());
-        assertEquals(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()), cookie.getExpires());
-        assertTrue(cookie.getMaxAge() == 1223);
-        assertTrue(cookie.isDiscard());
-        assertTrue(cookie.isSecure());
-        assertTrue(cookie.isHttpOnly());
+        //then
+        assertThat(cookie, not(nullValue()));
+        assertThat("foo", equalTo(cookie.getName()));
+        assertThat("bar", equalTo(cookie.getValue()));
+        assertThat("/foobar", equalTo(cookie.getPath()));
+        assertThat("www.foo.com", equalTo(cookie.getDomain()));
+        assertThat(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()), equalTo(cookie.getExpires()));
+        assertThat(cookie.getMaxAge(), equalTo(1223));
+        assertThat(cookie.isDiscard(), equalTo(true));
+        assertThat(cookie.isSecure(), equalTo(true));
+        assertThat(cookie.isHttpOnly(), equalTo(true));
     }
 }
