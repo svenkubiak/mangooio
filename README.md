@@ -1,6 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
 [![Travis Build Status](https://travis-ci.org/svenkubiak/mangooio.svg?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
-[![codecov.io](http://codecov.io/github/svenkubiak/mangooio/coverage.svg?branch=master)](http://codecov.io/github/svenkubiak/mangooio?branch=master)
 
 If this software is useful to you, you can support further development by using Flattr. Thank you!
 
