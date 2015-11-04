@@ -4,6 +4,8 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/78[#78] Switched to plugin and dependency management in root pom.xml (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/69[#69] Restructured unit integration tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/69[#69] Restructured unit integration tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/76[#76] Improved handling of values in forms (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/77[#77] Added option for adding custom cookies (svenkubiak)
