@@ -157,10 +157,10 @@ public final class RequestUtils {
     /**
      * Checks if the request has a valid authorization token
      * 
-     * @param requestURI The request URI
+     * @param requestUri The request URI
      * @param queryString The query string
      * @param token The authorization token
-     * @param headerMap The request header map
+     * @param header The request header map
      * 
      * @return True if the request authorization is valid, false otherwise
      */
