@@ -43,6 +43,7 @@ import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
+import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.MangooScheduler;
 import io.mangoo.utils.ConfigUtils;
@@ -163,6 +164,8 @@ public class Bootstrap {
         for (Route route : Router.getRoutes()) {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
+            } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
+                this.pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(new ServerSentEventHandler(route.getToken())));
             } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
                 this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
             }
@@ -182,7 +185,7 @@ public class Bootstrap {
 
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod()));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isAsync()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }

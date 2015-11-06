@@ -3,11 +3,17 @@ package controllers;
 import java.io.File;
 import java.net.URL;
 
+import com.google.inject.Inject;
+
+import io.mangoo.managers.ServerEventManager;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HttpString;
 
 public class ApplicationController {
+    
+    @Inject
+    private ServerEventManager manager;
 
     public Response index() {
         return Response.withOk();
@@ -18,6 +24,7 @@ public class ApplicationController {
     }
 
     public Response text() {
+        manager.send("/sse", "hello world!!!");
         return Response.withOk().andTextBody("foo");
     }
 

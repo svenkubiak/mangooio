@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.builder.api.TwitterApi;
@@ -151,5 +152,31 @@ public final class RequestUtils {
         }   
         
         return oAuthProvider;
+    }
+
+    /**
+     * Checks if the request has a valid authorization token
+     * 
+     * @param requestURI The request URI
+     * @param queryString The query string
+     * @param token The authorization token
+     * @param headerMap The request header map
+     * 
+     * @return True if the request authorization is valid, false otherwise
+     */
+    public static boolean hasValidAuthentication(String requestUri, String queryString, String header, String token) {
+        Preconditions.checkNotNull(requestUri, "requestURI can not be null");
+        Preconditions.checkNotNull(queryString, "queryString can not be null");
+        Preconditions.checkNotNull(header, "header can not be null");
+        Preconditions.checkNotNull(token, "token can not be null");
+        
+        String [] values = header.split(":");
+        if (values == null || values.length != 2) {
+            return false;
+        }
+        
+        String sign = DigestUtils.sha512Hex(requestUri + queryString + values [0] + token);
+        
+        return sign.equalsIgnoreCase(values[1]);
     }
 }

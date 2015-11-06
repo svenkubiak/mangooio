@@ -223,5 +223,12 @@ public final class ConfigUtils {
      */
     public static long getAuthenticationRememberExpires() {
         return config.getLong(Key.AUTH_COOKIE_REMEMBER_EXPIRES, Default.AUTH_COOKIE_REMEMBER_EXPIRES.toLong());
+    }
+
+    /**
+     * @return execution.threadpool from application.yaml or default value if undefined
+     */
+    public static int getExecutionPool() {
+        return config.getInt(Key.EXECUTION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
     }    
 }

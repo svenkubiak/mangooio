@@ -15,7 +15,9 @@ public class Route {
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
+    private String token;
     private RouteType routeType;
+    private boolean async;
 
     public Route(HttpString requestMethod) {
         Preconditions.checkNotNull(requestMethod, "requestMethod can not be null");
@@ -51,15 +53,17 @@ public class Route {
             }
         }
 
-        if (isResource()) {
+        if (isResourceOrServerSentEvent()) {
             Router.addRoute(this);
         }
 
         return this;
     }
 
-    private boolean isResource() {
-        return RouteType.RESOURCE_FILE.equals(this.routeType) || RouteType.RESOURCE_PATH.equals(this.routeType);
+    private boolean isResourceOrServerSentEvent() {
+        return RouteType.RESOURCE_FILE.equals(this.routeType)
+                || RouteType.RESOURCE_PATH.equals(this.routeType)
+                || RouteType.SERVER_SENT_EVENT.equals(this.routeType);
     }
 
     /**
@@ -86,6 +90,28 @@ public class Route {
 
         Router.addRoute(this);
     }
+    
+    /**
+     * Sets a token with is used for signed authentication
+     * of a Server Sent Event Connection
+     * 
+     * @param token The token
+     */
+    public void withToken(String token) {
+        this.token = token;
+    }
+    
+    /**
+     * Sets the request to be able to work asynchronous
+     * by executing the request in a thread where blocking
+     * is possible.
+     * 
+     * This optional will only work for controller mapped
+     * methods.
+     */
+    public void asynchronous() {
+        this.async = true;
+    }
 
     public Class<?> getControllerClass() {
         return controllerClass;
@@ -105,5 +131,13 @@ public class Route {
 
     public RouteType getRouteType() {
         return routeType;
+    }
+    
+    public String getToken() {
+        return this.token;
+    }
+    
+    public boolean isAsync() {
+        return this.async;
     }
 }

@@ -45,6 +45,14 @@ public final class Router {
     public static Route mapWebSocket() {
         return new Route(RouteType.WEBSOCKET);
     }
+    
+    /**
+     * Creates a request mapping for a server sent event
+     * @return A route object {@link io.mangoo.routing.Route}
+     */
+    public static Route mapServerSentEvent() {
+        return new Route(RouteType.SERVER_SENT_EVENT);
+    }
 
     /**
      * Creates a request mapping for a resource file, e.g. /robots.txt

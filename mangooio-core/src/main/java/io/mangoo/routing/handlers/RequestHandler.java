@@ -82,16 +82,18 @@ public class RequestHandler implements HttpHandler {
     private Flash flash;
     private Form form;
     private Request request;
-    private boolean hasRequestFilter;
     private Map<String, String> requestParameter;
     private String body = "";
+    private boolean hasRequestFilter;
+    private boolean async;
 
-    public RequestHandler(Class<?> controllerClass, String controllerMethod) {
+    public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
         Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
         
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
+        this.async = async;
         this.controller = Application.getInstance(this.controllerClass);
         this.methodParameters = getMethodParameters();
         this.parameterCount = this.methodParameters.size();
@@ -102,7 +104,7 @@ public class RequestHandler implements HttpHandler {
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if (RequestUtils.isPostOrPut(exchange) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }

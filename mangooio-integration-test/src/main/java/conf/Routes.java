@@ -81,7 +81,10 @@ public class Routes implements MangooRoutes {
         Router.mapRequest(Methods.POST).toUrl("/validateform").onClassAndMethod(FormController.class, "validateform");
 
         Router.mapWebSocket().toUrl("/websocket").onClass(WebSocketController.class);
-
+        
+        Router.mapServerSentEvent().toUrl("/sseauth").withToken("token");
+        Router.mapServerSentEvent().toUrl("/sse");
+        
         Router.mapResourceFile().toUrl("/robots.txt");
         Router.mapResourcePath().toUrl("/assets/");
     }

@@ -18,13 +18,15 @@ public class DispatcherHandler implements HttpHandler {
     private Class<?> controllerClass;
     private String controllerMethod;
     private boolean metrics;
+    private boolean async;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
         Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
         
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
+        this.async = async;
         this.metrics = ConfigUtils.isAdminMetricsEnabled();
     }
 
@@ -34,6 +36,6 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
         }
 
-        new RequestHandler(this.controllerClass, this.controllerMethod).handleRequest(exchange);
+        new RequestHandler(this.controllerClass, this.controllerMethod, this.async).handleRequest(exchange);
     }
 }

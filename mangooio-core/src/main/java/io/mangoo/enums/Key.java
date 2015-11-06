@@ -68,7 +68,8 @@ public enum Key {
     OAUTH_FACEBOOK_SECRET("oauth.facebook.secret"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
-    SCHEDULER_PACKAGE("scheduler.package");
+    SCHEDULER_PACKAGE("scheduler.package"),
+    EXECUTION_THREADPOOL("execution.threadpool");
 
     private final String value;
 

@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/79[#79] Add Server Sent Event handler (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/78[#78] Switched to plugin and dependency management in root pom.xml (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/69[#69] Restructured unit integration tests (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/69[#69] Restructured unit integration tests (svenkubiak)
@@ -19,7 +20,7 @@
 * Code cleanup, refactorings and more javadoc (svenkubiak)
 * Updated Documentation (svenkubiak)
 * Version bumps (svenkubiak)
-** undertow-core 1.3.3.Final -> 1.3.4.Final
+** undertow-core 1.3.3.Final -> 1.3.5.Final
 ** fluent-hc 4.4.1 -> 4.5.1
 ** fluentlenium-core 0.10.3 -> 0.10.6 
 

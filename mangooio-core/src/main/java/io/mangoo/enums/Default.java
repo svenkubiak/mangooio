@@ -75,7 +75,8 @@ public enum Default {
     BASICAUTH_CREDENTIALS_LENGTH("2"),
     OAUTH_REQUEST_PARAMETER("oauth"),
     SCHEDULER_PACKAGE("jobs"),
-    COOKIE_ENCRYPTION("false");
+    COOKIE_ENCRYPTION("false"),
+    EXECUTION_THREADPOOL("10");
 
     private final String value;
 
