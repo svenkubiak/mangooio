@@ -1,9 +1,9 @@
 package io.mangoo.routing.bindings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ import io.mangoo.enums.Key;
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
     private static final List<String> blacklist = Arrays.asList("|", ":", "&", " ");
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values = new ConcurrentHashMap<String, String>();
     private boolean discard;
 
     public Flash() {

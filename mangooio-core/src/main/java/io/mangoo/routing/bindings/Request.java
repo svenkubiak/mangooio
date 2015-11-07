@@ -1,7 +1,7 @@
 package io.mangoo.routing.bindings;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.boon.json.JsonFactory;
 
@@ -47,7 +47,7 @@ public class Request implements MangooValidator {
         this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
-        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<String, Cookie>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
+        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new ConcurrentHashMap<String, Cookie>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
     /**

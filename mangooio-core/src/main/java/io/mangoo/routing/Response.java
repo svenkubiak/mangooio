@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +28,8 @@ import io.undertow.util.StatusCodes;
  */
 public final class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
-    private Map<HttpString, String> headers = new HashMap<HttpString, String>();
-    private Map<String, Object> content = new HashMap<String, Object>();
+    private Map<HttpString, String> headers = new ConcurrentHashMap<HttpString, String>();
+    private Map<String, Object> content = new ConcurrentHashMap<String, Object>();
     private List<Cookie> cookies = new ArrayList<Cookie>(); 
     private String redirectTo;
     private String contentType = ContentType.TEXT_PLAIN.toString();

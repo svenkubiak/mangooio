@@ -1,9 +1,9 @@
 package io.mangoo.managers;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 
@@ -21,7 +21,7 @@ import io.undertow.websockets.core.WebSocketFrameType;
  */
 @Singleton
 public class WebSocketManager {
-    private Map<String, Set<WebSocketChannel>> channels = new HashMap<String, Set<WebSocketChannel>>();
+    private Map<String, Set<WebSocketChannel>> channels = new ConcurrentHashMap<String, Set<WebSocketChannel>>();
     
     /**
      * Adds a new channel to the manager
@@ -103,8 +103,6 @@ public class WebSocketManager {
      * Closes all channels for all URIs resources
      */
     public void closeAll() {
-        this.channels.entrySet().forEach(entry -> {
-            entry.getValue().forEach(channel -> IOUtils.closeQuietly(channel));
-        });
+        this.channels.entrySet().forEach(entry -> entry.getValue().forEach(channel -> IOUtils.closeQuietly(channel)));
     }
 }

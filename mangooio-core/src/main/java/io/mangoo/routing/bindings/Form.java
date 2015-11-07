@@ -2,10 +2,10 @@ package io.mangoo.routing.bindings;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -24,7 +24,7 @@ public class Form implements MangooValidator {
     private static final String KEY_ERROR = "Key can not be null";
     private boolean submitted;
     private List<File> files = new ArrayList<File>();
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values = new ConcurrentHashMap<String, String>();
     private Validator validator;
 
     @Inject

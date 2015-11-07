@@ -1,8 +1,8 @@
 package io.mangoo.routing.bindings;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,8 +22,8 @@ import io.mangoo.i18n.Messages;
  *
  */
 public class Validator {
-    private Map<String, String> errors = new HashMap<String, String>();
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> errors = new ConcurrentHashMap<String, String>();
+    private Map<String, String> values = new ConcurrentHashMap<String, String>();
     private Messages messages;
 
     @Inject

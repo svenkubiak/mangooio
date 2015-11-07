@@ -2,10 +2,10 @@ package io.mangoo.routing.bindings;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +27,7 @@ public class Session {
     }
 
     public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
-        this.values = Optional.ofNullable(values).orElse(new HashMap<String, String>());
+        this.values = Optional.ofNullable(values).orElse(new ConcurrentHashMap<String, String>());
         this.authenticityToken = authenticityToken;
         this.expires = expires;
     }
@@ -95,7 +95,7 @@ public class Session {
      */
     public void clear() {
         this.changed = true;
-        this.values = new HashMap<String, String>();
+        this.values = new ConcurrentHashMap<String, String>();
     }
 
     /**

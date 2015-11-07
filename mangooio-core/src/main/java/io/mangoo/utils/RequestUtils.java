@@ -1,8 +1,8 @@
 package io.mangoo.utils;
 
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.scribe.builder.ServiceBuilder;
@@ -44,7 +44,7 @@ public final class RequestUtils {
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
         
-        Map<String, String> requestParamater = new HashMap<String, String>();
+        Map<String, String> requestParamater = new ConcurrentHashMap<String, String>();
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR

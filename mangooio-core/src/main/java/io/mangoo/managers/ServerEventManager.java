@@ -1,9 +1,9 @@
 package io.mangoo.managers;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 
@@ -20,7 +20,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private Map<String, Set<ServerSentEventConnection>> connections = new HashMap<String, Set<ServerSentEventConnection>>();
+    private Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<String, Set<ServerSentEventConnection>>();
 
     /**
      * Adds a new connection to the manager

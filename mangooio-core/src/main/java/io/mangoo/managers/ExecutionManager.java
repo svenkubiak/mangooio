@@ -18,18 +18,49 @@ import io.mangoo.utils.ConfigUtils;
 public class ExecutionManager {
     private ExecutorService executorService = Executors.newFixedThreadPool(ConfigUtils.getExecutionPool());
     
+    /**
+     * Submits a value-returning task for execution and returns a Future
+     * representing the pending results of the task. The Future's get method
+     * will return the task's result upon successful completion. 
+     * 
+     * @param callable The callable to submit
+     * @return a Future representing pending completion of the task
+     */
     public <T> Future<T> submit(Callable<T> callable) {
         return this.executorService.submit(callable);
     }
     
+    /**
+     * Submits a Runnable task for execution and returns a Future representing
+     * that task. The Future's get method will return the given result upon
+     * successful completion.
+     * 
+     * @param runnable the task to submit
+     * @param result the result to return
+     * @return a Future representing pending completion of the task
+     */
     public <T> Future<T> submit(Runnable runnable, T result) {
         return this.executorService.submit(runnable, result);
     }
     
+    /**
+     * Submits a Runnable task for execution and returns a Future representing
+     * that task. The Future's get method will return null upon successful completion.
+     * 
+     * @param runnable the task to submit
+     * @return a Future representing pending completion of the task
+     */
     public Future<?> submit(Runnable runnable) {
         return this.executorService.submit(runnable);
     }
     
+    /**
+     * Executes the given command at some time in the future.
+     * The command may execute in a new thread, in a pooled thread,
+     * or in the calling thread, at the discretion of the Executor implementation.
+     * 
+     * @param runnable the runnable task
+     */
     public void execute(Runnable runnable) {
         this.executorService.execute(runnable);
     }

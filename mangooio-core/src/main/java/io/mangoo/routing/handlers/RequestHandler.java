@@ -7,11 +7,11 @@ import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
@@ -323,7 +323,7 @@ public class RequestHandler implements HttpHandler {
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
-                        Map<String, String> sessionValues = new HashMap<String, String>();
+                        Map<String, String> sessionValues = new ConcurrentHashMap<String, String>();
                         if (StringUtils.isNotEmpty(data)) {
                             for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
                                 sessionValues.put(entry.getKey(), entry.getValue());
@@ -336,7 +336,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (requestSession == null) {
-            requestSession = new Session(new HashMap<String, String>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
+            requestSession = new Session(new ConcurrentHashMap<String, String>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
         }
 
         this.session = requestSession;
@@ -488,7 +488,7 @@ public class RequestHandler implements HttpHandler {
         if (cookie != null){
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
-                Map<String, String> values = new HashMap<String, String>();
+                Map<String, String> values = new ConcurrentHashMap<String, String>();
                 for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
                     values.put(entry.getKey(), entry.getValue());
                 }

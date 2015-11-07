@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +32,7 @@ import io.mangoo.enums.Mode;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values = new ConcurrentHashMap<String, String>();
 
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
@@ -301,7 +301,7 @@ public class Config {
      * @return All configuration options of the current environment
      */
     public Map<String, String> getAllConfigurations() {
-        return new HashMap(this.values);
+        return new ConcurrentHashMap(this.values);
     }
 
     /**
