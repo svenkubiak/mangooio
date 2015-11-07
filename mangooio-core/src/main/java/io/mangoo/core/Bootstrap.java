@@ -45,7 +45,7 @@ import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
-import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.ConfigUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -261,7 +261,7 @@ public class Bootstrap {
         if (!this.error) {
             Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && ConfigUtils.isSchedulerAutostart()) {
-                MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
+                Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 for (Class<?> clazz : jobs) {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.quartz.JobKey;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
@@ -26,7 +25,7 @@ import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
-import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.scheduler.Scheduler;
 
 /**
  * Controller class for administrative URLs
@@ -87,7 +86,7 @@ public class MangooAdminController {
     
     public Response scheduler() throws SchedulerException {
         List<Job> jobs = new ArrayList<Job>();        
-        Scheduler scheduler = Application.getInstance(MangooScheduler.class).getScheduler();
+        org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         if (scheduler != null) {
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
             for (JobKey jobKey : jobKeys) {

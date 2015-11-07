@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
@@ -31,12 +30,12 @@ import io.mangoo.enums.Default;
  *
  */
 @Singleton
-public class MangooScheduler {
-    private static final Logger LOG = LogManager.getLogger(MangooScheduler.class);
-    private Scheduler scheduler;
+public class Scheduler {
+    private static final Logger LOG = LogManager.getLogger(Scheduler.class);
+    private org.quartz.Scheduler quartzScheduler;
 
     @Inject
-    public MangooScheduler(Config config) {
+    public Scheduler(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
 
         for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
@@ -51,15 +50,15 @@ public class MangooScheduler {
      * 
      * @return Scheduler instance, null if scheduler is not initialize or started
      */
-    public Scheduler getScheduler() {
-        return this.scheduler;
+    public org.quartz.Scheduler getScheduler() {
+        return this.quartzScheduler;
     }
 
     public void start() {
         initialize();
         try {
-            this.scheduler.start();
-            if (this.scheduler.isStarted()) {
+            this.quartzScheduler.start();
+            if (this.quartzScheduler.isStarted()) {
                 LOG.info("Successfully started quartz scheduler");
             } else {
                 LOG.error("Scheduler is not started");
@@ -70,11 +69,11 @@ public class MangooScheduler {
     }
 
     public void shutdown() {
-        Preconditions.checkNotNull(this.scheduler, "Scheduler is not initialized or started");
+        Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
         
         try {
-            this.scheduler.shutdown();
-            if (this.scheduler.isShutdown()) {
+            this.quartzScheduler.shutdown();
+            if (this.quartzScheduler.isShutdown()) {
                 LOG.info("Successfully shutdown quartz scheduler");
             } else {
                 LOG.error("Failed to shutdown scheduler");
@@ -85,11 +84,11 @@ public class MangooScheduler {
     }
 
     public void standby() {
-        Preconditions.checkNotNull(this.scheduler, "Scheduler is not initialized or started");
+        Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
         
         try {
-            this.scheduler.standby();
-            if (this.scheduler.isInStandbyMode()) {
+            this.quartzScheduler.standby();
+            if (this.quartzScheduler.isInStandbyMode()) {
                 LOG.info("Scheduler is now in standby");
             } else {
                 LOG.error("Failed to put scheduler in standby");
@@ -104,10 +103,10 @@ public class MangooScheduler {
      * scheduler instance from quartz scheduler factory
      */
     private void initialize() {
-        if (this.scheduler == null) {
+        if (this.quartzScheduler == null) {
             try {
-                this.scheduler = new StdSchedulerFactory().getScheduler();
-                this.scheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));                
+                this.quartzScheduler = new StdSchedulerFactory().getScheduler();
+                this.quartzScheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));                
             } catch (SchedulerException e) {
                 LOG.error("Failed to initialize scheduler", e);    
             }
@@ -126,7 +125,7 @@ public class MangooScheduler {
         initialize();
         
         try {
-            this.scheduler.scheduleJob(jobDetail, trigger);
+            this.quartzScheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             LOG.error("Failed to schedule a new job", e);
         }

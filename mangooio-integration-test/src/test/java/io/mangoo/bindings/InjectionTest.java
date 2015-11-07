@@ -19,7 +19,7 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.scheduler.Scheduler;
 import io.mangoo.test.MangooInstance;
 
 /**
@@ -42,7 +42,7 @@ public class InjectionTest {
         Messages messages = MangooInstance.TEST.getInstance(Messages.class);
         Response response  = MangooInstance.TEST.getInstance(Response.class);
         Request request = MangooInstance.TEST.getInstance(Request.class);
-        MangooScheduler mangooSchedulder = MangooInstance.TEST.getInstance(MangooScheduler.class);
+        Scheduler mangooSchedulder = MangooInstance.TEST.getInstance(Scheduler.class);
         ExecutionManager executionManager = MangooInstance.TEST.getInstance(ExecutionManager.class);
         WebSocketManager webSocketManager = MangooInstance.TEST.getInstance(WebSocketManager.class);
         ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
