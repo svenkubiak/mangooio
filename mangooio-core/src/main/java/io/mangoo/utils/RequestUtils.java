@@ -44,7 +44,7 @@ public final class RequestUtils {
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
         
-        Map<String, String> requestParamater = new ConcurrentHashMap<String, String>();
+        Map<String, String> requestParamater = new ConcurrentHashMap<>(16, 0.9f, 1);
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR

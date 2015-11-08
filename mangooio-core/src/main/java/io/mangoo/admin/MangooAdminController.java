@@ -49,7 +49,7 @@ public class MangooAdminController {
     public Response cache() {
         CacheStats cacheStats = Application.getInstance(Cache.class).getStats();
 
-        Map<String, Object> stats = new ConcurrentHashMap<String, Object>();
+        Map<String, Object> stats = new ConcurrentHashMap<>(16, 0.9f, 1);
         stats.put("Average load penalty", cacheStats.averageLoadPenalty());
         stats.put("Eviction count", cacheStats.evictionCount());
         stats.put("Hit count", cacheStats.hitCount());

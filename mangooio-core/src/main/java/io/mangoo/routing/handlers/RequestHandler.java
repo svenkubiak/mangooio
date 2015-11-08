@@ -323,7 +323,7 @@ public class RequestHandler implements HttpHandler {
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
-                        Map<String, String> sessionValues = new ConcurrentHashMap<String, String>();
+                        Map<String, String> sessionValues = new ConcurrentHashMap<>(16, 0.9f, 1);
                         if (StringUtils.isNotEmpty(data)) {
                             for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
                                 sessionValues.put(entry.getKey(), entry.getValue());
@@ -336,7 +336,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (requestSession == null) {
-            requestSession = new Session(new ConcurrentHashMap<String, String>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
+            requestSession = new Session(new ConcurrentHashMap<>(16, 0.9f, 1), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
         }
 
         this.session = requestSession;
@@ -488,7 +488,7 @@ public class RequestHandler implements HttpHandler {
         if (cookie != null){
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
-                Map<String, String> values = new ConcurrentHashMap<String, String>();
+                Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
                 for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
                     values.put(entry.getKey(), entry.getValue());
                 }

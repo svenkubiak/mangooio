@@ -20,7 +20,7 @@ import io.mangoo.enums.Validation;
  */
 @Singleton
 public class Messages {
-    private Map<String, String> defaults = new ConcurrentHashMap<String, String>();
+    private Map<String, String> defaults = new ConcurrentHashMap<>(16, 0.9f, 1);
     private ResourceBundle bundle;
     private Locale locale;
 

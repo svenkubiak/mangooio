@@ -128,7 +128,7 @@ public class TemplateEngine {
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws FileNotFoundException, IOException, TemplateException {
         Writer writer = new StringWriter();
-        Map<String, Object> content = new ConcurrentHashMap<String, Object>();
+        Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
         content.put("templateException", templateException);
 
         if (templateException) {

@@ -27,7 +27,7 @@ public class Session {
     }
 
     public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
-        this.values = Optional.ofNullable(values).orElse(new ConcurrentHashMap<String, String>());
+        this.values = Optional.ofNullable(values).orElse(new ConcurrentHashMap<>(16, 0.9f, 1));
         this.authenticityToken = authenticityToken;
         this.expires = expires;
     }
@@ -95,7 +95,7 @@ public class Session {
      */
     public void clear() {
         this.changed = true;
-        this.values = new ConcurrentHashMap<String, String>();
+        this.values = new ConcurrentHashMap<>(16, 0.9f, 1);
     }
 
     /**

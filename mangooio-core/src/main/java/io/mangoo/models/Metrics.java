@@ -14,7 +14,7 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class Metrics {
-    private final Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<Integer, LongAdder>();
+    private final Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     public void inc(int responseCode) {
         this.metricsCount.computeIfAbsent(responseCode, t -> new LongAdder()).increment();

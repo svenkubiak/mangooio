@@ -20,7 +20,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<String, Set<ServerSentEventConnection>>();
+    private Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     /**
      * Adds a new connection to the manager

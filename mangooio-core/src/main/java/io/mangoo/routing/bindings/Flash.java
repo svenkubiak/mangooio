@@ -18,7 +18,7 @@ import io.mangoo.enums.Key;
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
     private static final List<String> blacklist = Arrays.asList("|", ":", "&", " ");
-    private Map<String, String> values = new ConcurrentHashMap<String, String>();
+    private Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
     private boolean discard;
 
     public Flash() {

@@ -28,8 +28,8 @@ import io.undertow.util.StatusCodes;
  */
 public final class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
-    private Map<HttpString, String> headers = new ConcurrentHashMap<HttpString, String>();
-    private Map<String, Object> content = new ConcurrentHashMap<String, Object>();
+    private Map<HttpString, String> headers = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
     private List<Cookie> cookies = new ArrayList<Cookie>(); 
     private String redirectTo;
     private String contentType = ContentType.TEXT_PLAIN.toString();

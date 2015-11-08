@@ -47,7 +47,7 @@ public class Request implements MangooValidator {
         this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
-        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new ConcurrentHashMap<String, Cookie>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
+        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new ConcurrentHashMap<>(16, 0.9f, 1) : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
     /**

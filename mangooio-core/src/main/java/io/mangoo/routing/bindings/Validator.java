@@ -22,8 +22,8 @@ import io.mangoo.i18n.Messages;
  *
  */
 public class Validator {
-    private Map<String, String> errors = new ConcurrentHashMap<String, String>();
-    private Map<String, String> values = new ConcurrentHashMap<String, String>();
+    private Map<String, String> errors = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
     private Messages messages;
 
     @Inject

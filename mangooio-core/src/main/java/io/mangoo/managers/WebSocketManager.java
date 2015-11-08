@@ -21,7 +21,7 @@ import io.undertow.websockets.core.WebSocketFrameType;
  */
 @Singleton
 public class WebSocketManager {
-    private Map<String, Set<WebSocketChannel>> channels = new ConcurrentHashMap<String, Set<WebSocketChannel>>();
+    private Map<String, Set<WebSocketChannel>> channels = new ConcurrentHashMap<>(16, 0.9f, 1);
     
     /**
      * Adds a new channel to the manager
