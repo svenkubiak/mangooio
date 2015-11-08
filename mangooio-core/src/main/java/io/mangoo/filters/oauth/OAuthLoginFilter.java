@@ -15,7 +15,7 @@ import io.mangoo.utils.RequestUtils;
 
 /**
  * OAuth Login filter for redirecting to the OAuth provider
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -37,7 +37,7 @@ public class OAuthLoginFilter implements MangooFilter {
                     url = oAuthService.getAuthorizationUrl(null);
                     break;
                 default:
-                break;                
+                break;
                 }
 
                 if (StringUtils.isNotBlank(url)) {
@@ -45,7 +45,7 @@ public class OAuthLoginFilter implements MangooFilter {
                 }
             }
         }
-        
+
         return response;
     }
 }

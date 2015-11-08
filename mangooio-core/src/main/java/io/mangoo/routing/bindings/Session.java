@@ -22,7 +22,7 @@ public class Session {
     private String authenticityToken;
     private boolean changed;
     private LocalDateTime expires;
-    
+
     public Session(){
     }
 
@@ -34,7 +34,7 @@ public class Session {
 
     /**
      * Checks if the session has at least one entry
-     * 
+     *
      * @return True if the session has at least one entry, false otherwise
      */
     public boolean hasContent() {
@@ -43,7 +43,7 @@ public class Session {
 
     /**
      * Retrieves a specific value from the session
-     * 
+     *
      * @param key The key
      * @return The value or null if none present
      */

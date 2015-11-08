@@ -22,7 +22,7 @@ import io.mangoo.utils.ConfigUtils;
 
 /**
  * Google Guava based cache implementation
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -31,7 +31,7 @@ public class Cache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
     private static final String VALUE_REQUIRED = "A valid value is required";
     private static final String KEY_REQUIRED = "A valid key is required";
-    private com.google.common.cache.Cache<String, Object> guavaCache;
+    private final com.google.common.cache.Cache<String, Object> guavaCache;
 
     @Inject
     public Cache(Config config) {
@@ -57,7 +57,7 @@ public class Cache {
     public void add(String key, Object value) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
-        
+
         this.guavaCache.put(key, value);
     }
 
@@ -94,7 +94,7 @@ public class Cache {
      *
      * @param key The key for the cached value
      * @param <T> JavaDoc requires this (just ignore it)
-     * 
+     *
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
@@ -113,7 +113,7 @@ public class Cache {
      * @param key The key for the cached value
      * @param callable The callable to invoke when the value is not found
      * @param <T> JavaDoc requires this (just ignore it)
-     * 
+     *
      * @return A converted cache class value
      */
     @SuppressWarnings("unchecked")
@@ -132,18 +132,18 @@ public class Cache {
 
         return object == null ? null : (T) object;
     }
-    
+
     /**
      * Adds a complete map of objects to the cache
-     * 
+     *
      * @param map The map to add
      */
     public void addAll(Map<String, Object> map) {
         Preconditions.checkNotNull(map, "map can not be null");
-     
+
         this.guavaCache.putAll(map);
     }
-    
+
     /**
      * @return The complete content of the cache
      */

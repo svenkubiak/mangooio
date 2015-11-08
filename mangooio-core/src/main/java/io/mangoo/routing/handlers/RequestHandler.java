@@ -58,7 +58,7 @@ import io.undertow.util.StatusCodes;
 
 /**
  * Main class that handles all controller requests
- * 
+ *
  * @author skubiak
  *
  */
@@ -70,13 +70,13 @@ public class RequestHandler implements HttpHandler {
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
     private static final int SESSION_PREFIX_LENGTH = 4;
-    private int parameterCount;
-    private Class<?> controllerClass;
-    private String controllerMethod;
-    private Object controller;
-    private Map<String, Class<?>> methodParameters;
+    private final int parameterCount;
+    private final Class<?> controllerClass;
+    private final String controllerMethod;
+    private final Object controller;
+    private final Map<String, Class<?>> methodParameters;
     private Method method;
-    private ObjectMapper opjectMapper;
+    private final ObjectMapper opjectMapper;
     private Authentication authentication;
     private Session session;
     private Flash flash;
@@ -84,13 +84,13 @@ public class RequestHandler implements HttpHandler {
     private Request request;
     private Map<String, String> requestParameter;
     private String body = "";
-    private boolean hasRequestFilter;
-    private boolean async;
+    private final boolean hasRequestFilter;
+    private final boolean async;
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
         Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
-        
+
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.async = async;
@@ -108,7 +108,7 @@ public class RequestHandler implements HttpHandler {
             exchange.dispatch(this);
             return;
         }
-        
+
         this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
@@ -119,7 +119,7 @@ public class RequestHandler implements HttpHandler {
         getForm(exchange);
         getRequestBody(exchange);
         getRequest(exchange);
-        
+
         Response response = getResponse(exchange);
         response.getCookies().forEach(cookie -> exchange.setResponseCookie(cookie));
 
@@ -151,12 +151,12 @@ public class RequestHandler implements HttpHandler {
                 String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
                 Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2)));
             } else {
-                Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));    
+                Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
             }
         } else {
             Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
         }
-        
+
         messages.reload();
     }
 
@@ -301,7 +301,7 @@ public class RequestHandler implements HttpHandler {
                     Crypto crypto = Application.getInstance(Crypto.class);
                     cookieValue = crypto.decrypt(cookieValue);
                 }
-                
+
                 String sign = null;
                 String expires = null;
                 String authenticityToken = null;
@@ -368,7 +368,7 @@ public class RequestHandler implements HttpHandler {
             if (ConfigUtils.isAuthenticationCookieEncrypt()) {
                 value = Application.getInstance(Crypto.class).encrypt(value);
             }
-            
+
             Cookie cookie = CookieBuilder.create()
                 .name(ConfigUtils.getSessionCookieName())
                 .value(value)

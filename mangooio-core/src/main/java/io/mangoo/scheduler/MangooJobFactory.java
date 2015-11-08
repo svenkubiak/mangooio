@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import io.mangoo.core.Application;
 
 /**
- * Factory method for passing Scheduler job instance to the Google Guice injector 
- * 
+ * Factory method for passing Scheduler job instance to the Google Guice injector
+ *
  * @author svenkubiak
  *
  */

@@ -14,19 +14,19 @@ import io.undertow.server.ResponseCommitListener;
 
 /**
  * Listener that is invoked for counting metrics of HTTP response codes
- * 
+ *
  * @author Kubiak
  *
  */
 @Singleton
 public class MetricsListener implements ResponseCommitListener {
-    private Metrics metrics;
-    private List<String> blacklist = Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler");
+    private final Metrics metrics;
+    private final List<String> blacklist = Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler");
 
     @Inject
     public MetricsListener(Metrics metrics) {
         Preconditions.checkNotNull(metrics, "metrics can not be null");
-        
+
         this.metrics = metrics;
     }
 

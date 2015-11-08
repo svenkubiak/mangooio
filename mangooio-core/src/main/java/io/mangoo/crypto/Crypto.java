@@ -34,14 +34,14 @@ public class Crypto {
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
-    private PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
+    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
     private CipherParameters cipherParameters;
-    private Config config;
+    private final Config config;
 
     @Inject
     public Crypto(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
-        
+
         this.config = config;
     }
 
@@ -70,9 +70,8 @@ public class Crypto {
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
 
-        String plainText = null;
         this.cipher.init(false, this.cipherParameters);
-        plainText = new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
+        final String plainText = new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
 
         return plainText;
     }
@@ -108,9 +107,8 @@ public class Crypto {
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
 
-        String encrytedText = null;
         this.cipher.init(true, this.cipherParameters);
-        encrytedText = new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
+        final String encrytedText = new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
 
         return encrytedText;
     }
@@ -124,14 +122,14 @@ public class Crypto {
     private byte[] cipherData(byte[] data) {
         byte[] result = null;
         try {
-            byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
+            final byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
 
-            int processedBytes = this.cipher.processBytes(data, 0, data.length, buffer, 0);
-            int finalBytes = this.cipher.doFinal(buffer, processedBytes);
+            final int processedBytes = this.cipher.processBytes(data, 0, data.length, buffer, 0);
+            final int finalBytes = this.cipher.doFinal(buffer, processedBytes);
 
             result = new byte[processedBytes + finalBytes];
             System.arraycopy(buffer, 0, result, 0, result.length);
-        } catch (CryptoException e) {
+        } catch (final CryptoException e) {
             LOG.error("Failed to encrypt/decrypt", e);
         }
 

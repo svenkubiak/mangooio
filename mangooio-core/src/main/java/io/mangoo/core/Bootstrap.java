@@ -57,14 +57,14 @@ import io.undertow.util.Methods;
 
 /**
  * Convenient methods for everything to start up a mangoo I/O application
- * 
+ *
  * @author svenkubiak
  *
  */
 public class Bootstrap {
     private static final int INITIAL_SIZE = 255;
     private static volatile Logger LOG; //NOSONAR
-    private LocalDateTime start;
+    private final LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Config config;
@@ -73,7 +73,7 @@ public class Bootstrap {
     private Injector injector;
     private boolean error;
     private int port;
-    
+
     public Bootstrap() {
         this.start = LocalDateTime.now();
     }
@@ -92,26 +92,26 @@ public class Bootstrap {
         } else {
             this.mode = Mode.PROD;
         }
-        
+
         return this.mode;
     }
 
     public void prepareLogger() {
         String configurationFile = "log4j2." + this.mode.toString() + ".xml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
-            System.setProperty("log4j.configurationFile", configurationFile);            
+            System.setProperty("log4j.configurationFile", configurationFile);
         }
-        
+
         LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
     }
-    
+
     public Injector prepareInjector() {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
         return this.injector;
     }
-    
+
     public void applicationInitialized() {
-        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();        
+        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();
     }
 
     public void prepareConfig() {
@@ -252,11 +252,11 @@ public class Bootstrap {
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
-    
+
     public void applicationStarted() {
         this.injector.getInstance(MangooLifecycle.class).applicationStarted();
     }
-    
+
     public void startQuartzScheduler() {
         if (!this.error) {
             Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
@@ -266,8 +266,8 @@ public class Bootstrap {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
                         JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron()); 
-                        mangooScheduler.schedule(jobDetail, trigger);      
+                        Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                        mangooScheduler.schedule(jobDetail, trigger);
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
                         LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
@@ -275,12 +275,12 @@ public class Bootstrap {
                     }
                 }
                 if (!this.error) {
-                    mangooScheduler.start();                    
+                    mangooScheduler.start();
                 }
             }
         }
     }
-    
+
     private String getVersion() {
         String version = Default.VERSION.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {

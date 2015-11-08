@@ -32,13 +32,13 @@ public class Request implements MangooValidator {
     private Validator validator;
     private Map<String, String> parameter;
     private Map<String, Cookie> cookies;
-    
+
     public Request(){
     }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
         Preconditions.checkNotNull(httpServerExchange, "httpServerExchange can not be null");
-        
+
         this.httpServerExchange = httpServerExchange;
         this.session = session;
         this.authenticityToken = authenticityToken;
@@ -64,7 +64,7 @@ public class Request implements MangooValidator {
     public String getBody() {
         return this.body;
     }
-    
+
     /**
      *
      * @return The request body as Map object
@@ -146,7 +146,7 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/myFile.jsf?foo=bar HTTP/1.1 -&gt; 'http://localhost:8080/myFile.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my+File.jsf'
-     * 
+     *
      * @return The request URI
      */
     public String getURI() {
@@ -158,7 +158,7 @@ public class Request implements MangooValidator {
      * but does not include query string.
      *
      * This is not decoded.
-     * 
+     *
      * @return The request URL
      */
     public String getURL() {
@@ -171,17 +171,17 @@ public class Request implements MangooValidator {
     public Map<String, Cookie> getCookies() {
         return this.cookies;
     }
-    
+
     /**
      * Retrieves a single cookie from the request
-     * 
+     *
      * @param name The name of the cookie
      * @return The Cookie
      */
     public Cookie getCookie(String name) {
         return this.cookies.get(name);
     }
-    
+
     /**
      * Get the request URI scheme.  Normally this is one of {@code http} or {@code https}.
      *
@@ -225,7 +225,7 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my File.jsf'
-     * 
+     *
      * @return The request path
      */
     public String getPath() {

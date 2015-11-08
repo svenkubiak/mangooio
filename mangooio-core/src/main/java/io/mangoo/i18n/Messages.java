@@ -14,13 +14,13 @@ import io.mangoo.enums.Validation;
 
 /**
  * Convinient class for handling translations
- * 
+ *
  * @author skubiak
  *
  */
 @Singleton
 public class Messages {
-    private Map<String, String> defaults = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, String> defaults = new ConcurrentHashMap<>(16, 0.9f, 1);
     private ResourceBundle bundle;
     private Locale locale;
 

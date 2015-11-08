@@ -43,7 +43,7 @@ public final class RequestUtils {
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
-        
+
         Map<String, String> requestParamater = new ConcurrentHashMap<>(16, 0.9f, 1);
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
@@ -61,7 +61,7 @@ public final class RequestUtils {
      */
     public static String getTemplateName(String templateName) {
         Preconditions.checkNotNull(templateName, "templateName can not be null");
-        
+
         return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : templateName + Default.TEMPLATE_SUFFIX.toString();
     }
 
@@ -73,7 +73,7 @@ public final class RequestUtils {
      */
     public static boolean isPostOrPut(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
-        
+
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
     }
 
@@ -85,7 +85,7 @@ public final class RequestUtils {
      */
     public static boolean isJSONRequest(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
-        
+
         HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
                 headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase().contains(ContentType.APPLICATION_JSON.toString().toLowerCase());
@@ -124,24 +124,24 @@ public final class RequestUtils {
             .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
             .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
             .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET));
-            break;       
+            break;
         default:
             break;
         }
 
         return (serviceBuilder == null) ? null : serviceBuilder.build();
     }
-    
+
 
     /**
      * Returns an OAuthProvider based on a given string
-     * 
+     *
      * @param oauth The string to lookup the OAuthProvider Enum
      * @return OAuthProvider Enum
      */
     public static OAuthProvider getOAuthProvider(String oauth) {
         Preconditions.checkNotNull(oauth, "oauth can not be null");
-        
+
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
@@ -149,19 +149,19 @@ public final class RequestUtils {
             oAuthProvider = OAuthProvider.TWITTER;
         } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.GOOGLE;
-        }   
-        
+        }
+
         return oAuthProvider;
     }
 
     /**
      * Checks if the request has a valid authorization token
-     * 
+     *
      * @param requestUri The request URI
      * @param queryString The query string
      * @param token The authorization token
      * @param header The request header map
-     * 
+     *
      * @return True if the request authorization is valid, false otherwise
      */
     public static boolean hasValidAuthentication(String requestUri, String queryString, String header, String token) {
@@ -169,14 +169,14 @@ public final class RequestUtils {
         Preconditions.checkNotNull(queryString, "queryString can not be null");
         Preconditions.checkNotNull(header, "header can not be null");
         Preconditions.checkNotNull(token, "token can not be null");
-        
+
         String [] values = header.split(":");
         if (values == null || values.length != 2) {
             return false;
         }
-        
+
         String sign = DigestUtils.sha512Hex(requestUri + queryString + values [0] + token);
-        
+
         return sign.equalsIgnoreCase(values[1]);
     }
 }

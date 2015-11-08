@@ -24,7 +24,7 @@ import io.mangoo.enums.Mode;
 /**
  * Main configuration class for all properties
  * configure in application.yaml
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -32,7 +32,7 @@ import io.mangoo.enums.Mode;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());

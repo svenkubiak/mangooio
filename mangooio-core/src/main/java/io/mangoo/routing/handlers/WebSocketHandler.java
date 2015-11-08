@@ -22,11 +22,11 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
 @SuppressWarnings("unchecked")
 public class WebSocketHandler implements WebSocketConnectionCallback {
     private String token;
-    private Class<?> controllerClass;
+    private final Class<?> controllerClass;
 
     public WebSocketHandler(Class<?> controllerClass) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
-        
+
         this.controllerClass = controllerClass;
     }
 
@@ -34,10 +34,10 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
         String uri = exchange.getRequestURI();
         String queryString = exchange.getQueryString();
-        
+
         if (StringUtils.isNotBlank(this.token)) {
             String header = exchange.getRequestHeader(Headers.AUTHORIZATION_STRING);
-            
+
             if (RequestUtils.hasValidAuthentication(uri, queryString, this.token, header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
@@ -46,7 +46,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
                 IOUtils.closeQuietly(channel);
             }
         }
-        
+
         channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
         channel.resumeReceives();
         Application.getInstance(WebSocketManager.class).addConnection(uri, queryString, channel);

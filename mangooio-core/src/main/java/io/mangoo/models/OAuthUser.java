@@ -2,15 +2,15 @@ package io.mangoo.models;
 
 /**
  * Base class for an OAuthUser
- * 
+ *
  * @author svenkubiak
  *
  */
 public class OAuthUser {
-    private String id;
-    private String oAuthResponse;
-    private String username;
-    private String picture;
+    private final String id;
+    private final String oAuthResponse;
+    private final String username;
+    private final String picture;
 
     public OAuthUser(String id, String oAuthResponse, String username, String picture) {
         this.id = id;

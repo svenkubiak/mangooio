@@ -31,19 +31,19 @@ public class Flash {
     /**
      * Sets a specific error message available with
      * the key 'error'
-     * 
+     *
      * @param value The message
      */
     public void setError(String value) {
         if (validCharacters(value)) {
-            this.values.put(Key.ERROR.toString(), value);            
+            this.values.put(Key.ERROR.toString(), value);
         }
     }
 
     /**
      * Sets a specific warning message available with
      * the key 'warning'
-     * 
+     *
      * @param value The message
      */
     public void setWarning(String value) {
@@ -53,9 +53,9 @@ public class Flash {
     }
 
     /**
-     * Sets a specific success message available with 
+     * Sets a specific success message available with
      * the key 'success'
-     * 
+     *
      * @param value The message
      */
     public void setSuccess(String value) {
@@ -66,7 +66,7 @@ public class Flash {
 
     /**
      * Adds a value with a specific key to the flash
-     * 
+     *
      * @param key The key
      * @param value The value
      */
@@ -78,7 +78,7 @@ public class Flash {
 
     /**
      * Retrieves a specific value from the flash
-     * 
+     *
      * @param key The key
      * @return The value or null if not found
      */
@@ -105,7 +105,7 @@ public class Flash {
     /**
      * Checks if the given value contains characters that are not allowed
      * in the key or value of a flash cookie
-     * 
+     *
      * @param value The value to check
      * @return True if the given string is valid, false otherwise
      */
@@ -114,7 +114,7 @@ public class Flash {
             LOG.error("Flash key or value can not contain the following characters: spaces, |, & or :");
             return false;
         }
-        
+
         return true;
     }
 }

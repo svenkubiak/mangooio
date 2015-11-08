@@ -23,24 +23,24 @@ public enum Template {
     private String unauthorizedContent;
     private String forbiddenContent;
     private String serverErrorContent;
-    private String notFoundTemplate = "defaults/404.html";
-    private String badRequestTemplate = "defaults/400.html";
-    private String unauthorizedTemplate = "defaults/401.html";
-    private String forbiddenTemplate = "defaults/403.html";
-    private String serverErrorTemplate = "defaults/500.html";
-    private String routesTemplate = "defaults/routes.ftl";
-    private String cacheTemplate = "defaults/cache.ftl";
-    private String configTemplate = "defaults/config.ftl";
-    private String metricsTemplate = "defaults/metrics.ftl";
-    private String schedulerTemplate = "defaults/scheduler.ftl";
+    private final String notFoundTemplatePath = "defaults/404.html";
+    private final String badRequestTemplatePath = "defaults/400.html";
+    private final String unauthorizedTemplatePath = "defaults/401.html";
+    private final String forbiddenTemplatePath = "defaults/403.html";
+    private final String serverErrorTemplatePath = "defaults/500.html";
+    private final String routesTemplatePath = "defaults/routes.ftl";
+    private final String cacheTemplatePath = "defaults/cache.ftl";
+    private final String configTemplatePath = "defaults/config.ftl";
+    private final String metricsTemplatePath = "defaults/metrics.ftl";
+    private final String schedulerTemplatePath = "defaults/scheduler.ftl";
 
     Template () {
         try {
-            this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.notFoundTemplate), Charsets.UTF_8);
-            this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.badRequestTemplate), Charsets.UTF_8);
-            this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.unauthorizedTemplate), Charsets.UTF_8);
-            this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.forbiddenTemplate), Charsets.UTF_8);
-            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.serverErrorTemplate), Charsets.UTF_8);
+            this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.notFoundTemplatePath), Charsets.UTF_8);
+            this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.badRequestTemplatePath), Charsets.UTF_8);
+            this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.unauthorizedTemplatePath), Charsets.UTF_8);
+            this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.forbiddenTemplatePath), Charsets.UTF_8);
+            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.serverErrorTemplatePath), Charsets.UTF_8);
         } catch (IOException e) {
             LOG.error("Failed to load default templates", e);
         }
@@ -77,77 +77,77 @@ public enum Template {
     /**
      * @return The content of the default internal server error template
      */
-    public String serverErrorContent() {
+    public String serverError() {
         return this.serverErrorContent;
     }
-    
+
     /**
      * @return The relative path of the forbidden template
      */
-    public String forbiddenTemplate() {
-        return this.forbiddenTemplate;
+    public String forbiddenPath() {
+        return this.forbiddenTemplatePath;
     }
 
     /**
      * @return The relative path of the not found template
      */
-    public String notFoundTemplate() {
-        return this.notFoundTemplate;
+    public String notFoundPath() {
+        return this.notFoundTemplatePath;
     }
 
     /**
      * @return The relative path of the bad request template
      */
-    public String badRequestTemplate() {
-        return this.badRequestTemplate;
+    public String badRequestPath() {
+        return this.badRequestTemplatePath;
     }
 
     /**
      * @return The relative path of the unauthorized template
      */
-    public String unauthorizedTemplate() {
-        return this.unauthorizedTemplate;
+    public String unauthorizedPath() {
+        return this.unauthorizedTemplatePath;
     }
 
     /**
      * @return The relative path of the internal server error template
      */
-    public String serverErrorTemplate() {
-        return this.serverErrorTemplate;
+    public String serverErrorPath() {
+        return this.serverErrorTemplatePath;
     }
-    
+
     /**
      * @return The relative path of the routes template
      */
-    public String routesTemplate() {
-        return this.routesTemplate;
+    public String routesPath() {
+        return this.routesTemplatePath;
     }
 
     /**
      * @return The relative path of the cache template
      */
-    public String cacheTemplate() {
-        return this.cacheTemplate;
+    public String cachePath() {
+        return this.cacheTemplatePath;
     }
 
     /**
      * @return The relative path of the config template
      */
-    public String configTemplate() {
-        return this.configTemplate;
+    public String configPath() {
+        return this.configTemplatePath;
     }
 
     /**
      * @return The relative path of the metrics template
      */
-    public String metricsTemplate() {
-        return this.metricsTemplate;
+    public String metricsPath() {
+        return this.metricsTemplatePath;
     }
 
     /**
      * @return The relative path of the scheduler template
      */
-    public String schedulerTemplate() {
-        return this.schedulerTemplate;
+    public String schedulerPath() {
+        return this.schedulerTemplatePath;
     }
 }

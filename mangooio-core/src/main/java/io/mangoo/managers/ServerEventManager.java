@@ -14,22 +14,22 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 @Singleton
 public class ServerEventManager {
-    private Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     /**
      * Adds a new connection to the manager
-     * 
+     *
      * @param connection The connection to add
      */
     public void addConnection(ServerSentEventConnection connection) {
         Preconditions.checkNotNull(connection, "connection can not be null");
-        
+
         String uri = connection.getRequestURI() + "?" + connection.getQueryString();
         Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
         if (uriConnections == null) {
@@ -40,10 +40,10 @@ public class ServerEventManager {
         }
         this.connections.put(uri, uriConnections);
     }
-    
+
     /**
      * Retrieves all URI and their containing connection resources
-     * 
+     *
      * @return A Map of URI resources and their connections or an empty map
      */
     public Map<String, Set<ServerSentEventConnection>> getConnections() {
@@ -52,26 +52,26 @@ public class ServerEventManager {
 
     /**
      * Retrieves all connection resources under a given URL
-     * 
+     *
      * @param uri The URI resource for the connections
-     * 
+     *
      * @return A Set of connections for the URI resource
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Preconditions.checkNotNull(uri, "uri can not be null");
-        
+
         return this.connections.get(uri);
     }
-    
+
     /**
      * Sends data to all connections for a given URI resource
-     * 
+     *
      * @param uri The URI resource for the connection
      * @param data The event data
      */
     public void send(String uri, String data) {
         Preconditions.checkNotNull(uri, "uri can not be null");
-        
+
         Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
@@ -81,18 +81,18 @@ public class ServerEventManager {
             });
         }
     }
-    
+
     /**
      * Sends data to all connections for a given URI and invokes the callback
      * on Success or failure
-     * 
+     *
      * @param uri The URI resource for the connection
      * @param data The event data
      * @param eventCallback A callback that is notified on Success or failure
      */
     public void send(String uri, String data, EventCallback eventCallback) {
         Preconditions.checkNotNull(uri, "uri can not be null");
-        
+
         Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
@@ -102,21 +102,21 @@ public class ServerEventManager {
             });
         }
     }
-    
+
     /**
      * Closes all connections for a given URI resource
-     * 
+     *
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
         Preconditions.checkNotNull(uri, "uri can not be null");
-        
+
         Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> IOUtils.closeQuietly(connection));
         }
     }
-    
+
     /**
      * Closes all connections for all URIs resources
      */
