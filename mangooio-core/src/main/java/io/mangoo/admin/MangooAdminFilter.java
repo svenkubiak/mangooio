@@ -18,7 +18,7 @@ import io.undertow.util.Headers;
 
 /**
  * Authentication filter for administrative URLs
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -31,20 +31,20 @@ public class MangooAdminFilter implements MangooFilter {
                   return Response.withUnauthorized()
                           .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
                           .andEmptyBody()
-                          .end();                  
+                          .end();
             }
-            
+
             return response;
         }
-        
+
         return Response.withNotFound()
                 .andBody(Template.DEFAULT.notFound())
                 .end();
     }
-    
+
     /**
      * Checks via a basic HTTP authentication if user is authenticated
-     * 
+     *
      * @param request The current HTTP request
      * @return True if credentials are valid, false otherwise
      */
@@ -63,8 +63,8 @@ public class MangooAdminFilter implements MangooFilter {
                 password = credentials[1];
             }
         }
-        
-        return StringUtils.isNotBlank(username) && 
+
+        return StringUtils.isNotBlank(username) &&
                StringUtils.isNotBlank(password) &&
                ConfigUtils.getAdminAuthenticationUser().equals(username) &&
                ConfigUtils.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
@@ -72,7 +72,7 @@ public class MangooAdminFilter implements MangooFilter {
 
     /**
      * Checks if an administrative URL is enabled
-     * 
+     *
      * @param url The URL to check
      * @return True when enabled via application.yaml, false otherwise
      */
@@ -87,20 +87,20 @@ public class MangooAdminFilter implements MangooFilter {
             break;
         case "@health":
             enabled = ConfigUtils.isAdminHealthEnabled();
-            break; 
+            break;
         case "@cache":
             enabled = ConfigUtils.isAdminCacheEnabled();
-            break;      
+            break;
         case "@metrics":
             enabled = ConfigUtils.isAdminMetricsEnabled();
-            break;  
+            break;
         case "@scheduler":
             enabled = ConfigUtils.isAdminSchedulerEnabled();
-            break;  
+            break;
         default:
             enabled = false;
         }
-        
+
         return enabled;
     }
 }

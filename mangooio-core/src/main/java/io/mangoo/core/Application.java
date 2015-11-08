@@ -7,7 +7,7 @@ import io.mangoo.enums.Mode;
 
 /**
  * Main class that starts all components of a mangoo I/O application
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -66,7 +66,7 @@ public final class Application {
 
     /**
      * Returns the current mode the application is running in
-     * 
+     *
      * @return Enum Mode
      */
     public static Mode getMode() {
@@ -75,25 +75,25 @@ public final class Application {
 
     /**
      * Returns the Google Guice Injector
-     * 
+     *
      * @return Google Guice injector instance
      */
     public static Injector getInjector() {
         return injector;
     }
-    
+
     /**
      * Short form for getting an Goolge Guice injected class by
      * calling injector.getInstance(...)
-     * 
+     *
      * @param clazz The class to retrieve from the injector
      * @param <T> JavaDoc requires this (just ignore it)
-     * 
+     *
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Missing class instance for getInstance");
-        
+
         return injector.getInstance(clazz);
     }
 }

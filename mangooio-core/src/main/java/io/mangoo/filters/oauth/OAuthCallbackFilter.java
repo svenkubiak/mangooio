@@ -21,7 +21,7 @@ import io.mangoo.utils.RequestUtils;
 
 /**
  * Callback filter when returning from an OAuth authentication
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -48,7 +48,7 @@ public class OAuthCallbackFilter implements MangooFilter {
             break;
         case FACEBOOK:
             facebookOAuth(request);
-            break;     
+            break;
         default:
             break;
         }

@@ -34,14 +34,14 @@ public class Crypto {
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
-    private PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
+    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
     private CipherParameters cipherParameters;
-    private Config config;
+    private final Config config;
 
     @Inject
     public Crypto(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
-        
+
         this.config = config;
     }
 

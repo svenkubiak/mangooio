@@ -25,7 +25,7 @@ import io.mangoo.enums.Default;
 
 /**
  * Convenient class for interacting with the quartz scheduler
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -44,10 +44,10 @@ public class Scheduler {
             }
         }
     }
-    
+
     /**
      * Returns the current scheduler instance
-     * 
+     *
      * @return Scheduler instance, null if scheduler is not initialize or started
      */
     public org.quartz.Scheduler getScheduler() {
@@ -70,7 +70,7 @@ public class Scheduler {
 
     public void shutdown() {
         Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
-        
+
         try {
             this.quartzScheduler.shutdown();
             if (this.quartzScheduler.isShutdown()) {
@@ -85,7 +85,7 @@ public class Scheduler {
 
     public void standby() {
         Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
-        
+
         try {
             this.quartzScheduler.standby();
             if (this.quartzScheduler.isInStandbyMode()) {
@@ -99,20 +99,20 @@ public class Scheduler {
     }
 
     /**
-     * Prepares the scheduler for being started by creating a 
+     * Prepares the scheduler for being started by creating a
      * scheduler instance from quartz scheduler factory
      */
     private void initialize() {
         if (this.quartzScheduler == null) {
             try {
                 this.quartzScheduler = new StdSchedulerFactory().getScheduler();
-                this.quartzScheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));                
+                this.quartzScheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));
             } catch (SchedulerException e) {
-                LOG.error("Failed to initialize scheduler", e);    
+                LOG.error("Failed to initialize scheduler", e);
             }
         }
     }
-    
+
     /**
      * Adds a new job with a given JobDetail and Trigger to the scheduler
      *
@@ -123,23 +123,23 @@ public class Scheduler {
         Preconditions.checkNotNull(jobDetail, "JobDetail is required for schedule");
         Preconditions.checkNotNull(trigger, "trigger is required for schedule");
         initialize();
-        
+
         try {
             this.quartzScheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             LOG.error("Failed to schedule a new job", e);
         }
     }
-    
+
     /**
      * Creates a new quartz scheduler Trigger, which can be used to
      * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
-     * 
+     *
      * @param identity The name of the trigger
      * @param groupName The trigger group name
      * @param description The trigger description
      * @param cron The cron expression for the trigger
-     * 
+     *
      * @return A new Trigger object
      */
     public Trigger createTrigger(String identity, String groupName, String description, String cron) {
@@ -154,7 +154,7 @@ public class Scheduler {
                 .withDescription(description)
                 .build();
     }
-    
+
     /**
      * Creates a new quartz scheduler JobDetail, which can be used to
      * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
@@ -170,7 +170,7 @@ public class Scheduler {
         Preconditions.checkNotNull(identity, "identity is required for new JobDetail");
         Preconditions.checkNotNull(groupName, "groupName is required for new JobDetail");
         Preconditions.checkNotNull(clazz, "clazz is required for new JobDetail");
-        
+
         return newJob(clazz)
                 .withIdentity(identity, groupName)
                 .build();

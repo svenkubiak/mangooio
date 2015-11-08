@@ -14,7 +14,7 @@ import io.mangoo.models.OAuthUser;
 
 /**
  * Convinient class for handling authentication
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -25,7 +25,7 @@ public class Authentication {
     private String authenticatedUser;
     private boolean remember;
     private boolean loggedOut;
-    
+
     public Authentication() {
     }
 
@@ -123,7 +123,7 @@ public class Authentication {
 
         return authenticated;
     }
-    
+
     /**
      * Performs a logout of the currently authenticated user
      */
@@ -145,11 +145,11 @@ public class Authentication {
             this.remember = remember;
         }
     }
-    
+
     /**
      * Convenient method that calls {@link #login(String, boolean) login} with
      * remember set to false
-     * 
+     *
      * @param username The user name to login
      */
     public void login(String username) {

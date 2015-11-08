@@ -2,7 +2,7 @@ package io.mangoo.enums.oauth;
 
 /**
  * List of OAuthResources
- * 
+ *
  * @author skubiak
  *
  */

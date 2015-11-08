@@ -28,9 +28,9 @@ import io.undertow.util.StatusCodes;
  */
 public final class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
-    private Map<HttpString, String> headers = new ConcurrentHashMap<>(16, 0.9f, 1);
-    private Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
-    private List<Cookie> cookies = new ArrayList<Cookie>(); 
+    private final Map<HttpString, String> headers = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final List<Cookie> cookies = new ArrayList<Cookie>();
     private String redirectTo;
     private String contentType = ContentType.TEXT_PLAIN.toString();
     private String charset = Charsets.UTF_8.name();
@@ -44,7 +44,7 @@ public final class Response {
     private boolean rendered;
     private boolean redirect;
     private int statusCode = StatusCodes.OK;
-    
+
     public Response(){
     }
 
@@ -74,7 +74,7 @@ public final class Response {
     public String getBody() {
         return this.body;
     }
-    
+
     public List<Cookie> getCookies() {
         return this.cookies;
     }
@@ -195,7 +195,7 @@ public final class Response {
      */
     public static Response withRedirect(String redirectTo) {
         Preconditions.checkNotNull(redirectTo, "redirectTo can not be null");
-        
+
         return new Response(redirectTo);
     }
 
@@ -265,17 +265,17 @@ public final class Response {
 
         return this;
     }
-    
+
     /**
      * Adds an additional Cookie to the response which is passed to the client
-     * 
+     *
      * @param cookie The cookie to add
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andCookie(Cookie cookie) {
         Preconditions.checkNotNull(cookie, "cookie can not be null");
         this.cookies.add(cookie);
-        
+
         return this;
     }
 
@@ -289,7 +289,7 @@ public final class Response {
      */
     public Response andJsonBody(Object jsonObject) {
         Preconditions.checkNotNull(jsonObject, "jsonObject can not be null");
-        
+
         this.contentType = ContentType.APPLICATION_JSON.toString();
         this.body = JsonFactory.create().toJson(jsonObject);
         this.rendered = true;
@@ -305,7 +305,7 @@ public final class Response {
      */
     public Response andBinaryFile(File file) {
         Preconditions.checkNotNull(file, "file can not be null");
-        
+
         try (FileInputStream fileInputStream = new FileInputStream(file)){
             this.binaryFileName = file.getName();
             this.binaryContent = IOUtils.toByteArray(fileInputStream);
@@ -326,7 +326,7 @@ public final class Response {
      */
     public Response andBinaryContent(byte [] content) {
         Preconditions.checkNotNull(content, "content can not be null");
-        
+
         this.binaryContent = content.clone();
         this.binary = true;
         this.rendered = true;

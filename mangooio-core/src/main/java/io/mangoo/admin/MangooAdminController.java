@@ -29,7 +29,7 @@ import io.mangoo.scheduler.Scheduler;
 
 /**
  * Controller class for administrative URLs
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -78,25 +78,25 @@ public class MangooAdminController {
 
     public Response metrics() {
         Metrics metrics = Application.getInstance(Metrics.class);
-        
+
         return Response.withOk()
                 .andContent("metrics", metrics.getMetrics())
                 .andTemplate(Template.DEFAULT.metricsTemplate());
     }
-    
+
     public Response scheduler() throws SchedulerException {
-        List<Job> jobs = new ArrayList<Job>();        
+        List<Job> jobs = new ArrayList<>();
         org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         if (scheduler != null) {
             Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
             for (JobKey jobKey : jobKeys) {
                 List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-                Trigger trigger = triggers.get(0);  
+                Trigger trigger = triggers.get(0);
                 TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
                 jobs.add(new Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
             }
         }
-        
+
         return Response.withOk()
                 .andContent("jobs", jobs)
                 .andTemplate(Template.DEFAULT.schedulerTemplate());

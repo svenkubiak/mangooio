@@ -17,7 +17,7 @@ import io.undertow.util.Headers;
 
 /**
  * Filter for basic HTTP authentication
- * 
+ *
  * @author skubiak
  *
  */

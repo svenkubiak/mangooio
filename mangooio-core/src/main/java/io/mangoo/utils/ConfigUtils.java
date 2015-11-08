@@ -11,17 +11,17 @@ import io.mangoo.enums.Key;
 
 /**
  * Utility class for easy access of configuration values
- * 
+ *
  * @author kubi
  *
  */
 public final class ConfigUtils {
     private static Config config = Application.getInstance(Config.class);
-    
+
     private ConfigUtils() {
         Preconditions.checkNotNull(config, "config can not be null");
     }
-    
+
     /**
      * @return application.name from application.yaml
      */
@@ -65,7 +65,7 @@ public final class ConfigUtils {
     }
 
     /**
-     * @return auth.cookie.name from application.yaml or default value if undefined 
+     * @return auth.cookie.name from application.yaml or default value if undefined
      */
     public static String getAuthenticationCookieName() {
         return config.getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
@@ -154,7 +154,7 @@ public final class ConfigUtils {
     public static boolean isAdminSchedulerEnabled() {
         return config.getBoolean(Key.APPLICATION_ADMIN_SCHEDULER, Default.APPLICATION_ADMIN_SCHEDULER.toBoolean());
     }
-    
+
     /**
      * @return auth.cookie.encrypt from application.yaml or default value if undefined
      */
@@ -196,7 +196,7 @@ public final class ConfigUtils {
     public static String getAdminAuthenticationUser() {
         return config.getString(Key.APPLICATION_ADMIN_USERNAME);
     }
-    
+
     /**
      * @return application.admin.password from application.yaml or null if undefined
      */
@@ -230,5 +230,5 @@ public final class ConfigUtils {
      */
     public static int getExecutionPool() {
         return config.getInt(Key.EXECUTION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
-    }    
+    }
 }

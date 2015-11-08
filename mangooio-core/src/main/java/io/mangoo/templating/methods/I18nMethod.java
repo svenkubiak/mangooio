@@ -22,7 +22,7 @@ import io.mangoo.i18n.Messages;
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;
-    private Messages messages;
+    private final Messages messages;
 
     public I18nMethod(Messages messages) {
         this.messages = messages;

@@ -11,17 +11,17 @@ import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.Headers;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private String token;
-    
+    private final String token;
+
     public ServerSentEventHandler(String token) {
         this.token = token;
     }
-    
+
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
         if (StringUtils.isNotBlank(this.token)) {
@@ -33,12 +33,12 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             }
 
             if (RequestUtils.hasValidAuthentication(uri, queryString, this.token, header)) {
-                Application.getInstance(ServerEventManager.class).addConnection(connection); 
+                Application.getInstance(ServerEventManager.class).addConnection(connection);
             } else {
                 IOUtils.closeQuietly(connection);
             }
         } else {
-            Application.getInstance(ServerEventManager.class).addConnection(connection);            
+            Application.getInstance(ServerEventManager.class).addConnection(connection);
         }
     }
 }

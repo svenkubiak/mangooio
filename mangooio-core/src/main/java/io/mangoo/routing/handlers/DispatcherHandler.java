@@ -15,15 +15,15 @@ import io.undertow.server.HttpServerExchange;
  */
 @SuppressWarnings("all")
 public class DispatcherHandler implements HttpHandler {
-    private Class<?> controllerClass;
-    private String controllerMethod;
-    private boolean metrics;
-    private boolean async;
+    private final Class<?> controllerClass;
+    private final String controllerMethod;
+    private final boolean metrics;
+    private final boolean async;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
         Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
-        
+
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.async = async;

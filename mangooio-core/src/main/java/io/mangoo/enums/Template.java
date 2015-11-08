@@ -23,16 +23,16 @@ public enum Template {
     private String unauthorizedContent;
     private String forbiddenContent;
     private String serverErrorContent;
-    private String notFoundTemplate = "defaults/404.html";
-    private String badRequestTemplate = "defaults/400.html";
-    private String unauthorizedTemplate = "defaults/401.html";
-    private String forbiddenTemplate = "defaults/403.html";
-    private String serverErrorTemplate = "defaults/500.html";
-    private String routesTemplate = "defaults/routes.ftl";
-    private String cacheTemplate = "defaults/cache.ftl";
-    private String configTemplate = "defaults/config.ftl";
-    private String metricsTemplate = "defaults/metrics.ftl";
-    private String schedulerTemplate = "defaults/scheduler.ftl";
+    private final String notFoundTemplate = "defaults/404.html";
+    private final String badRequestTemplate = "defaults/400.html";
+    private final String unauthorizedTemplate = "defaults/401.html";
+    private final String forbiddenTemplate = "defaults/403.html";
+    private final String serverErrorTemplate = "defaults/500.html";
+    private final String routesTemplate = "defaults/routes.ftl";
+    private final String cacheTemplate = "defaults/cache.ftl";
+    private final String configTemplate = "defaults/config.ftl";
+    private final String metricsTemplate = "defaults/metrics.ftl";
+    private final String schedulerTemplate = "defaults/scheduler.ftl";
 
     Template () {
         try {
@@ -80,7 +80,7 @@ public enum Template {
     public String serverErrorContent() {
         return this.serverErrorContent;
     }
-    
+
     /**
      * @return The relative path of the forbidden template
      */
@@ -115,7 +115,7 @@ public enum Template {
     public String serverErrorTemplate() {
         return this.serverErrorTemplate;
     }
-    
+
     /**
      * @return The relative path of the routes template
      */

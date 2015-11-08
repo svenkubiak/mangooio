@@ -16,12 +16,12 @@ public class Route {
     private HttpString requestMethod;
     private String url;
     private String token;
-    private RouteType routeType;
+    private final RouteType routeType;
     private boolean async;
 
     public Route(HttpString requestMethod) {
         Preconditions.checkNotNull(requestMethod, "requestMethod can not be null");
-        
+
         this.routeType = RouteType.REQUEST;
         this.requestMethod = requestMethod;
     }
@@ -90,22 +90,22 @@ public class Route {
 
         Router.addRoute(this);
     }
-    
+
     /**
      * Sets a token with is used for signed authentication
      * of a Server Sent Event Connection
-     * 
+     *
      * @param token The token
      */
     public void withToken(String token) {
         this.token = token;
     }
-    
+
     /**
      * Sets the request to be able to work asynchronous
      * by executing the request in a thread where blocking
      * is possible.
-     * 
+     *
      * This optional will only work for controller mapped
      * methods.
      */
@@ -132,11 +132,11 @@ public class Route {
     public RouteType getRouteType() {
         return routeType;
     }
-    
+
     public String getToken() {
         return this.token;
     }
-    
+
     public boolean isAsync() {
         return this.async;
     }

@@ -32,7 +32,7 @@ public final class ThrowableUtils {
      */
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
         Preconditions.checkNotNull(stackTraceElement, "stackTraceElement can not be null");
-        
+
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
         if (position > 0) {
@@ -56,7 +56,7 @@ public final class ThrowableUtils {
     @SuppressWarnings("all")
     public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
         Preconditions.checkNotNull("sourcePath", "sourcePath can not be null");
-        
+
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)
