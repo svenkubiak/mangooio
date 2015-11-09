@@ -174,9 +174,7 @@ public final class RequestUtils {
         if (values == null || values.length != 2) {
             return false;
         }
-
-        String sign = DigestUtils.sha512Hex(requestUri + queryString + values [0] + token);
-
-        return sign.equalsIgnoreCase(values[1]);
+        
+        return DigestUtils.sha512Hex(requestUri + queryString + values [0] + token).equalsIgnoreCase(values[1]);
     }
 }

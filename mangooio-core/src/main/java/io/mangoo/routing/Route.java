@@ -97,8 +97,18 @@ public class Route {
      *
      * @param token The token
      */
-    public void withToken(String token) {
+    
+    /**
+     * Sets a token with is used for signed authentication
+     * of a Server Sent Event Connection
+     *
+     * @param token The token
+     * @return A route object {@link io.mangoo.routing.Route}
+     */
+    public Route withToken(String token) {
         this.token = token;
+        
+        return this;
     }
 
     /**

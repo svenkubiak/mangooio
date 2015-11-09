@@ -38,6 +38,7 @@ public class ServerEventManager {
         if (StringUtils.isNotBlank(connection.getQueryString())) {
             uri = uri + "?" + connection.getQueryString();
         }
+        
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections == null) {
             uriConnections = new HashSet<ServerSentEventConnection>();
@@ -129,7 +130,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      * @param uriConnections The connections for the URI resource
      */
-    private void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
+    public void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
         Preconditions.checkNotNull(uri, "uri can not be null");
         Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
         
@@ -141,9 +142,9 @@ public class ServerEventManager {
      * 
      * @param uri The URI resource for the connection
      */
-    private void removeConnections(String uri) {
+    public void removeConnections(String uri) {
         Preconditions.checkNotNull(uri, "uri can not be null");
         
-        this.cache.remove(PREFIX + uri); 
+        this.cache.remove(PREFIX + uri);
     }
 }
