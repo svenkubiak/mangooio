@@ -41,7 +41,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
             if (RequestUtils.hasValidAuthentication(uri, queryString, this.token, header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
-                Application.getInstance(WebSocketManager.class).addConnection(uri, queryString, channel);
+                Application.getInstance(WebSocketManager.class).addChannel(uri, queryString, channel);
             } else {
                 IOUtils.closeQuietly(channel);
             }
@@ -49,6 +49,6 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
 
         channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
         channel.resumeReceives();
-        Application.getInstance(WebSocketManager.class).addConnection(uri, queryString, channel);
+        Application.getInstance(WebSocketManager.class).addChannel(uri, queryString, channel);
     }
 }

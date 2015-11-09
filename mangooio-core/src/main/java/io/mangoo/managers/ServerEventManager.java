@@ -21,7 +21,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private static final String PREFIX = "MANGOOIO-";
+    private static final String PREFIX = "MANGOOIO-SSE-";
 
     @Inject
     private Cache cache;

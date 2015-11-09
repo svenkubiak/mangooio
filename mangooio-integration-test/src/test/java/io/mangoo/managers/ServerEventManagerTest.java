@@ -31,7 +31,7 @@ public class ServerEventManagerTest {
     
     @Before
     public void init() {
-        eventData = "";
+        eventData = null;
     }
     
     @Test
@@ -64,6 +64,25 @@ public class ServerEventManagerTest {
         //then
         assertThat(serverEventManager.getConnections("/foo"), not(nullValue()));
         assertThat(serverEventManager.getConnections("/foo").size(), equalTo(0));
+    }
+    
+    @Test
+    public void testCloseConnection() {
+        //given
+        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        
+        //when
+        WebTarget target = ClientBuilder.newBuilder()
+                .register(SseFeature.class)
+                .build()
+                .target("http://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/sse");
+        EventSource eventSource = EventSource.target(target).build();
+        eventSource.open();
+        serverEventManager.close("/sse");
+        
+        //then
+        assertThat(serverEventManager.getConnections("/sse"), not(nullValue()));
+        assertThat(serverEventManager.getConnections("/sse").size(), equalTo(0));
     }
     
     @Test
