@@ -185,7 +185,7 @@ public class Bootstrap {
 
         for (Route route : Router.getRoutes()) {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isAsync()));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlocking()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }

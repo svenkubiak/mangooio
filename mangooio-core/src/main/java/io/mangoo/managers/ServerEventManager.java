@@ -1,15 +1,16 @@
 package io.mangoo.managers;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import io.mangoo.cache.Cache;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
@@ -20,8 +21,11 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private final Map<String, Set<ServerSentEventConnection>> connections = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private static final String PREFIX = "MANGOOIO-";
 
+    @Inject
+    private Cache cache;
+    
     /**
      * Adds a new connection to the manager
      *
@@ -30,37 +34,18 @@ public class ServerEventManager {
     public void addConnection(ServerSentEventConnection connection) {
         Preconditions.checkNotNull(connection, "connection can not be null");
 
-        String uri = connection.getRequestURI() + "?" + connection.getQueryString();
-        Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
+        String uri = connection.getRequestURI();
+        if (StringUtils.isNotBlank(connection.getQueryString())) {
+            uri = uri + "?" + connection.getQueryString();
+        }
+        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections == null) {
             uriConnections = new HashSet<ServerSentEventConnection>();
             uriConnections.add(connection);
         } else {
             uriConnections.add(connection);
         }
-        this.connections.put(uri, uriConnections);
-    }
-
-    /**
-     * Retrieves all URI and their containing connection resources
-     *
-     * @return A Map of URI resources and their connections or an empty map
-     */
-    public Map<String, Set<ServerSentEventConnection>> getConnections() {
-        return this.connections;
-    }
-
-    /**
-     * Retrieves all connection resources under a given URL
-     *
-     * @param uri The URI resource for the connections
-     *
-     * @return A Set of connections for the URI resource
-     */
-    public Set<ServerSentEventConnection> getConnections(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
-
-        return this.connections.get(uri);
+        setConnections(uri, uriConnections);
     }
 
     /**
@@ -72,7 +57,7 @@ public class ServerEventManager {
     public void send(String uri, String data) {
         Preconditions.checkNotNull(uri, "uri can not be null");
 
-        Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
+        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
                 if (connection.isOpen()) {
@@ -92,8 +77,9 @@ public class ServerEventManager {
      */
     public void send(String uri, String data, EventCallback eventCallback) {
         Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(eventCallback, "eventCallback can not be null");
 
-        Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
+        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
                 if (connection.isOpen()) {
@@ -111,18 +97,53 @@ public class ServerEventManager {
     public void close(String uri) {
         Preconditions.checkNotNull(uri, "uri can not be null");
 
-        Set<ServerSentEventConnection> uriConnections = this.connections.get(uri);
+        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach(connection -> IOUtils.closeQuietly(connection));
+            uriConnections.forEach(connection -> {
+                if (connection.isOpen()){
+                    IOUtils.closeQuietly(connection);
+                }
+           });
+           removeConnections(uri);
         }
     }
 
     /**
-     * Closes all connections for all URIs resources
+     * Retrieves all connection resources under a given URL
+     *
+     * @param uri The URI resource for the connections
+     *
+     * @return A Set of connections for the URI resource
      */
-    public void closeAll() {
-        this.connections.entrySet().forEach(entry -> {
-            entry.getValue().forEach(connection -> IOUtils.closeQuietly(connection));
-        });
+    public Set<ServerSentEventConnection> getConnections(String uri) {
+        Preconditions.checkNotNull(uri, "uri can not be null");
+
+        Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
+        
+        return (uriConnections == null) ? new HashSet<ServerSentEventConnection>() : uriConnections;
+    }
+
+    /**
+     * Sets the URI resources for a given URL
+     * 
+     * @param uri The URI resource for the connection
+     * @param uriConnections The connections for the URI resource
+     */
+    private void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
+        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
+        
+        this.cache.add(PREFIX + uri, uriConnections);
+    }
+
+    /**
+     * Removes all URI resources for a given URL
+     * 
+     * @param uri The URI resource for the connection
+     */
+    private void removeConnections(String uri) {
+        Preconditions.checkNotNull(uri, "uri can not be null");
+        
+        this.cache.remove(PREFIX + uri); 
     }
 }

@@ -17,7 +17,7 @@ public class Route {
     private String url;
     private String token;
     private final RouteType routeType;
-    private boolean async;
+    private boolean blocking;
 
     public Route(HttpString requestMethod) {
         Preconditions.checkNotNull(requestMethod, "requestMethod can not be null");
@@ -102,15 +102,14 @@ public class Route {
     }
 
     /**
-     * Sets the request to be able to work asynchronous
-     * by executing the request in a thread where blocking
-     * is possible.
-     *
-     * This optional will only work for controller mapped
-     * methods.
+     * Sets a flag to the route, that blocking is possible.
+     * This advises the response handler to pass the request to
+     * a thread where blocking is allowed.
+     * 
+     * Please note, that this is only used in mapped controllers.
      */
-    public void asynchronous() {
-        this.async = true;
+    public void allowBlocking() {
+        this.blocking = true;
     }
 
     public Class<?> getControllerClass() {
@@ -137,7 +136,7 @@ public class Route {
         return this.token;
     }
 
-    public boolean isAsync() {
-        return this.async;
+    public boolean isBlocking() {
+        return this.blocking;
     }
 }

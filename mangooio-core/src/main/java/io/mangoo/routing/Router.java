@@ -20,8 +20,13 @@ public final class Router {
     private Router() {
     }
 
+    /**
+     * Adds a new route to the router
+     * 
+     * @param route The route to add
+     */
     public static void addRoute(Route route) {
-        Preconditions.checkNotNull(route, "route is required for addRoute");
+        Preconditions.checkNotNull(route, "route can note be null");
 
         routes.add(route);
     }
