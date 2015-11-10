@@ -27,8 +27,10 @@ public class WebSocketManager {
     
     /**
      * Adds a new channel to the manager
-     *
-     * @param channel The channel to add
+     * 
+     * @param uri The uri of the request
+     * @param queryString The query string of the request
+     * @param channel channel The channel to add
      */
     public void addChannel(String uri, String queryString, WebSocketChannel channel) {
         Preconditions.checkNotNull(channel, "channel can not be null");
