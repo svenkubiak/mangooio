@@ -15,9 +15,9 @@ public class Route {
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
-    private String token;
     private final RouteType routeType;
     private boolean blocking;
+    private boolean authentication;
 
     public Route(HttpString requestMethod) {
         Preconditions.checkNotNull(requestMethod, "requestMethod can not be null");
@@ -99,14 +99,16 @@ public class Route {
      */
     
     /**
-     * Sets a token with is used for signed authentication
-     * of a Server Sent Event Connection
-     *
-     * @param token The token
+     * Sets a flag to the request that it requires
+     * a valid authentication cookie
+     * 
+     * Please note, that this is only used for WebSockets
+     * and ServerSentEvents
+     * 
      * @return A route object {@link io.mangoo.routing.Route}
      */
-    public Route withToken(String token) {
-        this.token = token;
+    public Route withAuthentication() {
+        this.authentication = true;
         
         return this;
     }
@@ -142,8 +144,8 @@ public class Route {
         return routeType;
     }
 
-    public String getToken() {
-        return this.token;
+    public boolean isAuthenticationRequired() {
+        return this.authentication;
     }
 
     public boolean isBlocking() {

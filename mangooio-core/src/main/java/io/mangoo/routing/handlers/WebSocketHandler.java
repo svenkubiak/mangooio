@@ -1,7 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.xnio.ChannelListener;
 
 import com.google.common.base.Preconditions;
@@ -21,13 +20,14 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
  */
 @SuppressWarnings("unchecked")
 public class WebSocketHandler implements WebSocketConnectionCallback {
-    private String token;
+    private boolean requiresAuthentication;
     private final Class<?> controllerClass;
 
-    public WebSocketHandler(Class<?> controllerClass) {
+    public WebSocketHandler(Class<?> controllerClass, boolean requiresAuthentication) {
         Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
 
         this.controllerClass = controllerClass;
+        this.requiresAuthentication = requiresAuthentication;
     }
 
     @Override
@@ -35,10 +35,13 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
         String uri = exchange.getRequestURI();
         String queryString = exchange.getQueryString();
 
-        if (StringUtils.isNotBlank(this.token)) {
-            String header = exchange.getRequestHeader(Headers.AUTHORIZATION_STRING);
+        if (this.requiresAuthentication) {
+            String header = null;
+            if (exchange.getRequestHeader(Headers.SET_COOKIE_STRING) != null) {
+                header = exchange.getRequestHeader(Headers.SET_COOKIE_STRING);
+            } 
 
-            if (RequestUtils.hasValidAuthentication(uri, queryString, this.token, header)) {
+            if (RequestUtils.hasValidAuthentication(header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
                 Application.getInstance(WebSocketManager.class).addChannel(uri, queryString, channel);

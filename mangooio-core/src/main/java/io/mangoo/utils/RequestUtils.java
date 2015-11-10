@@ -1,10 +1,12 @@
 package io.mangoo.utils;
 
+import java.time.LocalDateTime;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.builder.api.TwitterApi;
@@ -14,11 +16,14 @@ import org.scribe.utils.Preconditions;
 import io.mangoo.authentication.oauth.Google2Api;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.util.Cookies;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.Methods;
@@ -31,6 +36,10 @@ import io.undertow.util.Methods;
 public final class RequestUtils {
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+    private static final int AUTH_PREFIX_LENGTH = 3;
+    private static final int INDEX_0 = 0;
+    private static final int INDEX_1 = 1;
+    private static final int INDEX_2 = 2;
 
     private RequestUtils() {
     }
@@ -155,26 +164,47 @@ public final class RequestUtils {
     }
 
     /**
-     * Checks if the request has a valid authorization token
-     *
-     * @param requestUri The request URI
-     * @param queryString The query string
-     * @param token The authorization token
-     * @param header The request header map
-     *
-     * @return True if the request authorization is valid, false otherwise
+     * Checks if the given header contains a valid authentication
+     * 
+     * @param header The header to parse
+     * @return True if the cookie contains a valid authentication, false otherwise
      */
-    public static boolean hasValidAuthentication(String requestUri, String queryString, String header, String token) {
-        Preconditions.checkNotNull(requestUri, "requestURI can not be null");
-        Preconditions.checkNotNull(queryString, "queryString can not be null");
-        Preconditions.checkNotNull(header, "header can not be null");
-        Preconditions.checkNotNull(token, "token can not be null");
+    public static boolean hasValidAuthentication(String header) {
+        boolean validAuthentication = false;
+        if (StringUtils.isNotBlank(header)) {
+            Cookie cookie = Cookies.parseSetCookieHeader(header);
+            
+            String cookieValue = cookie.getValue();
+            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
+                if (ConfigUtils.isAuthenticationCookieEncrypt()) {
+                    cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
+                }
 
-        String [] values = header.split(":");
-        if (values == null || values.length != 2) {
-            return false;
+                String sign = null;
+                String expires = null;
+                String version = null;
+                String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
+                if (StringUtils.isNotBlank(prefix)) {
+                    String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+
+                    if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
+                        sign = prefixes [INDEX_0];
+                        expires = prefixes [INDEX_1];
+                        version = prefixes [INDEX_2];
+                    }
+                }
+                
+                if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
+                    String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
+                    LocalDateTime expiresDate = LocalDateTime.parse(expires);
+
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
+                        validAuthentication = true;
+                    }
+                }
+            }
         }
         
-        return DigestUtils.sha512Hex(requestUri + queryString + values [0] + token).equalsIgnoreCase(values[1]);
+        return validAuthentication;
     }
 }

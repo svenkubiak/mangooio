@@ -41,13 +41,10 @@ public class RequestUtilsTest {
     @Test
     public void testHasValidAuthentication() {
         //given
-        String requestUri = "/foo";
-        String queryString = "?foo=bar";
-        String header = "123456789:48B2790431BC556C2EFD69A06A30763D23B47322FF52E1197FA176B56AB925451B016F6C79E001BC9AFAC1F48D2DF8E2D6009B94D3B68E90195A3AEEE5FA0E06";
-        String token = "token";
+        String header = "set-cookie:TEST-AUTH=359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio; path=/; secure; HttpOnly; Expires=Tue, 11-Nov-2999 11:11:11 GMT";
         
         //when
-        boolean valid = RequestUtils.hasValidAuthentication(requestUri, queryString, header, token);
+        boolean valid = RequestUtils.hasValidAuthentication(header);
         
         //then
         assertThat(valid, equalTo(true));
@@ -56,13 +53,10 @@ public class RequestUtilsTest {
     @Test
     public void testHasInvalidAuthentication() {
         //given
-        String requestUri = "/foo";
-        String queryString = "?foo=bar";
-        String header = "123456789:foobar";
-        String token = "token";
+        String header = null;
         
         //when
-        boolean valid = RequestUtils.hasValidAuthentication(requestUri, queryString, header, token);
+        boolean valid = RequestUtils.hasValidAuthentication(header);
         
         //then
         assertThat(valid, equalTo(false));

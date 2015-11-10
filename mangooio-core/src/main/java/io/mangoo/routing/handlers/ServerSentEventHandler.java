@@ -1,7 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.core.Application;
 import io.mangoo.managers.ServerEventManager;
@@ -16,23 +15,21 @@ import io.undertow.util.Headers;
  *
  */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private final String token;
+    private boolean requiresAuthentication;
 
-    public ServerSentEventHandler(String token) {
-        this.token = token;
+    public ServerSentEventHandler(boolean requiresAuthentication) {
+        this.requiresAuthentication = requiresAuthentication;
     }
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
-        if (StringUtils.isNotBlank(this.token)) {
-            String uri = connection.getRequestURI();
-            String queryString = connection.getQueryString();
-            String header = "";
-            if (connection.getRequestHeaders().get(Headers.AUTHORIZATION_STRING) != null) {
-                header = connection.getRequestHeaders().get(Headers.AUTHORIZATION_STRING).element();
+        if (this.requiresAuthentication) {
+            String header = null;
+            if (connection.getRequestHeaders().get(Headers.SET_COOKIE) != null) {
+                header = connection.getRequestHeaders().get(Headers.SET_COOKIE).element();
             }
             
-            if (RequestUtils.hasValidAuthentication(uri, queryString, this.token, header)) {
+            if (RequestUtils.hasValidAuthentication(header)) {
                 Application.getInstance(ServerEventManager.class).addConnection(connection);
             } else {
                 IOUtils.closeQuietly(connection);
