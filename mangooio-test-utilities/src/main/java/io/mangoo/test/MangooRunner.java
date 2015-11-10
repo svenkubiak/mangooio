@@ -17,10 +17,8 @@ public class MangooRunner {
 
     @Before
     public final void mangooStartup() {
-        if (!MangooInstance.TEST.isStarted()) {
-            beforeMangooStartup();
-            MangooInstance.TEST.start();
-        }
+        beforeMangooStartup();
+        MangooInstance.TEST.start();
     }
     
     public void beforeMangooStartup() {
