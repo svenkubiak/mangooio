@@ -41,7 +41,7 @@ public class WebSocketManager {
         
         Set<WebSocketChannel> channels = getChannels(uri);
         if (channels == null) {
-            channels = new HashSet<WebSocketChannel>();
+            channels = new HashSet<>();
             channels.add(channel);
         } else {
             channels.add(channel);
@@ -74,7 +74,7 @@ public class WebSocketManager {
 
         Set<WebSocketChannel> channels = this.cache.get(PREFIX + uri);
         
-        return (channels == null) ? new HashSet<WebSocketChannel>() : channels;
+        return (channels == null) ? new HashSet<>() : channels;
     }
 
     /**

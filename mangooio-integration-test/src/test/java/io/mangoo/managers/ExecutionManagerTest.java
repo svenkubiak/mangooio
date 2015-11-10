@@ -45,18 +45,6 @@ public class ExecutionManagerTest {
     }
     
     @Test
-    public void testRunnableWithFuture() throws InterruptedException, ExecutionException {
-        //given
-        ExecutionManager executionManager = MangooInstance.TEST.getInstance(ExecutionManager.class);
-        
-        //when
-        Future<?> future = executionManager.submit(new TestRunnable());
-        
-        //then
-        assertThat(future.get(), equalTo(null));
-    }
-    
-    @Test
     public void testRunnableExecute() {
         //given
         ExecutionManager executionManager = MangooInstance.TEST.getInstance(ExecutionManager.class);

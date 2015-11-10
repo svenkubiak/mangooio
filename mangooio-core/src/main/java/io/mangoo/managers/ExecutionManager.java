@@ -48,18 +48,6 @@ public class ExecutionManager {
     }
 
     /**
-     * Submits a Runnable task for execution and returns a Future representing
-     * that task. The Future's get method will return null upon successful completion.
-     *
-     * @param runnable the task to submit
-     * 
-     * @return a Future representing pending completion of the task
-     */
-    public Future<?> submit(Runnable runnable) {
-        return this.executorService.submit(runnable);
-    }
-
-    /**
      * Executes the given command at some time in the future.
      * The command may execute in a new thread, in a pooled thread,
      * or in the calling thread, at the discretion of the Executor implementation.

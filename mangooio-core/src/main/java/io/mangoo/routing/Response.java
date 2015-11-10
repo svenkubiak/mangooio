@@ -30,7 +30,7 @@ public final class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
     private final Map<HttpString, String> headers = new ConcurrentHashMap<>(16, 0.9f, 1);
     private final Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
-    private final List<Cookie> cookies = new ArrayList<Cookie>();
+    private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
     private String contentType = ContentType.TEXT_PLAIN.toString();
     private String charset = Charsets.UTF_8.name();

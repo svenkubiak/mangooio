@@ -41,7 +41,7 @@ public class ServerEventManager {
         
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections == null) {
-            uriConnections = new HashSet<ServerSentEventConnection>();
+            uriConnections = new HashSet<>();
             uriConnections.add(connection);
         } else {
             uriConnections.add(connection);
@@ -121,7 +121,7 @@ public class ServerEventManager {
 
         Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
         
-        return (uriConnections == null) ? new HashSet<ServerSentEventConnection>() : uriConnections;
+        return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }
 
     /**

@@ -23,7 +23,7 @@ import io.mangoo.interfaces.MangooValidator;
 public class Form implements MangooValidator {
     private static final String KEY_ERROR = "Key can not be null";
     private boolean submitted;
-    private final List<File> files = new ArrayList<File>();
+    private final List<File> files = new ArrayList<>();
     private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
     private final Validator validator;
 

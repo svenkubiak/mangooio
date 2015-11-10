@@ -15,7 +15,7 @@ import io.undertow.util.HttpString;
  *
  */
 public final class Router {
-    private static List<Route> routes = new ArrayList<Route>();
+    private static List<Route> routes = new ArrayList<>();
 
     private Router() {
     }

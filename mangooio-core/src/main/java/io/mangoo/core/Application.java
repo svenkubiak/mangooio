@@ -18,7 +18,7 @@ public final class Application {
     private Application() {
     }
 
-    public static void main( String[] args ) {
+    public static void main( String... args ) {
         Bootstrap bootstrap = new Bootstrap();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();

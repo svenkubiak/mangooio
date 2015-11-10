@@ -204,17 +204,17 @@ public class Watcher implements Runnable {
             return false;
         }
 
-        return !absolutePath.contains("min") && absolutePath.endsWith("css") || absolutePath.endsWith("js");
+        return !absolutePath.contains("min") && ( absolutePath.endsWith("css") || absolutePath.endsWith("js") );
     }
 
-    public static enum RuleType {
+    public enum RuleType {
         NONE,
         INCLUDE,
         EXCLUDE
     }
 
     public static class RuleMatch {
-        private boolean proceed;
+        private final boolean proceed;
 
         public RuleMatch(boolean proceed) {
             this.proceed = proceed;

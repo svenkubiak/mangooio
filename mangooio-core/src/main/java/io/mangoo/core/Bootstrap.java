@@ -221,7 +221,7 @@ public class Bootstrap {
     }
 
     private List<Module> getModules() {
-        List<Module> modules = new ArrayList<Module>();
+        List<Module> modules = new ArrayList<>();
         if (!this.error) {
             try {
                 Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
