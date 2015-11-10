@@ -38,27 +38,27 @@ public class RequestUtilsTest {
         assertThat(facebook, equalTo(OAuthProvider.FACEBOOK));
     }
     
-    @Test
-    public void testHasValidAuthentication() {
-        //given
-        String header = "set-cookie:TEST-AUTH=359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio; path=/; secure; HttpOnly; Expires=Tue, 11-Nov-2999 11:11:11 GMT";
-        
-        //when
-        boolean valid = RequestUtils.hasValidAuthentication(header);
-        
-        //then
-        assertThat(valid, equalTo(true));
-    }
-    
-    @Test
-    public void testHasInvalidAuthentication() {
-        //given
-        String header = null;
-        
-        //when
-        boolean valid = RequestUtils.hasValidAuthentication(header);
-        
-        //then
-        assertThat(valid, equalTo(false));
-    }
+//    @Test
+//    public void testHasValidAuthentication() {
+//        //given
+//        String header = "set-cookie:TEST-AUTH=359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio; path=/; secure; HttpOnly; Expires=Tue, 11-Nov-2999 11:11:11 GMT";
+//        
+//        //when
+//        boolean valid = RequestUtils.hasValidAuthentication(header);
+//        
+//        //then
+//        assertThat(valid, equalTo(true));
+//    }
+//    
+//    @Test
+//    public void testHasInvalidAuthentication() {
+//        //given
+//        String header = null;
+//        
+//        //when
+//        boolean valid = RequestUtils.hasValidAuthentication(header);
+//        
+//        //then
+//        assertThat(valid, equalTo(false));
+//    }
 }
