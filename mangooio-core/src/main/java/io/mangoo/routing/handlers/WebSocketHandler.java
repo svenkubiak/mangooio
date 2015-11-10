@@ -20,7 +20,7 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
  */
 @SuppressWarnings("unchecked")
 public class WebSocketHandler implements WebSocketConnectionCallback {
-    private boolean requiresAuthentication;
+    private final boolean requiresAuthentication;
     private final Class<?> controllerClass;
 
     public WebSocketHandler(Class<?> controllerClass, boolean requiresAuthentication) {

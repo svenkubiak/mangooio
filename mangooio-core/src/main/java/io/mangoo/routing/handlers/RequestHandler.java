@@ -223,10 +223,9 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException
      */
     private Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        FilterWith filterWith = null;
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().equals(FilterWith.class)) {
-                filterWith = (FilterWith) annotation;
+                FilterWith filterWith = (FilterWith) annotation;
                 for (Class<?> clazz : filterWith.value()) {
                     if (response.isEndResponse()) {
                         return response;
@@ -642,7 +641,7 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
                 break;
             case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJSONRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
+                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
                 break;
             default:
                 convertedParameters[index] = null;
@@ -661,7 +660,7 @@ public class RequestHandler implements HttpHandler {
      * @return A Map containing the declared methods of the method parameters and ther class type
      */
     private Map<String, Class<?>> getMethodParameters() {
-        Map<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
+        Map<String, Class<?>> parameters = new LinkedHashMap<>(); //NOSONAR
         for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
                 Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType())); //NOSONAR

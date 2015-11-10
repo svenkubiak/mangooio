@@ -11,7 +11,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  *
  */
 public class MangooFluent extends FluentTest {
-    private WebDriver webDriver = new HtmlUnitDriver();
+    private final WebDriver webDriver = new HtmlUnitDriver();
     
     @Before
     public final void mangooStartup() {

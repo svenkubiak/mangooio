@@ -19,7 +19,7 @@ public enum MangooInstance {
     
     MangooInstance() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        Application.main(null);
+        Application.main();
         this.started = true;
     }
 

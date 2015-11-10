@@ -15,7 +15,7 @@ import io.undertow.util.Headers;
  *
  */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private boolean requiresAuthentication;
+    private final boolean requiresAuthentication;
 
     public ServerSentEventHandler(boolean requiresAuthentication) {
         this.requiresAuthentication = requiresAuthentication;

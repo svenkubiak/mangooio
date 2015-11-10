@@ -37,7 +37,7 @@ public class I18nMethod implements TemplateMethodModelEx {
 
             logError(messageKey, messageValue);
         } else if (args.size() > NUM_ARGUMENTS) {
-            List<String> strings = new ArrayList<String>();
+            List<String> strings = new ArrayList<>();
             for (Object object : args) {
                 if (object instanceof SimpleScalar) {
                     strings.add(((SimpleScalar) object).getAsString());

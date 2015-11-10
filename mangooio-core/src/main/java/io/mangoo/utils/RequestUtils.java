@@ -92,7 +92,7 @@ public final class RequestUtils {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request content-type contains application/json, false otherwise
      */
-    public static boolean isJSONRequest(HttpServerExchange exchange) {
+    public static boolean isJsonRequest(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
 
         HeaderMap headerMap = exchange.getRequestHeaders();
