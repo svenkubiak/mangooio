@@ -21,6 +21,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
+    private static final String URI_ERROR = "uri can not be null";
     private static final String PREFIX = "MANGOOIO-SSE-";
 
     @Inject
@@ -56,7 +57,7 @@ public class ServerEventManager {
      * @param data The event data
      */
     public void send(String uri, String data) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -77,7 +78,7 @@ public class ServerEventManager {
      * @param eventCallback A callback that is notified on Success or failure
      */
     public void send(String uri, String data, EventCallback eventCallback) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(eventCallback, "eventCallback can not be null");
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
@@ -96,7 +97,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -117,7 +118,7 @@ public class ServerEventManager {
      * @return A Set of connections for the URI resource
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
         
@@ -131,7 +132,7 @@ public class ServerEventManager {
      * @param uriConnections The connections for the URI resource
      */
     public void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
         
         this.cache.add(PREFIX + uri, uriConnections);
@@ -143,7 +144,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void removeConnections(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
         
         this.cache.remove(PREFIX + uri);
     }

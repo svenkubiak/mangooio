@@ -20,6 +20,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 @Singleton
 public class WebSocketManager {
+    private static final String URI_ERROR = "uri can not be null";
     private static final String PREFIX = "MANGOOIO-WS-";
 
     @Inject
@@ -56,7 +57,7 @@ public class WebSocketManager {
      * @param channels The channels for the URI resource
      */
     public void setChannels(String uri, Set<WebSocketChannel> channels) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(channels, "uriConnections can not be null");
         
         this.cache.add(PREFIX + uri, channels);
@@ -70,7 +71,7 @@ public class WebSocketManager {
      * @return A Set of channels for the URI resource
      */
     public Set<WebSocketChannel> getChannels(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<WebSocketChannel> channels = this.cache.get(PREFIX + uri);
         
@@ -83,7 +84,7 @@ public class WebSocketManager {
      * @param uri The URI resource for the connection
      */
     public void removeChannels(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
         
         this.cache.remove(PREFIX + uri);
     }
@@ -94,7 +95,7 @@ public class WebSocketManager {
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<WebSocketChannel> channels = getChannels(uri);
         if (channels != null) {

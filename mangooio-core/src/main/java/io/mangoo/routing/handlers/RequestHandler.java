@@ -63,6 +63,9 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class RequestHandler implements HttpHandler {
+    private static final int CONCURRENCY_LEVEL = 1;
+    private static final float LOAD_FACTOR = 0.9f;
+    private static final int INITIAL_CAPACITY = 16;
     private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int TOKEN_LENGTH = 16;
     private static final int INDEX_0 = 0;
@@ -322,7 +325,7 @@ public class RequestHandler implements HttpHandler {
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
-                        Map<String, String> sessionValues = new ConcurrentHashMap<>(16, 0.9f, 1);
+                        Map<String, String> sessionValues = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
                         if (StringUtils.isNotEmpty(data)) {
                             for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
                                 sessionValues.put(entry.getKey(), entry.getValue());
