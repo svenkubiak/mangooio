@@ -74,7 +74,7 @@ public final class RequestUtils {
     public static String getTemplateName(String templateName) {
         Preconditions.checkNotNull(templateName, "templateName can not be null");
 
-        return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : templateName + Default.TEMPLATE_SUFFIX.toString();
+        return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : (templateName + Default.TEMPLATE_SUFFIX.toString());
     }
 
     /**
