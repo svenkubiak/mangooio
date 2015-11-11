@@ -16,9 +16,12 @@ import io.mangoo.enums.Key;
  *
  */
 public class Flash {
+    private static final int CONCURRENCY_LEVEL = 1;
+    private static final float LOAD_FACTOR = 0.9f;
+    private static final int INITIAL_CAPACITY = 16;
     private static final Logger LOG = LogManager.getLogger(Flash.class);
     private static final List<String> blacklist = Arrays.asList("|", ":", "&", " ");
-    private Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private Map<String, String> values = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
     private boolean discard;
 
     public Flash() {

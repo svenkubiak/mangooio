@@ -35,6 +35,10 @@ import io.mangoo.scheduler.Scheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
+    private static final int CONCURRENCY_LEVEL = 1;
+    private static final float LOAD_FACTOR = 0.9f;
+    private static final int INITIAL_CAPACITY = 16;
+    
     public Response health() {
         return Response.withOk()
                 .andTextBody("alive");
@@ -49,7 +53,7 @@ public class MangooAdminController {
     public Response cache() {
         CacheStats cacheStats = Application.getInstance(Cache.class).getStats();
 
-        Map<String, Object> stats = new ConcurrentHashMap<>(16, 0.9f, 1);
+        Map<String, Object> stats = new ConcurrentHashMap<>(CONCURRENCY_LEVEL, LOAD_FACTOR, INITIAL_CAPACITY);
         stats.put("Average load penalty", cacheStats.averageLoadPenalty());
         stats.put("Eviction count", cacheStats.evictionCount());
         stats.put("Hit count", cacheStats.hitCount());

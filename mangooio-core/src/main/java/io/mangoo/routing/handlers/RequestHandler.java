@@ -338,7 +338,7 @@ public class RequestHandler implements HttpHandler {
         }
 
         if (requestSession == null) {
-            requestSession = new Session(new ConcurrentHashMap<>(16, 0.9f, 1), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
+            requestSession = new Session(new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(ConfigUtils.getSessionExpires()));
         }
 
         this.session = requestSession;
@@ -490,7 +490,7 @@ public class RequestHandler implements HttpHandler {
         if (cookie != null){
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
-                Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+                Map<String, String> values = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
                 for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
                     values.put(entry.getKey(), entry.getValue());
                 }
