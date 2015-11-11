@@ -3,6 +3,7 @@ package io.mangoo.routing;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
@@ -106,5 +107,16 @@ public class RouteTest {
         
         //then
         assertThat(route.getRouteType(), equalTo(RouteType.RESOURCE_PATH));
+    }
+    
+    @Test
+    public void testAddRoute() {
+        //given
+        int oldSize = Router.getRoutes().size();
+        Router.addRoute(new Route(RouteType.REQUEST));
+        
+        //then
+        assertThat(Router.getRoutes(), notNullValue());
+        assertThat(Router.getRoutes().size(), equalTo(oldSize + 1));
     }
 }

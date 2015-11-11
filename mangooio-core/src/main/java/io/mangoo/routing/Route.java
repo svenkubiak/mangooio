@@ -38,9 +38,9 @@ public class Route {
      */
     public Route toUrl(String url) {
         this.url = url;
-
+        
         if (RouteType.RESOURCE_PATH.equals(this.routeType)) {
-            if (!this.url.startsWith("/")) {
+            if ('/' != this.url.charAt(0)) {
                 this.url = "/" + this.url;
             }
 
@@ -48,7 +48,7 @@ public class Route {
                 this.url = this.url + "/";
             }
         } else {
-            if (!this.url.startsWith("/")) {
+            if ('/' != this.url.charAt(0)) {
                 this.url = "/" + this.url;
             }
         }
