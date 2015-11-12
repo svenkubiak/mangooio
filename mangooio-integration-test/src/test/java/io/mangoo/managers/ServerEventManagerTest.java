@@ -86,7 +86,7 @@ public class ServerEventManagerTest {
     }
     
     @Test
-    public void testSendData() {
+    public void testSendData() throws InterruptedException {
         //given
         ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
         String data = "Server sent data FTW!";
@@ -106,7 +106,8 @@ public class ServerEventManagerTest {
         eventSource.register(listener);
         eventSource.open();
         serverEventManager.send("/sse", data);
-        eventSource.close();
+        
+        Thread.sleep(2000);
         
         //then
         assertThat(eventData, not(nullValue()));

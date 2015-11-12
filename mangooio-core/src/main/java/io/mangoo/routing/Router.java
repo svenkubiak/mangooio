@@ -1,8 +1,7 @@
 package io.mangoo.routing;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -15,7 +14,7 @@ import io.undertow.util.HttpString;
  *
  */
 public final class Router {
-    private static List<Route> routes = new ArrayList<>();
+    private static Set<Route> routes = new HashSet<>();
 
     private Router() {
     }
@@ -75,7 +74,10 @@ public final class Router {
         return new Route(RouteType.RESOURCE_PATH);
     }
 
-    public static List<Route> getRoutes() {
-        return Collections.unmodifiableList(routes);
+    /**
+     * @return An unmodifiable list of all routes
+     */
+    public static Set<Route> getRoutes() {
+        return routes;
     }
 }

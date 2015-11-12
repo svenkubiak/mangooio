@@ -53,17 +53,7 @@ public class Route {
             }
         }
 
-        if (isResourceOrServerSentEvent()) {
-            Router.addRoute(this);
-        }
-
         return this;
-    }
-
-    private boolean isResourceOrServerSentEvent() {
-        return RouteType.RESOURCE_FILE.equals(this.routeType)
-                || RouteType.RESOURCE_PATH.equals(this.routeType)
-                || RouteType.SERVER_SENT_EVENT.equals(this.routeType);
     }
 
     /**
@@ -71,12 +61,14 @@ public class Route {
      *
      * @param controllerClass The controller class (e.g. ApplicationController)
      * @param controllerMethod The controller method (e.g. index)
+     * 
+     * @return A route object {@link io.mangoo.routing.Route}
      */
-    public void onClassAndMethod(Class<?> controllerClass, String controllerMethod) {
+    public Route onController(Class<?> controllerClass, String controllerMethod) {
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
-
-        Router.addRoute(this);
+        
+        return this;
     }
 
     /**
@@ -84,19 +76,14 @@ public class Route {
      * methods.
      *
      * @param controllerClass The controller class (e.g. ApplicationController)
+     * 
+     * @return A route object {@link io.mangoo.routing.Route}
      */
-    public void onClass(Class<?> controllerClass) {
+    public Route onController(Class<?> controllerClass) {
         this.controllerClass = controllerClass;
-
-        Router.addRoute(this);
+        
+        return this;
     }
-
-    /**
-     * Sets a token with is used for signed authentication
-     * of a Server Sent Event Connection
-     *
-     * @param token The token
-     */
     
     /**
      * Sets a flag to the request that it requires
@@ -119,9 +106,20 @@ public class Route {
      * a thread where blocking is allowed.
      * 
      * Please note, that this is only used in mapped controllers.
+     * 
+     * @return A route object {@link io.mangoo.routing.Route}
      */
-    public void allowBlocking() {
+    public Route allowBlocking() {
         this.blocking = true;
+        
+        return this;
+    }
+    
+    /**
+     * Finished the route building process by adding this route to the router
+     */
+    public void build() {
+        Router.addRoute(this);
     }
 
     public Class<?> getControllerClass() {

@@ -21,24 +21,20 @@ public class RouteTest {
     @Test
     public void testAddResourcePath() {
         //given
-        int oldSize = Router.getRoutes().size();
         Route route = new Route(RouteType.RESOURCE_PATH).toUrl("woohoo");
         
         //then
         assertThat(route.getUrl(), startsWith("/"));
         assertThat(route.getUrl(), endsWith("/"));
-        assertThat(Router.getRoutes().size(), equalTo(oldSize + 1));
     }
     
     @Test
     public void testAddNonResourcePath() {
         //given
-        int oldSize = Router.getRoutes().size();
         Route route = new Route(RouteType.REQUEST).toUrl("wooop");
         
         //then
         assertThat(route.getUrl(), startsWith("/"));
-        assertThat(Router.getRoutes().size(), equalTo(oldSize));
     }
     
     @Test

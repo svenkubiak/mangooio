@@ -132,12 +132,12 @@ public class Bootstrap {
                 this.error = true;
             }
 
-            for (Route route : Router.getRoutes()) {
+            Router.getRoutes().forEach(route -> {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
                     Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
-                }
-            }
+                } 
+            });
 
             if (!this.error) {
                 initPathHandler();
@@ -161,7 +161,7 @@ public class Bootstrap {
 
     private void initPathHandler() {
         this.pathHandler = new PathHandler(initRoutingHandler());
-        for (Route route : Router.getRoutes()) {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
@@ -169,27 +169,27 @@ public class Bootstrap {
             } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
                 this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
             }
-        }
+        });
     }
 
     private RoutingHandler initRoutingHandler() {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
-        Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(MangooAdminController.class, "routes");
-        Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(MangooAdminController.class, "config");
-        Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(MangooAdminController.class, "health");
-        Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(MangooAdminController.class, "cache");
-        Router.mapRequest(Methods.GET).toUrl("/@metrics").onClassAndMethod(MangooAdminController.class, "metrics");
-        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onClassAndMethod(MangooAdminController.class, "scheduler");
+        Router.mapRequest(Methods.GET).toUrl("/@routes").onController(MangooAdminController.class, "routes").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@config").onController(MangooAdminController.class, "config").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@health").onController(MangooAdminController.class, "health").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@cache").onController(MangooAdminController.class, "cache").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@metrics").onController(MangooAdminController.class, "metrics").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onController(MangooAdminController.class, "scheduler").build();;
 
-        for (Route route : Router.getRoutes()) {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
                 routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlocking()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }
-        }
+        });
 
         return routingHandler;
     }
@@ -262,7 +262,7 @@ public class Bootstrap {
             Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && ConfigUtils.isSchedulerAutostart()) {
                 Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
-                for (Class<?> clazz : jobs) {
+                jobs.forEach(clazz -> {
                     Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
                         JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
@@ -272,8 +272,9 @@ public class Bootstrap {
                     } else {
                         LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         this.error = true;
-                    }
-                }
+                    }                    
+                });
+
                 if (!this.error) {
                     mangooScheduler.start();
                 }
