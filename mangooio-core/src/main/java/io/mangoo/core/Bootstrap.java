@@ -243,7 +243,11 @@ public class Bootstrap {
         if (!this.error) {
             StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
-                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getVersion() + "\n");
+                logo.append("\n")
+                     .append(FigletFont.convertOneLine("mangoo I/O"))
+                     .append("\n\n").append("https://mangoo.io | @mangoo_io | ")
+                     .append(getVersion())
+                     .append("\n");
             } catch (IOException e) {//NOSONAR
                 //intentionally left blank
             }

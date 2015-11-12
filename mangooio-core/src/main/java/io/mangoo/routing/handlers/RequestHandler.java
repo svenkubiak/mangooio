@@ -152,7 +152,7 @@ public class RequestHandler implements HttpHandler {
             Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
             if (split != null) {
                 String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2)));
+                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR
             } else {
                 Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
             }
