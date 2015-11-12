@@ -245,7 +245,7 @@
 			<dependency>
 				<groupId>org.fluentlenium</groupId>
 				<artifactId>fluentlenium-core</artifactId>
-				<version>0.10.6</version>
+				<version>0.10.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>

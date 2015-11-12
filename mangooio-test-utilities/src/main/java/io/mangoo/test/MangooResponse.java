@@ -302,7 +302,7 @@ public class MangooResponse {
      * @return The response cookie or an empty list
      */
     public List<Cookie> getCookies() {
-        return (this.cookieStore.getCookies() == null) ? new ArrayList<Cookie>() : this.cookieStore.getCookies();
+        return (this.cookieStore.getCookies() == null) ? new ArrayList<>() : this.cookieStore.getCookies();
     }
     
     /**
