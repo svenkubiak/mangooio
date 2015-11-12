@@ -78,6 +78,6 @@ public final class Router {
      * @return An unmodifiable list of all routes
      */
     public static Set<Route> getRoutes() {
-        return routes;
+        return new HashSet<>(routes);
     }
 }

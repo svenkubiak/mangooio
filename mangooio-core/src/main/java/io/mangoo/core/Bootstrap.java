@@ -176,12 +176,12 @@ public class Bootstrap {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
-        Router.mapRequest(Methods.GET).toUrl("/@routes").onController(MangooAdminController.class, "routes").build();;
-        Router.mapRequest(Methods.GET).toUrl("/@config").onController(MangooAdminController.class, "config").build();;
-        Router.mapRequest(Methods.GET).toUrl("/@health").onController(MangooAdminController.class, "health").build();;
-        Router.mapRequest(Methods.GET).toUrl("/@cache").onController(MangooAdminController.class, "cache").build();;
-        Router.mapRequest(Methods.GET).toUrl("/@metrics").onController(MangooAdminController.class, "metrics").build();;
-        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onController(MangooAdminController.class, "scheduler").build();;
+        Router.mapRequest(Methods.GET).toUrl("/@routes").onController(MangooAdminController.class, "routes").build();
+        Router.mapRequest(Methods.GET).toUrl("/@config").onController(MangooAdminController.class, "config").build();
+        Router.mapRequest(Methods.GET).toUrl("/@health").onController(MangooAdminController.class, "health").build();
+        Router.mapRequest(Methods.GET).toUrl("/@cache").onController(MangooAdminController.class, "cache").build();
+        Router.mapRequest(Methods.GET).toUrl("/@metrics").onController(MangooAdminController.class, "metrics").build();
+        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onController(MangooAdminController.class, "scheduler").build();
 
         Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

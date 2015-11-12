@@ -69,11 +69,9 @@ public class Crypto {
         Preconditions.checkNotNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
-
         this.cipher.init(false, this.cipherParameters);
-        final String plainText = new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
 
-        return plainText;
+        return new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
     }
 
     /**
@@ -106,11 +104,9 @@ public class Crypto {
         Preconditions.checkNotNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
-
         this.cipher.init(true, this.cipherParameters);
-        final String encrytedText = new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
 
-        return encrytedText;
+        return new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
 
     /**
