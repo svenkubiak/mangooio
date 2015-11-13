@@ -106,8 +106,7 @@ public class ServerEventManagerTest {
         eventSource.register(listener);
         eventSource.open();
         serverEventManager.send("/sse", data);
-        
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         
         //then
         assertThat(eventData, not(nullValue()));
