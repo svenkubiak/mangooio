@@ -12,81 +12,157 @@ import controllers.ParameterController;
 import controllers.SessionController;
 import controllers.WebSocketController;
 import io.mangoo.interfaces.MangooRoutes;
-import io.mangoo.routing.Router;
-import io.undertow.util.Methods;
+import io.mangoo.routing.Routing;
 
 public class Routes implements MangooRoutes {
     @Override
     public void routify() {
-        Router.mapRequest(Methods.GET).toUrl("/").onController(ApplicationController.class, "index").build();
-        Router.mapRequest(Methods.GET).toUrl("/redirect").onController(ApplicationController.class, "redirect").build();
-        Router.mapRequest(Methods.GET).toUrl("/text").onController(ApplicationController.class, "text").build();
-        Router.mapRequest(Methods.GET).toUrl("/forbidden").onController(ApplicationController.class, "forbidden").build();
-        Router.mapRequest(Methods.GET).toUrl("/badrequest").onController(ApplicationController.class, "badrequest").build();
-        Router.mapRequest(Methods.GET).toUrl("/unauthorized").onController(ApplicationController.class, "unauthorized").build();
-        Router.mapRequest(Methods.GET).toUrl("/binary").onController(ApplicationController.class, "binary").build();
-        Router.mapRequest(Methods.GET).toUrl("/header").onController(ApplicationController.class, "header").build();
-        Router.mapRequest(Methods.GET).toUrl("/etag").onController(ApplicationController.class, "etag").build();
-        Router.mapRequest(Methods.GET).toUrl("/request").onController(ApplicationController.class, "request").build();
-        Router.mapRequest(Methods.POST).toUrl("/post").onController(ApplicationController.class, "post").build();
-        Router.mapRequest(Methods.PUT).toUrl("/put").onController(ApplicationController.class, "put").build();
-        Router.mapRequest(Methods.POST).toUrl("/jsonpathpost").onController(ApplicationController.class, "post").build();
-        Router.mapRequest(Methods.PUT).toUrl("/jsonpathput").onController(ApplicationController.class, "put").build();
-        Router.mapRequest(Methods.POST).toUrl("/jsonboonpost").onController(ApplicationController.class, "post").build();
-        Router.mapRequest(Methods.PUT).toUrl("/jsonboonput").onController(ApplicationController.class, "put").build();   
+        //ApplicationController
+        Routing.ofController(ApplicationController.class)
+            .get()
+                .to("/").call("index").add()
+            .get()
+                .to("/redirect").call("redirect").add()
+            .get()
+                .to("/text").call("text").add()
+            .get()
+                .to("/forbidden").call("forbidden").add()
+            .get()
+                .to("/badrequest").call("badrequest").add()
+            .get()
+                .to("/unauthorized").call("unauthorized").add()
+            .get()
+                .to("/binary").call("binary").add()
+            .get()
+                .to("/header").call("header").add()
+            .get()
+                .to("/etag").call("etag").add()
+            .get()
+                .to("/request").call("request").add()
+            .post()
+                .to("/post").call("post").add()               
+            .put()
+                .to("/put").call("put").add()
+            .post()
+                .to("/jsonpathpost").call("post").add()
+            .put()
+                .to("/jsonpathput").call("put").add()  
+            .post()
+                .to("/jsonboonpost").call("post").add()        
+            .put()
+                .to("/jsonboonput").call("put").add();  
         
-        Router.mapRequest(Methods.POST).toUrl("/form").onController(FormController.class, "form").build();
+        //FormController  
+        Routing.ofController(FormController.class)
+            .post()
+                .to("/form").call("form").add();
 
-        Router.mapRequest(Methods.GET).toUrl("/render").onController(JsonController.class, "render").build();
-        Router.mapRequest(Methods.POST).toUrl("/parse").onController(JsonController.class, "parse").build();
-        Router.mapRequest(Methods.POST).toUrl("/body").onController(JsonController.class, "body").build();
-        Router.mapRequest(Methods.POST).toUrl("/requestAndJson").onController(JsonController.class, "requestAndJson").build();
-
-        Router.mapRequest(Methods.GET).toUrl("/authenticityform").onController(AuthenticityController.class, "form").build();
-        Router.mapRequest(Methods.GET).toUrl("/authenticitytoken").onController(AuthenticityController.class, "token").build();
-        Router.mapRequest(Methods.GET).toUrl("/valid").onController(AuthenticityController.class, "valid").build();
-        Router.mapRequest(Methods.GET).toUrl("/invalid").onController(AuthenticityController.class, "invalid").build();
-
-        Router.mapRequest(Methods.GET).toUrl("/string/{foo}").onController(ParameterController.class, "stringParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/int/{foo}").onController(ParameterController.class, "intParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/integer/{foo}").onController(ParameterController.class, "integerParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/doublePrimitive/{foo}").onController(ParameterController.class, "doublePrimitiveParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/double/{foo}").onController(ParameterController.class, "doubleParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/float/{foo}").onController(ParameterController.class, "floatParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/floatPrimitive/{foo}").onController(ParameterController.class, "floatPrimitiveParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/longPrimitive/{foo}").onController(ParameterController.class, "longPrimitiveParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/long/{foo}").onController(ParameterController.class, "longParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/multiple/{foo}/{bar}").onController(ParameterController.class, "multipleParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/path").onController(ParameterController.class, "pathParam").build();
-        Router.mapRequest(Methods.GET).toUrl("/localdate/{localDate}").onController(ParameterController.class, "localdate").build();
-        Router.mapRequest(Methods.GET).toUrl("/localdatetime/{localDateTime}").onController(ParameterController.class, "localdatetime").build();
+        //JsonController
+        Routing.ofController(JsonController.class)
+            .get()
+                .to("/render").call("render").add()
+            .post()
+                .to("/parse").call("parse").add()
+            .post()   
+                .to("/body").call("body").add()
+            .post()
+                .to("/requestAndJson").call("requestAndJson").add();      
         
-        Router.mapRequest(Methods.GET).toUrl("/session").onController(SessionController.class, "session").build();
+        //AuthenticityController
+        Routing.ofController(AuthenticityController.class)
+            .get()
+                .to("/authenticityform").call("form").add()
+            .get()
+                .to("/authenticitytoken").call("token").add()
+            .get()
+                .to("/valid").call("valid").add()
+            .get()
+                .to("/invalid").call("invalid").add();                  
+          
+        //ParameterController
+        Routing.ofController(ParameterController.class)
+            .get()
+                .to("/string/{foo}").call("stringParam").add()
+            .get()
+                .to("/int/{foo}").call("intParam").add()    
+            .get()
+                .to("/integer/{foo}").call("integerParam").add()                     
+            .get()
+                .to("/doublePrimitive/{foo}").call("doublePrimitiveParam").add()  
+            .get()
+                .to("/double/{foo}").call("doubleParam").add()                  
+             .get()
+                .to("/float/{foo}").call("floatParam").add()
+             .get()
+                .to("/floatPrimitive/{foo}").call("floatPrimitiveParam").add()  
+             .get()
+                .to("/longPrimitive/{foo}").call("longPrimitiveParam").add()
+             .get()
+                .to("/long/{foo}").call("longParam").add()               
+             .get()
+                .to("/multiple/{foo}/{bar}").call("multipleParam").add()     
+             .get()
+                .to("/path").call("pathParam").add()
+             .get()
+                .to("/localdate/{localDate}").call("localdate").add()
+             .get()
+                .to("/localdatetime/{localDateTime}").call("localdatetime").add();
 
-        Router.mapRequest(Methods.POST).toUrl("/dologin").onController(AuthenticationController.class, "doLogin").build();
-        Router.mapRequest(Methods.GET).toUrl("/authenticationrequired").onController(AuthenticationController.class, "notauthenticated").build();
-        Router.mapRequest(Methods.GET).toUrl("/login").onController(AuthenticationController.class, "login").build();
-        Router.mapRequest(Methods.GET).toUrl("/authenticate").onController(AuthenticationController.class, "authenticate").build();
-        Router.mapRequest(Methods.POST).toUrl("/login").onController(AuthenticationController.class, "login").build();
-        Router.mapRequest(Methods.GET).toUrl("/logout").onController(AuthenticationController.class, "logout").build();
-
-        Router.mapRequest(Methods.GET).toUrl("/flash").onController(FlashController.class, "flash").build();
-        Router.mapRequest(Methods.GET).toUrl("/flashed").onController(FlashController.class, "flashed").build();
-
-        Router.mapRequest(Methods.GET).toUrl("/translation").onController(I18nController.class, "translation").build();
-
-        Router.mapRequest(Methods.GET).toUrl("/filter").onController(FilterController.class, "filter").build();
-        Router.mapRequest(Methods.GET).toUrl("/headerfilter").onController(FilterController.class, "headerfilter").build();
-
-        Router.mapRequest(Methods.POST).toUrl("/validateform").onController(FormController.class, "validateform").build();
-
-        Router.mapWebSocket().toUrl("/websocket").onController(WebSocketController.class).build();
-        Router.mapWebSocket().toUrl("/websocketauth").withAuthentication().onController(WebSocketController.class).build();
+        //SessionController
+        Routing.ofController(SessionController.class)
+            .get()
+                .to("/session").call("session").add();
         
-        Router.mapServerSentEvent().withAuthentication().toUrl("/sseauth").build();
-        Router.mapServerSentEvent().toUrl("/sse").build();
+        //AuthenticationController
+        Routing.ofController(AuthenticationController.class)
+            .post()
+                .to("/dologin").call("doLogin").add()
+            .get()
+                .to("/authenticationrequired").call("notauthenticated").add()       
+            .get()
+                .to("/login").call("login").add()
+            .post()
+                .to("/login").call("login").add()                
+            .get()
+                .to("/authenticate").call("authenticate").add()                
+            .get()
+                .to("/logout").call("logout").add();              
+                
+        //FlasController
+        Routing.ofController(FlashController.class)
+            .get().to("/flash").call("flash").add()
+            .get().to("/flashed").call("flashed").add();
         
-        Router.mapResourceFile().toUrl("/robots.txt").build();
-        Router.mapResourcePath().toUrl("/assets/").build();
+        //I18nController
+        Routing.ofController(I18nController.class)
+            .get().to("/translation").call("translation").add();
+        
+        //FilterController
+        Routing.ofController(FilterController.class)
+            .get().to("/filter").call("filter").add()
+            .get().to("/headerfilter").call("headerfilter").add();
+
+        //FormController
+        Routing.ofController(FormController.class)
+            .post().to("form").call("form").add()
+            .post().to("/validateform").call("validateform").add();
+
+        //WebSocketController
+        Routing.ofWebSocket(WebSocketController.class)
+            .to("/websocket").add()
+            .to("/websocketauth").withAuthentication().add();
+        
+        //ServerSentEvent
+        Routing.ofServerSentEvent()
+            .to("/sse").add()
+            .to("/sseauth").withAuthentication().add();
+        
+        //Resource file
+        Routing.ofResourceFile()
+            .to("/robots.txt").add();
+        
+        //Resource path
+        Routing.ofResourcePath()
+            .to("/assets/").add();
     }
 }

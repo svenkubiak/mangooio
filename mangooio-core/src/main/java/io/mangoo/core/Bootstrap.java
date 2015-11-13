@@ -38,13 +38,13 @@ import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRoutes;
-import io.mangoo.routing.Route;
-import io.mangoo.routing.Router;
+import io.mangoo.routing.Routing;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
+import io.mangoo.routing.routes.Route;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.ConfigUtils;
 import io.undertow.Handlers;
@@ -132,7 +132,7 @@ public class Bootstrap {
                 this.error = true;
             }
 
-            Router.getRoutes().forEach(route -> {
+            Routing.getRoutes().forEach(route -> {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
                     Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
@@ -161,7 +161,7 @@ public class Bootstrap {
 
     private void initPathHandler() {
         this.pathHandler = new PathHandler(initRoutingHandler());
-        Router.getRoutes().forEach(route -> {
+        Routing.getRoutes().forEach(route -> {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
@@ -175,17 +175,18 @@ public class Bootstrap {
     private RoutingHandler initRoutingHandler() {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
+        
+        Routing.ofController(MangooAdminController.class)
+            .get().to("/@routes").call("routes").add()
+            .get().to("/@config").call("config").add()
+            .get().to("/@health").call("health").add()
+            .get().to("/@cache").call("cache").add()
+            .get().to("/@metrics").call("metrics").add()
+            .get().to("/@scheduler").call("scheduler").add();
 
-        Router.mapRequest(Methods.GET).toUrl("/@routes").onController(MangooAdminController.class, "routes").build();
-        Router.mapRequest(Methods.GET).toUrl("/@config").onController(MangooAdminController.class, "config").build();
-        Router.mapRequest(Methods.GET).toUrl("/@health").onController(MangooAdminController.class, "health").build();
-        Router.mapRequest(Methods.GET).toUrl("/@cache").onController(MangooAdminController.class, "cache").build();
-        Router.mapRequest(Methods.GET).toUrl("/@metrics").onController(MangooAdminController.class, "metrics").build();
-        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onController(MangooAdminController.class, "scheduler").build();
-
-        Router.getRoutes().forEach(route -> {
+        Routing.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlocking()));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }

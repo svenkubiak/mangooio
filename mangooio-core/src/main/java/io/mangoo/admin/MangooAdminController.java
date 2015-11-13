@@ -24,7 +24,7 @@ import io.mangoo.enums.Template;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.Router;
+import io.mangoo.routing.Routing;
 import io.mangoo.scheduler.Scheduler;
 
 /**
@@ -46,7 +46,7 @@ public class MangooAdminController {
 
     public Response routes() {
         return Response.withOk()
-                .andContent("routes", Router.getRoutes())
+                .andContent("routes", Routing.getRoutes())
                 .andTemplate(Template.DEFAULT.routesPath());
     }
 

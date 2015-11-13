@@ -16,6 +16,7 @@
 * https://github.com/svenkubiak/mangooio/issues/53[#53] Extracted Mailer to own extension (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/66[#66] Removed all redundant legacy code  (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/45[#45] Removed all @deprecated methods and classes (svenkubiak)
+* Refactored routing mechanism (svenkubiak)
 * Added new ConfigUtils class for easy access to configuration values (svenkubiak)
 * Code cleanup, refactorings and more javadoc (svenkubiak)
 * Updated Documentation (svenkubiak)
