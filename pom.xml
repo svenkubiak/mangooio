@@ -87,6 +87,11 @@
 					<version>2.2</version>
 				</plugin>
 				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.7.5.201505241946</version>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>2.7</version>
@@ -359,8 +364,8 @@
 					<exclusion>
 						<groupId>commons-beanutils</groupId>
 						<artifactId>commons-beanutils</artifactId>
-					</exclusion>					
-				</exclusions>				
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.yahoo.platform.yui</groupId>
