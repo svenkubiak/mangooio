@@ -17,7 +17,146 @@ import io.mangoo.routing.Routing;
 public class Routes implements MangooRoutes {
     @Override
     public void routify() {
-        //ApplicationController
+        applicationControllerRoutes();  
+        formControllerRoutes();
+        jsonControllerRoutes();      
+        authenticityControllerRoutes();                  
+        parameterControllerRoutes();
+        sessionControllerRoutes();
+        authenticationContrllerRoutes();              
+        flashControllerRoutes();
+        i18nControllerRoutes();
+        filterControllerRoutes();
+        webSocketRoutes();
+        serverSentEventRoutes();
+        resourceFileRoutes();
+        resourcePathRoutes();
+    }
+
+    private void resourcePathRoutes() {
+        Routing.ofResourcePath()
+            .to("/assets/").add();
+    }
+
+    private void resourceFileRoutes() {
+        Routing.ofResourceFile()
+            .to("/robots.txt").add();
+    }
+
+    private void serverSentEventRoutes() {
+        Routing.ofServerSentEvent()
+            .to("/sse").add()
+            .to("/sseauth").withAuthentication().add();
+    }
+
+    private void webSocketRoutes() {
+        Routing.ofWebSocket(WebSocketController.class)
+            .to("/websocket").add()
+            .to("/websocketauth").withAuthentication().add();
+    }
+
+    private void filterControllerRoutes() {
+        Routing.ofController(FilterController.class)
+            .get().to("/filter").call("filter").add()
+            .get().to("/headerfilter").call("headerfilter").add();
+    }
+
+    private void i18nControllerRoutes() {
+        Routing.ofController(I18nController.class)
+            .get().to("/translation").call("translation").add();
+    }
+
+    private void flashControllerRoutes() {
+        Routing.ofController(FlashController.class)
+            .get().to("/flash").call("flash").add()
+            .get().to("/flashed").call("flashed").add();
+    }
+
+    private void authenticationContrllerRoutes() {
+        Routing.ofController(AuthenticationController.class)
+            .post()
+                .to("/dologin").call("doLogin").add()
+            .get()
+                .to("/authenticationrequired").call("notauthenticated").add()       
+            .get()
+                .to("/login").call("login").add()
+            .post()
+                .to("/login").call("login").add()                
+            .get()
+                .to("/authenticate").call("authenticate").add()                
+            .get()
+                .to("/logout").call("logout").add();
+    }
+
+    private void sessionControllerRoutes() {
+        Routing.ofController(SessionController.class)
+            .get()
+                .to("/session").call("session").add();
+    }
+
+    private void parameterControllerRoutes() {
+        Routing.ofController(ParameterController.class)
+            .get()
+                .to("/string/{foo}").call("stringParam").add()
+            .get()
+                .to("/int/{foo}").call("intParam").add()    
+            .get()
+                .to("/integer/{foo}").call("integerParam").add()                     
+            .get()
+                .to("/doublePrimitive/{foo}").call("doublePrimitiveParam").add()  
+            .get()
+                .to("/double/{foo}").call("doubleParam").add()                  
+             .get()
+                .to("/float/{foo}").call("floatParam").add()
+             .get()
+                .to("/floatPrimitive/{foo}").call("floatPrimitiveParam").add()  
+             .get()
+                .to("/longPrimitive/{foo}").call("longPrimitiveParam").add()
+             .get()
+                .to("/long/{foo}").call("longParam").add()               
+             .get()
+                .to("/multiple/{foo}/{bar}").call("multipleParam").add()     
+             .get()
+                .to("/path").call("pathParam").add()
+             .get()
+                .to("/localdate/{localDate}").call("localdate").add()
+             .get()
+                .to("/localdatetime/{localDateTime}").call("localdatetime").add();
+    }
+
+    private void authenticityControllerRoutes() {
+        Routing.ofController(AuthenticityController.class)
+            .get()
+                .to("/authenticityform").call("form").add()
+            .get()
+                .to("/authenticitytoken").call("token").add()
+            .get()
+                .to("/valid").call("valid").add()
+            .get()
+                .to("/invalid").call("invalid").add();
+    }
+
+    private void jsonControllerRoutes() {
+        Routing.ofController(JsonController.class)
+            .get()
+                .to("/render").call("render").add()
+            .post()
+                .to("/parse").call("parse").add()
+            .post()   
+                .to("/body").call("body").add()
+            .post()
+                .to("/requestAndJson").call("requestAndJson").add();
+    }
+
+    private void formControllerRoutes() {
+        Routing.ofController(FormController.class)
+            .post()
+                .to("form").call("form").add()
+            .post()
+                .to("/validateform").call("validateform").add();                
+    }
+
+    private void applicationControllerRoutes() {
         Routing.ofController(ApplicationController.class)
             .get()
                 .to("/").call("index").add()
@@ -50,119 +189,6 @@ public class Routes implements MangooRoutes {
             .post()
                 .to("/jsonboonpost").call("post").add()        
             .put()
-                .to("/jsonboonput").call("put").add();  
-        
-        //FormController  
-        Routing.ofController(FormController.class)
-            .post()
-                .to("/form").call("form").add();
-
-        //JsonController
-        Routing.ofController(JsonController.class)
-            .get()
-                .to("/render").call("render").add()
-            .post()
-                .to("/parse").call("parse").add()
-            .post()   
-                .to("/body").call("body").add()
-            .post()
-                .to("/requestAndJson").call("requestAndJson").add();      
-        
-        //AuthenticityController
-        Routing.ofController(AuthenticityController.class)
-            .get()
-                .to("/authenticityform").call("form").add()
-            .get()
-                .to("/authenticitytoken").call("token").add()
-            .get()
-                .to("/valid").call("valid").add()
-            .get()
-                .to("/invalid").call("invalid").add();                  
-          
-        //ParameterController
-        Routing.ofController(ParameterController.class)
-            .get()
-                .to("/string/{foo}").call("stringParam").add()
-            .get()
-                .to("/int/{foo}").call("intParam").add()    
-            .get()
-                .to("/integer/{foo}").call("integerParam").add()                     
-            .get()
-                .to("/doublePrimitive/{foo}").call("doublePrimitiveParam").add()  
-            .get()
-                .to("/double/{foo}").call("doubleParam").add()                  
-             .get()
-                .to("/float/{foo}").call("floatParam").add()
-             .get()
-                .to("/floatPrimitive/{foo}").call("floatPrimitiveParam").add()  
-             .get()
-                .to("/longPrimitive/{foo}").call("longPrimitiveParam").add()
-             .get()
-                .to("/long/{foo}").call("longParam").add()               
-             .get()
-                .to("/multiple/{foo}/{bar}").call("multipleParam").add()     
-             .get()
-                .to("/path").call("pathParam").add()
-             .get()
-                .to("/localdate/{localDate}").call("localdate").add()
-             .get()
-                .to("/localdatetime/{localDateTime}").call("localdatetime").add();
-
-        //SessionController
-        Routing.ofController(SessionController.class)
-            .get()
-                .to("/session").call("session").add();
-        
-        //AuthenticationController
-        Routing.ofController(AuthenticationController.class)
-            .post()
-                .to("/dologin").call("doLogin").add()
-            .get()
-                .to("/authenticationrequired").call("notauthenticated").add()       
-            .get()
-                .to("/login").call("login").add()
-            .post()
-                .to("/login").call("login").add()                
-            .get()
-                .to("/authenticate").call("authenticate").add()                
-            .get()
-                .to("/logout").call("logout").add();              
-                
-        //FlasController
-        Routing.ofController(FlashController.class)
-            .get().to("/flash").call("flash").add()
-            .get().to("/flashed").call("flashed").add();
-        
-        //I18nController
-        Routing.ofController(I18nController.class)
-            .get().to("/translation").call("translation").add();
-        
-        //FilterController
-        Routing.ofController(FilterController.class)
-            .get().to("/filter").call("filter").add()
-            .get().to("/headerfilter").call("headerfilter").add();
-
-        //FormController
-        Routing.ofController(FormController.class)
-            .post().to("form").call("form").add()
-            .post().to("/validateform").call("validateform").add();
-
-        //WebSocketController
-        Routing.ofWebSocket(WebSocketController.class)
-            .to("/websocket").add()
-            .to("/websocketauth").withAuthentication().add();
-        
-        //ServerSentEvent
-        Routing.ofServerSentEvent()
-            .to("/sse").add()
-            .to("/sseauth").withAuthentication().add();
-        
-        //Resource file
-        Routing.ofResourceFile()
-            .to("/robots.txt").add();
-        
-        //Resource path
-        Routing.ofResourcePath()
-            .to("/assets/").add();
+                .to("/jsonboonput").call("put").add();
     }
 }

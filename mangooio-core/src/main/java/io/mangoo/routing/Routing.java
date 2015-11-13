@@ -21,6 +21,9 @@ import io.mangoo.routing.routes.WebSocketRoute;
 public final class Routing {
     private static Set<Route> routes = new HashSet<>();
     
+    private Routing(){
+    }
+    
     public static ControllerRoute ofController(Class<?> clazz) {
         return new ControllerRoute(clazz);
     }
