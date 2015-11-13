@@ -8,8 +8,8 @@ default:
         minify:
             js        : true
             css       : true
-            jsfolder  : /foo
-            cssfolder : /bar
+            jsfolder  : /javascripts
+            cssfolder : /stylesheets
             gzipjs    : false
             gzipcss   : false
     auth:
