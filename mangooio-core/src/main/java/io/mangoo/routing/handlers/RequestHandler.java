@@ -148,7 +148,9 @@ public class RequestHandler implements HttpHandler {
     private void setLocale(HttpServerExchange exchange) {
         Messages messages = Application.getInstance(Messages.class);
         HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
-        if (headerValues != null && headerValues.getFirst() != null) {
+        if (headerValues == null) {
+            Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
+        } else if (headerValues.getFirst() != null) {
             Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
             if (split != null) {
                 String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
@@ -156,8 +158,6 @@ public class RequestHandler implements HttpHandler {
             } else {
                 Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
             }
-        } else {
-            Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
         }
 
         messages.reload();
@@ -285,7 +285,7 @@ public class RequestHandler implements HttpHandler {
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
     private String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName()) : response.getTemplate();
+        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName())) : response.getTemplate();
     }
 
     /**

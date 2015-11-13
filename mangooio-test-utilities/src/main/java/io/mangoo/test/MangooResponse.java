@@ -58,7 +58,7 @@ public class MangooResponse {
     private HttpClientBuilder httpClientBuilder;
     private List<NameValuePair> postParameter = new ArrayList<>();
     private final CookieStore cookieStore = new BasicCookieStore();
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private boolean responseDisbaleRedirects;
     
     public MangooResponse (String uri, HttpString method) {

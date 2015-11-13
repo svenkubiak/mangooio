@@ -162,11 +162,10 @@ public class Scheduler {
      * @param identity The name of the job
      * @param groupName The name of the job Group
      * @param clazz The class where the actual execution takes place
-     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A new JobDetail object
      */
-    public <T extends Job> JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
+    public JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
         Preconditions.checkNotNull(identity, "identity is required for new JobDetail");
         Preconditions.checkNotNull(groupName, "groupName is required for new JobDetail");
         Preconditions.checkNotNull(clazz, "clazz is required for new JobDetail");
