@@ -35,6 +35,7 @@ import io.undertow.util.StatusCodes;
  */
 public class ApplicationControllerTest {
     private static final String JSON = "{\"foo\":\"bar\"}";
+    private static final String JSON_PLAIN = "{foo=bar}";
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
 
@@ -261,7 +262,7 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), equalTo(JSON));
+        assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
     
     @Test 
@@ -275,6 +276,6 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), equalTo(JSON));
+        assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
 }

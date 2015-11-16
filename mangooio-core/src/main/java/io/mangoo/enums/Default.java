@@ -41,7 +41,6 @@ public enum Default {
     FILTER_METHOD("execute"),
     AUTHENTICITY_TOKEN("authenticityToken"),
     XSS_PROTECTION("1"),
-    ROUTES_CLASS("conf.Routes"),
     FILES_FOLDER("files"),
     MODULE_CLASS("conf.Module"),
     VERSION("unknown"),
@@ -76,7 +75,9 @@ public enum Default {
     OAUTH_REQUEST_PARAMETER("oauth"),
     SCHEDULER_PACKAGE("jobs"),
     COOKIE_ENCRYPTION("false"),
-    EXECUTION_THREADPOOL("10");
+    EXECUTION_THREADPOOL("10"),
+    ROUTES_FILE("routes.yaml"),
+    APPLICATION_CONTROLLER("controllers.");
 
     private final String value;
 

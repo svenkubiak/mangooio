@@ -231,4 +231,11 @@ public final class ConfigUtils {
     public static int getExecutionPool() {
         return config.getInt(Key.EXECUTION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
     }
+
+    /**
+     * @return application.controller from application.yaml or default value if undefined
+     */
+    public static String getControllerPackage() {
+        return config.getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
+    }
 }

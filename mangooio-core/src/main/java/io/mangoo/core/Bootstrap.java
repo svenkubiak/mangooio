@@ -9,6 +9,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.reflections.Reflections;
+import org.yaml.snakeyaml.Yaml;
 
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
@@ -37,14 +39,13 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
 import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.interfaces.MangooRoutes;
-import io.mangoo.routing.Routing;
+import io.mangoo.routing.Route;
+import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
-import io.mangoo.routing.routes.Route;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.ConfigUtils;
 import io.undertow.Handlers;
@@ -53,6 +54,7 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
 /**
@@ -122,17 +124,58 @@ public class Bootstrap {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void prepareRoutes() {
         if (!this.error) {
             try {
-                MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName(Default.ROUTES_CLASS.toString()));
-                mangooRoutes.routify();
-            } catch (ClassNotFoundException e) {
-                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your application", e);
+                Yaml yaml = new Yaml();
+                List<Map<String, String>> routes = (List<Map<String, String>>) yaml.load(Resources.getResource(Default.ROUTES_FILE.toString()).openStream());
+            
+                routes.forEach(routing -> {
+                    routing.entrySet().forEach(entry -> {
+                        String method = entry.getKey().trim();
+                        String mapping = entry.getValue();
+
+                        boolean authentication = false;
+                        boolean blocking = false;
+                        if (mapping.contains("@authenticationRequired")) {
+                            mapping = mapping.replace("@authenticationRequired", "");
+                            authentication = true;
+                        } else if (mapping.contains("@allowBlocking")) {
+                            mapping = mapping.replace("@allowBlocking", "");
+                            blocking = true;
+                        }
+
+                        String [] split = mapping.split("->");
+                        Route route = new Route(getRouteType(method));
+                        route.toUrl(split[0].trim());
+                        route.withRequest(HttpString.tryFromString(method));
+                        route.withAuthentication(authentication);
+                        route.allowBlocking(blocking);
+                        
+                        try {
+                            if (split.length == 2) {
+                                String [] classMethod = split[1].split("\\.");
+                                route.withClass(Class.forName(ConfigUtils.getControllerPackage() + classMethod[0].trim()));
+                                if (classMethod.length == 2) {
+                                    route.withMethod(classMethod[1].trim());
+                                }
+                            }
+                            
+                            Router.addRoute(route);
+                        } catch (ClassNotFoundException e) {
+                            LOG.error("Failed to parse routing: " + routing);
+                            LOG.error("Please check, that your routes.yaml syntax is correct", e);
+                            this.error = true;
+                        } 
+                    });
+                });
+            } catch (IOException e) {
+                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
                 this.error = true;
             }
 
-            Routing.getRoutes().forEach(route -> {
+            Router.getRoutes().forEach(route -> {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
                     Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
@@ -143,6 +186,27 @@ public class Bootstrap {
                 initPathHandler();
             }
         }
+    }
+
+    private RouteType getRouteType(String method) {
+        switch (method) {
+        case "GET":
+        case "POST":
+        case "PUT":
+        case "DELETE":
+        case "HEAD":
+            return RouteType.REQUEST;
+        case "WSS":
+            return RouteType.WEBSOCKET;
+        case "SSE":
+            return RouteType.SERVER_SENT_EVENT;
+        case "REF":
+            return RouteType.RESOURCE_FILE;
+        case "REP":
+            return RouteType.RESOURCE_PATH;
+        }
+        
+        return null;
     }
 
     private void checkRoute(Route route, Class<?> controllerClass) {
@@ -161,7 +225,7 @@ public class Bootstrap {
 
     private void initPathHandler() {
         this.pathHandler = new PathHandler(initRoutingHandler());
-        Routing.getRoutes().forEach(route -> {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
@@ -176,15 +240,14 @@ public class Bootstrap {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
         
-        Routing.ofController(MangooAdminController.class)
-            .get().to("/@routes").call("routes").add()
-            .get().to("/@config").call("config").add()
-            .get().to("/@health").call("health").add()
-            .get().to("/@cache").call("cache").add()
-            .get().to("/@metrics").call("metrics").add()
-            .get().to("/@scheduler").call("scheduler").add();
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@routes").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("routes"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@config").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("config"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@health").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("health"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@cache").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("cache"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@metrics").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("metrics"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@scheduler").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("scheduler"));
 
-        Routing.getRoutes().forEach(route -> {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
                 routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {

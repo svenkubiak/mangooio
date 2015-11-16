@@ -1,0 +1,69 @@
+- GET:     /filter                    -> FilterController.filter
+- GET:     /headerfilter              -> FilterController.headerfilter
+
+- GET:     /translation               -> I18nController.translation
+
+- GET:     /flash                     -> FlashController.flash
+- GET:     /flashed                   -> FlashController.flashed
+
+- POST:    /dologin                   -> AuthenticationController.doLogin
+- POST:    /login                     -> AuthenticationController.login
+- GET:     /login                     -> AuthenticationController.login
+- GET:     /authenticationrequired    -> AuthenticationController.notauthenticated
+- GET:     /authenticate              -> AuthenticationController.authenticate
+- GET:     /logout                    -> AuthenticationController.logout
+
+- GET:     /session                   -> SessionController.session
+
+- GET:     /string/{foo}                      -> ParameterController.stringParam
+- GET:     /int/{foo}                         -> ParameterController.intParam
+- GET:     /integer/{foo}                     -> ParameterController.integerParam
+- GET:     /doublePrimitive/{foo}             -> ParameterController.doublePrimitiveParam
+- GET:     /double/{foo}                      -> ParameterController.doubleParam
+- GET:     /float/{foo}                       -> ParameterController.floatParam
+- GET:     /floatPrimitive/{foo}              -> ParameterController.floatPrimitiveParam
+- GET:     /longPrimitive/{foo}               -> ParameterController.longPrimitiveParam
+- GET:     /long/{foo}                        -> ParameterController.longParam
+- GET:     /multiple/{foo}/{bar}              -> ParameterController.multipleParam
+- GET:     /path                              -> ParameterController.pathParam
+- GET:     /localdate/{localDate}             -> ParameterController.localdate
+- GET:     /localdatetime/{localDateTime}     -> ParameterController.localdatetime
+
+- GET:     /authenticityform                  -> AuthenticityController.form
+- GET:     /authenticitytoken                 -> AuthenticityController.token
+- GET:     /valid                             -> AuthenticityController.valid
+- GET:     /invalid                           -> AuthenticityController.invalid
+
+- GET:     /render                            -> JsonController.render
+- POST:    /parse                             -> JsonController.parse
+- POST:    /body                              -> JsonController.body
+- POST:    /requestAndJson                    -> JsonController.requestAndJson
+
+- POST:    /form                              -> FormController.form
+- POST:    /validateform                      -> FormController.validateform
+
+- GET:     /                                  -> ApplicationController.index
+- GET:     /redirect                          -> ApplicationController.redirect
+- GET:     /text                              -> ApplicationController.text
+- GET:     /forbidden                         -> ApplicationController.forbidden
+- GET:     /badrequest                        -> ApplicationController.badrequest
+- GET:     /unauthorized                      -> ApplicationController.unauthorized
+- GET:     /binary                            -> ApplicationController.binary
+- GET:     /header                            -> ApplicationController.header
+- GET:     /etag                              -> ApplicationController.etag
+- GET:     /request                           -> ApplicationController.request
+- POST:    /post                              -> ApplicationController.post
+- PUT:     /put                               -> ApplicationController.put
+- POST:    /jsonpathpost                      -> ApplicationController.jsonPathPost
+- PUT:     /jsonpathput                       -> ApplicationController.jsonPathPut
+- POST:    /jsonboonpost                      -> ApplicationController.jsonBoonPost
+- PUT:     /jsonboonput                       -> ApplicationController.jsonBoonPut
+
+- WSS:     /websocket						  -> WebSocketController
+- WSS:     /websocketauth                     -> WebSocketController @authenticationRequired
+
+- SSE:     /sse
+- SSE:     /sseauth                           @authenticationRequired
+
+- REP:     /assets/
+- REF:     /robots.txt
