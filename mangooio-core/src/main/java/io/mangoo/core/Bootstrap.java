@@ -138,11 +138,11 @@ public class Bootstrap {
 
                         boolean authentication = false;
                         boolean blocking = false;
-                        if (mapping.contains("@authenticationRequired")) {
-                            mapping = mapping.replace("@authenticationRequired", "");
+                        if (mapping.contains("@authentication")) {
+                            mapping = mapping.replace("@authentication", "");
                             authentication = true;
-                        } else if (mapping.contains("@allowBlocking")) {
-                            mapping = mapping.replace("@allowBlocking", "");
+                        } else if (mapping.contains("@blocking")) {
+                            mapping = mapping.replace("@blocking", "");
                             blocking = true;
                         }
 

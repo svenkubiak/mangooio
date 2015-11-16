@@ -1,20 +1,26 @@
-- GET:     /filter                    -> FilterController.filter
-- GET:     /headerfilter              -> FilterController.headerfilter
+# FilterController
+- GET:     /filter                            -> FilterController.filter
+- GET:     /headerfilter                      -> FilterController.headerfilter
 
-- GET:     /translation               -> I18nController.translation
+# I18nController
+- GET:     /translation                       -> I18nController.translation
 
-- GET:     /flash                     -> FlashController.flash
-- GET:     /flashed                   -> FlashController.flashed
+# FlashController
+- GET:     /flash                             -> FlashController.flash
+- GET:     /flashed                           -> FlashController.flashed
 
-- POST:    /dologin                   -> AuthenticationController.doLogin
-- POST:    /login                     -> AuthenticationController.login
-- GET:     /login                     -> AuthenticationController.login
-- GET:     /authenticationrequired    -> AuthenticationController.notauthenticated
-- GET:     /authenticate              -> AuthenticationController.authenticate
-- GET:     /logout                    -> AuthenticationController.logout
+# AuthenticationController
+- POST:    /dologin                           -> AuthenticationController.doLogin
+- POST:    /login                             -> AuthenticationController.login
+- GET:     /login                             -> AuthenticationController.login
+- GET:     /authenticationrequired            -> AuthenticationController.notauthenticated
+- GET:     /authenticate                      -> AuthenticationController.authenticate
+- GET:     /logout                            -> AuthenticationController.logout
 
-- GET:     /session                   -> SessionController.session
+# SessionController
+- GET:     /session                           -> SessionController.session
 
+# ParameterController
 - GET:     /string/{foo}                      -> ParameterController.stringParam
 - GET:     /int/{foo}                         -> ParameterController.intParam
 - GET:     /integer/{foo}                     -> ParameterController.integerParam
@@ -29,19 +35,23 @@
 - GET:     /localdate/{localDate}             -> ParameterController.localdate
 - GET:     /localdatetime/{localDateTime}     -> ParameterController.localdatetime
 
+# AuthenticityController
 - GET:     /authenticityform                  -> AuthenticityController.form
 - GET:     /authenticitytoken                 -> AuthenticityController.token
 - GET:     /valid                             -> AuthenticityController.valid
 - GET:     /invalid                           -> AuthenticityController.invalid
 
+#JsonController
 - GET:     /render                            -> JsonController.render
 - POST:    /parse                             -> JsonController.parse
 - POST:    /body                              -> JsonController.body
 - POST:    /requestAndJson                    -> JsonController.requestAndJson
 
+# FormController
 - POST:    /form                              -> FormController.form
 - POST:    /validateform                      -> FormController.validateform
 
+# ApplicationController
 - GET:     /                                  -> ApplicationController.index
 - GET:     /redirect                          -> ApplicationController.redirect
 - GET:     /text                              -> ApplicationController.text
@@ -49,7 +59,7 @@
 - GET:     /badrequest                        -> ApplicationController.badrequest
 - GET:     /unauthorized                      -> ApplicationController.unauthorized
 - GET:     /binary                            -> ApplicationController.binary
-- GET:     /header                            -> ApplicationController.header
+- GET:     /header                            -> ApplicationController.header @blocking
 - GET:     /etag                              -> ApplicationController.etag
 - GET:     /request                           -> ApplicationController.request
 - POST:    /post                              -> ApplicationController.post
@@ -59,11 +69,14 @@
 - POST:    /jsonboonpost                      -> ApplicationController.jsonBoonPost
 - PUT:     /jsonboonput                       -> ApplicationController.jsonBoonPut
 
+# WebSocketController
 - WSS:     /websocket						  -> WebSocketController
-- WSS:     /websocketauth                     -> WebSocketController @authenticationRequired
+- WSS:     /websocketauth                     -> WebSocketController @authentication
 
+# ServerSentEvent
 - SSE:     /sse
-- SSE:     /sseauth                           @authenticationRequired
+- SSE:     /sseauth                           @authentication
 
+# Resource path and resource files
 - REP:     /assets/
 - REF:     /robots.txt
