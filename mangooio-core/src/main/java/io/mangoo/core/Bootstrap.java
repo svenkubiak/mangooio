@@ -124,7 +124,7 @@ public class Bootstrap {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     public void prepareRoutes() {
         if (!this.error) {
             try {
