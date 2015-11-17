@@ -1,3 +1,15 @@
+# Routes configuration
+# 
+# This file defines all application routes.
+# All routes start with an identifier of the method, followed by the
+# url, followed by a mapping to the controller class and method. For
+# some types a controller and method is not required.  
+#
+# You can find a detailed explation of the routing file in the documentation
+# https://mangoo.io/documentation#_routes
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # FilterController
 - GET:     /filter                            -> FilterController.filter
 - GET:     /headerfilter                      -> FilterController.headerfilter
@@ -78,5 +90,5 @@
 - SSE:     /sseauth                           @authentication
 
 # Resource path and resource files
-- REP:     /assets/
-- REF:     /robots.txt
+- PATH:     /assets/
+- FILE:     /robots.txt

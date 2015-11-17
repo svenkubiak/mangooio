@@ -200,9 +200,9 @@ public class Bootstrap {
             return RouteType.WEBSOCKET;
         case "SSE":
             return RouteType.SERVER_SENT_EVENT;
-        case "REF":
+        case "FILE":
             return RouteType.RESOURCE_FILE;
-        case "REP":
+        case "PATH":
             return RouteType.RESOURCE_PATH;
         default:
             return null;
