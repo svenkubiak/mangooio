@@ -204,9 +204,9 @@ public class Bootstrap {
             return RouteType.RESOURCE_FILE;
         case "REP":
             return RouteType.RESOURCE_PATH;
+        default:
+            return null;
         }
-        
-        return null;
     }
 
     private void checkRoute(Route route, Class<?> controllerClass) {

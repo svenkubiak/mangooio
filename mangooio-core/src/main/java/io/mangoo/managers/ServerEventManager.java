@@ -58,7 +58,7 @@ public class ServerEventManager {
      */
     public void send(String uri, String data) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-
+        
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {

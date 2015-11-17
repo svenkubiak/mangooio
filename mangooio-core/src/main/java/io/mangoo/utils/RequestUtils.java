@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -169,15 +170,15 @@ public final class RequestUtils {
     /**
      * Checks if the given header contains a valid authentication
      * 
-     * @param header The header to parse
+     * @param cookieHeader The header to parse
      * @return True if the cookie contains a valid authentication, false otherwise
      */
-    public static boolean hasValidAuthentication(String header) {
+    public static boolean hasValidAuthentication(String cookieHeader) {
         boolean validAuthentication = false;
-        if (StringUtils.isNotBlank(header)) {
-            Cookie cookie = Cookies.parseSetCookieHeader(header);
+        if (StringUtils.isNotBlank(cookieHeader)) {
+            Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
             
-            String cookieValue = cookie.getValue();
+            String cookieValue = cookies.get(ConfigUtils.getAuthenticationCookieName()).getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (ConfigUtils.isAuthenticationCookieEncrypt()) {
                     cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
@@ -187,9 +188,9 @@ public final class RequestUtils {
                 String expires = null;
                 String version = null;
                 String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
+
                 if (StringUtils.isNotBlank(prefix)) {
                     String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-
                     if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
                         sign = prefixes [INDEX_0];
                         expires = prefixes [INDEX_1];
@@ -200,7 +201,7 @@ public final class RequestUtils {
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
                     String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
-
+                    
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
                         validAuthentication = true;
                     }

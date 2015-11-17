@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,11 +28,9 @@ import io.undertow.websockets.core.WebSockets;
  */
 public class WebSocketManagerTest {
     private static String eventData;
-    
-    @Before
-    public void init() {
-        eventData = null;
-    }
+    private static final String COOKIE_NAME = "TEST-AUTH";
+    private static final String VALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio";
+    private static final String INVALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooiO";
     
     @Test
     public void testAddChannel() {
@@ -107,10 +105,10 @@ public class WebSocketManagerTest {
         factory.start();
         String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocket";
         String data = "Server sent data FTW!";
+        eventData = null;
         
         //when
-        WebSocketClient client = new WebSocketClient(factory);
-        WebSocket.Connection connection = client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        new WebSocketClient(factory).open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -123,23 +121,121 @@ public class WebSocketManagerTest {
 
             @Override
             public void onMessage(String data) {
-                eventData = data;
+                eventData = data;                    
             }
         }).get(5, TimeUnit.SECONDS);
-        
+        Thread.sleep(1000);
         webSocketManager.getChannels("/websocket").forEach(channel -> {
             try {
-                WebSockets.sendTextBlocking(data, channel);                
+                if (channel.isOpen()) {
+                    WebSockets.sendTextBlocking(data, channel);
+                }               
             } catch (IOException e) {
                 e.printStackTrace();
             }
          });
-
-        Thread.sleep(500);
+        Thread.sleep(1000);
         
         //then
         assertThat(eventData, not(nullValue()));
         assertThat(eventData, equalTo(data));
-        connection.close();
+    }
+    
+    @Test
+    public void testSendDataWithValidAuthentication() throws Exception {
+        //given
+        WebSocketManager webSocketManager = MangooInstance.TEST.getInstance(WebSocketManager.class);
+        webSocketManager.removeChannels("/websocketauth");
+        WebSocketClientFactory factory = new WebSocketClientFactory();
+        factory.start();
+        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocketauth";
+        String data = "Server sent data with authentication FTW!";
+        eventData = null;
+        
+        //when
+        WebSocketClient client = new WebSocketClient(factory);
+        client.getCookies().put(COOKIE_NAME, VALID_COOKIE_VALUE);
+        client.open(new URI(uri), new WebSocket.OnTextMessage() {
+            @Override
+            public void onOpen(Connection connection) {
+                // intentionally left blank
+            }
+
+            @Override
+            public void onClose(int closeCode, String message) {
+                // intentionally left blank
+            }
+
+            @Override
+            public void onMessage(String data) {
+                if (StringUtils.isBlank(eventData)) {
+                    eventData = data;                    
+                }
+            }
+        }).get(5, TimeUnit.SECONDS);
+        Thread.sleep(1000);
+        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
+            try {
+                if (channel.isOpen()) {
+                    WebSockets.sendTextBlocking(data, channel);
+                }             
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+         });
+        Thread.sleep(1000);
+        
+        //then
+        assertThat(eventData, not(nullValue()));
+        assertThat(eventData, equalTo(data));
+    }
+    
+    @Test
+    public void testSendDataWithInvalidAuthentication() throws Exception {
+        //given
+        WebSocketManager webSocketManager = MangooInstance.TEST.getInstance(WebSocketManager.class);
+        webSocketManager.removeChannels("/websocketauth");
+        WebSocketClientFactory factory = new WebSocketClientFactory();
+        factory.start();
+        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocketauth";
+        String data = "Server sent data with authentication FTW!";
+        eventData = null;
+        
+        //when
+        WebSocketClient client = new WebSocketClient(factory);
+        client.getCookies().put(COOKIE_NAME, INVALID_COOKIE_VALUE);
+        client.open(new URI(uri), new WebSocket.OnTextMessage() {
+            @Override
+            public void onOpen(Connection connection) {
+                // intentionally left blank
+            }
+
+            @Override
+            public void onClose(int closeCode, String message) {
+                // intentionally left blank
+            }
+
+            @Override
+            public void onMessage(String data) {
+                if (StringUtils.isBlank(eventData)) {
+                    eventData = data;                    
+                }
+            }
+        }).get(5, TimeUnit.SECONDS);
+        Thread.sleep(1000);        
+        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
+            try {
+                if (channel.isOpen()) {
+                    WebSockets.sendTextBlocking(data, channel);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+         });
+        Thread.sleep(1000);
+        
+        //then
+        assertThat(eventData, nullValue());
+        assertThat(eventData, not(equalTo(data)));
     }
 }

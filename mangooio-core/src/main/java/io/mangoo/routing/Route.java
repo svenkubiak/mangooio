@@ -1,5 +1,7 @@
 package io.mangoo.routing;
 
+import com.google.common.base.Preconditions;
+
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
 
@@ -13,11 +15,13 @@ public class Route {
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
-    private RouteType routeType;
+    private final RouteType routeType;
     private boolean authentication;
     private boolean blocking;
     
     public Route(RouteType routeType) {
+        Preconditions.checkNotNull(routeType, "routeType can not be null");
+        
         this.routeType = routeType;
     }
     
