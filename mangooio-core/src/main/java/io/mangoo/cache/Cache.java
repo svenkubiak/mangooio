@@ -18,7 +18,6 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.utils.ConfigUtils;
 
 /**
  * Google Guava based cache implementation
@@ -37,11 +36,11 @@ public class Cache {
     public Cache(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
 
-        CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
+        final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
                 .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS);
 
-        if (ConfigUtils.isAdminCacheEnabled()) {
+        if (config.getBoolean(Key.APPLICATION_ADMIN_CACHE)) {
             cacheBuilder.recordStats();
         }
 
@@ -101,7 +100,7 @@ public class Cache {
     public <T> T get(String key) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
 
-        Object object = this.guavaCache.getIfPresent(key);
+        final Object object = this.guavaCache.getIfPresent(key);
         return object == null ? null : (T) object;
     }
 
@@ -125,7 +124,7 @@ public class Cache {
         if (object == null) {
             try {
                 object = this.guavaCache.get(key, callable);
-            } catch (ExecutionException e) {
+            } catch (final ExecutionException e) {
                 LOG.error("Failed to get Cached value", e);
             }
         }

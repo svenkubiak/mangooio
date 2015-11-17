@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +28,8 @@ import io.undertow.util.StatusCodes;
  */
 public final class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
-    private final Map<HttpString, String> headers = new ConcurrentHashMap<>(16, 0.9f, 1);
-    private final Map<String, Object> content = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<HttpString, String> headers = new HashMap<>();
+    private final Map<String, Object> content = new HashMap<>();
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
     private String contentType = ContentType.TEXT_PLAIN.toString();
@@ -246,6 +246,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(String name, Object object) {
+        Preconditions.checkNotNull(name, "name can not be null");
         this.content.put(name, object);
 
         return this;
@@ -311,7 +312,7 @@ public final class Response {
             this.binaryContent = IOUtils.toByteArray(fileInputStream);
             this.binary = true;
             this.rendered = true;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to handle binary file", e);
         }
 

@@ -8,7 +8,7 @@ import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HttpString;
 
 public class ApplicationController {
-    
+
     public Response index() {
         return Response.withOk();
     }
@@ -38,8 +38,8 @@ public class ApplicationController {
     }
 
     public Response binary() {
-        URL url = this.getClass().getResource("/attachment.txt");
-        File file = new File(url.getFile());
+        final URL url = this.getClass().getResource("/attachment.txt");
+        final File file = new File(url.getFile());
 
         return Response.withOk().andBinaryFile(file);
     }
@@ -47,7 +47,7 @@ public class ApplicationController {
     public Response request(Request request) {
         return Response.withOk().andTextBody(request.getURI());
     }
-    
+
     public Response post(Request request) {
         return Response.withOk().andTextBody(request.getBody());
     }
@@ -59,19 +59,19 @@ public class ApplicationController {
     public Response jsonPathPost(Request request) {
         return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
     }
-    
+
     public Response jsonPathPut(Request request) {
         return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
     }
-    
+
     public Response jsonBoonPost(Request request) {
         return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
     }
-    
+
     public Response jsonBoonPut(Request request) {
         return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
     }
-    
+
     public Response header() {
         return Response
                 .withOk()
