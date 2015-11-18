@@ -77,10 +77,10 @@ public class ServerEventManagerTest {
                 .target("http://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/sse");
         EventSource eventSource = EventSource.target(target).build();
         eventSource.open();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         serverEventManager.close("/sse");
         eventSource.close();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(serverEventManager.getConnections("/sse"), not(nullValue()));
@@ -108,9 +108,9 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         serverEventManager.send("/sse", data);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, not(nullValue()));
@@ -141,9 +141,9 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         serverEventManager.send("/sseauth", data);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, not(nullValue()));
@@ -175,9 +175,9 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         serverEventManager.send("/sseauth", data);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, nullValue());

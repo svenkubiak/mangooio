@@ -124,7 +124,7 @@ public class WebSocketManagerTest {
                 eventData = data;                    
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         webSocketManager.getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -134,7 +134,7 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, not(nullValue()));
@@ -173,7 +173,7 @@ public class WebSocketManagerTest {
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(1000);
+        Thread.sleep(500);
         webSocketManager.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -183,7 +183,7 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, not(nullValue()));
@@ -222,7 +222,7 @@ public class WebSocketManagerTest {
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(1000);        
+        Thread.sleep(500);        
         webSocketManager.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -232,7 +232,7 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(1000);
+        Thread.sleep(500);
         
         //then
         assertThat(eventData, nullValue());
