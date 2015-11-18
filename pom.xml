@@ -23,6 +23,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.4.1</log4j.version>
+		<maven.version>3.3.9</maven.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -84,11 +85,6 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>versions-maven-plugin</artifactId>
 					<version>2.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.7.5.201505241946</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
