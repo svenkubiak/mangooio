@@ -18,4 +18,24 @@ public class ConfigTest {
         assertThat(config.getString(Key.APPLICATION_PORT), equalTo("10808"));
         assertThat(config.getString(Key.APPLICATION_PORT.toString()), equalTo("10808"));
     }
+    
+    @Test
+    public void testGetInt() {
+        //given
+        Config config = Mangoo.TEST.getInstance(Config.class);
+        
+        //then
+        assertThat(config.getInt(Key.APPLICATION_PORT), equalTo(10808));
+        assertThat(config.getInt(Key.APPLICATION_PORT.toString()), equalTo(10808));
+    }
+    
+    @Test
+    public void testGetBoolean() {
+        //given
+        Config config = Mangoo.TEST.getInstance(Config.class);
+        
+        //then
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_HEALTH), equalTo(true));
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_HEALTH.toString()), equalTo(true));
+    }
 }
