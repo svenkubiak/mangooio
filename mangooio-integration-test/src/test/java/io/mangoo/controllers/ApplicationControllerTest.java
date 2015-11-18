@@ -23,8 +23,8 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -42,7 +42,7 @@ public class ApplicationControllerTest {
     @Test
     public void testIndex() {
         //given
-        MangooResponse response = MangooRequest.get("/").execute();
+        Response response = Request.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -53,7 +53,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRequest() {
         //given
-        MangooResponse response = MangooRequest.get("/request").execute();
+        Response response = Request.get("/request").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -65,7 +65,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithDisableRedirects() {
         //given
-        MangooResponse response = MangooRequest.get("/redirect").withDisableRedirects(true).execute();
+        Response response = Request.get("/redirect").withDisableRedirects(true).execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -76,7 +76,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithoutDisableRedirects() {
         //given
-        MangooResponse response = MangooRequest.get("/redirect").execute();
+        Response response = Request.get("/redirect").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -88,7 +88,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPlainText() {
         //given
-        MangooResponse response = MangooRequest.get("/text").execute();
+        Response response = Request.get("/text").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -99,7 +99,7 @@ public class ApplicationControllerTest {
     @Test
     public void testNotFound() {
         //given
-        MangooResponse response = MangooRequest.get("/foo").execute();
+        Response response = Request.get("/foo").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -110,7 +110,7 @@ public class ApplicationControllerTest {
     @Test
     public void testForbidden() {
         //given
-        MangooResponse response = MangooRequest.get("/forbidden").execute();
+        Response response = Request.get("/forbidden").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -121,7 +121,7 @@ public class ApplicationControllerTest {
     @Test
     public void testBadRequest() {
         //given
-        MangooResponse response = MangooRequest.get("/badrequest").execute();
+        Response response = Request.get("/badrequest").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -132,7 +132,7 @@ public class ApplicationControllerTest {
     @Test
     public void testUnauthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/unauthorized").execute();
+        Response response = Request.get("/unauthorized").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -143,7 +143,7 @@ public class ApplicationControllerTest {
     @Test
     public void testAdditionalHeaders() {
         //given
-        MangooResponse response = MangooRequest.get("/header").execute();
+        Response response = Request.get("/header").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -179,7 +179,7 @@ public class ApplicationControllerTest {
     @SuppressWarnings("unchecked")
     public void testEtag() {
         //given
-        MangooResponse response = MangooRequest.get("/etag").execute();
+        Response response = Request.get("/etag").execute();
         String etag = response.getHeader(Headers.ETAG_STRING);
 
         //then
@@ -188,7 +188,7 @@ public class ApplicationControllerTest {
         assertThat(etag, matches("^[a-f0-9]{32}$"));
 
         //given
-        response = MangooRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
+        response = Request.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
@@ -198,7 +198,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testPost() {
         //given
-        MangooResponse response = MangooRequest.post("/post")
+        Response response = Request.post("/post")
                 .withRequestBody("Winter is coming!")
                 .execute();
         
@@ -212,7 +212,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testPut() {
         //given
-        MangooResponse response = MangooRequest.put("/put")
+        Response response = Request.put("/put")
                 .withRequestBody("The king of the north!")
                 .execute();
         
@@ -226,7 +226,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testJsonPathWithPost() {
         //given
-        MangooResponse response = MangooRequest.post("/jsonpathpost")
+        Response response = Request.post("/jsonpathpost")
                 .withRequestBody(JSON)
                 .execute();
         
@@ -240,7 +240,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testJsonPathWithPut() {
         //given
-        MangooResponse response = MangooRequest.put("/jsonpathput")
+        Response response = Request.put("/jsonpathput")
                 .withRequestBody(JSON)
                 .execute();
         
@@ -254,7 +254,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testJsonBoonWithPost() {
         //given
-        MangooResponse response = MangooRequest.post("/jsonboonpost")
+        Response response = Request.post("/jsonboonpost")
                 .withRequestBody(JSON)
                 .execute();
         
@@ -268,7 +268,7 @@ public class ApplicationControllerTest {
     @Test 
     public void testJsonBoonWithPut() {
         //given
-        MangooResponse response = MangooRequest.put("/jsonboonput")
+        Response response = Request.put("/jsonboonput")
                 .withRequestBody(JSON)
                 .execute();
         

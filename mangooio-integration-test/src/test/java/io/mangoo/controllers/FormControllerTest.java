@@ -13,8 +13,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
 import io.mangoo.enums.ContentType;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -32,7 +32,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("password", "secret"));
 
         //when
-        MangooResponse response = MangooRequest.post("/form")
+        Response response = Request.post("/form")
                 .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
                 .withPostParameters(parameter)
                 .execute();
@@ -51,7 +51,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("password", "#+ß§"));
 
         //when
-        MangooResponse response = MangooRequest.post("/form")
+        Response response = Request.post("/form")
                 .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
                 .withPostParameters(parameter)
                 .execute();
@@ -70,7 +70,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("regex", "ABC"));
 
         //when
-        MangooResponse response = MangooRequest.post("/validateform")
+        Response response = Request.post("/validateform")
                 .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
                 .withPostParameters(parameter)
                 .execute();
@@ -108,7 +108,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("regex", "a"));
 
         //when
-        MangooResponse response = MangooRequest.post("/validateform")
+        Response response = Request.post("/validateform")
                 .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
                 .withPostParameters(parameter)
                 .execute();

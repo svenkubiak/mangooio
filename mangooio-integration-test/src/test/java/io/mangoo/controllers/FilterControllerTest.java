@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -22,7 +22,7 @@ public class FilterControllerTest {
     @Test
     public void testFilterWithAdditionalContent() {
         //given
-        MangooResponse response = MangooRequest.get("/filter").execute();
+        Response response = Request.get("/filter").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -33,7 +33,7 @@ public class FilterControllerTest {
     @Test
     public void testFilterWithAdditionalHeader() {
         //given
-        MangooResponse response = MangooRequest.get("/headerfilter").execute();
+        Response response = Request.get("/headerfilter").execute();
 
         //then
         assertThat(response, not(nullValue()));

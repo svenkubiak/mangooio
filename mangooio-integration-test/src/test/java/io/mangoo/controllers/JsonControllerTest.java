@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Test;
 
 import io.mangoo.enums.ContentType;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -23,7 +23,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonSerialization() {
         //given
-        MangooResponse response = MangooRequest.get("/render").execute();
+        Response response = Request.get("/render").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -34,7 +34,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonParsing() {
         //given
-        MangooResponse response = MangooRequest.post("/parse")
+        Response response = Request.post("/parse")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(json)
                 .execute();
@@ -48,7 +48,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonEmptyResponseBody() {
         //given
-        MangooResponse response = MangooRequest.post("/body")
+        Response response = Request.post("/body")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody("")
                 .execute();
@@ -62,7 +62,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonNullResponseBody() {
         //given
-        MangooResponse response = MangooRequest.post("/body")
+        Response response = Request.post("/body")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(null)
                 .execute();
@@ -76,7 +76,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonResponseBody() {
         //given
-        MangooResponse response = MangooRequest.post("/body")
+        Response response = Request.post("/body")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(json)
                 .execute();
@@ -90,7 +90,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonRequestBody() {
         //given
-        MangooResponse response = MangooRequest.post("/requestAndJson")
+        Response response = Request.post("/requestAndJson")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(json)
                 .execute();

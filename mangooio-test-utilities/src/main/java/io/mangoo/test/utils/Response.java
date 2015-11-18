@@ -1,4 +1,4 @@
-package io.mangoo.test;
+package io.mangoo.test.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -37,6 +37,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.test.Mangoo;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -46,8 +47,8 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public class MangooResponse {
-    private static final Logger LOG = LogManager.getLogger(MangooResponse.class);
+public class Response {
+    private static final Logger LOG = LogManager.getLogger(Response.class);
     private String responseUrl;
     private String responseUri;
     private String responseRequestBody;
@@ -61,18 +62,18 @@ public class MangooResponse {
     private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private boolean responseDisbaleRedirects;
     
-    public MangooResponse (String uri, HttpString method) {
+    public Response (String uri, HttpString method) {
         this.responseUri = uri;
         this.responseMethod = method;
         init();
     }
 
-    public MangooResponse() {
+    public Response() {
         init();
     }
 
     private void init () {
-        Config config = MangooInstance.TEST.getInstance(Config.class);
+        Config config = Mangoo.TEST.getInstance(Config.class);
 
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
@@ -86,9 +87,9 @@ public class MangooResponse {
      * Sets the ContentType of the request
      * 
      * @param contentType The content type to use
-     * @return MangooResponse 
+     * @return Response 
      */
-    public MangooResponse withContentType(ContentType contentType) {
+    public Response withContentType(ContentType contentType) {
         Preconditions.checkNotNull(contentType, "contentType can not be null");
         
         this.responseContentType = contentType;
@@ -99,9 +100,9 @@ public class MangooResponse {
      * Sets the RequestBody of the request
      * 
      * @param requestBody The request body to use
-     * @return MangooResponse 
+     * @return Response 
      */
-    public MangooResponse withRequestBody(String requestBody) {
+    public Response withRequestBody(String requestBody) {
         this.responseRequestBody = requestBody;
         return this;
     }
@@ -110,9 +111,9 @@ public class MangooResponse {
      * Sets Post parameter to the request
      * 
      * @param postParameter A list of post parameter
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withPostParameters(List<NameValuePair> postParameter) {
+    public Response withPostParameters(List<NameValuePair> postParameter) {
         Preconditions.checkNotNull(postParameter, "postParameter can not be null");
         
         this.postParameter = Collections.unmodifiableList(postParameter);
@@ -123,9 +124,9 @@ public class MangooResponse {
      * Disables redirects when the request is executed
      * 
      * @param disableRedirects true or false
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withDisableRedirects(boolean disableRedirects) {
+    public Response withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
         return this;
     }
@@ -134,9 +135,9 @@ public class MangooResponse {
      * Sets the URI to be executed by the request
      * 
      * @param uri The URI to call
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withUri(String uri) {
+    public Response withUri(String uri) {
         Preconditions.checkNotNull(uri, "uri can not be null");
         
         this.responseUri = uri;
@@ -147,9 +148,9 @@ public class MangooResponse {
      * Sets the HTTP method to execute the request with
      * 
      * @param method The HTTP Method 
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withMethod(HttpString method) {
+    public Response withMethod(HttpString method) {
         Preconditions.checkNotNull(method, "method can not be null");
         
         this.responseMethod = method;
@@ -161,9 +162,9 @@ public class MangooResponse {
      * 
      * @param name The name of the header
      * @param value The value of the header
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withHeader(String name, String value) {
+    public Response withHeader(String name, String value) {
         Preconditions.checkNotNull(name, "name can not be null");
         Preconditions.checkNotNull(value, "value can not be null");
         
@@ -176,9 +177,9 @@ public class MangooResponse {
      * 
      * @param username The username
      * @param password The password
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse withBasicauthentication(String username, String password) {
+    public Response withBasicauthentication(String username, String password) {
         Preconditions.checkNotNull(username, "username can not be null");
         Preconditions.checkNotNull(password, "password can not be null");
         
@@ -192,9 +193,9 @@ public class MangooResponse {
     /**
      * Execute the HTTP request
      * 
-     * @return MangooResponse
+     * @return Response
      */
-    public MangooResponse execute() {
+    public Response execute() {
         if ((Methods.GET).equals(this.responseMethod)) {
             HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
 
@@ -240,9 +241,9 @@ public class MangooResponse {
      * Performs the actual HTTP request
      * 
      * @param request The HTTP request
-     * @return MangooResponse
+     * @return Response
      */
-    private MangooResponse doRequest(HttpUriRequest request) {
+    private Response doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
             request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
         }

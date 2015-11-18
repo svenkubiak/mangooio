@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -21,7 +21,7 @@ public class I18nControllerTest {
     @Test
     public void testWithOutAdditionalHeader() {
         //given
-        MangooResponse response = MangooRequest.get("/translation").execute();
+        Response response = Request.get("/translation").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -32,7 +32,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderDe() {
         //given
-        MangooResponse response = MangooRequest.get("/translation")
+        Response response = Request.get("/translation")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -45,7 +45,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderEn() {
         //given
-        MangooResponse response = MangooRequest.get("/translation")
+        Response response = Request.get("/translation")
                 .withHeader("Accept-Language", "en-US")
                 .execute();
         

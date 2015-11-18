@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -22,7 +22,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/string/bar").execute();
+        Response response = Request.get("/string/bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -33,7 +33,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameterWithSpecialCharacters() {
         //given
-        MangooResponse response = MangooRequest.get("/string/tüsätö-$ß_").execute();
+        Response response = Request.get("/string/tüsätö-$ß_").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -44,7 +44,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoublePrimitiveParamter() {
         //given
-        MangooResponse response = MangooRequest.get("/doublePrimitive/1.42").execute();
+        Response response = Request.get("/doublePrimitive/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -55,7 +55,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoubleParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/double/1.42").execute();
+        Response response = Request.get("/double/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -66,7 +66,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/int/42").execute();
+        Response response = Request.get("/int/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -77,7 +77,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntegerParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/integer/42").execute();
+        Response response = Request.get("/integer/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -88,7 +88,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatPrimitiveParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/floatPrimitive/1.24").execute();
+        Response response = Request.get("/floatPrimitive/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -99,7 +99,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/float/1.24").execute();
+        Response response = Request.get("/float/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -110,7 +110,7 @@ public class ParameterControllerTest {
     @Test
     public void testPrimitiveLongParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/longPrimitive/6000").execute();
+        Response response = Request.get("/longPrimitive/6000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -121,7 +121,7 @@ public class ParameterControllerTest {
     @Test
     public void testLongParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/long/60000").execute();
+        Response response = Request.get("/long/60000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -132,7 +132,7 @@ public class ParameterControllerTest {
     @Test
     public void testMultipleParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/multiple/bar/1").execute();
+        Response response = Request.get("/multiple/bar/1").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -143,7 +143,7 @@ public class ParameterControllerTest {
     @Test
     public void testPathParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/path?foo=bar").execute();
+        Response response = Request.get("/path?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -154,7 +154,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/localdate/2007-12-03").execute();
+        Response response = Request.get("/localdate/2007-12-03").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -166,7 +166,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateTimeParameter() {
         //given
-        MangooResponse response = MangooRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
+        Response response = Request.get("/localdatetime/2007-12-03T10:15:30").execute();
 
         //then
         assertThat(response, not(nullValue()));

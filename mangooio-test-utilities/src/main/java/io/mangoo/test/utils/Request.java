@@ -1,4 +1,4 @@
-package io.mangoo.test;
+package io.mangoo.test.utils;
 
 import com.google.common.base.Preconditions;
 
@@ -9,10 +9,10 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public final class MangooRequest {
+public final class Request {
     private static final String PRECONTIION_ERROR = "URI can not be null";
 
-    private MangooRequest() {
+    private Request() {
     }
 
     /**
@@ -21,10 +21,10 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse get(String uri) {
+    public static Response get(String uri) {
         Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
         
-        return new MangooResponse(uri, Methods.GET);
+        return new Response(uri, Methods.GET);
     }
     
     /**
@@ -33,10 +33,10 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse post(String uri) {
+    public static Response post(String uri) {
         Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
         
-        return new MangooResponse(uri, Methods.POST);
+        return new Response(uri, Methods.POST);
     }
 
     /**
@@ -45,10 +45,10 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse put(String uri) {
+    public static Response put(String uri) {
         Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
         
-        return new MangooResponse(uri, Methods.PUT);
+        return new Response(uri, Methods.PUT);
     }
     
     /**
@@ -57,9 +57,9 @@ public final class MangooRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static MangooResponse delete(String uri) {
+    public static Response delete(String uri) {
         Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
         
-        return new MangooResponse(uri, Methods.DELETE);
+        return new Response(uri, Methods.DELETE);
     }
 }

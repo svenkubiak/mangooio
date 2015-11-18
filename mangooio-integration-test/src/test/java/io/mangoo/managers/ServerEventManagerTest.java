@@ -18,7 +18,7 @@ import org.glassfish.jersey.media.sse.SseFeature;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import io.mangoo.test.MangooInstance;
+import io.mangoo.test.Mangoo;
 import io.mangoo.utils.ConfigUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
@@ -36,7 +36,7 @@ public class ServerEventManagerTest {
     @Test
     public void testAddConnection() {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
         when(serverSentEventConnection.getQueryString()).thenReturn(null);
@@ -52,7 +52,7 @@ public class ServerEventManagerTest {
     @Test
     public void testRemoveConnection() {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
         serverEventManager.addConnection(serverSentEventConnection);
@@ -68,7 +68,7 @@ public class ServerEventManagerTest {
     @Test
     public void testCloseConnection() throws InterruptedException {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         
         //when
         WebTarget target = ClientBuilder.newBuilder()
@@ -90,7 +90,7 @@ public class ServerEventManagerTest {
     @Test
     public void testSendData() throws InterruptedException {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         eventData = null;
         String data = "Server sent data FTW!";
         
@@ -121,7 +121,7 @@ public class ServerEventManagerTest {
     @Test
     public void testSendDataWithValidAuthentication() throws InterruptedException {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         eventData = null;
         String data = "Server sent data with authentication FTW!";
         
@@ -154,7 +154,7 @@ public class ServerEventManagerTest {
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException {
         //given
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         String data = "Server sent data with authentication FTW!";
         
         //when

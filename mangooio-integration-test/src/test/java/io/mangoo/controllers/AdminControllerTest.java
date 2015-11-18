@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -31,7 +31,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@health")
+        Response response = Request.get("/@health")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -45,7 +45,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthUnaothorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@health").execute();
+        Response response = Request.get("/@health").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -57,7 +57,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@config")
+        Response response = Request.get("/@config")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -71,7 +71,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigUnauthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@config").execute();
+        Response response = Request.get("/@config").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -83,7 +83,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@routes")
+        Response response = Request.get("/@routes")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -97,7 +97,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedUnauthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@routes").execute();
+        Response response = Request.get("/@routes").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -109,7 +109,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@cache")
+        Response response = Request.get("/@cache")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -123,7 +123,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheUnauthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@cache").execute();
+        Response response = Request.get("/@cache").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -135,7 +135,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@metrics")
+        Response response = Request.get("/@metrics")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -149,7 +149,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsUnauthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@metrics").execute();
+        Response response = Request.get("/@metrics").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -161,7 +161,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@scheduler")
+        Response response = Request.get("/@scheduler")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -175,7 +175,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerUnAuthorized() {
         //given
-        MangooResponse response = MangooRequest.get("/@scheduler").execute();
+        Response response = Request.get("/@scheduler").execute();
         
         //then
         assertThat(response, not(nullValue()));

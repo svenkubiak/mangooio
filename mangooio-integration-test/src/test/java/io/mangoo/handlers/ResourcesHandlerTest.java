@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -21,7 +21,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourceFile() {
         //given
-        MangooResponse response = MangooRequest.get("/robots.txt").execute();
+        Response response = Request.get("/robots.txt").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -32,7 +32,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathJavaScript() {
         //given
-        MangooResponse response = MangooRequest.get("/assets/javascripts/jquery.min.js").execute();
+        Response response = Request.get("/assets/javascripts/jquery.min.js").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -43,7 +43,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathStylesheet() {
         //given
-        MangooResponse response = MangooRequest.get("/assets/stylesheets/css.css").execute();
+        Response response = Request.get("/assets/stylesheets/css.css").execute();
         
         //then
         assertThat(response, not(nullValue()));

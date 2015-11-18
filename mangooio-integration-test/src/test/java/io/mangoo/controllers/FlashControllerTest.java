@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -20,7 +20,7 @@ public class FlashControllerTest {
     @Test
     public void testFlash() {
         //given
-        MangooResponse response = MangooRequest.get("/flash").execute();
+        Response response = Request.get("/flash").execute();
 
         //then
         assertThat(response, not(nullValue()));

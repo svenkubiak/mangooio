@@ -10,9 +10,9 @@ import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooBrowser;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Browser;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -26,7 +26,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityForm() {
         //given
-        MangooResponse response = MangooRequest.get("/authenticityform").execute();
+        Response response = Request.get("/authenticityform").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -38,7 +38,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityToken() {
         //given
-        MangooResponse response = MangooRequest.get("/authenticitytoken").execute();
+        Response response = Request.get("/authenticitytoken").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -49,10 +49,10 @@ public class AuthenticityControllerTest {
     @Test
     public void testValidAuthenticity() {
         //given
-    	MangooBrowser instance = MangooBrowser.open();
+    	Browser instance = Browser.open();
         
     	//when
-        MangooResponse response = instance.withUri("/authenticitytoken")
+        Response response = instance.withUri("/authenticitytoken")
                 .withMethod(Methods.GET)
                 .execute();
         String token = response.getContent();
@@ -75,7 +75,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        MangooResponse response = MangooRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        Response response = Request.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

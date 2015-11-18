@@ -13,22 +13,16 @@ import io.mangoo.enums.Mode;
  * @author svenkubiak
  *
  */
-public enum MangooInstance {
+public enum Mangoo {
     TEST;
-    private boolean started;
     
-    MangooInstance() {
+    private Mangoo() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main();
-        this.started = true;
     }
 
     public void start() {
-        //intentionally left blank
-    }
-    
-    public boolean isStarted() {
-        return this.started;
+        //intentionally does nothing, just used for better readability
     }
 
     public Injector getInjector() {
@@ -37,6 +31,6 @@ public enum MangooInstance {
     
     public <T> T getInstance(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "clazz can not be null");
-        return Application.getInjector().getInstance(clazz);
+        return Application.getInstance(clazz);
     }
 }

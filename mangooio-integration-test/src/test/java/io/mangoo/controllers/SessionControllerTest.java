@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.mangoo.utils.ConfigUtils;
 import io.undertow.util.StatusCodes;
 
@@ -21,7 +21,7 @@ public class SessionControllerTest {
     @Test
     public void testSessionCookie() {
         //when
-        MangooResponse response = MangooRequest.get("/session").execute();
+        Response response = Request.get("/session").execute();
         
         //then
         assertThat(response, not(nullValue()));

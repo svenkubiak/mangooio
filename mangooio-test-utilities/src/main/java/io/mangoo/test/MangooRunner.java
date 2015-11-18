@@ -16,12 +16,7 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 public class MangooRunner {
 
     @Before
-    public final void mangooStartup() {
-        beforeMangooStartup();
-        MangooInstance.TEST.start();
-    }
-
-    public void beforeMangooStartup() {
-        //Intentionally left blank for overwriting
+    public final void mangooStart() {
+        Mangoo.TEST.start();
     }
 }

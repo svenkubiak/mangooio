@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooInstance;
+import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class CacheTest {
     @Test
     public void testAdd() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
         cache.add("test", TEST_VALUE);
@@ -38,7 +38,7 @@ public class CacheTest {
     @Test
     public void testClear() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
         cache.add("test", TEST_VALUE);
@@ -51,7 +51,7 @@ public class CacheTest {
     @Test
     public void testCast() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
     	cache.add("test", 1);
@@ -63,7 +63,7 @@ public class CacheTest {
     @Test
     public void testGetAll() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
         cache.clear();
@@ -78,7 +78,7 @@ public class CacheTest {
     @Test
     public void testPutAll() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
         ConcurrentMap<String, Object> concurrentMap = new ConcurrentHashMap<String, Object>();
@@ -94,7 +94,7 @@ public class CacheTest {
     @Test
     public void testSize() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
         cache.clear();
@@ -110,7 +110,7 @@ public class CacheTest {
     @Test
     public void testStats() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //then
         assertThat(cache.getStats(), not(nullValue()));
@@ -119,7 +119,7 @@ public class CacheTest {
     @Test
     public void testGetWithCallable() {
         //given
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //then
         assertThat(cache.get("test", new CacheCallable()), equalTo(FROM_CALLABLE));

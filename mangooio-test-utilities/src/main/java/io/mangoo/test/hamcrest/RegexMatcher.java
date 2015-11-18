@@ -17,8 +17,8 @@ public class RegexMatcher extends BaseMatcher {
     }
 
     @Override
-    public boolean matches(Object o){
-        return ((String) o).matches(regex);
+    public boolean matches(Object object){
+        return ((String) object).matches(regex);
     }
 
     @Override

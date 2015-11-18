@@ -20,7 +20,7 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.test.MangooInstance;
+import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -32,20 +32,20 @@ public class InjectionTest {
     @Test
     public void testInjection() {
         //given
-        Form form = MangooInstance.TEST.getInstance(Form.class);
-        Authentication authentication = MangooInstance.TEST.getInstance(Authentication.class);
-        Session session = MangooInstance.TEST.getInstance(Session.class);
-        Flash flash = MangooInstance.TEST.getInstance(Flash.class);
-        Cache cache = MangooInstance.TEST.getInstance(Cache.class);
-        Crypto crypto = MangooInstance.TEST.getInstance(Crypto.class);
-        Config config = MangooInstance.TEST.getInstance(Config.class);
-        Messages messages = MangooInstance.TEST.getInstance(Messages.class);
-        Response response  = MangooInstance.TEST.getInstance(Response.class);
-        Request request = MangooInstance.TEST.getInstance(Request.class);
-        Scheduler mangooSchedulder = MangooInstance.TEST.getInstance(Scheduler.class);
-        ExecutionManager executionManager = MangooInstance.TEST.getInstance(ExecutionManager.class);
-        WebSocketManager webSocketManager = MangooInstance.TEST.getInstance(WebSocketManager.class);
-        ServerEventManager serverEventManager = MangooInstance.TEST.getInstance(ServerEventManager.class);
+        Form form = Mangoo.TEST.getInstance(Form.class);
+        Authentication authentication = Mangoo.TEST.getInstance(Authentication.class);
+        Session session = Mangoo.TEST.getInstance(Session.class);
+        Flash flash = Mangoo.TEST.getInstance(Flash.class);
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        Crypto crypto = Mangoo.TEST.getInstance(Crypto.class);
+        Config config = Mangoo.TEST.getInstance(Config.class);
+        Messages messages = Mangoo.TEST.getInstance(Messages.class);
+        Response response  = Mangoo.TEST.getInstance(Response.class);
+        Request request = Mangoo.TEST.getInstance(Request.class);
+        Scheduler mangooSchedulder = Mangoo.TEST.getInstance(Scheduler.class);
+        ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
+        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
         
         //then
         assertThat(form, not(nullValue()));
