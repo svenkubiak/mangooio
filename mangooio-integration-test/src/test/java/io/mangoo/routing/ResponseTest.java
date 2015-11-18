@@ -283,4 +283,16 @@ public class ResponseTest {
         //then
         assertThat(response.isETag(), equalTo(true));
     }
+    
+    @Test
+    public void testAndEnd() throws IOException {
+        //given
+        Response response = Response.withOk();
+        
+        //when
+        response.end();
+        
+        //then
+        assertThat(response.isEndResponse(), equalTo(true));
+    }
 }
