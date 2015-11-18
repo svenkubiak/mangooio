@@ -45,7 +45,7 @@ public class Config {
     }
 
     private void prepare(String configFile, Mode mode) {
-        String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
+        final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
 
         Map map = null;
         try {
@@ -54,13 +54,13 @@ public class Config {
             } else {
                 map = (Map) loadConfiguration(Resources.getResource(configFile).openStream());
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
         }
 
         if (map != null) {
-            Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
-            Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
+            final Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
+            final Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
 
             load("", defaults);
             if (environment != null && !environment.isEmpty()) {
@@ -71,8 +71,8 @@ public class Config {
 
     private Object loadConfiguration(InputStream inputStream) {
         Preconditions.checkNotNull(inputStream, "inputStream can not be null");
-        
-        Yaml yaml = new Yaml();
+
+        final Yaml yaml = new Yaml();
         return yaml.load(inputStream);
     }
 
@@ -83,16 +83,16 @@ public class Config {
      * @param map The map to iterate over
      */
     private void load(String parentKey, Map<String, Object> map) {
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            
-            if (key != null && value != null) {
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+
+            if (key != null) {
                 if (value instanceof Map) {
                     load(parentKey + "." + key, (Map<String, Object>) value);
                 } else {
                     this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), (value == null) ? "" : String.valueOf(value));
-                }                
+                }
             }
         }
     }
@@ -115,7 +115,7 @@ public class Config {
      * @return The configured value as String or the passed defautlValue if the key is not configured
      */
     public String getString(String key, String defaultValue) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -130,7 +130,7 @@ public class Config {
      * @return The configured value as int or 0 if the key is not configured
      */
     public int getInt(String key) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -145,7 +145,7 @@ public class Config {
      * @return The configured value as long or 0 if the key is not configured
      */
     public long getLong(String key) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -161,7 +161,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public long getLong(String key, long defaultValue) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -177,7 +177,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public int getInt(String key, int defaultValue) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -192,7 +192,7 @@ public class Config {
      * @return The configured value as boolean or false if the key is not configured
      */
     public boolean getBoolean(String key) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -208,7 +208,7 @@ public class Config {
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
      */
     public boolean getBoolean(String key, boolean defaultValue) {
-        String value = this.values.get(key);
+        final String value = this.values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -314,7 +314,7 @@ public class Config {
      * @return True if the configuration contains an application.secret property with at least 16 characters
      */
     public boolean hasValidSecret() {
-        String secret = getString(Key.APPLICATION_SECRET);
+        final String secret = getString(Key.APPLICATION_SECRET);
         return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
     }
 }
