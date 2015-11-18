@@ -22,8 +22,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 /**
- * Main configuration class for all properties
- * configure in application.yaml
+ * Main configuration class for all properties configured in application.yaml
  *
  * @author svenkubiak
  *
@@ -71,6 +70,8 @@ public class Config {
     }
 
     private Object loadConfiguration(InputStream inputStream) {
+        Preconditions.checkNotNull(inputStream, "inputStream can not be null");
+        
         Yaml yaml = new Yaml();
         return yaml.load(inputStream);
     }
@@ -83,13 +84,15 @@ public class Config {
      */
     private void load(String parentKey, Map<String, Object> map) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Object value = entry.getValue();
             String key = entry.getKey();
-
-            if (value instanceof Map) {
-                load(parentKey + "." + key, (Map<String, Object>) value);
-            } else {
-                this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), (value == null) ? "" : String.valueOf(value));
+            Object value = entry.getValue();
+            
+            if (key != null && value != null) {
+                if (value instanceof Map) {
+                    load(parentKey + "." + key, (Map<String, Object>) value);
+                } else {
+                    this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), (value == null) ? "" : String.valueOf(value));
+                }                
             }
         }
     }

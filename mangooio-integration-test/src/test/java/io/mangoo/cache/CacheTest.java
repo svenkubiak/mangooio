@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.junit.Test;
 
@@ -81,10 +81,10 @@ public class CacheTest {
         Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
-        ConcurrentMap<String, Object> concurrentMap = new ConcurrentHashMap<String, Object>();
-        concurrentMap.put("test", TEST_VALUE);
-        concurrentMap.put("test2", 1);
-        cache.addAll(concurrentMap);
+        Map<String, Object> map = new HashMap<>();
+        map.put("test", TEST_VALUE);
+        map.put("test2", 1);
+        cache.addAll(map);
         
         //then
         assertThat(cache.getAll(), not(nullValue()));

@@ -2,10 +2,10 @@ package io.mangoo.routing.bindings;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +17,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final int CONCURRENCY_LEVEL = 1;
-    private static final float LOAD_FACTOR = 0.9f;
-    private static final int INITIAL_CAPACITY = 16;
     private static final List<String> blacklist = Arrays.asList("|", ":", "&", " ");
     private Map<String, String> values;
     private String authenticityToken;
@@ -30,7 +27,7 @@ public class Session {
     }
 
     public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
-        this.values = Optional.ofNullable(values).orElse(new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL));
+        this.values = Optional.ofNullable(values).orElse(new HashMap<>());
         this.authenticityToken = authenticityToken;
         this.expires = expires;
     }
@@ -98,7 +95,7 @@ public class Session {
      */
     public void clear() {
         this.changed = true;
-        this.values = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        this.values = new HashMap<>();
     }
 
     /**

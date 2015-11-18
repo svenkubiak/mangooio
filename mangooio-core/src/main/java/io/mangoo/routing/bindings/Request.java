@@ -1,7 +1,7 @@
 package io.mangoo.routing.bindings;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.boon.json.JsonFactory;
 
@@ -24,9 +24,6 @@ import io.undertow.util.HttpString;
  *
  */
 public class Request implements MangooValidator {
-    private static final int CONCURRENCY_LEVEL = 1;
-    private static final float LOAD_FACTOR = 0.9f;
-    private static final int INITIAL_CAPACITY = 16;
     private HttpServerExchange httpServerExchange;
     private String body;
     private Session session;
@@ -50,7 +47,7 @@ public class Request implements MangooValidator {
         this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
-        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL) : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
+        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
     /**

@@ -1,8 +1,8 @@
 package io.mangoo.routing.bindings;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,11 +22,8 @@ import io.mangoo.i18n.Messages;
  *
  */
 public class Validator {
-    private static final int CONCURRENCY_LEVEL = 1;
-    private static final float LOAD_FACTOR = 0.9f;
-    private static final int INITIAL_CAPACITY = 16;
-    private final Map<String, String> errors = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-    private Map<String, String> values = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    private final Map<String, String> errors = new HashMap<>();
+    private Map<String, String> values = new HashMap<>();
     private final Messages messages;
 
     @Inject

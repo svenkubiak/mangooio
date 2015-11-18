@@ -3,8 +3,8 @@ package io.mangoo.utils;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,9 +35,6 @@ import io.undertow.util.Methods;
  *
  */
 public final class RequestUtils {
-    private static final int CONCURRENCY_LEVEL = 1;
-    private static final float LOAD_FACTOR = 0.9f;
-    private static final int INITIAL_CAPACITY = 16;
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int AUTH_PREFIX_LENGTH = 3;
@@ -57,7 +54,7 @@ public final class RequestUtils {
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
 
-        Map<String, String> requestParamater = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        Map<String, String> requestParamater = new HashMap<>();
         Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR

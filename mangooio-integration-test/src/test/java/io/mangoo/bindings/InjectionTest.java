@@ -19,6 +19,7 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.test.Mangoo;
 
@@ -46,6 +47,7 @@ public class InjectionTest {
         ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
         WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
         ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
+        MetricsListener metricsListener = Mangoo.TEST.getInstance(MetricsListener.class);
         
         //then
         assertThat(form, not(nullValue()));
@@ -62,5 +64,6 @@ public class InjectionTest {
         assertThat(executionManager, not(nullValue()));
         assertThat(webSocketManager, not(nullValue()));
         assertThat(serverEventManager, not(nullValue()));
+        assertThat(metricsListener, not(nullValue()));
     }
 }

@@ -1,10 +1,10 @@
 package io.mangoo.admin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
@@ -35,10 +35,6 @@ import io.mangoo.scheduler.Scheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
-    private static final int CONCURRENCY_LEVEL = 1;
-    private static final float LOAD_FACTOR = 0.9f;
-    private static final int INITIAL_CAPACITY = 16;
-    
     public Response health() {
         return Response.withOk()
                 .andTextBody("alive");
@@ -53,7 +49,7 @@ public class MangooAdminController {
     public Response cache() {
         CacheStats cacheStats = Application.getInstance(Cache.class).getStats();
 
-        Map<String, Object> stats = new ConcurrentHashMap<>(CONCURRENCY_LEVEL, LOAD_FACTOR, INITIAL_CAPACITY);
+        Map<String, Object> stats = new HashMap<>();
         stats.put("Average load penalty", cacheStats.averageLoadPenalty());
         stats.put("Eviction count", cacheStats.evictionCount());
         stats.put("Hit count", cacheStats.hitCount());
