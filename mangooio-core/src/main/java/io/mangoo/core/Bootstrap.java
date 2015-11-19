@@ -102,9 +102,11 @@ public class Bootstrap {
         String configurationFile = "log4j2." + this.mode.toString() + ".xml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
             System.setProperty("log4j.configurationFile", configurationFile);
+            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+            LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
+        } else {
+            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
         }
-
-        LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
     }
 
     public Injector prepareInjector() {
