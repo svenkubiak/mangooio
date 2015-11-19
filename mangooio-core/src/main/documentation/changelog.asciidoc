@@ -1,5 +1,11 @@
 = Changelog
 
+== Version 1.1.4.1
+
+[small]#Released at 19.11.2015#
+
+* Fixed NPE in maven plugin (svenkubiak)
+
 == Version 1.1.4
 
 [small]#Released at 04.10.2015#
