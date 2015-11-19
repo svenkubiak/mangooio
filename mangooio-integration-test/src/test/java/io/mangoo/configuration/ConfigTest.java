@@ -106,4 +106,14 @@ public class ConfigTest {
         assertThat(config.getAllConfigurations(), not(nullValue()));
         assertThat(config.getAllConfigurations().size(), greaterThan(12));
     }
+    
+    @Test
+    public void testEnvironmentValues() {
+        //given
+        Config config = Mangoo.TEST.getInstance(Config.class);
+        
+        //then
+        assertThat(config.getString("smtp.username"), equalTo(""));
+        assertThat(config.getString("smtp.port"), equalTo("3055"));
+    }
 }
