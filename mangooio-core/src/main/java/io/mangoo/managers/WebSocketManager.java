@@ -25,10 +25,10 @@ public class WebSocketManager {
 
     @Inject
     private Cache cache;
-    
+
     /**
      * Adds a new channel to the manager
-     * 
+     *
      * @param uri The uri of the request
      * @param queryString The query string of the request
      * @param channel channel The channel to add
@@ -39,7 +39,7 @@ public class WebSocketManager {
         if (StringUtils.isNotBlank(queryString)) {
             uri = uri + "?" + queryString;
         }
-        
+
         Set<WebSocketChannel> channels = getChannels(uri);
         if (channels == null) {
             channels = new HashSet<>();
@@ -52,14 +52,14 @@ public class WebSocketManager {
 
     /**
      * Sets the URI resources for a given URL
-     * 
+     *
      * @param uri The URI resource for the connection
      * @param channels The channels for the URI resource
      */
     public void setChannels(String uri, Set<WebSocketChannel> channels) {
         Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(channels, "uriConnections can not be null");
-        
+
         this.cache.add(PREFIX + uri, channels);
     }
 
@@ -74,18 +74,18 @@ public class WebSocketManager {
         Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<WebSocketChannel> channels = this.cache.get(PREFIX + uri);
-        
+
         return (channels == null) ? new HashSet<>() : channels;
     }
 
     /**
      * Removes all URI resources for a given URL
-     * 
+     *
      * @param uri The URI resource for the connection
      */
     public void removeChannels(String uri) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-        
+
         this.cache.remove(PREFIX + uri);
     }
 

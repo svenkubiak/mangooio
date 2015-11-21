@@ -60,7 +60,7 @@ public final class MinificationUtils {
         if (absolutePath == null || absolutePath.contains(MIN)) {
             return;
         }
-        
+
         if (config == null) {
             System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);

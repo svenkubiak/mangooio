@@ -132,7 +132,7 @@ public class Bootstrap {
             try {
                 Yaml yaml = new Yaml();
                 List<Map<String, String>> routes = (List<Map<String, String>>) yaml.load(Resources.getResource(Default.ROUTES_FILE.toString()).openStream());
-            
+
                 routes.forEach(routing -> {
                     routing.entrySet().forEach(entry -> {
                         String method = entry.getKey().trim();
@@ -154,7 +154,7 @@ public class Bootstrap {
                         route.withRequest(HttpString.tryFromString(method));
                         route.withAuthentication(authentication);
                         route.allowBlocking(blocking);
-                        
+
                         try {
                             if (split.length == 2) {
                                 String [] classMethod = split[1].split("\\.");
@@ -163,13 +163,13 @@ public class Bootstrap {
                                     route.withMethod(classMethod[1].trim());
                                 }
                             }
-                            
+
                             Router.addRoute(route);
                         } catch (ClassNotFoundException e) {
                             LOG.error("Failed to parse routing: " + routing);
                             LOG.error("Please check, that your routes.yaml syntax is correct", e);
                             this.error = true;
-                        } 
+                        }
                     });
                 });
             } catch (IOException e) {
@@ -181,7 +181,7 @@ public class Bootstrap {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
                     Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
-                } 
+                }
             });
 
             if (!this.error) {
@@ -241,7 +241,7 @@ public class Bootstrap {
     private RoutingHandler initRoutingHandler() {
         RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
-        
+
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@routes").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("routes"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@config").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("config"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@health").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("health"));
@@ -342,7 +342,7 @@ public class Bootstrap {
                     } else {
                         LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         this.error = true;
-                    }                    
+                    }
                 });
 
                 if (!this.error) {

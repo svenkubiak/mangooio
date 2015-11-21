@@ -154,7 +154,7 @@ public class RequestHandler implements HttpHandler {
                 Locale.setDefault(Locale.forLanguageTag(ConfigUtils.getApplicationLanguage()));
             } else {
                 String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(ConfigUtils.getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR                
+                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR
             }
         }
 

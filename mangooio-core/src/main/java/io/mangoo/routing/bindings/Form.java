@@ -24,7 +24,7 @@ public class Form implements MangooValidator {
     private static final String KEY_ERROR = "Key can not be null";
     private boolean submitted;
     private final List<File> files = new ArrayList<>();
-    private Map<String, String> values = new HashMap<>();
+    private final Map<String, String> values = new HashMap<>();
     private final Validator validator;
 
     @Inject

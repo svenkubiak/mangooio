@@ -28,7 +28,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             if (connection.getRequestHeaders().get(Headers.COOKIE) != null) {
                 header = connection.getRequestHeaders().get(Headers.COOKIE).element();
             }
-            
+
             if (RequestUtils.hasValidAuthentication(header)) {
                 Application.getInstance(ServerEventManager.class).addConnection(connection);
             } else {

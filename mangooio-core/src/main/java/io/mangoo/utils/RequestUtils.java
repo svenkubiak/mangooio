@@ -166,7 +166,7 @@ public final class RequestUtils {
 
     /**
      * Checks if the given header contains a valid authentication
-     * 
+     *
      * @param cookieHeader The header to parse
      * @return True if the cookie contains a valid authentication, false otherwise
      */
@@ -174,7 +174,7 @@ public final class RequestUtils {
         boolean validAuthentication = false;
         if (StringUtils.isNotBlank(cookieHeader)) {
             Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
-            
+
             String cookieValue = cookies.get(ConfigUtils.getAuthenticationCookieName()).getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (ConfigUtils.isAuthenticationCookieEncrypt()) {
@@ -194,18 +194,18 @@ public final class RequestUtils {
                         version = prefixes [INDEX_2];
                     }
                 }
-                
+
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
                     String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     LocalDateTime expiresDate = LocalDateTime.parse(expires);
-                    
+
                     if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
                         validAuthentication = true;
                     }
                 }
             }
         }
-        
+
         return validAuthentication;
     }
 }

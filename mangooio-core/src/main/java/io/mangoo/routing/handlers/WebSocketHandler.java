@@ -39,7 +39,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
             String header = null;
             if (exchange.getRequestHeader(Headers.COOKIE_STRING) != null) {
                 header = exchange.getRequestHeader(Headers.COOKIE_STRING);
-            } 
+            }
 
             if (RequestUtils.hasValidAuthentication(header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));

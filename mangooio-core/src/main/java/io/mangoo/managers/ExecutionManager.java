@@ -25,7 +25,7 @@ public class ExecutionManager {
      *
      * @param <T> JavaDoc requires this (just ignore it)
      * @param callable The callable to submit
-     * 
+     *
      * @return a Future representing pending completion of the task
      */
     public <T> Future<T> submit(Callable<T> callable) {
@@ -40,7 +40,7 @@ public class ExecutionManager {
      * @param <T> JavaDoc requires this (just ignore it)
      * @param runnable the task to submit
      * @param result the result to return
-     * 
+     *
      * @return a Future representing pending completion of the task
      */
     public <T> Future<T> submit(Runnable runnable, T result) {

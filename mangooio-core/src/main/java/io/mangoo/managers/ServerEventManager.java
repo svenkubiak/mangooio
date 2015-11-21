@@ -26,7 +26,7 @@ public class ServerEventManager {
 
     @Inject
     private Cache cache;
-    
+
     /**
      * Adds a new connection to the manager
      *
@@ -39,7 +39,7 @@ public class ServerEventManager {
         if (StringUtils.isNotBlank(connection.getQueryString())) {
             uri = uri + "?" + connection.getQueryString();
         }
-        
+
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();
@@ -58,7 +58,7 @@ public class ServerEventManager {
      */
     public void send(String uri, String data) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-        
+
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
@@ -121,31 +121,31 @@ public class ServerEventManager {
         Preconditions.checkNotNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
-        
+
         return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }
 
     /**
      * Sets the URI resources for a given URL
-     * 
+     *
      * @param uri The URI resource for the connection
      * @param uriConnections The connections for the URI resource
      */
     public void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
         Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
-        
+
         this.cache.add(PREFIX + uri, uriConnections);
     }
 
     /**
      * Removes all URI resources for a given URL
-     * 
+     *
      * @param uri The URI resource for the connection
      */
     public void removeConnections(String uri) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-        
+
         this.cache.remove(PREFIX + uri);
     }
 }
