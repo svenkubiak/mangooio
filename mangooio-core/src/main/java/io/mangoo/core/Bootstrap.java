@@ -81,7 +81,7 @@ public class Bootstrap {
     }
 
     public Mode prepareMode() {
-        String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
+        final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
             switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
             case "dev"  : this.mode = Mode.DEV;
@@ -99,7 +99,7 @@ public class Bootstrap {
     }
 
     public void prepareLogger() {
-        String configurationFile = "log4j2." + this.mode.toString() + ".xml";
+        final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
             System.setProperty("log4j.configurationFile", configurationFile);
             LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
@@ -130,12 +130,12 @@ public class Bootstrap {
     public void prepareRoutes() {
         if (!this.error) {
             try {
-                Yaml yaml = new Yaml();
-                List<Map<String, String>> routes = (List<Map<String, String>>) yaml.load(Resources.getResource(Default.ROUTES_FILE.toString()).openStream());
+                final Yaml yaml = new Yaml();
+                final List<Map<String, String>> routes = (List<Map<String, String>>) yaml.load(Resources.getResource(Default.ROUTES_FILE.toString()).openStream());
 
                 routes.forEach(routing -> {
                     routing.entrySet().forEach(entry -> {
-                        String method = entry.getKey().trim();
+                        final String method = entry.getKey().trim();
                         String mapping = entry.getValue();
 
                         boolean authentication = false;
@@ -148,8 +148,8 @@ public class Bootstrap {
                             blocking = true;
                         }
 
-                        String [] split = mapping.split("->");
-                        Route route = new Route(getRouteType(method));
+                        final String [] split = mapping.split("->");
+                        final Route route = new Route(getRouteType(method));
                         route.toUrl(split[0].trim());
                         route.withRequest(HttpString.tryFromString(method));
                         route.withAuthentication(authentication);
@@ -157,7 +157,7 @@ public class Bootstrap {
 
                         try {
                             if (split.length == 2) {
-                                String [] classMethod = split[1].split("\\.");
+                                final String [] classMethod = split[1].split("\\.");
                                 route.withClass(Class.forName(ConfigUtils.getControllerPackage() + classMethod[0].trim()));
                                 if (classMethod.length == 2) {
                                     route.withMethod(classMethod[1].trim());
@@ -165,21 +165,21 @@ public class Bootstrap {
                             }
 
                             Router.addRoute(route);
-                        } catch (ClassNotFoundException e) {
+                        } catch (final ClassNotFoundException e) {
                             LOG.error("Failed to parse routing: " + routing);
                             LOG.error("Please check, that your routes.yaml syntax is correct", e);
                             this.error = true;
                         }
                     });
                 });
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
                 this.error = true;
             }
 
             Router.getRoutes().forEach(route -> {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
-                    Class<?> controllerClass = route.getControllerClass();
+                    final Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
                 }
             });
@@ -212,16 +212,18 @@ public class Bootstrap {
     }
 
     private void checkRoute(Route route, Class<?> controllerClass) {
-        boolean found = false;
-        for (Method method : controllerClass.getMethods()) {
-            if (method.getName().equals(route.getControllerMethod())) {
-                found = true;
+        if (!this.error) {
+            boolean found = false;
+            for (final Method method : controllerClass.getMethods()) {
+                if (method.getName().equals(route.getControllerMethod())) {
+                    found = true;
+                }
             }
-        }
 
-        if (!found) {
-            LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
-            this.error = true;
+            if (!found) {
+                LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+                this.error = true;
+            }
         }
     }
 
@@ -239,7 +241,7 @@ public class Bootstrap {
     }
 
     private RoutingHandler initRoutingHandler() {
-        RoutingHandler routingHandler = Handlers.routing();
+        final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@routes").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("routes"));
@@ -277,7 +279,7 @@ public class Bootstrap {
             this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
             this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
-            Undertow server = Undertow.builder()
+            final Undertow server = Undertow.builder()
                     .addHttpListener(this.port, this.host)
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, new ExceptionHandler()))
                     .build();
@@ -287,10 +289,10 @@ public class Bootstrap {
     }
 
     private List<Module> getModules() {
-        List<Module> modules = new ArrayList<>();
+        final List<Module> modules = new ArrayList<>();
         if (!this.error) {
             try {
-                Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
+                final Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
                 AbstractModule abstractModule;
                 abstractModule = (AbstractModule) module.getConstructor().newInstance();
                 modules.add(abstractModule);
@@ -307,14 +309,14 @@ public class Bootstrap {
 
     public void showLogo() {
         if (!this.error) {
-            StringBuilder logo = new StringBuilder(INITIAL_SIZE);
+            final StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
                 logo.append('\n')
                      .append(FigletFont.convertOneLine("mangoo I/O"))
                      .append("\n\nhttps://mangoo.io | @mangoo_io | ")
                      .append(getVersion())
                      .append('\n');
-            } catch (IOException e) {//NOSONAR
+            } catch (final IOException e) {//NOSONAR
                 //intentionally left blank
             }
 
@@ -329,14 +331,14 @@ public class Bootstrap {
 
     public void startQuartzScheduler() {
         if (!this.error) {
-            Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
+            final Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && ConfigUtils.isSchedulerAutostart()) {
-                Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
+                final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 jobs.forEach(clazz -> {
-                    Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
+                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
-                        JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                        final JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                        final Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
                         mangooScheduler.schedule(jobDetail, trigger);
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
@@ -355,10 +357,10 @@ public class Bootstrap {
     private String getVersion() {
         String version = Default.VERSION.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
-            Properties properties = new Properties();
+            final Properties properties = new Properties();
             properties.load(inputStream);
             version = String.valueOf(properties.get(Key.VERSION.toString()));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to get application version", e);
         }
 
