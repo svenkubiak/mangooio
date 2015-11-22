@@ -1,7 +1,7 @@
 mangoo I/O Documentation
 ========================
 
-[NOTE]
+NOTE:
 You are reading version {version} of the documentation.
 
 == Overview
@@ -175,7 +175,7 @@ https://mangoo.io | @mangoo_io | 1.0.0
 mangoo I/O application started @127.0.0.1:8080 in 442 ms in dev mode. Enjoy.
 ---------------------------------------------------------------------------------------------------------
 
-[NOTE]
+NOTE:
 Whenever you see the mangoo I/O logo your application has started successfully.
 
 Now open your default web browser an say hello to your first mangoo I/O
@@ -428,7 +428,7 @@ public class Lifecycle implements MangooLifecycle {
 }
 ---------------------------------------------------
 
-[NOTE]
+NOTE:
 The Lifecycle class doesn't have to be named
 "Lifecycle", but the class must implement the MangooLifecycle interface and
 you have to bind the implementation using Google Guice in your Module
@@ -476,7 +476,7 @@ method in the ApplicationController class. Thus, when you open your
 browser and open the "/" URL the index method in the
 ApplicationController class will be called.
 
-[NOTE]
+NOTE:
 The Routes class has to implement the MangooRoutes interface to work properly.
 
 == Controllers
@@ -549,13 +549,13 @@ LocalDate
 LocalDateTime
 -------------------------------------------
 
-[NOTE]
+NOTE:
 Double and Float values are always passed with "." delimiter, either if you pass the query or request parameter with "," delimiter.
 
 All parameters are parsed case-sensitive, which means, that if you have a method parameter "localDateTime" you have to map the
 request-parameter accordingly, e.g. /foo/{localDateTime}.
 
-[NOTE]
+NOTE:
 LocalDate is parsed as ISO_LOCAL_DATE "yyyy-MM-dd", and LocalDateTime is parsed as ISO_LOCAL_DATE_TIME "yyyy-MM-ddThh:mm:ss".
 
 The following classes can also be used directly in controller methods, but can not be used as a request or query parameter
@@ -594,7 +594,7 @@ public Response index(Request request) {
 }
 -------------------------------------------
 
-==== Request validation
+=== Request validation
 
 As an additional feature on the request object, you can validate incoming parameters. Just like
 <<Form handling>> you can access a Validator class, which can perform specific checks on the request
@@ -664,7 +664,7 @@ public Response index(Form form) {
 
 ----------------------------------
 
-[NOTE]
+NOTE:
 The Form class is only available if the request is mapped as a POST or PUT method.
 
 The Form class is automatically available in the template so you don't
@@ -900,7 +900,7 @@ application:
 Once you set this new version, the session cookie on the client side will be invalidated and
 the user gets a new session cookie with the current version.
 
-[WARN]
+WARN:
 Be very careful with this feature, as it directly effects the user experience of your users.
 
 == Flash
@@ -1104,7 +1104,7 @@ default:
 There is a third required configuration, which you have to defined yousrelf. This is the callback property
 which defines the URL where you do the actual authentication and  the login of your user.
 
-[INFO]
+INFO:
 As OAuth authentication integrates into mangoo I/O authentication mechanism, you can combine "normal" authentication and OAuth authentication.
 
 ==== Setting the filters
@@ -1203,7 +1203,7 @@ auth:
 Once you set this new version, the authentication cookie on the client side will be invalidated and
 the user gets a new authentication cookie with the new version once he signs in again.
 
-[WARN]
+WARN:
 Be very careful with this feature, as it directly effects the user experience of your users.
 
 == ETag for dynamic content
@@ -1214,7 +1214,7 @@ This is widely used for static resources like CSS or JS files.
 mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
 following method at the returning response in your controller method.
 
-[NOTE]
+NOTE:
 If you are using a front-end HTTP server, please check the documentation on how it
 handles ETag, as the popular nginx web server https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip/[deliberately strips ETags] once gzip is applied.
 
@@ -1240,24 +1240,24 @@ following administrative URLs are available
 /@scheduler
 -------------------------------------------
 
-[NOTE]
+NOTE:
 By default, the administrative URLs are enabled in dev mode and disabled in test and prod mode. You
 can enable each administrative URL by setting the appropriate configuration value in your application.yaml.
 see <<Configuration options>> for more information on this.
 
-==== /@routes
+=== /@routes
 
 Displays a list of all configured routes and their corresponding controllers and methods.
 
-==== /@config
+=== /@config
 
 Displays a list of all configured properties and their corresponding values.
 
-[WARNING]
+WARN:
 Please be very careful with @config, as it exposes your configuration to the web.
 For security reasons the properties "application.secret" is not available via the @config route.
 
-==== /@cache
+=== /@cache
 
 Displays a list of cache statistics including cache hits, cache misses, etc.
 
@@ -1265,7 +1265,7 @@ Displays a list of cache statistics including cache hits, cache misses, etc.
 
 Displays a simple health check by returning "alive".
 
-==== /@scheduler
+=== /@scheduler
 
 Displays a list of schedules jobs, their last and their next execution time.
 
@@ -1545,7 +1545,7 @@ All returned response object from your filter are passed to the next filter in t
 2. Controller filters
 3. Method filters
 
-[NOTE]
+NOTE:
 Only the header and content values are merged with the response object returned from your controller.
 
 Here is an example of the AuthenticityFilter which is used for the CSRF checks.
@@ -1602,7 +1602,7 @@ public class MyGlobalFilter implements MangooRequestFilter {
 }
 ------------------------------------------------------------
 
-[NOTE]
+NOTE:
 There can only be one global filter in your mangoo I/O application.
 
 == Logging
@@ -1698,7 +1698,7 @@ public class MyJob implements Job {
 To schedule the job, add the @Schedule annotation, which requires a cron expression for the execution and an
 optional description of the job. 
 
-[NOTE]
+NOTE:
 Scheduling a job only works with cron expression.
 
 By default, mangoo I/O looks up all jobs in a package called "jobs", but this can be
@@ -1816,7 +1816,7 @@ function. You can check the
 https://commons.apache.org/proper/commons-email/userguide.html[Apache
 Commons Email documentation] on how to create the eMail objects you require.
 
-[NOTE]
+NOTE:
 You don't have to create any SMTP configuration programmatically as shown in the
 Apache Commons Email documentation. This is all done via the application.yaml and passed to the Mailer class of your mangoo
 I/O application, so you can set your host, port, username, password and ssl usage only once.
@@ -2088,7 +2088,7 @@ Of course you can configure the folder for the CSS and JS files in your
 application. See <<Configuration options>> for more
 information about this.
 
-[NOTE]
+NOTE:
 There is also an option on automatically GZIP your Assets.
 
 == Testing
@@ -2259,7 +2259,7 @@ java -jar app.jar
 This will start mangoo I/O in production mode, using the default
 configuration from your application.yaml
 
-[NOTE]
+NOTE:
 Also Undertow is production-ready, it is recommended to use a front-end HTTP
 server such as nginx or Apache to leverage an easy configuration for
 load-balancing, SSL termination, etc.
