@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -101,7 +104,14 @@ public class Bootstrap {
     public void prepareLogger() {
         final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
-            System.setProperty("log4j.configurationFile", configurationFile);
+            try {
+                final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
+                final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                context.setConfigLocation(resource.toURI());
+            } catch (final URISyntaxException e) {
+                e.printStackTrace();
+            }
+
             LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
             LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
         } else {
