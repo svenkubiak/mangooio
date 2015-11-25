@@ -31,7 +31,7 @@ public class WebSocketManager {
      *
      * @param uri The uri of the request
      * @param queryString The query string of the request
-     * @param channel channel The channel to add
+     * @param channel channel The channel to put
      */
     public void addChannel(String uri, String queryString, WebSocketChannel channel) {
         Preconditions.checkNotNull(channel, "channel can not be null");
@@ -60,7 +60,7 @@ public class WebSocketManager {
         Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(channels, "uriConnections can not be null");
 
-        this.cache.add(PREFIX + uri, channels);
+        this.cache.put(PREFIX + uri, channels);
     }
 
     /**

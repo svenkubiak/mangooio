@@ -30,7 +30,7 @@ public class ServerEventManager {
     /**
      * Adds a new connection to the manager
      *
-     * @param connection The connection to add
+     * @param connection The connection to put
      */
     public void addConnection(ServerSentEventConnection connection) {
         Preconditions.checkNotNull(connection, "connection can not be null");
@@ -135,7 +135,7 @@ public class ServerEventManager {
         Preconditions.checkNotNull(uri, URI_ERROR);
         Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
 
-        this.cache.add(PREFIX + uri, uriConnections);
+        this.cache.put(PREFIX + uri, uriConnections);
     }
 
     /**

@@ -53,7 +53,7 @@ public class Cache {
      * @param key The key for the cached value
      * @param value The value to store
      */
-    public void add(String key, Object value) {
+    public void put(String key, Object value) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
 
@@ -135,9 +135,9 @@ public class Cache {
     /**
      * Adds a complete map of objects to the cache
      *
-     * @param map The map to add
+     * @param map The map to put
      */
-    public void addAll(Map<String, Object> map) {
+    public void putAll(Map<String, Object> map) {
         Preconditions.checkNotNull(map, "map can not be null");
 
         this.guavaCache.putAll(map);

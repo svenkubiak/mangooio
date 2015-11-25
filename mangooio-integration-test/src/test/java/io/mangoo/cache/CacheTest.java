@@ -28,7 +28,7 @@ public class CacheTest {
         Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
-        cache.add("test", TEST_VALUE);
+        cache.put("test", TEST_VALUE);
 
         //then
         assertThat(cache.get("test"), not(nullValue()));
@@ -41,7 +41,7 @@ public class CacheTest {
         Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
-        cache.add("test", TEST_VALUE);
+        cache.put("test", TEST_VALUE);
         cache.clear();
 
         //then
@@ -54,7 +54,7 @@ public class CacheTest {
         Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //when
-    	cache.add("test", 1);
+    	cache.put("test", 1);
 
     	//then
         assertThat(cache.get("test"), equalTo(1));
@@ -67,8 +67,8 @@ public class CacheTest {
         
         //when
         cache.clear();
-        cache.add("test", TEST_VALUE);
-        cache.add("test2", 1);
+        cache.put("test", TEST_VALUE);
+        cache.put("test2", 1);
         
         //then
         assertThat(cache.getAll(), not(nullValue()));
@@ -84,7 +84,7 @@ public class CacheTest {
         Map<String, Object> map = new HashMap<>();
         map.put("test", TEST_VALUE);
         map.put("test2", 1);
-        cache.addAll(map);
+        cache.putAll(map);
         
         //then
         assertThat(cache.getAll(), not(nullValue()));
@@ -98,10 +98,10 @@ public class CacheTest {
         
         //when
         cache.clear();
-        cache.add("test1", TEST_VALUE);
-        cache.add("test2", TEST_VALUE);
-        cache.add("test3", TEST_VALUE);
-        cache.add("test4", TEST_VALUE);
+        cache.put("test1", TEST_VALUE);
+        cache.put("test2", TEST_VALUE);
+        cache.put("test3", TEST_VALUE);
+        cache.put("test4", TEST_VALUE);
         
         //then
         assertThat(cache.size(), equalTo(4L));
