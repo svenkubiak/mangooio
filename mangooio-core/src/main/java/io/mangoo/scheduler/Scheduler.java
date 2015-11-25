@@ -38,11 +38,11 @@ public class Scheduler {
     public Scheduler(Config config) {
         Preconditions.checkNotNull(config, "config can not be null");
 
-        for (Map.Entry<String, String> entry : config.getAllConfigurations().entrySet()) {
+        config.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
             if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
-        }
+        });
     }
 
     /**
