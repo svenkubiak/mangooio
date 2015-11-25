@@ -1,6 +1,7 @@
 package io.mangoo.cache;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -92,16 +93,14 @@ public class Cache {
      * a given class
      *
      * @param key The key for the cached value
-     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A converted cache class value
      */
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key) {
+    public Optional<Object> get(String key) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         final Object object = this.guavaCache.getIfPresent(key);
-        return object == null ? null : (T) object;
+        return object == null ? Optional.empty() : Optional.of(object);
     }
 
     /**
@@ -111,12 +110,10 @@ public class Cache {
      *
      * @param key The key for the cached value
      * @param callable The callable to invoke when the value is not found
-     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A converted cache class value
      */
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key, Callable<? extends Object> callable) {
+    public Optional<Object> get(String key, Callable<? extends Object> callable) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(callable,  "callable can not be null");
 
@@ -129,7 +126,7 @@ public class Cache {
             }
         }
 
-        return object == null ? null : (T) object;
+        return object == null ? Optional.empty() : Optional.of(object);
     }
 
     /**
