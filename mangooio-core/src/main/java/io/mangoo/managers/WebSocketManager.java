@@ -73,9 +73,7 @@ public class WebSocketManager {
     public Set<WebSocketChannel> getChannels(String uri) {
         Preconditions.checkNotNull(uri, URI_ERROR);
 
-        Set<WebSocketChannel> channels = this.cache.get(PREFIX + uri);
-
-        return (channels == null) ? new HashSet<>() : channels;
+        return this.cache.get(PREFIX + uri).isPresent() ? (Set<WebSocketChannel>) this.cache.get(PREFIX + uri).get() : new HashSet<>();
     }
 
     /**

@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
@@ -32,7 +33,7 @@ public class CacheTest {
 
         //then
         assertThat(cache.get("test"), not(nullValue()));
-        assertThat(cache.get("test"), equalTo(TEST_VALUE));
+        assertThat(cache.get("test").get(), equalTo(TEST_VALUE));
     }
 
     @Test
@@ -45,7 +46,7 @@ public class CacheTest {
         cache.clear();
 
         //then
-        assertThat(cache.get("test"), equalTo(null));
+        assertThat(cache.get("test"), equalTo(Optional.empty()));
     }
 
     @Test
@@ -57,7 +58,7 @@ public class CacheTest {
     	cache.put("test", 1);
 
     	//then
-        assertThat(cache.get("test"), equalTo(1));
+        assertThat(cache.get("test").get(), equalTo(1));
     }
     
     @Test
@@ -122,7 +123,7 @@ public class CacheTest {
         Cache cache = Mangoo.TEST.getInstance(Cache.class);
         
         //then
-        assertThat(cache.get("test", new CacheCallable()), equalTo(FROM_CALLABLE));
+        assertThat(cache.get("test", new CacheCallable()).get(), equalTo(FROM_CALLABLE));
     }
     
     private class CacheCallable implements Callable<String> {

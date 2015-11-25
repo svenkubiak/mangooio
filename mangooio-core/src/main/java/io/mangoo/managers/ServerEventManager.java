@@ -1,6 +1,7 @@
 package io.mangoo.managers;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -119,10 +120,7 @@ public class ServerEventManager {
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-
-        Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
-
-        return (uriConnections == null) ? new HashSet<>() : uriConnections;
+        return this.cache.get(PREFIX + uri).isPresent() ? (Set<ServerSentEventConnection>) this.cache.get(PREFIX + uri).get() : new HashSet<>();
     }
 
     /**
