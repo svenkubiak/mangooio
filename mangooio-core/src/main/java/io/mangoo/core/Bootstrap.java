@@ -103,19 +103,19 @@ public class Bootstrap {
 
     public void prepareLogger() {
         final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
-        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
+        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
+            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+        } else {
             try {
                 final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
                 final LoggerContext context = (LoggerContext) LogManager.getContext(false);
                 context.setConfigLocation(resource.toURI());
             } catch (final URISyntaxException e) {
-                e.printStackTrace();
+                e.printStackTrace(); //NOSONAR
             }
 
             LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
             LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
-        } else {
-            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
         }
     }
 
