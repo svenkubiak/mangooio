@@ -41,6 +41,7 @@ at home from the start
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
 * Support for Web Sockets
+* Support for Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
