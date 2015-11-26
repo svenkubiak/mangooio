@@ -1,4 +1,7 @@
-<#macro myLayout title="Layout example">
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<${symbol_pound}macro myLayout title="Layout example">
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,11 +16,11 @@
 	    <div class="row">
 	        <div class="twelve columns">
 	            <div class="error-template">
-	                <h1><h1><#nested/></h1></h1>
-	            </div>
+                    <h1><${symbol_pound}nested/></h1>
+                </div>
 	        </div>
 	    </div>
 	</div>
   </body>
 </html>
-</#macro>
+</${symbol_pound}macro>
