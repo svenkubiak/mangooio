@@ -10,4 +10,4 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- GET:    /     ->    Application.index
+- GET:    /     ->    ApplicationController.index
