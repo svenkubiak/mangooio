@@ -56,6 +56,7 @@
 									<exclude>junit:junit</exclude>
 									<exclude>com.yahoo.platform.yui:yuicompressor</exclude>
 									<exclude>rhino:js</exclude>
+									<exclude>com.google.code.findbugs:annotations</exclude>
 								</excludes>
 							</artifactSet>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
