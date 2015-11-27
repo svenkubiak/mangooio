@@ -1,31 +1,5 @@
 package io.mangoo.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.quartz.CronExpression;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.reflections.Reflections;
-import org.yaml.snakeyaml.Yaml;
-
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -33,7 +7,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-
 import io.mangoo.admin.MangooAdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -59,6 +32,31 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.quartz.CronExpression;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.reflections.Reflections;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Convenient methods for everything to start up a mangoo I/O application
@@ -101,6 +99,7 @@ public class Bootstrap {
         return this.mode;
     }
 
+    @SuppressWarnings("all")
     public void prepareLogger() {
         final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {

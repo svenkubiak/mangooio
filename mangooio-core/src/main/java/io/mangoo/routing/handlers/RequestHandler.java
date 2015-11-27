@@ -46,7 +46,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Main class that handles all controller requests
@@ -208,7 +214,6 @@ public class RequestHandler implements HttpHandler {
      *
      * @param annotations An array of @FilterWith annotated classes and methods
      * @param response
-     * @param exchange The Undertow HttpServerExchange
      * @return True if the request should continue after filter execution, false otherwise
      *
      * @throws NoSuchMethodException
@@ -238,7 +243,6 @@ public class RequestHandler implements HttpHandler {
      * is later send to the client
      *
      * @param exchange The Undertow HttpServerExchange
-     * @param response2
      * @return A response object
      *
      * @throws IllegalAccessException
