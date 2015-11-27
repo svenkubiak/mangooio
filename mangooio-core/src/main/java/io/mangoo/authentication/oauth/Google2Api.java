@@ -1,22 +1,17 @@
 package io.mangoo.authentication.oauth;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.exceptions.OAuthException;
 import org.scribe.extractors.AccessTokenExtractor;
-import org.scribe.model.OAuthConfig;
-import org.scribe.model.OAuthConstants;
-import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
-import org.scribe.model.Token;
-import org.scribe.model.Verb;
-import org.scribe.model.Verifier;
+import org.scribe.model.*;
 import org.scribe.oauth.OAuth20ServiceImpl;
 import org.scribe.oauth.OAuthService;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
+
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Google OAuth2.0
@@ -28,10 +23,12 @@ import org.scribe.utils.Preconditions;
 public class Google2Api extends DefaultApi20 {
     private static final String AUTHORIZE_URL = "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=%s&redirect_uri=%s";
     private static final String SCOPED_AUTHORIZE_URL = AUTHORIZE_URL + "&scope=%s";
+    private static final String ACCESS_TOKEN_ENDPOINT = "https://accounts.google.com/o/oauth2/token";
+    private static final Pattern PATTERN = Pattern.compile("\"access_token\" : \"([^&\"]+)\"");
 
     @Override
     public String getAccessTokenEndpoint() {
-        return "https://accounts.google.com/o/oauth2/token";
+        return ACCESS_TOKEN_ENDPOINT;
     }
 
     @Override
@@ -41,6 +38,8 @@ public class Google2Api extends DefaultApi20 {
 
     @Override
     public String getAuthorizationUrl(OAuthConfig config) {
+        Objects.requireNonNull(config, "config can not be null");
+
         if (config.hasScope()) {
             return String.format(SCOPED_AUTHORIZE_URL, config.getApiKey(),
                     OAuthEncoder.encode(config.getCallback()),
@@ -58,6 +57,8 @@ public class Google2Api extends DefaultApi20 {
 
     @Override
     public OAuthService createService(OAuthConfig config) {
+        Objects.requireNonNull(config, "config can not be null");
+
         return new GoogleOAuth2Service(this, config);
     }
 
@@ -66,7 +67,7 @@ public class Google2Api extends DefaultApi20 {
         public Token extract(String response) {
             Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
 
-            Matcher matcher = Pattern.compile("\"access_token\" : \"([^&\"]+)\"").matcher(response);
+            Matcher matcher = PATTERN.matcher(response);
             if (matcher.find()) {
                 String token = OAuthEncoder.decode(matcher.group(1));
                 return new Token(token, "", response);
