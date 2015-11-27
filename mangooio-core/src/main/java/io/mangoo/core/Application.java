@@ -1,9 +1,9 @@
 package io.mangoo.core;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Injector;
-
 import io.mangoo.enums.Mode;
+
+import java.util.Objects;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -92,7 +92,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Preconditions.checkNotNull(clazz, "Missing class instance for getInstance");
+        Objects.requireNonNull(clazz, "Missing class instance for getInstance");
 
         return injector.getInstance(clazz);
     }

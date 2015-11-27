@@ -1,19 +1,17 @@
 package io.mangoo.authentication;
 
-import java.time.LocalDateTime;
-
+import io.mangoo.enums.Default;
+import io.mangoo.models.OAuthUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.google.common.base.Preconditions;
-
-import io.mangoo.enums.Default;
-import io.mangoo.models.OAuthUser;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
- * Convinient class for handling authentication
+ * Convenient class for handling authentication
  *
  * @author svenkubiak
  *
@@ -97,7 +95,7 @@ public class Authentication {
      * @return The hashed password
      */
     public String getHashedPassword(String password) {
-        Preconditions.checkNotNull(password, "Password is required for getHashedPassword");
+        Objects.requireNonNull(password, "password is required for getHashedPassword");
 
         return BCrypt.hashpw(password, BCrypt.gensalt(Default.JBCRYPT_ROUNDS.toInt()));
     }
@@ -111,8 +109,8 @@ public class Authentication {
      * @return True if the new hashed password matches the hash, false otherwise
      */
     public boolean authenticate(String password, String hash) {
-        Preconditions.checkNotNull(password, "Password is required for authenticate");
-        Preconditions.checkNotNull(hash, "Hashed password is required for authenticate");
+        Objects.requireNonNull(password, "password is required for authenticate");
+        Objects.requireNonNull(hash, "Hashed password is required for authenticate");
 
         boolean authenticated = false;
         try {
@@ -138,7 +136,7 @@ public class Authentication {
      * @param remember If true, the user will stay logged in for (default) 2 weeks
      */
     public void login(String username, boolean remember) {
-        Preconditions.checkNotNull(username, "Username is required for login");
+        Objects.requireNonNull(username, "Username is required for login");
 
         if (StringUtils.isNotBlank(StringUtils.trimToNull(username))) {
             this.authenticatedUser = username;
@@ -172,7 +170,7 @@ public class Authentication {
      * @return True if the given user name is authenticates
      */
     public boolean isAuthenticated(String username) {
-        Preconditions.checkNotNull(username, "Username is required for isAuthenticated");
+        Objects.requireNonNull(username, "username is required for isAuthenticated");
 
         return username.equals(this.authenticatedUser);
     }

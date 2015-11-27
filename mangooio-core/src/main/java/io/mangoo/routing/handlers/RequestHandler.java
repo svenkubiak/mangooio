@@ -1,30 +1,8 @@
 package io.mangoo.routing.handlers;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.boon.json.JsonFactory;
-import org.boon.json.ObjectMapper;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.authentication.Authentication;
@@ -55,6 +33,20 @@ import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.boon.json.JsonFactory;
+import org.boon.json.ObjectMapper;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Main class that handles all controller requests
@@ -88,8 +80,8 @@ public class RequestHandler implements HttpHandler {
     private final boolean async;
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
-        Preconditions.checkNotNull(controllerClass, "controllerClass can not be null");
-        Preconditions.checkNotNull(controllerMethod, "controllerMethod can not be null");
+        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;

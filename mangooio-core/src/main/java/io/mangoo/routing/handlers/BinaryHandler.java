@@ -1,13 +1,13 @@
 package io.mangoo.routing.handlers;
 
-import com.google.common.base.Preconditions;
-
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
+
+import java.util.Objects;
 
 /**
  *
@@ -18,7 +18,7 @@ public class BinaryHandler implements HttpHandler {
     private final Response response;
 
     public BinaryHandler(Response response) {
-        Preconditions.checkNotNull(response, "response can not be null");
+        Objects.requireNonNull(response, "response can not be null");
 
         this.response = response;
     }

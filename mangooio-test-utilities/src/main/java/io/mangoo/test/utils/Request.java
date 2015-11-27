@@ -1,8 +1,8 @@
 package io.mangoo.test.utils;
 
-import com.google.common.base.Preconditions;
-
 import io.undertow.util.Methods;
+
+import java.util.Objects;
 
 /**
  * 
@@ -22,7 +22,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response get(String uri) {
-        Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, PRECONTIION_ERROR);
         
         return new Response(uri, Methods.GET);
     }
@@ -34,7 +34,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response post(String uri) {
-        Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, PRECONTIION_ERROR);
         
         return new Response(uri, Methods.POST);
     }
@@ -46,7 +46,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response put(String uri) {
-        Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, PRECONTIION_ERROR);
         
         return new Response(uri, Methods.PUT);
     }
@@ -58,7 +58,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response delete(String uri) {
-        Preconditions.checkNotNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, PRECONTIION_ERROR);
         
         return new Response(uri, Methods.DELETE);
     }

@@ -2,9 +2,8 @@ package io.mangoo.routing;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-
-import com.google.common.base.Preconditions;
 
 /**
  *
@@ -23,7 +22,7 @@ public final class Router {
      * @param route The route to add
      */
     public static void addRoute(Route route) {
-        Preconditions.checkNotNull(route, "route can note be null");
+        Objects.requireNonNull(route, "route can note be null");
 
         routes.add(route);
     }

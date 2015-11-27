@@ -1,18 +1,16 @@
 package io.mangoo.managers;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import io.mangoo.cache.Cache;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -33,7 +31,7 @@ public class ServerEventManager {
      * @param connection The connection to put
      */
     public void addConnection(ServerSentEventConnection connection) {
-        Preconditions.checkNotNull(connection, "connection can not be null");
+        Objects.requireNonNull(connection, "connection can not be null");
 
         String uri = connection.getRequestURI();
         if (StringUtils.isNotBlank(connection.getQueryString())) {
@@ -57,7 +55,7 @@ public class ServerEventManager {
      * @param data The event data
      */
     public void send(String uri, String data) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -78,8 +76,8 @@ public class ServerEventManager {
      * @param eventCallback A callback that is notified on Success or failure
      */
     public void send(String uri, String data, EventCallback eventCallback) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
-        Preconditions.checkNotNull(eventCallback, "eventCallback can not be null");
+        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(eventCallback, "eventCallback can not be null");
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -97,7 +95,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -118,7 +116,7 @@ public class ServerEventManager {
      * @return A Set of connections for the URI resource
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
 
         Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
 
@@ -132,8 +130,8 @@ public class ServerEventManager {
      * @param uriConnections The connections for the URI resource
      */
     public void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
-        Preconditions.checkNotNull(uriConnections, "uriConnections can not be null");
+        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uriConnections, "uriConnections can not be null");
 
         this.cache.put(PREFIX + uri, uriConnections);
     }
@@ -144,7 +142,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void removeConnections(String uri) {
-        Preconditions.checkNotNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
 
         this.cache.remove(PREFIX + uri);
     }

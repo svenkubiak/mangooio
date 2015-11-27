@@ -1,16 +1,15 @@
 package io.mangoo.routing.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import io.mangoo.models.Metrics;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.ResponseCommitListener;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Listener that is invoked for counting metrics of HTTP response codes
@@ -25,7 +24,7 @@ public class MetricsListener implements ResponseCommitListener {
 
     @Inject
     public MetricsListener(Metrics metrics) {
-        Preconditions.checkNotNull(metrics, "metrics can not be null");
+        Objects.requireNonNull(metrics, "metrics can not be null");
 
         this.metrics = metrics;
     }

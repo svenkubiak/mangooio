@@ -1,18 +1,16 @@
 package io.mangoo.utils;
 
+import com.google.common.base.Charsets;
+import io.mangoo.models.Source;
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
-
-import io.mangoo.models.Source;
+import java.util.Objects;
 
 /**
  *
@@ -31,7 +29,7 @@ public final class ThrowableUtils {
      * @return Source code filename
      */
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
-        Preconditions.checkNotNull(stackTraceElement, "stackTraceElement can not be null");
+        Objects.requireNonNull(stackTraceElement, "stackTraceElement can not be null");
 
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
@@ -55,7 +53,7 @@ public final class ThrowableUtils {
      */
     @SuppressWarnings("all")
     public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
-        Preconditions.checkNotNull("sourcePath", "sourcePath can not be null");
+        Objects.requireNonNull("sourcePath", "sourcePath can not be null");
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))

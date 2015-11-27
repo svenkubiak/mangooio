@@ -42,7 +42,7 @@ public class I18nMethod implements TemplateMethodModelEx {
                 if (object instanceof SimpleScalar) {
                     strings.add(((SimpleScalar) object).getAsString());
                 } else if (object instanceof SimpleNumber) {
-                    strings.add(((SimpleNumber) object).toString());
+                    strings.add(object.toString());
                 }
             }
 

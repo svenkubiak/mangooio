@@ -1,13 +1,13 @@
 package io.mangoo.test.utils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.ContentType;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.test.Mangoo;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,11 +17,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -31,16 +27,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.base.Preconditions;
-
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.ContentType;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.test.Mangoo;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  *
@@ -90,7 +79,7 @@ public class Response {
      * @return Response 
      */
     public Response withContentType(ContentType contentType) {
-        Preconditions.checkNotNull(contentType, "contentType can not be null");
+        Objects.requireNonNull(contentType, "contentType can not be null");
         
         this.responseContentType = contentType;
         return this;
@@ -114,7 +103,7 @@ public class Response {
      * @return Response
      */
     public Response withPostParameters(List<NameValuePair> postParameter) {
-        Preconditions.checkNotNull(postParameter, "postParameter can not be null");
+        Objects.requireNonNull(postParameter, "postParameter can not be null");
         
         this.postParameter = Collections.unmodifiableList(postParameter);
         return this;
@@ -138,7 +127,7 @@ public class Response {
      * @return Response
      */
     public Response withUri(String uri) {
-        Preconditions.checkNotNull(uri, "uri can not be null");
+        Objects.requireNonNull(uri, "uri can not be null");
         
         this.responseUri = uri;
         return this;
@@ -151,7 +140,7 @@ public class Response {
      * @return Response
      */
     public Response withMethod(HttpString method) {
-        Preconditions.checkNotNull(method, "method can not be null");
+        Objects.requireNonNull(method, "method can not be null");
         
         this.responseMethod = method;
         return this;
@@ -165,8 +154,8 @@ public class Response {
      * @return Response
      */
     public Response withHeader(String name, String value) {
-        Preconditions.checkNotNull(name, "name can not be null");
-        Preconditions.checkNotNull(value, "value can not be null");
+        Objects.requireNonNull(name, "name can not be null");
+        Objects.requireNonNull(value, "value can not be null");
         
         this.headers.put(name, value);
         return this;
@@ -180,8 +169,8 @@ public class Response {
      * @return Response
      */
     public Response withBasicauthentication(String username, String password) {
-        Preconditions.checkNotNull(username, "username can not be null");
-        Preconditions.checkNotNull(password, "password can not be null");
+        Objects.requireNonNull(username, "username can not be null");
+        Objects.requireNonNull(password, "password can not be null");
         
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));

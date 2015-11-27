@@ -1,5 +1,11 @@
 package io.mangoo.crypto;
 
+import com.google.common.base.Charsets;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.Key;
+import io.mangoo.utils.ConfigUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,14 +18,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.encoders.Base64;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.Key;
-import io.mangoo.utils.ConfigUtils;
+import java.util.Objects;
 
 /**
  * Convenient class for encryption and decryption
@@ -40,7 +39,7 @@ public class Crypto {
 
     @Inject
     public Crypto(Config config) {
-        Preconditions.checkNotNull(config, "config can not be null");
+        Objects.requireNonNull(config, "config can not be null");
 
         this.config = config;
     }
@@ -52,7 +51,7 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
-        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
 
         return decrypt(encrytedText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
     }
@@ -65,8 +64,8 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
-        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
-        Preconditions.checkNotNull(key, "key can not be null");
+        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
         this.cipher.init(false, this.cipherParameters);
@@ -84,7 +83,7 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        Preconditions.checkNotNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(plainText, "plainText can not be null");
 
         return encrypt(plainText, getSizedKey(ConfigUtils.getApplicationSecret()));
     }
@@ -100,8 +99,8 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
-        Preconditions.checkNotNull(plainText, "plainText can not be null");
-        Preconditions.checkNotNull(key, "key can not be null");
+        Objects.requireNonNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
         this.cipher.init(true, this.cipherParameters);

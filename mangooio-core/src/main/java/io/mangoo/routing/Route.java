@@ -1,9 +1,9 @@
 package io.mangoo.routing;
 
-import com.google.common.base.Preconditions;
-
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
+
+import java.util.Objects;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Route {
     private boolean blocking;
 
     public Route(RouteType routeType) {
-        Preconditions.checkNotNull(routeType, "routeType can not be null");
+        Objects.requireNonNull(routeType, "routeType can not be null");
 
         this.routeType = routeType;
     }

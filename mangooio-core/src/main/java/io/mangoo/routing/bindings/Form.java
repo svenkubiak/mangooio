@@ -1,19 +1,12 @@
 package io.mangoo.routing.bindings;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import com.google.inject.Inject;
+import io.mangoo.interfaces.MangooValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-
-import io.mangoo.interfaces.MangooValidator;
+import java.io.File;
+import java.util.*;
 
 /**
  *
@@ -29,7 +22,7 @@ public class Form implements MangooValidator {
 
     @Inject
     public Form (Validator validator) {
-        Preconditions.checkNotNull(validator, "Validator can not be null");
+        Objects.requireNonNull(validator, "Validator can not be null");
 
         this.validator = validator;
     }
@@ -51,7 +44,7 @@ public class Form implements MangooValidator {
      * @return The value of the form or null if not present
      */
     public String get(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         return this.values.get(key);
     }
@@ -63,7 +56,7 @@ public class Form implements MangooValidator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -85,7 +78,7 @@ public class Form implements MangooValidator {
      * @return Optional of Boolean
      */
     public Optional<Boolean> getBoolean(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -110,7 +103,7 @@ public class Form implements MangooValidator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
@@ -127,7 +120,7 @@ public class Form implements MangooValidator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
@@ -144,7 +137,7 @@ public class Form implements MangooValidator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Preconditions.checkNotNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, KEY_ERROR);
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {

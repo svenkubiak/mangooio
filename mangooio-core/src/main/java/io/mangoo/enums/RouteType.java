@@ -11,5 +11,5 @@ public enum RouteType {
     WEBSOCKET,
     SERVER_SENT_EVENT,
     RESOURCE_FILE,
-    RESOURCE_PATH;
+    RESOURCE_PATH
 }

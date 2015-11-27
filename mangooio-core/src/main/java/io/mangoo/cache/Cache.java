@@ -1,23 +1,21 @@
 package io.mangoo.cache;
 
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Google Guava based cache implementation
@@ -34,7 +32,7 @@ public class Cache {
 
     @Inject
     public Cache(Config config) {
-        Preconditions.checkNotNull(config, "config can not be null");
+        Objects.requireNonNull(config, "config can not be null");
 
         final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
                 .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
@@ -54,8 +52,8 @@ public class Cache {
      * @param value The value to store
      */
     public void put(String key, Object value) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
-        Preconditions.checkNotNull(value, VALUE_REQUIRED);
+        Objects.requireNonNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(value, VALUE_REQUIRED);
 
         this.guavaCache.put(key, value);
     }
@@ -66,7 +64,7 @@ public class Cache {
      * @param key The key for the cached value
      */
     public void remove(String key) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(key, KEY_REQUIRED);
 
         this.guavaCache.invalidate(key);
     }
@@ -98,7 +96,7 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(key, KEY_REQUIRED);
 
         final Object object = this.guavaCache.getIfPresent(key);
         return object == null ? null : (T) object;
@@ -117,8 +115,8 @@ public class Cache {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Callable<? extends Object> callable) {
-        Preconditions.checkNotNull(key, KEY_REQUIRED);
-        Preconditions.checkNotNull(callable,  "callable can not be null");
+        Objects.requireNonNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(callable,  "callable can not be null");
 
         Object object = this.guavaCache.getIfPresent(key);
         if (object == null) {
@@ -138,7 +136,7 @@ public class Cache {
      * @param map The map to add
      */
     public void putAll(Map<String, Object> map) {
-        Preconditions.checkNotNull(map, "map can not be null");
+        Objects.requireNonNull(map, "map can not be null");
 
         this.guavaCache.putAll(map);
     }
