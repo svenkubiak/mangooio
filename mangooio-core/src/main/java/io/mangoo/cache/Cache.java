@@ -1,7 +1,6 @@
 package io.mangoo.cache;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +53,7 @@ public class Cache {
      * @param key The key for the cached value
      * @param value The value to store
      */
-    public void put(String key, Object value) {
+    public void add(String key, Object value) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
 
@@ -93,14 +92,16 @@ public class Cache {
      * a given class
      *
      * @param key The key for the cached value
+     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A converted cache class value
      */
-    public Optional<Object> get(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
 
         final Object object = this.guavaCache.getIfPresent(key);
-        return object == null ? Optional.empty() : Optional.of(object);
+        return object == null ? null : (T) object;
     }
 
     /**
@@ -110,10 +111,12 @@ public class Cache {
      *
      * @param key The key for the cached value
      * @param callable The callable to invoke when the value is not found
+     * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return A converted cache class value
      */
-    public Optional<Object> get(String key, Callable<? extends Object> callable) {
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Callable<? extends Object> callable) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(callable,  "callable can not be null");
 
@@ -126,13 +129,13 @@ public class Cache {
             }
         }
 
-        return object == null ? Optional.empty() : Optional.of(object);
+        return object == null ? null : (T) object;
     }
 
     /**
      * Adds a complete map of objects to the cache
      *
-     * @param map The map to put
+     * @param map The map to add
      */
     public void putAll(Map<String, Object> map) {
         Preconditions.checkNotNull(map, "map can not be null");
