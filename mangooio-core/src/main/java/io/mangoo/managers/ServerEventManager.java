@@ -1,16 +1,18 @@
 package io.mangoo.managers;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.mangoo.cache.Cache;
-import io.undertow.server.handlers.sse.ServerSentEventConnection;
-import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import io.mangoo.cache.Cache;
+import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
 /**
  *
@@ -117,7 +119,10 @@ public class ServerEventManager {
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Preconditions.checkNotNull(uri, URI_ERROR);
-        return this.cache.get(PREFIX + uri).isPresent() ? (Set<ServerSentEventConnection>) this.cache.get(PREFIX + uri).get() : new HashSet<>();
+
+        Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
+
+        return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }
 
     /**

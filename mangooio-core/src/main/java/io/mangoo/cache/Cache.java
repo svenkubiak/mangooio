@@ -53,7 +53,7 @@ public class Cache {
      * @param key The key for the cached value
      * @param value The value to store
      */
-    public void add(String key, Object value) {
+    public void put(String key, Object value) {
         Preconditions.checkNotNull(key, KEY_REQUIRED);
         Preconditions.checkNotNull(value, VALUE_REQUIRED);
 
