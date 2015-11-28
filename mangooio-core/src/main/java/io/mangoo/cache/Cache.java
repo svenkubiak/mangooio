@@ -28,8 +28,8 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
-    private static final String VALUE_REQUIRED = "A valid value is required";
-    private static final String KEY_REQUIRED = "A valid key is required";
+    private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
+    private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
     private final com.google.common.cache.Cache<String, Object> guavaCache;
 
     @Inject
