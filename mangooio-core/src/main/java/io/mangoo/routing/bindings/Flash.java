@@ -65,12 +65,13 @@ public class Flash {
     }
 
     /**
-     * Adds a value with a specific key to the flash
+     * Adds a value with a specific key to the flash overwriting an
+     * exisiting value
      *
      * @param key The key
      * @param value The value
      */
-    public void add(String key, String value) {
+    public void put(String key, String value) {
         if (validCharacters(key) && validCharacters(value)) {
             this.values.put(key, value);
         }
