@@ -1925,12 +1925,57 @@ Controller in the Routes class with an appropriate method.
 
 [source,java]
 -----------------------------------------------------------------------------
-Router.mapWebSocket().toUrl("/websocket").onClass(WebSocketController.class);
+- WSS:    /websocket    -> WebSocketController
 -----------------------------------------------------------------------------
 
 Now you can start creating an application to access your
 WebScoketController at the URL "/websocket". Of course, you can have multiple
 WebSocket controllers in your application, each mapped to a specific URL.
+
+As WebSockets are a bi-directional protocol, and the above descripted how to deal with
+incoming event, you can also sent outgoing events by using the WebSocketManager.
+
+[source,java]
+-----------------------------------------------------------------------------
+    @Inject
+    WebSocketManager webSocketManager;
+
+    public void sentEvent() {
+        webSocketManager.getChannels("/websocket").forEach(channel -> {
+        ...
+        });
+    }
+-----------------------------------------------------------------------------
+
+The above example enables you access to all clients which have an open
+WebSocket channel to the URL /websocket.
+
+== Using Server-Sent Events
+
+To use Server-Sent Event on a specific request you have to map a Server-Sent
+Event in your routes.yaml
+
+[source,java]
+-----------------------------------------------------------------------------
+- SSE:    /serversentevent
+-----------------------------------------------------------------------------
+
+To send outgoing Server-Sent Event data, you can use the ServerEventManager.
+
+[source,java]
+-----------------------------------------------------------------------------
+    @Inject
+    ServerEventManager serverEventManager;
+
+    public void sentEvent() {
+        serverEventManager.getConnections("/serversentevent").forEach(connection -> {
+            connection.send("foo");
+        });
+    }
+-----------------------------------------------------------------------------
+
+The above example will send the data to all clients which have an open Servet-Sent Event
+connection to the URL /serversentevent.
 
 == i18n Internationalization
 
@@ -2020,8 +2065,8 @@ ResourcePath)
 
 [source,java]
 ----------------------------------------------
-Router.mapResourceFile().toUrl("/robots.txt");
-Router.mapResourcePath().toUrl("/assets/");
+- FILE:    /robots.txt
+- PATH:    /assets/
 ----------------------------------------------
 
 The above example maps a resource file located in
