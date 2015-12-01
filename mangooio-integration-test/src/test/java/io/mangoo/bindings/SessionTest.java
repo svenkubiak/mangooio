@@ -20,41 +20,41 @@ public class SessionTest {
     private Session getNewSession() {
         return new Session(null, null, null);
     }
-    
+
     @Test
     public void testNoContent() {
         //given
-        Session session = getNewSession();
-        
+        final Session session = getNewSession();
+
         //then
-        assertThat(session.hasContent(), equalTo(false));        
+        assertThat(session.hasContent(), equalTo(false));
     }
-    
+
     @Test
     public void testContent() {
         //given
-        Session session = getNewSession();
+        final Session session = getNewSession();
 
         //when
-        session.add(FOO, BAR);
+        session.put(FOO, BAR);
 
         //then
-        assertThat(session.hasContent(), equalTo(true));    
-        assertThat(session.get(FOO), equalTo(BAR));   
+        assertThat(session.hasContent(), equalTo(true));
+        assertThat(session.get(FOO), equalTo(BAR));
         assertThat(session.hasChanges(), equalTo(true));
     }
 
     @Test
     public void testRemove() {
         //given
-        Session session = new Session(null, null, null);
-        
+        final Session session = new Session(null, null, null);
+
         //when
-        session.add(FOO, BAR);
+        session.put(FOO, BAR);
         session.remove(FOO);
 
         //then
-        assertThat(session.hasContent(), equalTo(false));    
+        assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
         assertThat(session.hasChanges(), equalTo(true));
     }
@@ -62,34 +62,34 @@ public class SessionTest {
     @Test
     public void testClear() {
         //given
-        Session session = new Session(null, null, null);
-        
+        final Session session = new Session(null, null, null);
+
         //when
-        session.add(FOO, BAR);
+        session.put(FOO, BAR);
         session.clear();
-        
+
         //then
-        assertThat(session.hasContent(), equalTo(false));    
+        assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
         assertThat(session.hasChanges(), equalTo(true));
     }
-    
+
     @Test
     public void testInvalidCharacters() {
         //given
-        Session session = getNewSession();
-        
+        final Session session = getNewSession();
+
         //when
-        session.add("|", FOO);
-        session.add(":", FOO);
-        session.add("&", FOO);
-        session.add(" ", FOO);
-        session.add(FOO, "|");
-        session.add(FOO, ":");
-        session.add(FOO, "&");
-        session.add(FOO, " ");
-        
+        session.put("|", FOO);
+        session.put(":", FOO);
+        session.put("&", FOO);
+        session.put(" ", FOO);
+        session.put(FOO, "|");
+        session.put(FOO, ":");
+        session.put(FOO, "&");
+        session.put(FOO, " ");
+
         //then
-        assertThat(session.hasContent(), equalTo(false)); 
+        assertThat(session.hasContent(), equalTo(false));
     }
 }

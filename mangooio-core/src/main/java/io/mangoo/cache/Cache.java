@@ -1,21 +1,23 @@
 package io.mangoo.cache;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheStats;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
 
 /**
  * Google Guava based cache implementation
@@ -26,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class Cache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
-    private static final String VALUE_REQUIRED = "A valid value is required";
-    private static final String KEY_REQUIRED = "A valid key is required";
+    private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
+    private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
     private final com.google.common.cache.Cache<String, Object> guavaCache;
 
     @Inject
@@ -46,7 +48,7 @@ public class Cache {
     }
 
     /**
-     * Adds a value to cache with a given key
+     * Adds a value to cache with a given key overwriting and exisiting value
      *
      * @param key The key for the cached value
      * @param value The value to store

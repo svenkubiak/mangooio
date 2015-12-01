@@ -11,7 +11,7 @@ import org.junit.Test;
 import io.mangoo.routing.bindings.Flash;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -25,8 +25,8 @@ public class FlashTest {
     @Test
     public void testSuccessMessage() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //when
         flash.setSuccess(SUCCESS_MESSAGE);
 
@@ -37,7 +37,7 @@ public class FlashTest {
     @Test
     public void testWarningMessage() {
         //given
-        Flash flash = new Flash();
+        final Flash flash = new Flash();
 
         //when
         flash.setWarning(WARNING_MESSAGE);
@@ -49,8 +49,8 @@ public class FlashTest {
     @Test
     public void testErrorMessage() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //when
         flash.setError(ERROR_MESSAGE);
 
@@ -61,70 +61,70 @@ public class FlashTest {
     @Test
     public void testNoContent() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //then
         assertThat(flash.hasContent(), equalTo(false));
     }
-    
+
     @Test
     public void testContent() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //when
-        flash.add(MYMESSAGE, CUSTOM_MESSAGE);
+        flash.put(MYMESSAGE, CUSTOM_MESSAGE);
 
         //then
         assertThat(flash.hasContent(), equalTo(true));
         assertThat(flash.get(MYMESSAGE), equalToIgnoringWhiteSpace(CUSTOM_MESSAGE));
     }
-    
+
     @Test
     public void testInvalidCharacters() {
         //given
-        Flash flash = new Flash();
+        final Flash flash = new Flash();
 
         //when
-        flash.add("|", "foo");
-        flash.add(":", "foo");
-        flash.add("&", "foo");
-        flash.add(" ", "foo");
-        flash.add("foo", "|");
-        flash.add("foo", ":");
-        flash.add("foo", "&");
-        flash.add("foo", " ");
-        
+        flash.put("|", "foo");
+        flash.put(":", "foo");
+        flash.put("&", "foo");
+        flash.put(" ", "foo");
+        flash.put("foo", "|");
+        flash.put("foo", ":");
+        flash.put("foo", "&");
+        flash.put("foo", " ");
+
         //then
         assertThat(flash.hasContent(), equalTo(false));
     }
-    
+
     @Test
     public void testNoDiscard() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //then
         assertThat(flash.isDiscard(), equalTo(false));
     }
-    
+
     @Test
     public void testValues() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //then
         assertThat(flash.getValues(), not(nullValue()));
     }
-    
+
     @Test
     public void testDiscard() {
         //given
-        Flash flash = new Flash();
-        
+        final Flash flash = new Flash();
+
         //when
         flash.setDiscard(true);
-        
+
         //then
         assertThat(flash.isDiscard(), equalTo(true));
     }

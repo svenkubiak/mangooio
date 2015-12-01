@@ -66,12 +66,12 @@ public class Session {
     }
 
     /**
-     * Adds a value to the session.
+     * Adds a value to the session, overwriting an existing value
      *
      * @param key The key to store the value
      * @param value The value to store
      */
-    public void add(String key, String value) {
+    public void put(String key, String value) {
         if (blacklist.contains(key) || blacklist.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
