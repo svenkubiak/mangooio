@@ -8,7 +8,7 @@
 	<artifactId>mangooio-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<properties>
-		<maven.version>3.3.3</maven.version>
+		<maven.version>3.3.9</maven.version>
 	</properties>
 	<dependencies>
 		<dependency>

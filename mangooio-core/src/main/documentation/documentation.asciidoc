@@ -33,12 +33,12 @@ implementation, a lot of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
-* Intuitive convention-over-configuration, making a java developer feel
-at home from the start
+* Intuitive convention-over-configuration
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
 * Support for Web Sockets
+* Support for Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
@@ -58,9 +58,10 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * Maven - Dependency management, built-system, packaging
 * Undertow - Web Server
-* Google Guice - Dependency injection and caching
+* Google Guice - Dependency injection
 * Log4j 2 - Logging
 * Freemarker - Template engine
+* Google Guava - Caching
 * Quartz Scheduler - Scheduling
 * Boon JSON - JSON parser
 * And many more ...
@@ -218,12 +219,12 @@ this is the basic structure of a the application
         │   ├── conf
         │   │   ├── Lifecycle.java
         │   │   ├── Module.java
-        │   │   └── Routes.java
         │   └── controllers
         │       └── ApplicationController.java
         └── resources
-            ├── application.yaml
             ├── files
+            ├── application.yaml
+            ├── routes.yaml
             ├── log4j2.xml
             ├── templates
             │   ├── ApplicationController
@@ -244,7 +245,6 @@ following classes
 --------------
 Lifecycle.java
 Module.java
-Routes.java
 --------------
 
 The Lifecycle class is used for hooking into the application startup process.
@@ -260,6 +260,7 @@ following files and folders
 /translations
 application.yaml
 log4j2.xml
+routes.yaml
 ----------------
 
 The /files folder contains all static files (e.g. robots.txt or JS/CSS
@@ -346,6 +347,7 @@ mangoo I/O ships with an utility class for easy access of some configuration val
 [source,java]
 ----------------
 ConfigUtils.getApplicationName();
+ConfigUtils.getApplicationPort();
 ----------------
 
 === Modes
@@ -398,8 +400,8 @@ dev:
 ---------------------------------
 
 If no mode specific configuration is available, mangoo I/O will look up
-the default value. If mangoo I/O can find a non-prefixed value it
-will overwrite the default value.
+the default configuration. If mangoo I/O can find a environment specific value
+(e.g. dev.application.port) value it will overwrite the default value (e.g. default.application.port).
 
 By convention all default values are for the prod mode and will be overwritten, when
 a mode specific value is found. This keeps the configuration values to a minimum.
@@ -469,13 +471,12 @@ public class Module extends AbstractModule {
 One of the main pieces of a mangoo I/O application is the mapping of
 requests URLs to controllers classes and their methods. Whether you are rendering a
 template, sending JSON or just sending a HTTP OK, every request has to
-be mapped. This mapping is done in the Routes.java class, which you'll
-find in the /conf package of your application. Request mappings can be done
-in a fluent way by using the static Router class.
+be mapped. This mapping is done in the route.yaml file, which you'll
+find in the /src/main/resources folder of your application. Here is an
+example of how a routing might look like.
 
-[source,java]
 -------------------------------------------------------------------------------------------------
-Router.mapRequest(Methods.GET).toUrl("/").onClassAndMethod(ApplicationController.class, "index");
+- GET:    /    ->    ApplicationController.index
 -------------------------------------------------------------------------------------------------
 
 This example maps a GET request to "/" to the index
@@ -483,8 +484,70 @@ method in the ApplicationController class. Thus, when you open your
 browser and open the "/" URL the index method in the
 ApplicationController class will be called.
 
-NOTE:
-The Routes class has to implement the MangooRoutes interface to work properly.
+A route definition always starts with the request method, followed by the URL an "->" and the
+controller class with its corresponding method.
+
+You can use the following request methods to defined your mappings
+
+-------------------------------------------------------------------------------------------------
+- GET:    ...
+- POST:   ...
+- PUT:    ...
+- HEAD:   ...
+- DELETE: ...
+-------------------------------------------------------------------------------------------------
+
+The underlying Undertow server handles all request by using non-blocking I/O. However, there might
+be situations where you need a long running request. To allow blocking in a request, simply at the
+@blocking annotation to your request mapping.
+
+-------------------------------------------------------------------------------------------------
+- GET:    /    ->    ApplicationController.index    @blocking
+-------------------------------------------------------------------------------------------------
+
+Please note, that the @blocking annotation is only available for the above mentioned request methods.
+
+=== Serving static files
+
+If you want to serve static files (e.g. assets) you can map those files from your routes.yaml
+accordingly. You can map ether a specific file or a complete folder and all its sub-content.
+
+-------------------------------------------------------------------------------------------------
+- FILE:    /robots.txt
+- PATH:    /assets/
+-------------------------------------------------------------------------------------------------
+
+The file or path mapping is bound to the /files folder which you'll find in the src/main/resoureces
+folder in your application. The above mappings would server the files accordingly.
+
+-------------------------------------------------------------------------------------------------
+/src/main/resources/files/robots.txt
+/src/main/resources/files/assets/
+-------------------------------------------------------------------------------------------------
+
+=== Server-Sent Events and WebSockets
+
+Mappings for Server-Sent Events and WebSockets are also defined in the routes.yaml. As the
+Server-Sent Event is a uni-directional protocol, it does not have a controller it is mapped to.
+
+-------------------------------------------------------------------------------------------------
+- SSE:    /serversentevent
+- WSS:    /websocket          -> WebSocketController
+-------------------------------------------------------------------------------------------------
+
+A WebSocket controller ships with pre-defined controller methods, thus the method mapping is absolet.
+
+There migh be situation where your Server-Sent Events and/or WebSockets are only available for authenticated
+users. If this is the case, you can simply add the @authentication annotation to your mappings.
+
+-------------------------------------------------------------------------------------------------
+- SSE:    /serversentevent                             @authentication
+- WSS:    /websocket          -> WebSocketController   @authentication
+-------------------------------------------------------------------------------------------------
+
+This will require an authentication cookie in the request to the Server-Sent Event or WebSocket, whic is
+based on the build-in authentication mechanism. If the request does not have such a cookie, the
+Server-Sent Event or WebSocket connection will be rejected.
 
 == Controllers
 
@@ -517,7 +580,7 @@ imagine you have the following mapping in your Routes class.
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------
-Router.mapRequest(Methods.GET).toUrl("/user/{id}").onClassAndMethod(ApplicationController.class, "index");
+- GET:    /user/{id}    ->    ApplicationController.index
 ----------------------------------------------------------------------------------------------------------
 
 Note the {id} in the URL, that defines that this part of the URL is a
@@ -1078,7 +1141,7 @@ custom Authentication.
 === OAuth
 
 mangoo I/O supports authentication with OAuth for https://twitter.com[Twitter], https://google.com[Google] and https://facebook.com[Facebook]
-in a fluent. You may know this feature as "Sign in with ...". The OAuth feature
+in a fluent way. You may know this feature as "Sign in with ...". The OAuth feature
 integrates smoothly in the previously mentioned Authentication class.
 
 ==== Preconditions
@@ -2027,56 +2090,12 @@ this dependency set to "test" in your maven configuration.
 </dependency>
 --------------------------------------------------------
 
-There are two ways of executing unit tests with mangoo I/O. Simple unit
-tests which start the framework, execute the unit test and stop
-framework again and a TestSuite which starts the framework once, executes all
-tests and stops the framework after all tests are finished. Both ways
-have there advantages and disadvantages. When using simple unit tests
-the tests can be executed separately, a TestSuite will always run all
-tests. When using a TestSuite however, the framework needs to be started
-only once needing less time to execute all tests.
+=== Using the TestSuite
 
-=== Simple unit testing
-
-As mangoo I/O is a web framework, the main focus of testing an
-application relies on testing requests and responses as well as frontend
-testing. For request and response tests, mangoo I/O offers the
-MangooRequest class with has a fluent API for executing HTTP requests.
-Here is an example for a unit test.
-
-[source,java]
-----------------------------------------------------------------------------
-package mangoo.controllers;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import io.undertow.util.StatusCodes;
-import io.mangoo.testing.MangooRequest;
-import io.mangoo.testing.MangooResponse;
-
-import org.junit.Test;
-
-public class ApplicationControllerTest extends MangooUnit {
-
-    @Test
-    public void indexTest() {
-        MangooResponse response = MangooRequest.get("/").execute();
-
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-    }
-----------------------------------------------------------------------------
-
-Please note, that you have to extend MangooUnit if you are not using the TestSuite.
-Otherwise the framework will not start before each unit test and your tests will fail.
-
-=== Testing with a TestSuite
-
-Using a TestSuite is mostly suitable for situation where you want to
-startup for e.g. a database or other processes only once and execute
-your tests on that instance. For using a TestSuite you need an
-entry-point for the execution which extends the MangooRunner interface.
+manoo I/O uses a TestSuite for all unit testing. This concept allows you
+to start the framework once, execute all unit test and shut the framework
+down afterwards. For using a TestSuite you need an entry-point for the
+execution which extends the MangooRunner interface.
 
 [source,java]
 ---------------------------------------------
@@ -2089,15 +2108,17 @@ public class TestSuite extends MangooRunner {
 ---------------------------------------------
 
 This just needs to be an empty class for telling maven to use this Suite
-when tests are executed. Additionally Add the following plugin to your pom.xml to
-make Maven aware of your TestSuite class.
+when tests are executed. You can, of course, use this class to setup your unit
+tests, like starting a database, etc.
+
+Add the following plugin to your pom.xml to make Maven aware of your TestSuite class.
 
 [source,maven]
 --------------------------------------------------
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
-    <version>2.18.1</version>
+    <version>x.x.x</version>
     <configuration>
         <includes>
             <include>**/*TestSuite.java</include>
@@ -2107,13 +2128,7 @@ make Maven aware of your TestSuite class.
 --------------------------------------------------
 
 By convention, the TestSuite will execute all tests that ends with
-"*Test" in their class name. As for the unit tests, you don't have to
-extend or implement anything additional. If you want to execute
-FluentLenium tests in a TestSuite you have to use the native support for FluentLenium in JUnit
-as the TestSuite does not wrap around FluentLenium in comparison to
-MangooUnit for simple unit tests.
-
-See the https://github.com/FluentLenium/FluentLeniuhttps://github.com/FluentLenium/FluentLenium[FluentLenium documentation] on how to use FluentLenium standalone.
+"*Test" in their class name.
 
 === Frontend testing
 
@@ -2141,6 +2156,80 @@ public class FluentTest extends MangooFluent {
     }
 }
 ------------------------------------------------------------------
+
+=== Backend testing
+
+mangoo I/O provides convinent classes to support unit testing your application.
+
+Here is an example of how a unit test with the test utilities might look like.
+
+[source, java]
+------------------------------------------------------------------
+    ...
+    import io.mangoo.test.utils.Request;
+    import io.mangoo.test.utils.Response;
+    ...
+
+    @Test
+    public void testIndex() {
+        //given
+        Response response = Request.get("/").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+------------------------------------------------------------------
+
+The most common use case is probably a request-response test with
+your application. Therefore, mangoo I/O provides your with a test
+utility for Request and Response. You can add authentication, headers, etc.
+to the request. Check the fluent API of the Request object for this.
+
+There may be situation where you need to pass the request information
+along to the request. For this scenarios mangoo I/O provides you with
+the Browser class.
+
+[source, java]
+------------------------------------------------------------------
+Browser browser = Browser.open();
+------------------------------------------------------------------
+
+The browser class enables you to pass to keep the request information
+on the following requests.
+
+Here is an example on how this might look like.
+
+[source, java]
+------------------------------------------------------------------
+        ...
+        import io.mangoo.test.utils.Browser;
+        import io.mangoo.test.utils.Request;
+        import io.mangoo.test.utils.Response;
+        ...
+
+        //given
+        Browser browser = Browser.open();
+
+        //when
+        Response response = browser.withUri("/dologin")
+                .withMethod(Methods.POST)
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+
+        //when
+        response = browser.withUri("/authenticationrequired")
+                .withDisableRedirects(true)
+                .withMethod(Methods.GET)
+                .execute();
+------------------------------------------------------------------
+
+The information from the first request, like cookies, etc. will be passed to
+the following request, enabling you a browser-like testing of your application.
 
 == Deployment
 
