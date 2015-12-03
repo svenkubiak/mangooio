@@ -1,8 +1,6 @@
-mangoo I/O Documentation
+mangoo I/O documentation
+{version}
 ========================
-
-NOTE:
-You are reading version {version} of the documentation.
 
 == Overview
 
@@ -42,8 +40,10 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
-* Built-in asset minification in development mode
+* Build-in asset minification in development mode
 * Flexible testing tools
+* Build-in authentication tools
+* Support for OAuth with Twitter, Google and Facebook
 * Simple Deployment and CI-Integration
 * i18N Internationalization
 
@@ -64,6 +64,9 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Google Guava - Caching
 * Quartz Scheduler - Scheduling
 * Boon JSON - JSON parser
+* SnakeYaml - Configuration handling
+* JUnit - Testing
+* JBcrypt - Strong cryptography and authentication
 * And many more ...
 
 === Documentation versioning
@@ -77,16 +80,13 @@ simple adding the version number to the URL. If you want, for example, the docum
 https://mangoo.io/documentation/1.0.0
 -------------------------------------
 
-A note in the header will show you, which version of the
-documentation you are reading.
-
 == Getting started
 
 === Preconditions
 
 mangoo I/O requires
 http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
-(at least 1.8) and https://maven.apache.org[Maven] (at least 3.1.1).
+(at least 1.8) and https://maven.apache.org[Maven] (at least 3.3.1).
 
 ==== Checking Java
 
@@ -141,9 +141,10 @@ mvn archetype:generate -DarchetypeGroupId=io.mangoo -DarchetypeArtifactId=mangoo
 ------------------------------------------------------------------------------------------------------
 
 You will be prompted for a group and artifact id. You also have to set an application name and an application secret.
-Make your secret is "secure", as some functions, like sessions and authentication rely on it.
-Once the archetpye generation is finished, change in your newly
-created project directory and execute the following command:
+Make your secret is "secure", as some functions, like sessions and authentication rely on it. Please note, that the
+application secret has to be at least 16 characters.
+
+Once the archetpye generation is finished, change in your newly created project directory and execute the following command:
 
 [source,bash]
 -----------------
@@ -175,7 +176,7 @@ https://mangoo.io | @mangoo_io | 1.0.0
 mangoo I/O application started @127.0.0.1:8080 in 442 ms in dev mode. Enjoy.
 ---------------------------------------------------------------------------------------------------------
 
-NOTE:
+[NOTE]
 Whenever you see the mangoo I/O logo your application has started successfully.
 
 Now open your default web browser an say hello to your first mangoo I/O
@@ -437,7 +438,7 @@ public class Lifecycle implements MangooLifecycle {
 }
 ---------------------------------------------------
 
-NOTE:
+[NOTE]
 The Lifecycle class doesn't have to be named
 "Lifecycle", but the class must implement the MangooLifecycle interface and
 you have to bind the implementation using Google Guice in your Module
@@ -619,13 +620,13 @@ LocalDate
 LocalDateTime
 -------------------------------------------
 
-NOTE:
+[NOTE]
 Double and Float values are always passed with "." delimiter, either if you pass the query or request parameter with "," delimiter.
 
 All parameters are parsed case-sensitive, which means, that if you have a method parameter "localDateTime" you have to map the
 request-parameter accordingly, e.g. /foo/{localDateTime}.
 
-NOTE:
+[NOTE]
 LocalDate is parsed as ISO_LOCAL_DATE "yyyy-MM-dd", and LocalDateTime is parsed as ISO_LOCAL_DATE_TIME "yyyy-MM-ddThh:mm:ss".
 
 The following classes can also be used directly in controller methods, but can not be used as a request or query parameter
@@ -734,7 +735,7 @@ public Response index(Form form) {
 
 ----------------------------------
 
-NOTE:
+[NOTE]
 The Form class is only available if the request is mapped as a POST or PUT method.
 
 The Form class is automatically available in the template so you don't
@@ -1284,7 +1285,7 @@ This is widely used for static resources like CSS or JS files.
 mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
 following method at the returning response in your controller method.
 
-NOTE:
+[NOTE]
 If you are using a front-end HTTP server, please check the documentation on how it
 handles ETag, as the popular nginx web server https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip/[deliberately strips ETags] once gzip is applied.
 
@@ -1310,7 +1311,7 @@ following administrative URLs are available
 /@scheduler
 -------------------------------------------
 
-NOTE:
+[NOTE]
 By default, the administrative URLs are disabled in all modes. You can enable each administrative URL by
 setting the appropriate configuration value in your application.yaml. See <<Configuration options>> for more information on this.
 
@@ -1614,7 +1615,7 @@ All returned response object from your filter are passed to the next filter in t
 2. Controller filters
 3. Method filters
 
-NOTE:
+[NOTE]
 Only the header and content values are merged with the response object returned from your controller.
 
 Here is an example of the AuthenticityFilter which is used for the CSRF checks.
@@ -1671,7 +1672,7 @@ public class MyGlobalFilter implements MangooRequestFilter {
 }
 ------------------------------------------------------------
 
-NOTE:
+[NOTE]
 There can only be one global filter in your mangoo I/O application.
 
 == Logging
@@ -1689,13 +1690,13 @@ private static final Logger LOG = LogManager.getLogger(MyClass.class);
 -------------------------------------------------------------------------
 
 You can configure your appenders in the log4j2.xml file located in
-src/main/resources which is present by default if you created you project from the 
+src/main/resources which is present by default if you created you project from the
 mangoo I/O archtype.
 
 You can always use the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
 from log4j2 for loading the configuration file. However, mangoo I/O offers you an additional feature, specially when
 working with different environments. When mangoo I/O starts it will look for an environment specific log4j2 configuration
-file in the form of  
+file in the form of
 
 [source]
 -------------------------------------------------------------------------
@@ -1705,7 +1706,7 @@ log4j2.dev.xml
 This can of course also be set for prod and test mode.
 
 If mangoo I/O does not find such a file, it will fall back to the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
-from log4j2. 
+from log4j2.
 
 == Caching
 
@@ -1780,9 +1781,9 @@ public class MyJob implements Job {
 -----------------------------------------------------------------------------------------------------
 
 To schedule the job, add the @Schedule annotation, which requires a cron expression for the execution and an
-optional description of the job. 
+optional description of the job.
 
-NOTE:
+[NOTE]
 Scheduling a job only works with cron expression.
 
 By default, mangoo I/O looks up all jobs in a package called "jobs", but this can be
@@ -1799,9 +1800,9 @@ to the scheduler and starts the scheduler.
 
 === Manual scheduler start
 
-Again, start with creating a new task, by creating a simple Pojo, except *without* the @Schedule 
+Again, start with creating a new task, by creating a simple Pojo, except *without* the @Schedule
 annotation
- 
+
 [source,java]
 -----------------------------------------------------------------------------------------------------
 package jobs;
@@ -1880,7 +1881,7 @@ Check out the
 http://quartz-scheduler.org/generated/2.2.1/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
 Scheudler configuration documentation] for more information.
 
-== Using WebSockets
+== WebSockets
 
 Genereal information on using WebScokets can be found
 http://en.wikipedia.org/wiki/WebSocket[here]. To use WebSockets in
@@ -1950,7 +1951,7 @@ incoming event, you can also sent outgoing events by using the WebSocketManager.
 The above example enables you access to all clients which have an open
 WebSocket channel to the URL /websocket.
 
-== Using Server-Sent Events
+== Server-Sent Events
 
 To use Server-Sent Event on a specific request you have to map a Server-Sent
 Event in your routes.yaml
@@ -2115,7 +2116,7 @@ Of course you can configure the folder for the CSS and JS files in your
 application. See <<Configuration options>> for more
 information about this.
 
-NOTE:
+[NOTE]
 There is also an option on automatically GZIP your Assets.
 
 == Testing
@@ -2312,7 +2313,7 @@ java -jar app.jar
 This will start mangoo I/O in production mode, using the default
 configuration from your application.yaml
 
-NOTE:
+[NOTE]
 Also Undertow is production-ready, it is recommended to use a front-end HTTP
 server such as nginx or Apache to leverage an easy configuration for
 load-balancing, SSL termination, etc.
