@@ -1,11 +1,7 @@
 package io.mangoo.crypto;
 
-import com.google.common.base.Charsets;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.Key;
-import io.mangoo.utils.ConfigUtils;
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +14,12 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.encoders.Base64;
 
-import java.util.Objects;
+import com.google.common.base.Charsets;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.Key;
 
 /**
  * Convenient class for encryption and decryption
@@ -39,9 +40,7 @@ public class Crypto {
 
     @Inject
     public Crypto(Config config) {
-        Objects.requireNonNull(config, "config can not be null");
-
-        this.config = config;
+        this.config = Objects.requireNonNull(config, "config can not be null");
     }
 
     /**
@@ -85,7 +84,7 @@ public class Crypto {
     public String encrypt(String plainText) {
         Objects.requireNonNull(plainText, "plainText can not be null");
 
-        return encrypt(plainText, getSizedKey(ConfigUtils.getApplicationSecret()));
+        return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
     }
 
     /**

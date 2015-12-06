@@ -1,9 +1,9 @@
 package io.mangoo.routing;
 
+import java.util.Objects;
+
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
-
-import java.util.Objects;
 
 /**
  *

@@ -1,13 +1,13 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
-
-import java.util.Objects;
 
 /**
  *

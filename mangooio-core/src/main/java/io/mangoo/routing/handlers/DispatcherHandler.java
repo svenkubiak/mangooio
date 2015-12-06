@@ -1,12 +1,12 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
+import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.routing.listeners.MetricsListener;
-import io.mangoo.utils.ConfigUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-
-import java.util.Objects;
 
 /**
  *
@@ -27,7 +27,7 @@ public class DispatcherHandler implements HttpHandler {
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
         this.async = async;
-        this.metrics = ConfigUtils.isAdminMetricsEnabled();
+        this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
     }
 
     @Override

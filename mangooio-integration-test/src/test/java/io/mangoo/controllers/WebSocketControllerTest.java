@@ -11,7 +11,8 @@ import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.junit.Test;
 
-import io.mangoo.utils.ConfigUtils;
+import io.mangoo.configuration.Config;
+import io.mangoo.test.Mangoo;
 
 /**
  *
@@ -23,13 +24,14 @@ public class WebSocketControllerTest {
     @Test
     public void testWebSocketConnection() throws Exception {
         //given
-        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocket";
-        WebSocketClientFactory factory = new WebSocketClientFactory();
+        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final WebSocketClientFactory factory = new WebSocketClientFactory();
 
         //when
         factory.start();
-        WebSocketClient client = new WebSocketClient(factory);
-        WebSocket.Connection connection = client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        final WebSocketClient client = new WebSocketClient(factory);
+        final WebSocket.Connection connection = client.open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // open notification
@@ -47,7 +49,7 @@ public class WebSocketControllerTest {
         }).get(5, TimeUnit.SECONDS);
         connection.sendMessage("Hello World");
         connection.sendMessage("Hello World".getBytes(), 0, 0);
-        
+
         //then
         assertThat(connection.isOpen(), equalTo(true));
         connection.close();

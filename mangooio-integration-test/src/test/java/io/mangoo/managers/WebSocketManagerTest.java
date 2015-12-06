@@ -16,13 +16,13 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import io.mangoo.configuration.Config;
 import io.mangoo.test.Mangoo;
-import io.mangoo.utils.ConfigUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -31,47 +31,48 @@ public class WebSocketManagerTest {
     private static final String COOKIE_NAME = "TEST-AUTH";
     private static final String VALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio";
     private static final String INVALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooiO";
-    
+
     @Test
     public void testAddChannel() {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
-        WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
-        
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
+
         //when
         webSocketManager.addChannel("/websocket", null, channel);
-        
+
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
         assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(1));
     }
-    
+
     @Test
     public void testRemoveChannel() {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
-        WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
-        
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
+
         //when
         webSocketManager.addChannel("/websocket", null, channel);
         webSocketManager.removeChannels("/websocket");
-        
+
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
         assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(0));
     }
-    
+
     @Test
     public void testCloseChannel() throws Exception {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
         webSocketManager.removeChannels("/websocket");
-        WebSocketClientFactory factory = new WebSocketClientFactory();
+        final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocket";
-        
+        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+
         //when
-        WebSocketClient client = new WebSocketClient(factory);
+        final WebSocketClient client = new WebSocketClient(factory);
         client.open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
@@ -88,25 +89,26 @@ public class WebSocketManagerTest {
                 // intentionally left blank
             }
         }).get(5, TimeUnit.SECONDS);
-        
+
         webSocketManager.close("/websocket");
-        
+
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
         assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(0));
     }
-    
+
     @Test
     public void testSendData() throws Exception {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
         webSocketManager.removeChannels("/websocket");
-        WebSocketClientFactory factory = new WebSocketClientFactory();
+        final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocket";
-        String data = "Server sent data FTW!";
+        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String data = "Server sent data FTW!";
         eventData = null;
-        
+
         //when
         new WebSocketClient(factory).open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
@@ -121,7 +123,7 @@ public class WebSocketManagerTest {
 
             @Override
             public void onMessage(String data) {
-                eventData = data;                    
+                eventData = data;
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
@@ -129,31 +131,32 @@ public class WebSocketManagerTest {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
-                }               
-            } catch (IOException e) {
+                }
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
          });
         Thread.sleep(500);
-        
+
         //then
         assertThat(eventData, not(nullValue()));
         assertThat(eventData, equalTo(data));
     }
-    
+
     @Test
     public void testSendDataWithValidAuthentication() throws Exception {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Mangoo.TEST.getInstance(Config.class);
         webSocketManager.removeChannels("/websocketauth");
-        WebSocketClientFactory factory = new WebSocketClientFactory();
+        final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocketauth";
-        String data = "Server sent data with authentication FTW!";
+        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String data = "Server sent data with authentication FTW!";
         eventData = null;
-        
+
         //when
-        WebSocketClient client = new WebSocketClient(factory);
+        final WebSocketClient client = new WebSocketClient(factory);
         client.getCookies().put(COOKIE_NAME, VALID_COOKIE_VALUE);
         client.open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
@@ -169,7 +172,7 @@ public class WebSocketManagerTest {
             @Override
             public void onMessage(String data) {
                 if (StringUtils.isBlank(eventData)) {
-                    eventData = data;                    
+                    eventData = data;
                 }
             }
         }).get(5, TimeUnit.SECONDS);
@@ -178,31 +181,32 @@ public class WebSocketManagerTest {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
-                }             
-            } catch (IOException e) {
+                }
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
          });
         Thread.sleep(500);
-        
+
         //then
         assertThat(eventData, not(nullValue()));
         assertThat(eventData, equalTo(data));
     }
-    
+
     @Test
     public void testSendDataWithInvalidAuthentication() throws Exception {
         //given
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Mangoo.TEST.getInstance(Config.class);
         webSocketManager.removeChannels("/websocketauth");
-        WebSocketClientFactory factory = new WebSocketClientFactory();
+        final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        String uri = "ws://" + ConfigUtils.getApplicationHost() + ":" + ConfigUtils.getApplicationPort() + "/websocketauth";
-        String data = "Server sent data with authentication FTW!";
+        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String data = "Server sent data with authentication FTW!";
         eventData = null;
-        
+
         //when
-        WebSocketClient client = new WebSocketClient(factory);
+        final WebSocketClient client = new WebSocketClient(factory);
         client.getCookies().put(COOKIE_NAME, INVALID_COOKIE_VALUE);
         client.open(new URI(uri), new WebSocket.OnTextMessage() {
             @Override
@@ -218,22 +222,22 @@ public class WebSocketManagerTest {
             @Override
             public void onMessage(String data) {
                 if (StringUtils.isBlank(eventData)) {
-                    eventData = data;                    
+                    eventData = data;
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);        
+        Thread.sleep(500);
         webSocketManager.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
          });
         Thread.sleep(500);
-        
+
         //then
         assertThat(eventData, nullValue());
         assertThat(eventData, not(equalTo(data)));

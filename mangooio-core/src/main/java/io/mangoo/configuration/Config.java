@@ -1,16 +1,5 @@
 package io.mangoo.configuration;
 
-import com.google.common.io.Resources;
-import com.google.inject.Singleton;
-import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,6 +7,19 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.io.Resources;
+import com.google.inject.Singleton;
+
+import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
 
 /**
  * Main configuration class for all properties configured in application.yaml
@@ -314,5 +316,222 @@ public class Config {
     public boolean hasValidSecret() {
         final String secret = getString(Key.APPLICATION_SECRET);
         return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
+    }
+
+    /**
+     * @return application.name from application.yaml
+     */
+    public String getApplicationName() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_NAME);
+    }
+
+    /**
+     * @return application.host from application.yaml
+     */
+    public String getApplicationHost() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_HOST);
+    }
+
+    /**
+     * @return appliction.port from application.yaml
+     */
+    public int getApplicationPort() {
+        return Application.getInstance(Config.class).getInt(Key.APPLICATION_PORT);
+    }
+
+    /**
+     * @return default name of flash cookie name
+     */
+    public String getFlashCookieName() {
+        return Default.FLASH_COOKIE_NAME.toString();
+    }
+
+    /**
+     * @return cookie.name from application.yaml or default value if undefined
+     */
+    public String getSessionCookieName() {
+        return Application.getInstance(Config.class).getString(Key.COOKIE_NAME, Default.COOKIE_NAME.toString());
+    }
+
+    /**
+     * @return application.secret from application.yaml
+     */
+    public String getApplicationSecret() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
+    }
+
+    /**
+     * @return auth.cookie.name from application.yaml or default value if undefined
+     */
+    public String getAuthenticationCookieName() {
+        return Application.getInstance(Config.class).getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
+    }
+
+    /**
+     * @return auth.cookie.expires from application.yaml or default value if undefined
+     */
+    public long getAuthenticationExpires() {
+        return Application.getInstance(Config.class).getLong(Key.AUTH_COOKIE_EXPIRES, Default.AUTH_COOKIE_EXPIRES.toLong());
+    }
+
+    /**
+     * @return cookie.expires from application.yaml or default value if undefined
+     */
+    public long getSessionExpires() {
+        return Application.getInstance(Config.class).getLong(Key.COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toLong());
+    }
+
+    /**
+     * @return cookie.secure from application.yaml or default value if undefined
+     */
+    public boolean isSessionCookieSecure() {
+        return Application.getInstance(Config.class).getBoolean(Key.COOKIE_SECURE, Default.COOKIE_SECURE.toBoolean());
+    }
+
+    /**
+     * @return auth.cookie.secure from application.yaml or default value if undefined
+     */
+    public boolean isAuthenticationCookieSecure() {
+        return Application.getInstance(Config.class).getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
+    }
+
+    /**
+     * @return same value as isSessionCookieSecure()
+     */
+    public boolean isFlashCookieSecure() {
+        return isSessionCookieSecure();
+    }
+
+    /**
+     * @return application.language from application.yaml or default value if undefined
+     */
+    public String getApplicationLanguage() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
+    }
+
+    /**
+     * @return application.admin.health from application.yaml or default value if undefined
+     */
+    public boolean isAdminHealthEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_HEALTH, Default.APPLICATION_ADMIN_HEALTH.toBoolean());
+    }
+
+    /**
+     * @return application.admin.routes from application.yaml or default value if undefined
+     */
+    public boolean isAdminRoutesEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_ROUTES, Default.APPLICATION_ADMIN_ROUTES.toBoolean());
+    }
+
+    /**
+     * @return application.admin.cache from application.yaml or default value if undefined
+     */
+    public boolean isAdminCacheEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_CACHE, Default.APPLICATION_ADMIN_CACHE.toBoolean());
+    }
+
+    /**
+     * @return application.admin.config from application.yaml or default value if undefined
+     */
+    public boolean isAdminConfigEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_CONFIG, Default.APPLICATION_ADMIN_CONFIG.toBoolean());
+    }
+
+    /**
+     * @return application.admin.metrics from application.yaml or default value if undefined
+     */
+    public boolean isAdminMetricsEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_METRICS, Default.APPLICATION_ADMIN_METRICS.toBoolean());
+    }
+
+    /**
+     * @return application.admin.scheduler from application.yaml or default value if undefined
+     */
+    public boolean isAdminSchedulerEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_SCHEDULER, Default.APPLICATION_ADMIN_SCHEDULER.toBoolean());
+    }
+
+    /**
+     * @return auth.cookie.encrypt from application.yaml or default value if undefined
+     */
+    public boolean isAuthenticationCookieEncrypt() {
+        return Application.getInstance(Config.class).getBoolean(Key.AUTH_COOKIE_ENCRYPT, Default.AUTH_COOKIE_ENCRYPT.toBoolean());
+    }
+
+    /**
+     * @return auth.cookie.version from application.yaml or default value if undefined
+     */
+    public String getAuthCookieVersion() {
+        return Application.getInstance(Config.class).getString(Key.AUTH_COOKIE_VERSION, Default.AUTH_COOKIE_VERSION.toString());
+    }
+
+    /**
+     * @return cookie.version from application.yaml or default value if undefined
+     */
+    public String getCookieVersion() {
+        return Application.getInstance(Config.class).getString(Key.COOKIE_VERSION, Default.COOKIE_VERSION.toString());
+    }
+
+    /**
+     * @return scheduler.autostart from application.yaml or default value if undefined
+     */
+    public boolean isSchedulerAutostart() {
+        return Application.getInstance(Config.class).getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
+    }
+
+    /**
+     * @return true if application.admin.username and application.admin.password are note blank
+     */
+    public boolean isAdminAuthenticationEnabled() {
+        return StringUtils.isNotBlank(Application.getInstance(Config.class).getString(Key.APPLICATION_ADMIN_USERNAME)) && StringUtils.isNotBlank(Application.getInstance(Config.class).getString(Key.APPLICATION_ADMIN_PASSWORD));
+    }
+
+    /**
+     * @return application.admin.username from application.yaml or null if undefined
+     */
+    public String getAdminAuthenticationUser() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_ADMIN_USERNAME);
+    }
+
+    /**
+     * @return application.admin.password from application.yaml or null if undefined
+     */
+    public String getAdminAuthenticationPassword() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_ADMIN_PASSWORD);
+    }
+
+    /**
+     * @return scheduler.package from application.yaml or default value if undefined
+     */
+    public String getSchedulerPackage() {
+        return Application.getInstance(Config.class).getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
+    }
+
+    /**
+     * @return cookie.encryption from application.yaml or default value if undefined
+     */
+    public boolean isSessionCookieEncrypt() {
+        return Application.getInstance(Config.class).getBoolean(Key.COOKIE_ENCRYPTION, Default.COOKIE_ENCRYPTION.toBoolean());
+    }
+
+    /**
+     * @return auth.cookie.remember.expires from application.yaml or default value if undefined
+     */
+    public long getAuthenticationRememberExpires() {
+        return Application.getInstance(Config.class).getLong(Key.AUTH_COOKIE_REMEMBER_EXPIRES, Default.AUTH_COOKIE_REMEMBER_EXPIRES.toLong());
+    }
+
+    /**
+     * @return execution.threadpool from application.yaml or default value if undefined
+     */
+    public int getExecutionPool() {
+        return Application.getInstance(Config.class).getInt(Key.EXECUTION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
+    }
+
+    /**
+     * @return application.controller from application.yaml or default value if undefined
+     */
+    public String getControllerPackage() {
+        return Application.getInstance(Config.class).getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 }

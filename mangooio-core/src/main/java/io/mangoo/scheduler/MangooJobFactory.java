@@ -1,12 +1,13 @@
 package io.mangoo.scheduler;
 
-import io.mangoo.core.Application;
+import java.util.Objects;
+
 import org.quartz.Job;
 import org.quartz.Scheduler;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
-import java.util.Objects;
+import io.mangoo.core.Application;
 
 /**
  * Factory method for passing Scheduler job instance to the Google Guice injector

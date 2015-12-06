@@ -1,5 +1,6 @@
 package io.mangoo.admin;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -7,13 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
+import com.google.inject.Inject;
 
+import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.ConfigUtils;
 import io.undertow.util.Headers;
 
 /**
@@ -23,11 +25,19 @@ import io.undertow.util.Headers;
  *
  */
 public class MangooAdminFilter implements MangooFilter {
+
+    private final Config config;
+
+    @Inject
+    public MangooAdminFilter(Config config) {
+        this.config = Objects.requireNonNull(config,  "config can not be null");
+    }
+
     @Override
     public Response execute(Request request, Response response) {
-        String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
+        final String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
         if (isURLEnabled(url)) {
-            if (ConfigUtils.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
+            if (config.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
                   return Response.withUnauthorized()
                           .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
                           .andEmptyBody()
@@ -57,7 +67,7 @@ public class MangooAdminFilter implements MangooFilter {
             authInfo = authInfo.trim();
             authInfo = new String(Base64.decode(authInfo), Charsets.UTF_8);
 
-            String [] credentials = authInfo.split(":");
+            final String [] credentials = authInfo.split(":");
             if (credentials != null && credentials.length == Default.BASICAUTH_CREDENTIALS_LENGTH.toInt()) {
                 username = credentials[0];
                 password = credentials[1];
@@ -66,8 +76,8 @@ public class MangooAdminFilter implements MangooFilter {
 
         return StringUtils.isNotBlank(username) &&
                StringUtils.isNotBlank(password) &&
-               ConfigUtils.getAdminAuthenticationUser().equals(username) &&
-               ConfigUtils.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
+               config.getAdminAuthenticationUser().equals(username) &&
+               config.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
     }
 
     /**
@@ -80,22 +90,22 @@ public class MangooAdminFilter implements MangooFilter {
         boolean enabled;
         switch (url) {
         case "@routes":
-            enabled = ConfigUtils.isAdminRoutesEnabled();
+            enabled = config.isAdminRoutesEnabled();
             break;
         case "@config":
-            enabled = ConfigUtils.isAdminConfigEnabled();
+            enabled = config.isAdminConfigEnabled();
             break;
         case "@health":
-            enabled = ConfigUtils.isAdminHealthEnabled();
+            enabled = config.isAdminHealthEnabled();
             break;
         case "@cache":
-            enabled = ConfigUtils.isAdminCacheEnabled();
+            enabled = config.isAdminCacheEnabled();
             break;
         case "@metrics":
-            enabled = ConfigUtils.isAdminMetricsEnabled();
+            enabled = config.isAdminMetricsEnabled();
             break;
         case "@scheduler":
-            enabled = ConfigUtils.isAdminSchedulerEnabled();
+            enabled = config.isAdminSchedulerEnabled();
             break;
         default:
             enabled = false;

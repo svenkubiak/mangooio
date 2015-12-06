@@ -1,5 +1,31 @@
 package io.mangoo.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.quartz.CronExpression;
+import org.quartz.Job;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.reflections.Reflections;
+import org.yaml.snakeyaml.Yaml;
+
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -7,6 +33,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
+
 import io.mangoo.admin.MangooAdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -23,7 +50,6 @@ import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.ConfigUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.RoutingHandler;
@@ -32,31 +58,6 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.quartz.CronExpression;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.reflections.Reflections;
-import org.yaml.snakeyaml.Yaml;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Convenient methods for everything to start up a mangoo I/O application
@@ -167,7 +168,7 @@ public class Bootstrap {
                         try {
                             if (split.length == 2) {
                                 final String [] classMethod = split[1].split("\\.");
-                                route.withClass(Class.forName(ConfigUtils.getControllerPackage() + classMethod[0].trim()));
+                                route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
                                 if (classMethod.length == 2) {
                                     route.withMethod(classMethod[1].trim());
                                 }
@@ -340,8 +341,8 @@ public class Bootstrap {
 
     public void startQuartzScheduler() {
         if (!this.error) {
-            final Set<Class<?>> jobs = new Reflections(ConfigUtils.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
-            if (jobs != null && !jobs.isEmpty() && ConfigUtils.isSchedulerAutostart()) {
+            final Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
+            if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
                 final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 jobs.forEach(clazz -> {
                     final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);

@@ -1,16 +1,18 @@
 package io.mangoo.managers;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import io.mangoo.cache.Cache;
-import io.undertow.server.handlers.sse.ServerSentEventConnection;
-import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import io.mangoo.cache.Cache;
+import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
 /**
  *

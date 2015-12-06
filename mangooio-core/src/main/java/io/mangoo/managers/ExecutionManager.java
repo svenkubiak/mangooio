@@ -1,13 +1,15 @@
 package io.mangoo.managers;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.utils.ConfigUtils;
+import io.mangoo.configuration.Config;
 
 /**
  *
@@ -16,7 +18,13 @@ import io.mangoo.utils.ConfigUtils;
  */
 @Singleton
 public class ExecutionManager {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(ConfigUtils.getExecutionPool());
+    private final ExecutorService executorService;
+
+    @Inject
+    public ExecutionManager(Config config) {
+        config = Objects.requireNonNull(config,  "config can not be null");
+        executorService = Executors.newFixedThreadPool(config.getExecutionPool());
+    }
 
     /**
      * Submits a value-returning task for execution and returns a Future

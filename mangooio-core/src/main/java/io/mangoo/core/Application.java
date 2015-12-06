@@ -1,9 +1,10 @@
 package io.mangoo.core;
 
-import com.google.inject.Injector;
-import io.mangoo.enums.Mode;
-
 import java.util.Objects;
+
+import com.google.inject.Injector;
+
+import io.mangoo.enums.Mode;
 
 /**
  * Main class that starts all components of a mangoo I/O application

@@ -1,5 +1,10 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
+import org.apache.commons.io.IOUtils;
+import org.xnio.ChannelListener;
+
 import io.mangoo.core.Application;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.utils.RequestUtils;
@@ -7,10 +12,6 @@ import io.undertow.util.Headers;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
-import org.apache.commons.io.IOUtils;
-import org.xnio.ChannelListener;
-
-import java.util.Objects;
 
 /**
  *

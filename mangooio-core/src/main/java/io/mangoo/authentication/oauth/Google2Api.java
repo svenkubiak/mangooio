@@ -1,5 +1,9 @@
 package io.mangoo.authentication.oauth;
 
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.exceptions.OAuthException;
 import org.scribe.extractors.AccessTokenExtractor;
@@ -14,10 +18,6 @@ import org.scribe.oauth.OAuth20ServiceImpl;
 import org.scribe.oauth.OAuthService;
 import org.scribe.utils.OAuthEncoder;
 import org.scribe.utils.Preconditions;
-
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Google OAuth2.0

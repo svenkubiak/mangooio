@@ -1,9 +1,5 @@
 package io.mangoo.utils;
 
-import com.google.common.base.Charsets;
-import io.mangoo.models.Source;
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.base.Charsets;
+
+import io.mangoo.models.Source;
 
 /**
  *

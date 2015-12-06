@@ -54,8 +54,8 @@ public final class RequestUtils {
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
 
-        Map<String, String> requestParamater = new HashMap<>();
-        Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
+        final Map<String, String> requestParamater = new HashMap<>();
+        final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
 
@@ -96,7 +96,7 @@ public final class RequestUtils {
     public static boolean isJsonRequest(HttpServerExchange exchange) {
         Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
 
-        HeaderMap headerMap = exchange.getRequestHeaders();
+        final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
                 headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase().contains(ContentType.APPLICATION_JSON.toString().toLowerCase());
     }
@@ -110,7 +110,7 @@ public final class RequestUtils {
     public static OAuthService createOAuthService(OAuthProvider oAuthProvider) {
         Preconditions.checkNotNull(oAuthProvider, "oAuthProvider can not be null");
 
-        Config config = Application.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
         ServiceBuilder serviceBuilder = null;
         switch (oAuthProvider) {
         case TWITTER:
@@ -173,21 +173,22 @@ public final class RequestUtils {
     public static boolean hasValidAuthentication(String cookieHeader) {
         boolean validAuthentication = false;
         if (StringUtils.isNotBlank(cookieHeader)) {
-            Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
+            final Config config = Application.getInstance(Config.class);
+            final Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
 
-            String cookieValue = cookies.get(ConfigUtils.getAuthenticationCookieName()).getValue();
+            String cookieValue = cookies.get(config.getAuthenticationCookieName()).getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
-                if (ConfigUtils.isAuthenticationCookieEncrypt()) {
+                if (config.isAuthenticationCookieEncrypt()) {
                     cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
                 }
 
                 String sign = null;
                 String expires = null;
                 String version = null;
-                String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
+                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
 
                 if (StringUtils.isNotBlank(prefix)) {
-                    String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
                     if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
                         sign = prefixes [INDEX_0];
                         expires = prefixes [INDEX_1];
@@ -196,10 +197,10 @@ public final class RequestUtils {
                 }
 
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
-                    String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    LocalDateTime expiresDate = LocalDateTime.parse(expires);
+                    final String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
+                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + ConfigUtils.getApplicationSecret()).equals(sign)) {
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + config.getApplicationSecret()).equals(sign)) {
                         validAuthentication = true;
                     }
                 }
