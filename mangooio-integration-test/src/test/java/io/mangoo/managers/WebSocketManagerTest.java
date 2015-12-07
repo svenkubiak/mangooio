@@ -42,6 +42,7 @@ public class WebSocketManagerTest {
         when(channel.getUrl()).thenReturn("/websocket");
 
         //when
+        webSocketManager.removeChannels("/websocket");
         webSocketManager.addChannel(channel);
 
         //then
@@ -94,7 +95,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
 
-        webSocketManager.close(url);
+        webSocketManager.close("/websocket");
 
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
@@ -131,7 +132,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-        webSocketManager.getChannels(url).forEach(channel -> {
+        webSocketManager.getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -181,7 +182,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-        webSocketManager.getChannels(url).forEach(channel -> {
+        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);

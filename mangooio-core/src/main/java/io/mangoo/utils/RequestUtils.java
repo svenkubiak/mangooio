@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Deque;
@@ -212,7 +213,6 @@ public final class RequestUtils {
         return validAuthentication;
     }
     
-    
     /**
      * Retrieves a URL from a Server-Sent Event connection
      * 
@@ -221,12 +221,7 @@ public final class RequestUtils {
      * @return The URL of the Server-Sent Event Connection
      */
 	public static String getServerSentEventURL(ServerSentEventConnection connection) {
-		String url = connection.getRequestURI();
-        if (StringUtils.isNotBlank(connection.getQueryString())) {
-            url = url + "?" + connection.getQueryString();
-        }
-        
-		return url;
+		return getURL(URI.create(connection.getRequestURI()));
 	}
 	
 	/**
@@ -237,6 +232,28 @@ public final class RequestUtils {
 	 * @return The URL of the WebSocket Channel
 	 */
 	public static String getWebSocketURL(WebSocketChannel channel) {
-		return channel.getUrl();
+		return getURL(URI.create(channel.getUrl()));
+	}
+	
+	/**
+	 * Creates and URL with only path and if present query and
+	 * fragment, e.g. /path/data?key=value#fragid1
+	 * 
+	 * @param uri The URI to generate from
+	 * @return The generated URL
+	 */
+	private static String getURL(URI uri) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(uri.getPath());
+		
+		if (StringUtils.isNotBlank(uri.getQuery())) {
+			buffer.append("?").append(uri.getQuery());
+		}
+		
+		if (StringUtils.isNotBlank(uri.getFragment())) {
+			buffer.append("#").append(uri.getFragment());
+		}
+		
+		return buffer.toString();
 	}
 }
