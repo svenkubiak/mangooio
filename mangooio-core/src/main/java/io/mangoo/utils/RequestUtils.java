@@ -247,11 +247,11 @@ public final class RequestUtils {
         buffer.append(uri.getPath());
         
         if (StringUtils.isNotBlank(uri.getQuery())) {
-            buffer.append("?").append(uri.getQuery());
+            buffer.append('?').append(uri.getQuery());
         }
         
         if (StringUtils.isNotBlank(uri.getFragment())) {
-            buffer.append("#").append(uri.getFragment());
+            buffer.append('#').append(uri.getFragment());
         }
         
         return buffer.toString();
