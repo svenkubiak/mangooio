@@ -26,7 +26,7 @@ public class WebSocketManager {
         
     @Inject
     public WebSocketManager(Cache cache) {
-    	this.cache = Objects.requireNonNull(cache, "cache ca not be null");
+        this.cache = Objects.requireNonNull(cache, "cache ca not be null");
     }
 
     /**

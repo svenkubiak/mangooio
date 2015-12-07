@@ -27,7 +27,7 @@ public class ServerEventManager {
         
     @Inject
     public ServerEventManager(Cache cache) {
-    	this.cache = Objects.requireNonNull(cache, "cache ca not be null");
+        this.cache = Objects.requireNonNull(cache, "cache ca not be null");
     }
 
     /**

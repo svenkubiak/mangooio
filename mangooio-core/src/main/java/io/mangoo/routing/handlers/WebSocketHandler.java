@@ -49,7 +49,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
             channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
             channel.resumeReceives();
             channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
-            Application.getInstance(WebSocketManager.class).addChannel(channel);        	
+            Application.getInstance(WebSocketManager.class).addChannel(channel);
         }
     }
 }

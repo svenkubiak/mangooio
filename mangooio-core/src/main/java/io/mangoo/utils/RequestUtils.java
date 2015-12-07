@@ -220,40 +220,40 @@ public final class RequestUtils {
      * 
      * @return The URL of the Server-Sent Event Connection
      */
-	public static String getServerSentEventURL(ServerSentEventConnection connection) {
-		return getURL(URI.create(connection.getRequestURI()));
-	}
-	
-	/**
-	 * Retrieves the URL of a WebSocketChannel
-	 * 
-	 * @param channel The WebSocket Channel
-	 * 
-	 * @return The URL of the WebSocket Channel
-	 */
-	public static String getWebSocketURL(WebSocketChannel channel) {
-		return getURL(URI.create(channel.getUrl()));
-	}
-	
-	/**
-	 * Creates and URL with only path and if present query and
-	 * fragment, e.g. /path/data?key=value#fragid1
-	 * 
-	 * @param uri The URI to generate from
-	 * @return The generated URL
-	 */
-	private static String getURL(URI uri) {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(uri.getPath());
-		
-		if (StringUtils.isNotBlank(uri.getQuery())) {
-			buffer.append("?").append(uri.getQuery());
-		}
-		
-		if (StringUtils.isNotBlank(uri.getFragment())) {
-			buffer.append("#").append(uri.getFragment());
-		}
-		
-		return buffer.toString();
-	}
+    public static String getServerSentEventURL(ServerSentEventConnection connection) {
+        return getURL(URI.create(connection.getRequestURI()));
+    }
+    
+    /**
+     * Retrieves the URL of a WebSocketChannel
+     * 
+     * @param channel The WebSocket Channel
+     * 
+     * @return The URL of the WebSocket Channel
+     */
+    public static String getWebSocketURL(WebSocketChannel channel) {
+        return getURL(URI.create(channel.getUrl()));
+    }
+    
+    /**
+     * Creates and URL with only path and if present query and
+     * fragment, e.g. /path/data?key=value#fragid1
+     * 
+     * @param uri The URI to generate from
+     * @return The generated URL
+     */
+    private static String getURL(URI uri) {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(uri.getPath());
+        
+        if (StringUtils.isNotBlank(uri.getQuery())) {
+            buffer.append("?").append(uri.getQuery());
+        }
+        
+        if (StringUtils.isNotBlank(uri.getFragment())) {
+            buffer.append("#").append(uri.getFragment());
+        }
+        
+        return buffer.toString();
+    }
 }
