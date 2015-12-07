@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -37,9 +39,10 @@ public class WebSocketManagerTest {
         //given
         final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
+        when(channel.getUrl()).thenReturn("/websocket");
 
         //when
-        webSocketManager.addChannel("/websocket", null, channel);
+        webSocketManager.addChannel(channel);
 
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
@@ -51,9 +54,10 @@ public class WebSocketManagerTest {
         //given
         final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
+        when(channel.getUrl()).thenReturn("/websocket");
 
         //when
-        webSocketManager.addChannel("/websocket", null, channel);
+        webSocketManager.addChannel(channel);
         webSocketManager.removeChannels("/websocket");
 
         //then
@@ -69,11 +73,11 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
-        client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -90,7 +94,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
 
-        webSocketManager.close("/websocket");
+        webSocketManager.close(url);
 
         //then
         assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
@@ -105,12 +109,12 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
         final String data = "Server sent data FTW!";
         eventData = null;
 
         //when
-        new WebSocketClient(factory).open(new URI(uri), new WebSocket.OnTextMessage() {
+        new WebSocketClient(factory).open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -127,7 +131,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-        webSocketManager.getChannels("/websocket").forEach(channel -> {
+        webSocketManager.getChannels(url).forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -151,14 +155,14 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
         client.getCookies().put(COOKIE_NAME, VALID_COOKIE_VALUE);
-        client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -177,7 +181,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
+        webSocketManager.getChannels(url).forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -201,14 +205,14 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
         client.getCookies().put(COOKIE_NAME, INVALID_COOKIE_VALUE);
-        client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -227,7 +231,7 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
+        webSocketManager.getChannels(url).forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);

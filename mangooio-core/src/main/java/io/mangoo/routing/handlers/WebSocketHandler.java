@@ -7,6 +7,7 @@ import org.xnio.ChannelListener;
 
 import io.mangoo.core.Application;
 import io.mangoo.managers.WebSocketManager;
+import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.util.Headers;
 import io.undertow.websockets.WebSocketConnectionCallback;
@@ -24,17 +25,12 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
     private final Class<?> controllerClass;
 
     public WebSocketHandler(Class<?> controllerClass, boolean requiresAuthentication) {
-        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-
-        this.controllerClass = controllerClass;
+        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         this.requiresAuthentication = requiresAuthentication;
     }
 
     @Override
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
-        String uri = exchange.getRequestURI();
-        String queryString = exchange.getQueryString();
-
         if (this.requiresAuthentication) {
             String header = null;
             if (exchange.getRequestHeader(Headers.COOKIE_STRING) != null) {
@@ -44,14 +40,16 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
             if (RequestUtils.hasValidAuthentication(header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
-                Application.getInstance(WebSocketManager.class).addChannel(uri, queryString, channel);
+                channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
+                Application.getInstance(WebSocketManager.class).addChannel(channel);
             } else {
                 IOUtils.closeQuietly(channel);
             }
+        } else {
+            channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
+            channel.resumeReceives();
+            channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
+            Application.getInstance(WebSocketManager.class).addChannel(channel);        	
         }
-
-        channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
-        channel.resumeReceives();
-        Application.getInstance(WebSocketManager.class).addChannel(uri, queryString, channel);
     }
 }

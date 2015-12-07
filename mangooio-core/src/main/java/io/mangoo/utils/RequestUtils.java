@@ -24,10 +24,12 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.Cookies;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.Methods;
+import io.undertow.websockets.core.WebSocketChannel;
 
 /**
  *
@@ -209,4 +211,32 @@ public final class RequestUtils {
 
         return validAuthentication;
     }
+    
+    
+    /**
+     * Retrieves a URL from a Server-Sent Event connection
+     * 
+     * @param connection The ServerSentEvent Connection
+     * 
+     * @return The URL of the Server-Sent Event Connection
+     */
+	public static String getServerSentEventURL(ServerSentEventConnection connection) {
+		String url = connection.getRequestURI();
+        if (StringUtils.isNotBlank(connection.getQueryString())) {
+            url = url + "?" + connection.getQueryString();
+        }
+        
+		return url;
+	}
+	
+	/**
+	 * Retrieves the URL of a WebSocketChannel
+	 * 
+	 * @param channel The WebSocket Channel
+	 * 
+	 * @return The URL of the WebSocket Channel
+	 */
+	public static String getWebSocketURL(WebSocketChannel channel) {
+		return channel.getUrl();
+	}
 }

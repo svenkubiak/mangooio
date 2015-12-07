@@ -18,9 +18,7 @@ public class BinaryHandler implements HttpHandler {
     private final Response response;
 
     public BinaryHandler(Response response) {
-        Objects.requireNonNull(response, "response can not be null");
-
-        this.response = response;
+        this.response = Objects.requireNonNull(response, "response can not be null");
     }
 
     @Override

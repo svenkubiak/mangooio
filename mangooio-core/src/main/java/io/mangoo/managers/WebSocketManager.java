@@ -5,12 +5,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
+import io.mangoo.enums.Default;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
 /**
@@ -21,7 +22,6 @@ import io.undertow.websockets.core.WebSocketChannel;
 @Singleton
 public class WebSocketManager {
     private static final String URI_ERROR = "uri can not be null";
-    private static final String PREFIX = "MANGOOIO-WS-";
     private Cache cache;
     
     @Inject
@@ -36,21 +36,18 @@ public class WebSocketManager {
      * @param queryString The query string of the request
      * @param channel channel The channel to put
      */
-    public void addChannel(String uri, String queryString, WebSocketChannel channel) {
+    public void addChannel(WebSocketChannel channel) {
         Objects.requireNonNull(channel, "channel can not be null");
 
-        if (StringUtils.isNotBlank(queryString)) {
-            uri = uri + "?" + queryString;
-        }
-
-        Set<WebSocketChannel> channels = getChannels(uri);
+        String url = RequestUtils.getWebSocketURL(channel);
+        Set<WebSocketChannel> channels = getChannels(url);
         if (channels == null) {
             channels = new HashSet<>();
             channels.add(channel);
         } else {
             channels.add(channel);
         }
-        setChannels(uri, channels);
+        setChannels(url, channels);
     }
 
     /**
@@ -63,7 +60,7 @@ public class WebSocketManager {
         Objects.requireNonNull(uri, URI_ERROR);
         Objects.requireNonNull(channels, "uriConnections can not be null");
 
-        this.cache.put(PREFIX + uri, channels);
+        this.cache.put(Default.WSS_CACHE_PREFIX.toString() + uri, channels);
     }
 
     /**
@@ -76,7 +73,7 @@ public class WebSocketManager {
     public Set<WebSocketChannel> getChannels(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
 
-        Set<WebSocketChannel> channels = this.cache.get(PREFIX + uri);
+        Set<WebSocketChannel> channels = this.cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
 
         return (channels == null) ? new HashSet<>() : channels;
     }
@@ -89,7 +86,7 @@ public class WebSocketManager {
     public void removeChannels(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
 
-        this.cache.remove(PREFIX + uri);
+        this.cache.remove(Default.WSS_CACHE_PREFIX.toString() + uri);
     }
 
     /**

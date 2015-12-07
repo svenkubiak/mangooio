@@ -5,12 +5,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
+import io.mangoo.enums.Default;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
@@ -22,7 +23,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 @Singleton
 public class ServerEventManager {
     private static final String URI_ERROR = "uri can not be null";
-    private static final String PREFIX = "MANGOOIO-SSE-";
     private Cache cache;
     
     @Inject
@@ -38,19 +38,15 @@ public class ServerEventManager {
     public void addConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, "connection can not be null");
 
-        String uri = connection.getRequestURI();
-        if (StringUtils.isNotBlank(connection.getQueryString())) {
-            uri = uri + "?" + connection.getQueryString();
-        }
-
-        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
+        String url = RequestUtils.getServerSentEventURL(connection);
+        Set<ServerSentEventConnection> uriConnections = getConnections(url);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();
             uriConnections.add(connection);
         } else {
             uriConnections.add(connection);
         }
-        setConnections(uri, uriConnections);
+        setConnections(url, uriConnections);
     }
 
     /**
@@ -123,7 +119,7 @@ public class ServerEventManager {
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
 
-        Set<ServerSentEventConnection> uriConnections = this.cache.get(PREFIX + uri);
+        Set<ServerSentEventConnection> uriConnections = this.cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
 
         return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }
@@ -138,7 +134,7 @@ public class ServerEventManager {
         Objects.requireNonNull(uri, URI_ERROR);
         Objects.requireNonNull(uriConnections, "uriConnections can not be null");
 
-        this.cache.put(PREFIX + uri, uriConnections);
+        this.cache.put(Default.SSE_CACHE_PREFIX.toString() + uri, uriConnections);
     }
 
     /**
@@ -149,6 +145,6 @@ public class ServerEventManager {
     public void removeConnections(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
 
-        this.cache.remove(PREFIX + uri);
+        this.cache.remove(Default.SSE_CACHE_PREFIX.toString() + uri);
     }
 }

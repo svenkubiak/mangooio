@@ -89,11 +89,8 @@ public class RequestHandler implements HttpHandler {
     private final Config config;
 
     public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
-        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
-
-        this.controllerClass = controllerClass;
-        this.controllerMethod = controllerMethod;
+        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        this.controllerMethod = Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
         this.async = async;
         this.controller = Application.getInstance(this.controllerClass);
         this.methodParameters = getMethodParameters();

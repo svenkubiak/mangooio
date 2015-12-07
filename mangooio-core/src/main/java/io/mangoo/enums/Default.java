@@ -77,7 +77,9 @@ public enum Default {
     COOKIE_ENCRYPTION("false"),
     EXECUTION_THREADPOOL("10"),
     ROUTES_FILE("routes.yaml"),
-    APPLICATION_CONTROLLER("controllers.");
+    APPLICATION_CONTROLLER("controllers."),
+    SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
+    WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
     private final String value;
 
