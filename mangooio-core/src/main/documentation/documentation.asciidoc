@@ -1939,7 +1939,7 @@ incoming event, you can also sent outgoing events by using the WebSocketManager.
 [source,java]
 -----------------------------------------------------------------------------
     @Inject
-    WebSocketManager webSocketManager;
+    private WebSocketManager webSocketManager;
 
     public void sentEvent() {
         webSocketManager.getChannels("/websocket").forEach(channel -> {
@@ -1966,7 +1966,7 @@ To send outgoing Server-Sent Event data, you can use the ServerEventManager.
 [source,java]
 -----------------------------------------------------------------------------
     @Inject
-    ServerEventManager serverEventManager;
+    private ServerEventManager serverEventManager;
 
     public void sentEvent() {
         serverEventManager.getConnections("/serversentevent").forEach(connection -> {
@@ -1977,6 +1977,28 @@ To send outgoing Server-Sent Event data, you can use the ServerEventManager.
 
 The above example will send the data to all clients which have an open Servet-Sent Event
 connection to the URL /serversentevent.
+
+== Concurrency
+
+Although mangoo I/O is a web framework, there may be situations where you need to postpone
+a single, non periodic unit of work in the background and wait for it to finish.
+
+For this purpose mangoo I/O offers the ExecutionManager, whic is just a simple wrapper
+around the Java ExecutorService.
+
+[source,java]
+-----------------------------------------------------------------------------
+    @Inject
+    private ExecutionManager executionManager;
+
+    public void doTask() {
+        Future<String> future = executionManager.submit(new MyCallable());
+    }
+-----------------------------------------------------------------------------
+
+The manager offers some convinent methods for postpone task into the background of
+your application. The ExecutorService works with a fixed Thread-Pool size with a default
+value of 10. You can change this value via the application.yaml file.
 
 == i18n Internationalization
 
@@ -2463,7 +2485,7 @@ application.yaml and their default values, if the properties are not configured
 in the application.yaml file.
 
 |=======================================================================
-|*Optione name* |*Description* |*Default value* |*Note*
+|*Option name* |*Description* |*Default value* |*Note*
 |application.secret |The application secret |Random value |Must be at
 least 16 characters or mangoo I/O won't start
 
@@ -2528,6 +2550,8 @@ as a fallback value for Locale
 |cache.maxsize |The maximum number of elements in the cache |5000|
 
 |cache.expires |Duration in seconds after which an element is removed from the cache if it is not accessed|3600|
+
+|execution.threadpool |Number of threads in the ExecutionManager|10|
 
 |auth.cookie.name |The name of the authentication cookie
 |$application.name-MANGOO-AUTH|
