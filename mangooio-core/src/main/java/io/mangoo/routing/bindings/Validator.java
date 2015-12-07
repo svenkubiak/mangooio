@@ -28,9 +28,7 @@ public class Validator {
 
     @Inject
     public Validator(Messages messages) {
-        Objects.requireNonNull(messages, "Messages can not be null");
-
-        this.messages = messages;
+        this.messages =  Objects.requireNonNull(messages, "Messages can not be null");
     }
 
     /**

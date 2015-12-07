@@ -23,7 +23,7 @@ public class ExecutionManager {
     @Inject
     public ExecutionManager(Config config) {
         config = Objects.requireNonNull(config,  "config can not be null");
-        executorService = Executors.newFixedThreadPool(config.getExecutionPool());
+        this.executorService = Executors.newFixedThreadPool(config.getExecutionPool());
     }
 
     /**

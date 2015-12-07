@@ -48,7 +48,7 @@ public class Cache {
     }
 
     /**
-     * Adds a value to cache with a given key overwriting and exisiting value
+     * Adds a value to cache with a given key overwriting and existing value
      *
      * @param key The key for the cached value
      * @param value The value to store

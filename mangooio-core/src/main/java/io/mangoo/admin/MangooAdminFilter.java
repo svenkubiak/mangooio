@@ -25,7 +25,6 @@ import io.undertow.util.Headers;
  *
  */
 public class MangooAdminFilter implements MangooFilter {
-
     private final Config config;
 
     @Inject

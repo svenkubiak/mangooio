@@ -29,9 +29,7 @@ public class Form implements MangooValidator {
 
     @Inject
     public Form (Validator validator) {
-        Objects.requireNonNull(validator, "Validator can not be null");
-
-        this.validator = validator;
+        this.validator = Objects.requireNonNull(validator, "Validator can not be null");
     }
 
     @Override

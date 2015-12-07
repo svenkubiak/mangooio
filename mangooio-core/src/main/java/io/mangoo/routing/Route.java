@@ -20,9 +20,7 @@ public class Route {
     private boolean blocking;
 
     public Route(RouteType routeType) {
-        Objects.requireNonNull(routeType, "routeType can not be null");
-
-        this.routeType = routeType;
+        this.routeType = Objects.requireNonNull(routeType, "routeType can not be null");
     }
 
     public Route toUrl(String url) {

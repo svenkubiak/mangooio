@@ -23,9 +23,12 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 public class ServerEventManager {
     private static final String URI_ERROR = "uri can not be null";
     private static final String PREFIX = "MANGOOIO-SSE-";
-
-    @Inject
     private Cache cache;
+    
+    @Inject
+    public ServerEventManager(Cache cache) {
+    	this.cache = Objects.requireNonNull(cache, "cache ca not be null");
+    }
 
     /**
      * Adds a new connection to the manager

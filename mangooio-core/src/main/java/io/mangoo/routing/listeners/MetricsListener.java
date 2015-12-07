@@ -25,9 +25,7 @@ public class MetricsListener implements ResponseCommitListener {
 
     @Inject
     public MetricsListener(Metrics metrics) {
-        Objects.requireNonNull(metrics, "metrics can not be null");
-
-        this.metrics = metrics;
+        this.metrics = Objects.requireNonNull(metrics, "metrics can not be null");
     }
 
     @Override

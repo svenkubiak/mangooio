@@ -22,9 +22,12 @@ import io.undertow.websockets.core.WebSocketChannel;
 public class WebSocketManager {
     private static final String URI_ERROR = "uri can not be null";
     private static final String PREFIX = "MANGOOIO-WS-";
-
-    @Inject
     private Cache cache;
+    
+    @Inject
+    public WebSocketManager(Cache cache) {
+    	this.cache = Objects.requireNonNull(cache, "cache ca not be null");
+    }
 
     /**
      * Adds a new channel to the manager
