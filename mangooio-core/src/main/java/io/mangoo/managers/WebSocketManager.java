@@ -32,8 +32,6 @@ public class WebSocketManager {
     /**
      * Adds a new channel to the manager
      *
-     * @param uri The uri of the request
-     * @param queryString The query string of the request
      * @param channel channel The channel to put
      */
     public void addChannel(WebSocketChannel channel) {
