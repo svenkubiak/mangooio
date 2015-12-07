@@ -23,8 +23,8 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 @Singleton
 public class ServerEventManager {
     private static final String URI_ERROR = "uri can not be null";
-    private Cache cache;
-    
+    private final Cache cache;
+        
     @Inject
     public ServerEventManager(Cache cache) {
     	this.cache = Objects.requireNonNull(cache, "cache ca not be null");

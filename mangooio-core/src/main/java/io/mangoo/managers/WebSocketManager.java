@@ -22,8 +22,8 @@ import io.undertow.websockets.core.WebSocketChannel;
 @Singleton
 public class WebSocketManager {
     private static final String URI_ERROR = "uri can not be null";
-    private Cache cache;
-    
+    private final Cache cache;
+        
     @Inject
     public WebSocketManager(Cache cache) {
     	this.cache = Objects.requireNonNull(cache, "cache ca not be null");

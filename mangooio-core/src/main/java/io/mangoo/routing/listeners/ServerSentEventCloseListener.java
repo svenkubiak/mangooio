@@ -21,7 +21,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  */
 @Singleton
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
-	private Cache cache;
+	private final Cache cache;
 
 	@Inject
 	public ServerSentEventCloseListener(Cache cache) {

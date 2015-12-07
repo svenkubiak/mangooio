@@ -23,7 +23,7 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
 public class WebSocketHandler implements WebSocketConnectionCallback {
     private final boolean requiresAuthentication;
     private final Class<?> controllerClass;
-
+    
     public WebSocketHandler(Class<?> controllerClass, boolean requiresAuthentication) {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         this.requiresAuthentication = requiresAuthentication;

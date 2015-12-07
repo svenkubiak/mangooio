@@ -243,7 +243,7 @@ public final class RequestUtils {
 	 * @return The generated URL
 	 */
 	private static String getURL(URI uri) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(uri.getPath());
 		
 		if (StringUtils.isNotBlank(uri.getQuery())) {
