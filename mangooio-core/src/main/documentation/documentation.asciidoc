@@ -22,7 +22,7 @@ standard, production ready java libraries are used - no reinventing of the
 wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
 it is based on non-blocking I/O in the form of
 http://xnio.jboss.org[XNIO]. And although Undertow does support the
-servlet API, one is not bound to use it in any way, giving a java developer
+servlet API, one is not bound to use it in any way, giving a Java developer
 the opportunity to work fully stateless.
 
 mangoo I/O is highly inspired by the http://www.ninjaframework.org[Ninja
@@ -333,7 +333,7 @@ To access a configuration value, first inject the Config class.
 private Config config;
 ------------------------
 
-You can access a configuration value, either by a given key or predfined defaults
+You can access a configuration value, either by a given key or predefined defaults
 from mangoo I/O.
 
 ------------------------
@@ -341,21 +341,11 @@ config.getString("application.minify.js");
 config.getString(Key.APPLICATION_MINIFY_JS);
 ------------------------
 
-=== Utility class
-
-mangoo I/O ships with an utility class for easy access of some configuration values.
-
-[source,java]
-----------------
-ConfigUtils.getApplicationName();
-ConfigUtils.getApplicationPort();
-----------------
-
 === Modes
 
 By convention, mangoo I/O offers three configuration modes: **dev**,
 *test* and **prod**. The dev mode is automatically activated, when you
-start your mangoo I/O application for development with Maven for local development
+start your mangoo I/O application for development with Maven for local development.
 
 [source,bash]
 ----------------
@@ -380,7 +370,7 @@ or by passing a system property to the executable JAR
 
 === Mode configuration
 
-You can create mode specific configuration by prefxing a configuration
+You can create mode specific configuration by prefixing a configuration
 value.
 
 [source,yaml]
@@ -972,7 +962,7 @@ Once you set this new version, the session cookie on the client side will be inv
 the user gets a new session cookie with the current version.
 
 WARN:
-Be very careful with this feature, as it directly effects the user experience of your users.
+Be very careful with this feature, as it directly effects the experience of your users.
 
 == Flash
 
@@ -1077,7 +1067,7 @@ public class Module extends AbstractModule {
 --------------------------------------------------------------------------------------------
 
 In this example a Java 8 lambda expression is used to validate the
-passed credentials. Of coures, an instance of the MangooAuthenticator
+passed credentials. Of course, an instance of the MangooAuthenticator
 can be passed in any other way. Just make sure you implement the
 MangooAuthenticator interface and bind your implementation via the
 Module class.
@@ -1122,6 +1112,7 @@ authentication. The main methods are
 getAuthenticatedUser()
 authenticate(String password, String hash)
 login(String username, boolean remember)
+login(String username)
 logout()
 ------------------------------------------
 
@@ -1246,9 +1237,8 @@ the authentication via OAuth fails or the user did not login via OAuth the OAuth
 
 The OAuthUser is prefilled with some generic information that all supported mangoo I/O OAuth provider support. Please note,
 that email is not one of this property. Thus, you have to ask the user for the email address if you require this information
-in you application. You also have to connect the via OAuth authenticated user to your user mangement. This can, for example, done
-by storing the OAuth id of the user along with the OAuth provider (@twitter, @goolge or @facebook). But how you handle this
-is completily up to you.
+management by storing the OAuth id of the user along with the OAuth provider (@twitter, @goolge or @facebook). But how you handle this
+is completely up to you.
 
 You can also access the original OAuthResponse by calling the appropriate getter which gives you a string representation of the
 JSON reponse from the OAuth provider.
@@ -1644,6 +1634,7 @@ most certainly in an exception.
 
 === Global filter
 
+
 Besides the controller class or method filter, there is a special filter
 which can be executed globally. This means, that this filter is called on
 every mapped request in the Routes class for controller classes and methods.
@@ -1666,7 +1657,7 @@ public class MyGlobalFilter implements MangooRequestFilter {
 
     @Override
     public execute execute(Request request, Response response) {
-         Locale.setDefault(Locale.ENGLISH);
+        Locale.setDefault(Locale.ENGLISH);
         return response;
     }
 }
@@ -1677,9 +1668,8 @@ There can only be one global filter in your mangoo I/O application.
 
 == Logging
 
-mangoo I/O uses https://logging.apache.org/log4j/2.x/[Log4j2] for logging, enabling you
-a variate of loggers to append to. If you are familiar with Log4j2,
-creating a new logger instance is trivial.
+mangoo I/O uses https://logging.apache.org/log4j/2.x/[Log4j2] for logging.
+If you are familiar with Log4j2, creating a new logger instance is trivial.
 
 [source,java]
 -------------------------------------------------------------------------
@@ -1703,7 +1693,7 @@ file in the form of
 log4j2.dev.xml
 -------------------------------------------------------------------------
 
-This can of course also be set for prod and test mode.
+This can of course be set for all modes.
 
 If mangoo I/O does not find such a file, it will fall back to the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
 from log4j2.
@@ -1878,12 +1868,12 @@ org:
 -------------------------------------
 
 Check out the
-http://quartz-scheduler.org/generated/2.2.1/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
+http://quartz-scheduler.org/generated/2.2.2/html/qs-all/#page/Quartz_Scheduler_Documentation_Set%2F_qs_all.1.041.html%23[Quartz
 Scheudler configuration documentation] for more information.
 
 == WebSockets
 
-Genereal information on using WebScokets can be found
+General information on using WebScokets can be found
 http://en.wikipedia.org/wiki/WebSocket[here]. To use WebSockets in
 mangoo I/O you have to extend the MangooWebSocket class in your WebSocket controller. Extending this
 class offers you the entry points for using WebSockets methods.
@@ -1991,12 +1981,12 @@ around the Java ExecutorService.
     @Inject
     private ExecutionManager executionManager;
 
-    public void doTask() {
+    public void doSomething() {
         Future<String> future = executionManager.submit(new MyCallable());
     }
 -----------------------------------------------------------------------------
 
-The manager offers some convinent methods for postpone task into the background of
+The manager offers some convinient methods for postpone task into the background of
 your application. The ExecutorService works with a fixed Thread-Pool size with a default
 value of 10. You can change this value via the application.yaml file.
 
@@ -2036,8 +2026,7 @@ public class I18nController {
     public Response translation() {
         messages.get("my.translation");
         messages.get("my.othertranslation", "foo");
-
-         ...
+        ...
     }
 }
 ---------------------------------------------------
@@ -2049,10 +2038,10 @@ entries in the resource bundle would look like this
 
 -----------------------------------------------------------------
 my.translation=This is a translation
-my.othertranslation=This is a translation with the paramater: {0}
+my.othertranslation=This is a translation with the parameter: {0}
 -----------------------------------------------------------------
 
-Note the {0} which will be replaced by the passed paramter "foo".
+Note the {0} which will be replaced by the passed parameter "foo".
 
 === Translation in templates
 
@@ -2175,7 +2164,7 @@ public class TestSuite extends MangooRunner {
 }
 ---------------------------------------------
 
-This just needs to be an empty class for telling maven to use this Suite
+This just needs to be an empty class for telling Maven to use this Suite
 when tests are executed. You can, of course, use this class to setup your unit
 tests, like starting a database, etc.
 
@@ -2315,7 +2304,7 @@ mvn clean package
 The https://maven.apache.org/plugins/maven-shade-plugin/[Maven Shade
 Plugin] will generate the JAR file, which you can find in the target
 directory once the maven build is complete. By default, the JAR file
-will be named "mangooioapp.jar" (if you have create your mangoo I/O project
+will be named "mangooioapp.jar" (if you have created your mangoo I/O project
 via the archetype). You can change the name in your pom.xml file in
 the Shade Plugin configuration.
 
@@ -2337,13 +2326,13 @@ configuration from your application.yaml
 
 [NOTE]
 Also Undertow is production-ready, it is recommended to use a front-end HTTP
-server such as nginx or Apache to leverage an easy configuration for
+server such as nginx, Apache, etc. to leverage an easy configuration for
 load-balancing, SSL termination, etc.
 
 === Debian init.d script
 
 The following script is an example of how to start, stop and restart a
-mangoo I/O application as a deamon on debian.
+mangoo I/O application as a deamon on Debian.
 
 [source,bash]
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -2433,6 +2422,7 @@ Place this script in /etc/init.d and use it as follows
 
 [source,bash]
 ------------------------------------------------
+chmod +x /etc/init.d/MyScript
 /etc/init.d/MyScript (start|stop|restart|status)
 ------------------------------------------------
 
