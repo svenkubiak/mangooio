@@ -50,6 +50,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Support for OAuth with Twitter, Google and Facebook
 * Simple Deployment and CI-Integration
 * i18N Internationalization
+* And many more...
 
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
@@ -67,6 +68,9 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
 * [Google Guava](https://github.com/google/guava) - Caching
 * [Boon JSON](https://github.com/boonproject/boon) - JSON parser
+* [SnakeYaml](https://bitbucket.org/asomov/snakeyaml) - Configuration handling
+* [JUnit](http://junit.org/) - Testing
+* [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong cryptography and authentication
 * And many more ...
 
 **mangoo I/O in 2 Minutes**   
