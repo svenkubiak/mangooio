@@ -287,6 +287,30 @@ as the mapping is done in the Routes class and mangoo I/O doesn't require this.
 If you don't provide a log4j2.xml file, then Log4j2
 will fallback to a default configuration provided with the Log4j2 base package.
 
+== Dependency Injection
+
+mangoo I/O uses Google Guice for dependency injection, which enables you
+to simple inject a class by calling
+
+[source,java]
+------------------------
+@Inject
+private MyClass myClass;
+------------------------
+
+Guice will do the rest for you.
+
+While it is possible to use member injection, it is recommended to do
+constructor based injection, like this
+
+[source,java]
+------------------------
+@Inject
+public MyClass (MyMember myMember) {
+	this.myMember = myMember;
+}
+------------------------
+
 == Configuration
 
 mangoo I/O relies on one configuration file for your hole application.
