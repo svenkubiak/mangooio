@@ -1,7 +1,7 @@
 package controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.mangoo.interfaces.MangooWebSocket;
 import io.undertow.websockets.core.BufferedBinaryMessage;
@@ -11,8 +11,8 @@ import io.undertow.websockets.core.WebSocketChannel;
 
 @SuppressWarnings("all")
 public class WebSocketController extends MangooWebSocket {
-    private static final Logger LOG = LoggerFactory.getLogger(WebSocketController.class);
-
+    private static final Logger LOG = LogManager.getLogger(WebSocketController.class);
+    
     @Override
     protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {
         LOG.info(message.toString());

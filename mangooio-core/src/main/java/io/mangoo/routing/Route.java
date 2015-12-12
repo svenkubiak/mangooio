@@ -15,28 +15,19 @@ public class Route {
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
-    private RouteType routeType;
-
-    public Route(HttpString requestMethod) {
-        this.routeType = RouteType.REQUEST;
-        this.requestMethod = Objects.requireNonNull(requestMethod, "requestMethod can not be null");
-    }
+    private final RouteType routeType;
+    private boolean authentication;
+    private boolean blocking;
 
     public Route(RouteType routeType) {
-        this.routeType = routeType;
+        this.routeType = Objects.requireNonNull(routeType, "routeType can not be null");
     }
 
-    /**
-     * Maps a request mapping to given URL
-     *
-     * @param url The URL of the request (e.g. /foo)
-     * @return A route object {@link io.mangoo.routing.Route}
-     */
     public Route toUrl(String url) {
         this.url = url;
 
         if (RouteType.RESOURCE_PATH.equals(this.routeType)) {
-            if (!this.url.startsWith("/")) {
+            if ('/' != this.url.charAt(0)) {
                 this.url = "/" + this.url;
             }
 
@@ -44,64 +35,64 @@ public class Route {
                 this.url = this.url + "/";
             }
         } else {
-            if (!this.url.startsWith("/")) {
+            if ('/' != this.url.charAt(0)) {
                 this.url = "/" + this.url;
             }
-        }
-
-        if (isResource()) {
-            Router.addRoute(this);
         }
 
         return this;
     }
 
-    private boolean isResource() {
-        return RouteType.RESOURCE_FILE.equals(this.routeType) || RouteType.RESOURCE_PATH.equals(this.routeType);
+    public Route withClass(Class<?> controllerClass) {
+        this.controllerClass = controllerClass;
+        return this;
     }
 
-    /**
-     * Maps the request to a given controller class and controller method
-     *
-     * @param controllerClass The controller class (e.g. ApplicationController)
-     * @param controllerMethod The controller method (e.g. index)
-     */
-    public void onClassAndMethod(Class<?> controllerClass, String controllerMethod) {
-        this.controllerClass = controllerClass;
+    public Route withMethod(String controllerMethod) {
         this.controllerMethod = controllerMethod;
-
-        Router.addRoute(this);
+        return this;
     }
 
-    /**
-     * Maps the request to a given controller class. Used for websockets as they have specific controller
-     * methods.
-     *
-     * @param controllerClass The controller class (e.g. ApplicationController)
-     */
-    public void onClass(Class<?> controllerClass) {
-        this.controllerClass = controllerClass;
-
-        Router.addRoute(this);
+    public Route withRequest(HttpString requestMethod) {
+        this.requestMethod = requestMethod;
+        return this;
     }
 
-    public Class<?> getControllerClass() {
-        return controllerClass;
+    public Route withAuthentication(boolean authentication) {
+        this.authentication = authentication;
+        return this;
     }
 
-    public String getControllerMethod() {
-        return controllerMethod;
-    }
-
-    public HttpString getRequestMethod() {
-        return requestMethod;
+    public Route allowBlocking(boolean blocking) {
+        this.blocking = blocking;
+        return this;
     }
 
     public String getUrl() {
-        return url;
+        return this.url;
     }
 
     public RouteType getRouteType() {
-        return routeType;
+        return this.routeType;
+    }
+
+    public Class<?> getControllerClass() {
+        return this.controllerClass;
+    }
+
+    public String getControllerMethod() {
+        return this.controllerMethod;
+    }
+
+    public boolean isAuthenticationRequired() {
+        return this.authentication;
+    }
+
+    public HttpString getRequestMethod() {
+        return this.requestMethod;
+    }
+
+    public boolean isBlockingAllowed() {
+        return this.blocking;
     }
 }

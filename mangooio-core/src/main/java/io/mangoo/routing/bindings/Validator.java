@@ -22,13 +22,13 @@ import io.mangoo.i18n.Messages;
  *
  */
 public class Validator {
-    private Map<String, String> errors = new HashMap<String, String>();
-    private Map<String, String> values = new HashMap<String, String>();
-    private Messages messages;
+    private final Map<String, String> errors = new HashMap<>();
+    private Map<String, String> values = new HashMap<>();
+    private final Messages messages;
 
     @Inject
     public Validator(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, "Messages can not be null");
+        this.messages =  Objects.requireNonNull(messages, "Messages can not be null");
     }
 
     /**

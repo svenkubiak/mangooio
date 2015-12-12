@@ -1,6 +1,5 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
 [![Travis Build Status](https://travis-ci.org/svenkubiak/mangooio.svg?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
-[![codecov.io](http://codecov.io/github/svenkubiak/mangooio/coverage.svg?branch=master)](http://codecov.io/github/svenkubiak/mangooio?branch=master)
 
 If this software is useful to you, you can support further development by using Flattr. Thank you!
 
@@ -36,20 +35,22 @@ implementation, many of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
-* Intuitiv convention-over-configuration, making a java developer feel
-at home from the start
+* Intuitive convention-over-configuration
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
 * Support for Web Sockets
+* Support for Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks
 * Easy handling of JSON in- and output
-* Built-in asset minification in development mode
+* Build-in asset minification in development mode
 * Flexible testing tools
+* Build-in authentication tools
+* Support for OAuth with Twitter, Google and Facebook
 * Simple Deployment and CI-Integration
 * i18N Internationalization
-* Easy eMail handling
+* And many more...
 
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
@@ -62,11 +63,14 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Maven](https://maven.apache.org/) - Dependency management, built-system, packaging
 * [Undertow](http://undertow.io/) - Web Server
 * [Google Guice](https://github.com/google/guice) - Dependency injection
-* [Logback](http://logback.qos.ch/) - Logging
+* [Log4j 2](https://logging.apache.org/log4j/2.x/) - Logging
 * [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
 * [Google Guava](https://github.com/google/guava) - Caching
 * [Boon JSON](https://github.com/boonproject/boon) - JSON parser
+* [SnakeYaml](https://bitbucket.org/asomov/snakeyaml) - Configuration handling
+* [JUnit](http://junit.org/) - Testing
+* [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong cryptography and authentication
 * And many more ...
 
 **mangoo I/O in 2 Minutes**   

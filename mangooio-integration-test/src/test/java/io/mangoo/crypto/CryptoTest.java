@@ -1,24 +1,27 @@
 package io.mangoo.crypto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.regex.Pattern;
+import static io.mangoo.test.hamcrest.RegexMatcher.matches;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.crypto.Crypto;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
+@SuppressWarnings("unchecked")
 public class CryptoTest {
     private static Crypto crypto;
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
-    private static final Pattern pattern = Pattern.compile(base64Pattern);
-    private static final String plainText = "super secret message!!!";
-    private static final String key = "myvoiceismypassword";
+    private static final String plainText = "This is a super secret message!";
+    private static final String key = "My voice is my password!$";
     
     @Before
     public void init() {
@@ -26,42 +29,50 @@ public class CryptoTest {
     }
     
     @Test
-    public void encryptTest() {
+    public void testEncryption() {
+        //when
         String encrypt = crypto.encrypt(plainText);
-        
-        assertNotNull(encrypt);
-        assertTrue(pattern.matcher(encrypt).matches());
-        assertFalse(encrypt.equalsIgnoreCase(plainText));
+
+        //then
+        assertThat(encrypt, not(nullValue()));
+        assertThat(encrypt, matches(base64Pattern));
+        assertThat(encrypt, not(equalTo(plainText)));
     }
     
     @Test
-    public void encryptWithKeyTest() {
+    public void testEncryptionWithKey() {
+        //when
         String encrypt = crypto.encrypt(plainText, key);
         
-        assertNotNull(encrypt);
-        assertTrue(pattern.matcher(encrypt).matches());
-        assertFalse(encrypt.equalsIgnoreCase(plainText));
+        //then
+        assertThat(encrypt, not(nullValue()));
+        assertThat(encrypt, matches(base64Pattern));
+        assertThat(encrypt, not(equalTo(plainText)));
     }
     
     @Test
-    public void decryptTest() {
+    public void testDecryption() {
+        //given
         String encrypt = crypto.encrypt(plainText);
-        assertNotNull(encrypt);
-        assertTrue(pattern.matcher(encrypt).matches());
         
+        //when
         String decrypt = crypto.decrypt(encrypt);
-        assertNotNull(decrypt);
-        assertEquals(decrypt, plainText);
+
+        //then
+        assertThat(decrypt, not(nullValue()));
+        assertThat(decrypt, equalTo(plainText));
     }
     
     @Test
-    public void decryptWithKeyTest() {
+    public void testDecryptionWithKey() {
+        //given
         String encrypt = crypto.encrypt(plainText, key);
-        assertNotNull(encrypt);
-        assertTrue(pattern.matcher(encrypt).matches());
-        
+
+        //when
         String decrypt = crypto.decrypt(encrypt, key);
-        assertNotNull(decrypt);
-        assertEquals(decrypt, plainText);
+
+        //then
+        assertThat(decrypt, not(nullValue()));
+        assertThat(decrypt, equalTo(plainText));
     }
 }

@@ -4,23 +4,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
@@ -29,12 +33,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
-import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
 import io.mangoo.admin.MangooAdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -43,32 +42,33 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
 import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.interfaces.MangooRoutes;
 import io.mangoo.routing.Route;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
+import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
-import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.scheduler.Scheduler;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
 /**
  * Convenient methods for everything to start up a mangoo I/O application
- * 
+ *
  * @author svenkubiak
  *
  */
 public class Bootstrap {
-    private static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
     private static final int INITIAL_SIZE = 255;
-    private LocalDateTime start;
+    private static volatile Logger LOG; //NOSONAR
+    private final LocalDateTime start;
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Config config;
@@ -77,13 +77,13 @@ public class Bootstrap {
     private Injector injector;
     private boolean error;
     private int port;
-    
+
     public Bootstrap() {
         this.start = LocalDateTime.now();
     }
 
     public Mode prepareMode() {
-        String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
+        final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
             switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
             case "dev"  : this.mode = Mode.DEV;
@@ -96,17 +96,36 @@ public class Bootstrap {
         } else {
             this.mode = Mode.PROD;
         }
-        
+
         return this.mode;
+    }
+
+    @SuppressWarnings("all")
+    public void prepareLogger() {
+        final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
+        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
+            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+        } else {
+            try {
+                final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
+                final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                context.setConfigLocation(resource.toURI());
+            } catch (final URISyntaxException e) {
+                e.printStackTrace(); //NOSONAR
+            }
+
+            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+            LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
+        }
     }
 
     public Injector prepareInjector() {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
         return this.injector;
     }
-    
+
     public void applicationInitialized() {
-        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();        
+        this.injector.getInstance(MangooLifecycle.class).applicationInitialized();
     }
 
     public void prepareConfig() {
@@ -117,22 +136,63 @@ public class Bootstrap {
         }
     }
 
+    @SuppressWarnings("all")
     public void prepareRoutes() {
         if (!this.error) {
             try {
-                MangooRoutes mangooRoutes = (MangooRoutes) this.injector.getInstance(Class.forName(Default.ROUTES_CLASS.toString()));
-                mangooRoutes.routify();
-            } catch (ClassNotFoundException e) {
-                LOG.error("Failed to load routes. Please check, that conf/Routes.java exisits in your application", e);
+                final Yaml yaml = new Yaml();
+                final List<Map<String, String>> routes = (List<Map<String, String>>) yaml.load(Resources.getResource(Default.ROUTES_FILE.toString()).openStream());
+
+                routes.forEach(routing -> {
+                    routing.entrySet().forEach(entry -> {
+                        final String method = entry.getKey().trim();
+                        String mapping = entry.getValue();
+
+                        boolean authentication = false;
+                        boolean blocking = false;
+                        if (mapping.contains("@authentication")) {
+                            mapping = mapping.replace("@authentication", "");
+                            authentication = true;
+                        } else if (mapping.contains("@blocking")) {
+                            mapping = mapping.replace("@blocking", "");
+                            blocking = true;
+                        }
+
+                        final String [] split = mapping.split("->");
+                        final Route route = new Route(getRouteType(method));
+                        route.toUrl(split[0].trim());
+                        route.withRequest(HttpString.tryFromString(method));
+                        route.withAuthentication(authentication);
+                        route.allowBlocking(blocking);
+
+                        try {
+                            if (split.length == 2) {
+                                final String [] classMethod = split[1].split("\\.");
+                                route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
+                                if (classMethod.length == 2) {
+                                    route.withMethod(classMethod[1].trim());
+                                }
+                            }
+
+                            Router.addRoute(route);
+                        } catch (final ClassNotFoundException e) {
+                            LOG.error("Failed to parse routing: " + routing);
+                            LOG.error("Please check, that your routes.yaml syntax is correct", e);
+                            this.error = true;
+                        }
+                    });
+                });
+            } catch (final IOException e) {
+                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
                 this.error = true;
             }
 
-            for (Route route : Router.getRoutes()) {
+            Router.getRoutes().forEach(route -> {
                 if (RouteType.REQUEST.equals(route.getRouteType())) {
-                    Class<?> controllerClass = route.getControllerClass();
+                    final Class<?> controllerClass = route.getControllerClass();
                     checkRoute(route, controllerClass);
                 }
-            }
+            });
 
             if (!this.error) {
                 initPathHandler();
@@ -140,49 +200,74 @@ public class Bootstrap {
         }
     }
 
-    private void checkRoute(Route route, Class<?> controllerClass) {
-        boolean found = false;
-        for (Method method : controllerClass.getMethods()) {
-            if (method.getName().equals(route.getControllerMethod())) {
-                found = true;
-            }
+    private RouteType getRouteType(String method) {
+        switch (method) {
+        case "GET":
+        case "POST":
+        case "PUT":
+        case "DELETE":
+        case "HEAD":
+            return RouteType.REQUEST;
+        case "WSS":
+            return RouteType.WEBSOCKET;
+        case "SSE":
+            return RouteType.SERVER_SENT_EVENT;
+        case "FILE":
+            return RouteType.RESOURCE_FILE;
+        case "PATH":
+            return RouteType.RESOURCE_PATH;
+        default:
+            return null;
         }
+    }
 
-        if (!found) {
-            LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
-            this.error = true;
+    private void checkRoute(Route route, Class<?> controllerClass) {
+        if (!this.error) {
+            boolean found = false;
+            for (final Method method : controllerClass.getMethods()) {
+                if (method.getName().equals(route.getControllerMethod())) {
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
+                this.error = true;
+            }
         }
     }
 
     private void initPathHandler() {
         this.pathHandler = new PathHandler(initRoutingHandler());
-        for (Route route : Router.getRoutes()) {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
-                this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass())));
+                this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
+            } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
+                this.pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(new ServerSentEventHandler(route.isAuthenticationRequired())));
             } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
                 this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
             }
-        }
+        });
     }
 
     private RoutingHandler initRoutingHandler() {
-        RoutingHandler routingHandler = Handlers.routing();
+        final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
-        Router.mapRequest(Methods.GET).toUrl("/@routes").onClassAndMethod(MangooAdminController.class, "routes");
-        Router.mapRequest(Methods.GET).toUrl("/@config").onClassAndMethod(MangooAdminController.class, "config");
-        Router.mapRequest(Methods.GET).toUrl("/@health").onClassAndMethod(MangooAdminController.class, "health");
-        Router.mapRequest(Methods.GET).toUrl("/@cache").onClassAndMethod(MangooAdminController.class, "cache");
-        Router.mapRequest(Methods.GET).toUrl("/@metrics").onClassAndMethod(MangooAdminController.class, "metrics");
-        Router.mapRequest(Methods.GET).toUrl("/@scheduler").onClassAndMethod(MangooAdminController.class, "scheduler");
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@routes").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("routes"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@config").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("config"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@health").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("health"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@cache").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("cache"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@metrics").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("metrics"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@scheduler").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("scheduler"));
 
-        for (Route route : Router.getRoutes()) {
+        Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod()));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
             }
-        }
+        });
 
         return routingHandler;
     }
@@ -204,7 +289,7 @@ public class Bootstrap {
             this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
             this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
-            Undertow server = Undertow.builder()
+            final Undertow server = Undertow.builder()
                     .addHttpListener(this.port, this.host)
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, new ExceptionHandler()))
                     .build();
@@ -214,10 +299,10 @@ public class Bootstrap {
     }
 
     private List<Module> getModules() {
-        List<Module> modules = new ArrayList<Module>();
+        final List<Module> modules = new ArrayList<>();
         if (!this.error) {
             try {
-                Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
+                final Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
                 AbstractModule abstractModule;
                 abstractModule = (AbstractModule) module.getConstructor().newInstance();
                 modules.add(abstractModule);
@@ -234,10 +319,14 @@ public class Bootstrap {
 
     public void showLogo() {
         if (!this.error) {
-            StringBuilder logo = new StringBuilder(INITIAL_SIZE);
+            final StringBuilder logo = new StringBuilder(INITIAL_SIZE);
             try {
-                logo.append("\n").append(FigletFont.convertOneLine("mangoo I/O")).append("\n\n").append("https://mangoo.io | @mangoo_io | " + getVersion() + "\n");
-            } catch (IOException e) {//NOSONAR
+                logo.append('\n')
+                     .append(FigletFont.convertOneLine("mangoo I/O"))
+                     .append("\n\nhttps://mangoo.io | @mangoo_io | ")
+                     .append(getVersion())
+                     .append('\n');
+            } catch (final IOException e) {//NOSONAR
                 //intentionally left blank
             }
 
@@ -245,71 +334,43 @@ public class Bootstrap {
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
-    
+
     public void applicationStarted() {
         this.injector.getInstance(MangooLifecycle.class).applicationStarted();
     }
 
-    public GreenMail startGreenMail() {
-        GreenMail greenMail = null;
-        if (!this.error && !Mode.PROD.equals(Application.getMode())) {
-            greenMail = new GreenMail(new ServerSetup(
-                    this.config.getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt()),
-                    this.config.getString(Key.SMTP_HOST, Default.LOCALHOST.toString()), Default.FAKE_SMTP_PROTOCOL.toString()));
-            greenMail.start();
-        }
-        
-        return greenMail;
-    }
-    
     public void startQuartzScheduler() {
         if (!this.error) {
-            Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
+            final Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
-                MangooScheduler mangooScheduler = this.injector.getInstance(MangooScheduler.class);
-                for (Class<?> clazz : jobs) {
-                    Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
+                final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
+                jobs.forEach(clazz -> {
+                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
-                        JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron()); 
-                        mangooScheduler.schedule(jobDetail, trigger);      
+                        final JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                        final Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                        mangooScheduler.schedule(jobDetail, trigger);
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
                         LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         this.error = true;
                     }
-                }
+                });
+
                 if (!this.error) {
-                    mangooScheduler.start();                    
+                    mangooScheduler.start();
                 }
             }
         }
     }
 
-    public void prepareLogging() {
-        if (Mode.PROD.equals(this.mode)) {
-            LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-            try {
-                URL resource = Resources.getResource(Default.LOGBACK_PROD_FILE.toString());
-                if (resource != null) {
-                    JoranConfigurator configurator = new JoranConfigurator();
-                    configurator.setContext(context);
-                    context.reset();
-                    configurator.doConfigure(resource);
-                }
-            } catch (JoranException | IllegalArgumentException e) { //NOSONAR
-                //intentionally left blank
-            }
-        }
-    }
-    
     private String getVersion() {
         String version = Default.VERSION.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
-            Properties properties = new Properties();
+            final Properties properties = new Properties();
             properties.load(inputStream);
             version = String.valueOf(properties.get(Key.VERSION.toString()));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to get application version", e);
         }
 

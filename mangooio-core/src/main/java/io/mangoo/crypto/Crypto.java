@@ -3,6 +3,8 @@ package io.mangoo.crypto;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.engines.AESEngine;
@@ -11,11 +13,8 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.encoders.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -30,14 +29,14 @@ import io.mangoo.enums.Key;
  */
 @Singleton
 public class Crypto {
-    private static final Logger LOG = LoggerFactory.getLogger(Crypto.class);
+    private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final int KEYINDEX_START = 0;
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
-    private PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
+    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
     private CipherParameters cipherParameters;
-    private Config config;
+    private final Config config;
 
     @Inject
     public Crypto(Config config) {
@@ -51,7 +50,7 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
-        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
 
         return decrypt(encrytedText, getSizedKey(this.config.getString(Key.APPLICATION_SECRET)));
     }
@@ -64,16 +63,13 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
-        Preconditions.checkNotNull(encrytedText, "encrytedText can not be null");
-        Preconditions.checkNotNull(key, "key can not be null");
+        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
-
-        String plainText = null;
         this.cipher.init(false, this.cipherParameters);
-        plainText = new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
 
-        return plainText;
+        return new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
     }
 
     /**
@@ -86,7 +82,7 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        Preconditions.checkNotNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(plainText, "plainText can not be null");
 
         return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
     }
@@ -102,16 +98,13 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
-        Preconditions.checkNotNull(plainText, "plainText can not be null");
-        Preconditions.checkNotNull(key, "key can not be null");
+        Objects.requireNonNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(key, "key can not be null");
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
-
-        String encrytedText = null;
         this.cipher.init(true, this.cipherParameters);
-        encrytedText = new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
 
-        return encrytedText;
+        return new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
 
     /**
@@ -123,14 +116,14 @@ public class Crypto {
     private byte[] cipherData(byte[] data) {
         byte[] result = null;
         try {
-            byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
+            final byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
 
-            int processedBytes = this.cipher.processBytes(data, 0, data.length, buffer, 0);
-            int finalBytes = this.cipher.doFinal(buffer, processedBytes);
+            final int processedBytes = this.cipher.processBytes(data, 0, data.length, buffer, 0);
+            final int finalBytes = this.cipher.doFinal(buffer, processedBytes);
 
             result = new byte[processedBytes + finalBytes];
             System.arraycopy(buffer, 0, result, 0, result.length);
-        } catch (CryptoException e) {
+        } catch (final CryptoException e) {
             LOG.error("Failed to encrypt/decrypt", e);
         }
 

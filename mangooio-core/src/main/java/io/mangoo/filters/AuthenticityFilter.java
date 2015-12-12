@@ -7,7 +7,7 @@ import io.mangoo.routing.bindings.Request;
 
 /**
  * Filter that checks the authenticity token
- * 
+ *
  * @author svenkubiak
  *
  */

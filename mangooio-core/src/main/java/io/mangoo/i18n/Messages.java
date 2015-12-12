@@ -1,10 +1,10 @@
 package io.mangoo.i18n;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Singleton;
 
@@ -14,13 +14,13 @@ import io.mangoo.enums.Validation;
 
 /**
  * Convinient class for handling translations
- * 
+ *
  * @author skubiak
  *
  */
 @Singleton
 public class Messages {
-    private Map<String, String> defaults = new HashMap<String, String>();
+    private final Map<String, String> defaults = new ConcurrentHashMap<>(16, 0.9f, 1);
     private ResourceBundle bundle;
     private Locale locale;
 

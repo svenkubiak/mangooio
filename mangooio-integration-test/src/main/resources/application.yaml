@@ -1,3 +1,13 @@
+# Application configuration
+# 
+# This file defines all configuration values for a mangoo I/O application.
+# The default values are loaded by default and overwritten by environment specific
+# values if they are configured.
+#
+# Possible environments are test and dev.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 default:
     application:
         name       : TEST 
@@ -8,8 +18,8 @@ default:
         minify:
             js        : true
             css       : true
-            jsfolder  : /foo
-            cssfolder : /bar
+            jsfolder  : /javascripts
+            cssfolder : /stylesheets
             gzipjs    : false
             gzipcss   : false
     auth:
@@ -56,6 +66,7 @@ test:
               password   : c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec   
     smtp:
         port       : 3055
+        username   :        
 
 dev:
     application:
@@ -68,4 +79,4 @@ dev:
               metrics    : true  
               scheduler  : true   
     smtp:
-        port       : 3125
+        port       : 3125        

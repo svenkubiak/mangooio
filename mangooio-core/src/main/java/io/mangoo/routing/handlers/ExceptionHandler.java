@@ -1,7 +1,7 @@
 package io.mangoo.routing.handlers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
@@ -20,12 +20,12 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ExceptionHandler implements HttpHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
+    private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
     private static final String MESSAGE = "Failed to pass and exception to the frontend";
-    
+
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Throwable throwable = null; 
+        Throwable throwable = null;
         try {
             throwable = exchange.getAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE);
             exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
@@ -37,16 +37,16 @@ public class ExceptionHandler implements HttpHandler {
 
             if (Application.inDevMode()) {
                 TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
-                
+
                 if (throwable == null) {
-                    exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
+                    exchange.getResponseSender().send(Template.DEFAULT.serverError());
                 } else if (throwable.getCause() == null) {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, true));
                 } else {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable.getCause(), false));
                 }
             } else {
-                exchange.getResponseSender().send(Template.DEFAULT.internalServerError());
+                exchange.getResponseSender().send(Template.DEFAULT.serverError());
             }
         } catch (Exception e) { //NOSONAR
             if (throwable ==  null) {

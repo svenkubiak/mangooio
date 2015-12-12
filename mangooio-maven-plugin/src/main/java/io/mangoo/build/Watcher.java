@@ -37,9 +37,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sun.nio.file.SensitivityWatchEventModifier; //NOSONAR
 
@@ -57,7 +57,7 @@ import io.mangoo.utils.MinificationUtils;
  */
 @SuppressWarnings({"restriction", "unchecked"})
 public class Watcher implements Runnable {
-    private static final Logger LOG = LoggerFactory.getLogger(Watcher.class);
+    private static final Logger LOG = LogManager.getLogger(Watcher.class);
     private final Trigger trigger;
     private final Set<String> includes;
     private final Set<String> excludes;
@@ -204,17 +204,17 @@ public class Watcher implements Runnable {
             return false;
         }
 
-        return !absolutePath.contains("min") && absolutePath.endsWith("css") || absolutePath.endsWith("js");
+        return !absolutePath.contains("min") && ( absolutePath.endsWith("css") || absolutePath.endsWith("js") );
     }
 
-    public static enum RuleType {
+    public enum RuleType {
         NONE,
         INCLUDE,
         EXCLUDE
     }
 
     public static class RuleMatch {
-        private boolean proceed;
+        private final boolean proceed;
 
         public RuleMatch(boolean proceed) {
             this.proceed = proceed;

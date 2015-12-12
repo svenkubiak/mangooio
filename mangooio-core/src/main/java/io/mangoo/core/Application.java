@@ -1,34 +1,32 @@
 package io.mangoo.core;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.inject.Injector;
-import com.icegreen.greenmail.util.GreenMail;
 
 import io.mangoo.enums.Mode;
 
 /**
  * Main class that starts all components of a mangoo I/O application
- * 
+ *
  * @author svenkubiak
  *
  */
 public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
-    private static volatile GreenMail greenMail;
 
     private Application() {
     }
 
-    public static void main( String[] args ) {
+    public static void main(String... args) {
         Bootstrap bootstrap = new Bootstrap();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
+        bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
-        bootstrap.prepareLogging();
         bootstrap.prepareConfig();
         bootstrap.prepareRoutes();
-        greenMail = bootstrap.startGreenMail();
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
         bootstrap.showLogo();
@@ -69,7 +67,7 @@ public final class Application {
 
     /**
      * Returns the current mode the application is running in
-     * 
+     *
      * @return Enum Mode
      */
     public static Mode getMode() {
@@ -78,29 +76,25 @@ public final class Application {
 
     /**
      * Returns the Google Guice Injector
-     * 
+     *
      * @return Google Guice injector instance
      */
     public static Injector getInjector() {
         return injector;
     }
 
-    public static GreenMail getGreenMail() {
-        return greenMail;
-    }
-    
     /**
      * Short form for getting an Goolge Guice injected class by
      * calling injector.getInstance(...)
-     * 
+     *
      * @param clazz The class to retrieve from the injector
      * @param <T> JavaDoc requires this (just ignore it)
-     * 
+     *
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Preconditions.checkNotNull(clazz, "Missing class instance for getInstance");
-        
+        Objects.requireNonNull(clazz, "Missing class instance for getInstance");
+
         return injector.getInstance(clazz);
     }
 }

@@ -2,14 +2,14 @@ package io.mangoo.models;
 
 /**
  * Base class for holding exception information
- * 
+ *
  * @author svenkubiak
  *
  */
 public class Source {
-    private String content;
-    private boolean cause;
-    private int line;
+    private final String content;
+    private final boolean cause;
+    private final int line;
 
     public Source(boolean cause, int line, String content) {
         this.cause = cause;

@@ -3,8 +3,8 @@ package io.mangoo.templating.methods;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import freemarker.template.SimpleNumber;
 import freemarker.template.SimpleScalar;
@@ -20,9 +20,9 @@ import io.mangoo.i18n.Messages;
  */
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
-    private static final Logger LOG = LoggerFactory.getLogger(I18nMethod.class);
+    private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;
-    private Messages messages;
+    private final Messages messages;
 
     public I18nMethod(Messages messages) {
         this.messages = messages;
@@ -37,12 +37,12 @@ public class I18nMethod implements TemplateMethodModelEx {
 
             logError(messageKey, messageValue);
         } else if (args.size() > NUM_ARGUMENTS) {
-            List<String> strings = new ArrayList<String>();
+            List<String> strings = new ArrayList<>();
             for (Object object : args) {
                 if (object instanceof SimpleScalar) {
                     strings.add(((SimpleScalar) object).getAsString());
                 } else if (object instanceof SimpleNumber) {
-                    strings.add(((SimpleNumber) object).toString());
+                    strings.add(object.toString());
                 }
             }
 

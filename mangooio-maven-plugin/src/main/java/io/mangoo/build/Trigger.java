@@ -20,8 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This is a refactored version of
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Trigger extends Thread {
-    private static final Logger LOG = LoggerFactory.getLogger(Trigger.class);
+    private static final Logger LOG = LogManager.getLogger(Trigger.class);
     private boolean shutdown;
     private final AtomicInteger restartCount;
     private final AtomicInteger triggerCount;

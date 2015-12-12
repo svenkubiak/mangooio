@@ -1,92 +1,186 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class AdminControllerTest {
+    private static final String TEXT_HTML = "text/html; charset=UTF-8";
+    private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
+    private static final String SCHEDULER = "scheduler";
+    private static final String METRICS = "metrics";
+    private static final String CACHE = "cache";
+    private static final String ROUTES = "routes";
+    private static final String CONFIG = "config";
+    private static final String ALIVE = "alive";
+    private static final String ADMIN = "admin";
 
     @Test
-    public void healthTest() {
-        MangooResponse response = MangooRequest.get("/@health").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+    public void testHealthAuthorized() {
+        //given
+        Response response = Request.get("/@health")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
         
-        response = MangooRequest.get("/@health").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("alive"));
-    }
-
-    @Test
-    public void configTest() {
-        MangooResponse response = MangooRequest.get("/@config").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
-        
-        response = MangooRequest.get("/@config").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("config"));
-    }
-
-    @Test
-    public void routesTest() {
-        MangooResponse response = MangooRequest.get("/@routes").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
-        
-        response = MangooRequest.get("/@routes").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("routes"));
-    }
-
-    @Test
-    public void cacheTest() {
-        MangooResponse response = MangooRequest.get("/@cache").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
-
-        response = MangooRequest.get("/@cache").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("cache"));
-    }
-
-    @Test
-    public void metricsTest() {
-        MangooResponse response = MangooRequest.get("/@metrics").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
-
-        response = MangooRequest.get("/@metrics").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("metrics"));
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), containsString(ALIVE));
     }
     
     @Test
-    public void schedulerTest() {
-        MangooResponse response = MangooRequest.get("/@scheduler").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+    public void testHealthUnaothorized() {
+        //given
+        Response response = Request.get("/@health").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(ALIVE)));
+    }
 
-        response = MangooRequest.get("/@scheduler").authentication("admin", "admin").execute();
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertTrue(response.getContent().contains("scheduler"));
+    @Test
+    public void testConfigAuthorized() {
+        //given
+        Response response = Request.get("/@config")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(CONFIG));
+    }
+    
+    @Test
+    public void testConfigUnauthorized() {
+        //given
+        Response response = Request.get("/@config").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(CONFIG)));
+    }
+
+    @Test
+    public void testRoutedAuthorized() {
+        //given
+        Response response = Request.get("/@routes")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(ROUTES));
+    }
+    
+    @Test
+    public void testRoutedUnauthorized() {
+        //given
+        Response response = Request.get("/@routes").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(ROUTES)));
+    }
+
+    @Test
+    public void testCacheAuthorized() {
+        //given
+        Response response = Request.get("/@cache")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(CACHE));
+    }
+    
+    @Test
+    public void testCacheUnauthorized() {
+        //given
+        Response response = Request.get("/@cache").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(CACHE)));
+    }
+
+    @Test
+    public void testMetricsAuthorized() {
+        //given
+        Response response = Request.get("/@metrics")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(METRICS));
+    }
+    
+    @Test
+    public void testMetricsUnauthorized() {
+        //given
+        Response response = Request.get("/@metrics").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(METRICS)));
+    }
+    
+    @Test
+    public void testSchedulerAuthorized() {
+        //given
+        Response response = Request.get("/@scheduler")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(SCHEDULER));
+    }
+    
+    @Test
+    public void testSchedulerUnAuthorized() {
+        //given
+        Response response = Request.get("/@scheduler").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
 }

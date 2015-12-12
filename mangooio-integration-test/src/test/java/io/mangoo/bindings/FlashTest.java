@@ -1,45 +1,131 @@
 package io.mangoo.bindings;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
 import io.mangoo.routing.bindings.Flash;
 
+/**
+ *
+ * @author svenkubiak
+ *
+ */
 public class FlashTest {
+    private static final String MYMESSAGE = "mymessage";
+    private static final String CUSTOM_MESSAGE = "This is my custom message";
+    private static final String SUCCESS_MESSAGE = "This is a success message!";
+    private static final String WARNING_MESSAGE = "This is a warning message!";
+    private static final String ERROR_MESSAGE = "This is an error message!";
 
     @Test
-    public void testSuccess() {
-        Flash flash = new Flash();
-        flash.setSuccess("success");
+    public void testSuccessMessage() {
+        //given
+        final Flash flash = new Flash();
 
-        assertEquals("success", flash.get("success"));
+        //when
+        flash.setSuccess(SUCCESS_MESSAGE);
+
+        //then
+        assertThat(flash.get("success"), equalToIgnoringWhiteSpace(SUCCESS_MESSAGE));
     }
 
     @Test
-    public void testWarning() {
-        Flash flash = new Flash();
-        flash.setWarning("warning");
+    public void testWarningMessage() {
+        //given
+        final Flash flash = new Flash();
 
-        assertEquals("warning", flash.get("warning"));
+        //when
+        flash.setWarning(WARNING_MESSAGE);
+
+        //then
+        assertThat(flash.get("warning"), equalToIgnoringWhiteSpace(WARNING_MESSAGE));
     }
 
     @Test
-    public void testError() {
-        Flash flash = new Flash();
-        flash.setError("error");
+    public void testErrorMessage() {
+        //given
+        final Flash flash = new Flash();
 
-        assertEquals("error", flash.get("error"));
+        //when
+        flash.setError(ERROR_MESSAGE);
+
+        //then
+        assertThat(flash.get("error"), equalToIgnoringWhiteSpace(ERROR_MESSAGE));
+    }
+
+    @Test
+    public void testNoContent() {
+        //given
+        final Flash flash = new Flash();
+
+        //then
+        assertThat(flash.hasContent(), equalTo(false));
     }
 
     @Test
     public void testContent() {
-        Flash flash = new Flash();
-        assertFalse(flash.hasContent());
+        //given
+        final Flash flash = new Flash();
 
-        flash.add("foo", "bar");
-        assertTrue(flash.hasContent());
+        //when
+        flash.put(MYMESSAGE, CUSTOM_MESSAGE);
+
+        //then
+        assertThat(flash.hasContent(), equalTo(true));
+        assertThat(flash.get(MYMESSAGE), equalToIgnoringWhiteSpace(CUSTOM_MESSAGE));
+    }
+
+    @Test
+    public void testInvalidCharacters() {
+        //given
+        final Flash flash = new Flash();
+
+        //when
+        flash.put("|", "foo");
+        flash.put(":", "foo");
+        flash.put("&", "foo");
+        flash.put(" ", "foo");
+        flash.put("foo", "|");
+        flash.put("foo", ":");
+        flash.put("foo", "&");
+        flash.put("foo", " ");
+
+        //then
+        assertThat(flash.hasContent(), equalTo(false));
+    }
+
+    @Test
+    public void testNoDiscard() {
+        //given
+        final Flash flash = new Flash();
+
+        //then
+        assertThat(flash.isDiscard(), equalTo(false));
+    }
+
+    @Test
+    public void testValues() {
+        //given
+        final Flash flash = new Flash();
+
+        //then
+        assertThat(flash.getValues(), not(nullValue()));
+    }
+
+    @Test
+    public void testDiscard() {
+        //given
+        final Flash flash = new Flash();
+
+        //when
+        flash.setDiscard(true);
+
+        //then
+        assertThat(flash.isDiscard(), equalTo(true));
     }
 }

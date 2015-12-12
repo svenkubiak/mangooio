@@ -4,16 +4,16 @@ import java.util.Date;
 
 /**
  * Base class that holds scheduled job information
- * 
+ *
  * @author svenkubiak
  *
  */
 public class Job {
-    private boolean active;
-    private String name;
-    private String description;
-    private Date nextFireTime;
-    private Date previousFireTime;
+    private final boolean active;
+    private final String name;
+    private final String description;
+    private final Date nextFireTime;
+    private final Date previousFireTime;
 
     public Job(boolean active, String name, String description, Date nextFireTime, Date previousFireTime) {
         this.active = active;

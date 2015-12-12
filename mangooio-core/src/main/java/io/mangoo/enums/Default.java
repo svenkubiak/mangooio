@@ -16,13 +16,10 @@ public enum Default {
     LOCALHOST("127.0.0.1"), //NOSONAR
     APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
-    SMTP_PORT("25"),
-    SMTP_SSL("false"), //NOSONAR
     APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
     ASSETS_PATH("src/main/resources/files/assets/"),
     CONFIG_PATH("/src/main/resources/application.yaml"),
-    FAKE_SMTP_PROTOCOL("smtp"),
     STYLESHEET_FOLDER("stylesheets"),
     JAVSCRIPT_FOLDER("javascripts"),
     CONFIGURATION_FILE("application.yaml"),
@@ -36,17 +33,14 @@ public enum Default {
     TEMPLATES_FOLDER("/templates/"),
     TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
-    SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
+    COOKIE_NAME("MANGOOIO-SESSION"),
     SPLITTER("&"),
     SEPERATOR(":"),
     NOSNIFF("nosniff"),
     SAMEORIGIN("SAMEORIGIN"),
-    @Deprecated
-    FILTER_METHOD_NAME("filter"),
     FILTER_METHOD("execute"),
     AUTHENTICITY_TOKEN("authenticityToken"),
     XSS_PROTECTION("1"),
-    ROUTES_CLASS("conf.Routes"),
     FILES_FOLDER("files"),
     MODULE_CLASS("conf.Module"),
     VERSION("unknown"),
@@ -72,13 +66,20 @@ public enum Default {
     APPLICATION_ADMIN_SCHEDULER("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
+    AUTH_COOKIE_REMEMBER_EXPIRES("1209600"),
     COOKIE_VERSION("0"),
     SCHEDULER_AUTOSTART("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
     SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
     BASICAUTH_CREDENTIALS_LENGTH("2"),
     OAUTH_REQUEST_PARAMETER("oauth"),
-    SCHEDULER_PACKAGE("jobs");
+    SCHEDULER_PACKAGE("jobs"),
+    COOKIE_ENCRYPTION("false"),
+    EXECUTION_THREADPOOL("10"),
+    ROUTES_FILE("routes.yaml"),
+    APPLICATION_CONTROLLER("controllers."),
+    SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
+    WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
     private final String value;
 

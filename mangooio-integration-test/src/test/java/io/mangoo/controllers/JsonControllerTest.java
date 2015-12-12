@@ -1,13 +1,15 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
 import io.mangoo.enums.ContentType;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -19,46 +21,84 @@ public class JsonControllerTest {
     private static final String json = "{\"firstname\":\"Peter\",\"lastname\":\"Parker\",\"age\":24}";
 
     @Test
-    public void renderTest() {
-        MangooResponse response = MangooRequest.get("/render").execute();
+    public void testJsonSerialization() {
+        //given
+        Response response = Request.get("/render").execute();
 
-        assertNotNull(response.getContent());
-        assertEquals(json, response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo(json));
     }
 
     @Test
-    public void parseTest() {
-        MangooResponse response = MangooRequest.post("/parse").contentType(ContentType.APPLICATION_JSON).requestBody(json).execute();
+    public void testJsonParsing() {
+        //given
+        Response response = Request.post("/parse")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(json)
+                .execute();
 
-        assertNotNull(response.getContent());
-        assertEquals("Peter;Parker;24", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Peter;Parker;24"));
     }
 
     @Test
-    public void bodyTest() {
-        MangooResponse response = MangooRequest.post("/body").contentType(ContentType.APPLICATION_JSON).requestBody("").execute();
+    public void testJsonEmptyResponseBody() {
+        //given
+        Response response = Request.post("/body")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody("")
+                .execute();
 
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertNotNull(response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), not(nullValue()));
+    }
+    
+    @Test
+    public void testJsonNullResponseBody() {
+        //given
+        Response response = Request.post("/body")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(null)
+                .execute();
 
-        response = MangooRequest.post("/body").contentType(ContentType.APPLICATION_JSON).requestBody(null).execute();
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), not(nullValue()));
+    }
+    
+    @Test
+    public void testJsonResponseBody() {
+        //given
+        Response response = Request.post("/body")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(json)
+                .execute();
 
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertNotNull(response.getContent());
-
-        response = MangooRequest.post("/body").contentType(ContentType.APPLICATION_JSON).requestBody(json).execute();
-
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertNotNull(response.getContent());
-        assertEquals("/body", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("/body"));
     }
 
     @Test
-    public void requestAndJsonTest() {
-        MangooResponse response = MangooRequest.post("/requestAndJson").contentType(ContentType.APPLICATION_JSON).requestBody(json).execute();
+    public void testJsonRequestBody() {
+        //given
+        Response response = Request.post("/requestAndJson")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(json)
+                .execute();
 
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertNotNull(response.getContent());
-        assertEquals("/requestAndJsonPeter", response.getContent());
+        //then
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("/requestAndJsonPeter"));
     }
 }

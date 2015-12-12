@@ -1,50 +1,134 @@
 package io.mangoo.cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Before;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.junit.Test;
 
-import io.mangoo.cache.Cache;
-import io.mangoo.test.MangooTestInstance;
+import io.mangoo.test.Mangoo;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class CacheTest {
-    private static final String TEST = "this is a test for the cache";
-	private static Cache cache;
+    private static final String TEST_VALUE = "This is a test value for the cache!";
+    private static final String FROM_CALLABLE = "from callable";
 
-    @Before
-    public void init() {
-        cache = MangooTestInstance.IO.getInjector().getInstance(Cache.class);
+    @Test
+    public void testAdd() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+        cache.put("test", TEST_VALUE);
+
+        //then
+        assertThat(cache.get("test"), not(nullValue()));
+        assertThat(cache.get("test"), equalTo(TEST_VALUE));
     }
 
     @Test
-    public void addTest() {
-        cache.add("test", TEST);
-
-        assertEquals(cache.get("test"), TEST);
-    }
-
-    @Test
-    public void clearTest() {
-        cache.add("test", TEST);
-
-        assertEquals(cache.get("test"), TEST);
-
+    public void testClear() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+        cache.put("test", TEST_VALUE);
         cache.clear();
 
-        assertNull(cache.get("test"));
+        //then
+        assertThat(cache.get("test"), equalTo(null));
     }
 
     @Test
-    public void castTest() {
-    	cache.add("test", TEST);
-    	cache.add("test2", 1);
+    public void testCast() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+    	cache.put("test", 1);
 
-    	String test = cache.get("test", String.class);
-    	assertEquals(TEST, test);
-
-    	int foo = cache.get("test2", int.class);
-    	assertEquals(1, foo);
+    	//then
+        assertThat(cache.get("test"), equalTo(1));
+    }
+    
+    @Test
+    public void testGetAll() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+        cache.clear();
+        cache.put("test", TEST_VALUE);
+        cache.put("test2", 1);
+        
+        //then
+        assertThat(cache.getAll(), not(nullValue()));
+        assertThat(cache.getAll().size(), equalTo(2));
+    }
+    
+    @Test
+    public void testPutAll() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+        Map<String, Object> map = new HashMap<>();
+        map.put("test", TEST_VALUE);
+        map.put("test2", 1);
+        cache.putAll(map);
+        
+        //then
+        assertThat(cache.getAll(), not(nullValue()));
+        assertThat(cache.getAll().size(), equalTo(2));
+    }
+    
+    @Test
+    public void testSize() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //when
+        cache.clear();
+        cache.put("test1", TEST_VALUE);
+        cache.put("test2", TEST_VALUE);
+        cache.put("test3", TEST_VALUE);
+        cache.put("test4", TEST_VALUE);
+        
+        //then
+        assertThat(cache.size(), equalTo(4L));
+    }
+    
+    @Test
+    public void testStats() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //then
+        assertThat(cache.getStats(), not(nullValue()));
+    }
+    
+    @Test
+    public void testGetWithCallable() {
+        //given
+        Cache cache = Mangoo.TEST.getInstance(Cache.class);
+        
+        //then
+        assertThat(cache.get("test", new CacheCallable()), equalTo(FROM_CALLABLE));
+    }
+    
+    private class CacheCallable implements Callable<String> {
+        @Override
+        public String call() throws Exception {
+            return FROM_CALLABLE;
+        }
     }
 }

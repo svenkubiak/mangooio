@@ -1,5 +1,7 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;
@@ -8,15 +10,15 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 public class BinaryHandler implements HttpHandler {
-    private Response response;
-    
+    private final Response response;
+
     public BinaryHandler(Response response) {
-        this.response = response;
+        this.response = Objects.requireNonNull(response, "response can not be null");
     }
 
     @Override
@@ -27,6 +29,6 @@ public class BinaryHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-        exchange.getOutputStream().write(this.response.getBinaryContent());        
+        exchange.getOutputStream().write(this.response.getBinaryContent());
     }
 }

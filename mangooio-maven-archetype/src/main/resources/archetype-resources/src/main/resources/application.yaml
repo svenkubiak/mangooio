@@ -1,3 +1,12 @@
+# Application configuration
+# 
+# This file defines all configuration values for a mangoo I/O application.
+# The default values are loaded by default and overwritten by environment specific
+# values if they are configured.
+#
+# Possible environments are test and dev.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 default:
     application:
         name       : ${application-name} 

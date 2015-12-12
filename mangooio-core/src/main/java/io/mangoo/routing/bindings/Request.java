@@ -1,10 +1,12 @@
 package io.mangoo.routing.bindings;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.boon.json.JsonFactory;
 
+import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -29,12 +31,15 @@ public class Request implements MangooValidator {
     private Authentication authentication;
     private Validator validator;
     private Map<String, String> parameter;
-    
+    private Map<String, Cookie> cookies;
+
     public Request(){
     }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
-        this.httpServerExchange = Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
+        Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
+
+        this.httpServerExchange = httpServerExchange;
         this.session = session;
         this.authenticityToken = authenticityToken;
         this.authentication = authentication;
@@ -42,6 +47,7 @@ public class Request implements MangooValidator {
         this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
+        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
     /**
@@ -140,7 +146,7 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/myFile.jsf?foo=bar HTTP/1.1 -&gt; 'http://localhost:8080/myFile.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my+File.jsf'
-     * 
+     *
      * @return The request URI
      */
     public String getURI() {
@@ -152,7 +158,7 @@ public class Request implements MangooValidator {
      * but does not include query string.
      *
      * This is not decoded.
-     * 
+     *
      * @return The request URL
      */
     public String getURL() {
@@ -160,10 +166,20 @@ public class Request implements MangooValidator {
     }
 
     /**
-     * @return A mutable map of request cookies
+     * @return An immutable map of request cookies
      */
     public Map<String, Cookie> getCookies() {
-        return this.httpServerExchange.getRequestCookies();
+        return this.cookies;
+    }
+
+    /**
+     * Retrieves a single cookie from the request
+     *
+     * @param name The name of the cookie
+     * @return The Cookie
+     */
+    public Cookie getCookie(String name) {
+        return this.cookies.get(name);
     }
 
     /**
@@ -209,7 +225,7 @@ public class Request implements MangooValidator {
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my File.jsf'
-     * 
+     *
      * @return The request path
      */
     public String getPath() {

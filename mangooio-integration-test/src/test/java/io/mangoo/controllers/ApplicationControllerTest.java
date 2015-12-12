@@ -1,8 +1,10 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static io.mangoo.test.hamcrest.RegexMatcher.matches;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,7 +12,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -22,8 +23,8 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -33,207 +34,248 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ApplicationControllerTest {
+    private static final String JSON = "{\"foo\":\"bar\"}";
+    private static final String JSON_PLAIN = "{foo=bar}";
+    private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
+    private static final String TEXT_HTML = "text/html; charset=UTF-8";
 
     @Test
-    public void indexTest() {
-        MangooResponse response = MangooRequest.get("/").execute();
+    public void testIndex() {
+        //given
+        Response response = Request.get("/").execute();
 
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.OK, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 
     @Test
-    public void requestTest() {
-        MangooResponse response = MangooRequest.get("/request").execute();
+    public void testRequest() {
+        //given
+        Response response = Request.get("/request").execute();
 
-        assertNotNull(response);
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("/request", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("/request"));
     }
 
     @Test
-    public void indexTestWithContent() {
-        MangooResponse response = MangooRequest.get("/").execute();
+    public void testRedirectWithDisableRedirects() {
+        //given
+        Response response = Request.get("/redirect").withDisableRedirects(true).execute();
 
-        assertNotNull(response);
-        assertEquals("This is a test!", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+        assertThat(response.getResponseUrl(), equalTo("http://localhost:10808"));
     }
 
     @Test
-    public void redirectTestWithoutRedirect() {
-        MangooResponse response = MangooRequest.get("/redirect").disableRedirects(true).execute();
+    public void testRedirectWithoutDisableRedirects() {
+        //given
+        Response response = Request.get("/redirect").execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.FOUND, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getResponseUrl(), equalTo("http://localhost:10808"));
     }
 
     @Test
-    public void redirectTestWithRedirect() {
-        MangooResponse response = MangooRequest.get("/redirect").execute();
+    public void testPlainText() {
+        //given
+        Response response = Request.get("/text").execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 
     @Test
-    public void textTest() {
-        MangooResponse response = MangooRequest.get("/text").execute();
+    public void testNotFound() {
+        //given
+        Response response = Request.get("/foo").execute();
 
-        assertNotNull(response);
-        assertEquals("text/plain; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.OK, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
     }
 
     @Test
-    public void notFoundTest() {
-        MangooResponse response = MangooRequest.get("/foo").execute();
+    public void testForbidden() {
+        //given
+        Response response = Request.get("/forbidden").execute();
 
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.NOT_FOUND, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
     }
 
     @Test
-    public void forbiddenTest() {
-        MangooResponse response = MangooRequest.get("/forbidden").execute();
+    public void testBadRequest() {
+        //given
+        Response response = Request.get("/badrequest").execute();
 
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.FORBIDDEN, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
 
     @Test
-    public void badRequestTest() throws InterruptedException {
-        MangooResponse response = MangooRequest.get("/badrequest").execute();
+    public void testUnauthorized() {
+        //given
+        Response response = Request.get("/unauthorized").execute();
 
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.BAD_REQUEST, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
 
     @Test
-    public void unauthorizedTest() {
-        MangooResponse response = MangooRequest.get("/unauthorized").execute();
+    public void testAdditionalHeaders() {
+        //given
+        Response response = Request.get("/header").execute();
 
-        assertNotNull(response);
-        assertEquals("text/html; charset=UTF-8", response.getContentType());
-        assertEquals(StatusCodes.UNAUTHORIZED, response.getStatusCode());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("https://mangoo.io"));
     }
 
     @Test
-    public void headerTest() {
-        MangooResponse response = MangooRequest.get("/header").execute();
-
-        assertNotNull(response);
-        assertEquals("Access-Control-Allow-Origin: https://mangoo.io", response.getHttpResponse().getFirstHeader("Access-Control-Allow-Origin").toString());
-    }
-
-    @Test
-    public void binaryTest() throws ClientProtocolException, IOException {
+    public void testBinaryDownload() throws IOException {
+        //given
         Config config = Application.getInjector().getInstance(Config.class);
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
-
         File file = new File(UUID.randomUUID().toString());
         FileOutputStream fileOutputStream = new FileOutputStream(file);
+        
+        //when
         CloseableHttpClient httpclient = HttpClients.custom().build();
-        try {
-            HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
-            CloseableHttpResponse response = httpclient.execute(httpget);
-            try {
-                fileOutputStream.write(EntityUtils.toByteArray(response.getEntity()));
-                fileOutputStream.close();
-            } finally {
-                response.close();
-            }
-        } finally {
-            httpclient.close();
-        }
+        HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
+        CloseableHttpResponse response = httpclient.execute(httpget);
+        fileOutputStream.write(EntityUtils.toByteArray(response.getEntity()));
+        fileOutputStream.close();
+        response.close();
 
-        assertEquals("This is an attachment", FileUtils.readFileToString(file));
-        assertTrue(file.delete());
+        //then
+        assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(FileUtils.readFileToString(file), equalTo("This is an attachment"));
+        assertThat(file.delete(), equalTo(true));
     }
 
     @Test
-    public void localDateTest() {
-        MangooResponse response = MangooRequest.get("/localdate/2007-12-03").execute();
+    @SuppressWarnings("unchecked")
+    public void testEtag() {
+        //given
+        Response response = Request.get("/etag").execute();
+        String etag = response.getHeader(Headers.ETAG_STRING);
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("2007-12-03", response.getContent());
-    }
+        //then
+        assertThat(etag, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(etag, matches("^[a-f0-9]{32}$"));
 
-    @Test
-    public void localDateTimeTest() {
-        MangooResponse response = MangooRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
+        //given
+        response = Request.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
 
-        assertNotNull(response);
-        assertEquals(StatusCodes.OK, response.getStatusCode());
-        assertEquals("2007-12-03T10:15:30", response.getContent());
-    }
-
-    @Test
-    public void eTagTest() {
-        MangooResponse response = MangooRequest.get("/etag").execute();
-
-        assertNotNull(response);
-
-        String etag = response.getHttpResponse().getFirstHeader(Headers.ETAG_STRING).getValue();
-        assertNotNull(etag);
-
-        response = MangooRequest.get("/etag").header(Headers.IF_NONE_MATCH_STRING, etag).execute();
-
-        assertEquals(StatusCodes.NOT_MODIFIED, response.getStatusCode());
-        assertEquals("", response.getContent());
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
+        assertThat(response.getContent(), equalTo(""));
     }
     
     @Test 
-    public void postTest() {
-        MangooResponse response = MangooRequest.post("/post").requestBody("winter is coming!").execute();
+    public void testPost() {
+        //given
+        Response response = Request.post("/post")
+                .withRequestBody("Winter is coming!")
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("winter is coming!", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo("Winter is coming!"));
     }
     
     @Test 
-    public void putTest() {
-        MangooResponse response = MangooRequest.put("/put").requestBody("king of the north!").execute();
+    public void testPut() {
+        //given
+        Response response = Request.put("/put")
+                .withRequestBody("The king of the north!")
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("king of the north!", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo("The king of the north!"));
     }
     
     @Test 
-    public void jsonPathPostTest() {
-        MangooResponse response = MangooRequest.post("/jsonpathpost").requestBody("{\"foo\":\"bar\"}").execute();
+    public void testJsonPathWithPost() {
+        //given
+        Response response = Request.post("/jsonpathpost")
+                .withRequestBody(JSON)
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo(JSON));
     }
     
     @Test 
-    public void jsonPathPutTest() {
-        MangooResponse response = MangooRequest.put("/jsonpathput").requestBody("{\"foo\":\"bar\"}").execute();
+    public void testJsonPathWithPut() {
+        //given
+        Response response = Request.put("/jsonpathput")
+                .withRequestBody(JSON)
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo(JSON));
     }
     
     @Test 
-    public void jsonBoonPostTest() {
-        MangooResponse response = MangooRequest.post("/jsonboonpost").requestBody("{\"foo\":\"bar\"}").execute();
+    public void testJsonBoonWithPost() {
+        //given
+        Response response = Request.post("/jsonboonpost")
+                .withRequestBody(JSON)
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
     
     @Test 
-    public void jsonBoonPutTest() {
-        MangooResponse response = MangooRequest.put("/jsonboonput").requestBody("{\"foo\":\"bar\"}").execute();
+    public void testJsonBoonWithPut() {
+        //given
+        Response response = Request.put("/jsonboonput")
+                .withRequestBody(JSON)
+                .execute();
         
-        assertNotNull(response);
-        assertEquals("{\"foo\":\"bar\"}", response.getContent());
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
 }

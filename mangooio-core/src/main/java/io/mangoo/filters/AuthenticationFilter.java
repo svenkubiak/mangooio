@@ -12,7 +12,7 @@ import io.mangoo.routing.bindings.Request;
 
 /**
  * Filter for intercepting user authentication
- * 
+ *
  * @author svenkubiak
  *
  */

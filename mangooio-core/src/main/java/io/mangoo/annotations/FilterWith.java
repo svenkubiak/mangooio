@@ -9,7 +9,7 @@ import io.mangoo.interfaces.MangooFilter;
 
 /**
  * Filter annotation for request and controller filter
- * 
+ *
  * @author svenkubiak
  *
  */

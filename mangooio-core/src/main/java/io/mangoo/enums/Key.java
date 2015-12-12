@@ -28,18 +28,15 @@ public enum Key {
     APPLICATION_ADMIN_SCHEDULER("application.admin.scheduler"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
+    APPLICATION_CONTROLLER("application.controller"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
     AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
+    AUTH_COOKIE_REMEMBER_EXPIRES("auth.cookie.remember.expires"),
     AUTH_COOKIE_SECURE("auth.cookie.secure"),
     AUTH_COOKIE_VERSION("auth.cookie.version"),
     CACHE_TYPE("cache.class"),
-    SMTP_HOST("smtp.host"),
-    SMTP_PORT("smtp.port"),
-    SMTP_USERNAME("smtp.username"),
-    SMTP_PASSWORD("smtp.password"),
-    SMTP_SSL("smtp.ssl"),
     COOKIE_NAME("cookie.name"),
     COOKIE_ENCRYPTION("cookie.encryption"),
     COOKIE_EXPIRES("cookie.expires"),
@@ -72,7 +69,8 @@ public enum Key {
     OAUTH_FACEBOOK_SECRET("oauth.facebook.secret"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
-    SCHEDULER_PACKAGE("scheduler.package");
+    SCHEDULER_PACKAGE("scheduler.package"),
+    EXECUTION_THREADPOOL("execution.threadpool");
 
     private final String value;
 

@@ -9,10 +9,10 @@ import java.io.OutputStreamWriter;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
 import com.yahoo.platform.yui.compressor.CssCompressor;
@@ -25,7 +25,7 @@ import io.mangoo.enums.Mode;
 
 /**
  * Convenient class for minification of CSS and JS files
- * 
+ *
  * Based on
  * https://github.com/davidB/yuicompressor-maven-plugin/blob/master/src/main/java/net_alchim31_maven_yuicompressor/YuiCompressorMojo.java
  *
@@ -33,7 +33,7 @@ import io.mangoo.enums.Mode;
  *
  */
 public final class MinificationUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(MinificationUtils.class);
+    private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
     private static final int HUNDRET_PERCENT = 100;
     private static String basePath;
     private static volatile Config config; //NOSONAR
@@ -60,7 +60,7 @@ public final class MinificationUtils {
         if (absolutePath == null || absolutePath.contains(MIN)) {
             return;
         }
-        
+
         if (config == null) {
             System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);

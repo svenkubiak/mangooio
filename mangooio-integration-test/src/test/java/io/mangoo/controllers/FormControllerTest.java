@@ -1,10 +1,9 @@
 package io.mangoo.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import io.mangoo.enums.ContentType;
-import io.mangoo.test.MangooRequest;
-import io.mangoo.test.MangooResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,11 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
+
+import io.mangoo.enums.ContentType;
+import io.mangoo.test.utils.Request;
+import io.mangoo.test.utils.Response;
+import io.undertow.util.StatusCodes;
 
 /**
  *
@@ -21,50 +25,75 @@ import org.junit.Test;
 public class FormControllerTest {
 
     @Test
-    public void postTest() {
+    public void testFormPost() {
+        //given
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("username", "vip"));
         parameter.add(new BasicNameValuePair("password", "secret"));
 
-        MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
-        assertNotNull(response.getContent());
-        assertEquals("vip;secret", response.getContent());
+        //when
+        Response response = Request.post("/form")
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("vip;secret"));
     }
     
     @Test
-    public void encodingTest() {
+    public void testFormEncoding() {
+        //given
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("username", "süpöä"));
         parameter.add(new BasicNameValuePair("password", "#+ß§"));
 
-        MangooResponse response = MangooRequest.post("/form").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
-        assertNotNull(response.getContent());
-        assertEquals("süpöä;#+ß§", response.getContent());
+        //when
+        Response response = Request.post("/form")
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("süpöä;#+ß§"));
     }
 
     @Test
-    public void invalidFormTest() {
+    public void testInvalidFormValues() {
+        //given
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("phone", "1234567890123"));
         parameter.add(new BasicNameValuePair("regex", "ABC"));
 
-        MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
-        assertNotNull(response.getContent());
+        //when
+        Response response = Request.post("/validateform")
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         String [] lines = response.getContent().split(System.getProperty("line.separator"));
-        assertEquals("name is required", lines[0]);
-        assertEquals("email must be a valid eMail address", lines[1]);
-        assertEquals("email2 must match email2confirm", lines[2]);
-        assertEquals("password must exactly match passwordconfirm", lines[3]);
-        assertEquals("ipv4 must be a valid IPv4 address", lines[4]);
-        assertEquals("ipv6 must be a valid IPv6 address", lines[5]);
-        assertEquals("phone must have a size of max 12", lines[6]);
-        assertEquals("fax must have a least a size of 11", lines[7]);
-        assertEquals("regex is invalid", lines[8]);
+        assertThat(lines[0], equalTo("name is required"));
+        assertThat(lines[1], equalTo("email must be a valid eMail address"));
+        assertThat(lines[2], equalTo("email2 must match email2confirm"));
+        assertThat(lines[3], equalTo("password must exactly match passwordconfirm"));
+        assertThat(lines[4], equalTo("ipv4 must be a valid IPv4 address"));
+        assertThat(lines[5], equalTo("ipv6 must be a valid IPv6 address"));
+        assertThat(lines[6], equalTo("phone must have a size of max 12"));
+        assertThat(lines[7], equalTo("fax must have a least a size of 11"));
+        assertThat(lines[8], equalTo("regex is invalid"));
     }
 
     @Test
-    public void validFormTest() {
+    public void testValidFormValues() {
+        //given
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
         parameter.add(new BasicNameValuePair("name", "this is my name"));
         parameter.add(new BasicNameValuePair("email", "foo@bar.com"));
@@ -78,8 +107,15 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("fax", "abchdjskcjsa"));
         parameter.add(new BasicNameValuePair("regex", "a"));
 
-        MangooResponse response = MangooRequest.post("/validateform").contentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED).postParameters(parameter).execute();
-        assertNotNull(response.getContent());
-        assertEquals("Fancy that!", response.getContent());
+        //when
+        Response response = Request.post("/validateform")
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Fancy that!"));
     }
 }

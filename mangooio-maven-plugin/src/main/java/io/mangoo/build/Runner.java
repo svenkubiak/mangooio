@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.StartedProcess;
 import org.zeroturnaround.exec.listener.ProcessListener;
@@ -41,7 +41,7 @@ import org.zeroturnaround.exec.listener.ProcessListener;
  *
  */
 public class Runner {
-    private static final Logger LOG = LoggerFactory.getLogger(Runner.class);
+    private static final Logger LOG = LogManager.getLogger(Runner.class);
     private OutputStream outputStream;
     private StartedProcess startedProcess;
     private final AtomicBoolean restarting;

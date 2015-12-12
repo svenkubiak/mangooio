@@ -6,13 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -35,7 +34,6 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Key;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Response;
@@ -44,11 +42,11 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
+import io.mangoo.utils.CookieBuilder;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
 import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
@@ -60,66 +58,69 @@ import io.undertow.util.StatusCodes;
 
 /**
  * Main class that handles all controller requests
- * 
+ *
  * @author skubiak
  *
  */
 public class RequestHandler implements HttpHandler {
-    private static final int AUTH_PREFIX_LENGTH = 2;
+    private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int TOKEN_LENGTH = 16;
     private static final int INDEX_0 = 0;
     private static final int INDEX_1 = 1;
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
-    private static final int SESSION_PREFIX_LENGTH = 3;
-    private int parameterCount;
-    private Class<?> controllerClass;
-    private String controllerMethod;
-    private Object controller;
-    private Map<String, Class<?>> methodParameters;
+    private static final int SESSION_PREFIX_LENGTH = 4;
+    private final int parameterCount;
+    private final Class<?> controllerClass;
+    private final String controllerMethod;
+    private final Object controller;
+    private final Map<String, Class<?>> methodParameters;
     private Method method;
-    private ObjectMapper opjectMapper;
+    private final ObjectMapper opjectMapper;
     private Authentication authentication;
     private Session session;
     private Flash flash;
     private Form form;
-    private Config config;
     private Request request;
-    private boolean hasRequestFilter;
     private Map<String, String> requestParameter;
     private String body = "";
+    private final boolean hasRequestFilter;
+    private final boolean async;
+    private final Config config;
 
-    public RequestHandler(Class<?> controllerClass, String controllerMethod) {
-        this.controllerClass = controllerClass;
-        this.controllerMethod = controllerMethod;
+    public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
+        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        this.controllerMethod = Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
+        this.async = async;
         this.controller = Application.getInstance(this.controllerClass);
         this.methodParameters = getMethodParameters();
         this.parameterCount = this.methodParameters.size();
-        this.config = Application.getInstance(Config.class);
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
         this.opjectMapper = JsonFactory.create();
+        this.config = Application.getInstance(Config.class);
     }
 
     @Override
     @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if (RequestUtils.isPostOrPut(exchange) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }
-        
+
         this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
-        getSession(exchange);
-        getAuthentication(exchange);
-        getFlash(exchange);
+        getSessionCookie(exchange);
+        getAuthenticationCookie(exchange);
+        getFlashCookie(exchange);
         getForm(exchange);
         getRequestBody(exchange);
         getRequest(exchange);
 
-        Response response = getResponse(exchange);
+        final Response response = getResponse(exchange);
+        response.getCookies().forEach(cookie -> exchange.setResponseCookie(cookie));
 
         setSessionCookie(exchange);
         setFlashCookie(exchange);
@@ -141,15 +142,22 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void setLocale(HttpServerExchange exchange) {
-        HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
-        if (headerValues != null && headerValues.getFirst() != null) {
-            Iterable<String> split = Splitter.on(",").trimResults().split(headerValues.getFirst());
-            if (split != null) {
-                String language = Optional.ofNullable(split.iterator().next()).orElse(this.config.getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(language.substring(0, 1)));
-                Application.getInstance(Messages.class).reload();
+        final Messages messages = Application.getInstance(Messages.class);
+        final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
+        if (headerValues == null) {
+            Locale.setDefault(Locale.forLanguageTag(this.config.getApplicationLanguage()));
+        } else if (headerValues.getFirst() != null) {
+            final String values = Optional.ofNullable(headerValues.getFirst()).orElse("");
+            final Iterable<String> split = Splitter.on(",").trimResults().split(values);
+            if (split == null) {
+                Locale.setDefault(Locale.forLanguageTag(this.config.getApplicationLanguage()));
+            } else {
+                final String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(this.config.getApplicationLanguage());
+                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR
             }
         }
+
+        messages.reload();
     }
 
     /**
@@ -169,7 +177,7 @@ public class RequestHandler implements HttpHandler {
         //execute global request filter
         Response response = Response.withOk();
         if (this.hasRequestFilter) {
-            MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
+            final MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
             response = mangooRequestFilter.execute(this.request, response);
         }
 
@@ -198,7 +206,7 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void getRequest(HttpServerExchange exchange) {
-        String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.getValue(Default.AUTHENTICITY_TOKEN.toString()));
+        final String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.get(Default.AUTHENTICITY_TOKEN.toString()));
         this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter, this.body);
     }
 
@@ -207,7 +215,6 @@ public class RequestHandler implements HttpHandler {
      *
      * @param annotations An array of @FilterWith annotated classes and methods
      * @param response
-     * @param exchange The Undertow HttpServerExchange
      * @return True if the request should continue after filter execution, false otherwise
      *
      * @throws NoSuchMethodException
@@ -215,15 +222,14 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException
      */
     private Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        FilterWith filterWith = null;
-        for (Annotation annotation : annotations) {
+        for (final Annotation annotation : annotations) {
             if (annotation.annotationType().equals(FilterWith.class)) {
-                filterWith = (FilterWith) annotation;
-                for (Class<?> clazz : filterWith.value()) {
+                final FilterWith filterWith = (FilterWith) annotation;
+                for (final Class<?> clazz : filterWith.value()) {
                     if (response.isEndResponse()) {
                         return response;
                     } else {
-                        Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
+                        final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
                         response = (Response) classMethod.invoke(Application.getInstance(clazz), this.request, response);
                     }
                 }
@@ -238,7 +244,6 @@ public class RequestHandler implements HttpHandler {
      * is later send to the client
      *
      * @param exchange The Undertow HttpServerExchange
-     * @param response2
      * @return A response object
      *
      * @throws IllegalAccessException
@@ -252,14 +257,14 @@ public class RequestHandler implements HttpHandler {
         if (this.methodParameters.isEmpty()) {
             invokedResponse = (Response) this.method.invoke(this.controller);
         } else {
-            Object [] convertedParameters = getConvertedParameters(exchange);
+            final Object [] convertedParameters = getConvertedParameters(exchange);
             invokedResponse = (Response) this.method.invoke(this.controller, convertedParameters);
         }
 
         invokedResponse.andContent(response.getContent());
         invokedResponse.andHeaders(response.getHeaders());
         if (!invokedResponse.isRendered()) {
-            TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
+            final TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
             invokedResponse.andBody(templateEngine.render(this.flash, this.session, this.form, Application.getInstance(Messages.class), getTemplatePath(invokedResponse), invokedResponse.getContent()));
         }
 
@@ -275,7 +280,7 @@ public class RequestHandler implements HttpHandler {
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
     private String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName()) : response.getTemplate();
+        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName())) : response.getTemplate();
     }
 
     /**
@@ -283,14 +288,14 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getSession(HttpServerExchange exchange) {
+    private void getSessionCookie(HttpServerExchange exchange) {
         Session requestSession = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
+        final Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue)) {
-                if (this.config.getBoolean(Key.COOKIE_ENCRYPTION, false)) {
-                    Crypto crypto = Application.getInstance(Crypto.class);
+            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
+                if (this.config.isSessionCookieEncrypt()) {
+                    final Crypto crypto = Application.getInstance(Crypto.class);
                     cookieValue = crypto.decrypt(cookieValue);
                 }
 
@@ -298,19 +303,11 @@ public class RequestHandler implements HttpHandler {
                 String expires = null;
                 String authenticityToken = null;
                 String version = null;
-                String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
+                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
-                    String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
 
-                    /**
-                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
-                     * introduced with version 1.2.0 for cookie versioning.
-                     */
                     if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        authenticityToken = prefixes [INDEX_1];
-                        expires = prefixes [INDEX_2];
-                    } else if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH + 1) {
                         sign = prefixes [INDEX_0];
                         authenticityToken = prefixes [INDEX_1];
                         expires = prefixes [INDEX_2];
@@ -319,39 +316,24 @@ public class RequestHandler implements HttpHandler {
                 }
 
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires) && StringUtils.isNotBlank(authenticityToken)) {
-                    String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    LocalDateTime expiresDate = LocalDateTime.parse(expires);
+                    final String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
+                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    /**
-                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
-                     */
-                    if (StringUtils.isBlank(version)) {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + this.config.getApplicationSecret()).equals(sign)) {
-                            Map<String, String> sessionValues = new HashMap<String, String>();
-                            if (StringUtils.isNotEmpty(data)) {
-                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                    sessionValues.put(entry.getKey(), entry.getValue());
-                                }
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                        final Map<String, String> sessionValues = new HashMap<>();
+                        if (StringUtils.isNotEmpty(data)) {
+                            for (final Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
+                                sessionValues.put(entry.getKey(), entry.getValue());
                             }
-                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                         }
-                    } else {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                            Map<String, String> sessionValues = new HashMap<String, String>();
-                            if (StringUtils.isNotEmpty(data)) {
-                                for (Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                    sessionValues.put(entry.getKey(), entry.getValue());
-                                }
-                            }
-                            requestSession = new Session(sessionValues, authenticityToken, expiresDate);
-                        }
+                        requestSession = new Session(sessionValues, authenticityToken, expiresDate);
                     }
                 }
             }
         }
 
         if (requestSession == null) {
-            requestSession = new Session(new HashMap<String, String>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
+            requestSession = new Session(new HashMap<>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
         this.session = requestSession;
@@ -364,12 +346,11 @@ public class RequestHandler implements HttpHandler {
      */
     private void setSessionCookie(HttpServerExchange exchange) {
         if (this.session != null && this.session.hasChanges()) {
-            String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
-
-            String version = this.config.getCookieVersion();
-            String authenticityToken = this.session.getAuthenticityToken();
-            LocalDateTime expires = this.session.getExpires();
-            StringBuilder buffer = new StringBuilder()
+            final String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
+            final String version = this.config.getCookieVersion();
+            final String authenticityToken = this.session.getAuthenticityToken();
+            final LocalDateTime expires = this.session.getExpires();
+            final StringBuilder buffer = new StringBuilder()
                     .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()))
                     .append(Default.DELIMITER.toString())
                     .append(authenticityToken)
@@ -385,11 +366,13 @@ public class RequestHandler implements HttpHandler {
                 value = Application.getInstance(Crypto.class).encrypt(value);
             }
 
-            Cookie cookie = new CookieImpl(this.config.getString(Key.COOKIE_NAME), value)
-                    .setSecure(this.config.isSessionCookieSecure())
-                    .setHttpOnly(true)
-                    .setPath("/")
-                    .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+            final Cookie cookie = CookieBuilder.create()
+                .name(this.config.getSessionCookieName())
+                .value(value)
+                .secure(this.config.isSessionCookieSecure())
+                .httpOnly(true)
+                .expires(expires)
+                .build();
 
             exchange.setResponseCookie(cookie);
         }
@@ -400,12 +383,12 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getAuthentication(HttpServerExchange exchange) {
+    private void getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication requestAuthentication = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
+        final Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
         if (cookie != null) {
             String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue)) {
+            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (this.config.isAuthenticationCookieEncrypt()) {
                     cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
                 }
@@ -413,18 +396,11 @@ public class RequestHandler implements HttpHandler {
                 String sign = null;
                 String expires = null;
                 String version = null;
-                String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
+                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
                 if (StringUtils.isNotBlank(prefix)) {
-                    String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
 
-                    /**
-                     * TODO This should be refactored as the else if was only introduced due to compatibility reasons
-                     * introduced with version 1.2.0 for cookie versioning.
-                     */
                     if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        expires = prefixes [INDEX_1];
-                    } else if (prefixes != null && prefixes.length == (AUTH_PREFIX_LENGTH + 1)) {
                         sign = prefixes [INDEX_0];
                         expires = prefixes [INDEX_1];
                         version = prefixes [INDEX_2];
@@ -432,20 +408,11 @@ public class RequestHandler implements HttpHandler {
                 }
 
                 if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
-                    String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    LocalDateTime expiresDate = LocalDateTime.parse(expires);
+                    final String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
+                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    /**
-                     * TODO Like above. Old version without cookie versioning and new version with cookie versioning
-                     */
-                    if (StringUtils.isBlank(version)) {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + this.config.getApplicationSecret()).equals(sign)) {
-                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
-                        }
-                    } else {
-                        if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                            requestAuthentication = new Authentication(expiresDate, authenticatedUser);
-                        }
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
+                        requestAuthentication = new Authentication(expiresDate, authenticatedUser);
                     }
                 }
             }
@@ -466,7 +433,7 @@ public class RequestHandler implements HttpHandler {
     private void setAuthenticationCookie(HttpServerExchange exchange) {
         if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
             Cookie cookie;
-            String cookieName = this.config.getAuthenticationCookieName();
+            final String cookieName = this.config.getAuthenticationCookieName();
             if (this.authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
                 cookie.setSecure(this.config.isAuthenticationCookieSecure());
@@ -475,12 +442,12 @@ public class RequestHandler implements HttpHandler {
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
-                String authenticatedUser = this.authentication.getAuthenticatedUser();
-                LocalDateTime expires = this.authentication.getExpires();
-                String version = this.config.getAuthCookieVersion();
-                String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret());
+                final String authenticatedUser = this.authentication.getAuthenticatedUser();
+                final LocalDateTime expires = this.authentication.isRemember() ? LocalDateTime.now().plusSeconds(this.config.getAuthenticationRememberExpires()) : this.authentication.getExpires();
+                final String version = this.config.getAuthCookieVersion();
+                final String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret());
 
-                StringBuilder buffer = new StringBuilder()
+                final StringBuilder buffer = new StringBuilder()
                         .append(sign)
                         .append(Default.DELIMITER.toString())
                         .append(expires)
@@ -494,11 +461,13 @@ public class RequestHandler implements HttpHandler {
                     value = Application.getInstance(Crypto.class).encrypt(value);
                 }
 
-                cookie = new CookieImpl(cookieName, value)
-                        .setSecure(this.config.isAuthenticationCookieSecure())
-                        .setHttpOnly(true)
-                        .setPath("/")
-                        .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+                cookie = CookieBuilder.create()
+                        .name(cookieName)
+                        .value(value)
+                        .secure(this.config.isAuthenticationCookieSecure())
+                        .httpOnly(true)
+                        .expires(expires)
+                        .build();
             }
 
             exchange.setResponseCookie(cookie);
@@ -510,17 +479,20 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void getFlash(HttpServerExchange exchange) {
+    private void getFlashCookie(HttpServerExchange exchange) {
         Flash requestFlash = null;
-        Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
-        if (cookie != null && StringUtils.isNotBlank(cookie.getValue())){
-            Map<String, String> values = new HashMap<String, String>();
-            for (Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
-                values.put(entry.getKey(), entry.getValue());
-            }
+        final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
+        if (cookie != null){
+            final String cookieValue = cookie.getValue();
+            if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
+                final Map<String, String> values = new HashMap<>();
+                for (final Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
+                    values.put(entry.getKey(), entry.getValue());
+                }
 
-            requestFlash = new Flash(values);
-            requestFlash.setDiscard(true);
+                requestFlash = new Flash(values);
+                requestFlash.setDiscard(true);
+            }
         }
 
         if (requestFlash == null) {
@@ -537,16 +509,18 @@ public class RequestHandler implements HttpHandler {
      */
     private void setFlashCookie(HttpServerExchange exchange) {
         if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
-            String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
+            final String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
 
-            Cookie cookie = new CookieImpl(this.config.getFlashCookieName(), values)
-                    .setSecure(this.config.isFlashCookieSecure())
-                    .setHttpOnly(true)
-                    .setPath("/");
+            final Cookie cookie = CookieBuilder.create()
+                    .name(this.config.getFlashCookieName())
+                    .value(values)
+                    .secure(this.config.isFlashCookieSecure())
+                    .httpOnly(true)
+                    .build();
 
             exchange.setResponseCookie(cookie);
         } else {
-            Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
+            final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
                 .setSecure(this.config.isFlashCookieSecure())
@@ -568,16 +542,16 @@ public class RequestHandler implements HttpHandler {
     private void getForm(HttpServerExchange exchange) throws IOException {
         this.form = Application.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
-            Builder builder = FormParserFactory.builder();
+            final Builder builder = FormParserFactory.builder();
             builder.setDefaultCharset(Charsets.UTF_8.name());
 
             final FormDataParser formDataParser = builder.build().createParser(exchange);
             if (formDataParser != null) {
                 exchange.startBlocking();
-                FormData formData = formDataParser.parseBlocking();
+                final FormData formData = formDataParser.parseBlocking();
 
-                for (String data : formData) {
-                    for (FormData.FormValue formValue : formData.get(data)) {
+                for (final String data : formData) {
+                    for (final FormData.FormValue formValue : formData.get(data)) {
                         if (formValue.isFile()) {
                             this.form.addFile(formValue.getPath().toFile());
                         } else {
@@ -615,13 +589,13 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
-        Object [] convertedParameters = new Object[this.parameterCount];
+        final Object [] convertedParameters = new Object[this.parameterCount];
 
         int index = 0;
-        for (Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
-            String key = entry.getKey();
-            Class<?> clazz = entry.getValue();
-            Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
+        for (final Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
+            final String key = entry.getKey();
+            final Class<?> clazz = entry.getValue();
+            final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
             switch (binding) {
             case FORM:
@@ -665,7 +639,7 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
                 break;
             case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJSONRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
+                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
                 break;
             default:
                 convertedParameters[index] = null;
@@ -684,8 +658,8 @@ public class RequestHandler implements HttpHandler {
      * @return A Map containing the declared methods of the method parameters and ther class type
      */
     private Map<String, Class<?>> getMethodParameters() {
-        Map<String, Class<?>> parameters = new LinkedHashMap<String, Class<?>>();
-        for (Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
+        final Map<String, Class<?>> parameters = new LinkedHashMap<>(); //NOSONAR
+        for (final Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
                 Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType())); //NOSONAR
                 break;
@@ -749,8 +723,8 @@ public class RequestHandler implements HttpHandler {
     private String getResponseBody(HttpServerExchange exchange, Response response) {
         String responseBody = response.getBody();
         if (response.isETag()) {
-            String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
-            String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
+            final String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
+            final String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
                 responseBody = "";

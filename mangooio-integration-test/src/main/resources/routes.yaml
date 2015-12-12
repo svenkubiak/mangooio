@@ -1,0 +1,94 @@
+# Routes configuration
+# 
+# This file defines all application routes.
+# All routes start with an identifier of the method, followed by the
+# url, followed by a mapping to the controller class and method. For
+# some types a controller and method is not required.  
+#
+# You can find a detailed explation of the routing file in the documentation
+# https://mangoo.io/documentation#_routes
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# FilterController
+- GET:     /filter                            -> FilterController.filter
+- GET:     /headerfilter                      -> FilterController.headerfilter
+
+# I18nController
+- GET:     /translation                       -> I18nController.translation
+
+# FlashController
+- GET:     /flash                             -> FlashController.flash
+- GET:     /flashed                           -> FlashController.flashed
+
+# AuthenticationController
+- POST:    /dologin                           -> AuthenticationController.doLogin
+- POST:    /login                             -> AuthenticationController.login
+- GET:     /login                             -> AuthenticationController.login
+- GET:     /authenticationrequired            -> AuthenticationController.notauthenticated
+- GET:     /authenticate                      -> AuthenticationController.authenticate
+- GET:     /logout                            -> AuthenticationController.logout
+
+# SessionController
+- GET:     /session                           -> SessionController.session
+
+# ParameterController
+- GET:     /string/{foo}                      -> ParameterController.stringParam
+- GET:     /int/{foo}                         -> ParameterController.intParam
+- GET:     /integer/{foo}                     -> ParameterController.integerParam
+- GET:     /doublePrimitive/{foo}             -> ParameterController.doublePrimitiveParam
+- GET:     /double/{foo}                      -> ParameterController.doubleParam
+- GET:     /float/{foo}                       -> ParameterController.floatParam
+- GET:     /floatPrimitive/{foo}              -> ParameterController.floatPrimitiveParam
+- GET:     /longPrimitive/{foo}               -> ParameterController.longPrimitiveParam
+- GET:     /long/{foo}                        -> ParameterController.longParam
+- GET:     /multiple/{foo}/{bar}              -> ParameterController.multipleParam
+- GET:     /path                              -> ParameterController.pathParam
+- GET:     /localdate/{localDate}             -> ParameterController.localdate
+- GET:     /localdatetime/{localDateTime}     -> ParameterController.localdatetime
+
+# AuthenticityController
+- GET:     /authenticityform                  -> AuthenticityController.form
+- GET:     /authenticitytoken                 -> AuthenticityController.token
+- GET:     /valid                             -> AuthenticityController.valid
+- GET:     /invalid                           -> AuthenticityController.invalid
+
+#JsonController
+- GET:     /render                            -> JsonController.render
+- POST:    /parse                             -> JsonController.parse
+- POST:    /body                              -> JsonController.body
+- POST:    /requestAndJson                    -> JsonController.requestAndJson
+
+# FormController
+- POST:    /form                              -> FormController.form
+- POST:    /validateform                      -> FormController.validateform
+
+# ApplicationController
+- GET:     /                                  -> ApplicationController.index
+- GET:     /redirect                          -> ApplicationController.redirect
+- GET:     /text                              -> ApplicationController.text
+- GET:     /forbidden                         -> ApplicationController.forbidden
+- GET:     /badrequest                        -> ApplicationController.badrequest
+- GET:     /unauthorized                      -> ApplicationController.unauthorized
+- GET:     /binary                            -> ApplicationController.binary
+- GET:     /header                            -> ApplicationController.header @blocking
+- GET:     /etag                              -> ApplicationController.etag
+- GET:     /request                           -> ApplicationController.request
+- POST:    /post                              -> ApplicationController.post
+- PUT:     /put                               -> ApplicationController.put
+- POST:    /jsonpathpost                      -> ApplicationController.jsonPathPost
+- PUT:     /jsonpathput                       -> ApplicationController.jsonPathPut
+- POST:    /jsonboonpost                      -> ApplicationController.jsonBoonPost
+- PUT:     /jsonboonput                       -> ApplicationController.jsonBoonPut
+
+# WebSocketController
+- WSS:     /websocket						  -> WebSocketController
+- WSS:     /websocketauth                     -> WebSocketController @authentication
+
+# ServerSentEvent
+- SSE:     /sse
+- SSE:     /sseauth                           @authentication
+
+# Resource path and resource files
+- PATH:     /assets/
+- FILE:     /robots.txt

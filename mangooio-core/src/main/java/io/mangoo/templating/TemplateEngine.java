@@ -39,14 +39,14 @@ import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 @Singleton
 public class TemplateEngine {
-    private Configuration configuration = new Configuration(VERSION);
-    private String baseDirectory;
+    private final Configuration configuration = new Configuration(VERSION);
+    private final String baseDirectory;
     private static final int MAX_CHARS = 65536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
@@ -60,7 +60,7 @@ public class TemplateEngine {
         this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
         this.configuration.setAPIBuiltinEnabled(true);
-        
+
         if (Application.inDevMode()) {
             this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
         } else {
@@ -78,15 +78,15 @@ public class TemplateEngine {
 
     /**
      * Renders a template for a specific controller class and method
-     * 
+     *
      * @param flash The current flash
      * @param session The current session
      * @param form The current Form
-     * @param messages The current messages 
+     * @param messages The current messages
      * @param templatePath The path to the template to render
      * @param content The content map which is passed to the template
      * @return A rendered template
-     * 
+     *
      * @throws TemplateNotFoundException TemplateNotFoundException
      * @throws MalformedTemplateNameException MalformedTemplateNameException
      * @throws ParseException ParseException
@@ -115,12 +115,12 @@ public class TemplateEngine {
 
     /**
      * When in dev mode, this method is used to pass the framework exception to the frontend
-     * 
+     *
      * @param exchange A HttpServerExchange instance
      * @param cause The throwable cause
      * @param templateException True if the exceptions occurs during exception rendering, false otherwise
      * @return A rendered template
-     * 
+     *
      * @throws FileNotFoundException FileNotFoundException
      * @throws IOException IOException
      * @throws TemplateException TemplateException
@@ -128,7 +128,7 @@ public class TemplateEngine {
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws FileNotFoundException, IOException, TemplateException {
         Writer writer = new StringWriter();
-        Map<String, Object> content = new HashMap<String, Object>();
+        Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
 
         if (templateException) {

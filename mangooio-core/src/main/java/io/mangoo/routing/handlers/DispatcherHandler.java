@@ -1,5 +1,7 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.routing.listeners.MetricsListener;
@@ -13,13 +15,18 @@ import io.undertow.server.HttpServerExchange;
  */
 @SuppressWarnings("all")
 public class DispatcherHandler implements HttpHandler {
-    private Class<?> controllerClass;
-    private String controllerMethod;
-    private boolean metrics;
+    private final Class<?> controllerClass;
+    private final String controllerMethod;
+    private final boolean metrics;
+    private final boolean async;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
+        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
+
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
+        this.async = async;
         this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
     }
 
@@ -29,6 +36,6 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
         }
 
-        new RequestHandler(this.controllerClass, this.controllerMethod).handleRequest(exchange);
+        new RequestHandler(this.controllerClass, this.controllerMethod, this.async).handleRequest(exchange);
     }
 }

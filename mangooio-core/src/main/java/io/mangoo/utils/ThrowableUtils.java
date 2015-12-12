@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.io.IOUtils;
 
@@ -30,6 +31,8 @@ public final class ThrowableUtils {
      * @return Source code filename
      */
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
+        Objects.requireNonNull(stackTraceElement, "stackTraceElement can not be null");
+
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
         if (position > 0) {
@@ -52,6 +55,8 @@ public final class ThrowableUtils {
      */
     @SuppressWarnings("all")
     public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
+        Objects.requireNonNull("sourcePath", "sourcePath can not be null");
+
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)

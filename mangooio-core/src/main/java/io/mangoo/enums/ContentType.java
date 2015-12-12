@@ -11,8 +11,6 @@ public enum ContentType {
     APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
     TEXT_HTML("text/html"),
     TEXT_PLAIN("text/plain"),
-    @Deprecated
-    APPLICATION_OCTETE_STREAM("application/octet-stream"),
     APPLICATION_OCTET_STREAM("application/octet-stream");
 
     private final String value;
