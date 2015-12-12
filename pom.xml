@@ -22,7 +22,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.4.1</log4j.version>
+		<log4j.version>2.5</log4j.version>
 		<maven.version>3.3.9</maven.version>
 	</properties>
 	<prerequisites>
