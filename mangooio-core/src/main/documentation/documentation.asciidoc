@@ -1,5 +1,4 @@
 mangoo I/O documentation
-{version}
 ========================
 
 == Overview
