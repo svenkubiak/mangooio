@@ -1,5 +1,17 @@
 = Changelog
 
+== Version 2.0.2
+
+[small]#Released at xx.xx.xxxx5#
+
+* https://github.com/svenkubiak/mangooio/issues/89[#89] Added Internal Server Error to Response class (svenkubiak)
+
+== Version 2.0.1
+
+[small]#Released at 13.12.2015#
+
+* Fixed bug in documentation asciidoc file (svenkubiak)
+
 == Version 2.0.0
 
 [small]#Released at 13.12.2015#

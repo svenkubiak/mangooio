@@ -169,12 +169,21 @@ public final class Response {
     }
 
     /**
-     * Creates a response object with HTTP status code 500
+     * Creates a response object with HTTP status code 400
      *
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public static Response withBadRequest() {
         return new Response(StatusCodes.BAD_REQUEST);
+    }
+    
+    /**
+     * Creates a response object with HTTP status code 500
+     *
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
+    public static Response withInternalServerError() {
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
     }
 
     /**
