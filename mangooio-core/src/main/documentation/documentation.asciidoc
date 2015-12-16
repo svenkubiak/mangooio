@@ -823,6 +823,7 @@ validation.ipv6={0} must be a valid IPv6 address
 validation.range={0} must be between {1} and {2} characters
 validation.url={0} must be a valid URL
 validation.regex={0} is invalid
+validation.numeric={0} must be an numeric value
 --------------------------------------------------------
 
 The prefix follows the field type (email, required, match, etc.) for the
