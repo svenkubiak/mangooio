@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.boon.json.JsonFactory;
-
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
@@ -13,6 +11,7 @@ import com.jayway.jsonpath.ReadContext;
 import io.mangoo.authentication.Authentication;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
+import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
@@ -71,7 +70,7 @@ public class Request implements MangooValidator {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
-        return JsonFactory.create().readValue(this.body, Map.class);
+        return JsonUtils.fromJson(this.body, Map.class);
     }
 
     /**

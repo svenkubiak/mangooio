@@ -18,8 +18,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.boon.json.JsonFactory;
-import org.boon.json.ObjectMapper;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -43,6 +41,7 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.CookieBuilder;
+import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -76,7 +75,6 @@ public class RequestHandler implements HttpHandler {
     private final Object controller;
     private final Map<String, Class<?>> methodParameters;
     private Method method;
-    private final ObjectMapper opjectMapper;
     private Authentication authentication;
     private Session session;
     private Flash flash;
@@ -96,7 +94,6 @@ public class RequestHandler implements HttpHandler {
         this.methodParameters = getMethodParameters();
         this.parameterCount = this.methodParameters.size();
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.opjectMapper = JsonFactory.create();
         this.config = Application.getInstance(Config.class);
     }
 
@@ -639,7 +636,7 @@ public class RequestHandler implements HttpHandler {
                 convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
                 break;
             case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? this.opjectMapper.readValue(this.body, clazz) : null;
+                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(this.body, clazz) : null;
                 break;
             default:
                 convertedParameters[index] = null;

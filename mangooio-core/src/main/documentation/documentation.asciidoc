@@ -1419,6 +1419,48 @@ To retrieve JSON which is send to your mangoo I/O application you have three opt
 automatic object serialization, generic object convertion or working with the raw JSON
 string.
 
+=== Custom serializer
+
+By default JSON Boon will not write out nulls, empty lists or values that are default
+values. If you want a value to be written out even if it is empty, null, false or 0, you
+can use the @JsonInclude annotation. If you want a value to be excluded from JSON generation
+you can use the @JsonIgnore annotation.
+
+[source,java]
+--------------------------
+public class Car {
+    @JsonInclude
+    public String brand = null;
+    
+    @JsonInclude
+    public int doors = 0;
+
+    @JsonIgnore
+    public String comment = "blablabla";
+    
+    public String foo = "blablabla";
+
+    public Car() {}
+}
+--------------------------
+
+You can customize the JSON serialization by overwriting the JsonSerializer in the JSONUtils class
+which is recommended to use, when working with JSON in mangoo I/O.
+
+[source,java]
+--------------------------
+	JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
+    jsonSerializerFactory.useAnnotations();
+    jsonSerializerFactory.useFieldsOnly();
+    ...
+    JsonSerializer serializer = jsonSerializerFactory.create();
+        
+    JsonUtils.withJsonSerializer(serializer);
+--------------------------
+
+It is recommended that you customize the serializer when the framework starts using the
+lifecycle methods.
+
 ==== Automatic object convertion
 
 Consider the person class from above and the following JSON send to

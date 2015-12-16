@@ -11,12 +11,12 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.boon.json.JsonFactory;
 import org.scribe.utils.Preconditions;
 
 import com.google.common.base.Charsets;
 
 import io.mangoo.enums.ContentType;
+import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
@@ -301,7 +301,7 @@ public final class Response {
         Preconditions.checkNotNull(jsonObject, "jsonObject can not be null");
 
         this.contentType = ContentType.APPLICATION_JSON.toString();
-        this.body = JsonFactory.create().toJson(jsonObject);
+        this.body = JsonUtils.toJson(jsonObject);
         this.rendered = true;
 
         return this;
