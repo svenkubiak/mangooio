@@ -29,6 +29,7 @@ public class ValidatorTest {
     private static final String EXACT_MATCH = "exactMatch";
     private static final String EXACT_MATCH2 = "exactMatch2";
     private static final String MAX = "max";
+    private static final String NUMERIC = "numeric";
     private static final String MIN = "min";
     private static final String REQUIRED = "required";
     private static final String CUSTOM_ERROR_MESSAGE = "Custom error message";
@@ -50,6 +51,7 @@ public class ValidatorTest {
         validator.add(MAX, "abc");
         validator.add(MIN, "");
         validator.add(REQUIRED, "");
+        validator.add(NUMERIC, "");
         validator.url(URL);
         validator.regex(REGEX, PATTERN);
         validator.range(RANGE, 23, 42);
@@ -62,6 +64,7 @@ public class ValidatorTest {
         validator.min(MIN, 42);
         validator.required(REQUIRED);
         validator.url(URL);
+        validator.numeric(NUMERIC);
         
         //then
         assertThat(validator.getError(URL), containsString("must be a valid URL"));
@@ -75,6 +78,7 @@ public class ValidatorTest {
         assertThat(validator.getError(MAX), containsString("must have a size of max"));
         assertThat(validator.getError(MIN), containsString("must have a least a size of"));
         assertThat(validator.getError(REQUIRED), containsString("is required"));
+        assertThat(validator.getError(NUMERIC), containsString("must be a numeric value"));
     }
     
     @Test
@@ -96,6 +100,7 @@ public class ValidatorTest {
         validator.add(MAX, "abc");
         validator.add(MIN, "");
         validator.add(REQUIRED, "");
+        validator.add(NUMERIC, "");
         validator.url(URL, CUSTOM_ERROR_MESSAGE);
         validator.required(REGEX, CUSTOM_ERROR_MESSAGE);
         validator.range(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
@@ -108,6 +113,7 @@ public class ValidatorTest {
         validator.min(MIN, 42, CUSTOM_ERROR_MESSAGE);
         validator.required(REQUIRED, CUSTOM_ERROR_MESSAGE);
         validator.url(URL, CUSTOM_ERROR_MESSAGE);
+        validator.numeric(NUMERIC, CUSTOM_ERROR_MESSAGE);
         
         //then
         assertThat(validator.getError(URL), equalTo(CUSTOM_ERROR_MESSAGE));
@@ -121,6 +127,7 @@ public class ValidatorTest {
         assertThat(validator.getError(MAX), equalTo(CUSTOM_ERROR_MESSAGE));
         assertThat(validator.getError(MIN), equalTo(CUSTOM_ERROR_MESSAGE));
         assertThat(validator.getError(REQUIRED), equalTo(CUSTOM_ERROR_MESSAGE));
+        assertThat(validator.getError(NUMERIC), equalTo(CUSTOM_ERROR_MESSAGE));
     }
     
     @Test
@@ -514,5 +521,33 @@ public class ValidatorTest {
         //then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(URL), equalTo(true));
+    }
+    
+    @Test
+    public void testValidNumeric() {
+        //given
+        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        
+        //when
+        validator.add(NUMERIC, "2342");
+        validator.numeric(NUMERIC);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(NUMERIC), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidNumeric() {
+        //given
+        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        
+        //when
+        validator.add(NUMERIC, "asjcn");
+        validator.numeric(NUMERIC);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(NUMERIC), equalTo(true));
     }
 }

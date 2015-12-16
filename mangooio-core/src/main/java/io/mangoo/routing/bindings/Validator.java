@@ -115,6 +115,31 @@ public class Validator {
     public void max(String name, double maxLength) {
         max(name, maxLength, messages.get(Key.VALIDATION_MAX, name, maxLength));
     }
+    
+    /**
+     * Validates that a given field has a numeric value
+     *
+     * @param name The field to check
+     *
+     */
+    public void numeric(String name) {
+        numeric(name, messages.get(Key.VALIDATION_NUMERIC, name));
+    }
+    
+    /**
+     * Validates that a given field has a numeric value
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     *
+     */
+    public void numeric(String name, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (!StringUtils.isNumeric(value)) {
+            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_NUMERIC, name)));
+        }
+    }
 
     /**
      * Validates a given field to have a maximum length

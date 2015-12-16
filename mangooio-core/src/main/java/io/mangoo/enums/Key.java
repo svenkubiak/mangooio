@@ -56,6 +56,7 @@ public enum Key {
     VALIDATION_RANGE("validation.range"),
     VALIDATION_URL("validation.url"),
     VALIDATION_REGEX("validation.regex"),
+    VALIDATION_NUMERIC("validation.numeric"),
     VERSION("version"),
     CACHE_MAX_SIZE("cache.maxsize"),
     CACHE_EXPIRES("cache.expires"),

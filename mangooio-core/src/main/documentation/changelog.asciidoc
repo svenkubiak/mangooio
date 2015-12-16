@@ -2,8 +2,9 @@
 
 == Version 2.0.2
 
-[small]#Released at xx.xx.xxxx5#
+[small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/91[#91] Added numeric validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/89[#89] Added Internal Server Error to Response class (svenkubiak)
 
 == Version 2.0.1

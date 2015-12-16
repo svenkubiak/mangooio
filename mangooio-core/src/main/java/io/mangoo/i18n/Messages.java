@@ -38,6 +38,7 @@ public class Messages {
         defaults.put(Key.VALIDATION_RANGE.toString(), Validation.RANGE.toString());
         defaults.put(Key.VALIDATION_URL.toString(), Validation.URL.toString());
         defaults.put(Key.VALIDATION_REGEX.toString(), Validation.REGEX.toString());
+        defaults.put(Key.VALIDATION_NUMERIC.toString(), Validation.NUMERIC.toString());
     }
 
     /**
