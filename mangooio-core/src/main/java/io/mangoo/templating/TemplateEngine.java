@@ -171,10 +171,6 @@ public class TemplateEngine {
         StringWriter buffer = new StringWriter(MAX_CHARS);
         template.process(content, buffer);
 
-        Writer writer = new StringWriter();
-        writer.write(buffer.toString());
-        writer.close();
-
         return buffer.toString();
     }
 }

@@ -82,13 +82,15 @@ public class RequestHandler implements HttpHandler {
     private Request request;
     private Map<String, String> requestParameter;
     private String body = "";
+    private String controllerClassName;
     private final boolean hasRequestFilter;
     private final boolean async;
     private final Config config;
 
-    public RequestHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
+    public RequestHandler(Class<?> controllerClass, String controllerClassName, String controllerMethod, boolean async) {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         this.controllerMethod = Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
+        this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
         this.async = async;
         this.controller = Application.getInstance(this.controllerClass);
         this.methodParameters = getMethodParameters();
@@ -277,7 +279,7 @@ public class RequestHandler implements HttpHandler {
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
     private String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClass.getSimpleName() + "/" + RequestUtils.getTemplateName(this.method.getName())) : response.getTemplate();
+        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClassName + "/" + RequestUtils.getTemplateName(this.controllerMethod)) : response.getTemplate();
     }
 
     /**

@@ -16,6 +16,7 @@ import io.undertow.server.HttpServerExchange;
 @SuppressWarnings("all")
 public class DispatcherHandler implements HttpHandler {
     private final Class<?> controllerClass;
+    private final String controllerClassName;
     private final String controllerMethod;
     private final boolean metrics;
     private final boolean async;
@@ -26,6 +27,7 @@ public class DispatcherHandler implements HttpHandler {
 
         this.controllerClass = controllerClass;
         this.controllerMethod = controllerMethod;
+        this.controllerClassName = controllerClass.getSimpleName();
         this.async = async;
         this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
     }
@@ -36,6 +38,6 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
         }
 
-        new RequestHandler(this.controllerClass, this.controllerMethod, this.async).handleRequest(exchange);
+        new RequestHandler(this.controllerClass, this.controllerClassName, this.controllerMethod, this.async).handleRequest(exchange);
     }
 }
