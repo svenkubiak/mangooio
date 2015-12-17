@@ -13,7 +13,7 @@ public interface MangooLifecycle {
     public void applicationInitialized();
 
     /**
-     * Executed after the application is completly started
+     * Executed after the application is completely started
      */
     public void applicationStarted();
 }
