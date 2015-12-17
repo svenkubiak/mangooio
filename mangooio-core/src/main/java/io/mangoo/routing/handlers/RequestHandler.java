@@ -74,6 +74,10 @@ public class RequestHandler implements HttpHandler {
     private final String controllerMethod;
     private final Object controller;
     private final Map<String, Class<?>> methodParameters;
+    private final String controllerClassName;
+    private final boolean hasRequestFilter;
+    private final boolean async;
+    private final Config config;
     private Method method;
     private Authentication authentication;
     private Session session;
@@ -82,10 +86,6 @@ public class RequestHandler implements HttpHandler {
     private Request request;
     private Map<String, String> requestParameter;
     private String body = "";
-    private String controllerClassName;
-    private final boolean hasRequestFilter;
-    private final boolean async;
-    private final Config config;
 
     public RequestHandler(Class<?> controllerClass, String controllerClassName, String controllerMethod, boolean async) {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
