@@ -2028,9 +2028,31 @@ around the Java ExecutorService.
     }
 -----------------------------------------------------------------------------
 
-The manager offers some convinient methods for postpone task into the background of
+The manager offers some convenient methods for postpone task into the background of
 your application. The ExecutorService works with a fixed Thread-Pool size with a default
 value of 10. You can change this value via the application.yaml file.
+
+== Utilities
+
+mangoo I/O offers some nice utilities for making some task easy.
+
+=== Http-Utilities
+
+For contacting third-party webservices mangoo I/O has integrated the 
+https://hc.apache.org/httpcomponents-client-ga/tutorial/html/fluent.html[HC fluent API] 
+of the Apache HTTP components library.
+
+Fluent-HC enables you to open outgoing HTTP connections
+
+[source,java]
+-----------------------------------------------------------------------------
+Request.Get("http://somehost/")
+        .connectTimeout(1000)
+        .socketTimeout(1000)
+        .execute()
+        .returnContent()
+        .asString();
+-----------------------------------------------------------------------------
 
 == i18n Internationalization
 
