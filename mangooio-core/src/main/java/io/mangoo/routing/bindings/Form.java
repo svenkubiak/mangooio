@@ -22,11 +22,11 @@ import io.mangoo.interfaces.MangooValidator;
  */
 public class Form implements MangooValidator {
     private static final String KEY_ERROR = "Key can not be null";
-    private boolean submitted;
     private final List<File> files = new ArrayList<>();
     private final Map<String, String> values = new HashMap<>();
     private final Validator validator;
-
+    private boolean submitted;
+    
     @Inject
     public Form (Validator validator) {
         this.validator = Objects.requireNonNull(validator, "Validator can not be null");

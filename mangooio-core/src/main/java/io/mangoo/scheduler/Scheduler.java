@@ -5,6 +5,7 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +37,7 @@ public class Scheduler {
 
     @Inject
     public Scheduler(Config config) {
-        Preconditions.checkNotNull(config, "config can not be null");
+        Objects.requireNonNull(config, "config can not be null");
 
         config.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
             if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
@@ -69,7 +70,7 @@ public class Scheduler {
     }
 
     public void shutdown() {
-        Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized or started");
 
         try {
             this.quartzScheduler.shutdown();
@@ -84,7 +85,7 @@ public class Scheduler {
     }
 
     public void standby() {
-        Preconditions.checkNotNull(this.quartzScheduler, "Scheduler is not initialized or started");
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized or started");
 
         try {
             this.quartzScheduler.standby();
@@ -120,8 +121,8 @@ public class Scheduler {
      * @param trigger The Trigger for the job
      */
     public void schedule(JobDetail jobDetail, Trigger trigger) {
-        Preconditions.checkNotNull(jobDetail, "JobDetail is required for schedule");
-        Preconditions.checkNotNull(trigger, "trigger is required for schedule");
+        Objects.requireNonNull(jobDetail, "JobDetail is required for schedule");
+        Objects.requireNonNull(trigger, "trigger is required for schedule");
         initialize();
 
         try {
@@ -143,9 +144,9 @@ public class Scheduler {
      * @return A new Trigger object
      */
     public Trigger createTrigger(String identity, String groupName, String description, String cron) {
-        Preconditions.checkNotNull(identity, "Identity is required for creating a new trigger");
-        Preconditions.checkNotNull(groupName, "groupName is required for new trigger");
-        Preconditions.checkNotNull(cron, "cron is required for new trigger");
+        Objects.requireNonNull(identity, "Identity is required for creating a new trigger");
+        Objects.requireNonNull(groupName, "groupName is required for new trigger");
+        Objects.requireNonNull(cron, "cron is required for new trigger");
         Preconditions.checkArgument(CronExpression.isValidExpression(cron), "cron expression is invalid");
 
         return newTrigger()
@@ -166,9 +167,9 @@ public class Scheduler {
      * @return A new JobDetail object
      */
     public JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
-        Preconditions.checkNotNull(identity, "identity is required for new JobDetail");
-        Preconditions.checkNotNull(groupName, "groupName is required for new JobDetail");
-        Preconditions.checkNotNull(clazz, "clazz is required for new JobDetail");
+        Objects.requireNonNull(identity, "identity is required for new JobDetail");
+        Objects.requireNonNull(groupName, "groupName is required for new JobDetail");
+        Objects.requireNonNull(clazz, "clazz is required for new JobDetail");
 
         return newJob(clazz)
                 .withIdentity(identity, groupName)

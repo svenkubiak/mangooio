@@ -1,6 +1,6 @@
 package io.mangoo.test;
 
-import org.scribe.utils.Preconditions;
+import java.util.Objects;
 
 import com.google.inject.Injector;
 
@@ -30,7 +30,7 @@ public enum Mangoo {
     }
     
     public <T> T getInstance(Class<T> clazz) {
-        Preconditions.checkNotNull(clazz, "clazz can not be null");
+        Objects.requireNonNull(clazz, "clazz can not be null");
         return Application.getInstance(clazz);
     }
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,6 @@ import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.builder.api.TwitterApi;
 import org.scribe.oauth.OAuthService;
-import org.scribe.utils.Preconditions;
 
 import io.mangoo.authentication.oauth.Google2Api;
 import io.mangoo.configuration.Config;
@@ -55,7 +55,7 @@ public final class RequestUtils {
      * @return A single map contain both request and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
 
         final Map<String, String> requestParamater = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
@@ -73,7 +73,7 @@ public final class RequestUtils {
      * @return The template name with correct suffix
      */
     public static String getTemplateName(String templateName) {
-        Preconditions.checkNotNull(templateName, "templateName can not be null");
+        Objects.requireNonNull(templateName, "templateName can not be null");
 
         return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : (templateName + Default.TEMPLATE_SUFFIX.toString());
     }
@@ -85,7 +85,7 @@ public final class RequestUtils {
      * @return True if the request is a POST or a PUT request, false otherwise
      */
     public static boolean isPostOrPut(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
     }
@@ -97,7 +97,7 @@ public final class RequestUtils {
      * @return True if the request content-type contains application/json, false otherwise
      */
     public static boolean isJsonRequest(HttpServerExchange exchange) {
-        Preconditions.checkNotNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
@@ -111,7 +111,7 @@ public final class RequestUtils {
      * @return An OAuthService object or null if creating failed
      */
     public static OAuthService createOAuthService(OAuthProvider oAuthProvider) {
-        Preconditions.checkNotNull(oAuthProvider, "oAuthProvider can not be null");
+        Objects.requireNonNull(oAuthProvider, "oAuthProvider can not be null");
 
         final Config config = Application.getInstance(Config.class);
         ServiceBuilder serviceBuilder = null;
@@ -153,7 +153,7 @@ public final class RequestUtils {
      * @return OAuthProvider Enum
      */
     public static OAuthProvider getOAuthProvider(String oauth) {
-        Preconditions.checkNotNull(oauth, "oauth can not be null");
+        Objects.requireNonNull(oauth, "oauth can not be null");
 
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {

@@ -66,7 +66,7 @@ public class Flash {
 
     /**
      * Adds a value with a specific key to the flash overwriting an
-     * exisiting value
+     * existing value
      *
      * @param key The key
      * @param value The value
