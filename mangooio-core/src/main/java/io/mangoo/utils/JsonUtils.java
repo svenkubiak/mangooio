@@ -2,10 +2,10 @@ package io.mangoo.utils;
 
 import java.util.Objects;
 
-import org.boon.json.JsonFactory;
-import org.boon.json.JsonSerializer;
-import org.boon.json.JsonSerializerFactory;
-import org.boon.json.ObjectMapper;
+import io.advantageous.boon.json.JsonFactory;
+import io.advantageous.boon.json.JsonSerializer;
+import io.advantageous.boon.json.JsonSerializerFactory;
+import io.advantageous.boon.json.ObjectMapper;
 
 /**
  * 
@@ -62,7 +62,9 @@ public final class JsonUtils {
      * Converts a given Json string to given Class
      * 
      * @param json The json string to convert
-     * @param clazz The Class to converz to
+     * @param clazz The Class to convert to
+     * @param <T> JavaDoc wants this, just ignore it
+     * 
      * @return The converted class
      */
     public static <T> T fromJson(String json, Class<T> clazz) {

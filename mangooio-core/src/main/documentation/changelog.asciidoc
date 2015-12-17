@@ -7,6 +7,8 @@
 * https://github.com/svenkubiak/mangooio/issues/91[#91] Added numeric validation (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/90[#90] Added JSONUtils for custom serialization with annotations (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/89[#89] Added Internal Server Error to Response class (svenkubiak)
+* Sonar refactorings
+* Updated documentation
 
 == Version 2.0.1
 

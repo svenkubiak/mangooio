@@ -5,10 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.boon.json.JsonSerializer;
-import org.boon.json.JsonSerializerFactory;
 import org.junit.Test;
 
+import io.advantageous.boon.json.JsonSerializer;
+import io.advantageous.boon.json.JsonSerializerFactory;
 import io.mangoo.models.Car;
 
 /**

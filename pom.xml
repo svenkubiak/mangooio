@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -289,9 +290,9 @@
 				<version>2.4</version>
 			</dependency>
 			<dependency>
-				<groupId>io.fastjson</groupId>
-				<artifactId>boon</artifactId>
-				<version>0.33</version>
+				<groupId>io.advantageous.boon</groupId>
+				<artifactId>boon-json</artifactId>
+				<version>0.5.6.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>org.scribe</groupId>
