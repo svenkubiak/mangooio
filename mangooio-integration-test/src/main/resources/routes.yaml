@@ -64,7 +64,7 @@
 - POST:    /validateform                      -> FormController.validateform
 
 # ApplicationController
-- GET:     /                                  -> ApplicationController.index
+- GET:     /                                  -> ApplicationController.index @blocking
 - GET:     /redirect                          -> ApplicationController.redirect
 - GET:     /text                              -> ApplicationController.text
 - GET:     /forbidden                         -> ApplicationController.forbidden

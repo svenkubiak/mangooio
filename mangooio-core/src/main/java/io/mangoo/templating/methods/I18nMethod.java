@@ -3,9 +3,6 @@ package io.mangoo.templating.methods;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import freemarker.template.SimpleNumber;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
@@ -20,7 +17,6 @@ import io.mangoo.i18n.Messages;
  */
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
-    private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;
     private final Messages messages;
 
@@ -35,7 +31,6 @@ public class I18nMethod implements TemplateMethodModelEx {
             String messageKey = ((SimpleScalar) args.get(0)).getAsString();
             messageValue = messages.get(messageKey);
 
-            logError(messageKey, messageValue);
         } else if (args.size() > NUM_ARGUMENTS) {
             List<String> strings = new ArrayList<>();
             for (Object object : args) {
@@ -49,16 +44,8 @@ public class I18nMethod implements TemplateMethodModelEx {
             String messageKey = strings.get(0);
             strings.remove(0);
             messageValue = messages.get(messageKey, strings.toArray());
-
-            logError(messageKey, messageValue);
         }
 
         return new SimpleScalar(messageValue);
-    }
-
-    public void logError(String messageKey, String messageValue) {
-        if (messageKey.equals(messageValue)) {
-            LOG.error("Message key {} is missing. Using key as value inside template - but this is most likely not what you want.", messageKey);
-        }
     }
 }
