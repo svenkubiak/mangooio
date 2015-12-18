@@ -60,6 +60,7 @@ test:
               config     : true
               cache      : true
               routes     : true
+              system     : true              
               metrics    : true
               scheduler  : true
               username   : admin
@@ -75,6 +76,7 @@ dev:
               health     : true
               config     : true
               cache      : true
+              system     : true                  
               routes     : true
               metrics    : true  
               scheduler  : true   

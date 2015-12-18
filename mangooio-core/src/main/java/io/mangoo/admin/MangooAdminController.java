@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.quartz.JobKey;
@@ -35,6 +36,15 @@ import io.mangoo.scheduler.Scheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
+    private Map<String, String> properties = new HashMap<>();
+    
+    public MangooAdminController() {
+        Properties props = System.getProperties();
+        props.entrySet().forEach(entry -> {
+            properties.put(entry.getKey().toString(), entry.getValue().toString());
+        });
+    }
+    
     public Response health() {
         return Response.withOk()
                 .andTextBody("alive");
@@ -82,6 +92,12 @@ public class MangooAdminController {
         return Response.withOk()
                 .andContent("metrics", metrics.getMetrics())
                 .andTemplate(Template.DEFAULT.metricsPath());
+    }
+    
+    public Response system() {
+        return Response.withOk()
+                .andContent("properties", this.properties)
+                .andTemplate(Template.DEFAULT.propertiesPath());
     }
 
     public Response scheduler() throws SchedulerException {

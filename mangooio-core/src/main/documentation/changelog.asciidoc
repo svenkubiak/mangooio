@@ -1,5 +1,11 @@
 = Changelog
 
+== Version 2.1.0
+
+[small]#Released at xx.xx.xxxx#
+
+* https://github.com/svenkubiak/mangooio/issues/94[#94] Added new @system administrative URL (svenkubiak)
+
 == Version 2.0.2
 
 [small]#Released at 17.12.2015#

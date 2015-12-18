@@ -106,6 +106,9 @@ public class MangooAdminFilter implements MangooFilter {
         case "@scheduler":
             enabled = config.isAdminSchedulerEnabled();
             break;
+        case "@system":
+            enabled = config.isAdminSystemEnabled();
+            break;            
         default:
             enabled = false;
         }

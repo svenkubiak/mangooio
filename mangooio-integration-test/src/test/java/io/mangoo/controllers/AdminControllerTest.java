@@ -27,6 +27,7 @@ public class AdminControllerTest {
     private static final String CONFIG = "config";
     private static final String ALIVE = "alive";
     private static final String ADMIN = "admin";
+    private static final String PROPERTIES = "properties";
 
     @Test
     public void testHealthAuthorized() {
@@ -182,5 +183,31 @@ public class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
+    }
+    
+    @Test
+    public void testSystemAuthorized() {
+        //given
+        Response response = Request.get("/@system")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(PROPERTIES));
+    }
+    
+    @Test
+    public void testSystemUnAuthorized() {
+        //given
+        Response response = Request.get("/@system").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(PROPERTIES)));
     }
 }

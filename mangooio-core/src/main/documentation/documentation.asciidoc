@@ -1299,6 +1299,7 @@ following administrative URLs are available
 /@cache
 /@health
 /@scheduler
+/@system
 -------------------------------------------
 
 [NOTE]
@@ -1328,6 +1329,10 @@ Displays a simple health check by returning "alive".
 === /@scheduler
 
 Displays a list of schedules jobs, their last and their next execution time.
+
+=== /@system
+
+Displays a list of all properties for the current JVM.
 
 === Authentication for administrative URLs
 
@@ -2580,6 +2585,8 @@ as a fallback value for Locale
 |application.admin.health |Enable or disable administrative /@health URL |false|
 
 |application.admin.routes |Enable or disable administrative /@routes URL |false|
+
+|application.admin.system |Enable or disable administrative /@system URL |false|
 
 |application.admin.config |Enable or disable administrative /@config URL |false|
 

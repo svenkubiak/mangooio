@@ -452,6 +452,13 @@ public class Config {
     }
 
     /**
+     * @return application.admin.system from application.yaml or default value if undefined
+     */
+    public boolean isAdminSystemEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_SYSTEM, Default.APPLICATION_ADMIN_SYSTEM.toBoolean());
+    }    
+
+    /**
      * @return auth.cookie.encrypt from application.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieEncrypt() {
