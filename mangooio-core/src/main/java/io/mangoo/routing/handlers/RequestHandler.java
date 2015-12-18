@@ -6,9 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -69,15 +67,14 @@ public class RequestHandler implements HttpHandler {
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
     private static final int SESSION_PREFIX_LENGTH = 4;
-    private final int parameterCount;
-    private final Class<?> controllerClass;
-    private final String controllerMethod;
-    private final Object controller;
-    private final Map<String, Class<?>> methodParameters;
-    private final String controllerClassName;
-    private final boolean hasRequestFilter;
-    private final boolean async;
-    private final Config config;
+    private int methodParametersCount;
+    private Class<?> controllerClass;
+    private String controllerMethodName;
+    private Object controllerInstance;
+    private Map<String, Class<?>> methodParameters;
+    private String controllerClassName;
+    private String body = "";
+    private Config config;
     private Method method;
     private Authentication authentication;
     private Session session;
@@ -85,19 +82,56 @@ public class RequestHandler implements HttpHandler {
     private Form form;
     private Request request;
     private Map<String, String> requestParameter;
-    private String body = "";
+    private boolean hasRequestFilter;
+    private boolean async;
 
-    public RequestHandler(Class<?> controllerClass, String controllerClassName, String controllerMethod, boolean async) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        this.controllerMethod = Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
-        this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
-        this.async = async;
-        this.controller = Application.getInstance(this.controllerClass);
-        this.methodParameters = getMethodParameters();
-        this.parameterCount = this.methodParameters.size();
-        this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.config = Application.getInstance(Config.class);
+    public RequestHandler() {
     }
+
+    public RequestHandler controllerClass(Class<?> controllerClass) {
+        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        return this;
+    }
+    
+    public RequestHandler controllerClassName(String controllerClassName) {
+        this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
+        return this;
+    }
+    
+    public RequestHandler controllerMethodName(String controllerMethodName) {
+        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
+        return this;
+    }
+    
+    public RequestHandler config(Config config) {
+        this.config = Objects.requireNonNull(config, "config can not be null");
+        return this;
+    }   
+    
+    public RequestHandler controllerInstance(Object controllerInstance) {
+        this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
+        return this;
+    }     
+
+    public RequestHandler async(boolean async) {
+        this.async = async;
+        return this;
+    }
+
+    public RequestHandler methodParameters(Map<String, Class<?>> methodParameters) {
+        this.methodParameters = methodParameters;
+        return this;
+    }
+
+    public RequestHandler methodParameterCount(int methodParametersCount) {
+        this.methodParametersCount = methodParametersCount;
+        return this;
+    }
+
+    public RequestHandler hasRequestFilter(boolean hasRequestFilter) {
+        this.hasRequestFilter = hasRequestFilter;
+        return this;
+    }    
 
     @Override
     @SuppressWarnings("all")
@@ -107,7 +141,7 @@ public class RequestHandler implements HttpHandler {
             return;
         }
 
-        this.method = this.controller.getClass().getMethod(this.controllerMethod, methodParameters.values().toArray(new Class[0]));
+        this.method = this.controllerInstance.getClass().getMethod(this.controllerMethodName, methodParameters.values().toArray(new Class[0]));
         this.requestParameter = RequestUtils.getRequestParameters(exchange);
 
         setLocale(exchange);
@@ -254,10 +288,10 @@ public class RequestHandler implements HttpHandler {
         Response invokedResponse;
 
         if (this.methodParameters.isEmpty()) {
-            invokedResponse = (Response) this.method.invoke(this.controller);
+            invokedResponse = (Response) this.method.invoke(this.controllerInstance);
         } else {
             final Object [] convertedParameters = getConvertedParameters(exchange);
-            invokedResponse = (Response) this.method.invoke(this.controller, convertedParameters);
+            invokedResponse = (Response) this.method.invoke(this.controllerInstance, convertedParameters);
         }
 
         invokedResponse.andContent(response.getContent());
@@ -279,7 +313,7 @@ public class RequestHandler implements HttpHandler {
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
     private String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClassName + "/" + RequestUtils.getTemplateName(this.controllerMethod)) : response.getTemplate();
+        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClassName + "/" + RequestUtils.getTemplateName(this.controllerMethodName)) : response.getTemplate();
     }
 
     /**
@@ -588,7 +622,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
-        final Object [] convertedParameters = new Object[this.parameterCount];
+        final Object [] convertedParameters = new Object[this.methodParametersCount];
 
         int index = 0;
         for (final Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
@@ -649,23 +683,6 @@ public class RequestHandler implements HttpHandler {
         }
 
         return convertedParameters;
-    }
-
-    /**
-     * Converts the method parameter of a mapped controller method to a map
-     *
-     * @return A Map containing the declared methods of the method parameters and ther class type
-     */
-    private Map<String, Class<?>> getMethodParameters() {
-        final Map<String, Class<?>> parameters = new LinkedHashMap<>(); //NOSONAR
-        for (final Method declaredMethod : this.controller.getClass().getDeclaredMethods()) {
-            if (declaredMethod.getName().equals(this.controllerMethod) && declaredMethod.getParameterCount() > 0) {
-                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType())); //NOSONAR
-                break;
-            }
-        }
-
-        return parameters;
     }
 
     /**
