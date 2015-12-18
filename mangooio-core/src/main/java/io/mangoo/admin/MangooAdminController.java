@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.quartz.JobKey;
@@ -37,13 +36,12 @@ import io.mangoo.scheduler.Scheduler;
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
     private static final int MB = 1024*1024;
-    private Map<String, String> properties = new HashMap<>();
+    private final Map<String, String> properties = new HashMap<>();
     
     public MangooAdminController() {
-        Properties props = System.getProperties();
-        props.entrySet().forEach(entry -> {
-            this.properties.put(entry.getKey().toString(), entry.getValue().toString());
-        });
+        System.getProperties().entrySet().forEach(
+                entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
+        );
     }
     
     public Response health() {
