@@ -34,6 +34,7 @@ public enum Template {
     private final String metricsTemplatePath = "defaults/metrics.ftl";
     private final String schedulerTemplatePath = "defaults/scheduler.ftl";
     private final String propertiesTemplatePath = "defaults/properties.ftl";
+    private final String memoryTemplatePath = "defaults/memory.ftl";
 
     Template () {
         try {
@@ -153,10 +154,16 @@ public enum Template {
     }
 
     /**
-     * 
      * @return The relative path of the properties template
      */
     public String propertiesPath() {
         return this.propertiesTemplatePath;
+    }
+
+    /**
+     * @return The relative path of the memory template
+     */
+    public String memoryPath() {
+        return this.memoryTemplatePath;
     }
 }

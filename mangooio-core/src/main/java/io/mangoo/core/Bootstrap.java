@@ -261,6 +261,7 @@ public class Bootstrap {
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@metrics").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("metrics"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@scheduler").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("scheduler"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@system").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("system"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@memory").withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("memory"));
 
         Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

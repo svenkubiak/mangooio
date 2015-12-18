@@ -28,6 +28,7 @@ public class AdminControllerTest {
     private static final String ALIVE = "alive";
     private static final String ADMIN = "admin";
     private static final String PROPERTIES = "properties";
+    private static final String MEMORY = "memory";    
 
     @Test
     public void testHealthAuthorized() {
@@ -209,5 +210,31 @@ public class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(PROPERTIES)));
+    }
+    
+    @Test
+    public void testMemoryAuthorized() {
+        //given
+        Response response = Request.get("/@memory")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(MEMORY));
+    }
+    
+    @Test
+    public void testMemoryUnAuthorized() {
+        //given
+        Response response = Request.get("/@memory").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(MEMORY)));
     }
 }

@@ -456,6 +456,13 @@ public class Config {
      */
     public boolean isAdminSystemEnabled() {
         return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_SYSTEM, Default.APPLICATION_ADMIN_SYSTEM.toBoolean());
+    }   
+    
+    /**
+     * @return application.admin.memory from application.yaml or default value if undefined
+     */
+    public boolean isAdminMemoryEnabled() {
+        return Application.getInstance(Config.class).getBoolean(Key.APPLICATION_ADMIN_MEMORY, Default.APPLICATION_ADMIN_MEMORY.toBoolean());
     }    
 
     /**

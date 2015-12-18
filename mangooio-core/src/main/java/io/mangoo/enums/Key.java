@@ -26,6 +26,7 @@ public enum Key {
     APPLICATION_ADMIN_CONFIG("application.admin.config"),
     APPLICATION_ADMIN_METRICS("application.admin.metrics"),
     APPLICATION_ADMIN_SYSTEM("application.admin.system"),
+    APPLICATION_ADMIN_MEMORY("application.admin.memory"),
     APPLICATION_ADMIN_SCHEDULER("application.admin.scheduler"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),

@@ -108,7 +108,10 @@ public class MangooAdminFilter implements MangooFilter {
             break;
         case "@system":
             enabled = config.isAdminSystemEnabled();
-            break;            
+            break;    
+        case "@memory":
+            enabled = config.isAdminMemoryEnabled();
+            break;             
         default:
             enabled = false;
         }

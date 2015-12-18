@@ -21,7 +21,8 @@ import io.undertow.server.ResponseCommitListener;
 @Singleton
 public class MetricsListener implements ResponseCommitListener {
     private final Metrics metrics;
-    private final List<String> blacklist = Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler");
+    private final List<String> blacklist = Arrays
+            .asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");
 
     @Inject
     public MetricsListener(Metrics metrics) {

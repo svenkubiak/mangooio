@@ -1300,6 +1300,7 @@ following administrative URLs are available
 /@health
 /@scheduler
 /@system
+/@memory
 -------------------------------------------
 
 [NOTE]
@@ -1333,6 +1334,10 @@ Displays a list of schedules jobs, their last and their next execution time.
 === /@system
 
 Displays a list of all properties for the current JVM.
+
+=== /@memory
+
+Displays the current JVM memory usage.
 
 === Authentication for administrative URLs
 

@@ -36,12 +36,13 @@ import io.mangoo.scheduler.Scheduler;
  */
 @FilterWith(MangooAdminFilter.class)
 public class MangooAdminController {
+    private static final int MB = 1024*1024;
     private Map<String, String> properties = new HashMap<>();
     
     public MangooAdminController() {
         Properties props = System.getProperties();
         props.entrySet().forEach(entry -> {
-            properties.put(entry.getKey().toString(), entry.getValue().toString());
+            this.properties.put(entry.getKey().toString(), entry.getValue().toString());
         });
     }
     
@@ -98,6 +99,21 @@ public class MangooAdminController {
         return Response.withOk()
                 .andContent("properties", this.properties)
                 .andTemplate(Template.DEFAULT.propertiesPath());
+    }
+    
+    public Response memory() {
+        Runtime runtime = Runtime.getRuntime();
+        double usedMemory = ((runtime.totalMemory() - runtime.freeMemory()) / MB);
+        double freeMemory = runtime.freeMemory() / MB;
+        double totalMemory = runtime.totalMemory() / MB;
+        double maxMemory = runtime.maxMemory() / MB;
+        
+        return Response.withOk()
+                .andContent("usedMemory", usedMemory)
+                .andContent("freeMemory", freeMemory)
+                .andContent("totalMemory", totalMemory)
+                .andContent("maxMemory", maxMemory)
+                .andTemplate(Template.DEFAULT.memoryPath());
     }
 
     public Response scheduler() throws SchedulerException {
