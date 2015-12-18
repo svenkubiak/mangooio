@@ -101,7 +101,7 @@ public class MangooAdminController {
     
     public Response memory() {
         Runtime runtime = Runtime.getRuntime();
-        double usedMemory = ((runtime.totalMemory() - runtime.freeMemory()) / MB);
+        double usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / MB;
         double freeMemory = runtime.freeMemory() / MB;
         double totalMemory = runtime.totalMemory() / MB;
         double maxMemory = runtime.maxMemory() / MB;
