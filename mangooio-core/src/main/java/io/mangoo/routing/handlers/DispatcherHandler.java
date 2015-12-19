@@ -53,15 +53,15 @@ public class DispatcherHandler implements HttpHandler {
         }
 
         new RequestHandler()
-            .controllerInstance(Application.getInstance(this.controllerClass))
-            .controllerClass(this.controllerClass)
-            .controllerClassName(this.controllerClassName)
-            .controllerMethodName(this.controllerMethodName)
-            .methodParameters(this.methodParameters)
-            .methodParameterCount(this.methodParametersCount)
-            .hasRequestFilter(this.hasRequestFilter)
-            .config(this.config)
-            .async(this.async)
+            .withControllerInstance(Application.getInstance(this.controllerClass))
+            .withControllerClass(this.controllerClass)
+            .withControllerClassName(this.controllerClassName)
+            .withControllerMethodName(this.controllerMethodName)
+            .withMethodParameters(this.methodParameters)
+            .withMethodParameterCount(this.methodParametersCount)
+            .withRequestFilter(this.hasRequestFilter)
+            .withConfig(this.config)
+            .withAsync(this.async)
             .handleRequest(exchange);
     }
 

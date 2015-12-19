@@ -88,47 +88,47 @@ public class RequestHandler implements HttpHandler {
     public RequestHandler() {
     }
 
-    public RequestHandler controllerClass(Class<?> controllerClass) {
+    public RequestHandler withControllerClass(Class<?> controllerClass) {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         return this;
     }
     
-    public RequestHandler controllerClassName(String controllerClassName) {
+    public RequestHandler withControllerClassName(String controllerClassName) {
         this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
         return this;
     }
     
-    public RequestHandler controllerMethodName(String controllerMethodName) {
+    public RequestHandler withControllerMethodName(String controllerMethodName) {
         this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
         return this;
     }
     
-    public RequestHandler config(Config config) {
+    public RequestHandler withConfig(Config config) {
         this.config = Objects.requireNonNull(config, "config can not be null");
         return this;
     }   
     
-    public RequestHandler controllerInstance(Object controllerInstance) {
+    public RequestHandler withControllerInstance(Object controllerInstance) {
         this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
         return this;
     }     
 
-    public RequestHandler async(boolean async) {
+    public RequestHandler withAsync(boolean async) {
         this.async = async;
         return this;
     }
 
-    public RequestHandler methodParameters(Map<String, Class<?>> methodParameters) {
+    public RequestHandler withMethodParameters(Map<String, Class<?>> methodParameters) {
         this.methodParameters = methodParameters;
         return this;
     }
 
-    public RequestHandler methodParameterCount(int methodParametersCount) {
+    public RequestHandler withMethodParameterCount(int methodParametersCount) {
         this.methodParametersCount = methodParametersCount;
         return this;
     }
 
-    public RequestHandler hasRequestFilter(boolean hasRequestFilter) {
+    public RequestHandler withRequestFilter(boolean hasRequestFilter) {
         this.hasRequestFilter = hasRequestFilter;
         return this;
     }    
