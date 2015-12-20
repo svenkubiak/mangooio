@@ -2,11 +2,15 @@
 
 == Version 2.1.0
 
-[small]#Released at xx.xx.xxxx#
+[small]#Released at 21.12.2015#
 
 * https://github.com/svenkubiak/mangooio/issues/94[#95] Added new @memory administrative URL (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/94[#94] Added new @system administrative URL (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/93[#93] Improved DispatcherHandler/RequestHandler (svenkubiak)
+* Updated documentation (svenkubiak, MarkVink)
+* Version bumps (svenkubiak)
+** log4j 2.4.1 -> 2.5
+** mockito 2.0.31-Beta -> 2.0.33-Beta
 
 == Version 2.0.2
 
