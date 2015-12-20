@@ -797,7 +797,7 @@ To display a form specific error you can use the error method on a form field
 
 [source,html]
 -----------------------
-${form.error("myField)}
+${form.error("myField")}
 -----------------------
 
 This will display e.g.
@@ -981,10 +981,10 @@ import io.mangoo.routing.bindings.Flash;
 
 public class FlashController {
     public Response flash(Flash flash) {
-        flash.success("this is a success");
-        flash.warning("this is a warning");
-        flash.error("this is an error");
-        flash.add("foo", "bar");
+        flash.setSuccess("this is a success");
+        flash.setWarning("this is a warning");
+        flash.setError("this is an error");
+        flash.put("foo", "bar");
 
        return Response.withRedirect("/");
     }
