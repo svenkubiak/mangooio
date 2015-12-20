@@ -21,12 +21,12 @@ default:
             cssfolder : /bar
             gzipjs    : false
             gzipcss   : false
-        auth:
-            redirect  : /login
-            cookie:
-                name    : ${application-name}-AUTH
-                encrypt : false
-                expires : 86400
+    auth:
+        redirect  : /login
+        cookie:
+            name    : ${application-name}-AUTH
+            encrypt : false
+            expires : 86400
     cookie:
         name       : ${application-name}-SESSION
         expires    : 86400
