@@ -92,26 +92,26 @@ public class RequestHandler implements HttpHandler {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         return this;
     }
-    
+
     public RequestHandler withControllerClassName(String controllerClassName) {
         this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
         return this;
     }
-    
+
     public RequestHandler withControllerMethodName(String controllerMethodName) {
         this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
         return this;
     }
-    
+
     public RequestHandler withConfig(Config config) {
         this.config = Objects.requireNonNull(config, "config can not be null");
         return this;
-    }   
-    
+    }
+
     public RequestHandler withControllerInstance(Object controllerInstance) {
         this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
         return this;
-    }     
+    }
 
     public RequestHandler withAsync(boolean async) {
         this.async = async;
@@ -131,7 +131,7 @@ public class RequestHandler implements HttpHandler {
     public RequestHandler withRequestFilter(boolean hasRequestFilter) {
         this.hasRequestFilter = hasRequestFilter;
         return this;
-    }    
+    }
 
     @Override
     @SuppressWarnings("all")
