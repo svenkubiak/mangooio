@@ -18,6 +18,7 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.interfaces.MangooCache;
 
 /**
  * Google Guava based cache implementation
@@ -26,7 +27,7 @@ import io.mangoo.enums.Key;
  *
  */
 @Singleton
-public class Cache {
+public class Cache implements MangooCache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
     private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
     private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
@@ -37,8 +38,18 @@ public class Cache {
         Objects.requireNonNull(config, "config can not be null");
 
         final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-                .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()))
-                .expireAfterAccess(config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES.toInt()), TimeUnit.SECONDS);
+                .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()));
+        
+        String cacheEviction = config.getString(Key.CACHE_EVICTION, Default.CACHE_EXPIRES.toString());
+        int cacheExpires = config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES_ACCESS.toInt());
+        
+        if (("afterAccess").equalsIgnoreCase(cacheEviction)) {
+            cacheBuilder.expireAfterAccess(cacheExpires, TimeUnit.SECONDS);
+        } else if (("afterWrite").equalsIgnoreCase(cacheEviction)) {
+            cacheBuilder.expireAfterWrite(cacheExpires, TimeUnit.SECONDS);
+        } else {
+            cacheBuilder.expireAfterAccess(cacheExpires, TimeUnit.SECONDS);
+        }
 
         if (config.getBoolean(Key.APPLICATION_ADMIN_CACHE)) {
             cacheBuilder.recordStats();
@@ -56,7 +67,7 @@ public class Cache {
     public void put(String key, Object value) {
         Objects.requireNonNull(key, KEY_REQUIRED);
         Objects.requireNonNull(value, VALUE_REQUIRED);
-
+        
         this.guavaCache.put(key, value);
     }
 

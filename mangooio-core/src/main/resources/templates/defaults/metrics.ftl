@@ -1,3 +1,5 @@
+<#setting number_format=",##0">
+<#setting locale="en_US">
 <!DOCTYPE html>
 <html lang="en">
   <head>

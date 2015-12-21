@@ -1753,7 +1753,7 @@ from log4j2.
 
 == Caching
 
-mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] for storing and accessing values
+mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] as default Cache for storing and accessing values
 in-memory. To use the cache in your application, simply inject the cache class.
 
 [source,java]
@@ -1765,14 +1765,11 @@ private Cache cache;
 The cache offers some convenient functions for adding and removing values
 from the cache.
 
-Check out the https://github.com/google/guava/wiki[Guava
-documentation] on how to configure the cache.
-
 To use the cache, simply add or remove an entry by a specific key.
 
 [source,java]
 --------------------
-String foo = cache.get("myvalue", String.class);
+String foo = cache.get("myvalue");
 --------------------
 
 One cool thing about the guava cache, is the option to pass a callable if the value is
@@ -1789,6 +1786,23 @@ not found in the cache.
     }
   });
 --------------------
+
+=== Cache eviction
+
+The Guava eviction of cached data comes in two flavours: eviction after (last) access or eviction after write. 
+While eviction after write defines a fixed period of time until the entry is removed from the cache, eviction after access
+defines a time span after the last access of the entry until it is removed from the cache, keeping high frequent entries in
+the cache as long as possible. Thus, you have to manually force and updated if your entry is access often.
+
+Mangoo I/O uses eviction after access as default with a default timespan of 3600 seconds. You can configure both the eviction
+method, as well as the timespan in you application.yaml.
+
+[source,yaml]
+-------------------------------------------------------------------------
+cache:
+    eviction : afterWrite
+    expires  : 3600    
+-------------------------------------------------------------------------
 
 == Scheduling
 
@@ -2616,7 +2630,9 @@ as a fallback value for Locale
 
 |cache.maxsize |The maximum number of elements in the cache |5000|
 
-|cache.expires |Duration in seconds after which an element is removed from the cache if it is not accessed|3600|
+|cache.eviction |The type of the eviction policy. Can be 'afterAccess' or 'afterWrite'|afterAccess|
+
+|cache.expires |Duration in seconds after which an element is removed from the cache|3600|
 
 |execution.threadpool |Number of threads in the ExecutionManager|10|
 

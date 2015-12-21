@@ -50,14 +50,12 @@ public enum Default {
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     X_XSS_PPROTECTION("1"),
     COOKIE_SECURE("false"), //NOSONAR
-    CACHE_TYPE("ehcache"),
     AUTH_COOKIE_SECURE("false"), //NOSONAR
-    EHCACHE("ehcache"),
-    MEMCACHED("memcached"),
-    HAZELCAST("hazelcast"),
-    REDIS("redis"),
     CACHE_MAX_SIZE("5000"),
-    CACHE_EXPIRES("3600"),
+    CACHE_EXPIRES("afterAccess"),
+    CACHE_EXPIRES_ACCESS("3600"),
+    CACHE_EXPIRES_WRITE("3600"),
+    CACHE_TYPE("guava"),
     APPLICATION_ADMIN_HEALTH("false"),
     APPLICATION_ADMIN_CACHE("false"),
     APPLICATION_ADMIN_CONFIG("false"),
