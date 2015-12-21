@@ -68,7 +68,7 @@ public class Crypto {
 
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
         this.cipher.init(false, this.cipherParameters);
-
+        
         return new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
     }
 

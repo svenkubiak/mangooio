@@ -82,6 +82,7 @@ public class RequestHandler implements HttpHandler {
     private Form form;
     private Request request;
     private Map<String, String> requestParameter;
+    private Crypto crypto = Application.getInstance(Crypto.class);
     private boolean hasRequestFilter;
     private boolean async;
 
@@ -328,8 +329,7 @@ public class RequestHandler implements HttpHandler {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (this.config.isSessionCookieEncrypt()) {
-                    final Crypto crypto = Application.getInstance(Crypto.class);
-                    cookieValue = crypto.decrypt(cookieValue);
+                    cookieValue = this.crypto.decrypt(cookieValue);
                 }
 
                 String sign = null;
@@ -395,8 +395,8 @@ public class RequestHandler implements HttpHandler {
                     .append(data);
 
             String value = buffer.toString();
-            if (this.config.isAuthenticationCookieEncrypt()) {
-                value = Application.getInstance(Crypto.class).encrypt(value);
+            if (this.config.isSessionCookieEncrypt()) {
+                value = this.crypto.encrypt(value);
             }
 
             final Cookie cookie = CookieBuilder.create()
@@ -423,7 +423,7 @@ public class RequestHandler implements HttpHandler {
             String cookieValue = cookie.getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
                 if (this.config.isAuthenticationCookieEncrypt()) {
-                    cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
+                    cookieValue = this.crypto.decrypt(cookieValue);
                 }
 
                 String sign = null;
@@ -491,7 +491,7 @@ public class RequestHandler implements HttpHandler {
 
                 String value = buffer.toString();
                 if (this.config.isAuthenticationCookieEncrypt()) {
-                    value = Application.getInstance(Crypto.class).encrypt(value);
+                    value = this.crypto.encrypt(value);
                 }
 
                 cookie = CookieBuilder.create()

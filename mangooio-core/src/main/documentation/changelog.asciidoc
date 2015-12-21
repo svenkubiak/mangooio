@@ -4,7 +4,8 @@
 
 [small]#Released at 21.12.2015#
 
-* https://github.com/svenkubiak/mangooio/issues/102[#102] Made Cache eviction configurable (MarkVink)
+* https://github.com/svenkubiak/mangooio/issues/103[#103] Fixed bug when cookie encryption was enabled (svenkubiak)
+* https://github.com/svenkubiak/mangooio/issues/102[#102] Made Cache eviction configurable (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/101[#101] Fixed keys in archetype (MarkVink)
 * https://github.com/svenkubiak/mangooio/issues/97[#97] Fixed incorrect Form documentation (svenkubiak, MarkVink)
 * https://github.com/svenkubiak/mangooio/issues/94[#95] Added new @memory administrative URL (svenkubiak)
