@@ -798,7 +798,7 @@ To display a form specific error you can use the error method on a form field
 
 [source,html]
 -----------------------
-${form.error("myField")}
+${form.getError("myField")}
 -----------------------
 
 This will display e.g.
