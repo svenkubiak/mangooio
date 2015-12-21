@@ -14,6 +14,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.CacheType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.exceptions.MangooCacheException;
 import io.mangoo.interfaces.MangooCache;
 
 /**
@@ -44,15 +45,15 @@ public class CacheProvider implements Provider<MangooCache> {
     }
 
     private Class<? extends MangooCache> getCache(CacheType cacheType) {
-        Class<? extends MangooCache> mangooCache;
+        Class<? extends MangooCache> cache;
         try {
-            mangooCache = Class.forName(cacheType.getClassName()).asSubclass(MangooCache.class);
-            LOG.info("Using {} as implementation for Cache.",  mangooCache);
+            cache = Class.forName(cacheType.getClassName()).asSubclass(MangooCache.class);
+            LOG.info("Using {} as implementation for Cache.",  cache);
         } catch (ClassNotFoundException | ClassCastException e) {
-            throw new RuntimeException("Failed to initialize cache implementation", e);
+            throw new MangooCacheException("Failed to initialize cache implementation", e);
         }
         
-        return mangooCache;
+        return cache;
     }
     
     @Override
