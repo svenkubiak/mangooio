@@ -67,6 +67,7 @@ public class RequestHandler implements HttpHandler {
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
     private static final int SESSION_PREFIX_LENGTH = 4;
+    private final Crypto crypto = Application.getInstance(Crypto.class);
     private int methodParametersCount;
     private Class<?> controllerClass;
     private String controllerMethodName;
@@ -82,7 +83,6 @@ public class RequestHandler implements HttpHandler {
     private Form form;
     private Request request;
     private Map<String, String> requestParameter;
-    private Crypto crypto = Application.getInstance(Crypto.class);
     private boolean hasRequestFilter;
     private boolean async;
 
