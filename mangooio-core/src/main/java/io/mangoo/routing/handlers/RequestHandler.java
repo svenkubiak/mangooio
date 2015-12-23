@@ -67,7 +67,6 @@ public class RequestHandler implements HttpHandler {
     private static final int INDEX_2 = 2;
     private static final int INDEX_3 = 3;
     private static final int SESSION_PREFIX_LENGTH = 4;
-    private final Crypto crypto = Application.getInstance(Crypto.class);
     private int methodParametersCount;
     private Class<?> controllerClass;
     private String controllerMethodName;
@@ -83,6 +82,9 @@ public class RequestHandler implements HttpHandler {
     private Form form;
     private Request request;
     private Map<String, String> requestParameter;
+    private Crypto crypto;
+    private Messages messages;
+    private TemplateEngine templateEngine;
     private boolean hasRequestFilter;
     private boolean async;
 
@@ -114,13 +116,28 @@ public class RequestHandler implements HttpHandler {
         return this;
     }
 
-    public RequestHandler withAsync(boolean async) {
-        this.async = async;
+    public RequestHandler withCrypto(Crypto crypto) {
+        this.crypto = Objects.requireNonNull(crypto, "crypto can no be null");
         return this;
     }
 
     public RequestHandler withMethodParameters(Map<String, Class<?>> methodParameters) {
-        this.methodParameters = methodParameters;
+        this.methodParameters = Objects.requireNonNull(methodParameters, "methodParameters can no be null");
+        return this;
+    }
+
+    public RequestHandler withMessages(Messages messages) {
+        this.messages = Objects.requireNonNull(messages, "messages can no be null");
+        return this;
+    }
+
+    public RequestHandler withTemplateEngine(TemplateEngine templateEngine) {
+        this.templateEngine = Objects.requireNonNull(templateEngine, "templateEngine can no be null");
+        return this;
+    }
+
+    public RequestHandler withAsync(boolean async) {
+        this.async = async;
         return this;
     }
 
@@ -176,7 +193,6 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private void setLocale(HttpServerExchange exchange) {
-        final Messages messages = Application.getInstance(Messages.class);
         final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
         if (headerValues == null) {
             Locale.setDefault(Locale.forLanguageTag(this.config.getApplicationLanguage()));
@@ -191,7 +207,7 @@ public class RequestHandler implements HttpHandler {
             }
         }
 
-        messages.reload();
+        this.messages.reload();
     }
 
     /**
@@ -298,8 +314,7 @@ public class RequestHandler implements HttpHandler {
         invokedResponse.andContent(response.getContent());
         invokedResponse.andHeaders(response.getHeaders());
         if (!invokedResponse.isRendered()) {
-            final TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
-            invokedResponse.andBody(templateEngine.render(this.flash, this.session, this.form, Application.getInstance(Messages.class), getTemplatePath(invokedResponse), invokedResponse.getContent()));
+            invokedResponse.andBody(this.templateEngine.render(this.flash, this.session, this.form, this.messages, getTemplatePath(invokedResponse), invokedResponse.getContent()));
         }
 
         return invokedResponse;
@@ -478,10 +493,9 @@ public class RequestHandler implements HttpHandler {
                 final String authenticatedUser = this.authentication.getAuthenticatedUser();
                 final LocalDateTime expires = this.authentication.isRemember() ? LocalDateTime.now().plusSeconds(this.config.getAuthenticationRememberExpires()) : this.authentication.getExpires();
                 final String version = this.config.getAuthCookieVersion();
-                final String sign = DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret());
 
                 final StringBuilder buffer = new StringBuilder()
-                        .append(sign)
+                        .append(DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()))
                         .append(Default.DELIMITER.toString())
                         .append(expires)
                         .append(Default.DELIMITER.toString())
@@ -583,15 +597,15 @@ public class RequestHandler implements HttpHandler {
                 exchange.startBlocking();
                 final FormData formData = formDataParser.parseBlocking();
 
-                for (final String data : formData) {
-                    for (final FormData.FormValue formValue : formData.get(data)) {
+                formData.forEach(data -> {
+                    formData.get(data).forEach(formValue -> {
                         if (formValue.isFile()) {
                             this.form.addFile(formValue.getPath().toFile());
                         } else {
                             this.form.addValue(new HttpString(data).toString(), formValue.getValue());
                         }
-                    }
-                }
+                    });
+                });
 
                 this.form.setSubmitted(true);
             }

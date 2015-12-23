@@ -8,33 +8,43 @@ import java.util.Objects;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
+import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.listeners.MetricsListener;
+import io.mangoo.templating.TemplateEngine;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
 /**
+ * Main class for dispatching a request to a new RequestHandler
  *
  * @author svenkubiak
  *
  */
-@SuppressWarnings("all")
 public class DispatcherHandler implements HttpHandler {
-    private Map<String, Class<?>> methodParameters;
-    private Class<?> controllerInstance;
-    private Class<?> controllerClass;
-    private Config config;
-    private String controllerClassName;
-    private String controllerMethodName;
-    private int methodParametersCount;
-    private boolean metrics;
-    private boolean async;
-    private boolean hasRequestFilter;
+    private final TemplateEngine templateEngine;
+    private final Messages messages;
+    private final Crypto crypto;
+    private final MetricsListener metricsListener;
+    private final Map<String, Class<?>> methodParameters;
+    private final Class<?> controllerClass;
+    private final Config config;
+    private final String controllerClassName;
+    private final String controllerMethodName;
+    private final int methodParametersCount;
+    private final boolean metrics;
+    private final boolean async;
+    private final boolean hasRequestFilter;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
+        this.templateEngine = Application.getInstance(TemplateEngine.class);
+        this.messages = Application.getInstance(Messages.class);
+        this.metricsListener = Application.getInstance(MetricsListener.class);
+        this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethod;
         this.controllerClassName = controllerClass.getSimpleName();
@@ -49,7 +59,7 @@ public class DispatcherHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         if (this.metrics) {
-            exchange.addResponseCommitListener(Application.getInstance(MetricsListener.class));
+            exchange.addResponseCommitListener(this.metricsListener);
         }
 
         new RequestHandler()
@@ -60,6 +70,9 @@ public class DispatcherHandler implements HttpHandler {
             .withMethodParameters(this.methodParameters)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
+            .withMessages(this.messages)
+            .withTemplateEngine(this.templateEngine)
+            .withCrypto(this.crypto)
             .withConfig(this.config)
             .withAsync(this.async)
             .handleRequest(exchange);
