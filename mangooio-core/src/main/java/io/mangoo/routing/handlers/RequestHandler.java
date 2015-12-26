@@ -39,6 +39,7 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.CookieBuilder;
+import io.mangoo.utils.CookieParser;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -60,13 +61,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int TOKEN_LENGTH = 16;
-    private static final int INDEX_0 = 0;
-    private static final int INDEX_1 = 1;
-    private static final int INDEX_2 = 2;
-    private static final int INDEX_3 = 3;
-    private static final int SESSION_PREFIX_LENGTH = 4;
     private int methodParametersCount;
     private Class<?> controllerClass;
     private String controllerMethodName;
@@ -339,50 +334,16 @@ public class RequestHandler implements HttpHandler {
      */
     private void getSessionCookie(HttpServerExchange exchange) {
         Session requestSession = null;
-        final Cookie cookie = exchange.getRequestCookies().get(this.config.getSessionCookieName());
-        if (cookie != null) {
-            String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
-                if (this.config.isSessionCookieEncrypt()) {
-                    cookieValue = this.crypto.decrypt(cookieValue);
-                }
 
-                String sign = null;
-                String expires = null;
-                String authenticityToken = null;
-                String version = null;
-                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
-                if (StringUtils.isNotBlank(prefix)) {
-                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+        final CookieParser cookieParser = CookieParser
+                .create(exchange, this.config.getSessionCookieName(), this.config.getApplicationSecret(), this.config.isSessionCookieEncrypt());
 
-                    if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        authenticityToken = prefixes [INDEX_1];
-                        expires = prefixes [INDEX_2];
-                        version = prefixes [INDEX_3];
-                    }
-                }
-
-                if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires) && StringUtils.isNotBlank(authenticityToken)) {
-                    final String data = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
-
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                        final Map<String, String> sessionValues = new HashMap<>();
-                        if (StringUtils.isNotEmpty(data)) {
-                            for (final Map.Entry<String, String> entry : Splitter.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).split(data).entrySet()) {
-                                sessionValues.put(entry.getKey(), entry.getValue());
-                            }
-                        }
-                        requestSession = new Session(sessionValues, authenticityToken, expiresDate);
-                    }
-                }
-            }
-        }
-
-        if (requestSession == null) {
+        if (cookieParser.hasValidSessionCookie()) {
+            requestSession = new Session(cookieParser.getSessionValues(), cookieParser.getAuthenticityToken(), cookieParser.getExpiresDate());
+        } else {
             requestSession = new Session(new HashMap<>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
+
 
         this.session = requestSession;
     }
@@ -433,40 +394,13 @@ public class RequestHandler implements HttpHandler {
      */
     private void getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication requestAuthentication = null;
-        final Cookie cookie = exchange.getRequestCookies().get(this.config.getAuthenticationCookieName());
-        if (cookie != null) {
-            String cookieValue = cookie.getValue();
-            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
-                if (this.config.isAuthenticationCookieEncrypt()) {
-                    cookieValue = this.crypto.decrypt(cookieValue);
-                }
 
-                String sign = null;
-                String expires = null;
-                String version = null;
-                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
-                if (StringUtils.isNotBlank(prefix)) {
-                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
+        final CookieParser cookieParser = CookieParser
+                .create(exchange, this.config.getAuthenticationCookieName(), this.config.getApplicationSecret(), this.config.isAuthenticationCookieEncrypt());
 
-                    if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        expires = prefixes [INDEX_1];
-                        version = prefixes [INDEX_2];
-                    }
-                }
-
-                if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
-                    final String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
-
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()).equals(sign)) {
-                        requestAuthentication = new Authentication(expiresDate, authenticatedUser);
-                    }
-                }
-            }
-        }
-
-        if (requestAuthentication == null) {
+        if (cookieParser.hasValidAuthenticationCookie()) {
+            requestAuthentication = new Authentication(cookieParser.getExpiresDate(), cookieParser.getAuthenticatedUser());
+        } else {
             requestAuthentication = new Authentication(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()), null);
         }
 
