@@ -6,53 +6,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.authentication.Authentication;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Header;
-import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Flash;
-import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.routing.bindings.Session;
-import io.mangoo.templating.TemplateEngine;
-import io.mangoo.utils.CookieBuilder;
-import io.mangoo.utils.CookieParser;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.form.FormData;
-import io.undertow.server.handlers.form.FormDataParser;
-import io.undertow.server.handlers.form.FormParserFactory;
-import io.undertow.server.handlers.form.FormParserFactory.Builder;
-import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
-import io.undertow.util.StatusCodes;
 
 /**
  * Main class that handles all controller requests
@@ -61,148 +33,31 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private static final int TOKEN_LENGTH = 16;
-    private int methodParametersCount;
-    private Class<?> controllerClass;
-    private String controllerMethodName;
-    private Object controllerInstance;
-    private Map<String, Class<?>> methodParameters;
-    private String controllerClassName;
-    private String body = "";
-    private Config config;
-    private Method method;
-    private Authentication authentication;
-    private Session session;
-    private Flash flash;
-    private Form form;
-    private Request request;
-    private Map<String, String> requestParameter;
-    private Crypto crypto;
-    private Messages messages;
-    private TemplateEngine templateEngine;
-    private boolean hasRequestFilter;
-    private boolean async;
-
-    public RequestHandler() {
-    }
-
-    public RequestHandler withControllerClass(Class<?> controllerClass) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        return this;
-    }
-
-    public RequestHandler withControllerClassName(String controllerClassName) {
-        this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
-        return this;
-    }
-
-    public RequestHandler withControllerMethodName(String controllerMethodName) {
-        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
-        return this;
-    }
-
-    public RequestHandler withConfig(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
-        return this;
-    }
-
-    public RequestHandler withControllerInstance(Object controllerInstance) {
-        this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
-        return this;
-    }
-
-    public RequestHandler withCrypto(Crypto crypto) {
-        this.crypto = Objects.requireNonNull(crypto, "crypto can no be null");
-        return this;
-    }
-
-    public RequestHandler withMethodParameters(Map<String, Class<?>> methodParameters) {
-        this.methodParameters = Objects.requireNonNull(methodParameters, "methodParameters can no be null");
-        return this;
-    }
-
-    public RequestHandler withMessages(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, "messages can no be null");
-        return this;
-    }
-
-    public RequestHandler withTemplateEngine(TemplateEngine templateEngine) {
-        this.templateEngine = Objects.requireNonNull(templateEngine, "templateEngine can no be null");
-        return this;
-    }
-
-    public RequestHandler withAsync(boolean async) {
-        this.async = async;
-        return this;
-    }
-
-    public RequestHandler withMethodParameterCount(int methodParametersCount) {
-        this.methodParametersCount = methodParametersCount;
-        return this;
-    }
-
-    public RequestHandler withRequestFilter(boolean hasRequestFilter) {
-        this.hasRequestFilter = hasRequestFilter;
-        return this;
-    }
+    private RequestAttachment requestAttachment;
 
     @Override
-    @SuppressWarnings("all")
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
-            exchange.dispatch(this);
-            return;
-        }
-
-        this.method = this.controllerInstance.getClass().getMethod(this.controllerMethodName, methodParameters.values().toArray(new Class[0]));
-        this.requestParameter = RequestUtils.getRequestParameters(exchange);
-
-        setLocale(exchange);
-        getSessionCookie(exchange);
-        getAuthenticationCookie(exchange);
-        getFlashCookie(exchange);
-        getForm(exchange);
-        getRequestBody(exchange);
-        getRequest(exchange);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment.setBody(getRequestBody(exchange));
+        this.requestAttachment.setRequest(getRequest(exchange));
 
         final Response response = getResponse(exchange);
         response.getCookies().forEach(cookie -> exchange.setResponseCookie(cookie));
 
-        setSessionCookie(exchange);
-        setFlashCookie(exchange);
-        setAuthenticationCookie(exchange);
+        this.requestAttachment.setResponse(response);
 
-        if (response.isRedirect()) {
-            handleRedirectResponse(exchange, response);
-        } else if (response.isBinary()) {
-            handleBinaryResponse(exchange, response);
-        } else {
-            handleRenderedResponse(exchange, response);
-        }
+        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, this.requestAttachment);
+        nextHandler(exchange);
     }
 
     /**
-     * Retrieves the locale from the current request or sets a default one and
-     * triggers a reload of the Messages class if the locale has changed.
+     * Creates a new request object containing the current request data
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void setLocale(HttpServerExchange exchange) {
-        final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
-        if (headerValues == null) {
-            Locale.setDefault(Locale.forLanguageTag(this.config.getApplicationLanguage()));
-        } else if (headerValues.getFirst() != null) {
-            final String values = Optional.ofNullable(headerValues.getFirst()).orElse("");
-            final Iterable<String> split = Splitter.on(",").trimResults().split(values);
-            if (split == null) {
-                Locale.setDefault(Locale.forLanguageTag(this.config.getApplicationLanguage()));
-            } else {
-                final String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(this.config.getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR
-            }
-        }
-
-        this.messages.reload();
+    private Request getRequest(HttpServerExchange exchange) {
+        final String authenticityToken = Optional.ofNullable(this.requestAttachment.getRequestParameter().get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.requestAttachment.getForm().get(Default.AUTHENTICITY_TOKEN.toString()));
+        return new Request(exchange, this.requestAttachment.getSession(), authenticityToken, this.requestAttachment.getAuthentication(), this.requestAttachment.getRequestParameter(), this.requestAttachment.getBody());
     }
 
     /**
@@ -221,9 +76,9 @@ public class RequestHandler implements HttpHandler {
     private Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException {
         //execute global request filter
         Response response = Response.withOk();
-        if (this.hasRequestFilter) {
+        if (this.requestAttachment.hasRequestFilter()) {
             final MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
-            response = mangooRequestFilter.execute(this.request, response);
+            response = mangooRequestFilter.execute(this.requestAttachment.getRequest(), response);
         }
 
         if (response.isEndResponse()) {
@@ -231,13 +86,13 @@ public class RequestHandler implements HttpHandler {
         }
 
         //execute controller filters
-        response = executeFilter(this.controllerClass.getAnnotations(), response);
+        response = executeFilter(this.requestAttachment.getControllerClass().getAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
         }
 
         //execute method filters
-        response = executeFilter(this.method.getAnnotations(), response);
+        response = executeFilter(this.requestAttachment.getMethod().getAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
         }
@@ -246,13 +101,125 @@ public class RequestHandler implements HttpHandler {
     }
 
     /**
-     * Creates a new request object containing the current request data
+     * Invokes the controller methods and retrieves the response which
+     * is later send to the client
      *
      * @param exchange The Undertow HttpServerExchange
+     * @return A response object
+     *
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws IOException
+     * @throws TemplateException
      */
-    private void getRequest(HttpServerExchange exchange) {
-        final String authenticityToken = Optional.ofNullable(this.requestParameter.get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.form.get(Default.AUTHENTICITY_TOKEN.toString()));
-        this.request = new Request(exchange, this.session, authenticityToken, this.authentication, this.requestParameter, this.body);
+    private Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+        Response invokedResponse;
+
+        if (this.requestAttachment.getMethodParameters().isEmpty()) {
+            invokedResponse = (Response) this.requestAttachment.getMethod().invoke(this.requestAttachment.getControllerInstance());
+        } else {
+            final Object [] convertedParameters = getConvertedParameters(exchange);
+            invokedResponse = (Response) this.requestAttachment.getMethod().invoke(this.requestAttachment.getControllerInstance(), convertedParameters);
+        }
+
+        invokedResponse.andContent(response.getContent());
+        invokedResponse.andHeaders(response.getHeaders());
+        if (!invokedResponse.isRendered()) {
+            invokedResponse.andBody(this.requestAttachment.getTemplateEngine().render(
+                    this.requestAttachment.getFlash(),
+                    this.requestAttachment.getSession(),
+                    this.requestAttachment.getForm(),
+                    this.requestAttachment.getMessages(),
+                    getTemplatePath(invokedResponse),
+                    invokedResponse.getContent()));
+        }
+
+        return invokedResponse;
+    }
+
+    /**
+     * Returns the complete path to the template based on the
+     * controller and method name
+     *
+     * @param response The current response
+     *
+     * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
+     */
+    private String getTemplatePath(Response response) {
+        return StringUtils.isBlank(response.getTemplate()) ? (this.requestAttachment.getControllerClassName() + "/" + RequestUtils.getTemplateName(this.requestAttachment.getControllerMethodName())) : response.getTemplate();
+    }
+
+
+    /**
+     * Creates an array with the request controller method parameter and sets the appropriate values
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return an array with the request controller method parameter and sets the appropriate values
+     *
+     * @throws IOException
+     */
+    private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
+        final Object [] convertedParameters = new Object[this.requestAttachment.getMethodParametersCount()];
+
+        int index = 0;
+        for (final Map.Entry<String, Class<?>> entry : this.requestAttachment.getMethodParameters().entrySet()) {
+            final String key = entry.getKey();
+            final Class<?> clazz = entry.getValue();
+            final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
+
+            switch (binding) {
+            case FORM:
+                convertedParameters[index] = this.requestAttachment.getForm();
+                break;
+            case AUTHENTICATION:
+                convertedParameters[index] = this.requestAttachment.getAuthentication();
+                break;
+            case SESSION:
+                convertedParameters[index] = this.requestAttachment.getSession();
+                break;
+            case FLASH:
+                convertedParameters[index] = this.requestAttachment.getFlash();
+                break;
+            case REQUEST:
+                convertedParameters[index] = this.requestAttachment.getRequest();
+                break;
+            case LOCALDATE:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : LocalDate.parse(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case LOCALDATETIME:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case STRING:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : this.requestAttachment.getRequestParameter().get(key);
+                break;
+            case INT_PRIMITIVE:
+            case INTEGER:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : Integer.valueOf(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case DOUBLE_PRIMITIVE:
+            case DOUBLE:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : Double.valueOf(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case FLOAT_PRIMITIVE:
+            case FLOAT:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : Float.valueOf(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case LONG_PRIMITIVE:
+            case LONG:
+                convertedParameters[index] = StringUtils.isBlank(this.requestAttachment.getRequestParameter().get(key)) ? null : Long.valueOf(this.requestAttachment.getRequestParameter().get(key));
+                break;
+            case UNDEFINED:
+                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(this.requestAttachment.getBody(), clazz) : null;
+                break;
+            default:
+                convertedParameters[index] = null;
+                break;
+            }
+
+            index++;
+        }
+
+        return convertedParameters;
     }
 
     /**
@@ -275,275 +242,13 @@ public class RequestHandler implements HttpHandler {
                         return response;
                     } else {
                         final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                        response = (Response) classMethod.invoke(Application.getInstance(clazz), this.request, response);
+                        response = (Response) classMethod.invoke(Application.getInstance(clazz), this.requestAttachment.getRequest(), response);
                     }
                 }
             }
         }
 
         return response;
-    }
-
-    /**
-     * Invokes the controller methods and retrieves the response which
-     * is later send to the client
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return A response object
-     *
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws IOException
-     * @throws TemplateException
-     */
-    private Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
-        Response invokedResponse;
-
-        if (this.methodParameters.isEmpty()) {
-            invokedResponse = (Response) this.method.invoke(this.controllerInstance);
-        } else {
-            final Object [] convertedParameters = getConvertedParameters(exchange);
-            invokedResponse = (Response) this.method.invoke(this.controllerInstance, convertedParameters);
-        }
-
-        invokedResponse.andContent(response.getContent());
-        invokedResponse.andHeaders(response.getHeaders());
-        if (!invokedResponse.isRendered()) {
-            invokedResponse.andBody(this.templateEngine.render(this.flash, this.session, this.form, this.messages, getTemplatePath(invokedResponse), invokedResponse.getContent()));
-        }
-
-        return invokedResponse;
-    }
-
-    /**
-     * Returns the complete path to the template based on the
-     * controller and method name
-     *
-     * @param response The current response
-     *
-     * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
-     */
-    private String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? (this.controllerClassName + "/" + RequestUtils.getTemplateName(this.controllerMethodName)) : response.getTemplate();
-    }
-
-    /**
-     * Retrieves the current session from the HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void getSessionCookie(HttpServerExchange exchange) {
-        Session requestSession = null;
-
-        final CookieParser cookieParser = CookieParser
-                .create(exchange, this.config.getSessionCookieName(), this.config.getApplicationSecret(), this.config.isSessionCookieEncrypt());
-
-        if (cookieParser.hasValidSessionCookie()) {
-            requestSession = new Session(cookieParser.getSessionValues(), cookieParser.getAuthenticityToken(), cookieParser.getExpiresDate());
-        } else {
-            requestSession = new Session(new HashMap<>(), RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH), LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
-        }
-
-
-        this.session = requestSession;
-    }
-
-    /**
-     * Sets the session cookie to the current HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void setSessionCookie(HttpServerExchange exchange) {
-        if (this.session != null && this.session.hasChanges()) {
-            final String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(this.session.getValues());
-            final String version = this.config.getCookieVersion();
-            final String authenticityToken = this.session.getAuthenticityToken();
-            final LocalDateTime expires = this.session.getExpires();
-            final StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.config.getApplicationSecret()))
-                    .append(Default.DELIMITER.toString())
-                    .append(authenticityToken)
-                    .append(Default.DELIMITER.toString())
-                    .append(expires)
-                    .append(Default.DELIMITER.toString())
-                    .append(version)
-                    .append(Default.DATA_DELIMITER.toString())
-                    .append(data);
-
-            String value = buffer.toString();
-            if (this.config.isSessionCookieEncrypt()) {
-                value = this.crypto.encrypt(value);
-            }
-
-            final Cookie cookie = CookieBuilder.create()
-                .name(this.config.getSessionCookieName())
-                .value(value)
-                .secure(this.config.isSessionCookieSecure())
-                .httpOnly(true)
-                .expires(expires)
-                .build();
-
-            exchange.setResponseCookie(cookie);
-        }
-    }
-
-    /**
-     * Retrieves the current authentication from the HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication requestAuthentication = null;
-
-        final CookieParser cookieParser = CookieParser
-                .create(exchange, this.config.getAuthenticationCookieName(), this.config.getApplicationSecret(), this.config.isAuthenticationCookieEncrypt());
-
-        if (cookieParser.hasValidAuthenticationCookie()) {
-            requestAuthentication = new Authentication(cookieParser.getExpiresDate(), cookieParser.getAuthenticatedUser());
-        } else {
-            requestAuthentication = new Authentication(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()), null);
-        }
-
-        this.authentication = requestAuthentication;
-    }
-
-    /**
-     * Sets the authentication cookie to the current HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void setAuthenticationCookie(HttpServerExchange exchange) {
-        if (this.authentication != null && this.authentication.hasAuthenticatedUser()) {
-            Cookie cookie;
-            final String cookieName = this.config.getAuthenticationCookieName();
-            if (this.authentication.isLogout()) {
-                cookie = exchange.getRequestCookies().get(cookieName);
-                cookie.setSecure(this.config.isAuthenticationCookieSecure());
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                cookie.setDiscard(true);
-            } else {
-                final String authenticatedUser = this.authentication.getAuthenticatedUser();
-                final LocalDateTime expires = this.authentication.isRemember() ? LocalDateTime.now().plusSeconds(this.config.getAuthenticationRememberExpires()) : this.authentication.getExpires();
-                final String version = this.config.getAuthCookieVersion();
-
-                final StringBuilder buffer = new StringBuilder()
-                        .append(DigestUtils.sha512Hex(authenticatedUser + expires + version + this.config.getApplicationSecret()))
-                        .append(Default.DELIMITER.toString())
-                        .append(expires)
-                        .append(Default.DELIMITER.toString())
-                        .append(version)
-                        .append(Default.DATA_DELIMITER.toString())
-                        .append(authenticatedUser);
-
-                String value = buffer.toString();
-                if (this.config.isAuthenticationCookieEncrypt()) {
-                    value = this.crypto.encrypt(value);
-                }
-
-                cookie = CookieBuilder.create()
-                        .name(cookieName)
-                        .value(value)
-                        .secure(this.config.isAuthenticationCookieSecure())
-                        .httpOnly(true)
-                        .expires(expires)
-                        .build();
-            }
-
-            exchange.setResponseCookie(cookie);
-        }
-    }
-
-    /**
-     * Retrieves the flash cookie from the current
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void getFlashCookie(HttpServerExchange exchange) {
-        Flash requestFlash = null;
-        final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
-        if (cookie != null){
-            final String cookieValue = cookie.getValue();
-            if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
-                final Map<String, String> values = new HashMap<>();
-                for (final Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
-                    values.put(entry.getKey(), entry.getValue());
-                }
-
-                requestFlash = new Flash(values);
-                requestFlash.setDiscard(true);
-            }
-        }
-
-        if (requestFlash == null) {
-            requestFlash = new Flash();
-        }
-
-        this.flash = requestFlash;
-    }
-
-    /**
-     * Sets the flash cookie to current HttpServerExchange
-     *
-     * @param exchange The Undertow HttpServerExchange
-     */
-    private void setFlashCookie(HttpServerExchange exchange) {
-        if (this.flash != null && !this.flash.isDiscard() && this.flash.hasContent()) {
-            final String values = Joiner.on("&").withKeyValueSeparator(":").join(this.flash.getValues());
-
-            final Cookie cookie = CookieBuilder.create()
-                    .name(this.config.getFlashCookieName())
-                    .value(values)
-                    .secure(this.config.isFlashCookieSecure())
-                    .httpOnly(true)
-                    .build();
-
-            exchange.setResponseCookie(cookie);
-        } else {
-            final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
-            if (cookie != null) {
-                cookie.setHttpOnly(true)
-                .setSecure(this.config.isFlashCookieSecure())
-                .setPath("/")
-                .setMaxAge(0);
-
-                exchange.setResponseCookie(cookie);
-            }
-        }
-    }
-
-    /**
-     * Retrieves the form parameter from a request
-     *
-     * @param exchange The Undertow HttpServerExchange
-     *
-     * @throws IOException
-     */
-    private void getForm(HttpServerExchange exchange) throws IOException {
-        this.form = Application.getInstance(Form.class);
-        if (RequestUtils.isPostOrPut(exchange)) {
-            final Builder builder = FormParserFactory.builder();
-            builder.setDefaultCharset(Charsets.UTF_8.name());
-
-            final FormDataParser formDataParser = builder.build().createParser(exchange);
-            if (formDataParser != null) {
-                exchange.startBlocking();
-                final FormData formData = formDataParser.parseBlocking();
-
-                formData.forEach(data -> {
-                    formData.get(data).forEach(formValue -> {
-                        if (formValue.isFile()) {
-                            this.form.addFile(formValue.getPath().toFile());
-                        } else {
-                            this.form.addValue(new HttpString(data).toString(), formValue.getValue());
-                        }
-                    });
-                });
-
-                this.form.setSubmitted(true);
-            }
-        }
     }
 
     /**
@@ -554,149 +259,23 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private void getRequestBody(HttpServerExchange exchange) throws IOException {
+    private String getRequestBody(HttpServerExchange exchange) throws IOException {
+        String body = "";
         if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
-            this.body = IOUtils.toString(exchange.getInputStream());
-        }
-    }
-
-    /**
-     * Creates an array with the request controller method parameter and sets the appropriate values
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @return an array with the request controller method parameter and sets the appropriate values
-     *
-     * @throws IOException
-     */
-    private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
-        final Object [] convertedParameters = new Object[this.methodParametersCount];
-
-        int index = 0;
-        for (final Map.Entry<String, Class<?>> entry : this.methodParameters.entrySet()) {
-            final String key = entry.getKey();
-            final Class<?> clazz = entry.getValue();
-            final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
-
-            switch (binding) {
-            case FORM:
-                convertedParameters[index] = this.form;
-                break;
-            case AUTHENTICATION:
-                convertedParameters[index] = this.authentication;
-                break;
-            case SESSION:
-                convertedParameters[index] = this.session;
-                break;
-            case FLASH:
-                convertedParameters[index] = this.flash;
-                break;
-            case REQUEST:
-                convertedParameters[index] = this.request;
-                break;
-            case LOCALDATE:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDate.parse(this.requestParameter.get(key));
-                break;
-            case LOCALDATETIME:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : LocalDateTime.parse(this.requestParameter.get(key));
-                break;
-            case STRING:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : this.requestParameter.get(key);
-                break;
-            case INT_PRIMITIVE:
-            case INTEGER:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Integer.valueOf(this.requestParameter.get(key));
-                break;
-            case DOUBLE_PRIMITIVE:
-            case DOUBLE:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Double.valueOf(this.requestParameter.get(key));
-                break;
-            case FLOAT_PRIMITIVE:
-            case FLOAT:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Float.valueOf(this.requestParameter.get(key));
-                break;
-            case LONG_PRIMITIVE:
-            case LONG:
-                convertedParameters[index] = StringUtils.isBlank(this.requestParameter.get(key)) ? null : Long.valueOf(this.requestParameter.get(key));
-                break;
-            case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(this.body, clazz) : null;
-                break;
-            default:
-                convertedParameters[index] = null;
-                break;
-            }
-
-            index++;
+            body = IOUtils.toString(exchange.getInputStream());
         }
 
-        return convertedParameters;
+        return body;
     }
 
     /**
-     * Handles a redirect response to the client by sending a 403 status code to the client
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
-    private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
-        exchange.setStatusCode(StatusCodes.FOUND);
-        exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-        exchange.endExchange();
-    }
-
-    /**
-     * Handles a rendered response to the client by sending the rendered body from the response object
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
-    private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
-        exchange.setStatusCode(response.getStatusCode());
-        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
-        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
-        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
-        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-        exchange.getResponseSender().send(getResponseBody(exchange, response));
-    }
-
-    /**
-     * Handles a binary response to the client by sending the binary content from the response
-     * to the undertow output stream
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     *
-     * @throws IOException
-     */
-    private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
-        exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
-    }
-
-    /**
-     * Retrieves the body of the request and checks i an ETag needs to be handled
+     * Handles the next request in the handler chain
      *
      * @param exchange The HttpServerExchange
-     * @param response The Response object
-     * @return The body from the response object or an empty body if etag matches NONE_MATCH header
+     * @throws Exception Thrown when an exception occurs
      */
-    private String getResponseBody(HttpServerExchange exchange, Response response) {
-        String responseBody = response.getBody();
-        if (response.isETag()) {
-            final String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
-            final String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
-            if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
-                exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
-                responseBody = "";
-            } else {
-                exchange.getResponseHeaders().put(Headers.ETAG, etag);
-            }
-        }
-
-        return responseBody;
+    private void nextHandler(HttpServerExchange exchange) throws Exception {
+        new OutCookiesHandler().handleRequest(exchange);
     }
 }

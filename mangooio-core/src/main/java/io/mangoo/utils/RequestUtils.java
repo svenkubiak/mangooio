@@ -23,9 +23,11 @@ import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.oauth.OAuthProvider;
+import io.mangoo.routing.RequestAttachment;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import io.undertow.util.AttachmentKey;
 import io.undertow.util.Cookies;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
@@ -38,6 +40,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public final class RequestUtils {
+    public static final AttachmentKey<RequestAttachment> REQUEST_ATTACHMENT = AttachmentKey.create(RequestAttachment.class);
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int AUTH_PREFIX_LENGTH = 3;
@@ -212,48 +215,48 @@ public final class RequestUtils {
 
         return validAuthentication;
     }
-    
+
     /**
      * Retrieves a URL from a Server-Sent Event connection
-     * 
+     *
      * @param connection The ServerSentEvent Connection
-     * 
+     *
      * @return The URL of the Server-Sent Event Connection
      */
     public static String getServerSentEventURL(ServerSentEventConnection connection) {
         return getURL(URI.create(connection.getRequestURI()));
     }
-    
+
     /**
      * Retrieves the URL of a WebSocketChannel
-     * 
+     *
      * @param channel The WebSocket Channel
-     * 
+     *
      * @return The URL of the WebSocket Channel
      */
     public static String getWebSocketURL(WebSocketChannel channel) {
         return getURL(URI.create(channel.getUrl()));
     }
-    
+
     /**
      * Creates and URL with only path and if present query and
      * fragment, e.g. /path/data?key=value#fragid1
-     * 
+     *
      * @param uri The URI to generate from
      * @return The generated URL
      */
     private static String getURL(URI uri) {
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append(uri.getPath());
-        
+
         if (StringUtils.isNotBlank(uri.getQuery())) {
             buffer.append('?').append(uri.getQuery());
         }
-        
+
         if (StringUtils.isNotBlank(uri.getFragment())) {
             buffer.append('#').append(uri.getFragment());
         }
-        
+
         return buffer.toString();
     }
 }

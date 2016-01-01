@@ -11,8 +11,10 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.templating.TemplateEngine;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -58,24 +60,47 @@ public class DispatcherHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
+            exchange.dispatch(this);
+            return;
+        }
+
         if (this.metrics) {
             exchange.addResponseCommitListener(this.metricsListener);
         }
 
-        new RequestHandler()
-            .withControllerInstance(Application.getInstance(this.controllerClass))
+        final Object controllerInstance = Application.getInstance(this.controllerClass);
+        final Method method = controllerInstance.getClass().getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
+        final Map<String, String> requestParameter = RequestUtils.getRequestParameters(exchange);
+
+        final RequestAttachment requestMeta = RequestAttachment.build()
+            .withControllerInstance(controllerInstance)
             .withControllerClass(this.controllerClass)
             .withControllerClassName(this.controllerClassName)
             .withControllerMethodName(this.controllerMethodName)
             .withMethodParameters(this.methodParameters)
+            .withMethod(method)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
+            .withRequestParameter(requestParameter)
             .withMessages(this.messages)
             .withTemplateEngine(this.templateEngine)
+            .withMethod(method)
             .withCrypto(this.crypto)
-            .withConfig(this.config)
-            .withAsync(this.async)
-            .handleRequest(exchange);
+            .withConfig(this.config);
+
+        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestMeta);
+        nextHandler(exchange);
+    }
+
+    /**
+     * Handles the next request in the handler chain
+     *
+     * @param exchange The HttpServerExchange
+     * @throws Exception Thrown when an exception occurs
+     */
+    private void nextHandler(HttpServerExchange exchange) throws Exception {
+        new LocaleHandler().handleRequest(exchange);
     }
 
     /**
