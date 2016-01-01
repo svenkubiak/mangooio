@@ -6,6 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -19,12 +22,23 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
 /**
- * Main class for dispatching a request to a new RequestHandler
+ * Main class for dispatching a request to the request chain.
+ * The request chain contains the following handlers in order:
+ *
+ * DispatcherHandler
+ * LocalHandler
+ * InCookiesHandler
+ * FormHandler
+ * RequestHandler
+ * OutCookiesHandler
+ * ResponseHandler
  *
  * @author svenkubiak
  *
  */
 public class DispatcherHandler implements HttpHandler {
+    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private Method method;
     private final TemplateEngine templateEngine;
     private final Messages messages;
     private final Crypto crypto;
@@ -56,6 +70,14 @@ public class DispatcherHandler implements HttpHandler {
         this.async = async;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
         this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
+
+        try {
+            this.method = Application.getInstance(this.controllerClass)
+                    .getClass()
+                    .getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
+        } catch (NoSuchMethodException | SecurityException e) {
+            LOG.error("failed to create DispatcherHandler", e);
+        }
     }
 
     @Override
@@ -69,38 +91,25 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(this.metricsListener);
         }
 
-        final Object controllerInstance = Application.getInstance(this.controllerClass);
-        final Method method = controllerInstance.getClass().getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
         final Map<String, String> requestParameter = RequestUtils.getRequestParameters(exchange);
 
-        final RequestAttachment requestMeta = RequestAttachment.build()
-            .withControllerInstance(controllerInstance)
+        final RequestAttachment requestAttachment = RequestAttachment.build()
+            .withControllerInstance(Application.getInstance(this.controllerClass))
             .withControllerClass(this.controllerClass)
             .withControllerClassName(this.controllerClassName)
             .withControllerMethodName(this.controllerMethodName)
             .withMethodParameters(this.methodParameters)
-            .withMethod(method)
+            .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
             .withRequestParameter(requestParameter)
             .withMessages(this.messages)
             .withTemplateEngine(this.templateEngine)
-            .withMethod(method)
             .withCrypto(this.crypto)
             .withConfig(this.config);
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestMeta);
+        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
         nextHandler(exchange);
-    }
-
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new LocaleHandler().handleRequest(exchange);
     }
 
     /**
@@ -118,5 +127,15 @@ public class DispatcherHandler implements HttpHandler {
         }
 
         return parameters;
+    }
+
+    /**
+     * Handles the next request in the handler chain
+     *
+     * @param exchange The HttpServerExchange
+     * @throws Exception Thrown when an exception occurs
+     */
+    private void nextHandler(HttpServerExchange exchange) throws Exception {
+        new LocaleHandler().handleRequest(exchange);
     }
 }

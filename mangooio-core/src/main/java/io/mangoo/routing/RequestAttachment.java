@@ -22,10 +22,10 @@ import io.mangoo.templating.TemplateEngine;
 public class RequestAttachment {
     private int methodParametersCount;
     private Class<?> controllerClass;
-    private String controllerMethodName;
     private Object controllerInstance;
     private Map<String, Class<?>> methodParameters;
     private String controllerClassName;
+    private String controllerMethodName;
     private String body;
     private Config config;
     private Method method;
