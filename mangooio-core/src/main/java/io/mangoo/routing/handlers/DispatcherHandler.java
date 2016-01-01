@@ -76,7 +76,7 @@ public class DispatcherHandler implements HttpHandler {
                     .getClass()
                     .getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
         } catch (NoSuchMethodException | SecurityException e) {
-            LOG.error("failed to create DispatcherHandler", e);
+            LOG.error("Failed to create DispatcherHandler", e);
         }
     }
 
@@ -91,8 +91,6 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(this.metricsListener);
         }
 
-        final Map<String, String> requestParameter = RequestUtils.getRequestParameters(exchange);
-
         final RequestAttachment requestAttachment = RequestAttachment.build()
             .withControllerInstance(Application.getInstance(this.controllerClass))
             .withControllerClass(this.controllerClass)
@@ -102,7 +100,7 @@ public class DispatcherHandler implements HttpHandler {
             .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
-            .withRequestParameter(requestParameter)
+            .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto)

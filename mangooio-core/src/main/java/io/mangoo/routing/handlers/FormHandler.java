@@ -23,6 +23,7 @@ public class FormHandler implements HttpHandler {
         final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
         requestAttachment.setForm(getForm(exchange));
 
+        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
         nextHandler(exchange);
     }
 
