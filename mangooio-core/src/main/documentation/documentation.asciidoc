@@ -563,6 +563,27 @@ With the previously mapped request, a request to "/" will render the
 index.ftl template and send the template along with a HTTP Status OK to
 the client.
 
+=== Response timer
+
+Some times it can be useful to check how much time a request spends in the code, from
+the time the request comes an and the response is send. mangoo I/O enables you a specific
+header for this case, which is disabled by default. If you enable the following option
+in your application.yaml
+
+-------------------------------------------------------
+application:
+    timer: true
+-------------------------------------------------------
+
+an additional X-Response-Header will be added to every response.
+
+-------------------------------------------------------
+X-Response-Header: 2 ms
+-------------------------------------------------------
+
+This works for all mapped controller routes, except resources, websockets, binary content and
+server sent events.
+
 == Request and query parameters
 
 mangoo I/O makes it very easy to handle request or query parameter. Lets

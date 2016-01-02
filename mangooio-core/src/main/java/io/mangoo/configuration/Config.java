@@ -544,7 +544,7 @@ public class Config {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 
-    public boolean isResponseTimerEnabled() {
-        return getBoolean(Key.APPLICATION_RESPONSE_TIMER, Default.APPLICATION_RESPONSE_TIMER.toBoolean());
+    public boolean isTimerEnabled() {
+        return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
     }
 }

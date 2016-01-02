@@ -20,6 +20,7 @@ public enum Key {
     APPLICATION_HOST("application.host"),
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_MODE("application.mode"),
+    APPLICATION_TIMER("application.timer"),
     APPLICATION_ADMIN_HEALTH("application.admin.health"),
     APPLICATION_ADMIN_CACHE("application.admin.cache"),
     APPLICATION_ADMIN_ROUTES("application.admin.routes"),
