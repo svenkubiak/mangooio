@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.exceptions.MangooRequestException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.RequestAttachment;
@@ -134,11 +133,7 @@ public class DispatcherHandler implements HttpHandler {
      * @param exchange The HttpServerExchange
      * @throws Exception Thrown when an exception occurs
      */
-    private void nextHandler(HttpServerExchange exchange) throws MangooRequestException {
-        try {
-            new LocaleHandler().handleRequest(exchange);
-        } catch (final Exception e) {
-            throw new MangooRequestException(e);
-        }
+    private void nextHandler(HttpServerExchange exchange) throws Exception {
+        new LocaleHandler().handleRequest(exchange);
     }
 }
