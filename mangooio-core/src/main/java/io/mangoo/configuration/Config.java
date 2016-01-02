@@ -48,7 +48,7 @@ public class Config {
     private void prepare(String configFile, Mode mode) {
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
 
-        Map map = null;
+        Map map;
         if (StringUtils.isNotBlank(configPath)) {
             map = (Map) loadConfiguration(configPath, false);
         } else {
@@ -75,7 +75,7 @@ public class Config {
                 inputStream = new FileInputStream(new File(path));
             }
         } catch (final IOException e) {
-            LOG.error("Failed to load application.yaml");
+            LOG.error("Failed to load application.yaml", e);
         }
 
         Object object = null;
