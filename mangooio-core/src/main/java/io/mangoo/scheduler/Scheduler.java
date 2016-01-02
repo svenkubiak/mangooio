@@ -23,7 +23,6 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
-import io.mangoo.exceptions.MangooSchedulerException;
 
 /**
  * Convenient class for interacting with the quartz scheduler
@@ -66,7 +65,7 @@ public class Scheduler {
                 LOG.error("Scheduler is not started");
             }
         } catch (final SchedulerException e) {
-            throw new MangooSchedulerException("Failed to start scheduler", e);
+            LOG.error("Failed to start scheduler", e);
         }
     }
 
