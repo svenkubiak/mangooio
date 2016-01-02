@@ -15,6 +15,7 @@ default:
         language   : en
         host       : localhost
         port       : 9898
+        timer      : true
         minify:
             js        : true
             css       : true

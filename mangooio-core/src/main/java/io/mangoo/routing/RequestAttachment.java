@@ -20,6 +20,7 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 public class RequestAttachment {
+    private final long start = System.currentTimeMillis();
     private int methodParametersCount;
     private Class<?> controllerClass;
     private Object controllerInstance;
@@ -39,7 +40,7 @@ public class RequestAttachment {
     private Crypto crypto;
     private Messages messages;
     private TemplateEngine templateEngine;
-    private boolean hasRequestFilter;
+    private boolean requestFilter;
 
     public static RequestAttachment build() {
         return new RequestAttachment();
@@ -106,7 +107,7 @@ public class RequestAttachment {
     }
 
     public RequestAttachment withRequestFilter(boolean hasRequestFilter) {
-        this.hasRequestFilter = hasRequestFilter;
+        this.requestFilter = hasRequestFilter;
         return this;
     }
 
@@ -151,7 +152,7 @@ public class RequestAttachment {
     }
 
     public boolean hasRequestFilter() {
-        return this.hasRequestFilter;
+        return this.requestFilter;
     }
 
     public Method getMethod() {
@@ -216,5 +217,9 @@ public class RequestAttachment {
 
     public Response getResponse() {
         return this.response;
+    }
+
+    public long getResponseTime() {
+        return System.currentTimeMillis() - this.start;
     }
 }

@@ -21,11 +21,12 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
+    private RequestAttachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
-        final Response response = requestAttachment.getResponse();
+        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        final Response response = this.requestAttachment.getResponse();
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);
@@ -100,6 +101,11 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
+
+        if (this.requestAttachment.getConfig().isTimerEnabled()) {
+            exchange.getResponseHeaders().put(Header.X_RESPONSE_TIME.toHttpString(), this.requestAttachment.getResponseTime() + " ms");
+        }
+
         exchange.getResponseSender().send(getResponseBody(exchange, response));
     }
 }

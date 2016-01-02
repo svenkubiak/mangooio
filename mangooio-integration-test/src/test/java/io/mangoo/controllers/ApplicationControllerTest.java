@@ -2,6 +2,7 @@ package io.mangoo.controllers;
 
 import static io.mangoo.test.hamcrest.RegexMatcher.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.test.utils.Request;
 import io.mangoo.test.utils.Response;
@@ -42,7 +44,7 @@ public class ApplicationControllerTest {
     @Test
     public void testIndex() {
         //given
-        Response response = Request.get("/").execute();
+        final Response response = Request.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -53,7 +55,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRequest() {
         //given
-        Response response = Request.get("/request").execute();
+        final Response response = Request.get("/request").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -65,7 +67,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithDisableRedirects() {
         //given
-        Response response = Request.get("/redirect").withDisableRedirects(true).execute();
+        final Response response = Request.get("/redirect").withDisableRedirects(true).execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -76,7 +78,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithoutDisableRedirects() {
         //given
-        Response response = Request.get("/redirect").execute();
+        final Response response = Request.get("/redirect").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -88,7 +90,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPlainText() {
         //given
-        Response response = Request.get("/text").execute();
+        final Response response = Request.get("/text").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -99,7 +101,7 @@ public class ApplicationControllerTest {
     @Test
     public void testNotFound() {
         //given
-        Response response = Request.get("/foo").execute();
+        final Response response = Request.get("/foo").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -110,7 +112,7 @@ public class ApplicationControllerTest {
     @Test
     public void testForbidden() {
         //given
-        Response response = Request.get("/forbidden").execute();
+        final Response response = Request.get("/forbidden").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -121,7 +123,7 @@ public class ApplicationControllerTest {
     @Test
     public void testBadRequest() {
         //given
-        Response response = Request.get("/badrequest").execute();
+        final Response response = Request.get("/badrequest").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -132,7 +134,7 @@ public class ApplicationControllerTest {
     @Test
     public void testUnauthorized() {
         //given
-        Response response = Request.get("/unauthorized").execute();
+        final Response response = Request.get("/unauthorized").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -143,7 +145,7 @@ public class ApplicationControllerTest {
     @Test
     public void testAdditionalHeaders() {
         //given
-        Response response = Request.get("/header").execute();
+        final Response response = Request.get("/header").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -155,16 +157,16 @@ public class ApplicationControllerTest {
     @Test
     public void testBinaryDownload() throws IOException {
         //given
-        Config config = Application.getInjector().getInstance(Config.class);
-        String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
-        File file = new File(UUID.randomUUID().toString());
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        
+        final Config config = Application.getInjector().getInstance(Config.class);
+        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
+        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+        final File file = new File(UUID.randomUUID().toString());
+        final FileOutputStream fileOutputStream = new FileOutputStream(file);
+
         //when
-        CloseableHttpClient httpclient = HttpClients.custom().build();
-        HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
-        CloseableHttpResponse response = httpclient.execute(httpget);
+        final CloseableHttpClient httpclient = HttpClients.custom().build();
+        final HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
+        final CloseableHttpResponse response = httpclient.execute(httpget);
         fileOutputStream.write(EntityUtils.toByteArray(response.getEntity()));
         fileOutputStream.close();
         response.close();
@@ -180,7 +182,7 @@ public class ApplicationControllerTest {
     public void testEtag() {
         //given
         Response response = Request.get("/etag").execute();
-        String etag = response.getHeader(Headers.ETAG_STRING);
+        final String etag = response.getHeader(Headers.ETAG_STRING);
 
         //then
         assertThat(etag, not(nullValue()));
@@ -194,88 +196,99 @@ public class ApplicationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
         assertThat(response.getContent(), equalTo(""));
     }
-    
-    @Test 
+
+    @Test
     public void testPost() {
         //given
-        Response response = Request.post("/post")
+        final Response response = Request.post("/post")
                 .withRequestBody("Winter is coming!")
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo("Winter is coming!"));
     }
-    
-    @Test 
+
+    @Test
     public void testPut() {
         //given
-        Response response = Request.put("/put")
+        final Response response = Request.put("/put")
                 .withRequestBody("The king of the north!")
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo("The king of the north!"));
     }
-    
-    @Test 
+
+    @Test
     public void testJsonPathWithPost() {
         //given
-        Response response = Request.post("/jsonpathpost")
+        final Response response = Request.post("/jsonpathpost")
                 .withRequestBody(JSON)
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON));
     }
-    
-    @Test 
+
+    @Test
     public void testJsonPathWithPut() {
         //given
-        Response response = Request.put("/jsonpathput")
+        final Response response = Request.put("/jsonpathput")
                 .withRequestBody(JSON)
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON));
     }
-    
-    @Test 
+
+    @Test
     public void testJsonBoonWithPost() {
         //given
-        Response response = Request.post("/jsonboonpost")
+        final Response response = Request.post("/jsonboonpost")
                 .withRequestBody(JSON)
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
-    
-    @Test 
+
+    @Test
     public void testJsonBoonWithPut() {
         //given
-        Response response = Request.put("/jsonboonput")
+        final Response response = Request.put("/jsonboonput")
                 .withRequestBody(JSON)
                 .execute();
-        
+
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
+    }
+
+    @Test
+    public void testResponseTimer() {
+        //given
+        final Response response = Request.get("/").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader(Header.X_RESPONSE_TIME.toString()), containsString("ms"));
     }
 }

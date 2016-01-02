@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/110[#110] Added X-Response-Header (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/108[#108] Refactored RequestHandler (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/98[#98] Improved RequestHandler (svenkubiak)
 * Updated documentation (svenkubiak)
