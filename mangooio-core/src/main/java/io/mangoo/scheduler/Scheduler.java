@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.exceptions.MangooSchedulerException;
 
 /**
  * Convenient class for interacting with the quartz scheduler
@@ -64,8 +65,8 @@ public class Scheduler {
             } else {
                 LOG.error("Scheduler is not started");
             }
-        } catch (SchedulerException e) {
-            LOG.error("Failed to start scheduler", e);
+        } catch (final SchedulerException e) {
+            throw new MangooSchedulerException("Failed to start scheduler", e);
         }
     }
 
@@ -79,7 +80,7 @@ public class Scheduler {
             } else {
                 LOG.error("Failed to shutdown scheduler");
             }
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             LOG.error("Failed to shutdown scheduler", e);
         }
     }
@@ -94,7 +95,7 @@ public class Scheduler {
             } else {
                 LOG.error("Failed to put scheduler in standby");
             }
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             LOG.error("Failed to put scheduler in standby", e);
         }
     }
@@ -108,7 +109,7 @@ public class Scheduler {
             try {
                 this.quartzScheduler = new StdSchedulerFactory().getScheduler();
                 this.quartzScheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));
-            } catch (SchedulerException e) {
+            } catch (final SchedulerException e) {
                 LOG.error("Failed to initialize scheduler", e);
             }
         }
@@ -127,7 +128,7 @@ public class Scheduler {
 
         try {
             this.quartzScheduler.scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             LOG.error("Failed to schedule a new job", e);
         }
     }
