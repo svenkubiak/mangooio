@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,14 +49,10 @@ public class Config {
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
 
         Map map = null;
-        try {
-            if (StringUtils.isNotBlank(configPath)) {
-                map = (Map) loadConfiguration(new FileInputStream(new File(configPath))); //NOSONAR
-            } else {
-                map = (Map) loadConfiguration(Resources.getResource(configFile).openStream());
-            }
-        } catch (final IOException e) {
-            LOG.error("Failed to load application.yaml", e);
+        if (StringUtils.isNotBlank(configPath)) {
+            map = (Map) loadConfiguration(configPath, false);
+        } else {
+            map = (Map) loadConfiguration(configPath, true);
         }
 
         if (map != null) {
@@ -69,11 +66,27 @@ public class Config {
         }
     }
 
-    private Object loadConfiguration(InputStream inputStream) {
-        Objects.requireNonNull(inputStream, "inputStream can not be null");
+    private Object loadConfiguration(String configPath, boolean resource) {
+        InputStream inputStream = null;
+        try {
+            if (resource) {
+                inputStream = Resources.getResource(configPath).openStream();
+            } else {
+                inputStream = new FileInputStream(new File(configPath));
+            }
+        } catch (final IOException e) {
+            LOG.error("Failed to load application.yaml");
+        }
 
-        final Yaml yaml = new Yaml();
-        return yaml.load(inputStream);
+        Object object = null;
+        if (inputStream != null) {
+            final Yaml yaml = new Yaml();
+            object = yaml.load(inputStream);
+
+            IOUtils.closeQuietly(inputStream);
+        }
+
+        return object;
     }
 
     /**
