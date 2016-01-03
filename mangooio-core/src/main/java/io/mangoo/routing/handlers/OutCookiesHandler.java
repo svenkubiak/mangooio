@@ -159,6 +159,7 @@ public class OutCookiesHandler implements HttpHandler {
      * @param exchange The HttpServerExchange
      * @throws Exception Thrown when an exception occurs
      */
+    @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         new ResponseHandler().handleRequest(exchange);
     }

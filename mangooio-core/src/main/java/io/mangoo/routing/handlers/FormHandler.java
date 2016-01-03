@@ -34,6 +34,7 @@ public class FormHandler implements HttpHandler {
      *
      * @throws IOException
      */
+    @SuppressWarnings("all")
     private Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
@@ -68,6 +69,7 @@ public class FormHandler implements HttpHandler {
      * @param exchange The HttpServerExchange
      * @throws Exception Thrown when an exception occurs
      */
+    @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         new RequestHandler().handleRequest(exchange);
     }
