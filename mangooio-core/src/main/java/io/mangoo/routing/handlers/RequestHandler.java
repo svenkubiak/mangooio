@@ -42,7 +42,7 @@ public class RequestHandler implements HttpHandler {
         this.requestAttachment.setRequest(getRequest(exchange));
 
         final Response response = getResponse(exchange);
-        response.getCookies().forEach(cookie -> exchange.setResponseCookie(cookie));
+        response.getCookies().forEach(exchange::setResponseCookie);
 
         this.requestAttachment.setResponse(response);
 
