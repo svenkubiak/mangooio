@@ -60,10 +60,13 @@ public class CookieParser {
         boolean valid = false;
         if (StringUtils.isNotBlank(this.sign) && StringUtils.isNotBlank(this.expires) && StringUtils.isNotBlank(this.authenticityToken)) {
             final String data = this.value.substring(this.value.indexOf(Default.DATA_DELIMITER.toString()) + 1, this.value.length());
-            final LocalDateTime expiresDate = LocalDateTime.parse(expires);
+            final LocalDateTime cookieExpiresDate = LocalDateTime.parse(this.expires);
 
-            if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(data + this.authenticityToken + expires + version + this.secret).equals(sign)) {
-                this.expiresDate = expiresDate;
+            final StringBuilder buffer = new StringBuilder();
+                buffer.append(data).append(this.authenticityToken).append(this.expires).append(this.version).append(this.secret);
+
+            if (LocalDateTime.now().isBefore(cookieExpiresDate) && DigestUtils.sha512Hex(buffer.toString()).equals(this.sign)) {
+                this.expiresDate = cookieExpiresDate;
                 valid = true;
 
                 if (StringUtils.isNotEmpty(data)) {
@@ -86,38 +89,19 @@ public class CookieParser {
         boolean valid = false;
         if (StringUtils.isNotBlank(this.sign) && StringUtils.isNotBlank(this.expires)) {
             final String username = this.value.substring(this.value.indexOf(Default.DATA_DELIMITER.toString()) + 1, this.value.length());
-            final LocalDateTime expires = LocalDateTime.parse(this.expires);
+            final LocalDateTime cookieExpires = LocalDateTime.parse(this.expires);
 
-            if (LocalDateTime.now().isBefore(expires) && DigestUtils.sha512Hex(username + this.expires + this.version + this.secret).equals(sign)) {
-                this.expiresDate = expires;
+            final StringBuilder buffer = new StringBuilder();
+                buffer.append(username).append(this.expires).append(this.version).append(this.secret);
+
+            if (LocalDateTime.now().isBefore(cookieExpires) && DigestUtils.sha512Hex(buffer.toString()).equals(this.sign)) {
+                this.expiresDate = cookieExpires;
                 this.authenticatedUser = username;
                 valid = true;
             }
         }
 
         return valid;
-    }
-
-    public Map<String, String> getSessionValues() {
-        return this.sessionValues;
-    }
-
-    public String getAuthenticityToken() {
-        return this.authenticityToken;
-    }
-
-    public LocalDateTime getExpiresDate() {
-        return this.expiresDate;
-    }
-
-    public String getAuthenticatedUser() {
-        return this.authenticatedUser;
-    }
-
-    private void decrypt() {
-        if (this.encrypted && !this.value.contains("\\|")) {
-            this.value = Application.getInstance(Crypto.class).decrypt(this.value);
-        }
     }
 
     private void extractSession() {
@@ -154,5 +138,27 @@ public class CookieParser {
         }
 
         return value;
+    }
+
+    public Map<String, String> getSessionValues() {
+        return this.sessionValues;
+    }
+
+    public String getAuthenticityToken() {
+        return this.authenticityToken;
+    }
+
+    public LocalDateTime getExpiresDate() {
+        return this.expiresDate;
+    }
+
+    public String getAuthenticatedUser() {
+        return this.authenticatedUser;
+    }
+
+    private void decrypt() {
+        if (this.encrypted && !this.value.contains("\\|")) {
+            this.value = Application.getInstance(Crypto.class).decrypt(this.value);
+        }
     }
 }

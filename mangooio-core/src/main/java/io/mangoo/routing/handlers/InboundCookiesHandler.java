@@ -24,7 +24,7 @@ import io.undertow.server.handlers.Cookie;
  * @author svenkubiak
  *
  */
-public class InCookiesHandler implements HttpHandler {
+public class InboundCookiesHandler implements HttpHandler {
     private static final int TOKEN_LENGTH = 16;
     private RequestAttachment requestAttachment;
 
@@ -45,7 +45,7 @@ public class InCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private Session getSessionCookie(HttpServerExchange exchange) {
-        Session session = null;
+        Session session;
 
         final CookieParser cookieParser = CookieParser
                 .create(exchange,
@@ -73,7 +73,7 @@ public class InCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = null;
+        Authentication authentication;
 
         final CookieParser cookieParser = CookieParser
                 .create(exchange,

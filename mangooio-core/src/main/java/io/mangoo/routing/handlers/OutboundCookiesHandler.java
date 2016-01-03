@@ -22,7 +22,7 @@ import io.undertow.server.handlers.Cookie;
  * @author svenkubiak
  *
  */
-public class OutCookiesHandler implements HttpHandler {
+public class OutboundCookiesHandler implements HttpHandler {
     private RequestAttachment requestAttachment;
 
     @Override
