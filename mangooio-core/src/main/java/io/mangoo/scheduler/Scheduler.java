@@ -142,7 +142,7 @@ public class Scheduler {
      * @param cron The cron expression for the trigger
      * 
      * @deprecated As of release 2.2.0, replaced by
-     * {@link #SchedulerUtils.createTrigger(String identity, String groupName, String description, String cron)}
+     * {@link io.mangoo.utils.SchedulerUtils#createTrigger(String identity, String groupName, String description, String cron)}
      *
      * @return A new Trigger object
      */
@@ -169,7 +169,7 @@ public class Scheduler {
      * @param clazz The class where the actual execution takes place
      * 
      * @deprecated As of release 2.2.0, replaced by
-     * {@link #SchedulerUtils.createJobDetail(String identity, String groupName, Class<? extends Job> clazz)}
+     * {@link io.mangoo.utils.SchedulerUtils#createJobDetail(String identity, String groupName, Class clazz)}
      *
      * @return A new JobDetail object
      */

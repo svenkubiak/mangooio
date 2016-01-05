@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
 public class SchedulerUtils {
     /**
      * Creates a new quartz scheduler Trigger, which can be used to
-     * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
+     * schedule a new job by passing it into {@link io.mangoo.scheduler.Scheduler#schedule(JobDetail, Trigger) schedule}
      *
      * @param identity The name of the trigger
      * @param groupName The trigger group name
@@ -45,7 +45,7 @@ public class SchedulerUtils {
 
     /**
      * Creates a new quartz scheduler JobDetail, which can be used to
-     * schedule a new job by passing it into {@link #schedule(JobDetail, Trigger) schedule}
+     * schedule a new job by passing it into {@link io.mangoo.scheduler.Scheduler#schedule(JobDetail, Trigger) schedule}
      *
      * @param identity The name of the job
      * @param groupName The name of the job Group
