@@ -1,13 +1,14 @@
 package io.mangoo.test.utils;
 
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.ContentType;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.test.Mangoo;
-import io.undertow.util.Headers;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -31,14 +32,14 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.ContentType;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.test.Mangoo;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 
 /**
  *

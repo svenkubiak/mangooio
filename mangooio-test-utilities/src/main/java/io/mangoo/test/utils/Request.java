@@ -1,8 +1,8 @@
 package io.mangoo.test.utils;
 
-import io.undertow.util.Methods;
-
 import java.util.Objects;
+
+import io.undertow.util.Methods;
 
 /**
  * 
