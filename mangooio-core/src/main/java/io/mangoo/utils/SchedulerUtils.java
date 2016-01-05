@@ -18,7 +18,11 @@ import com.google.common.base.Preconditions;
  * @author svenkubiak
  *
  */
-public class SchedulerUtils {
+public final class SchedulerUtils {
+    
+    private SchedulerUtils() {
+    }
+    
     /**
      * Creates a new quartz scheduler Trigger, which can be used to
      * schedule a new job by passing it into {@link io.mangoo.scheduler.Scheduler#schedule(JobDetail, Trigger) schedule}

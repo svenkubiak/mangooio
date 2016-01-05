@@ -70,7 +70,7 @@ import io.undertow.util.Methods;
 public class Bootstrap {
     private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
-    private LocalDateTime start = LocalDateTime.now();
+    private final LocalDateTime start = LocalDateTime.now();
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Config config;

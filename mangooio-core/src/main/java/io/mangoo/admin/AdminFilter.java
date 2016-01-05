@@ -90,8 +90,8 @@ public class AdminFilter implements MangooFilter {
         Objects.requireNonNull(url, "url can not be null");
         
         boolean enabled;
-        if (!url.startsWith("/")) {
-            url = "/" + url;
+        if ('/' != url.charAt(0)) {
+            url = '/' + url;
         }
         
         switch (AdminRoute.fromString(url)) {
