@@ -6,7 +6,7 @@ import com.google.inject.AbstractModule;
 
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.interfaces.MangooCache;
-import io.mangoo.scheduler.MangooJobFactory;
+import io.mangoo.scheduler.SchedulerFactory;
 
 /**
  * Framework specific Google Guice Modules
@@ -17,7 +17,7 @@ import io.mangoo.scheduler.MangooJobFactory;
 public class Modules extends AbstractModule {
     @Override
     protected void configure() {
-        bind(JobFactory.class).to(MangooJobFactory.class);
+        bind(JobFactory.class).to(SchedulerFactory.class);
         bind(MangooCache.class).toProvider(CacheProvider.class);
     }
 }

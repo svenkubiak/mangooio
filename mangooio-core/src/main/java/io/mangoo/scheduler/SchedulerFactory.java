@@ -15,7 +15,7 @@ import io.mangoo.core.Application;
  * @author svenkubiak
  *
  */
-public class MangooJobFactory implements JobFactory {
+public class SchedulerFactory implements JobFactory {
     @Override
     public Job newJob(final TriggerFiredBundle triggerFiredBundle, final Scheduler scheduler) {
         Objects.requireNonNull(triggerFiredBundle, "triggerFiredBundle is required for a new job");

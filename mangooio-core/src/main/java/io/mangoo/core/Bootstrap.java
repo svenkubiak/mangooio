@@ -51,6 +51,7 @@ import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.RoutingHandler;
@@ -69,7 +70,7 @@ import io.undertow.util.Methods;
 public class Bootstrap {
     private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
-    private final LocalDateTime start;
+    private LocalDateTime start = LocalDateTime.now();
     private PathHandler pathHandler;
     private ResourceHandler resourceHandler;
     private Config config;
@@ -78,10 +79,6 @@ public class Bootstrap {
     private Injector injector;
     private boolean error;
     private int port;
-
-    public Bootstrap() {
-        this.start = LocalDateTime.now();
-    }
 
     public Mode prepareMode() {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
@@ -331,8 +328,8 @@ public class Bootstrap {
                 jobs.forEach(clazz -> {
                     final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
-                        final JobDetail jobDetail = mangooScheduler.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        final Trigger trigger = mangooScheduler.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                        final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                        final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
                         mangooScheduler.schedule(jobDetail, trigger);
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {

@@ -33,11 +33,11 @@ public final class Application {
         bootstrap.showLogo();
         bootstrap.applicationStarted();
 
-        if (!bootstrap.isBootstrapSuccessful()) {
+        if (bootstrap.isBootstrapSuccessful()) {
+            started = true;
+        } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
             System.exit(1); //NOSONAR
-        } else {
-            started = true;
         }
     }
 

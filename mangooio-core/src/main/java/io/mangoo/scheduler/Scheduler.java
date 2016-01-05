@@ -107,7 +107,7 @@ public class Scheduler {
         if (this.quartzScheduler == null) {
             try {
                 this.quartzScheduler = new StdSchedulerFactory().getScheduler();
-                this.quartzScheduler.setJobFactory(Application.getInstance(MangooJobFactory.class));
+                this.quartzScheduler.setJobFactory(Application.getInstance(SchedulerFactory.class));
             } catch (final SchedulerException e) {
                 LOG.error("Failed to initialize scheduler", e);
             }
@@ -140,9 +140,13 @@ public class Scheduler {
      * @param groupName The trigger group name
      * @param description The trigger description
      * @param cron The cron expression for the trigger
+     * 
+     * @deprecated As of release 2.2.0, replaced by
+     * {@link #SchedulerUtils.createTrigger(String identity, String groupName, String description, String cron)}
      *
      * @return A new Trigger object
      */
+    @Deprecated
     public Trigger createTrigger(String identity, String groupName, String description, String cron) {
         Objects.requireNonNull(identity, "Identity is required for creating a new trigger");
         Objects.requireNonNull(groupName, "groupName is required for new trigger");
@@ -163,9 +167,13 @@ public class Scheduler {
      * @param identity The name of the job
      * @param groupName The name of the job Group
      * @param clazz The class where the actual execution takes place
+     * 
+     * @deprecated As of release 2.2.0, replaced by
+     * {@link #SchedulerUtils.createJobDetail(String identity, String groupName, Class<? extends Job> clazz)}
      *
      * @return A new JobDetail object
      */
+    @Deprecated
     public JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
         Objects.requireNonNull(identity, "identity is required for new JobDetail");
         Objects.requireNonNull(groupName, "groupName is required for new JobDetail");

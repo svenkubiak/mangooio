@@ -2,6 +2,7 @@ package io.mangoo.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -23,6 +24,9 @@ import io.mangoo.enums.RouteType;
 public final class BootstrapUtils {
     private static final Logger LOG = LogManager.getLogger(BootstrapUtils.class);
     
+    private BootstrapUtils() {
+    }
+    
     /**
      * Retrieves a RouteType enum based on a given method string
      * 
@@ -32,7 +36,7 @@ public final class BootstrapUtils {
     public static RouteType getRouteType(String method) {
         Objects.requireNonNull(method, "method can not be null");
         
-        switch (method.toUpperCase()) {
+        switch (method.toUpperCase(Locale.ENGLISH)) {
         case "GET":
         case "POST":
         case "PUT":
@@ -59,7 +63,7 @@ public final class BootstrapUtils {
      * @return True if the mapping contains a blocking directive, false otherwise
      */
     public static boolean hasBlocking(String mapping) {
-        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase().contains(Default.BLOCKING.toString());
+        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase(Locale.ENGLISH).contains(Default.BLOCKING.toString());
     }
 
     /**
@@ -69,7 +73,7 @@ public final class BootstrapUtils {
      * @return True if the mapping contains an authentication directive, false otherwise
      */
     public static boolean hasAuthentication(String mapping) {
-        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase().contains(Default.AUTHENTICATION.toString());
+        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase(Locale.ENGLISH).contains(Default.AUTHENTICATION.toString());
     }
 
     /**
