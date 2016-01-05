@@ -12,7 +12,7 @@
 * Version bumps (svenkubiak)
 ** undertow-core 1.3.10.Final -> 1.3.11.Final
 ** bcprov-jdk15on 1.53 -> 1.54
-** mockito 2.0.33-Beta -> 2.0.35-Beta
+** mockito 2.0.33-Beta -> 2.0.36-Beta
 
 == Version 2.1.0
 
