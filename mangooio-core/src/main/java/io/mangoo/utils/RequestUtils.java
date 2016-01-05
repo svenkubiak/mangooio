@@ -156,8 +156,6 @@ public final class RequestUtils {
      * @return OAuthProvider Enum
      */
     public static OAuthProvider getOAuthProvider(String oauth) {
-        Objects.requireNonNull(oauth, "oauth can not be null");
-
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;

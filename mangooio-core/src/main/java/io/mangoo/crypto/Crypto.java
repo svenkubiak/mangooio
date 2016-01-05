@@ -35,9 +35,9 @@ public class Crypto {
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
     private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
-    private CipherParameters cipherParameters;
     private final Config config;
-
+    private CipherParameters cipherParameters;
+    
     @Inject
     public Crypto(Config config) {
         this.config = Objects.requireNonNull(config, "config can not be null");
@@ -111,7 +111,7 @@ public class Crypto {
      * Encrypts or decrypts a given byte array of data
      *
      * @param data The data to encrypt or decrypt
-     * @return A cleartext or encrypted byte array
+     * @return A clear text or encrypted byte array
      */
     private byte[] cipherData(byte[] data) {
         byte[] result = null;
@@ -134,9 +134,8 @@ public class Crypto {
      * Creates a secret for encrypt or decryption which has a length
      * of 16, 24 or 32 characters, corresponding to 128, 192 or 256 Bits
      *
-     *
      * @param secret A given secret to trim
-     * @return A stirng secret with 16, 24 or 32 characters
+     * @return A secret with 16, 24 or 32 characters
      */
     private String getSizedKey(String secret) {
         String key = "";

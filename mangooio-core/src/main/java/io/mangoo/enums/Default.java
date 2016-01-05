@@ -80,7 +80,9 @@ public enum Default {
     ROUTES_FILE("routes.yaml"),
     APPLICATION_CONTROLLER("controllers."),
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
-    WSS_CACHE_PREFIX("MANGOOIO-WSS-");
+    WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
+    AUTHENTICATION("@authentication"),
+    BLOCKING("@blocking");
 
     private final String value;
 

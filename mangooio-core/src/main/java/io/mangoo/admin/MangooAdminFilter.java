@@ -11,6 +11,7 @@ import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.enums.AdminRoute;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
@@ -86,30 +87,36 @@ public class MangooAdminFilter implements MangooFilter {
      * @return True when enabled via application.yaml, false otherwise
      */
     private boolean isURLEnabled(String url) {
+        Objects.requireNonNull(url, "url can not be null");
+        
         boolean enabled;
-        switch (url) {
-        case "@routes":
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
+        
+        switch (AdminRoute.fromString(url)) {
+        case ROUTES:
             enabled = config.isAdminRoutesEnabled();
             break;
-        case "@config":
+        case CONFIG:
             enabled = config.isAdminConfigEnabled();
             break;
-        case "@health":
+        case HEALTH:
             enabled = config.isAdminHealthEnabled();
             break;
-        case "@cache":
+        case CACHE:
             enabled = config.isAdminCacheEnabled();
             break;
-        case "@metrics":
+        case METRICS:
             enabled = config.isAdminMetricsEnabled();
             break;
-        case "@scheduler":
+        case SCHEDULER:
             enabled = config.isAdminSchedulerEnabled();
             break;
-        case "@system":
+        case SYSTEM:
             enabled = config.isAdminSystemEnabled();
             break;    
-        case "@memory":
+        case MEMORY:
             enabled = config.isAdminMemoryEnabled();
             break;             
         default:

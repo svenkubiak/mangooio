@@ -19,6 +19,11 @@ public enum Mangoo {
     private Mangoo() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main();
+        
+        if (!Application.isStarted()) {
+            System.out.print("Failed to start mangoo I/O application"); //NOSONAR
+            System.exit(1); //NOSONAR
+        }
     }
 
     public void start() {

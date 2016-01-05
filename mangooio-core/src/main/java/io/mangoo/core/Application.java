@@ -15,6 +15,7 @@ import io.mangoo.enums.Mode;
 public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
+    private static volatile boolean started;
 
     private Application() {
     }
@@ -32,9 +33,11 @@ public final class Application {
         bootstrap.showLogo();
         bootstrap.applicationStarted();
 
-        if (!bootstrap.isApplicationStarted()) {
+        if (!bootstrap.isBootstrapSuccessful()) {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
             System.exit(1); //NOSONAR
+        } else {
+            started = true;
         }
     }
 
@@ -82,6 +85,13 @@ public final class Application {
     public static Injector getInjector() {
         return injector;
     }
+    
+    /**
+     * @return True if the application started successfully, false otherwise
+     */
+    public static boolean isStarted() {
+        return started;
+    }
 
     /**
      * Short form for getting an Goolge Guice injected class by
@@ -93,7 +103,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Missing class instance for getInstance");
+        Objects.requireNonNull(clazz, "clazz can not be null");
 
         return injector.getInstance(clazz);
     }

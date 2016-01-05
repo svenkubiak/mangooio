@@ -69,9 +69,13 @@ public class TemplateEngine {
         }
 
         StringBuilder buffer = new StringBuilder();
-        buffer.append(System.getProperty("user.dir")).append(File.separator)
-        .append("src").append(File.separator).append("main")
-        .append(File.separator).append("java");
+        buffer.append(System.getProperty("user.dir"))
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
 
         this.baseDirectory = buffer.toString();
     }
