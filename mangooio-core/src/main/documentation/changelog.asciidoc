@@ -7,6 +7,7 @@
 * https://github.com/svenkubiak/mangooio/issues/110[#110] Added X-Response-Header (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/108[#108] Refactored RequestHandler (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/98[#98] Improved RequestHandler (svenkubiak)
+* Improved Framework startup time (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** undertow-core 1.3.10.Final -> 1.3.11.Final

@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,25 +18,25 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.RouteType;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 public final class BootstrapUtils {
     private static final Logger LOG = LogManager.getLogger(BootstrapUtils.class);
-    
+
     private BootstrapUtils() {
     }
-    
+
     /**
      * Retrieves a RouteType enum based on a given method string
-     * 
+     *
      * @param method The method to check
      * @return The RouteType enum or null if given method is undefined
      */
     public static RouteType getRouteType(String method) {
         Objects.requireNonNull(method, "method can not be null");
-        
+
         switch (method.toUpperCase(Locale.ENGLISH)) {
         case "GET":
         case "POST":
@@ -58,7 +59,7 @@ public final class BootstrapUtils {
 
     /**
      * Checks if a given mapping URL contains a blocking directive
-     * 
+     *
      * @param mapping The mapping to check
      * @return True if the mapping contains a blocking directive, false otherwise
      */
@@ -68,7 +69,7 @@ public final class BootstrapUtils {
 
     /**
      * Checks if a given mapping URL contains an authentication directive
-     * 
+     *
      * @param mapping The mapping to check
      * @return True if the mapping contains an authentication directive, false otherwise
      */
@@ -78,7 +79,7 @@ public final class BootstrapUtils {
 
     /**
      * Retrieves the current version of the framework from the version.properties file
-     * 
+     *
      * @return Current mangoo I/O version
      */
     public static String getVersion() {
@@ -92,5 +93,16 @@ public final class BootstrapUtils {
         }
 
         return version;
+    }
+
+    public static String getLogo() {
+        String logo = "";
+        try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
+            logo = IOUtils.toString(inputStream, "UTF-8");
+        } catch (final IOException e) {
+            LOG.error("Failed to get application logo", e);
+        }
+
+        return logo;
     }
 }

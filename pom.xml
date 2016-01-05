@@ -172,11 +172,6 @@
 				<version>1.16</version>
 			</dependency>
 			<dependency>
-				<groupId>com.github.lalyos</groupId>
-				<artifactId>jfiglet</artifactId>
-				<version>0.0.7</version>
-			</dependency>
-			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
 				<version>1.3.11.Final</version>

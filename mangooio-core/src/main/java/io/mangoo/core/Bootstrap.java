@@ -1,6 +1,5 @@
 package io.mangoo.core;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,6 @@ import org.quartz.Trigger;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 
-import com.github.lalyos.jfiglet.FigletFont;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -115,7 +114,7 @@ public class Bootstrap {
 
             if (!hasError()) {
                 LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-                LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);                
+                LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
             }
         }
     }
@@ -143,15 +142,15 @@ public class Bootstrap {
             try (InputStream inputStream = Resources.getResource(Default.ROUTES_FILE.toString()).openStream()) {
                 final List<Map<String, String>> routes = (List<Map<String, String>>) new Yaml().load(inputStream);
 
-                routes.forEach(routing -> {
-                    routing.entrySet().forEach(entry -> {
+                for (final Map<String, String> routing : routes) {
+                    for (final Entry<String, String> entry : routing.entrySet()) {
                         final String method = entry.getKey().trim();
                         final String mapping = entry.getValue();
                         final String [] mappings = mapping
                                 .replace(Default.AUTHENTICATION.toString(), "")
                                 .replace(Default.BLOCKING.toString(), "")
                                 .split("->");
-                        
+
                         if (mappings != null && mappings.length > 0) {
                             final String url = mappings[0].trim();
                             final Route route = new Route(BootstrapUtils.getRouteType(method));
@@ -167,7 +166,7 @@ public class Bootstrap {
                                         route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
                                             route.withMethod(classMethod[1].trim());
-                                        }                                    
+                                        }
                                     }
                                 }
 
@@ -176,10 +175,10 @@ public class Bootstrap {
                                 LOG.error("Failed to parse routing: " + routing);
                                 LOG.error("Please check, that your routes.yaml syntax is correct", e);
                                 this.error = true;
-                            } 
+                            }
                         }
-                    });
-                });
+                    }
+                }
             } catch (final Exception e) {
                 LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
                 this.error = true;
@@ -197,7 +196,7 @@ public class Bootstrap {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
                 checkRoute(route, route.getControllerClass());
             }
-        });        
+        });
     }
 
     private void checkRoute(Route route, Class<?> controllerClass) {
@@ -301,15 +300,11 @@ public class Bootstrap {
     public void showLogo() {
         if (!hasError()) {
             final StringBuilder logo = new StringBuilder(INITIAL_SIZE);
-            try {
-                logo.append('\n')
-                     .append(FigletFont.convertOneLine("mangoo I/O"))
-                     .append("\n\nhttps://mangoo.io | @mangoo_io | ")
-                     .append(BootstrapUtils.getVersion())
-                     .append('\n');
-            } catch (final IOException e) {//NOSONAR
-                //intentionally left blank
-            }
+            logo.append('\n')
+                .append(BootstrapUtils.getLogo())
+                .append("\n\nhttps://mangoo.io | @mangoo_io | ")
+                .append(BootstrapUtils.getVersion())
+                .append('\n');
 
             LOG.info(logo.toString());
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
@@ -348,7 +343,7 @@ public class Bootstrap {
     public boolean isBootstrapSuccessful() {
         return !this.error;
     }
-    
+
     private boolean hasError() {
         return this.error;
     }
