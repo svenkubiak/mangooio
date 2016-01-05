@@ -25,11 +25,11 @@ import io.undertow.util.Headers;
  * @author svenkubiak
  *
  */
-public class MangooAdminFilter implements MangooFilter {
+public class AdminFilter implements MangooFilter {
     private final Config config;
 
     @Inject
-    public MangooAdminFilter(Config config) {
+    public AdminFilter(Config config) {
         this.config = Objects.requireNonNull(config,  "config can not be null");
     }
 

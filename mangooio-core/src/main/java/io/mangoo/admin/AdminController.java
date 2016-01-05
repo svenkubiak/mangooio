@@ -33,12 +33,12 @@ import io.mangoo.scheduler.Scheduler;
  * @author svenkubiak
  *
  */
-@FilterWith(MangooAdminFilter.class)
-public class MangooAdminController {
+@FilterWith(AdminFilter.class)
+public class AdminController {
     private static final int MB = 1024*1024;
     private final Map<String, String> properties = new HashMap<>();
     
-    public MangooAdminController() {
+    public AdminController() {
         System.getProperties().entrySet().forEach(
                 entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
         );

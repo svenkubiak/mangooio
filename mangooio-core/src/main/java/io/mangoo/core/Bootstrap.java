@@ -33,7 +33,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 
-import io.mangoo.admin.MangooAdminController;
+import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.AdminRoute;
@@ -233,14 +233,14 @@ public class Bootstrap {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("routes"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("config"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.HEALTH.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("health"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CACHE.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("cache"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.METRICS.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("metrics"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SCHEDULER.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("scheduler"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("system"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(MangooAdminController.class).withMethod("memory"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("config"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.HEALTH.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("health"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CACHE.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.METRICS.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SCHEDULER.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("system"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("memory"));
 
         Router.getRoutes().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
