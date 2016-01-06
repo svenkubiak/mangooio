@@ -1,4 +1,5 @@
 package main;
+
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
 

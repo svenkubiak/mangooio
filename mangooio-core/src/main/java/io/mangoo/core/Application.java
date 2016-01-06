@@ -1,5 +1,6 @@
 package io.mangoo.core;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.google.inject.Injector;
@@ -15,6 +16,7 @@ import io.mangoo.enums.Mode;
 public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
+    private static volatile LocalDateTime start;
     private static volatile boolean started;
 
     private Application() {
@@ -22,12 +24,13 @@ public final class Application {
 
     public static void main(String... args) {
         Bootstrap bootstrap = new Bootstrap();
+        start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
-        bootstrap.prepareRoutes();
+        bootstrap.parseRoutes();
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
         bootstrap.showLogo();
@@ -91,6 +94,13 @@ public final class Application {
      */
     public static boolean isStarted() {
         return started;
+    }
+    
+    /**
+     * @return The LocalDateTime of the application start
+     */
+    public static LocalDateTime getStart() {
+        return start;
     }
 
     /**

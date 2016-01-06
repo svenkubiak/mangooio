@@ -71,13 +71,18 @@ public class Bootstrap {
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
     private PathHandler pathHandler;
-    private ResourceHandler resourceHandler;
+    private ResourceHandler pathResourceHandler;
     private Config config;
     private String host;
     private Mode mode;
     private Injector injector;
     private boolean error;
     private int port;
+    
+    public Bootstrap() {
+        this.pathResourceHandler = new ResourceHandler(
+                new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
+    }
 
     public Mode prepareMode() {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
@@ -137,11 +142,11 @@ public class Bootstrap {
     }
 
     @SuppressWarnings("all")
-    public void prepareRoutes() {
+    public void parseRoutes() {
         if (!hasError()) {
             try (InputStream inputStream = Resources.getResource(Default.ROUTES_FILE.toString()).openStream()) {
                 final List<Map<String, String>> routes = (List<Map<String, String>>) new Yaml().load(inputStream);
-
+                
                 for (final Map<String, String> routing : routes) {
                     for (final Entry<String, String> entry : routing.entrySet()) {
                         final String method = entry.getKey().trim();
@@ -165,7 +170,10 @@ public class Bootstrap {
                                     if (classMethod != null && classMethod.length > 0) {
                                         route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
-                                            route.withMethod(classMethod[1].trim());
+                                            String controllerMethod = classMethod[1].trim();
+                                            if (methodExists(controllerMethod, route.getControllerClass())) {
+                                                route.withMethod(controllerMethod);
+                                            }
                                         }
                                     }
                                 }
@@ -175,6 +183,8 @@ public class Bootstrap {
                                 LOG.error("Failed to parse routing: " + routing);
                                 LOG.error("Please check, that your routes.yaml syntax is correct", e);
                                 this.error = true;
+                                
+                                throw new Exception();
                             }
                         }
                     }
@@ -185,50 +195,42 @@ public class Bootstrap {
             }
 
             if (!hasError()) {
-                checkRoutes();
-                initPathHandler();
+                createRoutes();
             }
         }
     }
 
-    private void checkRoutes() {
-        Router.getRoutes().forEach(route -> {
-            if (RouteType.REQUEST.equals(route.getRouteType())) {
-                checkRoute(route, route.getControllerClass());
-            }
-        });
-    }
-
-    private void checkRoute(Route route, Class<?> controllerClass) {
-        if (!hasError()) {
-            boolean found = false;
-            for (final Method method : controllerClass.getMethods()) {
-                if (method.getName().equals(route.getControllerMethod())) {
-                    found = true;
-                }
-            }
-
-            if (!found) {
-                LOG.error("Could not find controller method '" + route.getControllerMethod() + "' in controller class '" + controllerClass.getSimpleName() + "'");
-                this.error = true;
+    private boolean methodExists(String controllerMethod, Class<?> controllerClass) {
+        boolean exists = false;
+        for (final Method method : controllerClass.getMethods()) {
+            if (method.getName().equals(controllerMethod)) {
+                exists = true;
+                break;
             }
         }
+
+        if (!exists) {
+            LOG.error("Could not find controller method '" + controllerMethod + "' in controller class '" + controllerClass.getSimpleName() + "'");
+            this.error = true;
+        }
+        
+        return exists;
     }
 
-    private void initPathHandler() {
-        this.pathHandler = new PathHandler(initRoutingHandler());
-        Router.getRoutes().forEach(route -> {
+    private void createRoutes() {
+        this.pathHandler = new PathHandler(getRoutingHandler());
+        for (Route route : Router.getRoutes()) {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(new ServerSentEventHandler(route.isAuthenticationRequired())));
             } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
-                this.pathHandler.addPrefixPath(route.getUrl(), getResourceHandler(route.getUrl()));
+                this.pathHandler.addPrefixPath(route.getUrl(), new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
             }
-        });
+        }
     }
 
-    private RoutingHandler initRoutingHandler() {
+    private RoutingHandler getRoutingHandler() {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(new FallbackHandler());
 
@@ -241,27 +243,15 @@ public class Bootstrap {
         Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("system"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("memory"));
 
-        Router.getRoutes().forEach(route -> {
+        Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
                 routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
-                routingHandler.add(Methods.GET, route.getUrl(), getResourceHandler(null));
-            }
+                routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
+            } 
         });
-
+        
         return routingHandler;
-    }
-
-    private ResourceHandler getResourceHandler(String postfix) {
-        if (StringUtils.isBlank(postfix)) {
-            if (this.resourceHandler == null) {
-                this.resourceHandler = new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
-            }
-
-            return this.resourceHandler;
-        }
-
-        return new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + postfix));
     }
 
     public void startUndertow() {
@@ -299,14 +289,14 @@ public class Bootstrap {
 
     public void showLogo() {
         if (!hasError()) {
-            final StringBuilder logo = new StringBuilder(INITIAL_SIZE);
-            logo.append('\n')
+            final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
+            buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
                 .append("\n\nhttps://mangoo.io | @mangoo_io | ")
                 .append(BootstrapUtils.getVersion())
                 .append('\n');
 
-            LOG.info(logo.toString());
+            LOG.info(buffer.toString());
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
@@ -346,5 +336,9 @@ public class Bootstrap {
 
     private boolean hasError() {
         return this.error;
+    }
+    
+    public LocalDateTime getStart() {
+        return this.start;
     }
 }

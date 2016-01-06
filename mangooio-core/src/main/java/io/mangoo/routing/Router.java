@@ -1,9 +1,9 @@
 package io.mangoo.routing;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -11,7 +11,7 @@ import java.util.Set;
  *
  */
 public final class Router {
-    private static Set<Route> routes = new HashSet<>();
+    private static Set<Route> routes = ConcurrentHashMap.newKeySet();
 
     private Router(){
     }

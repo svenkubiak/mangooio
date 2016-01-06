@@ -1915,7 +1915,8 @@ import org.quartz.Trigger;
 
 import jobs.InfoJob;
 import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.scheduler.MangooScheduler;
+import io.mangoo.scheduler.Scheduler;
+import io.mangoo.utils.SchedulerUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -1928,8 +1929,8 @@ public class Lifecycle implements MangooLifecycle {
 
     @Override
     public void applicationStarted() {
-        JobDetail jobDetail = mangooScheduler.getJobDetail(MyJob.class, "MyJobDetail", "MyJobGroup");
-        Trigger trigger = mangooScheduler.getTrigger("MyJobTrigger", "15 15 15 15 * ?", "MyTriggerGroup", "MyTriggerDescription");
+        JobDetail jobDetail = SchedulerUtils.getJobDetail(MyJob.class, "MyJobDetail", "MyJobGroup");
+        Trigger trigger = SchedulerUtils.getTrigger("MyJobTrigger", "15 15 15 15 * ?", "MyTriggerGroup", "MyTriggerDescription");
 
         mangooScheduler.schedule(jobDetail, trigger);
         mangooScheduler.start();
