@@ -1,5 +1,6 @@
 package io.mangoo.core;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -35,7 +36,7 @@ public final class Application {
         bootstrap.startUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
-
+        
         if (bootstrap.isBootstrapSuccessful()) {
             started = true;
         } else {
@@ -101,6 +102,26 @@ public final class Application {
      */
     public static LocalDateTime getStart() {
         return start;
+    }
+    
+    /**
+     * @return The duration of the application uptime
+     */
+    public static Duration getUptime() {
+        return Duration.between(start, LocalDateTime.now());
+    }
+    
+    /**
+     * @return The uptime of the application as a formatted string, e.g.
+     * Application is up for 23 days, 24 minutes and 42 seconds
+     * 
+     */
+    public static String getUptimeString() {
+        long days = Duration.between(start, LocalDateTime.now()).toDays();
+        long minutes = Duration.between(start, LocalDateTime.now()).toMinutes();
+        long seconds = Duration.between(start, LocalDateTime.now()).toMillis() / 1000;
+        
+        return "Application is up for " + days + " day(s), " + minutes + " minute(s) and " + seconds + " second(s)";
     }
 
     /**
