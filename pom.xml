@@ -30,6 +30,7 @@
 	</prerequisites>
 	<modules>
 		<module>mangooio-core</module>
+		<module>mangooio-benchmarks</module>
 		<module>mangooio-test-utilities</module>
 		<module>mangooio-maven-plugin</module>
 		<module>mangooio-maven-archetype</module>

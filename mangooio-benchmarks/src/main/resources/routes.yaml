@@ -1,0 +1,7 @@
+- GET:    /             ->    ApplicationController.index
+- GET:    /json         ->    ApplicationController.json
+- GET:    /db           ->    ApplicationController.db
+- GET:    /queries      ->    ApplicationController.queries
+- GET:    /plaintext    ->    ApplicationController.plaintext
+- GET:    /fortunes     ->    ApplicationController.fortunes
+- GET:    /updates      ->    ApplicationController.updates
