@@ -8,6 +8,7 @@
 * https://github.com/svenkubiak/mangooio/issues/108[#108] Refactored RequestHandler (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/98[#98] Improved RequestHandler (svenkubiak)
 * Added LocalDateTime timestamp of application start (svenkubiak)
+* Added new Benchmark project (svenkubiak)
 * Improved application startup time (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
