@@ -70,8 +70,8 @@ public class Bootstrap {
     private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
+    private final ResourceHandler pathResourceHandler;
     private PathHandler pathHandler;
-    private ResourceHandler pathResourceHandler;
     private Config config;
     private String host;
     private Mode mode;

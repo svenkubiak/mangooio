@@ -19,7 +19,8 @@ public final class Application {
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
     private static volatile boolean started;
-
+    private static final int MILLIS = 1000;
+    
     private Application() {
     }
 
@@ -112,14 +113,12 @@ public final class Application {
     }
     
     /**
-     * @return The uptime of the application as a formatted string, e.g.
-     * Application is up for 23 days, 24 minutes and 42 seconds
-     * 
+     * @return The uptime of the application as a formatted string, e.g. Application is up for 23 days, 24 minutes and 42 seconds
      */
     public static String getUptimeString() {
         long days = Duration.between(start, LocalDateTime.now()).toDays();
         long minutes = Duration.between(start, LocalDateTime.now()).toMinutes();
-        long seconds = Duration.between(start, LocalDateTime.now()).toMillis() / 1000;
+        long seconds = Duration.between(start, LocalDateTime.now()).toMillis() / MILLIS;
         
         return "Application is up for " + days + " day(s), " + minutes + " minute(s) and " + seconds + " second(s)";
     }
