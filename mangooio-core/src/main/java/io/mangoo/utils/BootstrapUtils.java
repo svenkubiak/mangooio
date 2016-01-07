@@ -95,6 +95,11 @@ public final class BootstrapUtils {
         return version;
     }
 
+    /**
+     * Retrieves the logo from the logo file and returns the string
+     * 
+     * @return The mangoo I/O logo string
+     */
     public static String getLogo() {
         String logo = "";
         try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
