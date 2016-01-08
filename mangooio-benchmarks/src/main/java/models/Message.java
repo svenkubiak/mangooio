@@ -6,9 +6,9 @@ package models;
  *
  */
 public class Message {
-	public final String message;
+	public final String text;
 
-	public Message(String message) {
-		this.message = message;
+	public Message(String text) {
+		this.text = text;
 	}
 }

@@ -20,20 +20,17 @@ import utils.RandomUtils;
  */
 @Singleton
 public class DataService {
-    private MongoDB mongoDB;
+    private static final int MAX_QUERIES = 500;
+    private final MongoDB mongoDB;
 
     @Inject
     public DataService(MongoDB mongoDB) {
     	this.mongoDB = mongoDB;
-        this.mongoDB.ensureIndexes(true);
+        this.mongoDB.ensureIndexes(false);
     }
 
     public World findById(int id) {
         return this.mongoDB.getDatastore().find(World.class).field("id").equal(id).retrievedFields(false, "_id").get();
-    }
-    
-    public List<World> find(int queries) {
-    	return this.mongoDB.getDatastore().find(World.class).retrievedFields(false, "_id").asList();
     }
 
 	public void save(Object object) {
@@ -48,11 +45,11 @@ public class DataService {
 		
 		if (query <= 1) {
 			query = 1;
-		} else if (query > 500) {
-			query = 500;
+		} else if (query > MAX_QUERIES) {
+			query = MAX_QUERIES;
 		}
 		
-		List<World> worlds = new ArrayList<World>();
+		List<World> worlds = new ArrayList<>();
 		for (int i=0; i < query; i++) {
 			worlds.add(findById(RandomUtils.getRandomId()));
 		}

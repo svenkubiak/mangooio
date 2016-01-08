@@ -56,7 +56,9 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     private Request getRequest(HttpServerExchange exchange) {
-        final String authenticityToken = Optional.ofNullable(this.requestAttachment.getRequestParameter().get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.requestAttachment.getForm().get(Default.AUTHENTICITY_TOKEN.toString()));
+        final String authenticityToken = Optional.ofNullable(this.requestAttachment.getRequestParameter()
+                .get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.requestAttachment.getForm().get(Default.AUTHENTICITY_TOKEN.toString()));
+        
         return new Request(exchange, this.requestAttachment.getSession(), authenticityToken, this.requestAttachment.getAuthentication(), this.requestAttachment.getRequestParameter(), this.requestAttachment.getBody());
     }
 

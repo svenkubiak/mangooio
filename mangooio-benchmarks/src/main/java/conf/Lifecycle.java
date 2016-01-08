@@ -1,5 +1,5 @@
 package conf;
-
+    
 import java.util.UUID;
 
 import com.google.inject.Singleton;
@@ -20,11 +20,12 @@ import utils.RandomUtils;
  */
 @Singleton
 public class Lifecycle implements MangooLifecycle {
+	private static final int MONGODB_PORT = 29019;
 
-	@Override
+    @Override
 	public void applicationInitialized() {
         if (!Application.inProdMode()) {
-            EmbeddedMongo.DB.port(29019).start();
+            EmbeddedMongo.DB.port(MONGODB_PORT).start();
             DataService dataService = Application.getInstance(DataService.class);
             for (int i=0; i < Constants.ROWS; i++) {
                 World world = new World(i + 1, RandomUtils.getRandomId());

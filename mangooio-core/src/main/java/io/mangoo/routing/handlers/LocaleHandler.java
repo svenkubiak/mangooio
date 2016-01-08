@@ -24,19 +24,22 @@ public class LocaleHandler implements HttpHandler {
         final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
         final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
 
+        Locale locale = null;
+        String defaultLanguage = requestAttachment.getConfig().getApplicationLanguage();
         if (headerValues == null) {
-            Locale.setDefault(Locale.forLanguageTag(requestAttachment.getConfig().getApplicationLanguage()));
+            locale = Locale.forLanguageTag(defaultLanguage);
         } else if (headerValues.getFirst() != null) {
             final String values = Optional.ofNullable(headerValues.getFirst()).orElse("");
-            final Iterable<String> split = Splitter.on(",").trimResults().split(values);
-            if (split == null) {
-                Locale.setDefault(Locale.forLanguageTag(requestAttachment.getConfig().getApplicationLanguage()));
+            final Iterable<String> splitter = Splitter.on(",").trimResults().split(values);
+            if (splitter == null) {
+                locale = Locale.forLanguageTag(defaultLanguage);
             } else {
-                final String acceptLanguage = Optional.ofNullable(split.iterator().next()).orElse(requestAttachment.getConfig().getApplicationLanguage());
-                Locale.setDefault(Locale.forLanguageTag(acceptLanguage.substring(0, 2))); //NOSONAR
+                final String acceptLanguage = Optional.ofNullable(splitter.iterator().next()).orElse(defaultLanguage);
+                locale = Locale.forLanguageTag(acceptLanguage.substring(0, 2)); //NOSONAR
             }
         }
 
+        Locale.setDefault(locale);
         requestAttachment.getMessages().reload();
         nextHandler(exchange);
     }

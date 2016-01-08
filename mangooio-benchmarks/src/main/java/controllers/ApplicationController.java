@@ -22,7 +22,7 @@ import utils.RandomUtils;
  */
 @Singleton
 public class ApplicationController {
-	private DataService dataService;
+	private final DataService dataService;
 	private final Message message = new Message(Constants.HELLO_WORLD);
 	private final Fortune fortune = new Fortune(0, Constants.FORTUNE_MESSAGE);
 
