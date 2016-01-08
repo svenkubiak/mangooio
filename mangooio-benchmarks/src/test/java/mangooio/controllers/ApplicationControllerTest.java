@@ -15,7 +15,7 @@ import io.undertow.util.StatusCodes;
 import utils.RandomUtils;
 
 public class ApplicationControllerTest {
-	private static final String HELLO_WORLD_JSON = "{\"message\":\"Hello, World!\"}";
+	private static final String HELLO_WORLD_JSON = "{\"text\":\"Hello, World!\"}";
 
 	@Test
 	public void testIndex() {
