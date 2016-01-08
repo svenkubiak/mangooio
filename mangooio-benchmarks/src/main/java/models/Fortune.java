@@ -45,7 +45,7 @@ public class Fortune  implements Serializable, Comparable<Fortune> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
+        int prime = 31;
         int result = 1;
         result = prime * result + (int) (id ^ (id >>> 32));
         result = prime * result + ((message == null) ? 0 : message.hashCode());
@@ -55,25 +55,35 @@ public class Fortune  implements Serializable, Comparable<Fortune> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
+            
         Fortune other = (Fortune) obj;
-        if (id != other.id)
+        if (id != other.id) {
             return false;
+        }
         if (message == null) {
-            if (other.message != null)
+            if (other.message != null) {
                 return false;
-        } else if (!message.equals(other.message))
+            }
+        } else if (!message.equals(other.message)) {
             return false;
+        }
         if (objectId == null) {
-            if (other.objectId != null)
-                return false;
-        } else if (!objectId.equals(other.objectId))
+            if (other.objectId != null) {
+                return false;                
+            }
+        } else if (!objectId.equals(other.objectId)) {
             return false;
+        }
+            
         return true;
     }
 }
