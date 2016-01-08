@@ -69,7 +69,7 @@ public class ApplicationController {
 	
 	public Response updates(String queries) {
 		List<World> worlds = new ArrayList<>();
-		dataService.getWorlds(queries).forEach(world -> {
+		dataService.getWorlds(queries).parallelStream().forEach(world -> {
 			world.setRandomnumber(RandomUtils.getRandomId());
 			dataService.save(world);
 			worlds.add(world);
