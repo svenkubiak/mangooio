@@ -14,7 +14,7 @@ import models.World;
 import utils.RandomUtils;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
@@ -25,7 +25,7 @@ public class DataService {
 
     @Inject
     public DataService(MongoDB mongoDB) {
-    	this.mongoDB = mongoDB;
+        this.mongoDB = mongoDB;
         this.mongoDB.ensureIndexes(false);
     }
 
@@ -33,30 +33,30 @@ public class DataService {
         return this.mongoDB.getDatastore().find(World.class).field("id").equal(id).retrievedFields(false, "_id").get();
     }
 
-	public void save(Object object) {
-		this.mongoDB.getDatastore().save(object);
-	}
-	
-	public List<World> getWorlds(String queries) {
-		int query = 1;
-		if (StringUtils.isNotBlank(queries) && StringUtils.isNumeric(queries)) {
-			query = Integer.valueOf(queries);
-		}
-		
-		if (query <= 1) {
-			query = 1;
-		} else if (query > MAX_QUERIES) {
-			query = MAX_QUERIES;
-		}
-		
-		List<World> worlds = new ArrayList<>();
-		for (int i=0; i < query; i++) {
-			worlds.add(findById(RandomUtils.getRandomId()));
-		}
-		return worlds;
-	}
+    public void save(Object object) {
+        this.mongoDB.getDatastore().save(object);
+    }
 
-	public List<Fortune> findAllFortunes() {
-		return this.mongoDB.getDatastore().find(Fortune.class).retrievedFields(false, "_id").asList();
-	}
+    public List<World> getWorlds(String queries) {
+        int query = 1;
+        if (StringUtils.isNotBlank(queries) && StringUtils.isNumeric(queries)) {
+            query = Integer.valueOf(queries);
+        }
+
+        if (query <= 1) {
+            query = 1;
+        } else if (query > MAX_QUERIES) {
+            query = MAX_QUERIES;
+        }
+
+        final List<World> worlds = new ArrayList<>();
+        for (int i=0; i < query; i++) {
+            worlds.add(findById(RandomUtils.getRandomId()));
+        }
+        return worlds;
+    }
+
+    public List<Fortune> findAllFortunes() {
+        return this.mongoDB.getDatastore().find(Fortune.class).retrievedFields(false, "_id").asList();
+    }
 }
