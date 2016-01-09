@@ -19,13 +19,12 @@ public final class Application {
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
     private static volatile boolean started;
-    private static final int MILLIS = 1000;
-    
+
     private Application() {
     }
 
     public static void main(String... args) {
-        Bootstrap bootstrap = new Bootstrap();
+        final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
@@ -37,7 +36,7 @@ public final class Application {
         bootstrap.startUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
-        
+
         if (bootstrap.isBootstrapSuccessful()) {
             started = true;
         } else {
@@ -90,37 +89,26 @@ public final class Application {
     public static Injector getInjector() {
         return injector;
     }
-    
+
     /**
      * @return True if the application started successfully, false otherwise
      */
     public static boolean isStarted() {
         return started;
     }
-    
+
     /**
      * @return The LocalDateTime of the application start
      */
     public static LocalDateTime getStart() {
         return start;
     }
-    
+
     /**
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
         return Duration.between(start, LocalDateTime.now());
-    }
-    
-    /**
-     * @return The uptime of the application as a formatted string, e.g. Application is up for 23 days, 24 minutes and 42 seconds
-     */
-    public static String getUptimeString() {
-        long days = Duration.between(start, LocalDateTime.now()).toDays();
-        long minutes = Duration.between(start, LocalDateTime.now()).toMinutes();
-        long seconds = Duration.between(start, LocalDateTime.now()).toMillis() / MILLIS;
-        
-        return "Application is up for " + days + " day(s), " + minutes + " minute(s) and " + seconds + " second(s)";
     }
 
     /**

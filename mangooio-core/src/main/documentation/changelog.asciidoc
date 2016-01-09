@@ -2,7 +2,7 @@
 
 == Version 2.2.0
 
-[small]#Released at xx.xx.xxxx#
+[small]#Released at 10.01.2016#
 
 * https://github.com/svenkubiak/mangooio/issues/110[#110] Added X-Response-Header (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/108[#108] Refactored RequestHandler (svenkubiak)
