@@ -13,7 +13,7 @@ default:
         name       : mangooio.benchmark 
         secret     : myvoiceismypassword
         language   : en
-        host       : 192.168.2.124
+        host       : localhost
         port       : 8080               
     cookie:
         name       : TEST-SESSION
@@ -32,8 +32,8 @@ default:
         
 test:
     application:
-        host       : 192.168.2.124
-        port       : 8080
+        host       : localhost
+        port       : 10808
     mongodb:
         host       : localhost
         port       : 29019
@@ -44,8 +44,8 @@ test:
   
 dev:
     application:
-        host       : 192.168.2.124    
-        port       : 8080
+        host       : localhost    
+        port       : 50000
     mongodb:
         host       : localhost
         port       : 29019
