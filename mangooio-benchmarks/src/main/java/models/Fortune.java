@@ -13,6 +13,7 @@ import org.mongodb.morphia.annotations.Indexed;
  */
 public class Fortune  implements Serializable, Comparable<Fortune> {
     private static final long serialVersionUID = 3493429313579555024L;
+    private static final int PRIME = 31;
 
     @Id
     protected ObjectId objectId;
@@ -45,11 +46,10 @@ public class Fortune  implements Serializable, Comparable<Fortune> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((objectId == null) ? 0 : objectId.hashCode());
+        result = PRIME * result + (int) (id ^ (id >>> 32));
+        result = PRIME * result + ((message == null) ? 0 : message.hashCode());
+        result = PRIME * result + ((objectId == null) ? 0 : objectId.hashCode());
         return result;
     }
 
