@@ -18,6 +18,7 @@ package io.mangoo.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -116,7 +118,8 @@ public class MangooMojo extends AbstractMojo {
         Set<String> excludesSet = new LinkedHashSet<>(excludes);
 
         Set<Path> watchDirectories = new LinkedHashSet<>();
-        watchDirectories.add(FileSystems.getDefault().getPath(buildOutputDirectory).toAbsolutePath());
+        FileSystem fileSystem = FileSystems.getDefault();
+        watchDirectories.add(fileSystem.getPath(buildOutputDirectory).toAbsolutePath());
 
         if (this.watchDirs != null) {
             for (File watchDir: this.watchDirs) {
@@ -126,6 +129,7 @@ public class MangooMojo extends AbstractMojo {
 
         getArtifacts(includesSet, excludesSet, watchDirectories);
         startRunner(classpathItems, includesSet, excludesSet, watchDirectories);
+        IOUtils.closeQuietly(fileSystem);
     }
 
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
