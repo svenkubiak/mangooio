@@ -5,6 +5,7 @@
 [small]#Released at xx.xx.xxxx#
 
 * Removed cache provider
+* Updated documentation
 
 
 == Version 2.2.0
