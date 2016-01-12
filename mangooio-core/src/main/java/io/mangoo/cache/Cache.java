@@ -1,5 +1,6 @@
 package io.mangoo.cache;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -18,7 +19,6 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.interfaces.MangooCache;
 
 /**
  * Google Guava based cache implementation
@@ -27,7 +27,7 @@ import io.mangoo.interfaces.MangooCache;
  *
  */
 @Singleton
-public class Cache implements MangooCache {
+public class Cache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
     private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
     private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
@@ -164,9 +164,24 @@ public class Cache implements MangooCache {
     /**
      * Retrieves the cache statistics
      *
-     * @return CacheStats containing cache statistics
+     * @return Map<String, Object> containing cache statistics
      */
-    public CacheStats getStats () {
-        return this.guavaCache.stats();
+    public Map<String, Object> getStats () {
+        CacheStats cacheStats = this.guavaCache.stats();
+        
+        Map<String, Object> data = new HashMap<>();
+        data.put("Average load penalty", cacheStats.averageLoadPenalty());
+        data.put("Eviction count", cacheStats.evictionCount());
+        data.put("Hit count", cacheStats.hitCount());
+        data.put("Hit rate", cacheStats.hitRate());
+        data.put("Load count", cacheStats.loadCount());
+        data.put("Load exception count", cacheStats.loadExceptionCount());
+        data.put("Load exception rate", cacheStats.loadExceptionRate());
+        data.put("Load success rate", cacheStats.loadSuccessCount());
+        data.put("Miss count", cacheStats.missCount());
+        data.put("Request count", cacheStats.requestCount());
+        data.put("Total load time in ns", cacheStats.totalLoadTime());
+        
+        return data;
     }
 }

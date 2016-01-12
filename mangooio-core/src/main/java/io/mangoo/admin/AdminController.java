@@ -12,8 +12,6 @@ import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.impl.matchers.GroupMatcher;
 
-import com.google.common.cache.CacheStats;
-
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
@@ -56,20 +54,7 @@ public class AdminController {
     }
 
     public Response cache() {
-        CacheStats cacheStats = Application.getInstance(Cache.class).getStats();
-
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("Average load penalty", cacheStats.averageLoadPenalty());
-        stats.put("Eviction count", cacheStats.evictionCount());
-        stats.put("Hit count", cacheStats.hitCount());
-        stats.put("Hit rate", cacheStats.hitRate());
-        stats.put("Load count", cacheStats.loadCount());
-        stats.put("Load exception count", cacheStats.loadExceptionCount());
-        stats.put("Load exception rate", cacheStats.loadExceptionRate());
-        stats.put("Load success rate", cacheStats.loadSuccessCount());
-        stats.put("Miss count", cacheStats.missCount());
-        stats.put("Request count", cacheStats.requestCount());
-        stats.put("Total load time in ns", cacheStats.totalLoadTime());
+        Map<String, Object> stats = Application.getInstance(Cache.class).getStats();
 
         return Response.withOk()
                 .andContent("stats", stats)

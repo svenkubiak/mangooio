@@ -64,6 +64,7 @@ public enum Key {
     CACHE_MAX_SIZE("cache.maxsize"),
     CACHE_EVICTION("cache.eviction"),
     CACHE_EXPIRES("cache.expires"),
+    CACHE_CLASS("cache.class"),
     OAUTH_TWITTER_KEY("oauth.twitter.key"),
     OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
     OAUTH_TWITTER_CALLBACK("oauth.twitter.callback"),

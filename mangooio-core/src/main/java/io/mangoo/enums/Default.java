@@ -56,7 +56,6 @@ public enum Default {
     CACHE_EXPIRES("afterAccess"),
     CACHE_EXPIRES_ACCESS("3600"),
     CACHE_EXPIRES_WRITE("3600"),
-    CACHE_TYPE("guava"),
     APPLICATION_ADMIN_HEALTH("false"),
     APPLICATION_ADMIN_CACHE("false"),
     APPLICATION_ADMIN_CONFIG("false"),
@@ -83,7 +82,8 @@ public enum Default {
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
-    BLOCKING("@blocking");
+    BLOCKING("@blocking"),
+    CACHE_CLASS("io.mangoo.cache.Cache");
 
     private final String value;
 

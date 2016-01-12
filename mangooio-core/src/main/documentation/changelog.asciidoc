@@ -1,5 +1,12 @@
 = Changelog
 
+== Version 2.2.1
+
+[small]#Released at xx.xx.xxxx#
+
+* Removed cache provider
+
+
 == Version 2.2.0
 
 [small]#Released at 10.01.2016#
