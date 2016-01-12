@@ -340,6 +340,16 @@ config.getString("application.minify.js");
 config.getString(Key.APPLICATION_MINIFY_JS);
 ------------------------
 
+By default mangoo I/O will uses the given application.yaml from the resources folder, but
+you can pass an absolute path to the executable JAR, like
+
+[source,bash]
+--------------------------
+... -Dapplication.config=/path/to/config/application.yaml
+--------------------------
+
+This will tell mangoo I/O to use this file instead of the application.yaml in the resource folder.
+
 === Modes
 
 By convention, mangoo I/O offers three configuration modes: **dev**,
