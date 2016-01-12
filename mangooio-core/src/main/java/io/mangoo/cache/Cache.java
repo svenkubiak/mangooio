@@ -164,7 +164,7 @@ public class Cache {
     /**
      * Retrieves the cache statistics
      *
-     * @return Map<String, Object> containing cache statistics
+     * @return Map containing cache statistics
      */
     public Map<String, Object> getStats () {
         CacheStats cacheStats = this.guavaCache.stats();
