@@ -151,7 +151,6 @@ public class RequestHandler implements HttpHandler {
         return StringUtils.isBlank(response.getTemplate()) ? (this.requestAttachment.getControllerClassName() + "/" + RequestUtils.getTemplateName(this.requestAttachment.getControllerMethodName())) : response.getTemplate();
     }
 
-
     /**
      * Creates an array with the request controller method parameter and sets the appropriate values
      *

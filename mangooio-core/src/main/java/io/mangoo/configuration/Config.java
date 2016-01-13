@@ -557,6 +557,9 @@ public class Config {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 
+    /**
+     * @return application.timer from application.yaml or default value if undefined
+     */
     public boolean isTimerEnabled() {
         return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
     }
