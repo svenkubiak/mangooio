@@ -9,6 +9,7 @@ import org.junit.Test;
 import io.mangoo.authentication.Authentication;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.managers.ExecutionManager;
@@ -21,7 +22,6 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -33,21 +33,21 @@ public class InjectionTest {
     @Test
     public void testInjection() {
         //given
-        Form form = Mangoo.TEST.getInstance(Form.class);
-        Authentication authentication = Mangoo.TEST.getInstance(Authentication.class);
-        Session session = Mangoo.TEST.getInstance(Session.class);
-        Flash flash = Mangoo.TEST.getInstance(Flash.class);
-        Cache cache = Mangoo.TEST.getInstance(Cache.class);
-        Crypto crypto = Mangoo.TEST.getInstance(Crypto.class);
-        Config config = Mangoo.TEST.getInstance(Config.class);
-        Messages messages = Mangoo.TEST.getInstance(Messages.class);
-        Response response  = Mangoo.TEST.getInstance(Response.class);
-        Request request = Mangoo.TEST.getInstance(Request.class);
-        Scheduler mangooSchedulder = Mangoo.TEST.getInstance(Scheduler.class);
-        ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
-        WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
-        ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
-        MetricsListener metricsListener = Mangoo.TEST.getInstance(MetricsListener.class);
+        Form form = Application.getInstance(Form.class);
+        Authentication authentication = Application.getInstance(Authentication.class);
+        Session session = Application.getInstance(Session.class);
+        Flash flash = Application.getInstance(Flash.class);
+        Cache cache = Application.getInstance(Cache.class);
+        Crypto crypto = Application.getInstance(Crypto.class);
+        Config config = Application.getInstance(Config.class);
+        Messages messages = Application.getInstance(Messages.class);
+        Response response  = Application.getInstance(Response.class);
+        Request request = Application.getInstance(Request.class);
+        Scheduler mangooSchedulder = Application.getInstance(Scheduler.class);
+        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
+        WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        MetricsListener metricsListener = Application.getInstance(MetricsListener.class);
         
         //then
         assertThat(form, not(nullValue()));

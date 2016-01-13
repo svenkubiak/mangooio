@@ -8,9 +8,9 @@ import java.util.concurrent.Future;
 
 import org.junit.Test;
 
+import io.mangoo.core.Application;
 import io.mangoo.managers.executors.TestCallable;
 import io.mangoo.managers.executors.TestRunnable;
-import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -22,7 +22,7 @@ public class ExecutionManagerTest {
     @Test
     public void testCallableWithFuture() throws InterruptedException, ExecutionException {
         //given
-        ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
+        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
         
         //when
         Future<String> future = executionManager.submit(new TestCallable());
@@ -34,7 +34,7 @@ public class ExecutionManagerTest {
     @Test
     public void testRunnableWithResult() throws InterruptedException, ExecutionException {
         //given
-        ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
+        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
         
         //when
         String success = "SUCCESS";
@@ -47,7 +47,7 @@ public class ExecutionManagerTest {
     @Test
     public void testRunnableExecute() {
         //given
-        ExecutionManager executionManager = Mangoo.TEST.getInstance(ExecutionManager.class);
+        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
         
         //then
         executionManager.execute(new TestRunnable());

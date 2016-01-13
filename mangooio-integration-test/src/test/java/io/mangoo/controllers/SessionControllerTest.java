@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Test;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 import io.mangoo.test.utils.Request;
 import io.mangoo.test.utils.Response;
 import io.undertow.util.StatusCodes;
@@ -22,7 +22,7 @@ public class SessionControllerTest {
     @Test
     public void testSessionCookie() {
         //when
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
         final Response response = Request.get("/session").execute();
 
         //then

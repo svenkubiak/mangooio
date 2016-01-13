@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 
@@ -36,7 +36,7 @@ public class WebSocketManagerTest {
     @Test
     public void testAddChannel() {
         //given
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
         when(channel.getUrl()).thenReturn("/websocket");
 
@@ -52,7 +52,7 @@ public class WebSocketManagerTest {
     @Test
     public void testRemoveChannel() {
         //given
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
         when(channel.getUrl()).thenReturn("/websocket");
 
@@ -68,8 +68,8 @@ public class WebSocketManagerTest {
     @Test
     public void testCloseChannel() throws Exception {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Application.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
@@ -104,8 +104,8 @@ public class WebSocketManagerTest {
     @Test
     public void testSendData() throws Exception {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
+        final Config config = Application.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
@@ -150,8 +150,8 @@ public class WebSocketManagerTest {
     @Test
     public void testSendDataWithValidAuthentication() throws Exception {
         //given
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final Config config = Application.getInstance(Config.class);
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
@@ -200,8 +200,8 @@ public class WebSocketManagerTest {
     @Test
     public void testSendDataWithInvalidAuthentication() throws Exception {
         //given
-        final WebSocketManager webSocketManager = Mangoo.TEST.getInstance(WebSocketManager.class);
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final Config config = Application.getInstance(Config.class);
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();

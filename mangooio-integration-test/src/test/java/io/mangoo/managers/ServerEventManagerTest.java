@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
 /**
@@ -36,7 +36,7 @@ public class ServerEventManagerTest {
     @Test
     public void testAddConnection() {
         //given
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
         when(serverSentEventConnection.getQueryString()).thenReturn(null);
@@ -52,7 +52,7 @@ public class ServerEventManagerTest {
     @Test
     public void testRemoveConnection() {
         //given
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
         serverEventManager.addConnection(serverSentEventConnection);
@@ -68,8 +68,8 @@ public class ServerEventManagerTest {
     @Test
     public void testCloseConnection() throws InterruptedException {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
+        final Config config = Application.getInstance(Config.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
 
         //when
         final WebTarget target = ClientBuilder.newBuilder()
@@ -91,8 +91,8 @@ public class ServerEventManagerTest {
     @Test
     public void testSendData() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data FTW!";
         eventData = null;
 
@@ -123,8 +123,8 @@ public class ServerEventManagerTest {
     @Test
     public void testSendDataWithValidAuthentication() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
@@ -157,8 +157,8 @@ public class ServerEventManagerTest {
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Mangoo.TEST.getInstance(ServerEventManager.class);
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
 
         //when

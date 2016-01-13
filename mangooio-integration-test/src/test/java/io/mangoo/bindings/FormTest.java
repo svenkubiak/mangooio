@@ -11,8 +11,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class FormTest {
     private static final String FOO = "foo";
 
     private Form getNewForm() {
-        Form form = Mangoo.TEST.getInjector().getInstance(Form.class);
+        Form form = Application.getInstance(Form.class);
         form.setSubmitted(true);
 
         return form;

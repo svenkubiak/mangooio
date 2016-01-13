@@ -1,10 +1,14 @@
 package io.mangoo.test;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
+
+import io.mangoo.core.Application;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
 
 /**
  *
@@ -15,8 +19,9 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 @SuiteClasses({"**/*Test.class"})
 public class MangooRunner {
 
-    @Before
-    public final void mangooStart() {
-        Mangoo.TEST.start();
+    @BeforeClass
+    public static final void mangooStart() {
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        Application.main();
     }
 }

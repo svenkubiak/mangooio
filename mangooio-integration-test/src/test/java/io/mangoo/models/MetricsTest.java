@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 
 /**
  * 
@@ -17,7 +17,7 @@ public class MetricsTest {
     @Test
     public void testIncrement() {
         //given
-        Metrics metrics = Mangoo.TEST.getInstance(Metrics.class);
+        Metrics metrics = Application.getInstance(Metrics.class);
         
         //when
         metrics.inc(418);

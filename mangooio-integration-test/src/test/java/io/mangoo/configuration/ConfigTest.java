@@ -8,14 +8,14 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
-import io.mangoo.test.Mangoo;
 
 public class ConfigTest {
     @Test
     public void testGetString() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getString(Key.APPLICATION_PORT), equalTo("10808"));
@@ -25,7 +25,7 @@ public class ConfigTest {
     @Test
     public void testGetInt() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getInt(Key.APPLICATION_PORT), equalTo(10808));
@@ -35,7 +35,7 @@ public class ConfigTest {
     @Test
     public void testGetBoolean() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getBoolean(Key.APPLICATION_ADMIN_HEALTH), equalTo(true));
@@ -45,7 +45,7 @@ public class ConfigTest {
     @Test
     public void testGetLong() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getLong(Key.APPLICATION_PORT), equalTo(10808L));
@@ -55,7 +55,7 @@ public class ConfigTest {
     @Test
     public void testGetStringDefaultValue() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getString("foo", "bar"), equalTo("bar"));
@@ -64,7 +64,7 @@ public class ConfigTest {
     @Test
     public void testGetIntDefaultValue() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getInt("foo", 42), equalTo(42));
@@ -73,7 +73,7 @@ public class ConfigTest {
     @Test
     public void testGetBooleanDefaultValue() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getBoolean("foo", true), equalTo(true));
@@ -83,7 +83,7 @@ public class ConfigTest {
     @Test
     public void testGetLongDefaultValue() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getLong("foo", 42), equalTo(42L));
@@ -92,7 +92,7 @@ public class ConfigTest {
     @Test
     public void testGetHasValidSecret() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.hasValidSecret(), equalTo(true));
@@ -101,7 +101,7 @@ public class ConfigTest {
     @Test
     public void testGetAllConfigurationValues() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getAllConfigurations(), not(nullValue()));
@@ -111,7 +111,7 @@ public class ConfigTest {
     @Test
     public void testEnvironmentValues() {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getString("smtp.username"), equalTo(""));

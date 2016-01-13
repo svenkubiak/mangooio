@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 
+import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Validator;
-import io.mangoo.test.Mangoo;
 
 /**
  * 
@@ -37,7 +37,7 @@ public class ValidatorTest {
     @Test
     public void testDefaultErrorMessages() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(URL, "");
@@ -84,7 +84,7 @@ public class ValidatorTest {
     @Test
     public void testCustomErrorMessages() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(URL, "");
@@ -133,7 +133,7 @@ public class ValidatorTest {
     @Test
     public void testValidRequired() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(REQUIRED, REQUIRED);
@@ -146,7 +146,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidRequired() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(REQUIRED, "");
@@ -160,7 +160,7 @@ public class ValidatorTest {
     @Test
     public void testValidMinString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MIN, "abcdef");
@@ -174,7 +174,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidMinString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MIN, "abcdef");
@@ -188,7 +188,7 @@ public class ValidatorTest {
     @Test
     public void testValidMinNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MIN, "6");
@@ -202,7 +202,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidMinNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MIN, "4");
@@ -216,7 +216,7 @@ public class ValidatorTest {
     @Test
     public void testValidMaxString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MAX, "abcdef");
@@ -230,7 +230,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidMaxString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MAX, "abcdef");
@@ -244,7 +244,7 @@ public class ValidatorTest {
     @Test
     public void testValidMaxNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
             
         //when
         validator.add(MAX, "3");
@@ -258,7 +258,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidMaxNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(MAX, "4");
@@ -272,7 +272,7 @@ public class ValidatorTest {
     @Test
     public void testValidExactMatch() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(EXACT_MATCH, EXACT_MATCH);
@@ -286,7 +286,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidExactMatch() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(MATCH, MATCH);
@@ -301,7 +301,7 @@ public class ValidatorTest {
     @Test
     public void testValidMatch() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MATCH, MATCH);
@@ -316,7 +316,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidMatch() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(MATCH, MATCH);
@@ -330,7 +330,7 @@ public class ValidatorTest {
     @Test
     public void testValidEmail() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(EMAIL, "foo@bar.com");
@@ -344,7 +344,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidEmail() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(EMAIL, "foo @");
@@ -358,7 +358,7 @@ public class ValidatorTest {
     @Test
     public void testValidIpv4Address() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(IPV4, "192.168.2.1");
@@ -372,7 +372,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidIpv4Address() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(IPV4, "192.189.383.122");
@@ -386,7 +386,7 @@ public class ValidatorTest {
     @Test
     public void testValidIpv6Address() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(IPV6, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344");
@@ -400,7 +400,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidIpv6Address() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(IPV6, "1f::::0");
@@ -414,7 +414,7 @@ public class ValidatorTest {
     @Test
     public void testValidRangeString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(RANGE, "abcdefg");
@@ -428,7 +428,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidRangeString() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(RANGE, "abcdef");
@@ -442,7 +442,7 @@ public class ValidatorTest {
     @Test
     public void testValidRangeNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(RANGE, "6");
@@ -456,7 +456,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidRangeNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(RANGE, "4");
@@ -470,7 +470,7 @@ public class ValidatorTest {
     @Test
     public void testValidRegex() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
 
         //when
         validator.add(REGEX, "abc");
@@ -484,7 +484,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidRegex() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(REGEX, "abc03");
@@ -498,7 +498,7 @@ public class ValidatorTest {
     @Test
     public void testValidUrl() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(URL, "https://mangoo.io");
@@ -512,7 +512,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidUrl() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(URL, "https:/mangoo.io");
@@ -526,7 +526,7 @@ public class ValidatorTest {
     @Test
     public void testValidNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(NUMERIC, "2342");
@@ -540,7 +540,7 @@ public class ValidatorTest {
     @Test
     public void testInvalidNumeric() {
         //given
-        Validator validator = Mangoo.TEST.getInstance(Validator.class);
+        Validator validator = Application.getInstance(Validator.class);
         
         //when
         validator.add(NUMERIC, "asjcn");

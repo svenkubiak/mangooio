@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 
 /**
  *
@@ -23,7 +23,7 @@ public class CookieParserTest {
 
     @Before
     public void init() {
-        this.secret = Mangoo.TEST.getInstance(Config.class).getApplicationSecret();
+        this.secret = Application.getInstance(Config.class).getApplicationSecret();
     }
 
     @Test

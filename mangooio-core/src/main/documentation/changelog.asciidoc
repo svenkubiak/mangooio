@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* Removed Mangoo.TEST enum in test utilities
 * Removed cache provider
 * Updated documentation
 

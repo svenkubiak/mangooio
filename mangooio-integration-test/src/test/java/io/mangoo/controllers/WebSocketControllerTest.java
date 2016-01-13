@@ -12,7 +12,7 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.junit.Test;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.test.Mangoo;
+import io.mangoo.core.Application;
 
 /**
  *
@@ -24,7 +24,7 @@ public class WebSocketControllerTest {
     @Test
     public void testWebSocketConnection() throws Exception {
         //given
-        final Config config = Mangoo.TEST.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
         final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
         final WebSocketClientFactory factory = new WebSocketClientFactory();
 

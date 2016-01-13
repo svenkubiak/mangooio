@@ -33,10 +33,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.test.Mangoo;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -72,7 +72,7 @@ public class Response {
     }
 
     private void init () {
-        Config config = Mangoo.TEST.getInstance(Config.class);
+        Config config = Application.getInstance(Config.class);
 
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
