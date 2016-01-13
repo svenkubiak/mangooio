@@ -9,7 +9,6 @@
 * Sonar refactorings
 * Updated documentation
 
-
 == Version 2.2.0
 
 [small]#Released at 10.01.2016#
