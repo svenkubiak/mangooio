@@ -48,6 +48,8 @@ import io.undertow.util.Methods;
  */
 public class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
+    private final CookieStore cookieStore = new BasicCookieStore();
+    private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private String responseUrl;
     private String responseUri;
     private String responseRequestBody;
@@ -57,8 +59,6 @@ public class Response {
     private ContentType responseContentType;
     private HttpClientBuilder httpClientBuilder;
     private List<NameValuePair> postParameter = new ArrayList<>();
-    private final CookieStore cookieStore = new BasicCookieStore();
-    private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private boolean responseDisbaleRedirects;
     
     public Response (String uri, HttpString method) {
