@@ -6,6 +6,7 @@
 
 * Removed Mangoo.TEST enum in test utilities
 * Removed cache provider
+* Sonar refactorings
 * Updated documentation
 
 
