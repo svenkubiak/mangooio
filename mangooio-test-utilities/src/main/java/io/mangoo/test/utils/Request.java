@@ -10,7 +10,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class Request {
-    private static final String PRECONTIION_ERROR = "URI can not be null";
+    private static final String URI_ERROR = "URI can not be null";
 
     private Request() {
     }
@@ -22,7 +22,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response get(String uri) {
-        Objects.requireNonNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
         
         return new Response(uri, Methods.GET);
     }
@@ -34,7 +34,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response post(String uri) {
-        Objects.requireNonNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
         
         return new Response(uri, Methods.POST);
     }
@@ -46,7 +46,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response put(String uri) {
-        Objects.requireNonNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
         
         return new Response(uri, Methods.PUT);
     }
@@ -58,7 +58,7 @@ public final class Request {
      * @return A MangooResponse
      */
     public static Response delete(String uri) {
-        Objects.requireNonNull(uri, PRECONTIION_ERROR);
+        Objects.requireNonNull(uri, URI_ERROR);
         
         return new Response(uri, Methods.DELETE);
     }
