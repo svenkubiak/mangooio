@@ -127,6 +127,14 @@ public class Request implements MangooValidator {
     }
 
     /**
+     * Retrieves a the clients accepted languages
+     * @author William Dunne
+     * @return the string value of the clients accepted languages
+     */
+    public String getAcceptLanguage() {
+        return this.httpServerExchange.getRequestHeaders().get("Accept-Language").element();
+    }
+    /**
      * Retrieves a specific header value by its name
      *
      * @param headerName The name of the header to retrieve
