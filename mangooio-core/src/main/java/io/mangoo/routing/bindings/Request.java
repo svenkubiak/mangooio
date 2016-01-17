@@ -15,6 +15,7 @@ import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
+import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 
 /**
@@ -132,7 +133,7 @@ public class Request implements MangooValidator {
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
-        return this.httpServerExchange.getRequestHeaders().get("Accept-Language").element();
+        return this.getHeader(Headers.ACCEPT_LANGUAGE);
     }
     /**
      * Retrieves a specific header value by its name
