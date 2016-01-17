@@ -4,7 +4,7 @@ package io.mangoo.enums;
  * Key strings for reading configuration properties
  *
  * @author svenkubiak
- *
+ * @author William Dunne
  */
 public enum Key {
     APPLICATION_CONFIG("application.config"),
@@ -47,6 +47,7 @@ public enum Key {
     COOKIE_VERSION("cookie.version"),
     ERROR("error"),
     WARNING("warning"),
+    LOCALE_COOKIE_NAME("i18n.cookie.name"),
     SUCCESS("success"),
     VALIDATION_REQUIRED("validation.required"),
     VALIDATION_MIN("validation.min"),

@@ -381,6 +381,14 @@ public class Config {
     }
 
     /**
+     * @return i18n.cookie.nme from application.yaml or default value if undefined
+     * @author William Dunne
+     */
+    public String getLocaleCookieName() {
+        return getString(Key.LOCALE_COOKIE_NAME, Default.LOCALE_COOKIE_NAME.toString());
+    }
+
+    /**
      * @return cookie.expires from application.yaml or default value if undefined
      */
     public long getSessionExpires() {

@@ -4,6 +4,7 @@ package io.mangoo.enums;
  * Default application values
  *
  * @author svenkubiak
+ * @author William Dunne
  *
  */
 public enum Default {
@@ -83,7 +84,8 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.Cache");
+    CACHE_CLASS("io.mangoo.cache.Cache"),
+    LOCALE_COOKIE_NAME("lang");
 
     private final String value;
 

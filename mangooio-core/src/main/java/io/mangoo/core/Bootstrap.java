@@ -47,6 +47,7 @@ import java.util.Map.Entry;
  * Convenient methods for everything to start up a mangoo I/O application
  *
  * @author svenkubiak
+ * @author William Dunne
  *
  */
 public class Bootstrap {
