@@ -11,22 +11,22 @@ mangoo I/O
 
 mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-Development of mangoo I/O was started in mid 2015 out of the interest on
-how difficult it would be to create an intuitiv, developer friendly,
+Development of mangoo I/O was started in mid 2015 out of an interest in
+how difficult it would be to create an intuitive, developer friendly,
 full stack java web framework from scratch. After the fresh new breeze of
 java development for the Web with the [Play
 Framwork - Version 1](https://www.playframework.com), contributions to the
-[Ninja Framework](http://www.ninjaframework.org) and having seen a lot of
+[Ninja Framework](http://www.ninjaframework.org), and having seen a lot of
 cumbersome "Enterprise" Applications, I thought it was time for yet
 another full stack java framework.
 
-The foundation of mangoo I/O is the very performant
+The foundation of mangoo I/O is the very performant, the
 [Undertow](http://undertow.io) web server from JBoss. On top of that,
 standard, production ready java libraries are used - no reinventing of the
 wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
 it is based on non-blocking I/O in the form of
 [XNIO](http://xnio.jboss.org). And although Undertow does support the
-servlet API, one is not bound to use it in any way. Giving a java developer
+servlet API, one is not bound to use it in any way. This gives the developer
 the opportunity to work fully stateless.
 
 mangoo I/O is highly inspired by the [Ninja
