@@ -1,6 +1,6 @@
 = Changelog
 
-== Version 2.2.1
+== Version 2.3.0
 
 [small]#Released at xx.xx.xxxx#
 
@@ -9,6 +9,8 @@
 * Refactored LocaleHandler
 * Sonar refactorings
 * Updated documentation
+* Version bumps (svenkubiak)
+** mockito 2.0.36-Beta -> 2.0.38-Beta
 
 == Version 2.2.0
 
