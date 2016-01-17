@@ -151,7 +151,7 @@ public class Bootstrap {
                                 if (mappings.length == 2) {
                                     final String [] classMethod = mappings[1].split("\\.");
                                     if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(this.config.getControllerPackage()+ '.' + classMethod[0].trim()));
+                                        route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
                                             String controllerMethod = classMethod[1].trim();
                                             if (methodExists(controllerMethod, route.getControllerClass())) {
