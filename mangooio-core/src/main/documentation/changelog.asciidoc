@@ -6,11 +6,11 @@
 
 * https://github.com/svenkubiak/mangooio/issues/120[#120] Added getAcceptLangauge to Request (MrDunne)
 * https://github.com/svenkubiak/mangooio/issues/121[#121] Updated readme (MrDunne)
-* Removed Mangoo.TEST enum in test utilities
-* Removed cache provider
-* Refactored LocaleHandler
-* Sonar refactorings
-* Updated documentation
+* Removed Mangoo.TEST enum in test utilities (svenkubiak)
+* Removed cache provider (svenkubiak)
+* Refactored LocaleHandler (svenkubiak)
+* Sonar refactorings (svenkubiak)
+* Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
 ** mockito 2.0.36-Beta -> 2.0.38-Beta
 ** dsiutils 2.2.5 -> 2.2.6
