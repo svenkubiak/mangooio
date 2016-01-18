@@ -7,6 +7,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.google.common.base.Joiner;
 
 import io.mangoo.authentication.Authentication;
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.bindings.Flash;
@@ -23,6 +25,7 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class OutboundCookiesHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
     private RequestAttachment requestAttachment;
 
     @Override
@@ -44,11 +47,11 @@ public class OutboundCookiesHandler implements HttpHandler {
     private void setSessionCookie(HttpServerExchange exchange, Session session) {
         if (session != null && session.hasChanges()) {
             final String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(session.getValues());
-            final String version = this.requestAttachment.getConfig().getCookieVersion();
+            final String version = CONFIG.getCookieVersion();
             final String authenticityToken = session.getAuthenticityToken();
             final LocalDateTime expires = session.getExpires();
             final StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + this.requestAttachment.getConfig().getApplicationSecret()))
+                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + CONFIG.getApplicationSecret()))
                     .append(Default.DELIMITER.toString())
                     .append(authenticityToken)
                     .append(Default.DELIMITER.toString())
@@ -59,14 +62,14 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .append(data);
 
             String value = buffer.toString();
-            if (this.requestAttachment.getConfig().isSessionCookieEncrypt()) {
+            if (CONFIG.isSessionCookieEncrypt()) {
                 value = this.requestAttachment.getCrypto().encrypt(value);
             }
 
             final Cookie cookie = CookieBuilder.create()
-                .name(this.requestAttachment.getConfig().getSessionCookieName())
+                .name(CONFIG.getSessionCookieName())
                 .value(value)
-                .secure(this.requestAttachment.getConfig().isSessionCookieSecure())
+                .secure(CONFIG.isSessionCookieSecure())
                 .httpOnly(true)
                 .expires(expires)
                 .build();
@@ -83,21 +86,21 @@ public class OutboundCookiesHandler implements HttpHandler {
     private void setAuthenticationCookie(HttpServerExchange exchange, Authentication authentication) {
         if (authentication != null && authentication.hasAuthenticatedUser()) {
             Cookie cookie;
-            final String cookieName = this.requestAttachment.getConfig().getAuthenticationCookieName();
+            final String cookieName = CONFIG.getAuthenticationCookieName();
             if (authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
-                cookie.setSecure(this.requestAttachment.getConfig().isAuthenticationCookieSecure());
+                cookie.setSecure(CONFIG.isAuthenticationCookieSecure());
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
                 final String authenticatedUser = authentication.getAuthenticatedUser();
-                final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusSeconds(this.requestAttachment.getConfig().getAuthenticationRememberExpires()) : authentication.getExpires();
-                final String version = this.requestAttachment.getConfig().getAuthCookieVersion();
+                final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
+                final String version = CONFIG.getAuthCookieVersion();
 
                 final StringBuilder buffer = new StringBuilder()
-                        .append(DigestUtils.sha512Hex(authenticatedUser + expires + version + this.requestAttachment.getConfig().getApplicationSecret()))
+                        .append(DigestUtils.sha512Hex(authenticatedUser + expires + version + CONFIG.getApplicationSecret()))
                         .append(Default.DELIMITER.toString())
                         .append(expires)
                         .append(Default.DELIMITER.toString())
@@ -106,14 +109,14 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .append(authenticatedUser);
 
                 String value = buffer.toString();
-                if (this.requestAttachment.getConfig().isAuthenticationCookieEncrypt()) {
+                if (CONFIG.isAuthenticationCookieEncrypt()) {
                     value = this.requestAttachment.getCrypto().encrypt(value);
                 }
 
                 cookie = CookieBuilder.create()
                         .name(cookieName)
                         .value(value)
-                        .secure(this.requestAttachment.getConfig().isAuthenticationCookieSecure())
+                        .secure(CONFIG.isAuthenticationCookieSecure())
                         .httpOnly(true)
                         .expires(expires)
                         .build();
@@ -133,18 +136,18 @@ public class OutboundCookiesHandler implements HttpHandler {
             final String values = Joiner.on("&").withKeyValueSeparator(":").join(flash.getValues());
 
             final Cookie cookie = CookieBuilder.create()
-                    .name(this.requestAttachment.getConfig().getFlashCookieName())
+                    .name(CONFIG.getFlashCookieName())
                     .value(values)
-                    .secure(this.requestAttachment.getConfig().isFlashCookieSecure())
+                    .secure(CONFIG.isFlashCookieSecure())
                     .httpOnly(true)
                     .build();
 
             exchange.setResponseCookie(cookie);
         } else {
-            final Cookie cookie = exchange.getRequestCookies().get(this.requestAttachment.getConfig().getFlashCookieName());
+            final Cookie cookie = exchange.getRequestCookies().get(CONFIG.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
-                .setSecure(this.requestAttachment.getConfig().isFlashCookieSecure())
+                .setSecure(CONFIG.isFlashCookieSecure())
                 .setPath("/")
                 .setMaxAge(0);
 

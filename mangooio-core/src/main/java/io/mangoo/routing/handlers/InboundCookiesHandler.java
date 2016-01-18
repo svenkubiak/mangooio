@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Splitter;
 
 import io.mangoo.authentication.Authentication;
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
@@ -25,6 +27,7 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class InboundCookiesHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
     private RequestAttachment requestAttachment;
 
@@ -48,10 +51,7 @@ public class InboundCookiesHandler implements HttpHandler {
         Session session;
 
         final CookieParser cookieParser = CookieParser
-                .create(exchange,
-                        this.requestAttachment.getConfig().getSessionCookieName(),
-                        this.requestAttachment.getConfig().getApplicationSecret(),
-                        this.requestAttachment.getConfig().isSessionCookieEncrypt());
+                .create(exchange, CONFIG.getSessionCookieName(), CONFIG.getApplicationSecret(), CONFIG.isSessionCookieEncrypt());
 
         if (cookieParser.hasValidSessionCookie()) {
             session = new Session(cookieParser.getSessionValues(),
@@ -60,7 +60,7 @@ public class InboundCookiesHandler implements HttpHandler {
         } else {
             session = new Session(new HashMap<>(),
                     RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH),
-                    LocalDateTime.now().plusSeconds(this.requestAttachment.getConfig().getSessionExpires()));
+                    LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
         }
 
 
@@ -76,14 +76,12 @@ public class InboundCookiesHandler implements HttpHandler {
         Authentication authentication;
 
         final CookieParser cookieParser = CookieParser
-                .create(exchange,
-                        this.requestAttachment.getConfig().getAuthenticationCookieName(),
-                        this.requestAttachment.getConfig().getApplicationSecret(), this.requestAttachment.getConfig().isAuthenticationCookieEncrypt());
+                .create(exchange,CONFIG.getAuthenticationCookieName(),CONFIG.getApplicationSecret(), CONFIG.isAuthenticationCookieEncrypt());
 
         if (cookieParser.hasValidAuthenticationCookie()) {
             authentication = new Authentication(cookieParser.getExpiresDate(), cookieParser.getAuthenticatedUser());
         } else {
-            authentication = new Authentication(LocalDateTime.now().plusSeconds(this.requestAttachment.getConfig().getAuthenticationExpires()), null);
+            authentication = new Authentication(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()), null);
         }
 
         return authentication;
@@ -96,7 +94,7 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     private Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final Cookie cookie = exchange.getRequestCookies().get(this.requestAttachment.getConfig().getFlashCookieName());
+        final Cookie cookie = exchange.getRequestCookies().get(CONFIG.getFlashCookieName());
         if (cookie != null){
             final String cookieValue = cookie.getValue();
             if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {

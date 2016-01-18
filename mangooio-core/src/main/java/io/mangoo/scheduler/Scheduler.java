@@ -17,7 +17,6 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
@@ -32,14 +31,12 @@ import io.mangoo.enums.Default;
  */
 @Singleton
 public class Scheduler {
+    private static final Config CONFIG = Application.getConfig();
     private static final Logger LOG = LogManager.getLogger(Scheduler.class);
     private org.quartz.Scheduler quartzScheduler;
 
-    @Inject
-    public Scheduler(Config config) {
-        Objects.requireNonNull(config, "config can not be null");
-
-        config.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
+    public Scheduler() {
+        CONFIG.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
             if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
                 System.setProperty(entry.getKey(), entry.getValue());
             }

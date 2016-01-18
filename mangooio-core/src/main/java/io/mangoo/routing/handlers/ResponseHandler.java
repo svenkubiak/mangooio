@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.routing.RequestAttachment;
@@ -21,6 +23,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
     private RequestAttachment requestAttachment;
 
     @Override
@@ -102,7 +105,7 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
 
-        if (this.requestAttachment.getConfig().isTimerEnabled()) {
+        if (CONFIG.isTimerEnabled()) {
             exchange.getResponseHeaders().put(Header.X_RESPONSE_TIME.toHttpString(), this.requestAttachment.getResponseTime() + " ms");
         }
 

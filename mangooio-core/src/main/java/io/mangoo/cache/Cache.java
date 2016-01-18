@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
@@ -29,19 +29,19 @@ import io.mangoo.enums.Key;
 @Singleton
 public class Cache {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
+    private static final Config CONFIG = Application.getConfig();
     private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
     private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
     private final com.google.common.cache.Cache<String, Object> guavaCache;
 
-    @Inject
-    public Cache(Config config) {
-        Objects.requireNonNull(config, "config can not be null");
+    public Cache() {
+        Objects.requireNonNull(CONFIG, "CONFIG can not be null");
 
         final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-                .maximumSize(config.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()));
+                .maximumSize(CONFIG.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()));
         
-        String cacheEviction = config.getString(Key.CACHE_EVICTION, Default.CACHE_EXPIRES.toString());
-        int cacheExpires = config.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES_ACCESS.toInt());
+        String cacheEviction = CONFIG.getString(Key.CACHE_EVICTION, Default.CACHE_EXPIRES.toString());
+        int cacheExpires = CONFIG.getInt(Key.CACHE_EXPIRES, Default.CACHE_EXPIRES_ACCESS.toInt());
         
         if (("afterAccess").equalsIgnoreCase(cacheEviction)) {
             cacheBuilder.expireAfterAccess(cacheExpires, TimeUnit.SECONDS);
@@ -51,7 +51,7 @@ public class Cache {
             cacheBuilder.expireAfterAccess(cacheExpires, TimeUnit.SECONDS);
         }
 
-        if (config.getBoolean(Key.APPLICATION_ADMIN_CACHE)) {
+        if (CONFIG.getBoolean(Key.APPLICATION_ADMIN_CACHE)) {
             cacheBuilder.recordStats();
         }
 
