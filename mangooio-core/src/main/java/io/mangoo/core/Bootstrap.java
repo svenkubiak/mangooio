@@ -1,27 +1,19 @@
 package io.mangoo.core;
 
-import com.google.common.io.Resources;
-import com.google.inject.*;
-import io.mangoo.admin.AdminController;
-import io.mangoo.annotations.Schedule;
-import io.mangoo.configuration.Config;
-import io.mangoo.enums.*;
-import io.mangoo.enums.Key;
-import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.routing.Route;
-import io.mangoo.routing.Router;
-import io.mangoo.routing.handlers.*;
-import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.BootstrapUtils;
-import io.mangoo.utils.SchedulerUtils;
-import io.undertow.Handlers;
-import io.undertow.Undertow;
-import io.undertow.server.RoutingHandler;
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.resource.ClassPathResourceManager;
-import io.undertow.server.handlers.resource.ResourceHandler;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,20 +25,46 @@ import org.quartz.Trigger;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.Map.Entry;
+import com.google.common.io.Resources;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Stage;
+
+import io.mangoo.admin.AdminController;
+import io.mangoo.annotations.Schedule;
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.AdminRoute;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
+import io.mangoo.enums.RouteType;
+import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.routing.Route;
+import io.mangoo.routing.Router;
+import io.mangoo.routing.handlers.DispatcherHandler;
+import io.mangoo.routing.handlers.ExceptionHandler;
+import io.mangoo.routing.handlers.FallbackHandler;
+import io.mangoo.routing.handlers.ServerSentEventHandler;
+import io.mangoo.routing.handlers.WebSocketHandler;
+import io.mangoo.scheduler.Scheduler;
+import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.utils.SchedulerUtils;
+import io.undertow.Handlers;
+import io.undertow.Undertow;
+import io.undertow.server.RoutingHandler;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.resource.ClassPathResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
 
 /**
  * Convenient methods for everything to start up a mangoo I/O application
  *
  * @author svenkubiak
+ * @author William Dunne
  *
  */
 public class Bootstrap {
@@ -151,7 +169,7 @@ public class Bootstrap {
                                 if (mappings.length == 2) {
                                     final String [] classMethod = mappings[1].split("\\.");
                                     if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(this.config.getControllerPackage() + classMethod[0].trim()));
+                                        route.withClass(Class.forName(validPackage(this.config.getControllerPackage()) + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
                                             String controllerMethod = classMethod[1].trim();
                                             if (methodExists(controllerMethod, route.getControllerClass())) {
@@ -323,5 +341,12 @@ public class Bootstrap {
     
     public LocalDateTime getStart() {
         return this.start;
+    }
+    
+    private String validPackage(String package) {
+        if(!package.endsWith(".")) {
+            return package + '.';
+        }
+        return package;
     }
 }
