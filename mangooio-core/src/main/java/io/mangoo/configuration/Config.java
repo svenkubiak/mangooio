@@ -381,7 +381,7 @@ public class Config {
     }
 
     /**
-     * @return i18n.cookie.nme from application.yaml or default value if undefined
+     * @return i18n.cookie.name from application.yaml or default value if undefined
      * @author William Dunne
      */
     public String getLocaleCookieName() {
