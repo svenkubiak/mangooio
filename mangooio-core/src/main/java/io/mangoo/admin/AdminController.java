@@ -33,6 +33,7 @@ import io.mangoo.scheduler.Scheduler;
  */
 @FilterWith(AdminFilter.class)
 public class AdminController {
+    private static final Config CONFIG = Application.getConfig();
     private static final int MB = 1024*1024;
     private final Map<String, String> properties = new HashMap<>();
     
@@ -62,7 +63,7 @@ public class AdminController {
     }
 
     public Response config() {
-        Map<String, String> configurations = Application.getInstance(Config.class).getAllConfigurations();
+        Map<String, String> configurations = CONFIG.getAllConfigurations();
         configurations.remove(Key.APPLICATION_SECRET.toString());
 
         return Response.withOk()

@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/109[#109] Refactored Config (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/120[#120] Added getAcceptLangauge to Request (MrDunne)
 * https://github.com/svenkubiak/mangooio/issues/121[#121] Updated readme (MrDunne)
 * Removed Mangoo.TEST enum in test utilities (svenkubiak)

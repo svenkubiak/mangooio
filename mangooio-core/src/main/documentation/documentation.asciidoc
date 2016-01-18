@@ -325,11 +325,27 @@ application.minify.js
 application.minify.css
 ------------------------
 
-To access a configuration value, first inject the Config class.
+To access configuration values you have three options for retrieving the Config class.
+You can either inject the Config class via constructor or member variable. Or you can invoke
+the static helper method in the Application class - which is the recommended way.
 
+Injection via member variable
 ------------------------
 @Inject
 private Config config;
+------------------------
+
+Injection via constructor variable
+------------------------
+@Inject
+private MyClass(Config config) {
+    //do something
+}
+------------------------
+
+Static access via helper method
+------------------------
+private static final Config CONFIG = Application.getConfig();
 ------------------------
 
 You can access a configuration value, either by a given key or predefined defaults

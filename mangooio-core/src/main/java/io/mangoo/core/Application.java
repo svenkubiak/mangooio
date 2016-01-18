@@ -113,7 +113,7 @@ public final class Application {
         Objects.requireNonNull(mode, "cant't create config instance without application mode");
         
         if (config == null) {
-            config = new Config();
+            config = getInstance(Config.class);
         }
         
         return config;

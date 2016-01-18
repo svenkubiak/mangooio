@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.mangoo.authentication.Authentication;
-import io.mangoo.configuration.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
@@ -28,7 +27,6 @@ public class RequestAttachment {
     private String controllerClassName;
     private String controllerMethodName;
     private String body;
-    private Config config;
     private Method method;
     private Authentication authentication;
     private Session session;
@@ -58,11 +56,6 @@ public class RequestAttachment {
 
     public RequestAttachment withControllerMethodName(String controllerMethodName) {
         this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
-        return this;
-    }
-
-    public RequestAttachment withConfig(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
         return this;
     }
 
@@ -109,10 +102,6 @@ public class RequestAttachment {
     public RequestAttachment withRequestFilter(boolean hasRequestFilter) {
         this.requestFilter = hasRequestFilter;
         return this;
-    }
-
-    public Config getConfig() {
-        return this.config;
     }
 
     public Messages getMessages() {

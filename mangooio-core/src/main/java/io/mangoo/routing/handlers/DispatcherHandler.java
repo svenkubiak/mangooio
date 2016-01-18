@@ -37,6 +37,7 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class DispatcherHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
     private Method method;
     private final TemplateEngine templateEngine;
@@ -45,7 +46,6 @@ public class DispatcherHandler implements HttpHandler {
     private final MetricsListener metricsListener;
     private final Map<String, Class<?>> methodParameters;
     private final Class<?> controllerClass;
-    private final Config config;
     private final String controllerClassName;
     private final String controllerMethodName;
     private final int methodParametersCount;
@@ -66,10 +66,9 @@ public class DispatcherHandler implements HttpHandler {
         this.controllerClassName = controllerClass.getSimpleName();
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
-        this.config = Application.getInstance(Config.class);
         this.async = async;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.metrics = Application.getInstance(Config.class).isAdminMetricsEnabled();
+        this.metrics = CONFIG.isAdminMetricsEnabled();
 
         try {
             this.method = Application.getInstance(this.controllerClass)
@@ -103,8 +102,7 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withTemplateEngine(this.templateEngine)
-            .withCrypto(this.crypto)
-            .withConfig(this.config);
+            .withCrypto(this.crypto);
 
         exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
         nextHandler(exchange);
