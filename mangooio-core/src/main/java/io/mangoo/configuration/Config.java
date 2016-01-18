@@ -552,11 +552,7 @@ public class Config {
      * @return application.controller from application.yaml or default value if undefined
      */
     public String getControllerPackage() {
-        String controllerPackage = getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
-        if(!controllerPackage.endsWith(".")) {
-            return controllerPackage + '.';
-        }
-        return controllerPackage;
+        return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 
     /**
