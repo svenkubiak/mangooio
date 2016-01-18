@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -169,7 +170,7 @@ public class Bootstrap {
                                 if (mappings.length == 2) {
                                     final String [] classMethod = mappings[1].split("\\.");
                                     if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(validPackage(this.config.getControllerPackage()) + classMethod[0].trim()));
+                                        route.withClass(Class.forName(getValidPackage(this.config.getControllerPackage()) + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
                                             String controllerMethod = classMethod[1].trim();
                                             if (methodExists(controllerMethod, route.getControllerClass())) {
@@ -343,10 +344,13 @@ public class Bootstrap {
         return this.start;
     }
     
-    private String validPackage(String nPackage) {
-        if(!nPackage.endsWith(".")) {
-            return nPackage + '.';
+    private String getValidPackage(String packageName) {
+        Objects.requireNonNull(packageName, "package name can not be null");
+        
+        if (!packageName.endsWith(".")) {
+            return packageName + '.';
         }
-        return nPackage;
+        
+        return packageName;
     }
 }
