@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Main configuration class for all properties configured in application.yaml
  *
  * @author svenkubiak
+ * @author William Dunne
  *
  */
 @Singleton
