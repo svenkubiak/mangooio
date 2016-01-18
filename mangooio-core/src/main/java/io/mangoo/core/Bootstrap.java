@@ -343,10 +343,10 @@ public class Bootstrap {
         return this.start;
     }
     
-    private String validPackage(String package) {
-        if(!package.endsWith(".")) {
-            return package + '.';
+    private String validPackage(String nPackage) {
+        if(!nPackage.endsWith(".")) {
+            return nPackage + '.';
         }
-        return package;
+        return nPackage;
     }
 }
