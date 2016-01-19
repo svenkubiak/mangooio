@@ -53,7 +53,6 @@ import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
@@ -260,11 +259,9 @@ public class Bootstrap {
             this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
             this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
-            HttpHandler handler = Application.getInstance(ExceptionHandler.class);
-
             final Undertow server = Undertow.builder()
                     .addHttpListener(this.port, this.host)
-                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, handler))
+                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
                     .build();
 
             server.start();
