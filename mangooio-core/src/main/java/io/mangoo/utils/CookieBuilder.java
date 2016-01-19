@@ -160,9 +160,9 @@ public class CookieBuilder {
      * @author WilliamDunne
      * @param locale to use in cookie
      */
-    public void createLocale(Locale locale) {
+    public CookieBuilder createLocale() {
         this.cookieName = config.getLocaleCookieName();
-        this.cookieValue = locale.getISO3Language();
+        return this;
     }
 
     public Cookie build() {
