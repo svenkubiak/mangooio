@@ -108,11 +108,7 @@ public class InboundCookiesHandler implements HttpHandler {
             }
         }
 
-        if (flash == null) {
-            flash = new Flash();
-        }
-
-        return flash;
+        return flash == null ? new Flash() : flash;
     }
 
     /**
