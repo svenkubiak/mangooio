@@ -37,7 +37,7 @@ public class CookieBuilderTest {
                 .secure(true)
                 .httpOnly(true)
                 .build();
-
+        
         //then
         assertThat(cookie, not(nullValue()));
         assertThat("foo", equalTo(cookie.getName()));

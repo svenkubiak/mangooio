@@ -1,1 +1,0 @@
-${person.firstname};${person.lastname};${person.age}
