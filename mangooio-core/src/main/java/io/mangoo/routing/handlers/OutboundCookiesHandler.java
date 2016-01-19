@@ -164,6 +164,6 @@ public class OutboundCookiesHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new ResponseHandler().handleRequest(exchange);
+        Application.getInstance(ResponseHandler.class).handleRequest(exchange);
     }
 }

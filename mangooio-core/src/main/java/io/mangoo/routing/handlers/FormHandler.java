@@ -40,7 +40,7 @@ public class FormHandler implements HttpHandler {
      * @throws IOException
      */
     @SuppressWarnings("all")
-    private Form getForm(HttpServerExchange exchange) throws IOException {
+    protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
             final Builder builder = FormParserFactory.builder();
@@ -75,7 +75,7 @@ public class FormHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new RequestHandler().handleRequest(exchange);
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        Application.getInstance(RequestHandler.class).handleRequest(exchange);
     }
 }

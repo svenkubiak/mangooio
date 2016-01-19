@@ -133,6 +133,6 @@ public class DispatcherHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new LocaleHandler().handleRequest(exchange);
+        Application.getInstance(LocaleHandler.class).handleRequest(exchange);
     }
 }

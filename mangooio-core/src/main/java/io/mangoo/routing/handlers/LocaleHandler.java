@@ -48,6 +48,6 @@ public class LocaleHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new InboundCookiesHandler().handleRequest(exchange);
+        Application.getInstance(InboundCookiesHandler.class).handleRequest(exchange);
     }
 }
