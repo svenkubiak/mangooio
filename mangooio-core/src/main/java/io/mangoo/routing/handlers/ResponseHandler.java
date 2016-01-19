@@ -46,7 +46,7 @@ public class ResponseHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
+    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
         exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
     }
 
@@ -56,7 +56,7 @@ public class ResponseHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
      */
-    private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
+    protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
@@ -71,7 +71,7 @@ public class ResponseHandler implements HttpHandler {
      * @param response The Response object
      * @return The body from the response object or an empty body if etag matches NONE_MATCH header
      */
-    private String getResponseBody(HttpServerExchange exchange, Response response) {
+    protected String getResponseBody(HttpServerExchange exchange, Response response) {
         String responseBody = response.getBody();
         if (response.isETag()) {
             final String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
@@ -93,7 +93,7 @@ public class ResponseHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
      */
-    private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
+    protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
