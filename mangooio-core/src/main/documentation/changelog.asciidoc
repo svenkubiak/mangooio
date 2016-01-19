@@ -4,6 +4,7 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/118[#118] Refactored reuqest chaining for customer handlers (svenkubiak, MarkVink)
 * https://github.com/svenkubiak/mangooio/issues/122[#122] Fixed inconsistency configuration controller package (MrDunne)
 * https://github.com/svenkubiak/mangooio/issues/109[#109] Refactored Config (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/120[#120] Added getAcceptLangauge to Request (MrDunne)
