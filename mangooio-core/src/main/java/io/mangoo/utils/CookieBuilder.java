@@ -3,20 +3,26 @@ package io.mangoo.utils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Locale;
 
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
+
 /**
  *
  * @author svenkubiak
+ * @author WilliamDunne
  *
  */
 public class CookieBuilder {
+    private Config config = Application.getInstance(Config.class);
     private String cookieName = "";
     private String cookieValue = "";
     private String cookiePath = "/";
-    private String cookieDomain;
+    private String cookieDomain = config.getApplicationHost();
     private Integer cookieMaxAge;
     private LocalDateTime cookieExpires = LocalDateTime.now().plusDays(1);
     private boolean cookieDiscard;
@@ -147,6 +153,16 @@ public class CookieBuilder {
     public CookieBuilder httpOnly(boolean httpOnly) {
         this.cookieHttpOnly = httpOnly;
         return this;
+    }
+
+    /**
+     * Sets up the cookie for locale settings
+     * @author WilliamDunne
+     * @param locale to use in cookie
+     */
+    public void createLocale(Locale locale) {
+        this.cookieName = config.getLocaleCookieName();
+        this.cookieValue = locale.getISO3Language();
     }
 
     public Cookie build() {

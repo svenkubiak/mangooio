@@ -117,4 +117,11 @@ public class ConfigTest {
         assertThat(config.getString("smtp.username"), equalTo(""));
         assertThat(config.getString("smtp.port"), equalTo("3055"));
     }
+
+    @Test
+    public void testGetLocaleCookieName() {
+        final Config config = Application.getInstance(Config.class);
+
+        assertThat(config.getLocaleCookieName, equalTo("lang"));
+    }
 }
