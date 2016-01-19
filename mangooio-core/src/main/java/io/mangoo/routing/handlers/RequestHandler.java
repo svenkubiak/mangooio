@@ -18,7 +18,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.JsonUtils;
@@ -33,11 +33,11 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         this.requestAttachment.setBody(getRequestBody(exchange));
         this.requestAttachment.setRequest(getRequest(exchange));
 
@@ -46,7 +46,7 @@ public class RequestHandler implements HttpHandler {
 
         this.requestAttachment.setResponse(response);
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, this.requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, this.requestAttachment);
         nextHandler(exchange);
     }
 

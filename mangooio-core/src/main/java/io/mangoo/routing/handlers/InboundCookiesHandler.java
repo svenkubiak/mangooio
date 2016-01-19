@@ -12,7 +12,7 @@ import com.google.common.base.Splitter;
 import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CookieParser;
@@ -29,16 +29,16 @@ import io.undertow.server.handlers.Cookie;
 public class InboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         this.requestAttachment.setSession(getSessionCookie(exchange));
         this.requestAttachment.setAuthentication(getAuthenticationCookie(exchange));
         this.requestAttachment.setFlash(getFlashCookie(exchange));
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, this.requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, this.requestAttachment);
         nextHandler(exchange);
     }
 

@@ -9,7 +9,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -24,11 +24,11 @@ import io.undertow.util.StatusCodes;
  */
 public class ResponseHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         final Response response = this.requestAttachment.getResponse();
 
         if (response.isRedirect()) {

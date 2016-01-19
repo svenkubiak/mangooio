@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -24,7 +24,7 @@ public class LocaleHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
         Locale locale = Locale.forLanguageTag(CONFIG.getApplicationLanguage());
         

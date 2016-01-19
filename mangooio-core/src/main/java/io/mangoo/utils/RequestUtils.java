@@ -23,7 +23,7 @@ import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.oauth.OAuthProvider;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -40,7 +40,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public final class RequestUtils {
-    public static final AttachmentKey<RequestAttachment> REQUEST_ATTACHMENT = AttachmentKey.create(RequestAttachment.class);
+    public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
     private static final Config CONFIG = Application.getConfig();
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";

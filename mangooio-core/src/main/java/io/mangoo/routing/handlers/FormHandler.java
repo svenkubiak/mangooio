@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.google.common.base.Charsets;
 
 import io.mangoo.core.Application;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -25,10 +25,10 @@ public class FormHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         requestAttachment.setForm(getForm(exchange));
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, requestAttachment);
         nextHandler(exchange);
     }
 

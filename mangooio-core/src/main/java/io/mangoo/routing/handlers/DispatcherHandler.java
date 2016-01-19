@@ -14,7 +14,7 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
@@ -90,7 +90,7 @@ public class DispatcherHandler implements HttpHandler {
             exchange.addResponseCommitListener(this.metricsListener);
         }
 
-        final RequestAttachment requestAttachment = RequestAttachment.build()
+        final Attachment attachment = Attachment.build()
             .withControllerInstance(Application.getInstance(this.controllerClass))
             .withControllerClass(this.controllerClass)
             .withControllerClassName(this.controllerClassName)
@@ -104,7 +104,7 @@ public class DispatcherHandler implements HttpHandler {
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto);
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 
