@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Locale;
 
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
