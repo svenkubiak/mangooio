@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.mangoo.core.Application;
 import io.mangoo.routing.RequestAttachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -45,6 +46,6 @@ public class LocaleHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        new InboundCookiesHandler().handleRequest(exchange);
+        Application.getInstance(InboundCookiesHandler.class).handleRequest(exchange);
     }
 }

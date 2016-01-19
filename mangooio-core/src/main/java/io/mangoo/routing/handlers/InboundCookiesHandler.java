@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.Splitter;
 
 import io.mangoo.authentication.Authentication;
+import io.mangoo.core.Application;
 import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
@@ -125,6 +126,6 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        new FormHandler().handleRequest(exchange);
+        Application.getInstance(FormHandler.class).handleRequest(exchange);
     }
 }

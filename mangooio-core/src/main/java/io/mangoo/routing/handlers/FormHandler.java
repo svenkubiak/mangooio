@@ -76,6 +76,6 @@ public class FormHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        new RequestHandler().handleRequest(exchange);
+        Application.getInstance(RequestHandler.class).handleRequest(exchange);
     }
 }
