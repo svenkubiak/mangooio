@@ -47,7 +47,7 @@ public class LocaleHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(InboundCookiesHandler.class).handleRequest(exchange);
     }
 }
