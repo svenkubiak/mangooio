@@ -47,7 +47,7 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private Session getSessionCookie(HttpServerExchange exchange) {
+    protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session;
 
         final CookieParser cookieParser = CookieParser
@@ -63,7 +63,6 @@ public class InboundCookiesHandler implements HttpHandler {
                     LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
         }
 
-
         return session;
     }
 
@@ -72,7 +71,7 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private Authentication getAuthenticationCookie(HttpServerExchange exchange) {
+    protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication;
 
         final CookieParser cookieParser = CookieParser
@@ -92,7 +91,7 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private Flash getFlashCookie(HttpServerExchange exchange) {
+    protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
         final Cookie cookie = exchange.getRequestCookies().get(CONFIG.getFlashCookieName());
         if (cookie != null){
@@ -118,7 +117,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(FormHandler.class).handleRequest(exchange);
     }
 }
