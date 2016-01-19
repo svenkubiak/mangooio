@@ -1,0 +1,89 @@
+# Application configuration
+# 
+# This file defines all configuration values for a mangoo I/O application.
+# The default values are loaded by default and overwritten by environment specific
+# values if they are configured.
+#
+# Possible environments are test and dev.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+default:
+    application:
+        name       : TEST 
+        secret     : myvoiceismypassword
+        language   : en
+        host       : localhost
+        port       : 9898
+        timer      : true
+        minify:
+            js        : true
+            css       : true
+            jsfolder  : /javascripts
+            cssfolder : /stylesheets
+            gzipjs    : false
+            gzipcss   : false
+    cookie:
+       encrypt : true
+    auth:
+        redirect  : /login
+        cookie:
+            name    : TEST-AUTH
+            encrypt : false
+            expires : 3600
+    oauth:
+        twitter:
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=twitter      
+        google:
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=google 
+        facebook:
+            key       : ###
+            secret    : ###
+            callback  : http://localhost:50000/authenticate?oauth=facebook                            
+    cookie:
+        name       : TEST-SESSION
+        expires    : 86400
+        encryption : false
+    smtp:
+        host       : localhost
+        port       : 25
+        username   : foo
+        password   : bar
+        ssl        : false
+        
+test:
+    application:
+        port             : 10808
+        admin:
+              health     : true
+              config     : true
+              cache      : true
+              routes     : true
+              system     : true              
+              metrics    : true
+              memory     : true              
+              scheduler  : true
+              username   : admin
+              password   : c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec   
+    smtp:
+        port       : 3055
+        username   :        
+
+dev:
+    application:
+        port       : 50000
+        admin:
+              health     : true
+              config     : true
+              cache      : true
+              memory     : true              
+              system     : true                  
+              routes     : true
+              metrics    : true  
+              scheduler  : true   
+    smtp:
+        port       : 3125        

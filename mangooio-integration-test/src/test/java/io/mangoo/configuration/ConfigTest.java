@@ -11,6 +11,10 @@ import org.junit.Test;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
 
+/**
+ * @author svenkubiak
+ * @author WilliamDunne
+ */
 public class ConfigTest {
     @Test
     public void testGetString() {
@@ -122,6 +126,6 @@ public class ConfigTest {
     public void testGetLocaleCookieName() {
         final Config config = Application.getInstance(Config.class);
 
-        assertThat(config.getLocaleCookieName, equalTo("lang"));
+        assertThat(config.getLocaleCookieName(), equalTo("lang"));
     }
 }
