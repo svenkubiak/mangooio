@@ -37,6 +37,14 @@ public class CookieBuilder {
     }
 
     /**
+     * Sets up the cookie for locale settings
+     * @author WilliamDunne
+     */
+    public CookieBuilder createLocale() {
+        return new CookieBuilder().name(config.getLocaleCookieName());
+    }
+
+    /**
      * Sets the name of the cookie
      *
      * Default is ""
@@ -155,15 +163,7 @@ public class CookieBuilder {
         return this;
     }
 
-    /**
-     * Sets up the cookie for locale settings
-     * @author WilliamDunne
-     * @param locale to use in cookie
-     */
-    public CookieBuilder createLocale() {
-        this.cookieName = config.getLocaleCookieName();
-        return this;
-    }
+
 
     public Cookie build() {
         Cookie cookie = new CookieImpl(this.cookieName)
