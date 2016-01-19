@@ -278,6 +278,6 @@ public class RequestHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        new OutboundCookiesHandler().handleRequest(exchange);
+        Application.getInstance(OutboundCookiesHandler.class).handleRequest(exchange);
     }
 }

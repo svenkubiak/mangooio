@@ -7,6 +7,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.google.common.base.Joiner;
 
 import io.mangoo.authentication.Authentication;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.RequestAttachment;
 import io.mangoo.routing.bindings.Flash;
@@ -161,6 +162,6 @@ public class OutboundCookiesHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        new ResponseHandler().handleRequest(exchange);
+        Application.getInstance(ResponseHandler.class).handleRequest(exchange);
     }
 }
