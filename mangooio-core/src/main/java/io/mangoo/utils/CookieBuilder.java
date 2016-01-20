@@ -21,7 +21,7 @@ public class CookieBuilder {
     private String cookieName = "";
     private String cookieValue = "";
     private String cookiePath = "/";
-    private String cookieDomain = config.getApplicationHost();
+    private String cookieDomain = "";
     private Integer cookieMaxAge;
     private LocalDateTime cookieExpires = LocalDateTime.now().plusDays(1);
     private boolean cookieDiscard;
