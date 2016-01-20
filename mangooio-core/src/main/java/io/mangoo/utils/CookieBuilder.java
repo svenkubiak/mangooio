@@ -17,7 +17,6 @@ import io.mangoo.core.Application;
  *
  */
 public class CookieBuilder {
-    private Config config = Application.getInstance(Config.class);
     private String cookieName = "";
     private String cookieValue = "";
     private String cookiePath = "/";
@@ -40,7 +39,7 @@ public class CookieBuilder {
      * @author WilliamDunne
      */
     public CookieBuilder createLocale() {
-        return new CookieBuilder().name(config.getLocaleCookieName());
+        return new CookieBuilder().name(Application.getInstance(Config.class).getLocaleCookieName());
     }
 
     /**
