@@ -2595,14 +2595,14 @@ Hibernate Extension
 
 * https://github.com/svenkubiak/mangooio-hibernate-extension
 
-e-Mail Extension
+Mailer Extension
 
-* https://github.com/svenkubiak/mangooio-email-extension
+* https://github.com/svenkubiak/mangooio-mailer-extension
 
 If you have created and extension and want it to be listed here, just
-add your extension to the above list by editing the documentation.md
+add your extension to the above list by editing the documentation.asciidoc
 file and create a pull request on the GitHub repository. You can find the documentation file in mangooio-core at
-https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/site[/src/main/site/documentation.md].
+https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/documentation[/src/main/documentation/documentation.asciidoc].
 
 [appendix]
 == Configuration options
