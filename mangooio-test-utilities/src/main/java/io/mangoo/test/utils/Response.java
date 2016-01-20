@@ -172,6 +172,19 @@ public class Response {
     }
     
     /**
+     * Adds an additional cookie to the request
+     * 
+     * @param cookie The cookie of the header
+     * @return Response
+     */
+    public Response withCookie(Cookie cookie) {
+        Objects.requireNonNull(cookie, "cookie can not be null");
+        
+        this.cookieStore.addCookie(cookie);
+        return this;
+    }
+    
+    /**
      * Sets Basic HTTP Authentication the the request
      * 
      * @param username The username
@@ -302,7 +315,7 @@ public class Response {
      * @return The response cookie or an empty list
      */
     public List<Cookie> getCookies() {
-        return (this.cookieStore.getCookies() == null) ? new ArrayList<>() : this.cookieStore.getCookies();
+        return this.cookieStore.getCookies();
     }
     
     /**
