@@ -27,10 +27,10 @@ import io.undertow.server.HttpServerExchange;
  *
  * DispatcherHandler
  * LocalHandler
- * InCookiesHandler
+ * InboundCookiesHandler
  * FormHandler
  * RequestHandler
- * OutCookiesHandler
+ * OutboundCookiesHandler
  * ResponseHandler
  *
  * @author svenkubiak

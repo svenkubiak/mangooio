@@ -744,6 +744,55 @@ The error messages for the request use the same key as the form handling. Check
 the documentation on <<Form handling>> for more information on how to customize
 the specific error messages.
 
+== Request handling
+
+The heart of mangoo I/O (and probably of all web frameworks) is the handling of requests.
+As mangoo I/O is based on Undertow for serving request, this is done by so called handlers.
+mangoo I/O has a number of handlers which all perform a specific task when a request is served.
+The handlers are chained to each other from the first receive of a request until sending out the response.
+
+A DispatcherHandler is created at framework startup for each mapped controller from the routes.yaml
+file, waiting to receive a request. From the DispatcherHandler the request chain is as follows:
+
+[source,java]
+-------------------------------------------
+LocalHandler
+InboundCookiesHandler
+FormHandler
+RequestHandler
+OutboundCookiesHandler
+ResponseHandler
+-------------------------------------------
+
+By using Google Guice features you have the option to customized each handler and change the request chain
+for your own needs.
+
+To overwrite a handler, first bind the handler to you custom handler in your Modules class.
+
+[source,java]
+-------------------------------------------
+bind(LocaleHandler.class).to(MyLocaleHandler.class);
+-------------------------------------------
+
+In your custom handler you need to extend the handler class and overwrite the methods from the default
+handlers as you want.
+
+[source,java]
+-------------------------------------------
+public class MyLocaleHandler extends LocaleHandler {
+
+    @Override
+    public void handleRequest(HttpServerExchange exchange) throws Exception {
+		//do something different
+    }
+    
+    @Override
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        //call another handler than the default one
+    }
+}
+-------------------------------------------
+
 == Form handling
 
 To access a form submitted to a controller class, you can simply pass
