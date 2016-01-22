@@ -16,7 +16,6 @@ import io.mangoo.enums.Mode;
  *
  */
 public final class Application {
-    private static volatile Config config;
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
@@ -112,11 +111,7 @@ public final class Application {
     public static Config getConfig() {
         Objects.requireNonNull(mode, "cant't create config instance without application mode");
         
-        if (config == null) {
-            config = new Config();
-        }
-        
-        return config;
+        return getInstance(Config.class);
     }
 
     /**

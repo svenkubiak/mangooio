@@ -14,7 +14,6 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -62,7 +61,7 @@ public class AdminController {
     }
 
     public Response config() {
-        Map<String, String> configurations = Application.getInstance(Config.class).getAllConfigurations();
+        Map<String, String> configurations = Application.getConfig().getAllConfigurations();
         configurations.remove(Key.APPLICATION_SECRET.toString());
 
         return Response.withOk()

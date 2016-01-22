@@ -8,9 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.AdminRoute;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Template;
@@ -26,18 +26,13 @@ import io.undertow.util.Headers;
  *
  */
 public class AdminFilter implements MangooFilter {
-    private final Config config;
-
-    @Inject
-    public AdminFilter(Config config) {
-        this.config = Objects.requireNonNull(config,  "config can not be null");
-    }
-
+    private static final Config CONFIG = Application.getConfig();
+    
     @Override
     public Response execute(Request request, Response response) {
         final String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
         if (isURLEnabled(url)) {
-            if (config.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
+            if (CONFIG.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
                   return Response.withUnauthorized()
                           .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
                           .andEmptyBody()
@@ -76,8 +71,8 @@ public class AdminFilter implements MangooFilter {
 
         return StringUtils.isNotBlank(username) &&
                StringUtils.isNotBlank(password) &&
-               config.getAdminAuthenticationUser().equals(username) &&
-               config.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
+               CONFIG.getAdminAuthenticationUser().equals(username) &&
+               CONFIG.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
     }
 
     /**
@@ -96,28 +91,28 @@ public class AdminFilter implements MangooFilter {
         
         switch (AdminRoute.fromString(url)) {
         case ROUTES:
-            enabled = config.isAdminRoutesEnabled();
+            enabled = CONFIG.isAdminRoutesEnabled();
             break;
         case CONFIG:
-            enabled = config.isAdminConfigEnabled();
+            enabled = CONFIG.isAdminConfigEnabled();
             break;
         case HEALTH:
-            enabled = config.isAdminHealthEnabled();
+            enabled = CONFIG.isAdminHealthEnabled();
             break;
         case CACHE:
-            enabled = config.isAdminCacheEnabled();
+            enabled = CONFIG.isAdminCacheEnabled();
             break;
         case METRICS:
-            enabled = config.isAdminMetricsEnabled();
+            enabled = CONFIG.isAdminMetricsEnabled();
             break;
         case SCHEDULER:
-            enabled = config.isAdminSchedulerEnabled();
+            enabled = CONFIG.isAdminSchedulerEnabled();
             break;
         case SYSTEM:
-            enabled = config.isAdminSystemEnabled();
+            enabled = CONFIG.isAdminSystemEnabled();
             break;    
         case MEMORY:
-            enabled = config.isAdminMemoryEnabled();
+            enabled = CONFIG.isAdminMemoryEnabled();
             break;             
         default:
             enabled = false;

@@ -22,6 +22,8 @@ import io.undertow.util.Headers;
  *
  */
 public class BasicAuthenticationFilter implements MangooFilter {
+    private static final Config CONFIG = Application.getConfig();
+    
     @Override
     public Response execute(Request request, Response response) {
         String username = null;
@@ -41,7 +43,7 @@ public class BasicAuthenticationFilter implements MangooFilter {
 
         if (!Application.getInstance(MangooAuthenticator.class).validCredentials(username, password)) {
             return Response.withUnauthorized()
-                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=" + Application.getInstance(Config.class).getString(Key.APPLICATION_NAME))
+                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=" + CONFIG.getString(Key.APPLICATION_NAME))
                     .andEmptyBody()
                     .end();
         }

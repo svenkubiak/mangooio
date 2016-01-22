@@ -4,15 +4,20 @@
 
 [small]#Released at xx.xx.xxxx#
 
+* https://github.com/svenkubiak/mangooio/issues/118[#118] Refactored reuqest chaining for customer handlers (svenkubiak, MarkVink)
+* https://github.com/svenkubiak/mangooio/issues/122[#122] Fixed inconsistency configuration controller package (MrDunne)
+* https://github.com/svenkubiak/mangooio/issues/109[#109] Refactored Config (svenkubiak)
 * https://github.com/svenkubiak/mangooio/issues/120[#120] Added getAcceptLangauge to Request (MrDunne)
 * https://github.com/svenkubiak/mangooio/issues/121[#121] Updated readme (MrDunne)
-* Removed Mangoo.TEST enum in test utilities
-* Removed cache provider
-* Refactored LocaleHandler
-* Sonar refactorings
-* Updated documentation
+* Added an option to add a custom cookie in test utilities request method (svenkubiak)
+* Removed Mangoo.TEST enum in test utilities (svenkubiak)
+* Removed cache provider (svenkubiak)
+* Refactored LocaleHandler (svenkubiak)
+* Sonar refactorings (svenkubiak)
+* Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
-** mockito 2.0.36-Beta -> 2.0.38-Beta
+** undertow-core 1.3.12.Final -> 1.3.14.Final
+** mockito 2.0.36-Beta -> 2.0.39-Beta
 ** dsiutils 2.2.5 -> 2.2.6
 
 == Version 2.2.0

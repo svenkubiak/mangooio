@@ -17,10 +17,12 @@ import io.mangoo.routing.bindings.Request;
  *
  */
 public class AuthenticationFilter implements MangooFilter {
+    private static final Config CONFIG = Application.getConfig();
+    
     @Override
     public Response execute(Request request, Response response) {
         if (!request.getAuthentication().hasAuthenticatedUser()) {
-            String redirect = Application.getInstance(Config.class).getString(Key.AUTH_REDIRECT.toString());
+            String redirect = CONFIG.getString(Key.AUTH_REDIRECT.toString());
             if (StringUtils.isNotBlank(redirect)) {
                 return Response.withRedirect(redirect).end();
             } else {

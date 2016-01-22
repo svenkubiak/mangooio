@@ -18,7 +18,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.JsonUtils;
@@ -33,11 +33,11 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class RequestHandler implements HttpHandler {
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         this.requestAttachment.setBody(getRequestBody(exchange));
         this.requestAttachment.setRequest(getRequest(exchange));
 
@@ -46,7 +46,7 @@ public class RequestHandler implements HttpHandler {
 
         this.requestAttachment.setResponse(response);
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, this.requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, this.requestAttachment);
         nextHandler(exchange);
     }
 
@@ -55,7 +55,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private Request getRequest(HttpServerExchange exchange) {
+    protected Request getRequest(HttpServerExchange exchange) {
         final String authenticityToken = Optional.ofNullable(this.requestAttachment.getRequestParameter()
                 .get(Default.AUTHENTICITY_TOKEN.toString())).orElse(this.requestAttachment.getForm().get(Default.AUTHENTICITY_TOKEN.toString()));
         
@@ -75,7 +75,7 @@ public class RequestHandler implements HttpHandler {
      * @throws TemplateException
      * @throws IOException
      */
-    private Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException {
         //execute global request filter
         Response response = Response.withOk();
         if (this.requestAttachment.hasRequestFilter()) {
@@ -114,7 +114,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      * @throws TemplateException
      */
-    private Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
         Response invokedResponse;
 
         if (this.requestAttachment.getMethodParameters().isEmpty()) {
@@ -147,7 +147,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
-    private String getTemplatePath(Response response) {
+    protected String getTemplatePath(Response response) {
         return StringUtils.isBlank(response.getTemplate()) ? (this.requestAttachment.getControllerClassName() + "/" + RequestUtils.getTemplateName(this.requestAttachment.getControllerMethodName())) : response.getTemplate();
     }
 
@@ -159,7 +159,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
+    protected Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
         final Object [] convertedParameters = new Object[this.requestAttachment.getMethodParametersCount()];
 
         int index = 0;
@@ -234,7 +234,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    protected Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) {
             if (annotation.annotationType().equals(FilterWith.class)) {
                 final FilterWith filterWith = (FilterWith) annotation;
@@ -260,7 +260,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private String getRequestBody(HttpServerExchange exchange) throws IOException {
+    protected String getRequestBody(HttpServerExchange exchange) throws IOException {
         String body = "";
         if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
@@ -277,7 +277,7 @@ public class RequestHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new OutboundCookiesHandler().handleRequest(exchange);
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        Application.getInstance(OutboundCookiesHandler.class).handleRequest(exchange);
     }
 }

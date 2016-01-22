@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.mangoo.authentication.Authentication;
-import io.mangoo.configuration.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
@@ -19,7 +18,7 @@ import io.mangoo.templating.TemplateEngine;
  * @author svenkubiak
  *
  */
-public class RequestAttachment {
+public class Attachment {
     private final long start = System.currentTimeMillis();
     private int methodParametersCount;
     private Class<?> controllerClass;
@@ -28,7 +27,6 @@ public class RequestAttachment {
     private String controllerClassName;
     private String controllerMethodName;
     private String body;
-    private Config config;
     private Method method;
     private Authentication authentication;
     private Session session;
@@ -42,77 +40,68 @@ public class RequestAttachment {
     private TemplateEngine templateEngine;
     private boolean requestFilter;
 
-    public static RequestAttachment build() {
-        return new RequestAttachment();
+    public static Attachment build() {
+        return new Attachment();
     }
 
-    public RequestAttachment withControllerClass(Class<?> controllerClass) {
+    public Attachment withControllerClass(Class<?> controllerClass) {
         this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         return this;
     }
 
-    public RequestAttachment withControllerClassName(String controllerClassName) {
+    public Attachment withControllerClassName(String controllerClassName) {
         this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
         return this;
     }
 
-    public RequestAttachment withControllerMethodName(String controllerMethodName) {
+    public Attachment withControllerMethodName(String controllerMethodName) {
         this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
         return this;
     }
 
-    public RequestAttachment withConfig(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
-        return this;
-    }
-
-    public RequestAttachment withControllerInstance(Object controllerInstance) {
+    public Attachment withControllerInstance(Object controllerInstance) {
         this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
         return this;
     }
 
-    public RequestAttachment withCrypto(Crypto crypto) {
+    public Attachment withCrypto(Crypto crypto) {
         this.crypto = Objects.requireNonNull(crypto, "crypto can no be null");
         return this;
     }
 
-    public RequestAttachment withMethodParameters(Map<String, Class<?>> methodParameters) {
+    public Attachment withMethodParameters(Map<String, Class<?>> methodParameters) {
         this.methodParameters = Objects.requireNonNull(methodParameters, "methodParameters can no be null");
         return this;
     }
 
-    public RequestAttachment withMessages(Messages messages) {
+    public Attachment withMessages(Messages messages) {
         this.messages = Objects.requireNonNull(messages, "messages can no be null");
         return this;
     }
 
-    public RequestAttachment withTemplateEngine(TemplateEngine templateEngine) {
+    public Attachment withTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = Objects.requireNonNull(templateEngine, "templateEngine can no be null");
         return this;
     }
 
-    public RequestAttachment withRequestParameter(Map<String, String> requestParameter) {
+    public Attachment withRequestParameter(Map<String, String> requestParameter) {
         this.requestParameter = Objects.requireNonNull(requestParameter, "requestParameter can no be null");
         return this;
     }
 
-    public RequestAttachment withMethod(Method method) {
+    public Attachment withMethod(Method method) {
         this.method = Objects.requireNonNull(method, "method can no be null");
         return this;
     }
 
-    public RequestAttachment withMethodParameterCount(int methodParametersCount) {
+    public Attachment withMethodParameterCount(int methodParametersCount) {
         this.methodParametersCount = methodParametersCount;
         return this;
     }
 
-    public RequestAttachment withRequestFilter(boolean hasRequestFilter) {
+    public Attachment withRequestFilter(boolean hasRequestFilter) {
         this.requestFilter = hasRequestFilter;
         return this;
-    }
-
-    public Config getConfig() {
-        return this.config;
     }
 
     public Messages getMessages() {
