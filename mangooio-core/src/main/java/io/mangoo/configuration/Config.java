@@ -403,7 +403,7 @@ public class Config {
     }
 
     /**
-     * @return i18n.cookie.name from application.yaml or default value if undefined
+     * @return application.i18n.cookie.name from application.yaml or default value if undefined
      * @author William Dunne
      */
     public String getLocaleCookieName() {

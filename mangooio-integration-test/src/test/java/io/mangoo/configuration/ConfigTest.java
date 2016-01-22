@@ -120,8 +120,10 @@ public class ConfigTest {
 
     @Test
     public void testGetLocaleCookieName() {
+        //given
         final Config config = Application.getInstance(Config.class);
 
+        //then
         assertThat(config.getLocaleCookieName(), equalTo("lang"));
     }
 }
