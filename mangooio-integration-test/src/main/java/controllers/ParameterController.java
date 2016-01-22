@@ -54,7 +54,7 @@ public class ParameterController {
     public Response pathParam(String foo) {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
-    
+
     public Response localdate(LocalDate localDate) {
         return Response
                 .withOk()
