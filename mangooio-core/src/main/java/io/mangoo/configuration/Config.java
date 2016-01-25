@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Main configuration class for all properties configured in application.yaml
  *
  * @author svenkubiak
- * @author William Dunne
+ * @author williamdunne
  *
  */
 @Singleton
@@ -400,6 +400,14 @@ public class Config {
      */
     public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
+    }
+
+    /**
+     * @return application.i18n.cookie.name from application.yaml or default value if undefined
+     * @author William Dunne
+     */
+    public String getLocaleCookieName() {
+        return getString(Key.LOCALE_COOKIE_NAME, Default.LOCALE_COOKIE_NAME.toString());
     }
 
     /**

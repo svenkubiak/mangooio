@@ -2,6 +2,7 @@ package io.mangoo.routing.handlers;
 
 import java.util.Locale;
 
+import io.undertow.server.handlers.Cookie;
 import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.configuration.Config;
@@ -17,6 +18,7 @@ import io.undertow.util.LocaleUtils;
 /**
  *
  * @author svenkubiak
+ * @author williamdunne
  *
  */
 public class LocaleHandler implements HttpHandler {
@@ -26,14 +28,22 @@ public class LocaleHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
+        final Cookie localeCookie = exchange.getRequestCookies().getOrDefault(CONFIG.getLocaleCookieName(), null);
+
         Locale locale = Locale.forLanguageTag(CONFIG.getApplicationLanguage());
-        
-        if (headerValues != null) {
-            String acceptLanguage = headerValues.element();
-            if (StringUtils.isNotBlank(acceptLanguage)) {
-                locale = LocaleUtils.getLocaleFromString(acceptLanguage);
+
+        if(localeCookie == null) {
+            if (headerValues != null) {
+                String acceptLanguage = headerValues.element();
+                if (StringUtils.isNotBlank(acceptLanguage)) {
+                    locale = LocaleUtils.getLocaleFromString(acceptLanguage);
+                }
             }
         }
+        else {
+            locale = LocaleUtils.getLocaleFromString(localeCookie.getValue());
+        }
+
 
         Locale.setDefault(locale);
         requestAttachment.getMessages().reload();
