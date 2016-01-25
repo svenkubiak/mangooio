@@ -36,6 +36,7 @@ public enum Default {
     TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
     COOKIE_NAME("MANGOOIO-SESSION"),
+    COOKIE_I18N_NAME("MANGOOIO-I18N"),
     SPLITTER("&"),
     SEPERATOR(":"),
     NOSNIFF("nosniff"),
@@ -84,8 +85,7 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.Cache"),
-    LOCALE_COOKIE_NAME("lang");
+    CACHE_CLASS("io.mangoo.cache.Cache");
 
     private final String value;
 

@@ -10,7 +10,7 @@ import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CookieBuilder;
@@ -26,11 +26,11 @@ import io.undertow.server.handlers.Cookie;
  */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
 
         setSessionCookie(exchange, requestAttachment.getSession());
         setFlashCookie(exchange, requestAttachment.getFlash());
@@ -44,7 +44,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void setSessionCookie(HttpServerExchange exchange, Session session) {
+    protected void setSessionCookie(HttpServerExchange exchange, Session session) {
         if (session != null && session.hasChanges()) {
             final String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(session.getValues());
             final String version = CONFIG.getCookieVersion();
@@ -83,7 +83,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void setAuthenticationCookie(HttpServerExchange exchange, Authentication authentication) {
+    protected void setAuthenticationCookie(HttpServerExchange exchange, Authentication authentication) {
         if (authentication != null && authentication.hasAuthenticatedUser()) {
             Cookie cookie;
             final String cookieName = CONFIG.getAuthenticationCookieName();
@@ -131,7 +131,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    private void setFlashCookie(HttpServerExchange exchange, Flash flash) {
+    protected void setFlashCookie(HttpServerExchange exchange, Flash flash) {
         if (flash != null && !flash.isDiscard() && flash.hasContent()) {
             final String values = Joiner.on("&").withKeyValueSeparator(":").join(flash.getValues());
 
@@ -163,7 +163,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new ResponseHandler().handleRequest(exchange);
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        Application.getInstance(ResponseHandler.class).handleRequest(exchange);
     }
 }

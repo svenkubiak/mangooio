@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
 public class ConfigTest {
@@ -124,6 +125,6 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getLocaleCookieName(), equalTo("lang"));
+        assertThat(config.getI18nCookieName(), equalTo(Default.COOKIE_I18N_NAME.toString()));
     }
 }

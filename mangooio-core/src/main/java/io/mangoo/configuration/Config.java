@@ -403,11 +403,11 @@ public class Config {
     }
 
     /**
-     * @return application.i18n.cookie.name from application.yaml or default value if undefined
+     * @return cookie.i18n.name from application.yaml or default value if undefined
      * @author William Dunne
      */
-    public String getLocaleCookieName() {
-        return getString(Key.LOCALE_COOKIE_NAME, Default.LOCALE_COOKIE_NAME.toString());
+    public String getI18nCookieName() {
+        return getString(Key.COOKIE_I18N_NAME, Default.COOKIE_I18N_NAME.toString());
     }
 
     /**

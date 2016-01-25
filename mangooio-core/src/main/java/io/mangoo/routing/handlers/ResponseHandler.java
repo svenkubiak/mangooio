@@ -9,7 +9,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -24,11 +24,11 @@ import io.undertow.util.StatusCodes;
  */
 public class ResponseHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private RequestAttachment requestAttachment;
+    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         final Response response = this.requestAttachment.getResponse();
 
         if (response.isRedirect()) {
@@ -49,7 +49,7 @@ public class ResponseHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    private void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
+    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
         exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
     }
 
@@ -59,7 +59,7 @@ public class ResponseHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
      */
-    private void handleRedirectResponse(HttpServerExchange exchange, Response response) {
+    protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
         exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
@@ -74,7 +74,7 @@ public class ResponseHandler implements HttpHandler {
      * @param response The Response object
      * @return The body from the response object or an empty body if etag matches NONE_MATCH header
      */
-    private String getResponseBody(HttpServerExchange exchange, Response response) {
+    protected String getResponseBody(HttpServerExchange exchange, Response response) {
         String responseBody = response.getBody();
         if (response.isETag()) {
             final String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
@@ -96,7 +96,7 @@ public class ResponseHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
      */
-    private void handleRenderedResponse(HttpServerExchange exchange, Response response) {
+    protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());

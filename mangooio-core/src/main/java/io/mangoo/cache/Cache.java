@@ -35,9 +35,8 @@ public class Cache {
     private final com.google.common.cache.Cache<String, Object> guavaCache;
 
     public Cache() {
-        Objects.requireNonNull(CONFIG, "CONFIG can not be null");
-
-        final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
+        final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder
+                .newBuilder()
                 .maximumSize(CONFIG.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()));
         
         String cacheEviction = CONFIG.getString(Key.CACHE_EVICTION, Default.CACHE_EXPIRES.toString());

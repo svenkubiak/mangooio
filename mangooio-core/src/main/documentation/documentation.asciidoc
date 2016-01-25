@@ -744,6 +744,55 @@ The error messages for the request use the same key as the form handling. Check
 the documentation on <<Form handling>> for more information on how to customize
 the specific error messages.
 
+== Request handling
+
+The heart of mangoo I/O (and probably of all web frameworks) is the handling of requests.
+As mangoo I/O is based on Undertow for serving request, this is done by so called handlers.
+mangoo I/O has a number of handlers which all perform a specific task when a request is served.
+The handlers are chained to each other from the first receive of a request until sending out the response.
+
+A DispatcherHandler is created at framework startup for each mapped controller from the routes.yaml
+file, waiting to receive a request. From the DispatcherHandler the request chain is as follows:
+
+[source,java]
+-------------------------------------------
+LocalHandler
+InboundCookiesHandler
+FormHandler
+RequestHandler
+OutboundCookiesHandler
+ResponseHandler
+-------------------------------------------
+
+By using Google Guice features you have the option to customized each handler and change the request chain
+for your own needs.
+
+To overwrite a handler, first bind the handler to you custom handler in your Modules class.
+
+[source,java]
+-------------------------------------------
+bind(LocaleHandler.class).to(MyLocaleHandler.class);
+-------------------------------------------
+
+In your custom handler you need to extend the handler class and overwrite the methods from the default
+handlers as you want.
+
+[source,java]
+-------------------------------------------
+public class MyLocaleHandler extends LocaleHandler {
+
+    @Override
+    public void handleRequest(HttpServerExchange exchange) throws Exception {
+		//do something different
+    }
+    
+    @Override
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        //call another handler than the default one
+    }
+}
+-------------------------------------------
+
 == Form handling
 
 To access a form submitted to a controller class, you can simply pass
@@ -2129,11 +2178,13 @@ Request.Get("http://somehost/")
 
 == i18n Internationalization
 
-Translations in mangoo I/O are based on the standard Locale of Java. The
-Locale is determined from each request from the Accept-Language header of
-the request. If the Locale can not be determined from the request,
-the default language of the application from application.yaml will be
-used. If this configuration is not set, mangoo I/O will default to "en".
+Translations in mangoo I/O are based on the standard Locale of Java.
+
+The Locale is determined from a specific i18n cookie or, as default, from each
+request from the Accept-Language header of the request.
+If the Locale can not be determined from the request or the cookie, the default 
+language of the application from application.yaml will be used. If this configuration is
+not set, mangoo I/O will default to "en".
 
 If you want to force the language, you simply set the Locale in a filter
 - see <<Filters>> for more information on filters.
@@ -2141,6 +2192,21 @@ If you want to force the language, you simply set the Locale in a filter
 [source,java]
 ----------------------------------
 Locale.setDefault(Locale.ENGLISH);
+----------------------------------
+
+You can set a locale cookie by using the CookieBuilder in one of your
+controllers.
+
+[source,java]
+----------------------------------
+public Response localize() {
+    Cookie cookie = CookieBuilder.create()
+            .name(Default.COOKIE_I18N_NAME.toString())
+            .value("en")
+            .build();
+        
+    return Response.withOk().andCookie(cookie);
+}      
 ----------------------------------
 
 mangoo I/O offers you a convenient way of accessing translations. To get
@@ -2595,14 +2661,14 @@ Hibernate Extension
 
 * https://github.com/svenkubiak/mangooio-hibernate-extension
 
-e-Mail Extension
+Mailer Extension
 
-* https://github.com/svenkubiak/mangooio-email-extension
+* https://github.com/svenkubiak/mangooio-mailer-extension
 
 If you have created and extension and want it to be listed here, just
-add your extension to the above list by editing the documentation.md
+add your extension to the above list by editing the documentation.asciidoc
 file and create a pull request on the GitHub repository. You can find the documentation file in mangooio-core at
-https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/site[/src/main/site/documentation.md].
+https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/documentation[/src/main/documentation/documentation.asciidoc].
 
 [appendix]
 == Configuration options

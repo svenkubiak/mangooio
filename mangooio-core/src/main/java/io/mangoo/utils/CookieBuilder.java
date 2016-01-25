@@ -7,9 +7,6 @@ import java.util.Date;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 
-import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
-
 /**
  *
  * @author svenkubiak
@@ -32,14 +29,6 @@ public class CookieBuilder {
      */
     public static CookieBuilder create() {
         return new CookieBuilder();
-    }
-
-    /**
-     * Sets up the cookie for locale settings
-     * @author WilliamDunne
-     */
-    public CookieBuilder createLocale() {
-        return new CookieBuilder().name(Application.getInstance(Config.class).getLocaleCookieName());
     }
 
     /**

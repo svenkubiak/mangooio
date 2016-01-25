@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.google.common.base.Charsets;
 
 import io.mangoo.core.Application;
-import io.mangoo.routing.RequestAttachment;
+import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -25,10 +25,10 @@ public class FormHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        final RequestAttachment requestAttachment = exchange.getAttachment(RequestUtils.REQUEST_ATTACHMENT);
+        final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         requestAttachment.setForm(getForm(exchange));
 
-        exchange.putAttachment(RequestUtils.REQUEST_ATTACHMENT, requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, requestAttachment);
         nextHandler(exchange);
     }
 
@@ -40,7 +40,7 @@ public class FormHandler implements HttpHandler {
      * @throws IOException
      */
     @SuppressWarnings("all")
-    private Form getForm(HttpServerExchange exchange) throws IOException {
+    protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostOrPut(exchange)) {
             final Builder builder = FormParserFactory.builder();
@@ -75,7 +75,7 @@ public class FormHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     @SuppressWarnings("all")
-    private void nextHandler(HttpServerExchange exchange) throws Exception {
-        new RequestHandler().handleRequest(exchange);
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        Application.getInstance(RequestHandler.class).handleRequest(exchange);
     }
 }

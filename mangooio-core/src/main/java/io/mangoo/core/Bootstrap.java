@@ -234,7 +234,7 @@ public class Bootstrap {
 
     private RoutingHandler getRoutingHandler() {
         final RoutingHandler routingHandler = Handlers.routing();
-        routingHandler.setFallbackHandler(new FallbackHandler());
+        routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
 
         Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes"));
         Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("config"));
@@ -263,7 +263,7 @@ public class Bootstrap {
 
             final Undertow server = Undertow.builder()
                     .addHttpListener(this.port, this.host)
-                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, new ExceptionHandler()))
+                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
                     .build();
 
             server.start();
