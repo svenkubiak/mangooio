@@ -41,6 +41,7 @@ public enum Key {
     AUTH_COOKIE_VERSION("auth.cookie.version"),
     CACHE_TYPE("cache.type"),
     COOKIE_NAME("cookie.name"),
+    COOKIE_I18N_NAME("cookie.i18n.name"),
     COOKIE_ENCRYPTION("cookie.encryption"),
     COOKIE_EXPIRES("cookie.expires"),
     COOKIE_SECURE("cookie.secure"),

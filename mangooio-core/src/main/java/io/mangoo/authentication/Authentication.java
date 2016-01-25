@@ -152,6 +152,8 @@ public class Authentication {
      * @param username The user name to login
      */
     public void login(String username) {
+        Objects.requireNonNull(username, "username is required for isAuthenticated");
+        
         login(username, false);
     }
 

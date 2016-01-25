@@ -10,6 +10,7 @@ import io.undertow.server.handlers.CookieImpl;
 /**
  *
  * @author svenkubiak
+ * @author WilliamDunne
  *
  */
 public class CookieBuilder {
@@ -148,6 +149,8 @@ public class CookieBuilder {
         this.cookieHttpOnly = httpOnly;
         return this;
     }
+
+
 
     public Cookie build() {
         Cookie cookie = new CookieImpl(this.cookieName)

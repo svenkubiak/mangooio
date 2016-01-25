@@ -4,6 +4,7 @@ package io.mangoo.enums;
  * Default application values
  *
  * @author svenkubiak
+ * @author williamdunne
  *
  */
 public enum Default {
@@ -35,6 +36,7 @@ public enum Default {
     TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
     COOKIE_NAME("MANGOOIO-SESSION"),
+    COOKIE_I18N_NAME("MANGOOIO-I18N"),
     SPLITTER("&"),
     SEPERATOR(":"),
     NOSNIFF("nosniff"),

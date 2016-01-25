@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
 public class ConfigTest {
@@ -116,5 +117,14 @@ public class ConfigTest {
         //then
         assertThat(config.getString("smtp.username"), equalTo(""));
         assertThat(config.getString("smtp.port"), equalTo("3055"));
+    }
+
+    @Test
+    public void testGetLocaleCookieName() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getI18nCookieName(), equalTo(Default.COOKIE_I18N_NAME.toString()));
     }
 }
