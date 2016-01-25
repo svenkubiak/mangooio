@@ -125,6 +125,6 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getLocaleCookieName(), equalTo(Default.COOKIE_I18N_NAME.toString()));
+        assertThat(config.getI18nCookieName(), equalTo(Default.COOKIE_I18N_NAME.toString()));
     }
 }

@@ -16,6 +16,7 @@
 
 # I18nController
 - GET:     /translation                       -> I18nController.translation
+- GET:     /localize                          -> I18nController.localize
 
 # FlashController
 - GET:     /flash                             -> FlashController.flash
