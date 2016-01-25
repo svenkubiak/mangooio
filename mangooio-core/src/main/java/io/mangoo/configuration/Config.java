@@ -406,7 +406,7 @@ public class Config {
      * @return cookie.i18n.name from application.yaml or default value if undefined
      * @author William Dunne
      */
-    public String getLocaleCookieName() {
+    public String getI18nCookieName() {
         return getString(Key.COOKIE_I18N_NAME, Default.COOKIE_I18N_NAME.toString());
     }
 

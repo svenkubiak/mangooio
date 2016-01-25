@@ -26,24 +26,21 @@ public class LocaleHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        Locale locale = Locale.forLanguageTag(CONFIG.getApplicationLanguage());
         final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
-        final Cookie localeCookie = exchange.getRequestCookies().getOrDefault(CONFIG.getLocaleCookieName(), null);
+        final Cookie i18nCookie = exchange.getRequestCookies().get(CONFIG.getI18nCookieName());
 
-        Locale locale = Locale.forLanguageTag(CONFIG.getApplicationLanguage());
-
-        if(localeCookie == null) {
+        if (i18nCookie == null) {
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {
                     locale = LocaleUtils.getLocaleFromString(acceptLanguage);
                 }
             }
+        } else {
+            locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
         }
-        else {
-            locale = LocaleUtils.getLocaleFromString(localeCookie.getValue());
-        }
-
 
         Locale.setDefault(locale);
         requestAttachment.getMessages().reload();
