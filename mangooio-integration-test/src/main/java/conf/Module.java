@@ -15,7 +15,6 @@ public class Module extends AbstractModule {
         bind(MangooRequestFilter.class).to(MyGlobalFilter.class);
         bind(MangooLifecycle.class).to(Lifecycle.class);
         bind(MangooAuthenticator.class).toInstance(
-                (username, password) -> ("foo").equals(username) && ("bar").equals(password)
-                );
+                (username, password) -> ("foo").equals(username) && ("bar").equals(password));
     }
 }

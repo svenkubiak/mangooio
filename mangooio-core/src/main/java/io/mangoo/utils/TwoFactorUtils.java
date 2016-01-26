@@ -54,14 +54,14 @@ public final class TwoFactorUtils {
     /**
      * Uses default length
      */
-    public String generateBase32Secret() {
+    public static String generateBase32Secret() {
         return generateBase32Secret(16);
     }
 
     /**
      * Generate a secret key in base32 format (A-Z2-7)
      */
-    public String generateBase32Secret(int length) {
+    public static String generateBase32Secret(int length) {
         StringBuilder sb = new StringBuilder();
         Random random = new SecureRandom();
         for (int i = 0; i < length; i++) {
@@ -78,14 +78,14 @@ public final class TwoFactorUtils {
     /**
      * Validate a given code using the secret, defaults to window of 3 either side
      */
-    public boolean validateCurrentNumber(int number, String secret) throws GeneralSecurityException {
+    public static boolean validateCurrentNumber(int number, String secret) throws GeneralSecurityException {
         return validateCurrentNumber(number, secret, 3);
     }
 
     /**
      * Validate a given code using the secret, set your own windows size
      */
-    public boolean validateCurrentNumber(int number, String secret, int window) throws GeneralSecurityException {
+    public static boolean validateCurrentNumber(int number, String secret, int window) throws GeneralSecurityException {
         Long time = System.currentTimeMillis();
         int cur = Integer.parseInt(generateCurrentNumber(secret, time));
         if(number == cur) {
@@ -98,7 +98,7 @@ public final class TwoFactorUtils {
         return false;
     }
 
-    private boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
+    private static boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
         int cur = Integer.parseInt(generateCurrentNumber(secret, time));
         if(cur == number) {
             return true;
@@ -111,7 +111,7 @@ public final class TwoFactorUtils {
         }
     }
 
-    private boolean validateCurrentNumberHigh(int number, String secret, int window, Long time) throws GeneralSecurityException {
+    private static boolean validateCurrentNumberHigh(int number, String secret, int window, Long time) throws GeneralSecurityException {
         int cur = Integer.parseInt(generateCurrentNumber(secret, time));
         if(cur == number) {
             return true;
