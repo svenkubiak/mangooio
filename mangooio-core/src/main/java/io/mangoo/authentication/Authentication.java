@@ -1,10 +1,8 @@
 package io.mangoo.authentication;
 
-import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import io.mangoo.utils.TwoFactorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -178,54 +176,5 @@ public class Authentication {
         Objects.requireNonNull(username, "username is required for isAuthenticated");
 
         return username.equals(this.authenticatedUser);
-    }
-    /**
-     * Checks if a given two factor code and secret are valid
-     *
-     * @param code to validate
-     * @param secret used to generate the code
-     * @return whether or not it is valid
-     */
-    public boolean authenticateTwoFactor(int code, String secret) {
-        try {
-            return new TwoFactorUtils().validateCurrentNumber(code, secret);
-        } catch(GeneralSecurityException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Check if a given two factor code and secret are valid, define your
-     * own window to check
-     * @param code to validate
-     * @param secret used to generate the code
-     * @param window of allowance for code verification
-     * @return whether or not it is valid
-     */
-    public boolean authenticateTwoFactor(int code, String secret, int window) {
-        try {
-            return new TwoFactorUtils().validateCurrentNumber(code, secret, window);
-        } catch(GeneralSecurityException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * Generate a two factor secret
-     * @return two factor secret
-     */
-    public String generateTwoFactorSecret() {
-        return new TwoFactorUtils().generateBase32Secret();
-    }
-
-    /**
-     * Generate a two factor secret
-     * @param length of the secret
-     * @return two factor secret
-     */
-    public String generateTwoFactorSecret(int length) {
-        return new TwoFactorUtils().generateBase32Secret(length);
     }
 }
