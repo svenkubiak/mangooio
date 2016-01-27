@@ -1,5 +1,11 @@
 = Changelog
 
+== Version 2.3.1
+
+[small]#Released at 27.01.2016#
+
+* Fxed bug when config injector was initialized in application start
+
 == Version 2.3.0
 
 [small]#Released at 26.01.2016#

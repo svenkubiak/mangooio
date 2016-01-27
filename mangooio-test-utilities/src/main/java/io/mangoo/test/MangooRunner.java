@@ -19,7 +19,7 @@ import io.mangoo.enums.Mode;
 @SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")
 public class MangooRunner {
-    
+
     @BeforeClass
     public static final void mangooStart() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());

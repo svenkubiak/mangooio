@@ -80,7 +80,7 @@ public class Bootstrap {
     private Injector injector;
     private boolean error;
     private int port;
-    
+
     public Bootstrap() {
         this.pathResourceHandler = new ResourceHandler(
                 new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
@@ -148,7 +148,7 @@ public class Bootstrap {
         if (!hasError()) {
             try (InputStream inputStream = Resources.getResource(Default.ROUTES_FILE.toString()).openStream()) {
                 final List<Map<String, String>> routes = (List<Map<String, String>>) new Yaml().load(inputStream);
-                
+
                 for (final Map<String, String> routing : routes) {
                     for (final Entry<String, String> entry : routing.entrySet()) {
                         final String method = entry.getKey().trim();
@@ -172,7 +172,7 @@ public class Bootstrap {
                                     if (classMethod != null && classMethod.length > 0) {
                                         route.withClass(Class.forName(getValidPackage(this.config.getControllerPackage()) + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
-                                            String controllerMethod = classMethod[1].trim();
+                                            final String controllerMethod = classMethod[1].trim();
                                             if (methodExists(controllerMethod, route.getControllerClass())) {
                                                 route.withMethod(controllerMethod);
                                             }
@@ -185,7 +185,7 @@ public class Bootstrap {
                                 LOG.error("Failed to parse routing: " + routing);
                                 LOG.error("Please check, that your routes.yaml syntax is correct", e);
                                 this.error = true;
-                                
+
                                 throw new Exception();
                             }
                         }
@@ -215,13 +215,13 @@ public class Bootstrap {
             LOG.error("Could not find controller method '" + controllerMethod + "' in controller class '" + controllerClass.getSimpleName() + "'");
             this.error = true;
         }
-        
+
         return exists;
     }
 
     private void createRoutes() {
         this.pathHandler = new PathHandler(getRoutingHandler());
-        for (Route route : Router.getRoutes()) {
+        for (final Route route : Router.getRoutes()) {
             if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
@@ -250,9 +250,9 @@ public class Bootstrap {
                 routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
-            } 
+            }
         });
-        
+
         return routingHandler;
     }
 
@@ -339,18 +339,18 @@ public class Bootstrap {
     private boolean hasError() {
         return this.error;
     }
-    
+
     public LocalDateTime getStart() {
         return this.start;
     }
-    
+
     private String getValidPackage(String packageName) {
         Objects.requireNonNull(packageName, "package name can not be null");
-        
+
         if (!packageName.endsWith(".")) {
             return packageName + '.';
         }
-        
+
         return packageName;
     }
 }

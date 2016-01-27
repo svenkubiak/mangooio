@@ -13,6 +13,7 @@ import io.mangoo.scheduler.SchedulerFactory;
  *
  */
 public class Modules extends AbstractModule {
+
     @Override
     protected void configure() {
         bind(JobFactory.class).to(SchedulerFactory.class);
