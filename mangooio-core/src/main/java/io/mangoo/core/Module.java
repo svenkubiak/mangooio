@@ -12,7 +12,7 @@ import io.mangoo.scheduler.SchedulerFactory;
  * @author svenkubiak
  *
  */
-public class Modules extends AbstractModule {
+public class Module extends AbstractModule {
 
     @Override
     protected void configure() {

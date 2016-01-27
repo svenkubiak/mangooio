@@ -274,11 +274,9 @@ public class Bootstrap {
         final List<Module> modules = new ArrayList<>();
         if (!hasError()) {
             try {
-                final Class<?> module = Class.forName(Default.MODULE_CLASS.toString());
-                AbstractModule abstractModule;
-                abstractModule = (AbstractModule) module.getConstructor().newInstance();
-                modules.add(abstractModule);
-                modules.add(new Modules());
+                final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
+                modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
+                modules.add(new io.mangoo.core.Module());
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
                 LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
