@@ -1,0 +1,7 @@
+site_name: mangoo I/O
+repo_url: https://github.com/svenkubia/mangooio
+pages:
+- ['index.md', 'Home']
+- ['documentation.md', 'Documentation']
+- ['changelog.md', 'Changelog']
+theme: readthedocs

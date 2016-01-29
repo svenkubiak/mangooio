@@ -1,7 +1,4 @@
-mangoo I/O documentation
-========================
-
-== Overview
+# Overview
 
 Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
@@ -51,7 +48,7 @@ base. Therefore, mangoo I/O is constantly checked against
 http://www.sonarqube.org[SonarQube] with a rule set of more than 600
 quality rules.
 
-=== Libraries
+## Libraries
 
 Here are some used libraries and their purpose in mangoo I/O.
 
@@ -68,76 +65,65 @@ Here are some used libraries and their purpose in mangoo I/O.
 * JBcrypt - Strong cryptography and authentication
 * And many more ...
 
-=== Documentation versioning
+### Documentation versioning
 
 This documentation always comes from the latest stable tag of the GitHub
 repository. However, you can change the version of the documentation by
 simple adding the version number to the URL. If you want, for example, the documentation of version
 1.0.0 re-open this page with the following URL
 
--------------------------------------
-https://mangoo.io/documentation/1.0.0
--------------------------------------
 
-== Getting started
+    https://mangoo.io/documentation/1.0.0
 
-=== Preconditions
+# Getting started
+
+## Preconditions
 
 mangoo I/O requires
 http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
 (at least 1.8) and https://maven.apache.org[Maven] (at least 3.3.1).
 
-==== Checking Java
+### Checking Java
 
 To make sure that you have Java correctly installed use the following
 command
 
-[source,bash]
----------------------------------------------------------------
-java -version
----------------------------------------------------------------
+
+    java -version
+
 
 This should output the Java version information as follows
 
-[source,bash]
----------------------------------------------------------------
-java version "1.8.0_45"
-Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
-Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
----------------------------------------------------------------
+    java version "1.8.0_45"
+    Java(TM) SE Runtime Environment (build 1.8.0_45-b14)
+    Java HotSpot(TM) 64-Bit Server VM (build 25.45-b02, mixed mode)
 
-==== Checking Maven
+
+### Checking Maven
 
 To make sure that you have Maven correctly installed use the following
 command
 
-[source,bash]
-------------
-mvn -version
-------------
+    mvn -version
+
 
 This should output the Maven version information as follows
 
-[source,bash]
-------------------------------------------------------------------------------
-Apache Maven 3.3.3 (...)
-Java version: 1.8.0_45, vendor: Oracle Corporation
-Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre
-Default locale: de_DE, platform encoding: UTF-8
-...
-------------------------------------------------------------------------------
+    Apache Maven 3.3.3 (...)
+    Java version: 1.8.0_45, vendor: Oracle Corporation
+    Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/jre
+    Default locale: de_DE, platform encoding: UTF-8
+    ...
 
 Now you are ready to create your first mangoo I/O application!
 
-=== Creating your first mangoo I/O application
+## Creating your first mangoo I/O application
 
 mangoo I/O comes with a ready-to-use Maven archetype, to get your first
 application started in no time. To create your first application execute
 the following Maven command:
 
-------------------------------------------------------------------------------------------------------
-mvn archetype:generate -DarchetypeGroupId=io.mangoo -DarchetypeArtifactId=mangooio-maven-archetype
-------------------------------------------------------------------------------------------------------
+    mvn archetype:generate -DarchetypeGroupId=io.mangoo -DarchetypeArtifactId=mangooio-maven-archetype
 
 You will be prompted for a group and artifact id. You also have to set an application name and an application secret.
 Make your secret is "secure", as some functions, like sessions and authentication rely on it. Please note, that the
@@ -145,45 +131,35 @@ application secret has to be at least 16 characters.
 
 Once the archetpye generation is finished, change in your newly created project directory and execute the following command:
 
-[source,bash]
------------------
-mvn clean package
------------------
+    mvn clean package
 
 Once the compilation is finished, you can start the development (dev) mode, by executing the following maven
 command
 
-[source,bash]
-----------------
-mvn mangooio:run
-----------------
+    mvn mangooio:run
 
 Once Maven has downloaded all required dependencies you should see the
 mangoo I/O logo showing you that your new application has started
 successfully in dev mode.
 
-[source,bash]
----------------------------------------------------------------------------------------------------------
-                                                ___     __  ___
- _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \
-| '_ ` _ \  / _` || '_ \  / _` | / _ \  / _ \   | |   / / | | | |
-| | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
-|_| |_| |_| \__,_||_| |_| \__, | \___/  \___/  |___|/_/    \___/
-                          |___/
-https://mangoo.io | @mangoo_io | 1.0.0
+                                                    ___     __  ___
+     _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \
+    | '_ ` _ \  / _` || '_ \  / _` | / _ \  / _ \   | |   / / | | | |
+    | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
+    |_| |_| |_| \__,_||_| |_| \__, | \___/  \___/  |___|/_/    \___/
+                              |___/
+    https://mangoo.io | @mangoo_io | 1.0.0
 
-mangoo I/O application started @127.0.0.1:8080 in 442 ms in dev mode. Enjoy.
----------------------------------------------------------------------------------------------------------
+    mangoo I/O application started @127.0.0.1:8080 in 442 ms in dev mode. Enjoy.
 
-[NOTE]
+
 Whenever you see the mangoo I/O logo your application has started successfully.
 
 Now open your default web browser an say hello to your first mangoo I/O
 application by opening the following URL
 
----------------------
-http://localhost:8080
----------------------
+    http://localhost:8080
+
 
 [IMPORTANT]
 .Using hot-compiling in dev mode
@@ -203,39 +179,36 @@ If you don't do this, mangoo I/O won't pass request parameters to your controlle
 
 This is only required in dev mode, as compilation in all other modes is done via Maven
 and the correct flags are set via the Maven compiler plugin.
-====
 
-=== Basic structure of a mangoo I/O application
+## Basic structure of a mangoo I/O application
 
 If you have created a new mangoo I/O application via the maven archetype,
 this is the basic structure of a the application
 
-------------------------------------------------------------------------------------------------------
-.
-├── pom.xml
-└── src
-    └── main
-        ├── java
-        │   ├── conf
-        │   │   ├── Lifecycle.java
-        │   │   ├── Module.java
-        │   └── controllers
-        │       └── ApplicationController.java
-        └── resources
-            ├── files
-            ├── application.yaml
-            ├── routes.yaml
-            ├── log4j2.xml
-            ├── templates
-            │   ├── ApplicationController
-            │   │   └── index.ftl
-            │   └── layout.ftl
-            └── translations
-                ├── messages.properties
-                ├── messages_de.properties
-                └── messages_en.properties
+	.
+	├── pom.xml
+	└── src
+	    └── main
+	        ├── java
+	        │   ├── conf
+	        │   │   ├── Lifecycle.java
+	        │   │   ├── Module.java
+	        │   └── controllers
+	        │       └── ApplicationController.java
+	        └── resources
+	            ├── files
+	            ├── application.yaml
+	            ├── routes.yaml
+	            ├── log4j2.xml
+	            ├── templates
+	            │   ├── ApplicationController
+	            │   │   └── index.ftl
+	            │   └── layout.ftl
+	            └── translations
+	                ├── messages.properties
+	                ├── messages_de.properties
+	                └── messages_en.properties
 
-------------------------------------------------------------------------------------------------------
 
 mangoo I/O comes with the following convetion-over-configuration:
 
