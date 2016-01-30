@@ -30,7 +30,7 @@ import io.mangoo.cache.Cache;
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
  *
- * @author graywatson
+ * @author graywatson, WilliamDunne, svenkubiak
  */
 public final class TwoFactorUtils {
     private static final Logger LOG = LogManager.getLogger(Cache.class);
@@ -52,21 +52,98 @@ public final class TwoFactorUtils {
     };
 
     /**
-     * Generate a secret key in base32 format (A-Z2-7)
+     * Uses default length
      */
     public static String generateBase32Secret() {
-        final Random random = new SecureRandom();
-        final StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < 16; i++) {
-            final int val = random.nextInt(32);
+        return generateBase32Secret(16);
+    }
+
+    /**
+     * Generate a secret key in base32 format (A-Z2-7)
+     */
+    public static String generateBase32Secret(int length) {
+        StringBuilder sb = new StringBuilder();
+        Random random = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            int val = random.nextInt(32);
             if (val < 26) {
-                buffer.append((char) ('A' + val));
+                sb.append((char) ('A' + val));
             } else {
-                buffer.append((char) ('2' + (val - 26)));
+                sb.append((char) ('2' + (val - 26)));
             }
         }
+        return sb.toString();
+    }
 
-        return buffer.toString();
+    /**
+     * Validate a given code using the secret, defaults to window of 3 either side
+     */
+    public static boolean validateCurrentNumber(int number, String secret) {
+        return validateCurrentNumber(number, secret, 3);
+    }
+    
+    /**
+     * Validate a given code at a specific time
+     */
+    public static boolean validateNumber(int number, String secret, int window, long time) {
+    	try {
+    		int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+            if(number == cur) {
+                return true;
+            } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
+                return true;
+            } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
+            	return true;
+            }
+    	}
+    	catch(GeneralSecurityException e) {}
+    	
+        return false;
+    }
+    /**
+     * Validate a given code using the secret, set your own windows size
+     */
+    public static boolean validateCurrentNumber(int number, String secret, int window) {
+        try {
+	    	Long time = System.currentTimeMillis();
+	        int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+	        if(number == cur) {
+	            return true;
+	        } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
+	            return true;
+	        } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
+	        	return true;
+	        }
+        }
+        catch(GeneralSecurityException e) {}
+        
+        return false;
+    }
+
+    private static boolean validateCurrentNumberLow(int number, String secret, int window, long time) throws GeneralSecurityException {
+        int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+        if(cur == number) {
+            return true;
+        } else {
+            if(window > 0) {
+                return validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private static boolean validateCurrentNumberHigh(int number, String secret, int window, long time) throws GeneralSecurityException {
+        int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+        if(cur == number) {
+            return true;
+        } else {
+            if(window > 0) {
+                return validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000);
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
