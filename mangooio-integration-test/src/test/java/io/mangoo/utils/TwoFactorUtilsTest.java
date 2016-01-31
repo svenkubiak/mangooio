@@ -18,18 +18,22 @@ public class TwoFactorUtilsTest {
 	
 	@Test
 	public void testGenerateSecret() {
+		//given
 		String secret = TwoFactorUtils.generateBase32Secret();
-		
+
+		//that
 		assertThat(secret, not(nullValue()));
 		assertThat(secret.length(), equalTo(16));
 	}
 	
 	@Test
 	public void testCodeChecking (){
+		//given
 		String secret = TwoFactorUtils.generateBase32Secret();		
 		int valid = Integer.parseInt(TwoFactorUtils.generateCurrentNumber(secret));		
 		long time = System.currentTimeMillis() + THIRTY_SECONDS;
-		
+
+		//that
 		assertThat(TwoFactorUtils.validateCurrentNumber(valid, secret, 2), equalTo(true));
 	}
 }
