@@ -52,7 +52,7 @@ public final class TwoFactorUtils {
     };
 
     /**
-     * Generate a secret key in base32 format (A-Z2-7)
+     * @return Generate a secret key in base32 format (A-Z2-7)
      */
     public static String generateBase32Secret() {
         final Random random = new SecureRandom();
