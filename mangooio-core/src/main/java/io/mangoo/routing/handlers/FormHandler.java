@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import java.io.IOException;
+import java.util.Deque;
 
 import com.google.common.base.Charsets;
 
@@ -11,6 +12,7 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData;
+import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.server.handlers.form.FormParserFactory.Builder;
@@ -50,16 +52,20 @@ public class FormHandler implements HttpHandler {
             if (formDataParser != null) {
                 exchange.startBlocking();
                 final FormData formData = formDataParser.parseBlocking();
-
                 formData.forEach(data -> {
-                    formData.get(data).forEach(formValue -> {
-                        if (formValue.isFile()) {
-                            form.addFile(formValue.getPath().toFile());
-                        } else {
-                            form.addValue(new HttpString(data).toString(), formValue.getValue());
-                        }
-                    });
+                	Deque<FormValue> deque = formData.get(data);
+                	if (deque != null) {
+                    	FormValue formValue = deque.element();
+                    	if (formValue != null) {
+                        	if (formValue.isFile() && formValue.getPath() != null) {
+                        		form.addFile(formValue.getPath().toFile());
+                            } else {
+                                form.addValue(new HttpString(data).toString(), formValue.getValue());
+                            }	
+                    	}
+                	}
                 });
+
 
                 form.setSubmitted(true);
             }

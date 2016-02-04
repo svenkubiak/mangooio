@@ -1,5 +1,12 @@
 = Changelog
 
+== Version 2.3.2
+
+[small]#Released at xx.xx.xxxx#
+
+* Minor refactoring in FormHanlder (svenkubiak)
+* Added unit tests for file upload (svenkubiak)
+
 == Version 2.3.1
 
 [small]#Released at 27.01.2016#
