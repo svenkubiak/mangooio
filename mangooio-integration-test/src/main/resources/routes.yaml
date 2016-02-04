@@ -62,6 +62,8 @@
 
 # FormController
 - POST:    /form                              -> FormController.form
+- POST:    /singlefile                        -> FormController.singlefile
+- POST:    /multifile                         -> FormController.multifile
 - POST:    /validateform                      -> FormController.validateform
 
 # ApplicationController
