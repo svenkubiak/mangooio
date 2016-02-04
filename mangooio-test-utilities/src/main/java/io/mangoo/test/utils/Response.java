@@ -25,6 +25,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -58,8 +61,10 @@ public class Response {
     private HttpResponse httpResponse;
     private ContentType responseContentType;
     private HttpClientBuilder httpClientBuilder;
+    private MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();    
     private List<NameValuePair> postParameter = new ArrayList<>();
     private boolean responseDisbaleRedirects;
+    private boolean hasFileBody;
     
     public Response (String uri, HttpString method) {
         this.responseUri = uri;
@@ -73,7 +78,8 @@ public class Response {
 
     private void init () {
         Config config = Application.getInstance(Config.class);
-
+        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        
         String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
         int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
@@ -140,6 +146,21 @@ public class Response {
         Objects.requireNonNull(uri, "uri can not be null");
         
         this.responseUri = uri;
+        return this;
+    }
+    
+    /**
+     * Adds a FileBody to the request
+     * 
+     * @param name The the of the file body
+     * @param fileBody The file body
+     * @return Response
+     */
+    public Response withFileBody(String name, FileBody fileBody) {
+        Objects.requireNonNull(fileBody, "fileBody can not be null");
+        
+        this.hasFileBody = true;
+        this.multipartEntityBuilder.addPart(name, fileBody); 
         return this;
     }
     
@@ -216,7 +237,9 @@ public class Response {
             HttpPost httpPost = new HttpPost(responseUrl + responseUri);
 
             try {
-                if (StringUtils.isNotBlank(this.responseRequestBody)) {
+            	if (this.hasFileBody) {
+            		httpPost.setEntity(multipartEntityBuilder.build());
+            	} else if (StringUtils.isNotBlank(this.responseRequestBody)) {
                     httpPost.setEntity(new StringEntity(this.responseRequestBody));
                 } else {
                     httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));

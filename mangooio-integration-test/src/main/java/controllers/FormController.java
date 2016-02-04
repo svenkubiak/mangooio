@@ -1,6 +1,12 @@
 package controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import com.google.common.io.Files;
 
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
@@ -11,6 +17,35 @@ public class FormController {
 
     public Response form() {
         return Response.withOk();
+    }
+    
+    public Response singlefile(Form form) {
+    	String content = "";
+    	if (form.getFile().isPresent()) {
+    		File file = form.getFile().get();
+    		try {
+				content = Files.readFirstLine(file, Charset.defaultCharset());
+			} catch (IOException e) {
+				//intentionally left blank
+			}
+    	}
+    	
+    	return Response.withOk().andTextBody(content);
+    }
+    
+    public Response multifile(Form form) {
+    	String content = "";
+    	
+    	List<File> files = form.getFiles();
+    	for (File file : files) {
+    		try {
+				content = content + Files.readFirstLine(file, Charset.defaultCharset());
+			} catch (IOException e) {
+				//intentionally left blank
+			}
+    	}
+    	
+    	return Response.withOk().andTextBody(content + files.size());
     }
 
     public Response validateform(Form form) {
