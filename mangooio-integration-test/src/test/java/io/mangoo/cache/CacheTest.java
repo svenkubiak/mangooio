@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
@@ -20,7 +19,6 @@ import io.mangoo.core.Application;
  */
 public class CacheTest {
     private static final String TEST_VALUE = "This is a test value for the cache!";
-    private static final String FROM_CALLABLE = "from callable";
 
     @Test
     public void testAdd() {
@@ -114,21 +112,5 @@ public class CacheTest {
         
         //then
         assertThat(cache.getStats(), not(nullValue()));
-    }
-    
-    @Test
-    public void testGetWithCallable() {
-        //given
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //then
-        assertThat(cache.get("test", new CacheCallable()), equalTo(FROM_CALLABLE));
-    }
-    
-    private class CacheCallable implements Callable<String> {
-        @Override
-        public String call() throws Exception {
-            return FROM_CALLABLE;
-        }
     }
 }
