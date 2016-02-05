@@ -1,3 +1,16 @@
+## Version 2.4.0
+
+**Released at xx.xx.xxxx**
+
+* [#138](https://github.com/svenkubiak/mangooio/issues/138) Added provider for cache (svenkubiak)
+* [#137](https://github.com/svenkubiak/mangooio/issues/137) Metrics are now stored in cache (svenkubiak)
+* [#133](https://github.com/svenkubiak/mangooio/issues/137) SSE and WSS informations are now stored in cache (svenkubiak)
+* Updated documentation (svenkubiak)
+* Version bumps (svenkubiak)
+	* undertow-core 1.3.15.Final -> 1.3.16.Final
+	* mockito 2.0.40-Beta -> 2.0.41-Beta
+	* dsiutils 2.2.6 -> 2.2.8
+
 ## Version 2.3.1
 
 **Released at 27.01.2016**
