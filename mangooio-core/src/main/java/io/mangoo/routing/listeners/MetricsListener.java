@@ -1,7 +1,5 @@
 package io.mangoo.routing.listeners;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.models.Metrics;
+import io.mangoo.utils.MangooUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.ResponseCommitListener;
 
@@ -21,8 +20,6 @@ import io.undertow.server.ResponseCommitListener;
 @Singleton
 public class MetricsListener implements ResponseCommitListener {
     private final Metrics metrics;
-    private final List<String> blacklist = Arrays
-            .asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");
 
     @Inject
     public MetricsListener(Metrics metrics) {
@@ -32,7 +29,7 @@ public class MetricsListener implements ResponseCommitListener {
     @Override
     public void beforeCommit(HttpServerExchange exchange) {
         String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase();
-        if (!blacklist.contains(uri)) {
+        if (!MangooUtils.getAdministrativeURLs().contains(uri)) {
             this.metrics.inc(exchange.getStatusCode());
         }
     }

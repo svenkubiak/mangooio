@@ -1,5 +1,8 @@
 package io.mangoo.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.GuavaCache;
 import io.mangoo.cache.HazlecastCache;
@@ -15,10 +18,15 @@ import io.mangoo.enums.Default;
 public final class MangooUtils {
     private static final Config CONFIG = Application.getConfig();
     private static Cache cache;
+    private static final List<String> ADMINISTRSTIVE_URLS = Arrays
+            .asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");
     
-    public static Cache getCache() {
+    /**
+     * @return An instance of the internal mangoo I/O cache
+     */
+    public static Cache getInternalCache() {
         if (cache == null) {
-            if (Default.CACHE_CLASS.equals(CONFIG.getCacheClass())) {
+            if (Default.CACHE_CLASS.toString().equals(CONFIG.getCacheClass())) {
                 cache = new GuavaCache();                
             } else {
                 cache = new HazlecastCache();
@@ -26,5 +34,12 @@ public final class MangooUtils {
         }
         
         return cache;
+    }
+    
+    /**
+     * @return A list of all administrative URLs
+     */
+    public static List<String> getAdministrativeURLs() {
+        return ADMINISTRSTIVE_URLS;
     }
 }
