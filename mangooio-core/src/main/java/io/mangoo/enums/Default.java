@@ -82,7 +82,9 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.GuavaCache");
+    CACHE_CLASS("io.mangoo.cache.GuavaCache"),
+    VALUE_REQUIRED("For a new cache entry a non null value is required"),
+    KEY_REQUIRED("For a new cache entry a non null key is required");
 
     private final String value;
 

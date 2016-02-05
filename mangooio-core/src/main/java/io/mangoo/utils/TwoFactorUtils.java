@@ -13,8 +13,6 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.cache.Cache;
-
 /**
  * Two factor Java implementation for the Time-based One-Time Password (TOTP) algorithm.
  *
@@ -33,7 +31,7 @@ import io.mangoo.cache.Cache;
  * @author graywatson
  */
 public final class TwoFactorUtils {
-    private static final Logger LOG = LogManager.getLogger(Cache.class);
+    private static final Logger LOG = LogManager.getLogger(TwoFactorUtils.class);
     private static final Base32 base32 = new Base32();
     private static final String HMAC_SHA1 = "HmacSHA1";
     private static final String BLOCK_OF_ZEROS = "000000";

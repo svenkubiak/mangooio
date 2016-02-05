@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.enums.Default;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -22,13 +22,8 @@ import io.undertow.websockets.core.WebSocketChannel;
 @Singleton
 public class WebSocketManager {
     private static final String URI_ERROR = "uri can not be null";
-    private final Cache cache;
+    private Cache cache = MangooUtils.getInternalCache();
         
-    @Inject
-    public WebSocketManager(Cache cache) {
-        this.cache = Objects.requireNonNull(cache, "cache ca not be null");
-    }
-
     /**
      * Adds a new channel to the manager
      *

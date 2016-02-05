@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.enums.Default;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
@@ -23,13 +23,8 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 @Singleton
 public class ServerEventManager {
     private static final String URI_ERROR = "uri can not be null";
-    private final Cache cache;
+    private Cache cache = MangooUtils.getInternalCache();
         
-    @Inject
-    public ServerEventManager(Cache cache) {
-        this.cache = Objects.requireNonNull(cache, "cache can not be null");
-    }
-
     /**
      * Adds a new connection to the manager
      *

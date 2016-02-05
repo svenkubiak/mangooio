@@ -28,8 +28,6 @@ import io.mangoo.enums.Key;
 public class GuavaCache implements Cache {
 	private static final Logger LOG = LogManager.getLogger(Cache.class);
 	private static final Config CONFIG = Application.getConfig();
-	private static final String VALUE_REQUIRED = "For a new cache entry a non null value is required";
-	private static final String KEY_REQUIRED = "For a new cache entry a non null key is required";
 	private final com.google.common.cache.Cache<String, Object> cache;
 
 	public GuavaCache() {
@@ -45,15 +43,15 @@ public class GuavaCache implements Cache {
 
     @Override
 	public void put(String key, Object value) {
-		Objects.requireNonNull(key, KEY_REQUIRED);
-		Objects.requireNonNull(value, VALUE_REQUIRED);
+		Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
+		Objects.requireNonNull(value, Default.VALUE_REQUIRED.toString());
 
 		this.cache.put(key, value);
 	}
 
     @Override
 	public void remove(String key) {
-		Objects.requireNonNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
 
 		this.cache.invalidate(key);
 	}
@@ -71,7 +69,7 @@ public class GuavaCache implements Cache {
     @Override
 	@SuppressWarnings("unchecked")
 	public <T> T get(String key) {
-		Objects.requireNonNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
 
 		final Object object = this.cache.getIfPresent(key);
 		return object == null ? null : (T) object;
@@ -80,7 +78,7 @@ public class GuavaCache implements Cache {
     @Override
 	@SuppressWarnings("unchecked")
 	public <T> T get(String key, Callable<? extends Object> callable) {
-		Objects.requireNonNull(key, KEY_REQUIRED);
+        Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
 		Objects.requireNonNull(callable, "callable can not be null");
 
 		Object object = this.cache.getIfPresent(key);
