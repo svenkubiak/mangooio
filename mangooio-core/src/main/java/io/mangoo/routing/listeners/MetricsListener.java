@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
-import io.mangoo.utils.MangooUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.ResponseCommitListener;
 
@@ -29,7 +29,7 @@ public class MetricsListener implements ResponseCommitListener {
     @Override
     public void beforeCommit(HttpServerExchange exchange) {
         String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase();
-        if (!MangooUtils.getAdministrativeURLs().contains(uri)) {
+        if (!Application.getAdministrativeURLs().contains(uri)) {
             this.metrics.inc(exchange.getStatusCode());
         }
     }

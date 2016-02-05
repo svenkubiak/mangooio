@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.LongAdder;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.core.Application;
 
 /**
  * Base class for counting system metrics
@@ -18,16 +18,16 @@ import io.mangoo.utils.MangooUtils;
 @Singleton
 public class Metrics {
     private static final String MANGOO_METRICS = "MANGOO-METRICS";
-
+    private Cache cache = Application.getInternalCache();
+    
     public void inc(int responseCode) {
         Map<Integer, LongAdder> metrics = getMetricsCounter();
         metrics.computeIfAbsent(responseCode, t -> new LongAdder()).increment();
-        MangooUtils.getInternalCache().put(MANGOO_METRICS, metrics);
+        this.cache.put(MANGOO_METRICS, metrics);
     }
 
     private Map<Integer, LongAdder> getMetricsCounter() {
-        Cache cache = MangooUtils.getInternalCache();
-        Map<Integer, LongAdder> metricsCounter = cache.get(MANGOO_METRICS);
+        Map<Integer, LongAdder> metricsCounter = this.cache.get(MANGOO_METRICS);
         if (metricsCounter == null) {
             metricsCounter = new HashMap<>();
         }
