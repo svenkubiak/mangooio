@@ -55,9 +55,6 @@ public enum Default {
     COOKIE_SECURE("false"), //NOSONAR
     AUTH_COOKIE_SECURE("false"), //NOSONAR
     CACHE_MAX_SIZE("5000"),
-    CACHE_EXPIRES("afterAccess"),
-    CACHE_EXPIRES_ACCESS("3600"),
-    CACHE_EXPIRES_WRITE("3600"),
     APPLICATION_ADMIN_HEALTH("false"),
     APPLICATION_ADMIN_CACHE("false"),
     APPLICATION_ADMIN_CONFIG("false"),
@@ -85,7 +82,7 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.Cache");
+    CACHE_CLASS("io.mangoo.cache.GuavaCache");
 
     private final String value;
 

@@ -570,4 +570,18 @@ public class Config {
     public boolean isTimerEnabled() {
         return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
     }
+
+    /**
+     * @return cache.class from application.yaml or default value if undefined
+     */
+	public String getCacheClass() {
+		return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
+	}
+
+    /**
+     * @return cache.addresses from application.yaml
+     */
+    public String getCacheAddresses() {
+        return getString(Key.CACHE_ADDRESSES);
+    }
 }
