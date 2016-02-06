@@ -3,27 +3,26 @@
 Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
 full stack web framework in Java from scratch. After I had a fresh new breeze of
-java development for the web with the https://www.playframework.com[Play
-Framwork - Version 1], contributions to the
-http://www.ninjaframework.org[Ninja Framework] and having seen a lot of
+java development for the web with the [Play
+Framwork - Version 1](https://www.playframework.com), contributions to the
+[Ninja Framework](http://www.ninjaframework.org) and having seen a lot of
 cumbersome "Enterprise" applications, I thought it was time for yet
 another full stack java web framework.
 
 For me, developing mangoo I/O will always be about having a developer friendly,
 easy to understand web framework with a small learning curve for the Java ecosystem.
 
-At its core, mangoo I/O is a classic MVC-Framework. The foundation of mangoo I/O is the very performant
-http://undertow.io[Undertow] web server from JBoss. On top of that,
+At its core, mangoo I/O is a classic MVC-Framework. The foundation of mangoo I/O is the high performant
+[Undertow](http://undertow.io) web server from JBoss. On top of that,
 standard, production ready java libraries are used - no reinventing of the
 wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
 it is based on non-blocking I/O in the form of
-http://xnio.jboss.org[XNIO]. And although Undertow does support the
+[XNIO](http://xnio.jboss.org). And although Undertow does support the
 servlet API, one is not bound to use it in any way, giving a Java developer
 the opportunity to work fully stateless.
 
-mangoo I/O is highly inspired by the http://www.ninjaframework.org[Ninja
-Web Framework]. Although the mangoo I/O core is a complete custom
-implementation, a lot of the ideas and methodologies were re-used.
+mangoo I/O is inspired by the [Ninja
+Web Framework](http://www.ninjaframework.org). Although the mangoo I/O core is a complete custom implementation, some ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
@@ -57,7 +56,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Google Guice - Dependency injection
 * Log4j 2 - Logging
 * Freemarker - Template engine
-* Google Guava - Caching
+* Google Guava, Hazlecast - Caching
 * Quartz Scheduler - Scheduling
 * Boon JSON - JSON parser
 * SnakeYaml - Configuration handling
@@ -80,8 +79,8 @@ simple adding the version number to the URL. If you want, for example, the docum
 ## Preconditions
 
 mangoo I/O requires
-http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java]
-(at least 1.8) and https://maven.apache.org[Maven] (at least 3.3.1).
+[Java](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+(at least 1.8) and [Maven](https://maven.apache.org) (at least 3.3.1).
 
 ### Checking Java
 
@@ -161,24 +160,22 @@ application by opening the following URL
     http://localhost:8080
 
 
-[IMPORTANT]
-Using hot-compiling in dev mode
-====
-When in dev mode mangoo I/O supports hot-compiling. This means, that when you change a source file in your IDE
-of choice the changes are available more or less instantly (in most cases in less than a second).
-As mangoo I/O relies on Java 8, it is important that the files are compiled with the correct flags specific to Java 8.
-To be more precise, mangoo I/O relies on the parameter flag that enables easy lookup of method parameters.
-
-If you are using *Eclipse*, please make sure that you have checked the following option: +
-Settings -> Compiler -> Check "Store information about method parameter (usable via reflection)"
-
-If you are using *IntelliJ*, please make sure that you have checked the following option: +
-Settings -> Java Compiler -> Add additional line parameters: -> "-parameters" (without the qoutes)
-
-If you don't do this, mangoo I/O won't pass request parameters to your controller when in dev mode.
-
-This is only required in dev mode, as compilation in all other modes is done via Maven
-and the correct flags are set via the Maven compiler plugin.
+> ## Using hot-compiling in dev mode
+> When in dev mode mangoo I/O supports hot-compiling. This means, that when you change a source file in your IDE
+> of choice the changes are available more or less instantly (in most cases in less than a second).
+> As mangoo I/O relies on Java 8, it is important that the files are compiled with the correct flags specific to Java 8.
+> To be more precise, mangoo I/O relies on the parameter flag that enables easy lookup of method parameters.
+> 
+> If you are using *Eclipse*, please make sure that you have checked the following option: +
+> Settings -> Compiler -> Check "Store information about method parameter (usable via reflection)"
+> 
+> If you are using *IntelliJ*, please make sure that you have checked the following option: +
+> Settings -> Java Compiler -> Add additional line parameters: -> "-parameters" (without the qoutes)
+> 
+> If you don't do this, mangoo I/O won't pass request parameters to your controller when in dev mode.
+> 
+> This is only required in dev mode, as compilation in all other modes is done via Maven
+> and the correct flags are set via the Maven compiler plugin.
 
 ## Basic structure of a mangoo I/O application
 
@@ -266,7 +263,7 @@ application.yaml, for example
 	application:
 	      name   : myValue
 
-The application.yaml uses https://de.wikipedia.org/wiki/YAML[YAML] for setting
+The application.yaml uses [YAML](https://de.wikipedia.org/wiki/YAML) for setting
 the configuration values.
 
 There is a number of default properties which configure a mangoo I/O
@@ -393,12 +390,12 @@ class may look like.
 	    }
 	}
 
-[NOTE]
-The Lifecycle class doesn't have to be named
-"Lifecycle", but the class must implement the MangooLifecycle interface and
-you have to bind the implementation using Google Guice in your Module
-class. The module class is also located in the /conf package in your
-application. This class can also hold other custom Google Guice bindings.
+
+> The Lifecycle class doesn't have to be named
+> "Lifecycle", but the class must implement the MangooLifecycle interface and
+> you have to bind the implementation using Google Guice in your Module
+> class. The module class is also located in the /conf package in your
+> application. This class can also hold other custom Google Guice bindings.
 
 	package conf;
 	
@@ -693,8 +690,7 @@ The Form class offers you convenient methods for accessing form values from you 
 	    ...
 	}
 
-[NOTE]
-The Form class is only available if the request is mapped as a POST or PUT method.
+> The Form class is only available if the request is mapped as a POST or PUT method.
 
 The Form class is automatically available in the template so you don't
 have to pass the class to your template.
@@ -786,7 +782,7 @@ message.
 ## CSRF Protection
 
 mangoo I/O allows you to retrieve an authenticity token for protection
-against https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery[CSRF].
+against [CSRF](https://de.wikipedia.org/wiki/Cross-Site-Request-Forgery).
 You can either obtain a prefilled hidden input field or the token itself.
 
 To get the prefilled hidden input field, use the following tag in your
@@ -810,8 +806,8 @@ If the token is invalid the request will be redirected to a default
 
 # Sessions
 
-With a http://en.wikipedia.org/wiki/Shared_nothing_architecture[Shared
-nothing architecture] in mind mangoo I/O uses a so called client-side
+With a [Shared
+nothing architecture](http://en.wikipedia.org/wiki/Shared_nothing_architecture) in mind mangoo I/O uses a so called client-side
 session. This means, that all information for a specific user is stored
 on the client-side inside a cookie. The big advantage of this concept
 is, that you can scale your application very easy, because nothing
@@ -857,7 +853,7 @@ don't have to pass the class to the template via a controller.
 ## Session encryption
 
 By default the values in the client-side cookie are signed with the
-application secret using SHA2(SHA-512), making manipulation of the
+application secret using SHA2 (SHA-512), making manipulation of the
 values very difficult. The security of the client-side cookie can be further
 increased by using AES encryption. To activate cookie encryption of the
 session cookie, set the following property in your application.yaml
@@ -1003,8 +999,8 @@ into a controller class.
 	@Inject
 	private Authentication authentication;
 
-The authentication uses http://de.wikipedia.org/wiki/Bcrypt[BCrypt]
-provided by http://www.mindrot.org/projects/jBCrypt[jBCrypt] for
+The authentication uses [BCrypt](http://de.wikipedia.org/wiki/Bcrypt)
+provided by [jBCrypt](http://www.mindrot.org/projects/jBCrypt) for
 password hashing. This means, that you don't have to store a salt along
 with the user data, just the hashed password. This also means, that you have
 to hash the user password with the provided function in the authentication class
@@ -1038,14 +1034,14 @@ custom Authentication.
 
 ## OAuth
 
-mangoo I/O supports authentication with OAuth for https://twitter.com[Twitter], https://google.com[Google] and https://facebook.com[Facebook]
+mangoo I/O supports authentication with OAuth for [Twitter](https://twitter.com), [Google](https://google.com) and [Facebook](https://facebook.com)
 in a fluent way. You may know this feature as "Sign in with ...". The OAuth feature
 integrates smoothly in the previously mentioned Authentication class.
 
 ## Preconditions
 
 In order to start an implementation for OAuth with mangoo I/O you first need an
-application key and an application secret. Check the developer pages for https://apps.twitter.com[Twitter], https://console.developers.google.com[Google] and https://developers.facebook.com[Facebook]
+application key and an application secret. Check the developer pages for [Twitter](https://apps.twitter.com), [Google](https://console.developers.google.com) and [Facebook](https://developers.facebook.com)
 on how to create an app and get the required informations. Once you have the key and secret
 simply add it to you application.yml
 
@@ -1169,13 +1165,13 @@ following method at the returning response in your controller method.
 
 [NOTE]
 If you are using a front-end HTTP server, please check the documentation on how it
-handles ETag, as the popular nginx web server https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip/[deliberately strips ETags] once gzip is applied.
+handles ETag, as the popular nginx web server [deliberately strips ETags](https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip) once gzip is applied.
 
 	public Response index() {
 	    return Response.withOk().andETag();
 	}
 
-For more information on how ETag works, click https://en.wikipedia.org/wiki/HTTP_ETag[here].
+For more information on how ETag works, click [here](https://en.wikipedia.org/wiki/HTTP_ETag).
 
 # Administrative URLs
 
@@ -1241,9 +1237,9 @@ The password parameter expects a SHA512 hashed value.
 
 # Working with JSON
 
-mangoo I/O uses https://github.com/boonproject/boon[boon] for parsing JSON. boon is a
-http://rick-hightower.blogspot.de/2014/01/boon-json-in-five-minutes-faster-json.htm[very
-fast] JSON handler with its main focus on serializing and deserializing of objects.
+mangoo I/O uses [boon JSON](https://github.com/boonproject/boon) for parsing JSON. boon is a
+[very
+fast](http://rick-hightower.blogspot.de/2014/01/boon-json-in-five-minutes-faster-json.htm) JSON handler with its main focus on serializing and deserializing of objects.
 
 ## JSON output
 
@@ -1388,7 +1384,7 @@ the object body of a request to a Map<String, Object>.
 	    }
 	}
 
-You can also get hold of the JSON using the great https://github.com/jayway/JsonPath[JsonPath] library.
+You can also get hold of the JSON using the great [JsonPath](https://github.com/jayway/JsonPath) library.
 
 	package controllers;
 	
@@ -1499,8 +1495,7 @@ All returned response object from your filter are passed to the next filter in t
 2. Controller filters
 3. Method filters
 
-[NOTE]
-Only the header and content values are merged with the response object returned from your controller.
+> Only the header and content values are merged with the response object returned from your controller.
 
 Here is an example of the AuthenticityFilter which is used for the CSRF checks.
 
@@ -1550,12 +1545,11 @@ filter has to implement the MangooRequestFilter interface instead.
 	    }
 	}
 
-[NOTE]
-There can only be one global filter in your mangoo I/O application.
+> There can only be one global filter in your mangoo I/O application.
 
 # Logging
 
-mangoo I/O uses https://logging.apache.org/log4j/2.x/[Log4j2] for logging.
+mangoo I/O uses [Log4j2](https://logging.apache.org/log4j/2.x) for logging.
 If you are familiar with Log4j2, creating a new logger instance is trivial.
 
 	import org.apache.logging.log4j.Logger;
@@ -1567,7 +1561,7 @@ You can configure your appenders in the log4j2.xml file located in
 src/main/resources which is present by default if you created you project from the
 mangoo I/O archtype.
 
-You can always use the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
+You can always use the default [configuration options](https://logging.apache.org/log4j/2.x/manual/configuration.html)
 from log4j2 for loading the configuration file. However, mangoo I/O offers you an additional feature, specially when
 working with different environments. When mangoo I/O starts it will look for an environment specific log4j2 configuration
 file in the form of
@@ -1576,12 +1570,12 @@ file in the form of
 
 This can of course be set for all modes.
 
-If mangoo I/O does not find such a file, it will fall back to the default https://logging.apache.org/log4j/2.x/manual/configuration.html[configuration options]
+If mangoo I/O does not find such a file, it will fall back to the default [configuration options](https://logging.apache.org/log4j/2.x/manual)configuration.html
 from log4j2.
 
 # Caching
 
-mangoo I/O uses https://github.com/google/guava/wiki/CachesExplained[Guava Cache] as default Cache for storing and accessing values
+mangoo I/O uses [Guava Cache](https://github.com/google/guava/wiki) CachesExplained as default Cache for storing and accessing values
 in-memory. To use the cache in your application, simply inject the cache class.
 
 	@Inject
