@@ -6,12 +6,12 @@
 	<meta name="description" content="mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.">
 	<meta name="keywords" content="java, framework, full stack, mangoo, lightweight, performance, web" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
-	<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" />
-	<link rel="stylesheet" href="css/style.min.css" type="text/css" />
-	<link rel="stylesheet" href="css/font-icons.min.css" type="text/css" />
-	<link rel="stylesheet" href="css/animate.min.css" type="text/css" />
-	<link rel="stylesheet" href="css/responsive.min.css" type="text/css" />
+	<link href="//fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/style.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/font-icons.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/animate.min.css" type="text/css" />
+	<link rel="stylesheet" href="/css/responsive.min.css" type="text/css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!--[if lt IE 9]>
 		<script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
@@ -26,26 +26,25 @@
 				<div class="container clearfix">
 					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
 					<div id="logo">
-						<a href="index.html" class="standard-logo" data-dark-logo="images/logo-dark.png"><img src="images/logo.png" alt="Canvas Logo"></a>
-						<a href="index.html" class="retina-logo" data-dark-logo="images/logo-dark@2x.png"><img src="images/logo@2x.png" alt="Canvas Logo"></a>
+						<a href="index.html" class="standard-logo" data-dark-logo="/images/logo-dark.png"><img src="/images/logo.png" alt="Canvas Logo"></a>
+						<a href="index.html" class="retina-logo" data-dark-logo="/images/logo-dark@2x.png"><img src="/images/logo@2x.png" alt="Canvas Logo"></a>
 					</div>
 					<nav id="primary-menu">
 						<ul>
-							<li><a href="index.html"><div>Home</div></a></li>
-							<li><a href="#"><div>Documentation</div></a></li>
-							<li><a href="#"><div>Changelog</div></a></li>
+							<li><a href="/"><div>Home</div></a></li>
+							<li><a href="/documentation"><div>Documentation</div></a></li>
+							<li><a href="/changelog"><div>Changelog</div></a></li>
 						</ul>
 					</nav>
 				</div>
 			</div>
 		</header>
-		<section id="page-title" class="page-title-parallax page-title-dark" style="padding: 250px 0; background-image: url('images/parallax.jpg'); background-size: cover; background-position: center center;" data-stellar-background-ratio="0.4">
+		<section id="page-title" class="page-title-parallax page-title-dark" style="padding: 250px 0; background-image: url('/images/parallax.jpg'); background-size: cover; background-position: center center;" data-stellar-background-ratio="0.4">
 			<div class="container clearfix">
 				<h1>mangoo I/O</h1>
 				<span>An Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</span>
 			</div>
 		</section>
-
 		<section id="content">
 			<div class="content-wrap">
 				<div class="container clearfix">
@@ -95,6 +94,7 @@
 				<br><br>
 				<div class="container clearfix">
 					<div class="col_full">
+					{{ content }}
 						<div class="heading-block fancy-title nobottomborder title-bottom-border">
 							<h4>In a <span>Nutshell</span>.</h4>
 						</div>
@@ -169,16 +169,10 @@
 				</div>
 			</div>
 		</footer>
-
-	</div><!-- #wrapper end -->
-
-	<!-- Go To Top
-	============================================= -->
+	</div>
 	<div id="gotoTop" class="icon-angle-up"></div>
-
-	<script type="text/javascript" src="js/jquery.min.js"></script>
-	<script type="text/javascript" src="js/plugins.min.js"></script>
-	<script type="text/javascript" src="js/functions.min.js"></script>
-
+	<script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/plugins.min.js"></script>
+	<script type="text/javascript" src="/js/functions.min.js"></script>
 </body>
 </html>
