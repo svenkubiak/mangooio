@@ -230,7 +230,7 @@ following files and folders
 	routes.yaml
 
 The /files folder contains all static files (e.g. robots.txt or JS/CSS
-assets) - see <<Handling static files and assets>> for more
+assets) - see [handling static files and assets](#handling-static-files-and-assets) for more
 information on serving static files and assets. The /templates folder contains all templates
 of your application. By convention the /templates folder has a
 layout.ftl file which contains the basic layout of your application.
@@ -267,7 +267,7 @@ The application.yaml uses [YAML](https://de.wikipedia.org/wiki/YAML) for setting
 the configuration values.
 
 There is a number of default properties which configure a mangoo I/O
-application. See <<Configuration options>>,
+application. See [Configuration options](#configuration-options),
 for all configuration options and there default values.
 
 Config values are accessed with a dot-notation in mangoo I/O. If you have
@@ -595,7 +595,7 @@ the parameter.
 ## Request validation
 
 As an additional feature on the request object, you can validate incoming parameters. Just like
-<<Form handling>> you can access a Validator class, which can perform specific checks on the request
+[Form handling](#form-handling) you can access a Validator class, which can perform specific checks on the request
 parameter.
 
 	public Response index(Request request) {
@@ -626,7 +626,7 @@ With this validation you can check an incoming request and return specific error
 	}
 
 The error messages for the request use the same key as the form handling. Check
-the documentation on <<Form handling>> for more information on how to customize
+the documentation on [Form handling](#form-handling) for more information on how to customize
 the specific error messages.
 
 # Request handling
@@ -1161,9 +1161,8 @@ This is widely used for static resources like CSS or JS files.
 mangoo I/O offers this functionality for dynamic content as well. To make use of an entity tag, simply add the
 following method at the returning response in your controller method.
 
-[NOTE]
-If you are using a front-end HTTP server, please check the documentation on how it
-handles ETag, as the popular nginx web server [deliberately strips ETags](https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip) once gzip is applied.
+> If you are using a front-end HTTP server, please check the documentation on how it
+> handles ETag, as the popular nginx web server [deliberately strips ETags](https://thinkingandcomputing.com/2014/09/27/enable-etag-nginx-resources-sent-gzip) once gzip is applied.
 
 	public Response index() {
 	    return Response.withOk().andETag();
@@ -1184,9 +1183,8 @@ following administrative URLs are available
 	/@system
 	/@memory
 
-[NOTE]
-By default, the administrative URLs are disabled in all modes. You can enable each administrative URL by
-setting the appropriate configuration value in your application.yaml. See <<Configuration options>> for more information on this.
+> By default, the administrative URLs are disabled in all modes. You can enable each administrative URL by
+> setting the appropriate configuration value in your application.yaml. See [Configuration options](#configuration-options) for more information on this.
 
 ## /@routes
 
@@ -1862,7 +1860,7 @@ language of the application from application.yaml will be used. If this configur
 not set, mangoo I/O will default to "en".
 
 If you want to force the language, you simply set the Locale in a filter
-- see <<Filters>> for more information on filters.
+- see [Filters](#filters) for more information on filters.
 
 	Locale.setDefault(Locale.ENGLISH);
 
@@ -1975,7 +1973,7 @@ again. The on-the-fly minification will create a file with the same
 name, ending with .min.css or .min.js.
 
 Of course you can configure the folder for the CSS and JS files in your
-application. See <<Configuration options>> for more
+application. See [Configuration options](#configuration-options) for more
 information about this.
 
 > There is also an option on automatically GZIP your Assets.
