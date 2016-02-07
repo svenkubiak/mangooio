@@ -1,7 +1,10 @@
 site_name: mangoo I/O
+site_author: Sven Kubiak
+site_url: https://mangoo.io
 repo_url: https://github.com/svenkubia/mangooio
+repo_name: mangoo I/O
 pages:
 - ['index.md', 'Home']
 - ['documentation.md', 'Documentation']
 - ['changelog.md', 'Changelog']
-theme: readthedocs
+theme_dir: custom_theme
