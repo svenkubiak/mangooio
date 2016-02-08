@@ -4,7 +4,6 @@ import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Objects;
-import java.util.Random;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -28,7 +27,7 @@ import org.apache.logging.log4j.Logger;
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
  *
- * @author graywatson
+ * @author graywatson, svenkubiak
  */
 public final class TwoFactorUtils {
     private static final Logger LOG = LogManager.getLogger(TwoFactorUtils.class);
@@ -40,23 +39,21 @@ public final class TwoFactorUtils {
     private static final ThreadLocal<Mac> MAC_THREAD_LOCAL = new ThreadLocal<Mac>() {
         @Override
         protected Mac initialValue() {
-            final String name = HMAC_SHA1;
             try {
-                return Mac.getInstance(name);
+                return Mac.getInstance(HMAC_SHA1);
             } catch (final NoSuchAlgorithmException e) {
-                throw new RuntimeException("Unknown message authentication code instance: " + name, e);
+                throw new RuntimeException("Unknown message authentication code instance", e);
             }
         }
     };
 
     /**
-     * @return Generate a secret key in base32 format (A-Z2-7)
+     * @return Generate a secret key in base32 format (A-Z, 2-7)
      */
     public static String generateBase32Secret() {
-        final Random random = new SecureRandom();
         final StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < 16; i++) {
-            final int val = random.nextInt(32);
+            final int val = new SecureRandom().nextInt(32);
             if (val < 26) {
                 buffer.append((char) ('A' + val));
             } else {
@@ -67,23 +64,28 @@ public final class TwoFactorUtils {
         return buffer.toString();
     }
 
+
     /**
-     * Return the current number to be checked. This can be compared against user input.
+     * Return the current number to be checked against the user input, using the
+     * time found in System.currentTimeMillis()
      *
      * WARNING: This requires a system clock that is in sync with the world.
      *
      * For more details of this magic algorithm, see:
      * http://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
+     * 
+     * @param secret The secret to use
+     * 
+     * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
     /**
-     * Same as {@link #generateCurrentNumber(String)} except at a particular time in millis. Mostly for testing
-     * purposes.
+     * Same as {@link #generateCurrentNumber(String)} except at a particular time in milliseconds
      */
-    private static String generateCurrentNumber(String secret, long currentTimeMillis) {
+    public static String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, "secret can not be null");
 
         final byte[] key = base32.decode(secret.getBytes());
@@ -95,7 +97,6 @@ public final class TwoFactorUtils {
             value >>= 8;
         }
 
-        // encrypt the data with the key and return the SHA1 of it in hex
         final SecretKeySpec signKey = new SecretKeySpec(key, HMAC_SHA1);
         Mac mac;
         byte[] hash = null;
@@ -111,37 +112,34 @@ public final class TwoFactorUtils {
             LOG.error("Failed to encrypt data with key", e);
         }
 
-        // take the 4 least significant bits from the encrypted string as an offset
         final int offset = hash[hash.length - 1] & 0xF;
-
-        // We're using a long because Java hasn't got unsigned int.
         long truncatedHash = 0;
         for (int i = offset; i < offset + 4; ++i) {
             truncatedHash <<= 8;
-            // get the 4 bytes at the offset
             truncatedHash |= (hash[i] & 0xFF);
         }
-        // cut off the top bit
         truncatedHash &= 0x7FFFFFFF;
-
-        // the token is then the last 6 digits in the number
         truncatedHash %= 1000000;
 
         return zeroPrepend(truncatedHash, 000000);
     }
 
     /**
-     * Return the QR image url thanks to Google. This can be shown to the user and scanned by the authenticator program
-     * as an easy way to enter the secret.
-     *
-     * NOTE: this must be URL escaped if it is to be put into a href on a web-page.
+     * Return the QR image URL from Google Charts API.
+     * 
+     * This can be shown to the user and scanned by the authenticator program as an easy way to enter the secret
+     * 
+     * @param accountName The account name used to display to the user
+     * @param secret The secret to use
+     * 
+     * @return A URL to the Google charts API
      */
-    public static String getQRCode(String keyId, String secret) {
+    public static String getQRCode(String accountName, String secret) {
         final StringBuilder buffer = new StringBuilder(128);
         buffer.append("https://chart.googleapis.com/chart")
             .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
             .append("otpauth://totp/")
-            .append(keyId)
+            .append(accountName)
             .append("?secret=")
             .append(secret);
 
@@ -149,7 +147,7 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Return the string prepended with 0s. Tested as 10x faster than String.format("%06d", ...); Exposed for testing.
+     * @return A string prepended with 0s. Tested as 10x faster than String.format("%06d", ...);
      */
     private static String zeroPrepend(long num, int digits) {
         final String hash = Long.toString(num);

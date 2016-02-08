@@ -14,16 +14,14 @@ import org.junit.Test;
  *
  */
 public class TwoFactorUtilsTest {
-    private static final String LINK = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth://totp/MyKeyId?secret=MySecureSecret";
+    private static final String ACCOUNT = "MyAccount";
+    private static final String SECRET = "MySecureSecret";
+    private static final String LINK = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth://totp/MyAccount?secret=MySecureSecret";
 
     @Test
     public void testGetQRCode() {
-        //given
-        String keyId = "MyKeyId";
-        String secret = "MySecureSecret";
-        
         //when
-        String qrCode = TwoFactorUtils.getQRCode(keyId, secret);
+        String qrCode = TwoFactorUtils.getQRCode(ACCOUNT, SECRET);
         
         //then
         assertThat(qrCode, not(equalTo(nullValue())));
@@ -46,14 +44,21 @@ public class TwoFactorUtilsTest {
     
     @Test
     public void testGenerateCurrentNumber() {
-        //given
-        String secret = "MySecureSecret";
-        
         //when
-        String number = TwoFactorUtils.generateCurrentNumber(secret);
-
+        String number = TwoFactorUtils.generateCurrentNumber(SECRET);
+        
         //then
         assertThat(number, not(nullValue()));
         assertThat(number.length(), equalTo(6));
+    }
+    
+    @Test
+    public void testGenerateCurrentNumberWithMillis() {
+        //when
+        String number = TwoFactorUtils.generateCurrentNumber(SECRET, 1454934536166L);
+
+        //then
+        assertThat(number, not(nullValue()));
+        assertThat(number, equalTo("378301"));
     }
 }
