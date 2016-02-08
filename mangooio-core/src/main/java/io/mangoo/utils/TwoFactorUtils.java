@@ -136,7 +136,7 @@ public final class TwoFactorUtils {
      *
      * NOTE: this must be URL escaped if it is to be put into a href on a web-page.
      */
-    public String getQRCode(String keyId, String secret) {
+    public static String getQRCode(String keyId, String secret) {
         final StringBuilder buffer = new StringBuilder(128);
         buffer.append("https://chart.googleapis.com/chart")
             .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
