@@ -79,6 +79,8 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
+        Objects.requireNonNull(secret, "secret can not be null");
+        
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
@@ -135,6 +137,9 @@ public final class TwoFactorUtils {
      * @return A URL to the Google charts API
      */
     public static String getQRCode(String accountName, String secret) {
+        Objects.requireNonNull(accountName, "accountName can not be null");
+        Objects.requireNonNull(secret, "secret can not be null");
+        
         final StringBuilder buffer = new StringBuilder(128);
         buffer.append("https://chart.googleapis.com/chart")
             .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
