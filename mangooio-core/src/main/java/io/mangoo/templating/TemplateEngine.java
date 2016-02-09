@@ -1,10 +1,7 @@
 package io.mangoo.templating;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 
-import freemarker.template.TemplateException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
@@ -31,19 +28,20 @@ public interface TemplateEngine {
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath,
-            Map<String, Object> content) throws MangooTemplateEngineException;
+    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException;
 
     /**
+     * Renders a template for a specific controller class and method
      * 
-     * @param pathPrefix
-     * @param templateName
-     * @param content
-     * @return
+     * @param pathPrefix A path prefix for the template
+     * @param templateName The path to the template to render
+     * @param content The content map which is passed to the template
+     * @return A rendered template
+     * 
      * @throws MangooTemplateEngineException
      */
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException;
-
+    
     /**
      * When in dev mode, this method is used to pass the framework exception to the frontend
      *
@@ -52,10 +50,7 @@ public interface TemplateEngine {
      * @param templateException True if the exceptions occurs during exception rendering, false otherwise
      * @return A rendered template
      *
-     * @throws FileNotFoundException FileNotFoundException
-     * @throws IOException IOException
-     * @throws TemplateException TemplateException
+     * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public  String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException)
-            throws MangooTemplateEngineException;
+    public  String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException;
 }

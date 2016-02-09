@@ -28,6 +28,7 @@ public final class Application {
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
     private static volatile boolean started;
+    private static volatile String baseDirectory;
 
     private Application() {
     }
@@ -37,6 +38,7 @@ public final class Application {
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
+        baseDirectory = bootstrap.preparteBaseDirectory();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
@@ -45,7 +47,7 @@ public final class Application {
         bootstrap.startUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
-
+        
         if (bootstrap.isBootstrapSuccessful()) {
             started = true;
         } else {
@@ -170,5 +172,9 @@ public final class Application {
      */
     public static List<String> getAdministrativeURLs() {
         return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");  
+    }
+    
+    public static String getBaseDirectory() {
+        return baseDirectory;
     }
 }

@@ -35,9 +35,13 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class TemplateEngineFreemarker implements TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
-    private final String baseDirectory;
     private static final int MAX_CHARS = 65536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
@@ -58,17 +62,6 @@ public class TemplateEngineFreemarker implements TemplateEngine {
             this.configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
             this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
         }
-
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(System.getProperty("user.dir"))
-        .append(File.separator)
-        .append("src")
-        .append(File.separator)
-        .append("main")
-        .append(File.separator)
-        .append("java");
-
-        this.baseDirectory = buffer.toString();
     }
 
     @SuppressWarnings("all")
@@ -90,9 +83,6 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         return processTemplate(content, template);
     }
 
-    /* (non-Javadoc)
-     * @see io.mangoo.templating.freemarker.Foo#render(java.lang.String, java.lang.String, java.util.Map)
-     */
     @SuppressWarnings("all")
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException {
         Template template;
@@ -130,7 +120,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
             content.put("line", stackTraceElement.getLineNumber());
             content.put("causeSource", cause.toString());
             content.put("stackTraces", cause.getStackTrace());
-            content.put("sourceCodePath", StringUtils.substringAfter(new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+            content.put("sourceCodePath", StringUtils.substringAfter(new File(Application.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
         Configuration config = new Configuration(VERSION);
