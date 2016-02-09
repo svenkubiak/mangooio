@@ -45,6 +45,7 @@
 				<span>An Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</span>
 			</div>
 		</section>
+		{% if current_page.url == '.' %}
 		<section id="content">
 			<div class="content-wrap">
 				<div class="container clearfix">
@@ -154,6 +155,27 @@
 					</div>
 				</div>				
 		</section>
+		{% elif current_page.title == 'Documentation' %}
+		<section id="content">
+			<div class="content-wrap">
+				<div class="container clearfix">
+					<div class="col_full">
+					{{ content }}
+					</div>
+				</div>
+			</div>
+		</section>					
+		{% elif current_page.title == 'Changelog' %}
+		<section id="content">
+			<div class="content-wrap">
+				<div class="container clearfix">
+					<div class="col_full">
+					{{ content }}
+					</div>
+				</div>
+			</div>
+		</section>
+		{% endif %}
 		<footer id="footer" class="dark">
 			<div id="copyrights">
 				<div class="container clearfix">
@@ -163,7 +185,7 @@
 					<div class="col_half col_last tright">
 						<div class="clear"></div>
 						twitter.com/mangoo_io<br>
-						contact@mangoo.io 
+						contact@mangoo.io
 					</div>
 				</div>
 			</div>
