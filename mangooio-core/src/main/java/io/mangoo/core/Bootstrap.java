@@ -237,18 +237,18 @@ public class Bootstrap {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
 
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("config"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.HEALTH.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("health"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CACHE.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.METRICS.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SCHEDULER.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("system"));
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("memory"));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("config").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.HEALTH.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("health").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CACHE.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.METRICS.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SCHEDULER.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("system").internal());
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("memory").internal());
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed()));
+                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed(), route.isInternal()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
             }

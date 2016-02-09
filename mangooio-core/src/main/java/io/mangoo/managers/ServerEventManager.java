@@ -6,10 +6,10 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
-import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.ErrorMessage;
 import io.mangoo.utils.RequestUtils;
@@ -23,7 +23,14 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private Cache cache = Application.getInternalCache();
+    private Cache cache;
+    
+    @Inject
+    public ServerEventManager(Cache cache) {
+        Objects.requireNonNull(cache, "Cache can not be null");
+        
+        this.cache = cache;
+    }
         
     /**
      * Adds a new connection to the manager

@@ -2,12 +2,13 @@ package io.mangoo.models;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
-import io.mangoo.core.Application;
 
 /**
  * Base class for counting system metrics
@@ -18,7 +19,14 @@ import io.mangoo.core.Application;
 @Singleton
 public class Metrics {
     private static final String MANGOO_METRICS = "MANGOO-METRICS";
-    private Cache cache = Application.getInternalCache();
+    private Cache cache;
+    
+    @Inject
+    public Metrics(Cache cache) {
+        Objects.requireNonNull(cache, "Cache can not be null");
+        
+        this.cache = cache;
+    } 
     
     public void inc(int responseCode) {
         Map<Integer, LongAdder> metrics = getMetricsCounter();

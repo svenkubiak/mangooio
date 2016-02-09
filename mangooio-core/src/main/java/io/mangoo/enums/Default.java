@@ -33,7 +33,6 @@ public enum Default {
     SERVER("Undertow"),
     CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
-    TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
     COOKIE_NAME("MANGOOIO-SESSION"),
     COOKIE_I18N_NAME("MANGOOIO-I18N"),
@@ -49,7 +48,6 @@ public enum Default {
     VERSION("unknown"),
     LOGBACK_PROD_FILE("logback.prod.xml"),
     NUMBER_FORMAT("0.######"),
-    EXCEPTION_TEMPLATE_NAME("exception.ftl"),
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     X_XSS_PPROTECTION("1"),
     COOKIE_SECURE("false"), //NOSONAR

@@ -17,17 +17,6 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public class RequestUtilsTest {
-
-    @Test
-    public void testGetTemplateName() {
-        //given
-        String name1 = RequestUtils.getTemplateName("template.ftl");
-        String name2 = RequestUtils.getTemplateName("template");
-        
-        //then
-        assertThat(name1, equalTo("template.ftl"));
-        assertThat(name2, equalTo("template.ftl"));
-    }
     
     @Test
     public void testGetOAuthProvider() {

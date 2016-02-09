@@ -8,12 +8,10 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
-import io.mangoo.cache.Cache;
-import io.mangoo.cache.GuavaCache;
-import io.mangoo.cache.HazlecastCache;
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Mode;
+import io.mangoo.templating.TemplateEngine;
+import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -22,7 +20,7 @@ import io.mangoo.enums.Mode;
  *
  */
 public final class Application {
-    private static volatile Cache cache;
+    private static volatile TemplateEngine templateEngine;
     private static volatile Config config;
     private static volatile Mode mode;
     private static volatile Injector injector;
@@ -127,6 +125,17 @@ public final class Application {
 
         return config;
     }
+    
+    /**
+     * @return An instance of the internal template engine freemarker
+     */
+    public static TemplateEngine getInternalTemplateEngine() {
+        if (templateEngine == null) {
+            templateEngine = new TemplateEngineFreemarker();
+        }
+
+        return templateEngine;
+    }
 
     /**
      * @return The duration of the application uptime
@@ -153,27 +162,15 @@ public final class Application {
     }
     
     /**
-     * @return An instance of the internal mangoo I/O cache
-     */
-    public static Cache getInternalCache() {
-        if (cache == null) {
-            if (Default.CACHE_CLASS.toString().equals(config.getCacheClass())) {
-                cache = new GuavaCache();                
-            } else {
-                cache = new HazlecastCache();
-            }
-        }
-        
-        return cache;
-    }
-    
-    /**
      * @return A list of all administrative URLs
      */
     public static List<String> getAdministrativeURLs() {
         return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");  
     }
     
+    /**
+     * @return The system specific base directory to 
+     */
     public static String getBaseDirectory() {
         return baseDirectory;
     }

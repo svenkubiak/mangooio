@@ -18,6 +18,7 @@ public class Route {
     private final RouteType routeType;
     private boolean authentication;
     private boolean blocking;
+    private boolean internal;
 
     public Route(RouteType routeType) {
         this.routeType = Objects.requireNonNull(routeType, "routeType can not be null");
@@ -67,6 +68,11 @@ public class Route {
         this.blocking = blocking;
         return this;
     }
+    
+    public Route internal() {
+        this.internal = true;
+        return this;
+    }
 
     public String getUrl() {
         return this.url;
@@ -86,6 +92,10 @@ public class Route {
 
     public boolean isAuthenticationRequired() {
         return this.authentication;
+    }
+    
+    public boolean isInternal() {
+        return this.internal;
     }
 
     public HttpString getRequestMethod() {

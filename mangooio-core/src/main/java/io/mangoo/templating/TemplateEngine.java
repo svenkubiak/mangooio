@@ -52,5 +52,15 @@ public interface TemplateEngine {
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public  String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException;
+    public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException;
+    
+    
+    /**
+     * Checks if a given template name has the current suffix and sets is
+     * if it does not exist
+     *
+     * @param templateName The name of the template file
+     * @return The template name with correct suffix
+     */
+    public String getTemplateName(String templateName);
 }

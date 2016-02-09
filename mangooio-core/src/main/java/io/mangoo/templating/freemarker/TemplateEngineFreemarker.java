@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -31,7 +32,6 @@ import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.directives.AuthenticityFormDirective;
 import io.mangoo.templating.freemarker.directives.AuthenticityTokenDirective;
 import io.mangoo.templating.freemarker.methods.I18nMethod;
-import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
@@ -42,6 +42,7 @@ import io.undertow.server.HttpServerExchange;
  */
 public class TemplateEngineFreemarker implements TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
+    private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final int MAX_CHARS = 65536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
@@ -64,6 +65,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         }
     }
 
+    @Override
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
         Template template;
@@ -83,11 +85,12 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         return processTemplate(content, template);
     }
 
+    @Override
     @SuppressWarnings("all")
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException {
         Template template;
         try {
-            template = configuration.getTemplate(pathPrefix + "/" + RequestUtils.getTemplateName(templateName));
+            template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
         } catch (IOException e) {
             throw new MangooTemplateEngineException("Failed to render template", e);
         }
@@ -95,6 +98,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         return processTemplate(content, template);
     }
 
+    @Override
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Writer writer = new StringWriter();
@@ -128,7 +132,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
         Template template;
         try {
-            template = config.getTemplate(Default.EXCEPTION_TEMPLATE_NAME.toString());
+            template = config.getTemplate("exception.ftl");
             template.process(content, writer);
         } catch (IOException | TemplateException e) {
             throw new MangooTemplateEngineException("Failed to process template", e);
@@ -156,5 +160,12 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         }
 
         return buffer.toString();
+    }
+
+    @Override
+    public String getTemplateName(String templateName) {
+        Objects.requireNonNull(templateName, "templateName can not be null");
+
+        return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
 }

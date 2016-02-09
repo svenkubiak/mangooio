@@ -70,19 +70,6 @@ public final class RequestUtils {
     }
 
     /**
-     * Checks if a given template name has the current suffix and sets is
-     * if it does not exist
-     *
-     * @param templateName The name of the template file
-     * @return The template name with correct suffix
-     */
-    public static String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, "templateName can not be null");
-
-        return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : (templateName + Default.TEMPLATE_SUFFIX.toString());
-    }
-
-    /**
      * Checks if the request is a POST or a PUT request
      *
      * @param exchange The Undertow HttpServerExchange
