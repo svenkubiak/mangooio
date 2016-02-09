@@ -84,7 +84,8 @@ public enum Default {
     BLOCKING("@blocking"),
     CACHE_CLASS("io.mangoo.cache.GuavaCache"),
     VALUE_REQUIRED("For a new cache entry a non null value is required"),
-    KEY_REQUIRED("For a new cache entry a non null key is required");
+    KEY_REQUIRED("For a new cache entry a non null key is required"),
+    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker");
 
     private final String value;
 

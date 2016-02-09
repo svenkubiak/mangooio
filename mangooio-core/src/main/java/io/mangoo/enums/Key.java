@@ -75,7 +75,8 @@ public enum Key {
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    EXECUTION_THREADPOOL("execution.threadpool");
+    EXECUTION_THREADPOOL("execution.threadpool"),
+    TEMPLATE_ENGINE_CLASS("templateeninge.class");
 
     private final String value;
 

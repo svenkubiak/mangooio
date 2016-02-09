@@ -586,4 +586,11 @@ public class Config {
     public String getCacheAddresses() {
         return getString(Key.CACHE_ADDRESSES);
     }
+
+    /**
+     * @return templateengine.class from application.yaml
+     */
+    public String getTemplateEngineClass() {
+        return getString(Key.TEMPLATE_ENGINE_CLASS, Default.TEMPLATE_ENGINE_CLASS.toString());
+    }
 }

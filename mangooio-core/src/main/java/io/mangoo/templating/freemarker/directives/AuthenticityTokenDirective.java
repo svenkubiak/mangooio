@@ -1,4 +1,4 @@
-package io.mangoo.templating.directives;
+package io.mangoo.templating.freemarker.directives;
 
 import java.io.IOException;
 import java.util.Map;

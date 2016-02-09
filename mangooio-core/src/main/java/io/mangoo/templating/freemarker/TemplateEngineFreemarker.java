@@ -1,0 +1,170 @@
+package io.mangoo.templating.freemarker;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import com.google.common.base.Charsets;
+
+import freemarker.cache.MruCacheStorage;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.Version;
+import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
+import io.mangoo.exceptions.MangooTemplateEngineException;
+import io.mangoo.i18n.Messages;
+import io.mangoo.models.Source;
+import io.mangoo.routing.bindings.Flash;
+import io.mangoo.routing.bindings.Form;
+import io.mangoo.routing.bindings.Session;
+import io.mangoo.templating.TemplateEngine;
+import io.mangoo.templating.freemarker.directives.AuthenticityFormDirective;
+import io.mangoo.templating.freemarker.directives.AuthenticityTokenDirective;
+import io.mangoo.templating.freemarker.methods.I18nMethod;
+import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.ThrowableUtils;
+import io.undertow.server.HttpServerExchange;
+
+public class TemplateEngineFreemarker implements TemplateEngine {
+    private final Configuration configuration = new Configuration(VERSION);
+    private final String baseDirectory;
+    private static final int MAX_CHARS = 65536;
+    private static final int ONE_SECOND_MS = 1000;
+    private static final int STRONG_SIZE_LIMIT = 20;
+    private static final Version VERSION = new Version(2, 3, 23);
+
+    public TemplateEngineFreemarker() {
+        this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
+        this.configuration.setDefaultEncoding(Charsets.UTF_8.name());
+        this.configuration.setOutputEncoding(Charsets.UTF_8.name());
+        this.configuration.setLocalizedLookup(false);
+        this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
+        this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
+        this.configuration.setAPIBuiltinEnabled(true);
+
+        if (Application.inDevMode()) {
+            this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
+        } else {
+            this.configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
+            this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
+        }
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(System.getProperty("user.dir"))
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
+
+        this.baseDirectory = buffer.toString();
+    }
+
+    @SuppressWarnings("all")
+    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
+        Template template;
+        try {
+            template = configuration.getTemplate(templatePath);
+        } catch (IOException e) {
+            throw new MangooTemplateEngineException("Template was not found on path:" + templatePath, e);
+        }
+        
+        content.put("form", form);
+        content.put("flash", flash);
+        content.put("session", session);
+        content.put("i18n", new I18nMethod(messages));
+        content.put("authenticityToken", new AuthenticityTokenDirective(session));
+        content.put("authenticityForm", new AuthenticityFormDirective(session));
+
+        return processTemplate(content, template);
+    }
+
+    /* (non-Javadoc)
+     * @see io.mangoo.templating.freemarker.Foo#render(java.lang.String, java.lang.String, java.util.Map)
+     */
+    @SuppressWarnings("all")
+    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException {
+        Template template;
+        try {
+            template = configuration.getTemplate(pathPrefix + "/" + RequestUtils.getTemplateName(templateName));
+        } catch (IOException e) {
+            throw new MangooTemplateEngineException("Failed to render template", e);
+        }
+
+        return processTemplate(content, template);
+    }
+
+    @SuppressWarnings("all")
+    public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
+        Writer writer = new StringWriter();
+        Map<String, Object> content = new HashMap<>();
+        content.put("templateException", templateException);
+
+        if (templateException) {
+            content.put("exceptions", cause.getMessage().split("\n"));
+        } else {
+            StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
+            String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
+
+            List<Source> sources;
+            try {
+                sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
+            } catch (IOException e) {
+                throw new MangooTemplateEngineException("Failed to get source lines of exception", e);
+            }
+            content.put("sources", sources);
+            content.put("cause", ExceptionUtils.getMessage(cause));
+            content.put("url", exchange.getRequestURI());
+            content.put("method", exchange.getRequestMethod());
+            content.put("line", stackTraceElement.getLineNumber());
+            content.put("causeSource", cause.toString());
+            content.put("stackTraces", cause.getStackTrace());
+            content.put("sourceCodePath", StringUtils.substringAfter(new File(this.baseDirectory).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+        }
+
+        Configuration config = new Configuration(VERSION);
+        config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
+
+        Template template;
+        try {
+            template = config.getTemplate(Default.EXCEPTION_TEMPLATE_NAME.toString());
+            template.process(content, writer);
+        } catch (IOException | TemplateException e) {
+            throw new MangooTemplateEngineException("Failed to process template", e);
+        }
+
+        return writer.toString();
+    }
+
+    /**
+     * Process a template by rendering the content into the template
+     *
+     * @param content The content to render in the template
+     * @param template The template
+     * @return A completely rendered template
+     *
+     * @throws TemplateExceptions TemplateExceptions
+     * @throws IOException IOException
+     */
+    private String processTemplate(Map<String, Object> content, Template template) throws MangooTemplateEngineException {
+        StringWriter buffer = new StringWriter(MAX_CHARS);
+        try {
+            template.process(content, buffer);
+        } catch (TemplateException | IOException e) {
+            throw new MangooTemplateEngineException("Failed to process template", e);
+        }
+
+        return buffer.toString();
+    }
+}
