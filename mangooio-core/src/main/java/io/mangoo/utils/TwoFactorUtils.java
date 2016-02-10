@@ -119,15 +119,13 @@ public final class TwoFactorUtils {
         }
 
         long truncatedHash = 0;
-        if (hash != null) {
-            final int offset = hash[hash.length - 1] & 0xF;
-            for (int i = offset; i < offset + 4; ++i) {
-                truncatedHash <<= 8;
-                truncatedHash |= (hash[i] & 0xFF);
-            }
-            truncatedHash &= 0x7FFFFFFF;
-            truncatedHash %= 1000000;   
+        final int offset = hash[hash.length - 1] & 0xF;
+        for (int i = offset; i < offset + 4; ++i) {
+            truncatedHash <<= 8;
+            truncatedHash |= (hash[i] & 0xFF);
         }
+        truncatedHash &= 0x7FFFFFFF;
+        truncatedHash %= 1000000;   
 
         return zeroPrepend(truncatedHash, 000000);
     }
