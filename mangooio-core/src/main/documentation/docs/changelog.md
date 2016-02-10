@@ -6,7 +6,6 @@
 * [#139](https://github.com/svenkubiak/mangooio/issues/139) Added utility methods for Two-Factor-Authentication (svenkubiak, MrDunne)
 * [#134](https://github.com/svenkubiak/mangooio/issues/134) Change documentation from ascidoc to MkDocs (svenkubiak)
 * [#138](https://github.com/svenkubiak/mangooio/issues/138) Added provider for cache (svenkubiak)
-* [#137](https://github.com/svenkubiak/mangooio/issues/137) Metrics are now stored in cache (svenkubiak)
 * [#133](https://github.com/svenkubiak/mangooio/issues/137) SSE and WSS informations are now stored in cache (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Updated documentation (svenkubiak)
