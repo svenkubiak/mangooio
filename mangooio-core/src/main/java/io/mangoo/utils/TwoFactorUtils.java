@@ -64,7 +64,6 @@ public final class TwoFactorUtils {
         return buffer.toString();
     }
 
-
     /**
      * Return the current number to be checked against the user input, using the
      * time found in System.currentTimeMillis()
@@ -94,7 +93,7 @@ public final class TwoFactorUtils {
         final byte[] data = new byte[8];
 
         long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS;
-        for (int i = 7; value > 0; i--) {
+        for (int i = 7; value > 0; i--) { //NOSONAR
             data[i] = (byte) (value & 0xFF);
             value >>= 8;
         }
@@ -114,14 +113,16 @@ public final class TwoFactorUtils {
             LOG.error("Failed to encrypt data with key", e);
         }
 
-        final int offset = hash[hash.length - 1] & 0xF;
         long truncatedHash = 0;
-        for (int i = offset; i < offset + 4; ++i) {
-            truncatedHash <<= 8;
-            truncatedHash |= (hash[i] & 0xFF);
+        if (hash != null) {
+            final int offset = hash[hash.length - 1] & 0xF;
+            for (int i = offset; i < offset + 4; ++i) {
+                truncatedHash <<= 8;
+                truncatedHash |= (hash[i] & 0xFF);
+            }
+            truncatedHash &= 0x7FFFFFFF;
+            truncatedHash %= 1000000;   
         }
-        truncatedHash &= 0x7FFFFFFF;
-        truncatedHash %= 1000000;
 
         return zeroPrepend(truncatedHash, 000000);
     }

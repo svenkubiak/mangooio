@@ -20,32 +20,33 @@ public class FormController {
     }
     
     public Response singlefile(Form form) {
-    	String content = "";
-    	if (form.getFile().isPresent()) {
-    		File file = form.getFile().get();
-    		try {
-				content = Files.readFirstLine(file, Charset.defaultCharset());
-			} catch (IOException e) {
-				//intentionally left blank
-			}
-    	}
-    	
-    	return Response.withOk().andTextBody(content);
+        String content = "";
+        if (form.getFile().isPresent()) {
+            File file = form.getFile().get();
+            try {
+                content = Files.readFirstLine(file, Charset.defaultCharset());
+            } catch (IOException e) {
+                //intentionally left blank
+            }
+        }
+        
+        return Response.withOk().andTextBody(content);
     }
     
+    @SuppressWarnings("all")
     public Response multifile(Form form) {
-    	String content = "";
-    	
-    	List<File> files = form.getFiles();
-    	for (File file : files) {
-    		try {
-				content = content + Files.readFirstLine(file, Charset.defaultCharset());
-			} catch (IOException e) {
-				//intentionally left blank
-			}
-    	}
-    	
-    	return Response.withOk().andTextBody(content + files.size());
+        String content = "";
+        
+        List<File> files = form.getFiles();
+        for (File file : files) {
+            try {
+                content = content + Files.readFirstLine(file, Charset.defaultCharset());
+            } catch (IOException e) {
+                //intentionally left blank
+            }
+        }
+        
+        return Response.withOk().andTextBody(content + files.size());
     }
 
     public Response validateform(Form form) {

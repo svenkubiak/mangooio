@@ -53,17 +53,17 @@ public class FormHandler implements HttpHandler {
                 exchange.startBlocking();
                 final FormData formData = formDataParser.parseBlocking();
                 formData.forEach(data -> {
-                	Deque<FormValue> deque = formData.get(data);
-                	if (deque != null) {
-                    	FormValue formValue = deque.element();
-                    	if (formValue != null) {
-                        	if (formValue.isFile() && formValue.getPath() != null) {
-                        		form.addFile(formValue.getPath().toFile());
+                    Deque<FormValue> deque = formData.get(data);
+                    if (deque != null) {
+                        FormValue formValue = deque.element();
+                        if (formValue != null) {
+                            if (formValue.isFile() && formValue.getPath() != null) {
+                                form.addFile(formValue.getPath().toFile());
                             } else {
                                 form.addValue(new HttpString(data).toString(), formValue.getValue());
-                            }	
-                    	}
-                	}
+                            }    
+                        }
+                    }
                 });
 
 
