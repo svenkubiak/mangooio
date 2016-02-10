@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -44,8 +45,10 @@ public final class TwoFactorUtils {
             try {
                 return Mac.getInstance(HMAC_SHA1);
             } catch (final NoSuchAlgorithmException e) {
-                throw new RuntimeException("Unknown message authentication code instance", e);
+                LOG.error("Unknown message authentication code instance", e);
             }
+            
+            return null;
         }
     };
 
@@ -57,12 +60,12 @@ public final class TwoFactorUtils {
      */
     public static String generateBase32Secret() {
         final StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 16; i++) { //NOSONR
             final int val = new SecureRandom().nextInt(32);
-            if (val < 26) {
+            if (val < 26) { //NOSONR
                 buffer.append((char) ('A' + val));
             } else {
-                buffer.append((char) ('2' + (val - 26)));
+                buffer.append((char) ('2' + (val - 26))); //NOSONAR
             }
         }
 
@@ -94,13 +97,18 @@ public final class TwoFactorUtils {
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
 
-        final byte[] key = base32.decode(secret.getBytes());
-        final byte[] data = new byte[8];
-
-        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS;
+        byte[] key = null;
+        try {
+            key = base32.decode(secret.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Failed to decode secrete to base32", e);
+        }
+        
+        final byte[] data = new byte[8]; //NOSONAR
+        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS; //NOSONAR
         for (int i = 7; value > 0; i--) { //NOSONAR
             data[i] = (byte) (value & 0xFF);
-            value >>= 8;
+            value >>= 8; //NOSONAR
         }
 
         final SecretKeySpec signKey = new SecretKeySpec(key, HMAC_SHA1);
@@ -125,9 +133,9 @@ public final class TwoFactorUtils {
             truncatedHash |= (hash[i] & 0xFF);
         }
         truncatedHash &= 0x7FFFFFFF;
-        truncatedHash %= 1000000;   
+        truncatedHash %= 1000000; //NOSONAR
 
-        return zeroPrepend(truncatedHash, 000000);
+        return zeroPrepend(truncatedHash, 000000); //NOSONAR
     }
 
     /**
