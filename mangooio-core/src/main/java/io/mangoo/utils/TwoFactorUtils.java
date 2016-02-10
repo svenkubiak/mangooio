@@ -32,6 +32,7 @@ import io.mangoo.enums.ErrorMessage;
  *
  * @author graywatson, svenkubiak
  */
+@SuppressWarnings("all")
 public final class TwoFactorUtils {
     private static final Logger LOG = LogManager.getLogger(TwoFactorUtils.class);
     private static final Base32 base32 = new Base32();
@@ -60,12 +61,12 @@ public final class TwoFactorUtils {
      */
     public static String generateBase32Secret() {
         final StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < 16; i++) { //NOSONR
+        for (int i = 0; i < 16; i++) { 
             final int val = new SecureRandom().nextInt(32);
-            if (val < 26) { //NOSONR
+            if (val < 26) { 
                 buffer.append((char) ('A' + val));
             } else {
-                buffer.append((char) ('2' + (val - 26))); //NOSONAR
+                buffer.append((char) ('2' + (val - 26))); 
             }
         }
 
@@ -104,11 +105,11 @@ public final class TwoFactorUtils {
             LOG.error("Failed to decode secrete to base32", e);
         }
         
-        final byte[] data = new byte[8]; //NOSONAR
-        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS; //NOSONAR
-        for (int i = 7; value > 0; i--) { //NOSONAR
+        final byte[] data = new byte[8]; 
+        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS; 
+        for (int i = 7; value > 0; i--) { 
             data[i] = (byte) (value & 0xFF);
-            value >>= 8; //NOSONAR
+            value >>= 8; 
         }
 
         final SecretKeySpec signKey = new SecretKeySpec(key, HMAC_SHA1);
@@ -133,9 +134,9 @@ public final class TwoFactorUtils {
             truncatedHash |= (hash[i] & 0xFF);
         }
         truncatedHash &= 0x7FFFFFFF;
-        truncatedHash %= 1000000; //NOSONAR
+        truncatedHash %= 1000000; 
 
-        return zeroPrepend(truncatedHash, 000000); //NOSONAR
+        return zeroPrepend(truncatedHash, 000000); 
     }
 
     /**
