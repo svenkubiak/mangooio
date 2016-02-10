@@ -10,9 +10,9 @@
 * Sonar refactorings (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
-	* undertow-core 1.3.15.Final -> 1.3.16.Final
+	* undertow-core 1.3.15.Final -> 1.3.17.Final
 	* mockito 2.0.40-Beta -> 2.0.42-Beta
-	* dsiutils 2.2.6 -> 2.2.8
+	* dsiutils 2.2.6 -> 2.3.0
 
 ## Version 2.3.1
 
