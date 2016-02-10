@@ -576,9 +576,9 @@ public class Config {
     /**
      * @return cache.class from application.yaml or default value if undefined
      */
-	public String getCacheClass() {
-		return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
-	}
+    public String getCacheClass() {
+        return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
+    }
 
     /**
      * @return cache.addresses from application.yaml

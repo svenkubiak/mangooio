@@ -20,26 +20,26 @@ import io.mangoo.core.Application;
 @Singleton
 public class CacheProvider implements Provider<Cache> {
     private static final Logger LOG = LogManager.getLogger(CacheProvider.class);
-	private static final Config CONFIG = Application.getConfig();
-	private Cache cache;
+    private static final Config CONFIG = Application.getConfig();
+    private Cache cache;
 
-	@Inject
-	public CacheProvider(Injector injector) {
-		Class<? extends Cache> cacheClass = null; 
-		try {
-			cacheClass = Class.forName(CONFIG.getCacheClass()).asSubclass(Cache.class);
-		} catch (ClassNotFoundException e) {
-			LOG.error("Can not find cache class: " + CONFIG.getCacheClass());
-		}
-		
-		if (cacheClass != null) {
-			this.cache = injector.getInstance(cacheClass);
-			LOG.info("Using {} as implementation for Cache",  cacheClass);
-		}
-	}
+    @Inject
+    public CacheProvider(Injector injector) {
+        Class<? extends Cache> cacheClass = null; 
+        try {
+            cacheClass = Class.forName(CONFIG.getCacheClass()).asSubclass(Cache.class);
+        } catch (ClassNotFoundException e) {
+            LOG.error("Can not find cache class: " + CONFIG.getCacheClass(), e);
+        }
+        
+        if (cacheClass != null) {
+            this.cache = injector.getInstance(cacheClass);
+            LOG.info("Using {} as implementation for Cache",  cacheClass);
+        }
+    }
 
-	@Override
-	public Cache get() {
-		return this.cache;
-	}
+    @Override
+    public Cache get() {
+        return this.cache;
+    }
 }

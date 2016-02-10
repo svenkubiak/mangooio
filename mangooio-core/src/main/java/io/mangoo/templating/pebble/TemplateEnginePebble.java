@@ -73,7 +73,6 @@ public class TemplateEnginePebble implements TemplateEngine {
 
     @Override
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
-        Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
 
@@ -98,7 +97,8 @@ public class TemplateEnginePebble implements TemplateEngine {
             content.put("stackTraces", cause.getStackTrace());
             content.put("sourceCodePath", StringUtils.substringAfter(new File(Application.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
-        
+
+        Writer writer = new StringWriter();
         try {
             PebbleTemplate pebbleTemplate = pebbleEngine.getTemplate("exception.peb");
             pebbleTemplate.evaluate(writer, content);

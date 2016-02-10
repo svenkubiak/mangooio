@@ -69,7 +69,7 @@ public class Route {
         return this;
     }
     
-    public Route internal() {
+    public Route internalOnly() {
         this.internal = true;
         return this;
     }

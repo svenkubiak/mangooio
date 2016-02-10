@@ -12,6 +12,8 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.mangoo.enums.ErrorMessage;
+
 /**
  * Two factor Java implementation for the Time-based One-Time Password (TOTP) algorithm.
  *
@@ -47,6 +49,9 @@ public final class TwoFactorUtils {
         }
     };
 
+    private TwoFactorUtils() {
+    }
+    
     /**
      * @return Generate a secret key in base32 format (A-Z, 2-7)
      */
@@ -78,7 +83,7 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
         
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
@@ -87,7 +92,7 @@ public final class TwoFactorUtils {
      * Same as {@link #generateCurrentNumber(String)} except at a particular time in milliseconds
      */
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
 
         final byte[] key = base32.decode(secret.getBytes());
         final byte[] data = new byte[8];

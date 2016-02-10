@@ -7,7 +7,8 @@ package io.mangoo.enums;
  *
  */
 public enum ErrorMessage {
-    URI("uri can not be null");
+    URI("uri can not be null"),
+    SECRET("secret can not be null");
 
     private final String value;
 

@@ -57,7 +57,7 @@ public class DispatcherHandler implements HttpHandler {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
-        this.templateEngine = (internal) ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
+        this.templateEngine = internal ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.metricsListener = Application.getInstance(MetricsListener.class);
         this.crypto = Application.getInstance(Crypto.class);

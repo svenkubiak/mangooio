@@ -29,7 +29,7 @@ public class TemplateEngineProvider implements Provider<TemplateEngine> {
         try {
             templateEngineClass = Class.forName(CONFIG.getTemplateEngineClass()).asSubclass(TemplateEngine.class);
         } catch (ClassNotFoundException e) {
-            LOG.error("Can not find Template Engine class: " + CONFIG.getTemplateEngineClass());
+            LOG.error("Can not find Template Engine class: " + CONFIG.getTemplateEngineClass(), e);
         }
         
         if (templateEngineClass != null) {
