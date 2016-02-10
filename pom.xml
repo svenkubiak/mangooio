@@ -94,9 +94,9 @@
 					<version>2.7</version>
 				</plugin>
 				<plugin>
-					<groupId>org.codehaus.sonar</groupId>
-					<artifactId>sonar-maven3-plugin</artifactId>
-					<version>5.1</version>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.0.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
