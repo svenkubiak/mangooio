@@ -1051,15 +1051,15 @@ simply add it to you application.yml
 	    twitter:
 	        key       : ###
 	        secret    : ###
-	        callback  : http://localhost:8080/authenticat?oauth=twitter
+	        callback  : http://localhost:8080/authenticate?oauth=twitter
 	    google:
 	        key       : ###
 	        secret    : ###
-	        callback  : http://localhost:8080/authenticat?oauth=google
+	        callback  : http://localhost:8080/authenticate?oauth=google
 	    facebook:
 	        key       : ###
 	        secret    : ###
-	        callback  : http://localhost:8080/authenticat?oauth=facebook
+	        callback  : http://localhost:8080/authenticate?oauth=facebook
 
 There is a third required configuration, which you have to defined yousrelf. This is the callback property
 which defines the URL where you do the actual authentication and  the login of your user.

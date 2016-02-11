@@ -2,6 +2,7 @@
 
 **Released at xx.xx.xxxx**
 
+* [#146](https://github.com/svenkubiak/mangooio/issues/146) Updated to 2.x of Scribe OAuth library (svenkubiak)
 * [#145](https://github.com/svenkubiak/mangooio/issues/145) Added provider for TemplateEngine and second Template Engine Pebble (svenkubiak)
 * [#139](https://github.com/svenkubiak/mangooio/issues/139) Added utility methods for Two-Factor-Authentication (svenkubiak, MrDunne)
 * [#134](https://github.com/svenkubiak/mangooio/issues/134) Change documentation from ascidoc to MkDocs (svenkubiak)
@@ -13,6 +14,7 @@
 	* undertow-core 1.3.15.Final -> 1.3.17.Final
 	* mockito 2.0.40-Beta -> 2.0.42-Beta
 	* dsiutils 2.2.6 -> 2.3.0
+	* jetty-websocket 8.1.18.v20150929 -> 8.1.19.v20160209
 
 ## Version 2.3.1
 
