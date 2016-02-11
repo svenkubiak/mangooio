@@ -6,7 +6,7 @@
 	<meta name="description" content="mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.">
 	<meta name="keywords" content="java, framework, full stack, mangoo, lightweight, performance, web" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-	<link href="//fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
 	<link rel="stylesheet" href="/css/style.min.css" type="text/css" />
 	<link rel="stylesheet" href="/css/font-icons.min.css" type="text/css" />
@@ -14,14 +14,14 @@
 	<link rel="stylesheet" href="/css/responsive.min.css" type="text/css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<!--[if lt IE 9]>
-		<script src="//css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+		<script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 	<![endif]-->
 	<style>#page-title.page-title-parallax span{font-size:22px;color:#FFEFEF;text-shadow:2px 2px #000}#page-title.page-title-parallax h1{font-size:40px;font-weight:600;letter-spacing:2px;text-shadow:2px 2px #000}</style>
 	<title>mangoo I/O - Intuitive, Lightweight, High Performance Full Stack Java Web Framework</title>
 </head>
 <body class="stretched">
 	<div id="wrapper" class="clearfix">
-		<header id="header" class="transparent-header dark full-header" data-sticky-class="not-dark">
+		<header id="header" class="transparent-header not-dark full-header sticky-header">
 			<div id="header-wrap">
 				<div class="container clearfix">
 					<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
@@ -159,8 +159,17 @@
 		<section id="content">
 			<div class="content-wrap">
 				<div class="container clearfix">
-					<div class="col_full">
-					{{ content }}
+					<div class="postcontent nobottommargin col_last clearfix">
+						{{ content }}
+					</div>
+					<div class="sidebar nobottommargin clearfix">
+						<div class="widget widget_links clearfix">
+							<ul>
+							{% for toc_item in toc %}
+								<li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+							{% endfor %}
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -169,8 +178,15 @@
 		<section id="content">
 			<div class="content-wrap">
 				<div class="container clearfix">
-					<div class="col_full">
-					{{ content }}
+					<div class="postcontent nobottommargin col_last clearfix">
+						{{ content }}
+					</div>
+					<div class="widget widget_links clearfix">
+						<ul>
+						{% for toc_item in toc %}
+							<li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+						{% endfor %}
+						</ul>
 					</div>
 				</div>
 			</div>
