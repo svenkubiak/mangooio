@@ -70,7 +70,7 @@ public class Messages {
      * @return The localized value or null value if the given key is not configured
      */
     @SuppressWarnings("all")
-    public String get(String key, Object [] arguments) {
+    public String get(String key, Object... arguments) {
         if (this.bundle.containsKey(key)) {
             return MessageFormat.format(this.bundle.getString(key), arguments);
         } else if (this.defaults.containsKey(key)) {
@@ -88,7 +88,8 @@ public class Messages {
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured
      */
-    public String get(Key key, Object [] arguments) {
+    @SuppressWarnings("all")
+    public String get(Key key, Object... arguments) {
         return get(key.toString(), arguments);
     }
 }
