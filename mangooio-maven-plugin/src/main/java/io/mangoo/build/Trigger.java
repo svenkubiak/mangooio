@@ -111,11 +111,12 @@ public class Trigger extends Thread {
         }
     }
 
+    @SuppressWarnings("all")
     private void sleep() {
         try {
             Thread.sleep(settleDownMillis);
         } catch (InterruptedException e) {
-            LOG.error("Failed to sleep in watcher thread", e);
+            //intentionally left blank
         }
     }
 

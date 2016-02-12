@@ -47,6 +47,7 @@ public final class RequestUtils {
     private static final Config CONFIG = Application.getConfig();
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+    private static final int MAX_RANDOM = 999_999;
     private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int INDEX_0 = 0;
     private static final int INDEX_1 = 1;
@@ -122,7 +123,7 @@ public final class RequestUtils {
             .callback(CONFIG.getString(Key.OAUTH_GOOGLE_CALLBACK))
             .apiKey(CONFIG.getString(Key.OAUTH_GOOGLE_KEY))
             .apiSecret(CONFIG.getString(Key.OAUTH_GOOGLE_SECRET))
-            .state("secret" + new SecureRandom().nextInt(999_999))
+            .state("secret" + new SecureRandom().nextInt(MAX_RANDOM))
             .build(GoogleApi20.instance());
             break;
         case FACEBOOK:

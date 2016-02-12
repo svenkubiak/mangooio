@@ -36,7 +36,7 @@ public final class Application {
     private Application() {
     }
 
-    public static void main(String... args) {
+    public static void main(String[] args) {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
