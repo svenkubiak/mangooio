@@ -88,7 +88,7 @@ public class Messages {
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured
      */
-    public String get(Key key, Object... arguments) {
+    public String get(Key key, Object [] arguments) {
         return get(key.toString(), arguments);
     }
 }
