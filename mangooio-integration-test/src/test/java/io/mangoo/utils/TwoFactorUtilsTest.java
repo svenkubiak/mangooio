@@ -45,7 +45,7 @@ public class TwoFactorUtilsTest {
     @Test
     public void testGenerateCurrentNumber() {
         //when
-        String number = TwoFactorUtils.generateCurrentNumber(SECRET);
+        String number = TwoFactorUtils.getNumber(SECRET);
         
         //then
         assertThat(number, not(nullValue()));

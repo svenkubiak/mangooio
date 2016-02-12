@@ -38,7 +38,7 @@ public interface TemplateEngine {
      * @param content The content map which is passed to the template
      * @return A rendered template
      * 
-     * @throws MangooTemplateEngineException
+     * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException;
     

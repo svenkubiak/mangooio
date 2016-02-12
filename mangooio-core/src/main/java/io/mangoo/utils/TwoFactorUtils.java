@@ -86,14 +86,18 @@ public final class TwoFactorUtils {
      * 
      * @return The current number to be checked
      */
-    public static String generateCurrentNumber(String secret) {
+    public static String getNumber(String secret) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
         
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
     /**
-     * Same as {@link #generateCurrentNumber(String)} except at a particular time in milliseconds
+     * Same as {@link #getNumber(String)} except at a particular time in milliseconds
+     * 
+     * @param secret The secret to use
+     * @param currentTimeMillis A provided time in milli seconds
+     * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
