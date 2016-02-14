@@ -10,10 +10,11 @@ import org.junit.Test;
 
 /**
  * 
- * @author svenkubiak
+ * @author svenkubiak, WilliamDunne
  *
  */
 public class TwoFactorUtilsTest {
+    private static final int THIRTY_SECONDS = 1000 * 30;
     private static final String ACCOUNT = "MyAccount";
     private static final String SECRET = "MySecureSecret";
     private static final String LINK = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth://totp/MyAccount?secret=MySecureSecret";
@@ -60,5 +61,27 @@ public class TwoFactorUtilsTest {
         //then
         assertThat(number, not(nullValue()));
         assertThat(number, equalTo("378301"));
+    }
+
+
+    @Test
+    public void testGenerateSecret() {
+        //given
+        String secret = TwoFactorUtils.generateBase32Secret();
+
+        //that
+        assertThat(secret, not(nullValue()));
+        assertThat(secret.length(), equalTo(16));
+    }
+
+    @Test
+    public void testCodeChecking (){
+        //given
+        String secret = TwoFactorUtils.generateBase32Secret();
+        int valid = Integer.parseInt(TwoFactorUtils.generateCurrentNumber(secret));
+        long time = System.currentTimeMillis() + THIRTY_SECONDS;
+
+        //that
+        assertThat(TwoFactorUtils.validateCurrentNumber(valid, secret, 2), equalTo(true));
     }
 }
