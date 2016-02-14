@@ -111,11 +111,12 @@ public class Trigger extends Thread {
         }
     }
 
+    @SuppressWarnings("all")
     private void sleep() {
         try {
             Thread.sleep(settleDownMillis);
         } catch (InterruptedException e) {
-            // Intentionally left blank
+            //intentionally left blank
         }
     }
 

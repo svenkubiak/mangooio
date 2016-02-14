@@ -148,7 +148,7 @@ public class RequestHandler implements HttpHandler {
      * @return A case-sensitive template path, e.g. /ApplicationController/index.ftl
      */
     protected String getTemplatePath(Response response) {
-        return StringUtils.isBlank(response.getTemplate()) ? (this.requestAttachment.getControllerClassName() + "/" + RequestUtils.getTemplateName(this.requestAttachment.getControllerMethodName())) : response.getTemplate();
+        return StringUtils.isBlank(response.getTemplate()) ? (this.requestAttachment.getControllerClassName() + "/" + this.requestAttachment.getTemplateEngine().getTemplateName(this.requestAttachment.getControllerMethodName())) : response.getTemplate();
     }
 
     /**

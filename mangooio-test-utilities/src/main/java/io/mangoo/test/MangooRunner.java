@@ -23,6 +23,6 @@ public class MangooRunner {
     @BeforeClass
     public static final void mangooStart() {
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        Application.main();
+        Application.main(null);
     }
 }

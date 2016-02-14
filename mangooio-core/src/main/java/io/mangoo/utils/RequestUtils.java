@@ -1,21 +1,24 @@
 package io.mangoo.utils;
 
 import java.net.URI;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.builder.api.FacebookApi;
-import org.scribe.builder.api.TwitterApi;
-import org.scribe.oauth.OAuthService;
 
-import io.mangoo.authentication.oauth.Google2Api;
+import com.github.scribejava.apis.FacebookApi;
+import com.github.scribejava.apis.GoogleApi20;
+import com.github.scribejava.apis.TwitterApi;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuthService;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -44,6 +47,7 @@ public final class RequestUtils {
     private static final Config CONFIG = Application.getConfig();
     private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
+    private static final int MAX_RANDOM = 999_999;
     private static final int AUTH_PREFIX_LENGTH = 3;
     private static final int INDEX_0 = 0;
     private static final int INDEX_1 = 1;
@@ -67,19 +71,6 @@ public final class RequestUtils {
         queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
 
         return requestParamater;
-    }
-
-    /**
-     * Checks if a given template name has the current suffix and sets is
-     * if it does not exist
-     *
-     * @param templateName The name of the template file
-     * @return The template name with correct suffix
-     */
-    public static String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, "templateName can not be null");
-
-        return templateName.endsWith(Default.TEMPLATE_SUFFIX.toString()) ? templateName : (templateName + Default.TEMPLATE_SUFFIX.toString());
     }
 
     /**
@@ -114,38 +105,39 @@ public final class RequestUtils {
      * @param oAuthProvider The OAuth provider Enum
      * @return An OAuthService object or null if creating failed
      */
-    public static OAuthService createOAuthService(OAuthProvider oAuthProvider) {
+    public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, "oAuthProvider can not be null");
 
-        ServiceBuilder serviceBuilder = null;
+        OAuthService oAuthService = null;
         switch (oAuthProvider) {
         case TWITTER:
-            serviceBuilder = new ServiceBuilder()
-            .provider(TwitterApi.class)
+            oAuthService = new ServiceBuilder()
             .callback(CONFIG.getString(Key.OAUTH_TWITTER_CALLBACK))
             .apiKey(CONFIG.getString(Key.OAUTH_TWITTER_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_TWITTER_SECRET));
+            .apiSecret(CONFIG.getString(Key.OAUTH_TWITTER_SECRET))
+            .build(TwitterApi.instance());
             break;
         case GOOGLE:
-            serviceBuilder = new ServiceBuilder()
-            .provider(Google2Api.class)
+            oAuthService = new ServiceBuilder()
             .scope(SCOPE)
             .callback(CONFIG.getString(Key.OAUTH_GOOGLE_CALLBACK))
             .apiKey(CONFIG.getString(Key.OAUTH_GOOGLE_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_GOOGLE_SECRET));
+            .apiSecret(CONFIG.getString(Key.OAUTH_GOOGLE_SECRET))
+            .state("secret" + new SecureRandom().nextInt(MAX_RANDOM))
+            .build(GoogleApi20.instance());
             break;
         case FACEBOOK:
-            serviceBuilder = new ServiceBuilder()
-            .provider(FacebookApi.class)
+            oAuthService = new ServiceBuilder()
             .callback(CONFIG.getString(Key.OAUTH_FACEBOOK_CALLBACK))
             .apiKey(CONFIG.getString(Key.OAUTH_FACEBOOK_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_FACEBOOK_SECRET));
+            .apiSecret(CONFIG.getString(Key.OAUTH_FACEBOOK_SECRET))
+            .build(FacebookApi.instance());
             break;
         default:
             break;
         }
 
-        return (serviceBuilder == null) ? null : serviceBuilder.build();
+        return (oAuthService == null) ? Optional.empty() : Optional.of(oAuthService);
     }
 
 
@@ -155,7 +147,7 @@ public final class RequestUtils {
      * @param oauth The string to lookup the OAuthProvider Enum
      * @return OAuthProvider Enum
      */
-    public static OAuthProvider getOAuthProvider(String oauth) {
+    public static Optional<OAuthProvider> getOAuthProvider(String oauth) {
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
@@ -165,7 +157,7 @@ public final class RequestUtils {
             oAuthProvider = OAuthProvider.GOOGLE;
         }
 
-        return oAuthProvider;
+        return (oAuthProvider == null) ? Optional.empty() : Optional.of(oAuthProvider);
     }
 
     /**

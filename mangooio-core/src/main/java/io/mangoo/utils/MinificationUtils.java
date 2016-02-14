@@ -32,6 +32,7 @@ import io.mangoo.enums.Mode;
  * @author svenkubiak
  *
  */
+@SuppressWarnings("all")
 public final class MinificationUtils {
     private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
     private static final int HUNDRET_PERCENT = 100;

@@ -8,7 +8,7 @@ import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HttpString;
 
 public class ApplicationController {
-
+    
     public Response index() {
         return Response.withOk();
     }

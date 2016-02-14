@@ -6,11 +6,12 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.Cache;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.ErrorMessage;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -21,14 +22,8 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 @Singleton
 public class WebSocketManager {
-    private static final String URI_ERROR = "uri can not be null";
-    private final Cache cache;
+    private Cache cache = Application.getInternalCache();
         
-    @Inject
-    public WebSocketManager(Cache cache) {
-        this.cache = Objects.requireNonNull(cache, "cache ca not be null");
-    }
-
     /**
      * Adds a new channel to the manager
      *
@@ -55,7 +50,7 @@ public class WebSocketManager {
      * @param channels The channels for the URI resource
      */
     public void setChannels(String uri, Set<WebSocketChannel> channels) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
         Objects.requireNonNull(channels, "uriConnections can not be null");
 
         this.cache.put(Default.WSS_CACHE_PREFIX.toString() + uri, channels);
@@ -69,7 +64,7 @@ public class WebSocketManager {
      * @return A Set of channels for the URI resource
      */
     public Set<WebSocketChannel> getChannels(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
         Set<WebSocketChannel> channels = this.cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
 
@@ -82,7 +77,7 @@ public class WebSocketManager {
      * @param uri The URI resource for the connection
      */
     public void removeChannels(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
         this.cache.remove(Default.WSS_CACHE_PREFIX.toString() + uri);
     }
@@ -93,7 +88,7 @@ public class WebSocketManager {
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
         Set<WebSocketChannel> channels = getChannels(uri);
         if (channels != null) {

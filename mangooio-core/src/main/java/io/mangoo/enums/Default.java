@@ -33,7 +33,6 @@ public enum Default {
     SERVER("Undertow"),
     CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
-    TEMPLATE_SUFFIX(".ftl"),
     AUTH_COOKIE_EXPIRES("3600"),
     COOKIE_NAME("MANGOOIO-SESSION"),
     COOKIE_I18N_NAME("MANGOOIO-I18N"),
@@ -49,15 +48,11 @@ public enum Default {
     VERSION("unknown"),
     LOGBACK_PROD_FILE("logback.prod.xml"),
     NUMBER_FORMAT("0.######"),
-    EXCEPTION_TEMPLATE_NAME("exception.ftl"),
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     X_XSS_PPROTECTION("1"),
     COOKIE_SECURE("false"), //NOSONAR
     AUTH_COOKIE_SECURE("false"), //NOSONAR
     CACHE_MAX_SIZE("5000"),
-    CACHE_EXPIRES("afterAccess"),
-    CACHE_EXPIRES_ACCESS("3600"),
-    CACHE_EXPIRES_WRITE("3600"),
     APPLICATION_ADMIN_HEALTH("false"),
     APPLICATION_ADMIN_CACHE("false"),
     APPLICATION_ADMIN_CONFIG("false"),
@@ -85,7 +80,10 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.Cache");
+    CACHE_CLASS("io.mangoo.cache.GuavaCache"),
+    VALUE_REQUIRED("For a new cache entry a non null value is required"),
+    KEY_REQUIRED("For a new cache entry a non null key is required"),
+    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker");
 
     private final String value;
 

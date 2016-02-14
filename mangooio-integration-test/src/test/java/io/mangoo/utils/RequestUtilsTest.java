@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -17,29 +19,18 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public class RequestUtilsTest {
-
-    @Test
-    public void testGetTemplateName() {
-        //given
-        String name1 = RequestUtils.getTemplateName("template.ftl");
-        String name2 = RequestUtils.getTemplateName("template");
-        
-        //then
-        assertThat(name1, equalTo("template.ftl"));
-        assertThat(name2, equalTo("template.ftl"));
-    }
     
     @Test
     public void testGetOAuthProvider() {
         //given
-        OAuthProvider twitter = RequestUtils.getOAuthProvider("twitter");
-        OAuthProvider google = RequestUtils.getOAuthProvider("google");
-        OAuthProvider facebook = RequestUtils.getOAuthProvider("facebook");
+        Optional<OAuthProvider> twitter = RequestUtils.getOAuthProvider("twitter");
+        Optional<OAuthProvider> google = RequestUtils.getOAuthProvider("google");
+        Optional<OAuthProvider> facebook = RequestUtils.getOAuthProvider("facebook");
         
         //then
-        assertThat(twitter, equalTo(OAuthProvider.TWITTER));
-        assertThat(google, equalTo(OAuthProvider.GOOGLE));
-        assertThat(facebook, equalTo(OAuthProvider.FACEBOOK));
+        assertThat(twitter.get(), equalTo(OAuthProvider.TWITTER));
+        assertThat(google.get(), equalTo(OAuthProvider.GOOGLE));
+        assertThat(facebook.get(), equalTo(OAuthProvider.FACEBOOK));
     }
     
     @Test

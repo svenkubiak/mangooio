@@ -2,7 +2,6 @@ package io.mangoo.routing.handlers;
 
 import java.util.Locale;
 
-import io.undertow.server.handlers.Cookie;
 import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.configuration.Config;
@@ -11,6 +10,7 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 import io.undertow.util.LocaleUtils;

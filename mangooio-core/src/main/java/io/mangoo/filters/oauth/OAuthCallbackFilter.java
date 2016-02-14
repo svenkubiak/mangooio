@@ -1,12 +1,16 @@
 package io.mangoo.filters.oauth;
 
-import org.apache.commons.lang3.StringUtils;
-import org.scribe.model.OAuthRequest;
-import org.scribe.model.Token;
-import org.scribe.model.Verb;
-import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.model.Verifier;
+import com.github.scribejava.core.oauth.OAuth10aService;
+import com.github.scribejava.core.oauth.OAuth20Service;
+import com.github.scribejava.core.oauth.OAuthService;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -38,19 +42,21 @@ public class OAuthCallbackFilter implements MangooFilter {
 
     @Override
     public Response execute(Request request, Response response) {
-        OAuthProvider oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
-        switch (oAuthProvider) {
-        case TWITTER:
-            twitterOAuth(request);
-            break;
-        case GOOGLE:
-            googleOAuth(request);
-            break;
-        case FACEBOOK:
-            facebookOAuth(request);
-            break;
-        default:
-            break;
+        Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
+        if (oAuthProvider.isPresent()) {
+            switch (oAuthProvider.get()) {
+            case TWITTER:
+                twitterOAuth(request);
+                break;
+            case GOOGLE:
+                googleOAuth(request);
+                break;
+            case FACEBOOK:
+                facebookOAuth(request);
+                break;
+            default:
+                break;
+            } 
         }
 
         return response;
@@ -63,13 +69,14 @@ public class OAuthCallbackFilter implements MangooFilter {
      */
     private void facebookOAuth(Request request) {
         String code = request.getParameter(CODE);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
+        Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
 
-        if (StringUtils.isNotBlank(code) && oAuthService != null) {
+        if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             Verifier verifier = new Verifier(code);
-            Token accessToken = oAuthService.getAccessToken(null, verifier);
+            OAuth10aService oAuth10aService = (OAuth10aService) oAuthService.get();
+            Token accessToken = oAuth10aService.getAccessToken(null, verifier);
 
-            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.FACEBOOK.toString());
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, accessToken, OAuthResource.FACEBOOK.toString());
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponseBody);
@@ -85,13 +92,14 @@ public class OAuthCallbackFilter implements MangooFilter {
      */
     private void googleOAuth(Request request) {
         String code = request.getParameter(CODE);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
+        Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
 
-        if (StringUtils.isNotBlank(code) && oAuthService != null) {
+        if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             Verifier verifier = new Verifier(code);
-            Token accessToken = oAuthService.getAccessToken(null, verifier);
+            OAuth20Service oAuth20Service = (OAuth20Service) oAuthService.get();
+            Token accessToken = oAuth20Service.getAccessToken(verifier);
 
-            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.GOOGLE.toString());
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, accessToken, OAuthResource.GOOGLE.toString());
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
@@ -108,14 +116,15 @@ public class OAuthCallbackFilter implements MangooFilter {
     private void twitterOAuth(Request request) {
         String oauthToken = request.getParameter(OAUTH_TOKEN);
         String oauthVerifier = request.getParameter(OAUTH_VERIFIER);
-        OAuthService oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER);
+        Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER);
 
-        if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService != null) {
+        if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService.isPresent()) {
             Token requestToken = new Token(oauthToken, oauthVerifier);
             Verifier verifier = new Verifier(oauthVerifier);
-            Token accessToken = oAuthService.getAccessToken(requestToken, verifier);
+            OAuth10aService oAuth10aService = (OAuth10aService) oAuthService.get();
+            Token accessToken = oAuth10aService.getAccessToken(requestToken, verifier);
 
-            org.scribe.model.Response scribeResponse = getResourceResponse(oAuthService, accessToken, OAuthResource.TWITTER.toString());
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, accessToken, OAuthResource.TWITTER.toString());
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
@@ -133,8 +142,8 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @return The response of the OAuth request
      */
-    private org.scribe.model.Response getResourceResponse(OAuthService oAuthService, Token accessToken, String resource) {
-        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, resource);
+    private com.github.scribejava.core.model.Response getResourceResponse(OAuthService oAuthService, Token accessToken, String resource) {
+        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, resource, oAuthService);
         oAuthService.signRequest(accessToken, oAuthRequest);
 
         return oAuthRequest.send();

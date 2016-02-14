@@ -8,7 +8,7 @@ import io.undertow.websockets.core.WebSocketChannel;
 
 /**
  *
- * @author svenkubiak
+ * @author svenkubiak, WilliamDunne
  *
  */
 public abstract class MangooWebSocket extends AbstractReceiveListener {
@@ -23,4 +23,9 @@ public abstract class MangooWebSocket extends AbstractReceiveListener {
 
     @Override
     protected abstract void onCloseMessage(CloseMessage closeMessage, WebSocketChannel channel);
+
+    @Override
+    protected void onError(WebSocketChannel channel, Throwable error) {
+        super.onError(channel, error);
+    }
 }

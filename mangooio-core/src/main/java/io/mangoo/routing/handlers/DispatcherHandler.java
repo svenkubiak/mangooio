@@ -53,11 +53,11 @@ public class DispatcherHandler implements HttpHandler {
     private final boolean async;
     private final boolean hasRequestFilter;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internal) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
-        this.templateEngine = Application.getInstance(TemplateEngine.class);
+        this.templateEngine = internal ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.metricsListener = Application.getInstance(MetricsListener.class);
         this.crypto = Application.getInstance(Crypto.class);

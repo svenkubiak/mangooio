@@ -237,9 +237,9 @@ public class Response {
             HttpPost httpPost = new HttpPost(responseUrl + responseUri);
 
             try {
-            	if (this.hasFileBody) {
-            		httpPost.setEntity(multipartEntityBuilder.build());
-            	} else if (StringUtils.isNotBlank(this.responseRequestBody)) {
+                if (this.hasFileBody) {
+                    httpPost.setEntity(multipartEntityBuilder.build());
+                } else if (StringUtils.isNotBlank(this.responseRequestBody)) {
                     httpPost.setEntity(new StringEntity(this.responseRequestBody));
                 } else {
                     httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));

@@ -2,12 +2,20 @@ package io.mangoo.core;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.inject.Injector;
 
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.GuavaCache;
+import io.mangoo.cache.HazlecastCache;
 import io.mangoo.configuration.Config;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Mode;
+import io.mangoo.templating.TemplateEngine;
+import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -16,20 +24,24 @@ import io.mangoo.enums.Mode;
  *
  */
 public final class Application {
+    private static volatile Cache cache;
+    private static volatile TemplateEngine templateEngine;
     private static volatile Config config;
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
     private static volatile boolean started;
+    private static volatile String baseDirectory;
 
     private Application() {
     }
 
-    public static void main(String... args) {
+    public static void main(String[] args) {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
+        baseDirectory = bootstrap.preparteBaseDirectory();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
@@ -38,7 +50,7 @@ public final class Application {
         bootstrap.startUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
-
+        
         if (bootstrap.isBootstrapSuccessful()) {
             started = true;
         } else {
@@ -118,12 +130,38 @@ public final class Application {
 
         return config;
     }
+    
+    /**
+     * @return An instance of the internal template engine freemarker
+     */
+    public static TemplateEngine getInternalTemplateEngine() {
+        if (templateEngine == null) {
+            templateEngine = new TemplateEngineFreemarker();
+        }
+
+        return templateEngine;
+    }
+    
+    /**
+     * @return An instance of the internal cache
+     */
+    public static Cache getInternalCache() {
+        if (cache == null) {
+            if (Default.CACHE_CLASS.toString().equals(config.getCacheClass())) {
+                cache = new GuavaCache();                
+            } else {
+                cache = new HazlecastCache();
+            }
+        }
+        
+        return cache;
+    }
 
     /**
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
-        Objects.requireNonNull(start, "can't calculate duration without application start time");
+        Objects.requireNonNull(start, "Can not calculate duration without application start time");
 
         return Duration.between(start, LocalDateTime.now());
     }
@@ -141,5 +179,19 @@ public final class Application {
         Objects.requireNonNull(clazz, "clazz can not be null");
 
         return injector.getInstance(clazz);
+    }
+    
+    /**
+     * @return A list of all administrative URLs
+     */
+    public static List<String> getAdministrativeURLs() {
+        return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");  
+    }
+    
+    /**
+     * @return The system specific base directory to 
+     */
+    public static String getBaseDirectory() {
+        return baseDirectory;
     }
 }

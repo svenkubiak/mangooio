@@ -1,17 +1,5 @@
 package io.mangoo.configuration;
 
-import com.google.common.io.Resources;
-import com.google.inject.Singleton;
-import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +7,20 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.io.Resources;
+import com.google.inject.Singleton;
+
+import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
 
 /**
  * Main configuration class for all properties configured in application.yaml
@@ -569,5 +571,26 @@ public class Config {
      */
     public boolean isTimerEnabled() {
         return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
+    }
+
+    /**
+     * @return cache.class from application.yaml or default value if undefined
+     */
+    public String getCacheClass() {
+        return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
+    }
+
+    /**
+     * @return cache.addresses from application.yaml
+     */
+    public String getCacheAddresses() {
+        return getString(Key.CACHE_ADDRESSES);
+    }
+
+    /**
+     * @return templateengine.class from application.yaml
+     */
+    public String getTemplateEngineClass() {
+        return getString(Key.TEMPLATE_ENGINE_CLASS, Default.TEMPLATE_ENGINE_CLASS.toString());
     }
 }

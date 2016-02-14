@@ -39,7 +39,6 @@ public enum Key {
     AUTH_COOKIE_REMEMBER_EXPIRES("auth.cookie.remember.expires"),
     AUTH_COOKIE_SECURE("auth.cookie.secure"),
     AUTH_COOKIE_VERSION("auth.cookie.version"),
-    CACHE_TYPE("cache.type"),
     COOKIE_NAME("cookie.name"),
     COOKIE_I18N_NAME("cookie.i18n.name"),
     COOKIE_ENCRYPTION("cookie.encryption"),
@@ -62,9 +61,8 @@ public enum Key {
     VALIDATION_REGEX("validation.regex"),
     VALIDATION_NUMERIC("validation.numeric"),
     VERSION("version"),
+    CACHE_ADDRESSES("cache.addresses"),
     CACHE_MAX_SIZE("cache.maxsize"),
-    CACHE_EVICTION("cache.eviction"),
-    CACHE_EXPIRES("cache.expires"),
     CACHE_CLASS("cache.class"),
     OAUTH_TWITTER_KEY("oauth.twitter.key"),
     OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
@@ -77,7 +75,8 @@ public enum Key {
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    EXECUTION_THREADPOOL("execution.threadpool");
+    EXECUTION_THREADPOOL("execution.threadpool"),
+    TEMPLATE_ENGINE_CLASS("templateeninge.class");
 
     private final String value;
 

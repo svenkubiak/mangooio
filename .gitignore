@@ -4,5 +4,6 @@
 .settings/
 .idea/
 target/
+site/
 *.jar
 *.class

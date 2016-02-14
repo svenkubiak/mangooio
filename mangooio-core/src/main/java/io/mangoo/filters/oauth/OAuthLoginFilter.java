@@ -1,10 +1,13 @@
 package io.mangoo.filters.oauth;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.scribe.model.Token;
-import org.scribe.oauth.OAuthService;
+
+import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.oauth.OAuth10aService;
+import com.github.scribejava.core.oauth.OAuthService;
 
 import io.mangoo.enums.Default;
 import io.mangoo.enums.oauth.OAuthProvider;
@@ -22,19 +25,24 @@ import io.mangoo.utils.RequestUtils;
 public class OAuthLoginFilter implements MangooFilter {
     @Override
     public Response execute(Request request, Response response) {
-        OAuthProvider oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
-        if (oAuthProvider != null) {
-            OAuthService oAuthService = RequestUtils.createOAuthService(oAuthProvider);
-            if (oAuthService != null) {
+        Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
+        if (oAuthProvider.isPresent()) {
+            Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(oAuthProvider.get());
+            if (oAuthService.isPresent()) {
                 String url = null;
-                switch (oAuthProvider) {
+                switch (oAuthProvider.get()) {
                 case TWITTER:
-                    Token requestToken = oAuthService.getRequestToken();
-                    url = oAuthService.getAuthorizationUrl(requestToken);
+                    OAuth10aService twitterService = (OAuth10aService) oAuthService.get();
+                    Token requestToken = twitterService.getRequestToken();
+                    url = twitterService.getAuthorizationUrl(requestToken);
                     break;
                 case GOOGLE:
+                    OAuth10aService googleService = (OAuth10aService) oAuthService.get();
+                    url = googleService.getAuthorizationUrl(null);
+                    break;
                 case FACEBOOK:
-                    url = oAuthService.getAuthorizationUrl(null);
+                    OAuth10aService facebookService = (OAuth10aService) oAuthService.get();
+                    url = facebookService.getAuthorizationUrl(null);
                     break;
                 default:
                 break;
