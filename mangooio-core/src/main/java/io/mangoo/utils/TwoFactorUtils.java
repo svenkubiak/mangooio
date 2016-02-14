@@ -30,7 +30,7 @@ import io.mangoo.enums.ErrorMessage;
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
  *
- * @author graywatson, svenkubiak
+ * @author graywatson, svenkubiak, WilliamDunne
  */
 @SuppressWarnings("all")
 public final class TwoFactorUtils {
