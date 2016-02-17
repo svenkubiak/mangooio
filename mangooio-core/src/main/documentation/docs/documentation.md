@@ -1698,15 +1698,15 @@ starting the scheduler.
 	public class Lifecycle implements MangooLifecycle {
 
 	    @Inject
-	    private MangooScheduler mangooScheduler;
+	    private Scheduler scheduler;
 
 	    @Override
 	    public void applicationStarted() {
-	        JobDetail jobDetail = SchedulerUtils.getJobDetail(MyJob.class, "MyJobDetail", "MyJobGroup");
-	        Trigger trigger = SchedulerUtils.getTrigger("MyJobTrigger", "15 15 15 15 * ?", "MyTriggerGroup", "MyTriggerDescription");
+	        JobDetail jobDetail = SchedulerUtils.getJobDetail("MyJobDetail", "MyJobGroup", MyJob.class);
+	        Trigger trigger = SchedulerUtils.getTrigger("MyJobTrigger", "MyTriggerGroup", "MyTriggerDescription", "15 15 15 15 * ?");
 
-	        mangooScheduler.schedule(jobDetail, trigger);
-	        mangooScheduler.start();
+	        scheduler.schedule(jobDetail, trigger);
+	        scheduler.start();
 	    }
 	}
 
