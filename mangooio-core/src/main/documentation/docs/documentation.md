@@ -58,21 +58,11 @@ Here are some used libraries and their purpose in mangoo I/O.
 * Freemarker - Template engine
 * Google Guava, Hazlecast - Caching
 * Quartz Scheduler - Scheduling
-* Boon JSON - JSON parser
+* Boon JSON, JSONPath - JSON parser
 * SnakeYaml - Configuration handling
-* JUnit - Testing
+* JUnit, DocTester, Mockito, FluentLenium - Testing
 * JBcrypt - Strong cryptography and authentication
 * And many more ...
-
-### Documentation versioning
-
-This documentation always comes from the latest stable tag of the GitHub
-repository. However, you can change the version of the documentation by
-simple adding the version number to the URL. If you want, for example, the documentation of version
-1.0.0 re-open this page with the following URL
-
-
-    https://mangoo.io/documentation/1.0.0
 
 # Getting started
 
@@ -1571,8 +1561,7 @@ from log4j2.
 
 # Caching
 
-mangoo I/O uses [Guava Cache](https://github.com/google/guava/wiki) CachesExplained as default Cache for storing and accessing values
-in-memory. To use the cache in your application, simply inject the cache class.
+mangoo I/O caching comes in two flavours out of the box: [Guava Cache](https://github.com/google/guava/wiki/CachesExplained) and [Hazlecast](https://hazelcast.com/). The default Cache is Guava as this is mostly suitable for using a single instance mangoo I/O applicaton. To use the cache in your application, simply inject the cache class.
 
 	@Inject
 	private Cache cache;
@@ -1598,17 +1587,20 @@ not found in the cache.
 
 ## Cache eviction
 
-The Guava eviction of cached data comes in two flavours: eviction after (last) access or eviction after write.
-While eviction after write defines a fixed period of time until the entry is removed from the cache, eviction after access
-defines a time span after the last access of the entry until it is removed from the cache, keeping high frequent entries in
-the cache as long as possible. Thus, you have to manually force and updated if your entry is access often.
+By default either Guava nor Hazlecast does any eviction. You'll have to manage eviction yourself.
 
-Mangoo I/O uses eviction after access as default with a default timespan of 3600 seconds. You can configure both the eviction
-method, as well as the timespan in you application.yaml.
+## Cache provider
+
+mangoo I/O lets you customize the cache you use in your application by using a Google Guava provider. You'll simply have to set the cache implementation class in you application.yaml.
 
 	cache:
-	    eviction : afterWrite
-	    expires  : 3600    
+		class: my.package.MyCache.class
+
+Your custom cache class has to implement the Cache interface.
+
+	public class MyCache implements Cache
+
+Please not that you **have** to use Hazlecast when running mangoo I/O with multiple instances as the cache is also used for internal perposes.   
 
 # Scheduling
 
@@ -2311,6 +2303,8 @@ in the application.yaml file.
 |cookie.encrypt |Whether to encrypt the session cookie or not |false| - |
 |cookie.secure |Whether to set the secure flag for the session cookie or not |false| - |
 |cache.maxsize |The maximum number of elements in the cache |5000| - |
+|cache.class |The class of the Cache implementaiotn |io.mangoo.cache.GuavaCache.class| - |
+|cache.addresses |A comma-seperated list of hazlecast nodes |-| Only required when using Hazlecast |
 |execution.threadpool |Number of threads in the ExecutionManager|10| - |
 |auth.cookie.name |The name of the authentication cookie|$application.name-MANGOO-AUTH| - |
 |auth.cookie.expire |The time in seconds how long the user stays logged in even is the browser is closed |3600| - |
