@@ -10,6 +10,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base32;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,13 +58,16 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Uses default length
+     * Uses default length of 16, to generate the Base32 secret
+     * @return Generate a 16 character secret key in base32 format
      */
     public static String generateBase32Secret() {
         return generateBase32Secret(16);
     }
 
     /**
+     * method to generate Base32 secret keys for the user
+     * @param length how long the key should be
      * @return Generate a secret key in base32 format (A-Z, 2-7)
      */
     public static String generateBase32Secret(int length) {
@@ -81,14 +85,25 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Validate a given code using the secret, defaults to window of 3 either side
+     * Validate a given code using the secret, defaults to window of 3 either side,
+     * allowing a margin of error equivalent to three windows to adjust for time
+     * discrepencies.
+     * Uses the current time.
+     * @param number code provided by user
+     * @param secret the secret for the users code
+     * @return boolean if the code is valid
      */
     public static boolean validateCurrentNumber(int number, String secret) {
         return validateCurrentNumber(number, secret, 3);
     }
 
     /**
-     * Validate a given code at a specific time
+     * Validate a given code at a specific time, and specific window
+     * @param number the code provided by the user.
+     * @param secret the secret used to generate the users code
+     * @param windows the number of windows to check around the time
+     * @param time the time in milliseconds at which the code should be checked
+     * @return boolean whether or not the code is valid within the timeframe
      */
     public static boolean validateNumber(int number, String secret, int window, long time) {
         try {
@@ -101,12 +116,19 @@ public final class TwoFactorUtils {
                 return true;
             }
         }
-        catch(GeneralSecurityException e) {}
+        catch(GeneralSecurityException e) {
+            LOG.log(Level.WARN, e);
+        }
 
         return false;
     }
     /**
-     * Validate a given code using the secret, set your own windows size
+     * Validate a given code using the secret, provided number, and number of windows
+     * to check. Uses currentTimeMillis for time
+     * @param number the code provided by the user
+     * @param secret the secret for the users code
+     * @param window the number of windows to check around the time
+     * @return if the code is correct.
      */
     public static boolean validateCurrentNumber(int number, String secret, int window) {
         long time = System.currentTimeMillis();
