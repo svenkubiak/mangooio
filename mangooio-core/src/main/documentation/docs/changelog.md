@@ -14,6 +14,7 @@
 	* undertow-core 1.3.15.Final -> 1.3.17.Final
 	* mockito 2.0.40-Beta -> 2.0.42-Beta
 	* dsiutils 2.2.6 -> 2.3.0
+	* jersey-media-sse 2.22.1 -> 2.22.2
 	* jetty-websocket 8.1.18.v20150929 -> 8.1.19.v20160209
 
 ## Version 2.3.1
