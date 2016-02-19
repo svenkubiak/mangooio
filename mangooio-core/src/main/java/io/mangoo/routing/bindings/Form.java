@@ -51,6 +51,15 @@ public class Form implements MangooValidator {
     public boolean hasError(String fieldName) {
         return this.validator.hasError(fieldName);
     }
+    
+    /**
+     * Checks if any field in the validation has an error
+     *
+     * @return True if at least one field has an error, false otherwise
+     */
+    public boolean hasErrors() {
+        return this.validator.hasErrors();
+    }
 
     /**
      * Retrieves a form value corresponding to the name of the form element
