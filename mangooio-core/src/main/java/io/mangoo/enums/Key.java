@@ -76,7 +76,8 @@ public enum Key {
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
     EXECUTION_THREADPOOL("execution.threadpool"),
-    TEMPLATE_ENGINE_CLASS("templateeninge.class");
+    TEMPLATE_ENGINE_CLASS("templateeninge.class"),
+    UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 
     private final String value;
 

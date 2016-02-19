@@ -83,7 +83,8 @@ public enum Default {
     CACHE_CLASS("io.mangoo.cache.GuavaCache"),
     VALUE_REQUIRED("For a new cache entry a non null value is required"),
     KEY_REQUIRED("For a new cache entry a non null key is required"),
-    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker");
+    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker"),
+    UNDERTOW_MAX_ENTITY_SIZE("4194304");
 
     private final String value;
 
