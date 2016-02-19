@@ -10,6 +10,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base32;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +31,7 @@ import io.mangoo.enums.ErrorMessage;
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
  *
- * @author graywatson, svenkubiak
+ * @author graywatson, svenkubiak, WilliamDunne
  */
 @SuppressWarnings("all")
 public final class TwoFactorUtils {
@@ -55,13 +56,23 @@ public final class TwoFactorUtils {
 
     private TwoFactorUtils() {
     }
-    
+
     /**
-     * @return Generate a secret key in base32 format (A-Z, 2-7)
+     * Uses default length of 16, to generate the Base32 secret
+     * @return Generate a 16 character secret key in base32 format
      */
     public static String generateBase32Secret() {
+        return generateBase32Secret(16);
+    }
+
+    /**
+     * method to generate Base32 secret keys for the user
+     * @param length how long the key should be
+     * @return Generate a secret key in base32 format (A-Z, 2-7)
+     */
+    public static String generateBase32Secret(int length) {
         final StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < 16; i++) { 
+        for (int i = 0; i < length; i++) {
             final int val = new SecureRandom().nextInt(32);
             if (val < 26) { 
                 buffer.append((char) ('A' + val));
@@ -71,6 +82,84 @@ public final class TwoFactorUtils {
         }
 
         return buffer.toString();
+    }
+
+    /**
+     * Validate a given code using the secret, defaults to window of 3 either side,
+     * allowing a margin of error equivalent to three windows to adjust for time
+     * discrepencies.
+     * Uses the current time.
+     * @param number code provided by user
+     * @param secret the secret for the users code
+     * @return boolean if the code is valid
+     */
+    public static boolean validateCurrentNumber(int number, String secret) {
+        return validateCurrentNumber(number, secret, 3);
+    }
+
+    /**
+     * Validate a given code at a specific time, and specific window
+     * @param number the code provided by the user.
+     * @param secret the secret used to generate the users code
+     * @param windows the number of windows to check around the time
+     * @param time the time in milliseconds at which the code should be checked
+     * @return boolean whether or not the code is valid within the timeframe
+     */
+    public static boolean validateNumber(int number, String secret, int window, long time) {
+        try {
+            int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+            if(number == cur) {
+                return true;
+            } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
+                return true;
+            } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
+                return true;
+            }
+        }
+        catch(GeneralSecurityException e) {
+            LOG.log(Level.WARN, e);
+        }
+
+        return false;
+    }
+    /**
+     * Validate a given code using the secret, provided number, and number of windows
+     * to check. Uses currentTimeMillis for time
+     * @param number the code provided by the user
+     * @param secret the secret for the users code
+     * @param window the number of windows to check around the time
+     * @return if the code is correct.
+     */
+    public static boolean validateCurrentNumber(int number, String secret, int window) {
+        long time = System.currentTimeMillis();
+
+        return validateNumber(number, secret, window, time);
+    }
+
+    private static boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
+        int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+        if(cur == number) {
+            return true;
+        } else {
+            if(window > 0) {
+                return validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private static boolean validateCurrentNumberHigh(int number, String secret, int window, long time) throws GeneralSecurityException {
+        int cur = Integer.parseInt(generateCurrentNumber(secret, time));
+        if(cur == number) {
+            return true;
+        } else {
+            if(window > 0) {
+                return validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000);
+            } else {
+                return false;
+            }
+        }
     }
 
     /**
@@ -89,6 +178,17 @@ public final class TwoFactorUtils {
     public static String getNumber(String secret) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
         
+        return generateCurrentNumber(secret, System.currentTimeMillis());
+    }
+
+    /**
+     * Return the current number to be checked. This can be compared against user input.
+     *
+     * WARNING: This requires a system clock that is in sync with the world.
+     *
+     * @param secret The secret to use
+     */
+    public static String generateCurrentNumber(String secret) {
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
