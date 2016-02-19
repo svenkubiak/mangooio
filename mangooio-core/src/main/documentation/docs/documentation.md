@@ -2313,3 +2313,4 @@ in the application.yaml file.
 |auth.cookie.version |Sets the version of an authentication cookie |0| - |
 |auth.cookie.secure |Whether to set the secure flag for the auth cookie or not |false| - |
 |auth.login.redirect |The URL a user is redirected when not logged in| - | - |
+|undertow.maxentitysize |The maximum limit of an entity size in byte| 4194304 | - |

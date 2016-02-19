@@ -2,6 +2,7 @@
 
 **Released at xx.xx.xxxx**
 
+* [#154](https://github.com/svenkubiak/mangooio/issues/154) Added limit for max post size (svenkubiak)
 * [#146](https://github.com/svenkubiak/mangooio/issues/146) Updated to 2.x of Scribe OAuth library (svenkubiak)
 * [#145](https://github.com/svenkubiak/mangooio/issues/145) Added provider for TemplateEngine and second Template Engine Pebble (svenkubiak)
 * [#139](https://github.com/svenkubiak/mangooio/issues/139) Added utility methods for Two-Factor-Authentication (svenkubiak, MrDunne)
@@ -11,7 +12,7 @@
 * Sonar refactorings (svenkubiak)
 * Updated documentation (svenkubiak)
 * Version bumps (svenkubiak)
-	* undertow-core 1.3.15.Final -> 1.3.17.Final
+	* undertow-core 1.3.15.Final -> 1.3.18.Final
 	* mockito 2.0.40-Beta -> 2.0.42-Beta
 	* dsiutils 2.2.6 -> 2.3.0
 	* jersey-media-sse 2.22.1 -> 2.22.2
