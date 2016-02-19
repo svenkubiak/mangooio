@@ -107,7 +107,7 @@ public final class TwoFactorUtils {
      * 
      * @param number the code provided by the user.
      * @param secret the secret used to generate the users code
-     * @param windows the number of windows to check around the time
+     * @param window the number of windows to check around the time
      * @param time the time in milliseconds at which the code should be checked
      * 
      * @return True if the code is valid within the timeframe, false otherwise
