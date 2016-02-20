@@ -1,6 +1,6 @@
 ## Version 2.4.0
 
-**Released at xx.xx.xxxx**
+**Released at 20.02.2016**
 
 * [#154](https://github.com/svenkubiak/mangooio/issues/154) Added limit for max post size (svenkubiak)
 * [#146](https://github.com/svenkubiak/mangooio/issues/146) Updated to 2.x of Scribe OAuth library (svenkubiak)
@@ -16,6 +16,7 @@
 	* mockito 2.0.40-Beta -> 2.0.42-Beta
 	* dsiutils 2.2.6 -> 2.3.0
 	* jersey-media-sse 2.22.1 -> 2.22.2
+	* snakeyaml 1.16 -> 1.17
 	* jetty-websocket 8.1.18.v20150929 -> 8.1.19.v20160209
 
 ## Version 2.3.1
