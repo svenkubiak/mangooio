@@ -2263,10 +2263,14 @@ Mailer Extension
 
 * [https://github.com/svenkubiak/mangooio-mailer-extension](https://github.com/svenkubiak/mangooio-mailer-extension)
 
+Elasticsearch Extension
+
+* [https://github.com/MarkVink/mangooio-elasticsearch-extension](https://github.com/MarkVink/mangooio-elasticsearch-extension)
+
 If you have created and extension and want it to be listed here, just
 add your extension to the above list by editing the documentation.asciidoc
 file and create a pull request on the GitHub repository. You can find the documentation file in mangooio-core at
-[/src/main/documentation/documentation.asciidoc](https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/documentation).
+[/src/main/documentation/docs/documentation.md](https://github.com/svenkubiak/mangooio/tree/master/mangooio-core/src/main/documentation/docs).
 
 ## Configuration options
 
