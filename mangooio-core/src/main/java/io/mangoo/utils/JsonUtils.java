@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import io.advantageous.boon.json.JsonFactory;
@@ -72,5 +73,24 @@ public final class JsonUtils {
         Objects.requireNonNull(clazz, "clazz can not be null");
         
         return objectMapper.fromJson(json, clazz);
+    }
+
+    /**
+     * Converts a given Json string to a collection of a given Class
+     * 
+     * @param json The json string to convert
+     * @param componentType The collection type to convert to
+     * @param clazz The Class to convert to
+     * 
+     * @param <T> JavaDoc wants this, just ignore it
+     * 
+     * @return A collection of converted classes
+     */
+    public static <T extends Collection<C>, C> T fromJson(String json, Class<C> componentType, Class<T> clazz) {
+        Objects.requireNonNull(json, "json can not be null");
+        Objects.requireNonNull(clazz, "clazz can not be null");
+        Objects.requireNonNull(componentType, "componentType can not be null");
+        
+        return objectMapper.readValue(json, clazz, componentType);
     }
 }

@@ -1,3 +1,9 @@
+## Version 2.4.1
+
+**Released at xx.xx.xxxx**
+
+* Added additional methods for mapping collections in JSONUtils  (svenkubiak)
+
 ## Version 2.4.0
 
 **Released at 20.02.2016**
