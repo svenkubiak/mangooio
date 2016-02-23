@@ -18,10 +18,7 @@ public class FlashController {
         return Response.withRedirect("/flashed");
     }
 
-    public Response flashed(Flash flash) {
-        final StringBuilder buffer = new StringBuilder();
-        buffer.append(flash.get(SIMPLE)).append(flash.get(ERROR)).append(flash.get(WARNING)).append(flash.get(SUCCESS));
-
-        return Response.withOk().andTextBody(buffer.toString());
+    public Response flashed() {
+        return Response.withOk();
     }
 }
