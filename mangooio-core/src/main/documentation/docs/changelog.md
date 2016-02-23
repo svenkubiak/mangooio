@@ -1,8 +1,9 @@
 ## Version 2.4.1
 
-**Released at xx.xx.xxxx**
+**Released at 23.02.2016**
 
-* Added additional methods for mapping collections in JSONUtils  (svenkubiak)
+* [#157](https://github.com/svenkubiak/mangooio/issues/157) Fixed bug that prevented authentication wrong showing an error (svenkubiak)
+* Added additional methods for mapping collections in JSONUtils (svenkubiak)
 
 ## Version 2.4.0
 

@@ -4,11 +4,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 import io.mangoo.enums.Default;
+import io.mangoo.exceptions.MangooAuthenticationException;
 import io.mangoo.models.OAuthUser;
 
 /**
@@ -18,7 +17,6 @@ import io.mangoo.models.OAuthUser;
  *
  */
 public class Authentication {
-    private static final Logger LOG = LogManager.getLogger(Authentication.class);
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
     private String authenticatedUser;
@@ -109,15 +107,17 @@ public class Authentication {
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean authenticate(String password, String hash) {
+    public boolean authenticate(String password, String hash) throws MangooAuthenticationException {
         Objects.requireNonNull(password, "password is required for authenticate");
         Objects.requireNonNull(hash, "Hashed password is required for authenticate");
 
         boolean authenticated = false;
         try {
-            authenticated = BCrypt.checkpw(password, hash);
+            if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(hash)) {
+                authenticated = BCrypt.checkpw(password, hash);                
+            }
         } catch (IllegalArgumentException e) {
-            LOG.error("Failed to check password against hash", e);
+            throw new MangooAuthenticationException("Failed to check password hash for authentication", e);
         }
 
         return authenticated;
