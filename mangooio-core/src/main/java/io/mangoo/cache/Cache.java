@@ -1,7 +1,6 @@
 package io.mangoo.cache;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -48,24 +47,6 @@ public interface Cache {
      * @return A converted cache class value
      */
     public <T> T get(String key);
-
-    /**
-     * @deprecated
-     * As of version 2.4.0 this is deprecated and will be removed
-     * in version 3.0.0.
-     * 
-     * Retrieves an object from the caches and converts it to
-     * a given class. If the value is not found the callable
-     * will be called to retrieve the value.
-     * 
-     * @param key The key for the cached value
-     * @param callable The callable to invoke when the value is not found
-     * @param <T> JavaDoc requires this (just ignore it)
-     *
-     * @return A converted cache class value
-     */
-    @Deprecated
-    public <T> T get(String key, Callable<? extends Object> callable);
 
     /**
      * Adds a complete map of objects to the cache

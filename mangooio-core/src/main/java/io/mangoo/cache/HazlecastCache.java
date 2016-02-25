@@ -3,7 +3,6 @@ package io.mangoo.cache;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 
 import com.google.inject.Singleton;
@@ -62,14 +61,6 @@ public class HazlecastCache implements Cache {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
-        Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
-        
-        return (T) this.cache.getMap(Default.CACHE_NAME.toString()).get(key);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key, Callable<? extends Object> callable) {
         Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
         
         return (T) this.cache.getMap(Default.CACHE_NAME.toString()).get(key);

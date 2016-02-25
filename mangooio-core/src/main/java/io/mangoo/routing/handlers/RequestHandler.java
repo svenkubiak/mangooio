@@ -17,6 +17,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
+import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
@@ -74,8 +75,9 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException
      * @throws TemplateException
      * @throws IOException
+     * @throws MangooTemplateEngineException 
      */
-    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException, MangooTemplateEngineException {
         //execute global request filter
         Response response = Response.withOk();
         if (this.requestAttachment.hasRequestFilter()) {
@@ -113,8 +115,9 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException
      * @throws IOException
      * @throws TemplateException
+     * @throws MangooTemplateEngineException 
      */
-    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException, MangooTemplateEngineException {
         Response invokedResponse;
 
         if (this.requestAttachment.getMethodParameters().isEmpty()) {

@@ -3,12 +3,7 @@ package io.mangoo.cache;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheStats;
@@ -26,7 +21,6 @@ import io.mangoo.enums.Key;
  */
 @Singleton
 public class GuavaCache implements Cache {
-    private static final Logger LOG = LogManager.getLogger(Cache.class);
     private static final Config CONFIG = Application.getConfig();
     private final com.google.common.cache.Cache<String, Object> cache;
 
@@ -72,24 +66,6 @@ public class GuavaCache implements Cache {
         Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
 
         final Object object = this.cache.getIfPresent(key);
-        return object == null ? null : (T) object;
-    }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(String key, Callable<? extends Object> callable) {
-        Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
-        Objects.requireNonNull(callable, "callable can not be null");
-
-        Object object = this.cache.getIfPresent(key);
-        if (object == null) {
-            try {
-                object = this.cache.get(key, callable);
-            } catch (final ExecutionException e) {
-                LOG.error("Failed to get Cached value", e);
-            }
-        }
-
         return object == null ? null : (T) object;
     }
 
