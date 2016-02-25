@@ -1,3 +1,14 @@
+## Version 2.5.0
+
+**Released at xx.xx.xxxx**
+
+* [#154](https://github.com/svenkubiak/mangooio/issues/154) Added new exception handling for public API (svenkubiak)
+* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+	* undertow-core 1.3.15.Final -> 1.3.18.Final
+	* mockito 2.0.42-Beta -> 2.0.43-Beta
+
 ## Version 2.4.1
 
 **Released at 23.02.2016**
