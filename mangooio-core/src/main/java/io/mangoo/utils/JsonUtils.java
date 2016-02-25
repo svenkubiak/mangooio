@@ -3,6 +3,9 @@ package io.mangoo.utils;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.ReadContext;
+
 import io.advantageous.boon.json.JsonFactory;
 import io.advantageous.boon.json.JsonSerializer;
 import io.advantageous.boon.json.JsonSerializerFactory;
@@ -48,15 +51,15 @@ public final class JsonUtils {
     }
     
     /**
-     * Converts a given Json string to an object
+     * Converts a given Json string to an JSONPath ReadContext
      * 
      * @param json The json string to convert
-     * @return The converted object
+     * @return JSPNPath read context
      */
-    public static Object fromJson(String json) {
+    public static ReadContext fromJson(String json) {
         Objects.requireNonNull(json, "json can not be null");
         
-        return objectMapper.fromJson(json);
+        return JsonPath.parse(json);
     }
     
     /**

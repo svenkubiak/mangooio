@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import com.jayway.jsonpath.ReadContext;
+
 import io.advantageous.boon.json.JsonSerializer;
 import io.advantageous.boon.json.JsonSerializerFactory;
 import io.mangoo.models.Car;
@@ -33,15 +35,15 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void fromJsonTest() {
+    public void fromJsonTest2() {
         //given
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
         //when
-        Object object = JsonUtils.fromJson(json);
+        ReadContext readContext = JsonUtils.fromJson(json);
         
         //then
-        assertThat(object, not(nullValue()));
+        assertThat(readContext, not(nullValue()));
     }
     
     @Test
