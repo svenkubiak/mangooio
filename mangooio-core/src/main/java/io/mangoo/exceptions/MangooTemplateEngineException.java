@@ -7,8 +7,8 @@ package io.mangoo.exceptions;
  */
 public class MangooTemplateEngineException extends Exception {
     private static final long serialVersionUID = -3362035234167593528L;
-
-    public MangooTemplateEngineException(String message, Exception e){
+    
+    public MangooTemplateEngineException(String message, Exception e) {
         super(message, e);
     }
 }

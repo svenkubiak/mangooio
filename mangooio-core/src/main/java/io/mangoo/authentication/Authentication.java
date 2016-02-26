@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 import io.mangoo.enums.Default;
-import io.mangoo.exceptions.MangooAuthenticationException;
 import io.mangoo.models.OAuthUser;
 
 /**
@@ -107,17 +106,13 @@ public class Authentication {
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean authenticate(String password, String hash) throws MangooAuthenticationException {
+    public boolean authenticate(String password, String hash) {
         Objects.requireNonNull(password, "password is required for authenticate");
         Objects.requireNonNull(hash, "Hashed password is required for authenticate");
 
         boolean authenticated = false;
-        try {
-            if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(hash)) {
-                authenticated = BCrypt.checkpw(password, hash);                
-            }
-        } catch (IllegalArgumentException e) {
-            throw new MangooAuthenticationException("Failed to check password hash for authentication", e);
+        if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(hash)) {
+            authenticated = BCrypt.checkpw(password, hash);                
         }
 
         return authenticated;

@@ -152,6 +152,9 @@ public class TemplateEngineFreemarker implements TemplateEngine {
      * @throws IOException IOException
      */
     private String processTemplate(Map<String, Object> content, Template template) throws MangooTemplateEngineException {
+        Objects.requireNonNull(content, "content can not be null");
+        Objects.requireNonNull(template, "template can not be null");
+        
         StringWriter buffer = new StringWriter(MAX_CHARS);
         try {
             template.process(content, buffer);

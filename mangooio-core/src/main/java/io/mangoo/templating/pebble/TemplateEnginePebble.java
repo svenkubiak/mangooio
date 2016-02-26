@@ -120,6 +120,9 @@ public class TemplateEnginePebble implements TemplateEngine {
      * @throws IOException IOException
      */
     private String processTemplate(Map<String, Object> content, PebbleTemplate pebbleTemplate) throws MangooTemplateEngineException {
+        Objects.requireNonNull(content, "content can not be null");
+        Objects.requireNonNull(pebbleTemplate, "pebbleTemplate can not be null");
+        
         Writer writer = new StringWriter();
         try {
             pebbleTemplate.evaluate(writer, content);
