@@ -2,6 +2,8 @@
 
 **Released at xx.xx.xxxx**
 
+* [#160](https://github.com/svenkubiak/mangooio/issues/159) Fixed ClassCastException in OAuthLoginFilter (svenkubiak)
+* [#159](https://github.com/svenkubiak/mangooio/issues/159) Added authenticity token and form for Pebble (svenkubiak)
 * [#154](https://github.com/svenkubiak/mangooio/issues/154) Added new exception handling for public API (svenkubiak)
 * [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
 * Sonar refactorings (svenkubiak)

@@ -25,7 +25,7 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
-import io.mangoo.templating.freemarker.methods.I18nMethod;
+import io.mangoo.templating.pebble.tags.AuthenticityTag;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
@@ -39,15 +39,15 @@ public class TemplateEnginePebble implements TemplateEngine {
     private PebbleEngine pebbleEngine;
     
     public TemplateEnginePebble() {
-        this.pebbleEngine = new PebbleEngine.Builder().extension(new TemplateEnginePebbleExtension()).build();
+        this.pebbleEngine = new PebbleEngine.Builder().build();
     }
 
     @Override
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
         PebbleTemplate pebbleTemplate;
-        
+
         try {
-            pebbleTemplate = pebbleEngine.getTemplate("C:\\mangooio\\mangooio-integration-test\\src\\main\\resources\\templates\\ApplicationController\\index.peb");
+            pebbleTemplate = pebbleEngine.getTemplate("templates/" + templatePath);
         } catch (PebbleException e) {
             throw new MangooTemplateEngineException("Failed to render template", e);
         }
@@ -55,7 +55,7 @@ public class TemplateEnginePebble implements TemplateEngine {
         content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
-        content.put("i18n", new I18nMethod(messages));
+        content.put("authenticity", new AuthenticityTag(session));
         
         return processTemplate(content, pebbleTemplate);
     }
