@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.oauth.OAuthService;
 
 import io.mangoo.enums.Default;
@@ -37,11 +38,11 @@ public class OAuthLoginFilter implements MangooFilter {
                     url = twitterService.getAuthorizationUrl(requestToken);
                     break;
                 case GOOGLE:
-                    OAuth10aService googleService = (OAuth10aService) oAuthService.get();
+                    OAuth20Service googleService = (OAuth20Service) oAuthService.get();
                     url = googleService.getAuthorizationUrl(null);
                     break;
                 case FACEBOOK:
-                    OAuth10aService facebookService = (OAuth10aService) oAuthService.get();
+                    OAuth20Service facebookService = (OAuth20Service) oAuthService.get();
                     url = facebookService.getAuthorizationUrl(null);
                     break;
                 default:

@@ -4,9 +4,10 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
+import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.model.Verifier;
 import com.github.scribejava.core.oauth.OAuth10aService;
@@ -74,10 +75,10 @@ public class OAuthCallbackFilter implements MangooFilter {
 
         if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             Verifier verifier = new Verifier(code);
-            OAuth10aService oAuth10aService = (OAuth10aService) oAuthService.get();
-            Token accessToken = oAuth10aService.getAccessToken(null, verifier);
+            OAuth20Service oAuth20Service = (OAuth20Service ) oAuthService.get();
+            OAuth2AccessToken oAuth2AccessToken = oAuth20Service.getAccessToken(verifier);
 
-            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, accessToken, OAuthResource.FACEBOOK.toString());
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.FACEBOOK.toString());
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponseBody);
@@ -92,21 +93,21 @@ public class OAuthCallbackFilter implements MangooFilter {
      * @param request The current request
      */
     private void googleOAuth(Request request) {
-//        String code = request.getParameter(CODE);
-//        Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
-//
-//        if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
-//            Verifier verifier = new Verifier(code);
-//            OAuth20Service oAuth20Service = (OAuth20Service) oAuthService.get();
-//            Token accessToken = oAuth20Service.getAccessToken(verifier);
-//
-//            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, accessToken, OAuthResource.GOOGLE.toString());
-//            String scribeResponseBody = scribeResponse.getBody();
-//            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
-//                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-//                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
-//            }
-//        }
+        String code = request.getParameter(CODE);
+        Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
+
+        if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
+            Verifier verifier = new Verifier(code);
+            OAuth20Service oAuth20Service = (OAuth20Service) oAuthService.get();
+            OAuth2AccessToken oAuth2AccessToken = oAuth20Service.getAccessToken(verifier);
+
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.GOOGLE.toString());
+            String scribeResponseBody = scribeResponse.getBody();
+            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
+                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
+            }
+        }
     }
 
     /**
@@ -123,9 +124,9 @@ public class OAuthCallbackFilter implements MangooFilter {
             OAuth1RequestToken requestToken = new OAuth1RequestToken(oauthToken, oauthVerifier);
             Verifier verifier = new Verifier(oauthVerifier);
             OAuth10aService oAuth10aService = (OAuth10aService) oAuthService.get();
-            Token accessToken = oAuth10aService.getAccessToken(requestToken, verifier);
+            OAuth1AccessToken oAuth1AccessToken = oAuth10aService.getAccessToken(requestToken, verifier);
 
-            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, accessToken, OAuthResource.TWITTER.toString());
+            com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, oAuth1AccessToken, OAuthResource.TWITTER.toString());
             String scribeResponseBody = scribeResponse.getBody();
             if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                 ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
@@ -135,19 +136,34 @@ public class OAuthCallbackFilter implements MangooFilter {
     }
 
     /**
-     * Executes a OAuth request to an OAuth resource
-     *
-     * @param oAuthService An OAuth service
-     * @param accessToken An accessToken
-     * @param resource The resource to access
-     *
-     * @return The response of the OAuth request
+     * Executes an OAuth20 request
+     * 
+     * @param oAuth20Service The service to access
+     * @param oAuth2AccessToken The access token to be used
+     * @param resource The resource URL to access
+     * 
+     * @return A OAuth response
      */
-    private com.github.scribejava.core.model.Response getResourceResponse(OAuth10aService oAuth10aService, Token accessToken, String resource) {
-//        OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, resource, oAuth10aService);
-//        oAuth10aService.signRequest(accessToken, oAuthRequest);
-//
-//        return oAuthRequest.send();
-        return null;
+    private com.github.scribejava.core.model.Response getResourceResponse(OAuth20Service oAuth20Service, OAuth2AccessToken oAuth2AccessToken, String resource) {
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth20Service);
+        oAuth20Service.signRequest(oAuth2AccessToken, request);
+        
+        return request.send();
+    }
+    
+    /**
+     * Executes an OAuth10a request
+     * 
+     * @param oAuth10aService The service to access
+     * @param oAuth1AccessToken The access token to be used
+     * @param resource The resource URL to access
+     * 
+     * @return A OAuth response
+     */
+    private com.github.scribejava.core.model.Response getResourceResponse(OAuth10aService oAuth10aService, OAuth1AccessToken oAuth1AccessToken, String resource) {
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth10aService);
+        oAuth10aService.signRequest(oAuth1AccessToken, request);
+        
+        return request.send();
     }
 }

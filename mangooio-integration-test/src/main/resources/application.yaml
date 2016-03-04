@@ -85,7 +85,7 @@ dev:
               routes     : true
               metrics    : true  
               scheduler  : true   
-    templateeninge: 
-        class: io.mangoo.templating.pebble.TemplateEnginePebble              
+#    templateeninge: 
+#        class: io.mangoo.templating.pebble.TemplateEnginePebble              
     smtp:
         port       : 3125        

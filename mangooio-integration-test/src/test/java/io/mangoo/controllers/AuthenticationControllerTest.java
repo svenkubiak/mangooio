@@ -5,7 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import io.mangoo.test.utils.Browser;
@@ -19,7 +18,6 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
-@Ignore
 public class AuthenticationControllerTest {
 
     @Test
