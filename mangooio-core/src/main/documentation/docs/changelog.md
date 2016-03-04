@@ -8,6 +8,11 @@
 * Version bumps (svenkubiak)
 	* undertow-core 1.3.15.Final -> 1.3.18.Final
 	* mockito 2.0.42-Beta -> 2.0.43-Beta
+	* scripe-apis 2.2.2 -> 2.3.0
+	* scripe-core 2.2.2 -> 2.3.0
+	* hazlecast-client 3.6 -> 3.6.1
+    * json-path 2.1.0 -> 2.2.0
+    * fleunt-hc 4.5.1 -> 4.5.2
 
 ## Version 2.4.1
 

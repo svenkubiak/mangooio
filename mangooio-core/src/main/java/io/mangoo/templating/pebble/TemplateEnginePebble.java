@@ -39,14 +39,15 @@ public class TemplateEnginePebble implements TemplateEngine {
     private PebbleEngine pebbleEngine;
     
     public TemplateEnginePebble() {
-        this.pebbleEngine = new PebbleEngine.Builder().build();
+        this.pebbleEngine = new PebbleEngine.Builder().extension(new TemplateEnginePebbleExtension()).build();
     }
 
     @Override
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
         PebbleTemplate pebbleTemplate;
+        
         try {
-            pebbleTemplate = pebbleEngine.getTemplate(templatePath);
+            pebbleTemplate = pebbleEngine.getTemplate("C:\\mangooio\\mangooio-integration-test\\src\\main\\resources\\templates\\ApplicationController\\index.peb");
         } catch (PebbleException e) {
             throw new MangooTemplateEngineException("Failed to render template", e);
         }

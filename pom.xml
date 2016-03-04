@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.5</log4j.version>
 		<maven.version>3.3.9</maven.version>
-		<scribejava.version>2.2.2</scribejava.version>
+		<scribejava.version>2.3.0</scribejava.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -186,7 +186,7 @@
 			<dependency>
 				<groupId>com.jayway.jsonpath</groupId>
 				<artifactId>json-path</artifactId>
-				<version>2.1.0</version>
+				<version>2.2.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -233,7 +233,7 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-client</artifactId>
-				<version>3.6</version>
+				<version>3.6.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
@@ -253,7 +253,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>fluent-hc</artifactId>
-				<version>4.5.1</version>
+				<version>4.5.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.fluentlenium</groupId>

@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.scribejava.core.model.Token;
+import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuthService;
 
@@ -33,7 +33,7 @@ public class OAuthLoginFilter implements MangooFilter {
                 switch (oAuthProvider.get()) {
                 case TWITTER:
                     OAuth10aService twitterService = (OAuth10aService) oAuthService.get();
-                    Token requestToken = twitterService.getRequestToken();
+                    OAuth1RequestToken requestToken = twitterService.getRequestToken();
                     url = twitterService.getAuthorizationUrl(requestToken);
                     break;
                 case GOOGLE:
