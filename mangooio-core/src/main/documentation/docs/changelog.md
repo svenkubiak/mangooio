@@ -9,7 +9,7 @@
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
 	* undertow-core 1.3.15.Final -> 1.3.18.Final
-	* mockito 2.0.42-Beta -> 2.0.43-Beta
+	* mockito 2.0.42-Beta -> 2.0.44-Beta
 	* pebble 2.1.0 -> 2.2.0
 	* scripe-apis 2.2.2 -> 2.3.0
 	* scripe-core 2.2.2 -> 2.3.0
