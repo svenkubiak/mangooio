@@ -17,6 +17,7 @@ import io.advantageous.boon.json.ObjectMapper;
  *
  */
 public final class JsonUtils {
+    private static final String JSON_CAN_NOT_BE_NULL = "json can not be null";
     private static volatile JsonSerializer jsonSerializer = createJsonSerializer();
     private static ObjectMapper objectMapper = JsonFactory.create();
     
@@ -57,7 +58,7 @@ public final class JsonUtils {
      * @return JSPNPath read context
      */
     public static ReadContext fromJson(String json) {
-        Objects.requireNonNull(json, "json can not be null");
+        Objects.requireNonNull(json, JSON_CAN_NOT_BE_NULL);
         
         return JsonPath.parse(json);
     }
@@ -72,7 +73,7 @@ public final class JsonUtils {
      * @return The converted class
      */
     public static <T> T fromJson(String json, Class<T> clazz) {
-        Objects.requireNonNull(json, "json can not be null");
+        Objects.requireNonNull(json, JSON_CAN_NOT_BE_NULL);
         Objects.requireNonNull(clazz, "clazz can not be null");
         
         return objectMapper.fromJson(json, clazz);
@@ -90,7 +91,7 @@ public final class JsonUtils {
      * @return A collection of converted classes
      */
     public static <T extends Collection<C>, C> T fromJson(String json, Class<C> componentType, Class<T> clazz) {
-        Objects.requireNonNull(json, "json can not be null");
+        Objects.requireNonNull(json, JSON_CAN_NOT_BE_NULL);
         Objects.requireNonNull(clazz, "clazz can not be null");
         Objects.requireNonNull(componentType, "componentType can not be null");
         
