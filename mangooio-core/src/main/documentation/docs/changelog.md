@@ -1,3 +1,9 @@
+## Version 2.5.1
+
+**Released at 20.03.2016**
+
+* Documentation fix
+
 ## Version 2.5.0
 
 **Released at 20.03.2016**
