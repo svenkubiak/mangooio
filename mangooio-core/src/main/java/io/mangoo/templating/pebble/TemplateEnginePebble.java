@@ -30,14 +30,14 @@ import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 public class TemplateEnginePebble implements TemplateEngine {
     private static final String TEMPLATE_SUFFIX = ".peb";
-    private PebbleEngine pebbleEngine;
-    
+    private final PebbleEngine pebbleEngine;
+
     public TemplateEnginePebble() {
         this.pebbleEngine = new PebbleEngine.Builder().build();
     }
@@ -48,15 +48,15 @@ public class TemplateEnginePebble implements TemplateEngine {
 
         try {
             pebbleTemplate = pebbleEngine.getTemplate("templates/" + templatePath);
-        } catch (PebbleException e) {
+        } catch (final PebbleException e) {
             throw new MangooTemplateEngineException("Failed to render template", e);
         }
-        
+
         content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
         content.put("authenticity", new AuthenticityTag(session));
-        
+
         return processTemplate(content, pebbleTemplate);
     }
 
@@ -65,7 +65,7 @@ public class TemplateEnginePebble implements TemplateEngine {
         PebbleTemplate pebbleTemplate;
         try {
             pebbleTemplate = pebbleEngine.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
-        } catch (PebbleException e) {
+        } catch (final PebbleException e) {
             throw new MangooTemplateEngineException("Failed to render Template", e);
         }
 
@@ -74,19 +74,19 @@ public class TemplateEnginePebble implements TemplateEngine {
 
     @Override
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
-        Map<String, Object> content = new HashMap<>();
+        final Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
 
         if (templateException) {
             content.put("exceptions", cause.getMessage().split("\n"));
         } else {
-            StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
-            String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
+            final StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
+            final String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
 
             List<Source> sources;
             try {
                 sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new MangooTemplateEngineException("Failed to get source lines of exception", e);
             }
             content.put("sources", sources);
@@ -99,9 +99,9 @@ public class TemplateEnginePebble implements TemplateEngine {
             content.put("sourceCodePath", StringUtils.substringAfter(new File(Application.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
-        Writer writer = new StringWriter();
+        final Writer writer = new StringWriter();
         try {
-            PebbleTemplate pebbleTemplate = pebbleEngine.getTemplate("exception.peb");
+            final PebbleTemplate pebbleTemplate = pebbleEngine.getTemplate("exception.peb");
             pebbleTemplate.evaluate(writer, content);
         } catch (PebbleException | IOException e) {
             throw new MangooTemplateEngineException("Failed to process template", e);
@@ -109,7 +109,7 @@ public class TemplateEnginePebble implements TemplateEngine {
 
         return writer.toString();
     }
-    
+
     /**
      * Process a template by rendering the content into the template
      *
@@ -123,8 +123,8 @@ public class TemplateEnginePebble implements TemplateEngine {
     private String processTemplate(Map<String, Object> content, PebbleTemplate pebbleTemplate) throws MangooTemplateEngineException {
         Objects.requireNonNull(content, "content can not be null");
         Objects.requireNonNull(pebbleTemplate, "pebbleTemplate can not be null");
-        
-        Writer writer = new StringWriter();
+
+        final Writer writer = new StringWriter();
         try {
             pebbleTemplate.evaluate(writer, content);
         } catch (PebbleException | IOException e) {
@@ -133,7 +133,7 @@ public class TemplateEnginePebble implements TemplateEngine {
 
         return writer.toString();
     }
-    
+
     @Override
     public String getTemplateName(String templateName) {
         Objects.requireNonNull(templateName, "templateName can not be null");
