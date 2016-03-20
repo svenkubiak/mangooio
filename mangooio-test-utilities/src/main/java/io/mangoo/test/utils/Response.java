@@ -53,6 +53,7 @@ public class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
     private final CookieStore cookieStore = new BasicCookieStore();
     private final Map<String, String> headers = new HashMap<>(); //NOSONAR
+    private final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
     private String responseUrl;
     private String responseUri;
     private String responseRequestBody;
@@ -61,11 +62,10 @@ public class Response {
     private HttpResponse httpResponse;
     private ContentType responseContentType;
     private HttpClientBuilder httpClientBuilder;
-    private MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();    
     private List<NameValuePair> postParameter = new ArrayList<>();
     private boolean responseDisbaleRedirects;
     private boolean hasFileBody;
-    
+
     public Response (String uri, HttpString method) {
         this.responseUri = uri;
         this.responseMethod = method;
@@ -77,11 +77,11 @@ public class Response {
     }
 
     private void init () {
-        Config config = Application.getInstance(Config.class);
+        final Config config = Application.getInstance(Config.class);
         multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-        
-        String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+
+        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
+        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
         this.cookieStore.clear();
         this.responseUrl = "http://" + host + ":" + port;
@@ -90,22 +90,22 @@ public class Response {
 
     /**
      * Sets the ContentType of the request
-     * 
+     *
      * @param contentType The content type to use
-     * @return Response 
+     * @return Response
      */
     public Response withContentType(ContentType contentType) {
         Objects.requireNonNull(contentType, "contentType can not be null");
-        
+
         this.responseContentType = contentType;
         return this;
     }
 
     /**
      * Sets the RequestBody of the request
-     * 
+     *
      * @param requestBody The request body to use
-     * @return Response 
+     * @return Response
      */
     public Response withRequestBody(String requestBody) {
         this.responseRequestBody = requestBody;
@@ -114,20 +114,20 @@ public class Response {
 
     /**
      * Sets Post parameter to the request
-     * 
+     *
      * @param postParameter A list of post parameter
      * @return Response
      */
     public Response withPostParameters(List<NameValuePair> postParameter) {
         Objects.requireNonNull(postParameter, "postParameter can not be null");
-        
+
         this.postParameter = Collections.unmodifiableList(postParameter);
         return this;
     }
 
     /**
      * Disables redirects when the request is executed
-     * 
+     *
      * @param disableRedirects true or false
      * @return Response
      */
@@ -138,48 +138,48 @@ public class Response {
 
     /**
      * Sets the URI to be executed by the request
-     * 
+     *
      * @param uri The URI to call
      * @return Response
      */
     public Response withUri(String uri) {
         Objects.requireNonNull(uri, "uri can not be null");
-        
+
         this.responseUri = uri;
         return this;
     }
-    
+
     /**
      * Adds a FileBody to the request
-     * 
+     *
      * @param name The the of the file body
      * @param fileBody The file body
      * @return Response
      */
     public Response withFileBody(String name, FileBody fileBody) {
         Objects.requireNonNull(fileBody, "fileBody can not be null");
-        
+
         this.hasFileBody = true;
-        this.multipartEntityBuilder.addPart(name, fileBody); 
+        this.multipartEntityBuilder.addPart(name, fileBody);
         return this;
     }
-    
+
     /**
      * Sets the HTTP method to execute the request with
-     * 
-     * @param method The HTTP Method 
+     *
+     * @param method The HTTP Method
      * @return Response
      */
     public Response withMethod(HttpString method) {
         Objects.requireNonNull(method, "method can not be null");
-        
+
         this.responseMethod = method;
         return this;
     }
 
     /**
      * Adds an additional header to the request
-     * 
+     *
      * @param name The name of the header
      * @param value The value of the header
      * @return Response
@@ -187,27 +187,27 @@ public class Response {
     public Response withHeader(String name, String value) {
         Objects.requireNonNull(name, "name can not be null");
         Objects.requireNonNull(value, "value can not be null");
-        
+
         this.headers.put(name, value);
         return this;
     }
-    
+
     /**
      * Adds an additional cookie to the request
-     * 
+     *
      * @param cookie The cookie of the header
      * @return Response
      */
     public Response withCookie(Cookie cookie) {
         Objects.requireNonNull(cookie, "cookie can not be null");
-        
+
         this.cookieStore.addCookie(cookie);
         return this;
     }
-    
+
     /**
      * Sets Basic HTTP Authentication the the request
-     * 
+     *
      * @param username The username
      * @param password The password
      * @return Response
@@ -215,26 +215,26 @@ public class Response {
     public Response withBasicauthentication(String username, String password) {
         Objects.requireNonNull(username, "username can not be null");
         Objects.requireNonNull(password, "password can not be null");
-        
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+
+        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
         this.httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider).setDefaultCookieStore(this.cookieStore);
-        
+
         return this;
     }
 
     /**
      * Execute the HTTP request
-     * 
+     *
      * @return Response
      */
     public Response execute() {
         if ((Methods.GET).equals(this.responseMethod)) {
-            HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
+            final HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
 
             return doRequest(httpGet);
         } else if ((Methods.POST).equals(this.responseMethod)) {
-            HttpPost httpPost = new HttpPost(responseUrl + responseUri);
+            final HttpPost httpPost = new HttpPost(responseUrl + responseUri);
 
             try {
                 if (this.hasFileBody) {
@@ -244,13 +244,13 @@ public class Response {
                 } else {
                     httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
                 }
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 LOG.error("Failed to create HttpPost request", e);
             }
 
             return doRequest(httpPost);
         } else if ((Methods.PUT).equals(this.responseMethod)) {
-            HttpPut httpPut = new HttpPut(responseUrl + responseUri);
+            final HttpPut httpPut = new HttpPut(responseUrl + responseUri);
 
             try {
                 if (StringUtils.isNotBlank(this.responseRequestBody)) {
@@ -258,13 +258,13 @@ public class Response {
                 } else {
                     httpPut.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
                 }
-            } catch (UnsupportedEncodingException e) {
+            } catch (final UnsupportedEncodingException e) {
                 LOG.error("Failed to create HttpPut request", e);
             }
 
-            return doRequest(httpPut);     
+            return doRequest(httpPut);
         } else if ((Methods.DELETE).equals(this.responseMethod)) {
-            HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
+            final HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
 
             return doRequest(httpDelete);
         }
@@ -274,7 +274,7 @@ public class Response {
 
     /**
      * Performs the actual HTTP request
-     * 
+     *
      * @param request The HTTP request
      * @return Response
      */
@@ -287,22 +287,22 @@ public class Response {
 
         if (responseDisbaleRedirects) {
             this.httpClientBuilder.disableRedirectHandling();
-        } 
-        
+        }
+
         try {
             this.httpResponse = this.httpClientBuilder.build().execute(request);
-            
-            HttpEntity httpEntity = this.httpResponse.getEntity();
+
+            final HttpEntity httpEntity = this.httpResponse.getEntity();
             if (httpEntity != null) {
                 this.responseContent = EntityUtils.toString(httpEntity);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to execute request to " + responseUrl, e);
         }
 
         return this;
     }
-    
+
     /**
      * @return The response content
      */
@@ -323,10 +323,10 @@ public class Response {
     public int getStatusCode() {
         return this.httpResponse.getStatusLine().getStatusCode();
     }
-    
+
     /**
      * Retrieves a specific header with the given name
-     * 
+     *
      * @param name The name of the header
      * @return The value of the header or null if not found
      */
@@ -340,20 +340,20 @@ public class Response {
     public List<Cookie> getCookies() {
         return this.cookieStore.getCookies();
     }
-    
+
     /**
      * Retrieves the cookie from the cookie store with a given name
-     * 
+     *
      * @param name The name of the cookie
      * @return A Cookie or null if non found by name
      */
     public Cookie getCookie(String name) {
-        for (Cookie cookie : this.cookieStore.getCookies()) {
+        for (final Cookie cookie : this.cookieStore.getCookies()) {
             if (name.equals(cookie.getName())) {
                 return cookie;
             }
         }
-        
+
         return null;
     }
 

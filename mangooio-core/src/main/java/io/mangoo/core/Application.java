@@ -36,7 +36,7 @@ public final class Application {
     private Application() {
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
@@ -50,7 +50,7 @@ public final class Application {
         bootstrap.startUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
-        
+
         if (bootstrap.isBootstrapSuccessful()) {
             started = true;
         } else {
@@ -130,7 +130,7 @@ public final class Application {
 
         return config;
     }
-    
+
     /**
      * @return An instance of the internal template engine freemarker
      */
@@ -141,19 +141,19 @@ public final class Application {
 
         return templateEngine;
     }
-    
+
     /**
      * @return An instance of the internal cache
      */
     public static Cache getInternalCache() {
         if (cache == null) {
             if (Default.CACHE_CLASS.toString().equals(config.getCacheClass())) {
-                cache = new GuavaCache();                
+                cache = new GuavaCache();
             } else {
                 cache = new HazlecastCache();
             }
         }
-        
+
         return cache;
     }
 
@@ -180,16 +180,16 @@ public final class Application {
 
         return injector.getInstance(clazz);
     }
-    
+
     /**
      * @return A list of all administrative URLs
      */
     public static List<String> getAdministrativeURLs() {
-        return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");  
+        return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");
     }
-    
+
     /**
-     * @return The system specific base directory to 
+     * @return The system specific base directory to
      */
     public static String getBaseDirectory() {
         return baseDirectory;

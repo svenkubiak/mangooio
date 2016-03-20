@@ -23,8 +23,8 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerEventManager {
-    private Cache cache = Application.getInternalCache();
-    
+    private final Cache cache = Application.getInternalCache();
+
     /**
      * Adds a new connection to the manager
      *
@@ -33,7 +33,7 @@ public class ServerEventManager {
     public void addConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, "connection can not be null");
 
-        String url = RequestUtils.getServerSentEventURL(connection);
+        final String url = RequestUtils.getServerSentEventURL(connection);
         Set<ServerSentEventConnection> uriConnections = getConnections(url);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();
@@ -53,7 +53,7 @@ public class ServerEventManager {
     public void send(String uri, String data) {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
-        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
+        final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
                 if (connection.isOpen()) {
@@ -75,7 +75,7 @@ public class ServerEventManager {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
         Objects.requireNonNull(eventCallback, "eventCallback can not be null");
 
-        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
+        final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
                 if (connection.isOpen()) {
@@ -93,7 +93,7 @@ public class ServerEventManager {
     public void close(String uri) {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
-        Set<ServerSentEventConnection> uriConnections = getConnections(uri);
+        final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
             uriConnections.forEach(connection -> {
                 if (connection.isOpen()){
@@ -114,7 +114,7 @@ public class ServerEventManager {
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
-        Set<ServerSentEventConnection> uriConnections = this.cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
+        final Set<ServerSentEventConnection> uriConnections = this.cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
 
         return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }

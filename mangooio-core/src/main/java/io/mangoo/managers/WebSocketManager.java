@@ -22,8 +22,8 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 @Singleton
 public class WebSocketManager {
-    private Cache cache = Application.getInternalCache();
-        
+    private final Cache cache = Application.getInternalCache();
+
     /**
      * Adds a new channel to the manager
      *
@@ -32,7 +32,7 @@ public class WebSocketManager {
     public void addChannel(WebSocketChannel channel) {
         Objects.requireNonNull(channel, "channel can not be null");
 
-        String url = RequestUtils.getWebSocketURL(channel);
+        final String url = RequestUtils.getWebSocketURL(channel);
         Set<WebSocketChannel> channels = getChannels(url);
         if (channels == null) {
             channels = new HashSet<>();
@@ -66,7 +66,7 @@ public class WebSocketManager {
     public Set<WebSocketChannel> getChannels(String uri) {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
-        Set<WebSocketChannel> channels = this.cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
+        final Set<WebSocketChannel> channels = this.cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
 
         return (channels == null) ? new HashSet<>() : channels;
     }
@@ -90,7 +90,7 @@ public class WebSocketManager {
     public void close(String uri) {
         Objects.requireNonNull(uri, ErrorMessage.URI.toString());
 
-        Set<WebSocketChannel> channels = getChannels(uri);
+        final Set<WebSocketChannel> channels = getChannels(uri);
         if (channels != null) {
             channels.forEach(channel -> {
                 if (channel.isOpen()) {
