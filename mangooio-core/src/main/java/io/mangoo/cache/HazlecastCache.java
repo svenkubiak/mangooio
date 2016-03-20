@@ -17,19 +17,19 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 
 /**
- * 
+ *
  * @author svenkubiak
  *
  */
 @Singleton
 public class HazlecastCache implements Cache {
     private static final Config CONFIG = Application.getConfig();
-    private HazelcastInstance cache = HazelcastClient.newHazelcastClient();
+    private final HazelcastInstance cache;
 
     public HazlecastCache () {
-        ClientConfig config = new ClientConfig();
+        final ClientConfig config = new ClientConfig();
         config.getNetworkConfig().addAddress(CONFIG.getCacheAddresses());
-        
+
         this.cache = HazelcastClient.newHazelcastClient(config);
     }
 
@@ -37,14 +37,14 @@ public class HazlecastCache implements Cache {
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
         Objects.requireNonNull(value, Default.VALUE_REQUIRED.toString());
-        
+
         this.cache.getMap(Default.CACHE_NAME.toString()).put(key, value);
     }
 
     @Override
     public void remove(String key) {
         Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
-        
+
         this.cache.getMap(Default.CACHE_NAME.toString()).remove(key);
     }
 
@@ -62,14 +62,14 @@ public class HazlecastCache implements Cache {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Objects.requireNonNull(key, Default.KEY_REQUIRED.toString());
-        
+
         return (T) this.cache.getMap(Default.CACHE_NAME.toString()).get(key);
     }
 
     @Override
     public void putAll(Map<String, Object> map) {
         Objects.requireNonNull(map, "map can not be null");
-        
+
         this.cache.getMap(Default.CACHE_NAME.toString()).putAll(map);
     }
 
@@ -80,15 +80,15 @@ public class HazlecastCache implements Cache {
 
     @Override
     public Map<String, Object> getStats() {
-        IMap<Object, Object> map = this.cache.getMap(Default.CACHE_NAME.toString());
-        LocalMapStats localMapStats = map.getLocalMapStats();
-        
-        Map<String, Object> stats = new HashMap<>();
+        final IMap<Object, Object> map = this.cache.getMap(Default.CACHE_NAME.toString());
+        final LocalMapStats localMapStats = map.getLocalMapStats();
+
+        final Map<String, Object> stats = new HashMap<>();
         stats.put("Hits", localMapStats.getHits());
         stats.put("Misses", localMapStats.getNearCacheStats().getMisses());
         stats.put("Put operation count", localMapStats.getPutOperationCount());
         stats.put("Remove operation count", localMapStats.getRemoveOperationCount());
-        
+
         return stats;
     }
 }
