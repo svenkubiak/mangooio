@@ -1,11 +1,10 @@
 ## Version 2.5.0
 
-**Released at xx.xx.xxxx**
+**Released at 20.03.2016**
 
 * [#160](https://github.com/svenkubiak/mangooio/issues/159) Fixed ClassCastException in OAuthLoginFilter (svenkubiak)
 * [#159](https://github.com/svenkubiak/mangooio/issues/159) Added authenticity token and form for Pebble (svenkubiak)
 * [#154](https://github.com/svenkubiak/mangooio/issues/154) Added new exception handling for public API (svenkubiak)
-* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
 	* undertow-core 1.3.15.Final -> 1.3.18.Final
