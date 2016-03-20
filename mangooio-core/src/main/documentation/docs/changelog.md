@@ -1,5 +1,12 @@
 ## Version 2.5.1
 
+**Released at xx.xx.xxxx**
+
+* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
+* Sonar refactorings
+
+## Version 2.5.1
+
 **Released at 20.03.2016**
 
 * Documentation fix
