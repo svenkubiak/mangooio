@@ -3,6 +3,7 @@
 **Released at xx.xx.xxxx**
 
 * [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
+* Added option to set encryption configuration values
 * Sonar refactorings
 
 ## Version 2.5.1
