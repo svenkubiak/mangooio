@@ -8,6 +8,7 @@ package io.mangoo.enums;
  */
 public enum Key {
     APPLICATION_CONFIG("application.config"),
+    APPLICATION_MASTERKEY("application.masterkey"),
     APPLICATION_NAME("application.name"),
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MINIFY_CSS("application.minify.css"),

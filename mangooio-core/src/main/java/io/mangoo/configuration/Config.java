@@ -5,9 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +17,11 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.io.Resources;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -34,6 +38,9 @@ import io.mangoo.enums.Mode;
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+    
+    @Inject
+    private Crypto crypto;
 
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
@@ -63,6 +70,12 @@ public class Config {
             load("", defaults);
             if (environment != null && !environment.isEmpty()) {
                 load("", environment);
+            }
+            
+            for (Entry<String, String> entry : this.values.entrySet()) {
+            	if (isEncrypted(entry.getValue())) {
+            		this.values.put(entry.getKey(), decrypt(entry.getValue()));
+            	}
             }
         }
     }
@@ -112,6 +125,36 @@ public class Config {
     }
 
     /**
+     * Decrypts an encrypted config value
+     * 
+     * @param value The crypted text
+     * @return The uncrypted text
+     */
+    private String decrypt(String value) {
+    	Objects.requireNonNull(value, "value can not be null");
+    	
+    	String key = null;
+		try {
+			key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY)));
+		} catch (IOException e) {
+			LOG.error("Failed to read master key file", e);
+		}
+
+    	return this.crypto.decrypt(StringUtils.substringBetween(value, "cryptex[", "]"), key);
+	}
+
+	/**
+     * Checks if a value is encrypt by checking for the prefix crpytex
+     * 
+     * @param value The value to check
+     * @return True if the value starts with cryptex, false othweise
+     */
+    private boolean isEncrypted(String value) {
+    	Objects.requireNonNull(value, "value can not be null");
+		return value.startsWith("cryptex[");
+	}
+
+	/**
      * Retrieves a configuration value with the given key
      *
      * @param key The key of the configuration value (e.g. application.name)

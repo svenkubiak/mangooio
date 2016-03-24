@@ -31,8 +31,8 @@ import io.mangoo.enums.Default;
  */
 @Singleton
 public class Scheduler {
-    private static final Config CONFIG = Application.getConfig();
-    private static final Logger LOG = LogManager.getLogger(Scheduler.class);
+	private static final Logger LOG = LogManager.getLogger(Scheduler.class);
+	private static final Config CONFIG = Application.getConfig();
     private org.quartz.Scheduler quartzScheduler;
 
     public Scheduler() {
