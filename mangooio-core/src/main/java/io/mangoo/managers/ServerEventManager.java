@@ -30,6 +30,7 @@ public class ServerEventManager {
      *
      * @param connection The connection to put
      */
+    @SuppressWarnings("all")
     public void addConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, "connection can not be null");
 

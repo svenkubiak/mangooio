@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -96,7 +97,7 @@ public final class RequestUtils {
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
-                headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase().contains(ContentType.APPLICATION_JSON.toString().toLowerCase());
+                headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(ContentType.APPLICATION_JSON.toString().toLowerCase());
     }
 
     /**

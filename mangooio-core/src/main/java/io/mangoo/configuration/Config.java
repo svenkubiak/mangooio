@@ -73,9 +73,9 @@ public class Config {
             }
             
             for (Entry<String, String> entry : this.values.entrySet()) {
-            	if (isEncrypted(entry.getValue())) {
-            		this.values.put(entry.getKey(), decrypt(entry.getValue()));
-            	}
+                if (isEncrypted(entry.getValue())) {
+                    this.values.put(entry.getKey(), decrypt(entry.getValue()));
+                }
             }
         }
     }
@@ -131,30 +131,30 @@ public class Config {
      * @return The uncrypted text
      */
     private String decrypt(String value) {
-    	Objects.requireNonNull(value, "value can not be null");
-    	
-    	String key = null;
-		try {
-			key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY)));
-		} catch (IOException e) {
-			LOG.error("Failed to read master key file", e);
-		}
+        Objects.requireNonNull(value, "value can not be null");
+        
+        String key = null;
+        try {
+            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY)));
+        } catch (IOException e) {
+            LOG.error("Failed to read master key file", e);
+        }
 
-    	return this.crypto.decrypt(StringUtils.substringBetween(value, "cryptex[", "]"), key);
-	}
+        return this.crypto.decrypt(StringUtils.substringBetween(value, "cryptex[", "]"), key);
+    }
 
-	/**
+    /**
      * Checks if a value is encrypt by checking for the prefix crpytex
      * 
      * @param value The value to check
      * @return True if the value starts with cryptex, false othweise
      */
     private boolean isEncrypted(String value) {
-    	Objects.requireNonNull(value, "value can not be null");
-		return value.startsWith("cryptex[");
-	}
+        Objects.requireNonNull(value, "value can not be null");
+        return value.startsWith("cryptex[");
+    }
 
-	/**
+    /**
      * Retrieves a configuration value with the given key
      *
      * @param key The key of the configuration value (e.g. application.name)

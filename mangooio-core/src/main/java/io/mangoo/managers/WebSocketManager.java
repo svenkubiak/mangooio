@@ -29,6 +29,7 @@ public class WebSocketManager {
      *
      * @param channel channel The channel to put
      */
+    @SuppressWarnings("all")
     public void addChannel(WebSocketChannel channel) {
         Objects.requireNonNull(channel, "channel can not be null");
 
