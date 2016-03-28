@@ -3,7 +3,7 @@
 **Released at xx.xx.xxxx**
 
 * [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
-* Added option to set encryption configuration values
+* Added option to set configuration values encrypted
 * Sonar refactorings
 
 ## Version 2.5.1
@@ -21,7 +21,7 @@
 * [#154](https://github.com/svenkubiak/mangooio/issues/154) Added new exception handling for public API (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
-	* undertow-core 1.3.15.Final -> 1.3.18.Final
+	* undertow-core 1.3.15.Final -> 1.3.19.Final
 	* mockito 2.0.42-Beta -> 2.0.44-Beta
 	* pebble 2.1.0 -> 2.2.0
 	* scripe-apis 2.2.2 -> 2.4.0
