@@ -85,8 +85,8 @@ public final class JsonUtils {
      * @param json The json string to convert
      * @param componentType The collection type to convert to
      * @param clazz The Class to convert to
-     * 
      * @param <T> JavaDoc wants this, just ignore it
+     * @param <C> JavaDoc wants this, just ignore it
      * 
      * @return A collection of converted classes
      */

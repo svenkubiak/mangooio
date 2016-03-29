@@ -52,6 +52,7 @@ public final class Application {
         bootstrap.applicationStarted();
 
         if (bootstrap.isBootstrapSuccessful()) {
+            getInstance(Config.class).decrypt();
             started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
