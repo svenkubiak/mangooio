@@ -1,4 +1,14 @@
-## Version 2.5.1
+## Version 2.6.0
+
+**Released at xx.xx.xxxx**
+
+* Version bumps (svenkubiak)
+	* freemarker 2.3.23 -> 2.3.24-incubating
+	* pebble 2.2.0 -> 2.2.1
+	* scripe-apis 2.4.0 -> 2.5.2
+	* scripe-core 2.4.0 -> 2.5.2
+
+## Version 2.5.2
 
 **Released at xx.xx.xxxx**
 
