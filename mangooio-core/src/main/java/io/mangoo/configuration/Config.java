@@ -115,10 +115,7 @@ public class Config {
     }
 
     /**
-     * Decrypts an encrypted config value
-     * 
-     * @param value The crypted text
-     * @return The uncrypted text
+     * Decrypts all encrypted config value
      */
     public void decrypt() {
         String key = "";

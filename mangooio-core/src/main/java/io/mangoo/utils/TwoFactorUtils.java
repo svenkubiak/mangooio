@@ -195,6 +195,8 @@ public final class TwoFactorUtils {
      * WARNING: This requires a system clock that is in sync with the world.
      *
      * @param secret The secret to use
+     * 
+     * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
         return generateCurrentNumber(secret, System.currentTimeMillis());
