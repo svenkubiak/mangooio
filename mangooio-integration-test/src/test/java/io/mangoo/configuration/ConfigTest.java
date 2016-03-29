@@ -6,10 +6,9 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.runners.MethodSorters;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
@@ -136,8 +135,6 @@ public class ConfigTest {
     public void testEncryptedValue() {
         //given
         final Config config = Application.getInstance(Config.class);
-        final Config configMock = Mockito.spy(config);
-        Mockito.when(configMock.getMasterKey()).thenReturn("myvoiceismypasswordmyvoiceistmyp");
 
         //then
         assertThat(config.getString("application.foo"), equalTo("thisisatestvalue"));
