@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.5</log4j.version>
 		<maven.version>3.3.9</maven.version>
-		<scribejava.version>2.4.0</scribejava.version>
+		<scribejava.version>2.5.2</scribejava.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -197,7 +197,7 @@
 			<dependency>
 				<groupId>com.mitchellbosecke</groupId>
 				<artifactId>pebble</artifactId>
-				<version>2.2.0</version>
+				<version>2.2.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -278,7 +278,7 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.23</version>
+				<version>2.3.24-incubating</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
