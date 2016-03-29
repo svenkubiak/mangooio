@@ -118,20 +118,35 @@ public class Config {
      * Decrypts all encrypted config value
      */
     public void decrypt() {
-        String key = "";
+        String key = null;
+        Crypto crypto = null;
+        
         for (Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
                 if (StringUtils.isBlank(key)) {
                     key = getMasterKey();
+                    crypto = Application.getInstance(Crypto.class);
                 }
                 
-                this.values.put(entry.getKey(), Application.getInstance(Crypto.class).decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key));
+                if (StringUtils.isNotBlank(key) && crypto != null) {
+                    String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
+                    if (StringUtils.isNotBlank(decryptedText)) {
+                        this.values.put(entry.getKey(), decryptedText);                         
+                    }
+                }
             }
         }
     }
 
+    /**
+     * @return The master key for encrypted config value, returns a default value if in test mode
+     */
     public String getMasterKey() {
-        String key = "";
+        if (Application.inTestMode()) {
+            return Default.APPLICATION_MASTERKEY.toString();
+        }
+        
+        String key = null;
         try {
             key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())));
         } catch (IOException e) {

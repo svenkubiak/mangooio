@@ -57,9 +57,8 @@ default:
 
 test:
     application:
-        masterkey        : /Users/sven.kubiak/key
         port             : 10808
-        foo              : cryptex[OMMIiZt51xzrC0V6B9sHGUuaNMoGqJnbRyxPgAh7Tus=]
+        foo              : cryptex[xOh1oRZzZNfBVl8Sw+O/OTqafBVD6ISKGjSmbljt/hw=]
         admin:
               health     : true
               config     : true
