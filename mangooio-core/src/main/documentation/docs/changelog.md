@@ -2,19 +2,16 @@
 
 **Released at xx.xx.xxxx**
 
+* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
+* Added option to encrypt configuration values (svenkubiak)
+* Sonar refactorings  (svenkubiak)
 * Version bumps (svenkubiak)
+	* undertow-core 1.3.19.Final -> 1.3.20.Final
 	* freemarker 2.3.23 -> 2.3.24-incubating
 	* pebble 2.2.0 -> 2.2.1
+	* fluentlenium-core 0.10.9 -> 0.11.0
 	* scripe-apis 2.4.0 -> 2.5.2
 	* scripe-core 2.4.0 -> 2.5.2
-
-## Version 2.5.2
-
-**Released at xx.xx.xxxx**
-
-* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
-* Added option to set configuration values encrypted
-* Sonar refactorings
 
 ## Version 2.5.1
 
