@@ -66,7 +66,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Log4j 2](https://logging.apache.org/log4j/2.x/) - Logging
 * [Freemarker](http://freemarker.org/), [Pebble](http://www.mitchellbosecke.com/pebble/home) - Template engines
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
-* [Google Guava](https://github.com/google/guava), [https://hazelcast.com/](https://github.com/google/guava) - Caching
+* [Google Guava](https://github.com/google/guava), [Hazelcast](https://hazelcast.com/) - Caching
 * [Boon JSON](https://github.com/boonproject/boon), [JSONPath](http://goessner.net/articles/JsonPath/) - JSON parser
 * [SnakeYaml](https://bitbucket.org/asomov/snakeyaml) - Configuration handling
 * [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [Mockito](http://mockito.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
