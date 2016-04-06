@@ -9,6 +9,8 @@
 	* undertow-core 1.3.19.Final -> 1.3.20.Final
 	* freemarker 2.3.23 -> 2.3.24-incubating
 	* pebble 2.2.0 -> 2.2.1
+	* hazelcast-client 3.6.1 -> 3.6.2
+	* boon-json 0.5.6.RELEASE -> 0.5.7
 	* fluentlenium-core 0.10.9 -> 0.11.0
 	* scripe-apis 2.4.0 -> 2.5.2
 	* scripe-core 2.4.0 -> 2.5.2
