@@ -177,7 +177,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>1.3.20.Final</version>
+				<version>1.3.21.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
@@ -259,7 +259,7 @@
 			<dependency>
 				<groupId>org.fluentlenium</groupId>
 				<artifactId>fluentlenium-core</artifactId>
-				<version>0.11.0</version>
+				<version>0.13.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
