@@ -14,6 +14,7 @@
 	* fluentlenium-core 0.10.9 -> 0.13.0
 	* scripe-apis 2.4.0 -> 2.5.2
 	* scripe-core 2.4.0 -> 2.5.2
+	* zt-exec 1.8 -> 1.9
 
 ## Version 2.5.1
 
