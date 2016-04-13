@@ -1,5 +1,6 @@
 package io.mangoo.crypto;
 
+import java.util.Base64;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,6 @@ import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.util.encoders.Base64;
 
 import com.google.common.base.Charsets;
 import com.google.inject.Singleton;
@@ -35,6 +35,8 @@ public class Crypto {
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
+    private static final Base64.Encoder base64Encoder = Base64.getEncoder();
+    private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
     private CipherParameters cipherParameters;
     
@@ -64,7 +66,7 @@ public class Crypto {
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
         this.cipher.init(false, this.cipherParameters);
         
-        return new String(cipherData(Base64.decode(encrytedText)), Charsets.UTF_8);
+        return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
     }
 
     /**
@@ -99,7 +101,7 @@ public class Crypto {
         this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
         this.cipher.init(true, this.cipherParameters);
 
-        return new String(Base64.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
+        return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
 
     /**

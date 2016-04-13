@@ -4,6 +4,7 @@
 
 * [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
 * Added option to encrypt configuration values (svenkubiak)
+* Switched to default Java 8 Base64 Encoder/Decoder (svenkubiak)
 * Sonar refactorings  (svenkubiak)
 * Version bumps (svenkubiak)
 	* undertow-core 1.3.19.Final -> 1.3.21.Final
