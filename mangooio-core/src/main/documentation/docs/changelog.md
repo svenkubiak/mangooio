@@ -15,6 +15,8 @@
 	* scripe-apis 2.4.0 -> 2.5.2
 	* scripe-core 2.4.0 -> 2.5.2
 	* zt-exec 1.8 -> 1.9
+	* dsituils 2.3.0 -> 2.3.2
+	* mockito 2.0.44-Beta -> 2.0.46-Beta
 
 ## Version 2.5.1
 
