@@ -1,8 +1,7 @@
 ## Version 2.6.0
 
-**Released at xx.xx.xxxx**
+**Released at 15.04.2016**
 
-* [#147](https://github.com/svenkubiak/mangooio/issues/147) Big documentation update (svenkubiak)
 * Added option to encrypt configuration values (svenkubiak)
 * Switched to default Java 8 Base64 Encoder/Decoder (svenkubiak)
 * Sonar refactorings  (svenkubiak)
