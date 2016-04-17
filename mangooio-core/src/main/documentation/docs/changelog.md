@@ -1,3 +1,9 @@
+## Version 2.6.1
+
+**Released at 17.04.2016**
+
+* [#163](https://github.com/svenkubiak/mangooio/issues/163) Fixed dependency cycle bug when using mangoo-test-utilities (svenkubiak)
+
 ## Version 2.6.0
 
 **Released at 15.04.2016**
