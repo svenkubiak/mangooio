@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.5</log4j.version>
 		<maven.version>3.3.9</maven.version>
-		<scribejava.version>2.5.2</scribejava.version>
+		<scribejava.version>2.5.3</scribejava.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -248,7 +248,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.0.46-beta</version>
+				<version>2.0.49-beta</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
@@ -288,7 +288,7 @@
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
-				<version>2.2.2</version>
+				<version>2.2.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>

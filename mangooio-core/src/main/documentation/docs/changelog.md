@@ -1,3 +1,13 @@
+## Version 2.7.0
+
+**Released at xx.xx.xxxx**
+
+* Version bumps (svenkubiak)
+	* scribejava-apis 2.5.2 -> 2.5.3
+	* scribejava-core 2.5.2 -> 2.5.3
+	* mockito 2.0.46-Beta -> 2.0.49-Beta
+	* quartz 2.2.2 -> 2.2.3
+	
 ## Version 2.6.1
 
 **Released at 17.04.2016**
