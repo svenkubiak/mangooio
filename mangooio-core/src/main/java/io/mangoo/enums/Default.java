@@ -9,6 +9,7 @@ package io.mangoo.enums;
  */
 public enum Default {
     LANGUAGE("en"),
+    ENCODING("UTF-8"),
     DATA_DELIMITER("#"),
     DELIMITER("|"),
     FLASH_COOKIE_NAME("MANGOOIO-FLASH"),

@@ -148,7 +148,7 @@ public class Config {
         
         String key = null;
         try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())));
+            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString());
         } catch (IOException e) {
             LOG.error("Failed to read master key", e);
         }

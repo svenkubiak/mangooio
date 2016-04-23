@@ -103,7 +103,7 @@ public final class BootstrapUtils {
     public static String getLogo() {
         String logo = "";
         try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
-            logo = IOUtils.toString(inputStream, "UTF-8");
+            logo = IOUtils.toString(inputStream, Default.ENCODING.toString());
         } catch (final IOException e) {
             LOG.error("Failed to get application logo", e);
         }

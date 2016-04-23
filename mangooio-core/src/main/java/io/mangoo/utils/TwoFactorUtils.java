@@ -13,6 +13,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.mangoo.enums.Default;
 import io.mangoo.enums.ErrorMessage;
 
 /**
@@ -215,7 +216,7 @@ public final class TwoFactorUtils {
 
         byte[] key = null;
         try {
-            key = base32.decode(secret.getBytes("UTF-8"));
+            key = base32.decode(secret.getBytes(Default.ENCODING.toString()));
         } catch (UnsupportedEncodingException e) {
             LOG.error("Failed to decode secrete to base32", e);
         }

@@ -173,7 +173,7 @@ public class ApplicationControllerTest {
 
         //then
         assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(FileUtils.readFileToString(file), equalTo("This is an attachment"));
+        assertThat(FileUtils.readFileToString(file, Default.ENCODING.toString()), equalTo("This is an attachment"));
         assertThat(file.delete(), equalTo(true));
     }
 

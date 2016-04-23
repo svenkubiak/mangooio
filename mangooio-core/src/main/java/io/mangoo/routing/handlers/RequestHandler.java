@@ -267,7 +267,7 @@ public class RequestHandler implements HttpHandler {
         String body = "";
         if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
-            body = IOUtils.toString(exchange.getInputStream());
+            body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING.toString());
         }
 
         return body;
