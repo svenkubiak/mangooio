@@ -2,6 +2,7 @@
 
 **Released at xx.xx.xxx**
 
+* [#165](https://github.com/svenkubiak/mangooio/issues/165) rename mangooio-test-utilities to mangooio-test and move helper classes to core (svenkubiak)
 * [#112](https://github.com/svenkubiak/mangooio/issues/112) Removed all @deprecated functions and classes (svenkubiak)
 * [#111](https://github.com/svenkubiak/mangooio/issues/111) Moved Authentication class to bindings package (svenkubiak)
 

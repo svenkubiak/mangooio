@@ -25,8 +25,8 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -44,7 +44,7 @@ public class ApplicationControllerTest {
     @Test
     public void testIndex() {
         //given
-        final Response response = Request.get("/").execute();
+        final HTTPResponse response = HTTPRequest.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -55,7 +55,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRequest() {
         //given
-        final Response response = Request.get("/request").execute();
+        final HTTPResponse response = HTTPRequest.get("/request").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -67,7 +67,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithDisableRedirects() {
         //given
-        final Response response = Request.get("/redirect").withDisableRedirects(true).execute();
+        final HTTPResponse response = HTTPRequest.get("/redirect").withDisableRedirects(true).execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -78,7 +78,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithoutDisableRedirects() {
         //given
-        final Response response = Request.get("/redirect").execute();
+        final HTTPResponse response = HTTPRequest.get("/redirect").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -90,7 +90,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPlainText() {
         //given
-        final Response response = Request.get("/text").execute();
+        final HTTPResponse response = HTTPRequest.get("/text").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -101,7 +101,7 @@ public class ApplicationControllerTest {
     @Test
     public void testNotFound() {
         //given
-        final Response response = Request.get("/foo").execute();
+        final HTTPResponse response = HTTPRequest.get("/foo").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -112,7 +112,7 @@ public class ApplicationControllerTest {
     @Test
     public void testForbidden() {
         //given
-        final Response response = Request.get("/forbidden").execute();
+        final HTTPResponse response = HTTPRequest.get("/forbidden").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -123,7 +123,7 @@ public class ApplicationControllerTest {
     @Test
     public void testBadRequest() {
         //given
-        final Response response = Request.get("/badrequest").execute();
+        final HTTPResponse response = HTTPRequest.get("/badrequest").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -134,7 +134,7 @@ public class ApplicationControllerTest {
     @Test
     public void testUnauthorized() {
         //given
-        final Response response = Request.get("/unauthorized").execute();
+        final HTTPResponse response = HTTPRequest.get("/unauthorized").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -145,7 +145,7 @@ public class ApplicationControllerTest {
     @Test
     public void testAdditionalHeaders() {
         //given
-        final Response response = Request.get("/header").execute();
+        final HTTPResponse response = HTTPRequest.get("/header").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -181,7 +181,7 @@ public class ApplicationControllerTest {
     @SuppressWarnings("unchecked")
     public void testEtag() {
         //given
-        Response response = Request.get("/etag").execute();
+        HTTPResponse response = HTTPRequest.get("/etag").execute();
         final String etag = response.getHeader(Headers.ETAG_STRING);
 
         //then
@@ -190,7 +190,7 @@ public class ApplicationControllerTest {
         assertThat(etag, matches("^[a-f0-9]{32}$"));
 
         //given
-        response = Request.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
+        response = HTTPRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
@@ -200,7 +200,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPost() {
         //given
-        final Response response = Request.post("/post")
+        final HTTPResponse response = HTTPRequest.post("/post")
                 .withRequestBody("Winter is coming!")
                 .execute();
 
@@ -214,7 +214,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPut() {
         //given
-        final Response response = Request.put("/put")
+        final HTTPResponse response = HTTPRequest.put("/put")
                 .withRequestBody("The king of the north!")
                 .execute();
 
@@ -228,7 +228,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonPathWithPost() {
         //given
-        final Response response = Request.post("/jsonpathpost")
+        final HTTPResponse response = HTTPRequest.post("/jsonpathpost")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -242,7 +242,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonPathWithPut() {
         //given
-        final Response response = Request.put("/jsonpathput")
+        final HTTPResponse response = HTTPRequest.put("/jsonpathput")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -256,7 +256,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonBoonWithPost() {
         //given
-        final Response response = Request.post("/jsonboonpost")
+        final HTTPResponse response = HTTPRequest.post("/jsonboonpost")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -270,7 +270,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonBoonWithPut() {
         //given
-        final Response response = Request.put("/jsonboonput")
+        final HTTPResponse response = HTTPRequest.put("/jsonboonput")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -284,7 +284,7 @@ public class ApplicationControllerTest {
     @Test
     public void testResponseTimer() {
         //given
-        final Response response = Request.get("/").execute();
+        final HTTPResponse response = HTTPRequest.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));

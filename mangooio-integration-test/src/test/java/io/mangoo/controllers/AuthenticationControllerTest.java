@@ -7,9 +7,9 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.utils.Browser;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPBrowser;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -23,7 +23,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testNotAuthenticated() {
         //given
-        Response response = Request.get("/authenticationrequired")
+        HTTPResponse response = HTTPRequest.get("/authenticationrequired")
                 .withDisableRedirects(true)
                 .execute();
 
@@ -35,10 +35,10 @@ public class AuthenticationControllerTest {
     @Test
     public void testAuthenticated() {
         //given
-        Browser instance = Browser.open();
+        HTTPBrowser instance = HTTPBrowser.open();
 
         //when
-        Response response = instance.withUri("/dologin")
+        HTTPResponse response = instance.withUri("/dologin")
                 .withMethod(Methods.POST)
                 .execute();
         

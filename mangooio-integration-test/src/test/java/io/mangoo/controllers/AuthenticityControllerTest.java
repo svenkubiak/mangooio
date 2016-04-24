@@ -10,9 +10,9 @@ import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
 
-import io.mangoo.test.utils.Browser;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPBrowser;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -26,7 +26,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityForm() {
         //given
-        Response response = Request.get("/authenticityform").execute();
+        HTTPResponse response = HTTPRequest.get("/authenticityform").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -38,7 +38,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityToken() {
         //given
-        Response response = Request.get("/authenticitytoken").execute();
+        HTTPResponse response = HTTPRequest.get("/authenticitytoken").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -49,10 +49,10 @@ public class AuthenticityControllerTest {
     @Test
     public void testValidAuthenticity() {
         //given
-    	Browser instance = Browser.open();
+    	HTTPBrowser instance = HTTPBrowser.open();
         
     	//when
-        Response response = instance.withUri("/authenticitytoken")
+        HTTPResponse response = instance.withUri("/authenticitytoken")
                 .withMethod(Methods.GET)
                 .execute();
         String token = response.getContent();
@@ -75,7 +75,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        Response response = Request.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        HTTPResponse response = HTTPRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

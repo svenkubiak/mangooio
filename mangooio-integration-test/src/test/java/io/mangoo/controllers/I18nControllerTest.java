@@ -8,9 +8,9 @@ import static org.hamcrest.Matchers.nullValue;
 import org.junit.Test;
 
 import io.mangoo.enums.Default;
-import io.mangoo.test.utils.Browser;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPBrowser;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -24,7 +24,7 @@ public class I18nControllerTest {
     @Test
     public void testWithOutAdditionalHeader() {
         //given
-        Response response = Request.get("/translation").execute();
+        HTTPResponse response = HTTPRequest.get("/translation").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -35,7 +35,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderDe() {
         //given
-        Response response = Request.get("/translation")
+        HTTPResponse response = HTTPRequest.get("/translation")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -48,7 +48,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderEn() {
         //given
-        Response response = Request.get("/translation")
+        HTTPResponse response = HTTPRequest.get("/translation")
                 .withHeader("Accept-Language", "en-US")
                 .execute();
         
@@ -61,8 +61,8 @@ public class I18nControllerTest {
     @Test
     public void testWithI18nCookie() {
         //given
-        Browser browser = Browser.open();
-        Response response = browser.withMethod(Methods.GET).withUri("/localize").execute();
+        HTTPBrowser browser = HTTPBrowser.open();
+        HTTPResponse response = browser.withMethod(Methods.GET).withUri("/localize").execute();
         
         //then
         assertThat(response, not(nullValue()));

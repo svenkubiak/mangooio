@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -23,7 +23,7 @@ public class SessionControllerTest {
     public void testSessionCookie() {
         //when
         final Config config = Application.getInstance(Config.class);
-        final Response response = Request.get("/session").execute();
+        final HTTPResponse response = HTTPRequest.get("/session").execute();
 
         //then
         assertThat(response, not(nullValue()));

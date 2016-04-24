@@ -1,4 +1,4 @@
-package io.mangoo.test.utils;
+package io.mangoo.utils.http;
 
 import java.util.Objects;
 
@@ -9,10 +9,10 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public final class Request {
+public final class HTTPRequest {
     private static final String URI_ERROR = "URI can not be null";
 
-    private Request() {
+    private HTTPRequest() {
     }
 
     /**
@@ -21,10 +21,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response get(String uri) {
+    public static HTTPResponse get(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.GET);
+        return new HTTPResponse(uri, Methods.GET);
     }
     
     /**
@@ -33,10 +33,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response post(String uri) {
+    public static HTTPResponse post(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.POST);
+        return new HTTPResponse(uri, Methods.POST);
     }
 
     /**
@@ -45,10 +45,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response put(String uri) {
+    public static HTTPResponse put(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.PUT);
+        return new HTTPResponse(uri, Methods.PUT);
     }
     
     /**
@@ -57,9 +57,9 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response delete(String uri) {
+    public static HTTPResponse delete(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.DELETE);
+        return new HTTPResponse(uri, Methods.DELETE);
     }
 }

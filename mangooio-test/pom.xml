@@ -5,7 +5,7 @@
 		<artifactId>mangooio</artifactId>
 		<version>2.6.2-SNAPSHOT</version>
 	</parent>
-	<artifactId>mangooio-test-utilities</artifactId>
+	<artifactId>mangooio-test</artifactId>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
@@ -29,10 +29,6 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>fluent-hc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.fluentlenium</groupId>

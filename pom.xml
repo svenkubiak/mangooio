@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -24,6 +25,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>2.5</log4j.version>
 		<maven.version>3.3.9</maven.version>
+		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<scribejava.version>2.5.3</scribejava.version>
 	</properties>
 	<prerequisites>
@@ -32,10 +34,10 @@
 	<modules>
 		<module>mangooio-core</module>
 		<module>mangooio-benchmarks</module>
-		<module>mangooio-test-utilities</module>
 		<module>mangooio-maven-plugin</module>
 		<module>mangooio-maven-archetype</module>
 		<module>mangooio-integration-test</module>
+		<module>mangooio-test</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
@@ -253,7 +255,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>fluent-hc</artifactId>
-				<version>4.5.2</version>
+				<version>${httpcomponents.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.fluentlenium</groupId>
@@ -305,6 +307,11 @@
 				<groupId>io.advantageous.boon</groupId>
 				<artifactId>boon-json</artifactId>
 				<version>0.5.7</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpmime</artifactId>
+				<version>${httpcomponents.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.scribejava</groupId>

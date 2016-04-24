@@ -7,8 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -22,7 +22,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameter() {
         //given
-        Response response = Request.get("/string/bar").execute();
+        HTTPResponse response = HTTPRequest.get("/string/bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -33,7 +33,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameterWithSpecialCharacters() {
         //given
-        Response response = Request.get("/string/tüsätö-$ß_").execute();
+        HTTPResponse response = HTTPRequest.get("/string/tüsätö-$ß_").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -44,7 +44,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoublePrimitiveParamter() {
         //given
-        Response response = Request.get("/doublePrimitive/1.42").execute();
+        HTTPResponse response = HTTPRequest.get("/doublePrimitive/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -55,7 +55,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoubleParameter() {
         //given
-        Response response = Request.get("/double/1.42").execute();
+        HTTPResponse response = HTTPRequest.get("/double/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -66,7 +66,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntParameter() {
         //given
-        Response response = Request.get("/int/42").execute();
+        HTTPResponse response = HTTPRequest.get("/int/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -77,7 +77,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntegerParameter() {
         //given
-        Response response = Request.get("/integer/42").execute();
+        HTTPResponse response = HTTPRequest.get("/integer/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -88,7 +88,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatPrimitiveParameter() {
         //given
-        Response response = Request.get("/floatPrimitive/1.24").execute();
+        HTTPResponse response = HTTPRequest.get("/floatPrimitive/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -99,7 +99,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatParameter() {
         //given
-        Response response = Request.get("/float/1.24").execute();
+        HTTPResponse response = HTTPRequest.get("/float/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -110,7 +110,7 @@ public class ParameterControllerTest {
     @Test
     public void testPrimitiveLongParameter() {
         //given
-        Response response = Request.get("/longPrimitive/6000").execute();
+        HTTPResponse response = HTTPRequest.get("/longPrimitive/6000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -121,7 +121,7 @@ public class ParameterControllerTest {
     @Test
     public void testLongParameter() {
         //given
-        Response response = Request.get("/long/60000").execute();
+        HTTPResponse response = HTTPRequest.get("/long/60000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -132,7 +132,7 @@ public class ParameterControllerTest {
     @Test
     public void testMultipleParameter() {
         //given
-        Response response = Request.get("/multiple/bar/1").execute();
+        HTTPResponse response = HTTPRequest.get("/multiple/bar/1").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -143,7 +143,7 @@ public class ParameterControllerTest {
     @Test
     public void testPathParameter() {
         //given
-        Response response = Request.get("/path?foo=bar").execute();
+        HTTPResponse response = HTTPRequest.get("/path?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -154,7 +154,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateParameter() {
         //given
-        Response response = Request.get("/localdate/2007-12-03").execute();
+        HTTPResponse response = HTTPRequest.get("/localdate/2007-12-03").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -166,7 +166,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateTimeParameter() {
         //given
-        Response response = Request.get("/localdatetime/2007-12-03T10:15:30").execute();
+        HTTPResponse response = HTTPRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
 
         //then
         assertThat(response, not(nullValue()));

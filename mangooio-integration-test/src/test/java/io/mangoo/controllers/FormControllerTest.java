@@ -21,8 +21,8 @@ import org.junit.Test;
 import com.google.common.io.Resources;
 
 import io.mangoo.enums.ContentType;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -40,7 +40,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("password", "secret"));
 
 		// when
-		Response response = Request.post("/form")
+		HTTPResponse response = HTTPRequest.post("/form")
 				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
 				.withPostParameters(parameter)
 				.execute();
@@ -59,7 +59,7 @@ public class FormControllerTest {
 		FileUtils.copyInputStreamToFile(attachment, file);
 		
 		// when
-		Response response = Request.post("/singlefile")
+		HTTPResponse response = HTTPRequest.post("/singlefile")
 				.withFileBody("file", new FileBody(file))
 				.execute();
 
@@ -81,7 +81,7 @@ public class FormControllerTest {
 		FileUtils.copyInputStreamToFile(attachment2, file2);
 		
 		// when
-		Response response = Request.post("/multifile")
+		HTTPResponse response = HTTPRequest.post("/multifile")
 				.withFileBody("file1", new FileBody(file1))
 				.withFileBody("file2", new FileBody(file2))
 				.execute();
@@ -102,7 +102,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("password", "#+ß§"));
 
 		// when
-		Response response = Request.post("/form")
+		HTTPResponse response = HTTPRequest.post("/form")
 				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
 				.withPostParameters(parameter)
 				.execute();
@@ -121,7 +121,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("regex", "ABC"));
 
 		// when
-		Response response = Request.post("/validateform")
+		HTTPResponse response = HTTPRequest.post("/validateform")
 				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
 				.withPostParameters(parameter)
 				.execute();
@@ -159,7 +159,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("regex", "a"));
 
 		// when
-		Response response = Request.post("/validateform").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+		HTTPResponse response = HTTPRequest.post("/validateform").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
 				.withPostParameters(parameter).execute();
 
 		// then

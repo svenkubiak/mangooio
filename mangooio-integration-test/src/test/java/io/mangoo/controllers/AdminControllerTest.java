@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -33,7 +33,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthAuthorized() {
         //given
-        Response response = Request.get("/@health")
+        HTTPResponse response = HTTPRequest.get("/@health")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -47,7 +47,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthUnaothorized() {
         //given
-        Response response = Request.get("/@health").execute();
+        HTTPResponse response = HTTPRequest.get("/@health").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -59,7 +59,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigAuthorized() {
         //given
-        Response response = Request.get("/@config")
+        HTTPResponse response = HTTPRequest.get("/@config")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -73,7 +73,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigUnauthorized() {
         //given
-        Response response = Request.get("/@config").execute();
+        HTTPResponse response = HTTPRequest.get("/@config").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -85,7 +85,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedAuthorized() {
         //given
-        Response response = Request.get("/@routes")
+        HTTPResponse response = HTTPRequest.get("/@routes")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -99,7 +99,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedUnauthorized() {
         //given
-        Response response = Request.get("/@routes").execute();
+        HTTPResponse response = HTTPRequest.get("/@routes").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -111,7 +111,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheAuthorized() {
         //given
-        Response response = Request.get("/@cache")
+        HTTPResponse response = HTTPRequest.get("/@cache")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -125,7 +125,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheUnauthorized() {
         //given
-        Response response = Request.get("/@cache").execute();
+        HTTPResponse response = HTTPRequest.get("/@cache").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -137,7 +137,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsAuthorized() {
         //given
-        Response response = Request.get("/@metrics")
+        HTTPResponse response = HTTPRequest.get("/@metrics")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -151,7 +151,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsUnauthorized() {
         //given
-        Response response = Request.get("/@metrics").execute();
+        HTTPResponse response = HTTPRequest.get("/@metrics").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -163,7 +163,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerAuthorized() {
         //given
-        Response response = Request.get("/@scheduler")
+        HTTPResponse response = HTTPRequest.get("/@scheduler")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -177,7 +177,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerUnAuthorized() {
         //given
-        Response response = Request.get("/@scheduler").execute();
+        HTTPResponse response = HTTPRequest.get("/@scheduler").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -189,7 +189,7 @@ public class AdminControllerTest {
     @Test
     public void testSystemAuthorized() {
         //given
-        Response response = Request.get("/@system")
+        HTTPResponse response = HTTPRequest.get("/@system")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -203,7 +203,7 @@ public class AdminControllerTest {
     @Test
     public void testSystemUnAuthorized() {
         //given
-        Response response = Request.get("/@system").execute();
+        HTTPResponse response = HTTPRequest.get("/@system").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -215,7 +215,7 @@ public class AdminControllerTest {
     @Test
     public void testMemoryAuthorized() {
         //given
-        Response response = Request.get("/@memory")
+        HTTPResponse response = HTTPRequest.get("/@memory")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -229,7 +229,7 @@ public class AdminControllerTest {
     @Test
     public void testMemoryUnAuthorized() {
         //given
-        Response response = Request.get("/@memory").execute();
+        HTTPResponse response = HTTPRequest.get("/@memory").execute();
         
         //then
         assertThat(response, not(nullValue()));

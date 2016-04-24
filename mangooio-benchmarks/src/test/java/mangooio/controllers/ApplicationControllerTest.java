@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import de.svenkubiak.embeddedmongodb.EmbeddedMongo;
 import interfaces.Constants;
-import io.mangoo.test.utils.Request;
-import io.mangoo.test.utils.Response;
+import io.mangoo.utils.http.HTTPRequest;
+import io.mangoo.utils.http.HTTPResponse;
 import io.undertow.util.StatusCodes;
 import utils.RandomUtils;
 
@@ -19,7 +19,7 @@ public class ApplicationControllerTest {
 
 	@Test
 	public void testIndex() {
-		Response mangooResponse = Request.get("/").execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/").execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -27,7 +27,7 @@ public class ApplicationControllerTest {
 	
 	@Test
 	public void testJson() {
-		Response mangooResponse = Request.get("/json").execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/json").execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -36,7 +36,7 @@ public class ApplicationControllerTest {
 	
 	@Test
 	public void testDb() {
-		Response mangooResponse = Request.get("/db").execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/db").execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -47,7 +47,7 @@ public class ApplicationControllerTest {
 	@Test
 	public void testQueries() {
 		int queries = RandomUtils.getRandomId();
-		Response mangooResponse = Request.get("/db?queries=" + queries).execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/db?queries=" + queries).execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -57,7 +57,7 @@ public class ApplicationControllerTest {
 	
 	@Test
 	public void testPlaintext() {
-		Response mangooResponse = Request.get("/plaintext").execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/plaintext").execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -66,7 +66,7 @@ public class ApplicationControllerTest {
 	
 	@Test
 	public void testFortunes() {
-		Response mangooResponse = Request.get("/fortunes").execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/fortunes").execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
@@ -77,7 +77,7 @@ public class ApplicationControllerTest {
 	@Test
 	public void testUpdates() {
 		int queries = RandomUtils.getRandomId();
-		Response mangooResponse = Request.get("/updates?queries=" + queries).execute();
+		HTTPResponse mangooResponse = HTTPRequest.get("/updates?queries=" + queries).execute();
 		
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
