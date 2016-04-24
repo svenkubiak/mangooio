@@ -3,6 +3,7 @@
 **Released at xx.xx.xxx**
 
 * [#112](https://github.com/svenkubiak/mangooio/issues/112) Removed all @deprecated functions and classes (svenkubiak)
+* [#111](https://github.com/svenkubiak/mangooio/issues/111) Moved Authentication class to bindings package (svenkubiak)
 
 ## Version 2.7.0
 

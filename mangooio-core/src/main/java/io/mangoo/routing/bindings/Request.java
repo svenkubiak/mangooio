@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
 import io.mangoo.utils.JsonUtils;

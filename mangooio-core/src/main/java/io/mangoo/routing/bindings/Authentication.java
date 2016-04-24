@@ -1,4 +1,4 @@
-package io.mangoo.authentication;
+package io.mangoo.routing.bindings;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

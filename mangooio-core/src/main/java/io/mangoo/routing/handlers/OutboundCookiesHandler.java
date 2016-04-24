@@ -6,11 +6,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import com.google.common.base.Joiner;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.routing.Attachment;
+import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CookieBuilder;

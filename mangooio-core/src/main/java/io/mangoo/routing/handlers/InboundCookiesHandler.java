@@ -9,10 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Splitter;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.routing.Attachment;
+import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CookieParser;

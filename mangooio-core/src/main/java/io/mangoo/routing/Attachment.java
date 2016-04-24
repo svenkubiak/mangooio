@@ -4,9 +4,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
+import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;

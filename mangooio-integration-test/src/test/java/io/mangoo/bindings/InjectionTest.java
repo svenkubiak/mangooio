@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.authentication.Authentication;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
@@ -16,6 +15,7 @@ import io.mangoo.managers.ExecutionManager;
 import io.mangoo.managers.ServerEventManager;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
