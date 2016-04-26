@@ -208,8 +208,8 @@
 			<artifactId>commons-validator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.yahoo.platform.yui</groupId>
-			<artifactId>yuicompressor</artifactId>
+			<groupId>net.jawr</groupId>
+			<artifactId>jawr-core</artifactId>
 		</dependency>
 	</dependencies>
 </project>

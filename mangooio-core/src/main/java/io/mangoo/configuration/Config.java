@@ -649,4 +649,39 @@ public class Config {
     public String getTemplateEngineClass() {
         return getString(Key.TEMPLATE_ENGINE_CLASS, Default.TEMPLATE_ENGINE_CLASS.toString());
     }
+
+    /**
+     * @return application.minify.js or default value if undefined
+     */
+    public boolean isMinifyJS() {
+        return getBoolean(Key.APPLICATION_MINIFY_JS.toString(), false);
+    }
+
+    /**
+     * @return application.minify.css or default value if undefined
+     */
+    public boolean isMinifyCSS() {
+        return getBoolean(Key.APPLICATION_MINIFY_CSS.toString(), false);
+    }
+
+    /**
+     * @return application.minify.cssfolder or default value if undefined
+     */
+    public String getMinifyCSSFolder() {
+        return getString(Key.APPLICATION_MINIFY_CSSFOLDER, Default.STYLESHEET_FOLDER.toString());
+    }
+
+    /**
+     * @return application.minify.jsfolder or default value if undefined
+     */
+    public String getMinifyJSFolder() {
+        return getString(Key.APPLICATION_MINIFY_JSFOLDER, Default.JAVSCRIPT_FOLDER.toString());
+    }
+
+    /**
+     * @return application.assets.path
+     */
+    public String getAssetsPath() {
+        return getString(Key.APPLICATION_ASSETS_PATH, Default.ASSETS_PATH.toString());
+    }
 }
