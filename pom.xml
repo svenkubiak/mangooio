@@ -315,9 +315,9 @@
 				<version>2.5</version>
 			</dependency>
 			<dependency>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-sass-compiler</artifactId>
-				<version>0.9.13</version>
+				<groupId>io.bit3</groupId>
+				<artifactId>jsass</artifactId>
+				<version>5.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>io.advantageous.boon</groupId>

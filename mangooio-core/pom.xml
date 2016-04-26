@@ -164,8 +164,8 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-sass-compiler</artifactId>
+			<groupId>io.bit3</groupId>
+			<artifactId>jsass</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.advantageous.boon</groupId>
