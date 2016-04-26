@@ -6,13 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +20,6 @@ import com.github.sommeri.less4j.LessCompiler.CompilationResult;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
 import com.google.common.base.Charsets;
 
-import io.advantageous.boon.core.Sys;
 import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
@@ -50,13 +43,13 @@ import net.jawr.web.minification.JSMin.JSMinException;
 public final class MinificationUtils {
     private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
     private static final int HUNDRED_PERCENT = 100;
-    private static String basePath;
-    private static volatile Config config; //NOSONAR
     private static final String JS = "js";
     private static final String CSS = "css";
     private static final String LESS = "less";
     private static final String SASS = "sass";
     private static final String MIN = "min";
+    private static String basePath;
+    private static volatile Config config; //NOSONAR
 
     private MinificationUtils() {
         config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
