@@ -164,6 +164,10 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-sass-compiler</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.advantageous.boon</groupId>
 			<artifactId>boon-json</artifactId>
 		</dependency>
@@ -198,6 +202,10 @@
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
 			<artifactId>jBCrypt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.sommeri</groupId>
+			<artifactId>less4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

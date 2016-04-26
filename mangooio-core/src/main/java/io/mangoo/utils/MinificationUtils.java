@@ -13,6 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.sommeri.less4j.Less4jException;
+import com.github.sommeri.less4j.LessCompiler;
+import com.github.sommeri.less4j.LessCompiler.CompilationResult;
+import com.github.sommeri.less4j.core.DefaultLessCompiler;
 import com.google.common.base.Charsets;
 
 import io.advantageous.boon.core.Sys;
@@ -39,6 +43,8 @@ public final class MinificationUtils {
     private static volatile Config config; //NOSONAR
     private static final String JS = "js";
     private static final String CSS = "css";
+    private static final String LESS = "less";
+    private static final String SASS = "sass";
     private static final String MIN = "min";
     private static final boolean DISABLEOPTIMIZATION = false;
     private static final boolean PRESERVESEMICOLONS = false;
@@ -83,12 +89,44 @@ public final class MinificationUtils {
             minifyCSS(new File(absolutePath));
         }
     }
+    
+    public static void compile(String absolutePath) {
+        if (absolutePath == null) {
+            return;
+        }
+        
+        if (config == null) {
+            System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
+            config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+        }
+
+        if (absolutePath.endsWith(LESS)) {
+            lessify(new File(absolutePath));
+        } else if (absolutePath.endsWith(SASS)) {
+            sassify(new File(absolutePath));
+        }
+    }
+
+    private static void lessify(File lessFile) {
+        LessCompiler compiler = new DefaultLessCompiler();
+        try {
+            File outputFile = getCompileFile(lessFile);
+            CompilationResult compilationResult = compiler.compile(lessFile);
+            FileUtils.writeStringToFile(new File(""), compilationResult.getCss(), Default.ENCODING.toString());
+        } catch (Less4jException | IOException e) {
+            LOG.error("Failed to compile less file", e);
+        }
+    }
+    
+    private static void sassify(File sassFile) {
+        // TODO Auto-generated method stub
+    }
 
     private static void minifyJS(File inputFile) {
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
         try {
-            File outputFile = getOutputFile(inputFile, JS);
+            File outputFile = getMinificationFile(inputFile, JS);
             inputStreamReader = new InputStreamReader(new FileInputStream(inputFile), Charsets.UTF_8);
             outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile), Charsets.UTF_8);
 
@@ -111,7 +149,7 @@ public final class MinificationUtils {
 
     private static void minifyCSS(File inputFile) {
         try {
-            File outputFile = getOutputFile(inputFile, CSS);
+            File outputFile = getMinificationFile(inputFile, CSS);
 
             StringBuffer stringBuffer = new StringBuffer();
             CSSMinifier cssMinifier = new CSSMinifier();
@@ -127,7 +165,7 @@ public final class MinificationUtils {
         }
     }
 
-    private static File getOutputFile(File file, String suffix) {
+    private static File getMinificationFile(File file, String suffix) {
         String path = file.getAbsolutePath().split("target")[0];
         
         String fileName = file.getName();
@@ -145,6 +183,15 @@ public final class MinificationUtils {
         } 
         
         return new File(path + config.getAssetsPath() + "/" + folder + "/" + fileName + ".min." + suffix);
+    }
+    
+    private static File getCompileFile(File file) {
+        String path = file.getAbsolutePath().split("target")[0];
+        
+        String fileName = file.getName();
+        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+
+        return new File(file.getParent() + ".css");
     }
 
     private static long ratioOfSize(File inputFile, File outputFile) {
