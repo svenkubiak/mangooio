@@ -49,7 +49,7 @@ import net.jawr.web.minification.JSMin.JSMinException;
 @SuppressWarnings("all")
 public final class MinificationUtils {
     private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
-    private static final int HUNDRET_PERCENT = 100;
+    private static final int HUNDRED_PERCENT = 100;
     private static String basePath;
     private static volatile Config config; //NOSONAR
     private static final String JS = "js";
@@ -224,6 +224,6 @@ public final class MinificationUtils {
         long inFile = Math.max(inputFile.length(), 1);
         long outFile = Math.max(outputFile.length(), 1);
         
-        return (outFile * HUNDRET_PERCENT) / inFile;
+        return (outFile * HUNDRED_PERCENT) / inFile;
     }
 }

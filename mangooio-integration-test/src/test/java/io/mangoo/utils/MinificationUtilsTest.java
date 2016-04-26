@@ -28,7 +28,7 @@ public class MinificationUtilsTest {
     private static final String COMPILED_SASS = "font: 100% Helvetica, sans-serif;";
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String JS = "$(document).ready(function(){$('#username').focus();});$('.btn-success').click(function(){var btn=$(this);btn.button('loading');});";
-    private static final String TEMP = System.getProperty("java.io.tmpdir");
+    private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
     private Config config;
     
     @Before
