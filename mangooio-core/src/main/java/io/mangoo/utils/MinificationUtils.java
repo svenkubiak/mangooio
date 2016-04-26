@@ -77,9 +77,6 @@ public final class MinificationUtils {
     /**
      * Minifies a JS or CSS file to a corresponding JS or CSS file
      * 
-     * mycss.css -> mycss.min.css
-     * myjs.js -> myjs.min.js
-     * 
      * @param absolutePath The absolute path to the file
      */
     public static void minify(String absolutePath) {
