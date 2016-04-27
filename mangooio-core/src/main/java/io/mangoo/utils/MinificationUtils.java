@@ -10,7 +10,6 @@ import java.net.URI;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +27,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
+import io.mangoo.enums.Suffix;
 import net.jawr.web.minification.CSSMinifier;
 import net.jawr.web.minification.JSMin;
 import net.jawr.web.minification.JSMin.JSMinException;
@@ -94,7 +94,7 @@ public final class MinificationUtils {
      * 
      * @param absolutePath The absolute path to the file
      */
-    public static void compile(String absolutePath) {
+    public static void preprocess(String absolutePath) {
         if (absolutePath == null) {
             return;
         }
@@ -114,36 +114,37 @@ public final class MinificationUtils {
     private static void lessify(File lessFile) {
         LessCompiler compiler = new DefaultLessCompiler();
         try {
-            File outputFile = getCompiledFile(lessFile);
+            File outputFile = getOutputFile(lessFile, Suffix.CSS);
+            
             CompilationResult compilationResult = compiler.compile(lessFile);
             FileUtils.writeStringToFile(outputFile, compilationResult.getCss(), Default.ENCODING.toString());
-            logCompile(lessFile, outputFile);
+            logPreprocess(lessFile, outputFile);
         } catch (Less4jException | IOException e) {
-            LOG.error("Failed to compile less file", e);
+            LOG.error("Failed to preprocess LESS file", e);
         }
     }
     
     private static void sassify(File sassFile) {
-        File outputFile = getCompiledFile(sassFile);
+        File outputFile = getOutputFile(sassFile, Suffix.CSS);
         
         URI inputURI = sassFile.toURI();
-        URI outputURI = getCompiledFile(sassFile).toURI();
+        URI outputURI = outputFile.toURI();
 
         Compiler compiler = new Compiler();
         try {
           Output output = compiler.compileFile(inputURI, outputURI, new Options());
           FileUtils.writeStringToFile(outputFile, output.getCss(), Default.ENCODING.toString());
-          logCompile(sassFile, outputFile);
+          logPreprocess(sassFile, outputFile);
         } catch (CompilationException | IOException e) {
-            LOG.error("Failed to compile sass file", e);
+            LOG.error("Failed to preprocess SASS file", e);
         }
     }
 
     private static void minifyJS(File inputFile) {
         InputStreamReader inputStreamReader = null;
         OutputStreamWriter outputStreamWriter = null;
-        try {
-            File outputFile = getMinifiedFile(inputFile, JS);
+        try { 
+            File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
             inputStreamReader = new InputStreamReader(new FileInputStream(inputFile), Charsets.UTF_8);
             outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile), Charsets.UTF_8);
 
@@ -164,13 +165,13 @@ public final class MinificationUtils {
         LOG.info(String.format("Minified asset %s (%db) -> %s (%db) [compressed to %d%% of original size]", inputFile.getName(), inputFile.length(), outputFile.getName(), outputFile.length(), ratioOfSize(inputFile, outputFile)));
     }
     
-    private static void logCompile(File inputFile, File outputFile) {
+    private static void logPreprocess(File inputFile, File outputFile) {
         LOG.info(String.format("Compiled asset %s -> %s", inputFile.getName(), outputFile.getName()));
     }
 
     private static void minifyCSS(File inputFile) {
         try {
-            File outputFile = getMinifiedFile(inputFile, CSS);
+            File outputFile = getOutputFile(inputFile, Suffix.CSS_MIN);
 
             StringBuffer stringBuffer = new StringBuffer();
             CSSMinifier cssMinifier = new CSSMinifier();
@@ -185,32 +186,33 @@ public final class MinificationUtils {
             LOG.error("Failed to minify CSS", e);
         }
     }
-
-    private static File getMinifiedFile(File file, String suffix) {
-        String path = file.getAbsolutePath().split("target")[0];
-        
-        String fileName = file.getName();
-        fileName = fileName.substring(0, fileName.lastIndexOf('.'));
-
-        String folder = null;
-        if (CSS.equals(suffix)) {
-            folder = config.getMinifyCSSFolder();
-        } else if (JS.equals(suffix)) {
-            folder = config.getMinifyJSFolder();
-        }
-
-        if (StringUtils.isBlank(folder)) {
-            return new File(file.getParent() + "/" + fileName + ".min." + suffix);
-        } 
-        
-        return new File(path + config.getAssetsPath() + "/" + folder + "/" + fileName + ".min." + suffix);
-    }
     
-    private static File getCompiledFile(File file) {
-        String fileName = file.getName();
+    private static File getOutputFile(File inputfile, Suffix targetSuffix) {
+        String fileName = inputfile.getName();
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+        fileName = fileName + targetSuffix.toString();
+
+        if (!basePath.endsWith("/")) {
+            basePath = basePath + "/";
+        }
         
-        return new File(file.getParent() + "/" + fileName + ".css");
+        String assetPath = config.getAssetsPath();
+        if (assetPath.startsWith("/")) {
+            assetPath = assetPath.substring(1);
+        }
+        
+        if (!assetPath.endsWith("/")) {
+            assetPath = assetPath + "/";
+        }
+        
+        String subpath = null;
+        if (Suffix.CSS.equals(targetSuffix) || Suffix.CSS_MIN.equals(targetSuffix)) {
+            subpath = Default.STYLESHEET_FOLDER.toString() + "/" + fileName;
+        } else if (Suffix.JS.equals(targetSuffix) || Suffix.JS_MIN.equals(targetSuffix)) {
+            subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
+        }
+        
+        return new File(basePath + assetPath + subpath);
     }
 
     private static long ratioOfSize(File inputFile, File outputFile) {

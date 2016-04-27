@@ -665,20 +665,6 @@ public class Config {
     }
 
     /**
-     * @return application.minify.cssfolder or default value if undefined
-     */
-    public String getMinifyCSSFolder() {
-        return getString(Key.APPLICATION_MINIFY_CSSFOLDER, Default.STYLESHEET_FOLDER.toString());
-    }
-
-    /**
-     * @return application.minify.jsfolder or default value if undefined
-     */
-    public String getMinifyJSFolder() {
-        return getString(Key.APPLICATION_MINIFY_JSFOLDER, Default.JAVSCRIPT_FOLDER.toString());
-    }
-
-    /**
      * @return application.assets.path
      */
     public String getAssetsPath() {

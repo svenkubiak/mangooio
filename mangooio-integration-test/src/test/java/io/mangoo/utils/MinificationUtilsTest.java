@@ -29,6 +29,7 @@ public class MinificationUtilsTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String JS = "$(document).ready(function(){$('#username').focus();});$('.btn-success').click(function(){var btn=$(this);btn.button('loading');});";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
+    private static final String ASSET_PATH = "assets/";
     private Config config;
     
     @Before
@@ -36,10 +37,14 @@ public class MinificationUtilsTest {
         config = Mockito.mock(Config.class);
         when(config.isMinifyCSS()).thenReturn(true);
         when(config.isMinifyJS()).thenReturn(true);
-        when(config.getMinifyCSSFolder()).thenReturn("");
-        when(config.getMinifyJSFolder()).thenReturn("");
+        when(config.getAssetsPath()).thenReturn(ASSET_PATH);
         MinificationUtils.setConfig(config);
         MinificationUtils.setBasePath(TEMP);
+        
+        File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());
+        File dir2 = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString());
+        dir1.mkdir();
+        dir2.mkdir();
     }
     
     @Test
@@ -59,7 +64,7 @@ public class MinificationUtilsTest {
         File file = new File(TEMP + uuid + ".css");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
         MinificationUtils.minify(file.getAbsolutePath());
-        File outputfile = new File(TEMP + uuid + ".min.css");
+        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".min.css");
 
         //then
         assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(CSS));
@@ -86,7 +91,7 @@ public class MinificationUtilsTest {
         File file = new File(TEMP + uuid + ".js");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
         MinificationUtils.minify(file.getAbsolutePath());
-        File outputfile = new File(TEMP + uuid + ".min.js");
+        File outputfile = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
 
         //then
         assertThat(outputfile.exists(), equalTo(true));
@@ -97,7 +102,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void compileLessTest() throws IOException {
+    public void preprocessLessTest() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
@@ -113,8 +118,9 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".less");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.compile(file.getAbsolutePath());
-        File outputfile = new File(TEMP + uuid + ".css");
+        
+        MinificationUtils.preprocess(file.getAbsolutePath());
+        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
 
         //then
         assertThat(outputfile.exists(), equalTo(true));
@@ -124,7 +130,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void compileSassTest() throws IOException {
+    public void preprocessSassTest() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
@@ -139,8 +145,8 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".sass");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.compile(file.getAbsolutePath());
-        File outputfile = new File(TEMP + uuid + ".css");
+        MinificationUtils.preprocess(file.getAbsolutePath());
+        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
 
         //then
         assertThat(outputfile.exists(), equalTo(true));

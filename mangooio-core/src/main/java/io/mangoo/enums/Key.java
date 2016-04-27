@@ -12,8 +12,6 @@ public enum Key {
     APPLICATION_NAME("application.name"),
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
-    APPLICATION_MINIFY_JSFOLDER("application.minify.jsfolder"),
-    APPLICATION_MINIFY_CSSFOLDER("application.minify.cssfolder"),
     APPLICATION_SECRET("application.secret"),
     APPLICATION_PORT("application.port"),
     APPLICATION_HOST("application.host"),
