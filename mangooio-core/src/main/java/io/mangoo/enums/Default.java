@@ -21,6 +21,7 @@ public enum Default {
     APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
     ASSETS_PATH("src/main/resources/files/assets/"),
+    FILES_PATH("src/main/resources/files/"),
     CONFIG_PATH("/src/main/resources/application.yaml"),
     STYLESHEET_FOLDER("stylesheet"),
     JAVASCRIPT_FOLDER("javascript"),

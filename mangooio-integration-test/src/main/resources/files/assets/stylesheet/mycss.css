@@ -1,0 +1,464 @@
+@import url("../twentytwelve/style.css");
+*>.anchor-link {
+    margin-left: -20px;
+    width: 15px;
+    display: inline-block;
+    visibility: hidden;
+    text-decoration: none;
+    color: black;
+}
+
+*:hover>.anchor-link {
+    visibility: inherit;
+}
+
+.toc-link {
+    display: none;
+}
+
+.site-title a {
+    display: block!important;
+    text-indent: -1000px;
+    width: 546px;
+    height: 130px;
+    background: url(jQVP_Logo_gr.png);
+}
+
+pre,
+code {
+    font-family: "source-code-pro", Consolas, monospace!important;
+    word-spacing: 0;
+}
+
+pre code {
+    display: block;
+    padding: 0.5em;
+    color: #333;
+    background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+    color: #998;
+    font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+    color: #333;
+    font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+    color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+    color: #d14
+}
+
+pre .title,
+pre .id {
+    color: #900;
+    font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+    font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+    color: #458;
+    font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+    color: #000080;
+    font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+    color: #008080
+}
+
+pre .regexp {
+    color: #009926
+}
+
+pre .class {
+    color: #458;
+    font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+    color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+    color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+    color: #999;
+    font-weight: bold
+}
+
+pre .deletion {
+    background: #fdd
+}
+
+pre .addition {
+    background: #dfd
+}
+
+pre .diff .change {
+    background: #0086b3
+}
+
+pre .chunk {
+    color: #aaa
+}
+
+.syntaxhighlighter a,
+.syntaxhighlighter div,
+.syntaxhighlighter pre,
+.syntaxhighlighter code,
+.syntaxhighlighter table,
+.syntaxhighlighter table td,
+.syntaxhighlighter table tr,
+.syntaxhighlighter table tbody,
+.syntaxhighlighter table thead,
+.syntaxhighlighter table caption,
+.syntaxhighlighter textarea {
+    border-radius: 0 0 0 0!important;
+    background: none!important;
+    bottom: auto!important;
+    float: none!important;
+    height: auto!important;
+    left: auto!important;
+    line-height: 1.1em!important;
+    margin: 0!important;
+    outline: 0!important;
+    overflow: visible!important;
+    padding: 0!important;
+    position: static!important;
+    right: auto!important;
+    text-align: left!important;
+    top: auto!important;
+    vertical-align: baseline!important;
+    width: auto!important;
+    box-sizing: content-box!important;
+    font-family: "source-code-pro", Consolas, monospace!important;
+    font-weight: normal!important;
+    font-style: normal!important;
+    font-size: 1em!important;
+    min-height: inherit!important;
+    min-height: auto!important;
+}
+
+.syntaxhighlighter {
+    width: 100%!important;
+    margin: 1em 0 1em 0!important;
+    padding: 1em 0;
+    position: relative!important;
+    overflow: auto!important;
+    font-size: 1em!important;
+    background: #eee;
+}
+
+.syntaxhighlighter.source {
+    overflow: hidden!important;
+}
+
+.syntaxhighlighter .line {
+    white-space: pre!important;
+}
+
+.syntaxhighlighter table {
+    width: 100%!important;
+}
+
+.syntaxhighlighter table caption {
+    text-align: left!important;
+    padding: .5em 0 0.5em 1em!important;
+}
+
+.syntaxhighlighter table td.code {
+    width: 100%!important;
+}
+
+.syntaxhighlighter table td.code .container {
+    position: relative!important;
+}
+
+.syntaxhighlighter table td.code .container textarea {
+    box-sizing: border-box!important;
+    position: absolute!important;
+    left: 0!important;
+    top: 0!important;
+    width: 100%!important;
+    height: 100%!important;
+    border: none!important;
+    background: white!important;
+    padding-left: 1em!important;
+    overflow: hidden!important;
+    white-space: pre!important;
+}
+
+.syntaxhighlighter table td.gutter .line {
+    text-align: right!important;
+    padding: 0 0.5em 0 1em!important;
+}
+
+.syntaxhighlighter table td.code .line {
+    padding: 0 0.5em!important;
+}
+
+.syntaxhighlighter.nogutter td.code .container textarea,
+.syntaxhighlighter.nogutter td.code .line {
+    padding-left: 1em!important;
+}
+
+.syntaxhighlighter table td.gutter {
+    border-right: 2px solid #999;
+}
+
+.syntaxhighlighter {
+    border-radius: 5px;
+}
+
+#content .syntaxhighlighter tr {
+    border-bottom: none;
+}
+
+.entry {
+    margin: 15px 0;
+}
+
+.entry-wrapper {
+    border: 1px solid #CCC;
+    border-top: 0;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+}
+
+#content .section-title {
+    background: #333;
+    border: 1px solid #111;
+    padding: 8px 15px;
+    font-size: 16px;
+    color: white;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    letter-spacing: 0;
+    border-radius: 5px 5px 0 0;
+    font-weight: normal;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+.returns {
+    float: right;
+    font-style: italic;
+}
+
+.api-item .returns {
+    font-size: 16px;
+    color: #333;
+    font-weight: normal;
+}
+
+#content .signatures {
+    background: #eee;
+    border: 1px solid #ccc;
+    margin: 0 auto 15px;
+    max-width: 750px;
+    border-radius: 3px;
+    color: #333;
+    text-shadow: 0 1px 0 #fff;
+}
+
+#content .signatures li {
+    list-style: none;
+    background: none;
+    margin: 0;
+    padding: 10px;
+}
+
+#content .signatures>li {
+    padding-bottom: 0;
+}
+
+#content .signature>ul {
+    margin: 0;
+}
+
+.signatures h4 {
+    font-size: 16px;
+    letter-spacing: 0;
+    padding: 8px 10px;
+    margin: -10px -10px 0;
+    color: #fff;
+    text-shadow: 0 1px 0 #444;
+    background: #777;
+}
+
+.signature:first-child h4 {
+    border-radius: 3px 3px 0 0;
+}
+
+#content .signature h4 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.signature h4 .icon-link {
+    margin-right: 0.5em;
+}
+
+.signature .event-properties {
+    margin: 15px 0 0 0;
+}
+
+.argument {
+    margin-top: 1em;
+}
+
+#options,
+#methods,
+#events,
+#quick-nav {
+    border: 1px solid #CCC;
+    margin: 0 15px 15px;
+    padding: 10px;
+    overflow: auto;
+}
+
+#options header h2,
+#methods header h2,
+#events header h2,
+#quick-nav h2 {
+    background: #cccccc;
+    background: -webkit-linear-gradient(top, #ffffff 0%, #eeeeee 17%, #cccccc 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #eeeeee 17%, #cccccc 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#cccccc', GradientType=0);
+    margin: -10px -10px 10px -10px;
+    padding: 10px;
+}
+
+#quick-nav h2 a {
+    float: right;
+    font-size: 80%;
+    padding-left: 10px;
+}
+
+.quick-nav-section {
+    width: 33%;
+    float: left;
+}
+
+#methods .api-item li,
+#events .api-item li {
+    margin-bottom: 1em;
+}
+
+#methods .api-item li ul,
+#events .api-item li ul {
+    list-style: none;
+}
+
+.version-details {
+    font-weight: bold;
+}
+
+.section-title .version-details,
+.name .version-details {
+    float: right;
+    clear: right;
+    font-size: 14px;
+    color: #fff;
+}
+
+.api-item {
+    padding: 20px 10px;
+}
+
+.signature li,
+.api-item {
+    border-top: 1px solid #CCC;
+}
+
+.signature li:first-child,
+.api-item.first-item {
+    border-top: none;
+    padding-top: 10px;
+}
+
+.option-type {
+    font-size: 16px;
+    font-weight: normal;
+    color: #333;
+    float: right;
+}
+
+#options .default {
+    text-align: right;
+    font-size: 13px;
+    margin-top: -10px;
+}
+
+.desc {
+    font-size: 16px;
+    padding: 5px 15px 0;
+    color: #666;
+    font-style: italic;
+}
+
+.desc strong {
+    color: #444;
+    font-style: normal;
+}
+
+.entry-summary p {
+    margin: 0;
+}
+
+.warning {
+    padding: 0.5em 1em;
+    margin: 1em;
+    background: #fff3a5;
+    border-radius: 5px;
+}

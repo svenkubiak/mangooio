@@ -1,11 +1,19 @@
 package io.mangoo.maven;
 
+import java.io.File;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Suffix;
+import io.mangoo.utils.MinificationUtils;
 
 /**
  * 
@@ -18,8 +26,29 @@ defaultPhase = LifecyclePhase.NONE,
 threadSafe = true)
 public class MinifyMojo extends AbstractMojo {
 
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        System.out.println("---------- minifying ----------- ");
+        String baseDir = project.getBasedir().getAbsolutePath();
+        MinificationUtils.setBasePath(baseDir);
+        minifyFiles(baseDir + "/" + Default.FILES_PATH.toString());
+    }
+    
+    public void minifyFiles(String directoryName){
+        File directory = new File(directoryName);
+        File[] files = directory.listFiles();
+        
+        for (File file : files){
+            if (file.isFile()){
+                String fileName = file.getName();
+                if (fileName.endsWith(Suffix.CSS.toString()) || fileName.endsWith(Suffix.JS.toString()) && !fileName.contains("min")) {
+                    MinificationUtils.minify(file.getAbsolutePath());
+                }
+            } else if (file.isDirectory()){
+                minifyFiles(file.getAbsolutePath());
+            }
+        }
     }
 }

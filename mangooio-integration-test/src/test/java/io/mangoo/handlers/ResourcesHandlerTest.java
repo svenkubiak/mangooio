@@ -32,7 +32,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathJavaScript() {
         //given
-        HTTPResponse response = HTTPRequest.get("/assets/javascripts/jquery.min.js").execute();
+        HTTPResponse response = HTTPRequest.get("/assets/javascript/jquery.min.js").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -43,7 +43,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathStylesheet() {
         //given
-        HTTPResponse response = HTTPRequest.get("/assets/stylesheets/css.css").execute();
+        HTTPResponse response = HTTPRequest.get("/assets/stylesheet/css.css").execute();
         
         //then
         assertThat(response, not(nullValue()));

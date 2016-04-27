@@ -7,6 +7,8 @@ package io.mangoo.enums;
  *
  */
 public enum Suffix {
+    SASS(".sass"),
+    LESS(".less"),
     CSS(".css"),
     JS(".js"),
     CSS_MIN(".min.css"),
