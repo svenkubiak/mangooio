@@ -108,7 +108,7 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void prepareLogger() {
-        final String configurationFile = "log4j2." + this.mode.toString() + ".xml";
+        final String configurationFile = "log4j2." + this.mode.toString() + ".yaml";
         if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
             LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
         } else {
