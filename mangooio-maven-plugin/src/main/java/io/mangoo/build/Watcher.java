@@ -37,12 +37,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.StringUtils;
 
 import com.sun.nio.file.SensitivityWatchEventModifier; //NOSONAR
 
+import io.mangoo.enums.Suffix;
 import io.mangoo.utils.MinificationUtils;
 
 /**
@@ -189,10 +190,18 @@ public class Watcher implements Runnable {
 
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
+        if (isPreprocess(absolutePath)){
+            MinificationUtils.preprocess(absolutePath);
+            String [] tempPath = absolutePath.split("files");
+            MinificationUtils.minify(tempPath[0] + "files/assets/stylesheet/" + StringUtils.substringAfterLast(absolutePath, "/")
+                .replace(Suffix.SASS.toString(), Suffix.CSS.toString())
+                .replace(Suffix.LESS.toString(), Suffix.CSS.toString()));
+        }
+        
         if (isAsset(absolutePath)) {
             MinificationUtils.minify(absolutePath);
         }
-
+        
         RuleMatch match = matchRule(includes, excludes, absolutePath);
         if (match.proceed) {
             this.trigger.trigger();
@@ -205,6 +214,14 @@ public class Watcher implements Runnable {
         }
 
         return !absolutePath.contains("min") && ( absolutePath.endsWith("css") || absolutePath.endsWith("js") );
+    }
+    
+    private boolean isPreprocess(String absolutePath) {
+        if (StringUtils.isBlank(absolutePath)) {
+            return false;
+        }
+
+        return absolutePath.endsWith("sass") || absolutePath.endsWith("less");
     }
 
     public enum RuleType {

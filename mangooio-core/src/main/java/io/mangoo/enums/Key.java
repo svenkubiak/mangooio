@@ -19,6 +19,8 @@ public enum Key {
     APPLICATION_MODE("application.mode"),
     APPLICATION_TIMER("application.timer"),
     APPLICATION_ASSETS_PATH("application.assets.path"),
+    APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),
+    APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
     APPLICATION_ADMIN_HEALTH("application.admin.health"),
     APPLICATION_ADMIN_CACHE("application.admin.cache"),
     APPLICATION_ADMIN_ROUTES("application.admin.routes"),

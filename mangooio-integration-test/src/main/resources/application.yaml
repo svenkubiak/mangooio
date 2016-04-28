@@ -23,6 +23,9 @@ default:
             cssfolder : /stylesheets
             gzipjs    : false
             gzipcss   : false
+        preprocess:
+            sass      : true
+            less      : true
     cookie:
        encrypt : true
     auth:

@@ -670,4 +670,18 @@ public class Config {
     public String getAssetsPath() {
         return getString(Key.APPLICATION_ASSETS_PATH, Default.ASSETS_PATH.toString());
     }
+
+    /**
+     * @return application.preprocess.sass or default value if undefined
+     */
+    public boolean isPreprocessSass() {
+        return getBoolean(Key.APPLICATION_PREPROCESS_SASS.toString(), false);
+    }
+    
+    /**
+     * @return application.preprocess.less or default value if undefined
+     */
+    public boolean isPreprocessLess() {
+        return getBoolean(Key.APPLICATION_PREPROCESS_LESS.toString(), false);
+    }
 }

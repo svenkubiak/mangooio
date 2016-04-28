@@ -62,6 +62,8 @@ threadSafe = true)
 public class MangooMojo extends AbstractMojo {
     private static final String [] DEFAULT_EXCLUDE_PATTERNS = {
             "(.*)" + Pattern.quote(File.separator) + "templates" + Pattern.quote(File.separator) + "(.*)ftl",
+            "(.*)less",
+            "(.*)sass",
             "(.*)" + Pattern.quote(File.separator) + "assets" + Pattern.quote(File.separator) + "(.*)"
     };
 

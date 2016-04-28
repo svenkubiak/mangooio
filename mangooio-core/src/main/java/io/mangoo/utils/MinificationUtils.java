@@ -104,9 +104,9 @@ public final class MinificationUtils {
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
         }
 
-        if (absolutePath.endsWith(LESS)) {
+        if (config.isPreprocessLess() && absolutePath.endsWith(LESS)) {
             lessify(new File(absolutePath));
-        } else if (absolutePath.endsWith(SASS)) {
+        } else if (config.isPreprocessSass() && absolutePath.endsWith(SASS)) {
             sassify(new File(absolutePath));
         }
     }
@@ -166,7 +166,7 @@ public final class MinificationUtils {
     }
     
     private static void logPreprocess(File inputFile, File outputFile) {
-        LOG.info(String.format("Compiled asset %s -> %s", inputFile.getName(), outputFile.getName()));
+        LOG.info(String.format("Preprocessed asset %s -> %s", inputFile.getName(), outputFile.getName()));
     }
 
     private static void minifyCSS(File inputFile) {
