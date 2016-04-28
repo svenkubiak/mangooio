@@ -37,6 +37,8 @@ public class MinificationUtilsTest {
         config = Mockito.mock(Config.class);
         when(config.isMinifyCSS()).thenReturn(true);
         when(config.isMinifyJS()).thenReturn(true);
+        when(config.isPreprocessLess()).thenReturn(true);
+        when(config.isPreprocessSass()).thenReturn(true);
         when(config.getAssetsPath()).thenReturn(ASSET_PATH);
         MinificationUtils.setConfig(config);
         MinificationUtils.setBasePath(TEMP);
