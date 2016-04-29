@@ -613,6 +613,13 @@ public class Config {
     public boolean isPreprocessLess() {
         return getBoolean(Key.APPLICATION_PREPROCESS_LESS, false);
     }
+    
+    /**
+     * @return application.assets.path (for testing purposes only)
+     */
+    public String getAssetsPath() {
+        return Default.ASSETS_PATH.toString();
+    }
 
     /**
      * 

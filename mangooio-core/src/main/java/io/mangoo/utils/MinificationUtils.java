@@ -196,7 +196,7 @@ public final class MinificationUtils {
             basePath = basePath + "/";
         }
         
-        String assetPath = Default.ASSETS_PATH.toString();
+        String assetPath = config.getAssetsPath();
         if (assetPath.startsWith("/")) {
             assetPath = assetPath.substring(1);
         }
