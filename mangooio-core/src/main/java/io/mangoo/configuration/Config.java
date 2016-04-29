@@ -481,63 +481,6 @@ public class Config {
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
     }
-
-    /**
-     * @return application.admin.health from application.yaml or default value if undefined
-     */
-    public boolean isAdminHealthEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_HEALTH, Default.APPLICATION_ADMIN_HEALTH.toBoolean());
-    }
-
-    /**
-     * @return application.admin.routes from application.yaml or default value if undefined
-     */
-    public boolean isAdminRoutesEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_ROUTES, Default.APPLICATION_ADMIN_ROUTES.toBoolean());
-    }
-
-    /**
-     * @return application.admin.cache from application.yaml or default value if undefined
-     */
-    public boolean isAdminCacheEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_CACHE, Default.APPLICATION_ADMIN_CACHE.toBoolean());
-    }
-
-    /**
-     * @return application.admin.config from application.yaml or default value if undefined
-     */
-    public boolean isAdminConfigEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_CONFIG, Default.APPLICATION_ADMIN_CONFIG.toBoolean());
-    }
-
-    /**
-     * @return application.admin.metrics from application.yaml or default value if undefined
-     */
-    public boolean isAdminMetricsEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_METRICS, Default.APPLICATION_ADMIN_METRICS.toBoolean());
-    }
-
-    /**
-     * @return application.admin.scheduler from application.yaml or default value if undefined
-     */
-    public boolean isAdminSchedulerEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_SCHEDULER, Default.APPLICATION_ADMIN_SCHEDULER.toBoolean());
-    }
-
-    /**
-     * @return application.admin.system from application.yaml or default value if undefined
-     */
-    public boolean isAdminSystemEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_SYSTEM, Default.APPLICATION_ADMIN_SYSTEM.toBoolean());
-    }
-
-    /**
-     * @return application.admin.memory from application.yaml or default value if undefined
-     */
-    public boolean isAdminMemoryEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_MEMORY, Default.APPLICATION_ADMIN_MEMORY.toBoolean());
-    }
-
     /**
      * @return auth.cookie.encrypt from application.yaml or default value if undefined
      */
@@ -564,13 +507,6 @@ public class Config {
      */
     public boolean isSchedulerAutostart() {
         return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
-    }
-
-    /**
-     * @return true if application.admin.username and application.admin.password are note blank
-     */
-    public boolean isAdminAuthenticationEnabled() {
-        return StringUtils.isNotBlank(getString(Key.APPLICATION_ADMIN_USERNAME)) && StringUtils.isNotBlank(getString(Key.APPLICATION_ADMIN_PASSWORD));
     }
 
     /**
@@ -654,34 +590,42 @@ public class Config {
      * @return application.minify.js or default value if undefined
      */
     public boolean isMinifyJS() {
-        return getBoolean(Key.APPLICATION_MINIFY_JS.toString(), false);
+        return getBoolean(Key.APPLICATION_MINIFY_JS, false);
     }
 
     /**
      * @return application.minify.css or default value if undefined
      */
     public boolean isMinifyCSS() {
-        return getBoolean(Key.APPLICATION_MINIFY_CSS.toString(), false);
-    }
-
-    /**
-     * @return application.assets.path
-     */
-    public String getAssetsPath() {
-        return getString(Key.APPLICATION_ASSETS_PATH, Default.ASSETS_PATH.toString());
+        return getBoolean(Key.APPLICATION_MINIFY_CSS, false);
     }
 
     /**
      * @return application.preprocess.sass or default value if undefined
      */
     public boolean isPreprocessSass() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_SASS.toString(), false);
+        return getBoolean(Key.APPLICATION_PREPROCESS_SASS, false);
     }
     
     /**
      * @return application.preprocess.less or default value if undefined
      */
     public boolean isPreprocessLess() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_LESS.toString(), false);
+        return getBoolean(Key.APPLICATION_PREPROCESS_LESS, false);
+    }
+
+    /**
+     * 
+     * @return application.admin.enable or default value if undefined
+     */
+    public boolean isAdminEnabled() {
+        return getBoolean(Key.APPLICATION_ADMIN_ENABLE, false);
+    }
+
+    /**
+     * @return application.admin.url or default value if undefined
+     */
+    public String getAdminURL() {
+        return getString(Key.APPLICATION_ADMIN_URL, Default.APPLICATION_ADMIN_URL.toString());
     }
 }

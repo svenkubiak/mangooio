@@ -19,13 +19,9 @@ default:
         minify:
             js        : true
             css       : true
-            jsfolder  : /javascripts
-            cssfolder : /stylesheets
-            gzipjs    : false
-            gzipcss   : false
         preprocess:
-            sass      : true
-            less      : true
+            js        : true
+            css       : true
     cookie:
        encrypt : true
     auth:
@@ -63,14 +59,7 @@ test:
         port             : 10808
         foo              : cryptex[xOh1oRZzZNfBVl8Sw+O/OTqafBVD6ISKGjSmbljt/hw=]
         admin:
-              health     : true
-              config     : true
-              cache      : true
-              routes     : true
-              system     : true
-              metrics    : true
-              memory     : true
-              scheduler  : true
+              enable     : true
               username   : admin
               password   : c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec
     smtp:
@@ -81,13 +70,8 @@ dev:
     application:
         port       : 50000
         admin:
-              health     : true
-              config     : true
-              cache      : true
-              memory     : true
-              system     : true
-              routes     : true
-              metrics    : true
-              scheduler  : true
+              enable     : true
+              username   : admin
+              password   : c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec
     smtp:
         port       : 3125

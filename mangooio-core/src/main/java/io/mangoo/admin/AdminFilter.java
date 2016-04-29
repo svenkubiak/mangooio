@@ -1,8 +1,6 @@
 package io.mangoo.admin;
 
 import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +9,6 @@ import com.google.common.base.Charsets;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.AdminRoute;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
@@ -31,21 +28,20 @@ public class AdminFilter implements MangooFilter {
     
     @Override
     public Response execute(Request request, Response response) {
-        final String url = Optional.ofNullable(request.getURI()).orElse("").replace("/", "");
-        if (isURLEnabled(url)) {
-            if (CONFIG.isAdminAuthenticationEnabled() && !isAuthenticated(request)) {
-                  return Response.withUnauthorized()
-                          .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
-                          .andEmptyBody()
-                          .end();
-            }
-
-            return response;
+        if (!CONFIG.isAdminEnabled()) {
+            return Response.withNotFound()
+                    .andBody(Template.DEFAULT.notFound())
+                    .end();
+        }
+        
+        if (!isAuthenticated(request)) {
+            return Response.withUnauthorized()
+                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
+                    .andEmptyBody()
+                    .end();
         }
 
-        return Response.withNotFound()
-                .andBody(Template.DEFAULT.notFound())
-                .end();
+        return response;
     }
 
     /**
@@ -72,53 +68,9 @@ public class AdminFilter implements MangooFilter {
 
         return StringUtils.isNotBlank(username) &&
                StringUtils.isNotBlank(password) &&
+               StringUtils.isNotBlank(CONFIG.getAdminAuthenticationUser()) &&
+               StringUtils.isNotBlank(CONFIG.getAdminAuthenticationPassword()) &&
                CONFIG.getAdminAuthenticationUser().equals(username) &&
                CONFIG.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
-    }
-
-    /**
-     * Checks if an administrative URL is enabled
-     *
-     * @param url The URL to check
-     * @return True when enabled via application.yaml, false otherwise
-     */
-    private boolean isURLEnabled(String url) {
-        Objects.requireNonNull(url, "url can not be null");
-        
-        boolean enabled;
-        if ('/' != url.charAt(0)) {
-            url = '/' + url;
-        }
-        
-        switch (AdminRoute.fromString(url)) {
-        case ROUTES:
-            enabled = CONFIG.isAdminRoutesEnabled();
-            break;
-        case CONFIG:
-            enabled = CONFIG.isAdminConfigEnabled();
-            break;
-        case HEALTH:
-            enabled = CONFIG.isAdminHealthEnabled();
-            break;
-        case CACHE:
-            enabled = CONFIG.isAdminCacheEnabled();
-            break;
-        case METRICS:
-            enabled = CONFIG.isAdminMetricsEnabled();
-            break;
-        case SCHEDULER:
-            enabled = CONFIG.isAdminSchedulerEnabled();
-            break;
-        case SYSTEM:
-            enabled = CONFIG.isAdminSystemEnabled();
-            break;    
-        case MEMORY:
-            enabled = CONFIG.isAdminMemoryEnabled();
-            break;             
-        default:
-            enabled = false;
-        }
-
-        return enabled;
     }
 }

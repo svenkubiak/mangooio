@@ -68,7 +68,7 @@ public class DispatcherHandler implements HttpHandler {
         this.methodParametersCount = this.methodParameters.size();
         this.async = async;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.metrics = CONFIG.isAdminMetricsEnabled();
+        this.metrics = CONFIG.isAdminEnabled();
 
         try {
             this.method = Application.getInstance(this.controllerClass)

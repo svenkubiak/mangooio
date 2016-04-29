@@ -41,11 +41,11 @@ public class AdminController {
         );
     }
     
-    public Response health() {
+    public Response index() {
         return Response.withOk()
-                .andTextBody("alive");
+                .andTemplate(Template.DEFAULT.adminPath());
     }
-
+    
     public Response routes() {
         return Response.withOk()
                 .andContent("routes", Router.getRoutes())

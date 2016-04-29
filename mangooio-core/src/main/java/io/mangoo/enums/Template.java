@@ -35,6 +35,7 @@ public enum Template {
     private final String schedulerTemplatePath = "defaults/scheduler.ftl";
     private final String propertiesTemplatePath = "defaults/properties.ftl";
     private final String memoryTemplatePath = "defaults/memory.ftl";
+    private final String adminTemplatePath = "defaults/admin.ftl";
 
     Template () {
         try {
@@ -165,5 +166,12 @@ public enum Template {
      */
     public String memoryPath() {
         return this.memoryTemplatePath;
+    }
+
+    /**
+     * @return The relative path of the admin template
+     */
+    public String adminPath() {
+        return this.adminTemplatePath;
     }
 }

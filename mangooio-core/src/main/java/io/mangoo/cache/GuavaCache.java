@@ -28,7 +28,7 @@ public class GuavaCache implements Cache {
         final CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
                 .maximumSize(CONFIG.getInt(Key.CACHE_MAX_SIZE, Default.CACHE_MAX_SIZE.toInt()));
 
-        if (CONFIG.getBoolean(Key.APPLICATION_ADMIN_CACHE)) {
+        if (CONFIG.isAdminEnabled()) {
             cacheBuilder.recordStats();
         }
         

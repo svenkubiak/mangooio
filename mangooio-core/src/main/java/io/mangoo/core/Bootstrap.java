@@ -37,7 +37,6 @@ import com.google.inject.Stage;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.AdminRoute;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -237,15 +236,10 @@ public class Bootstrap {
     private RoutingHandler getRoutingHandler() {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
-
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.ROUTES.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CONFIG.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("config").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.HEALTH.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("health").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.CACHE.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.METRICS.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SCHEDULER.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.SYSTEM.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("system").internalOnly());
-        Router.addRoute(new Route(RouteType.REQUEST).toUrl(AdminRoute.MEMORY.toString()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("memory").internalOnly());
+        
+        if (this.config.isAdminEnabled()) {
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl(this.config.getAdminURL()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
+        }
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {

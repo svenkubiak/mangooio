@@ -42,8 +42,8 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_HEALTH), equalTo(true));
-        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_HEALTH.toString()), equalTo(true));
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE.toString()), equalTo(true));
     }
 
     @Test
