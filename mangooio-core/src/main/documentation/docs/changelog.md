@@ -2,14 +2,12 @@
 
 **Released at xx.xx.xxx**
 
-* [#165](https://github.com/svenkubiak/mangooio/issues/165) rename mangooio-test-utilities to mangooio-test and move helper classes to core (svenkubiak)
+* [#82](https://github.com/svenkubiak/mangooio/issues/82) Added new SASS and LESS compiler (svenkubiak)
+* [#164](https://github.com/svenkubiak/mangooio/issues/164) Switched to log4j2 yaml based configuration (svenkubiak)
+* [#165](https://github.com/svenkubiak/mangooio/issues/165) Renamed mangooio-test-utilities to mangooio-test and move helper classes to core (svenkubiak)
 * [#112](https://github.com/svenkubiak/mangooio/issues/112) Removed all @deprecated functions and classes (svenkubiak)
 * [#111](https://github.com/svenkubiak/mangooio/issues/111) Moved Authentication class to bindings package (svenkubiak)
-
-## Version 2.7.0
-
-**Released at xx.xx.xxxx**
-
+* Sonar refactorings
 * Version bumps (svenkubiak)
 	* scribejava-apis 2.5.2 -> 2.5.3
 	* scribejava-core 2.5.2 -> 2.5.3

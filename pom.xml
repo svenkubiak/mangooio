@@ -27,7 +27,7 @@
 		<maven.version>3.3.9</maven.version>
 		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<scribejava.version>2.5.3</scribejava.version>
-		<jackson.version>2.7.3</jackson.version>
+		<jackson.version>2.7.4</jackson.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
