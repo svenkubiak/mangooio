@@ -9,10 +9,10 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public final class HTTPRequest {
+public final class WebRequest {
     private static final String URI_ERROR = "URI can not be null";
 
-    private HTTPRequest() {
+    private WebRequest() {
     }
 
     /**
@@ -21,10 +21,10 @@ public final class HTTPRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static HTTPResponse get(String uri) {
+    public static WebResponse get(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new HTTPResponse(uri, Methods.GET);
+        return new WebResponse(uri, Methods.GET);
     }
     
     /**
@@ -33,10 +33,10 @@ public final class HTTPRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static HTTPResponse post(String uri) {
+    public static WebResponse post(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new HTTPResponse(uri, Methods.POST);
+        return new WebResponse(uri, Methods.POST);
     }
 
     /**
@@ -45,10 +45,10 @@ public final class HTTPRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static HTTPResponse put(String uri) {
+    public static WebResponse put(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new HTTPResponse(uri, Methods.PUT);
+        return new WebResponse(uri, Methods.PUT);
     }
     
     /**
@@ -57,9 +57,9 @@ public final class HTTPRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static HTTPResponse delete(String uri) {
+    public static WebResponse delete(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new HTTPResponse(uri, Methods.DELETE);
+        return new WebResponse(uri, Methods.DELETE);
     }
 }

@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.utils.http.HTTPRequest;
-import io.mangoo.utils.http.HTTPResponse;
+import io.mangoo.utils.http.WebRequest;
+import io.mangoo.utils.http.WebResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -31,7 +31,7 @@ public class AdminControllerTest {
     @Test
     public void testDashboardAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin")
+        WebResponse response = WebRequest.get("/@admin")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -45,7 +45,7 @@ public class AdminControllerTest {
     @Test
     public void testDashboardUnAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin").execute();
+        WebResponse response = WebRequest.get("/@admin").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -57,7 +57,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/configuration")
+        WebResponse response = WebRequest.get("/@admin/configuration")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -71,7 +71,7 @@ public class AdminControllerTest {
     @Test
     public void testConfigUnauthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/configuration").execute();
+        WebResponse response = WebRequest.get("/@admin/configuration").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -83,7 +83,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/routes")
+        WebResponse response = WebRequest.get("/@admin/routes")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -97,7 +97,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutedUnauthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/routes").execute();
+        WebResponse response = WebRequest.get("/@admin/routes").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -109,7 +109,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/cache")
+        WebResponse response = WebRequest.get("/@admin/cache")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -123,7 +123,7 @@ public class AdminControllerTest {
     @Test
     public void testCacheUnauthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/cache").execute();
+        WebResponse response = WebRequest.get("/@admin/cache").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -135,7 +135,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/metrics")
+        WebResponse response = WebRequest.get("/@admin/metrics")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -149,7 +149,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsUnauthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/metrics").execute();
+        WebResponse response = WebRequest.get("/@admin/metrics").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -161,7 +161,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerAuthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/scheduler")
+        WebResponse response = WebRequest.get("/@admin/scheduler")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -175,7 +175,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerUnauthorized() {
         //given
-        HTTPResponse response = HTTPRequest.get("/@admin/scheduler").execute();
+        WebResponse response = WebRequest.get("/@admin/scheduler").execute();
         
         //then
         assertThat(response, not(nullValue()));

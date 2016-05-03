@@ -10,9 +10,9 @@ import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
 
-import io.mangoo.utils.http.HTTPBrowser;
-import io.mangoo.utils.http.HTTPRequest;
-import io.mangoo.utils.http.HTTPResponse;
+import io.mangoo.utils.http.WebBrowser;
+import io.mangoo.utils.http.WebRequest;
+import io.mangoo.utils.http.WebResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -26,7 +26,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityForm() {
         //given
-        HTTPResponse response = HTTPRequest.get("/authenticityform").execute();
+        WebResponse response = WebRequest.get("/authenticityform").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -38,7 +38,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityToken() {
         //given
-        HTTPResponse response = HTTPRequest.get("/authenticitytoken").execute();
+        WebResponse response = WebRequest.get("/authenticitytoken").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -49,10 +49,10 @@ public class AuthenticityControllerTest {
     @Test
     public void testValidAuthenticity() {
         //given
-    	HTTPBrowser instance = HTTPBrowser.open();
+    	WebBrowser instance = WebBrowser.open();
         
     	//when
-        HTTPResponse response = instance.withUri("/authenticitytoken")
+        WebResponse response = instance.withUri("/authenticitytoken")
                 .withMethod(Methods.GET)
                 .execute();
         String token = response.getContent();
@@ -75,7 +75,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        HTTPResponse response = HTTPRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        WebResponse response = WebRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

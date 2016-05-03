@@ -49,8 +49,8 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public class HTTPResponse {
-    private static final Logger LOG = LogManager.getLogger(HTTPResponse.class);
+public class WebResponse {
+    private static final Logger LOG = LogManager.getLogger(WebResponse.class);
     private final CookieStore cookieStore = new BasicCookieStore();
     private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
@@ -66,13 +66,13 @@ public class HTTPResponse {
     private boolean responseDisbaleRedirects;
     private boolean hasFileBody;
 
-    public HTTPResponse (String uri, HttpString method) {
+    public WebResponse (String uri, HttpString method) {
         this.responseUri = uri;
         this.responseMethod = method;
         init();
     }
 
-    public HTTPResponse() {
+    public WebResponse() {
         init();
     }
 
@@ -94,7 +94,7 @@ public class HTTPResponse {
      * @param contentType The content type to use
      * @return Response
      */
-    public HTTPResponse withContentType(ContentType contentType) {
+    public WebResponse withContentType(ContentType contentType) {
         Objects.requireNonNull(contentType, "contentType can not be null");
 
         this.responseContentType = contentType;
@@ -107,7 +107,7 @@ public class HTTPResponse {
      * @param requestBody The request body to use
      * @return Response
      */
-    public HTTPResponse withRequestBody(String requestBody) {
+    public WebResponse withRequestBody(String requestBody) {
         this.responseRequestBody = requestBody;
         return this;
     }
@@ -118,7 +118,7 @@ public class HTTPResponse {
      * @param postParameter A list of post parameter
      * @return Response
      */
-    public HTTPResponse withPostParameters(List<NameValuePair> postParameter) {
+    public WebResponse withPostParameters(List<NameValuePair> postParameter) {
         Objects.requireNonNull(postParameter, "postParameter can not be null");
 
         this.postParameter = Collections.unmodifiableList(postParameter);
@@ -131,7 +131,7 @@ public class HTTPResponse {
      * @param disableRedirects true or false
      * @return Response
      */
-    public HTTPResponse withDisableRedirects(boolean disableRedirects) {
+    public WebResponse withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
         return this;
     }
@@ -142,7 +142,7 @@ public class HTTPResponse {
      * @param uri The URI to call
      * @return Response
      */
-    public HTTPResponse withUri(String uri) {
+    public WebResponse withUri(String uri) {
         Objects.requireNonNull(uri, "uri can not be null");
 
         this.responseUri = uri;
@@ -156,7 +156,7 @@ public class HTTPResponse {
      * @param fileBody The file body
      * @return Response
      */
-    public HTTPResponse withFileBody(String name, FileBody fileBody) {
+    public WebResponse withFileBody(String name, FileBody fileBody) {
         Objects.requireNonNull(fileBody, "fileBody can not be null");
 
         this.hasFileBody = true;
@@ -170,7 +170,7 @@ public class HTTPResponse {
      * @param method The HTTP Method
      * @return Response
      */
-    public HTTPResponse withMethod(HttpString method) {
+    public WebResponse withMethod(HttpString method) {
         Objects.requireNonNull(method, "method can not be null");
 
         this.responseMethod = method;
@@ -184,7 +184,7 @@ public class HTTPResponse {
      * @param value The value of the header
      * @return Response
      */
-    public HTTPResponse withHeader(String name, String value) {
+    public WebResponse withHeader(String name, String value) {
         Objects.requireNonNull(name, "name can not be null");
         Objects.requireNonNull(value, "value can not be null");
 
@@ -198,7 +198,7 @@ public class HTTPResponse {
      * @param cookie The cookie of the header
      * @return Response
      */
-    public HTTPResponse withCookie(Cookie cookie) {
+    public WebResponse withCookie(Cookie cookie) {
         Objects.requireNonNull(cookie, "cookie can not be null");
 
         this.cookieStore.addCookie(cookie);
@@ -212,7 +212,7 @@ public class HTTPResponse {
      * @param password The password
      * @return Response
      */
-    public HTTPResponse withBasicauthentication(String username, String password) {
+    public WebResponse withBasicauthentication(String username, String password) {
         Objects.requireNonNull(username, "username can not be null");
         Objects.requireNonNull(password, "password can not be null");
 
@@ -228,7 +228,7 @@ public class HTTPResponse {
      *
      * @return Response
      */
-    public HTTPResponse execute() {
+    public WebResponse execute() {
         if ((Methods.GET).equals(this.responseMethod)) {
             final HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
 
@@ -278,7 +278,7 @@ public class HTTPResponse {
      * @param request The HTTP request
      * @return Response
      */
-    private HTTPResponse doRequest(HttpUriRequest request) {
+    private WebResponse doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
             request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
         }
