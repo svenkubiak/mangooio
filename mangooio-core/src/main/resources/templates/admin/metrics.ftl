@@ -3,7 +3,7 @@
 	<div class="col-xs-12">
     	<div class="box">
         	<div class="box-header">
-            	<h3 class="box-title">Scheduler</h3>
+            	<h3 class="box-title">Metrics</h3>
                 <div class="box-tools">
                 	<div class="input-group">
                     	<input type="text" name="table_search" size="50" id="filter" class="form-control input-large" placeholder="Start typing what you are looking for...">

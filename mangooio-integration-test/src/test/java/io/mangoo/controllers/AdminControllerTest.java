@@ -173,7 +173,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testSchedulerUnAuthorized() {
+    public void testSchedulerUnauthorized() {
         //given
         HTTPResponse response = HTTPRequest.get("/@admin/scheduler").execute();
         
