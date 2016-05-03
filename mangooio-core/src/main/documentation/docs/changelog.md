@@ -4,7 +4,7 @@
 
 * [#82](https://github.com/svenkubiak/mangooio/issues/82) Added new SASS and LESS compiler (svenkubiak)
 * [#164](https://github.com/svenkubiak/mangooio/issues/164) Switched to log4j2 yaml based configuration (svenkubiak)
-* [#165](https://github.com/svenkubiak/mangooio/issues/165) Renamed mangooio-test-utilities to mangooio-test and move helper classes to core (svenkubiak)
+* [#165](https://github.com/svenkubiak/mangooio/issues/165) Renamed mangooio-test-utilities to mangooio-test and move to helper classes of core (svenkubiak)
 * [#112](https://github.com/svenkubiak/mangooio/issues/112) Removed all @deprecated functions and classes (svenkubiak)
 * [#111](https://github.com/svenkubiak/mangooio/issues/111) Moved Authentication class to bindings package (svenkubiak)
 * Sonar refactorings
@@ -14,6 +14,9 @@
 	* mockito 2.0.46-Beta -> 2.0.52-Beta
 	* quartz 2.2.2 -> 2.2.3
 	* commons-io 2.4 -> 2.5 
+	* commons-validator 1.5.0 -> 1.5.1 
+	* jackson-dataformat-yaml 2.7.3 -> 2.7.4
+	* jackson-databind 2.7.3 -> 2.7.4
 	
 ## Version 2.6.1
 

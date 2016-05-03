@@ -239,6 +239,7 @@ public class Bootstrap {
         
         if (this.config.isAdminEnabled()) {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl(this.config.getAdminURL()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
         }
 
         Router.getRoutes().parallelStream().forEach(route -> {

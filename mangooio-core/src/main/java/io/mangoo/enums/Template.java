@@ -28,14 +28,13 @@ public enum Template {
     private final String unauthorizedTemplatePath = "defaults/401.html";
     private final String forbiddenTemplatePath = "defaults/403.html";
     private final String serverErrorTemplatePath = "defaults/500.html";
-    private final String routesTemplatePath = "defaults/routes.ftl";
-    private final String cacheTemplatePath = "defaults/cache.ftl";
-    private final String configTemplatePath = "defaults/config.ftl";
-    private final String metricsTemplatePath = "defaults/metrics.ftl";
-    private final String schedulerTemplatePath = "defaults/scheduler.ftl";
-    private final String propertiesTemplatePath = "defaults/properties.ftl";
-    private final String memoryTemplatePath = "defaults/memory.ftl";
-    private final String adminTemplatePath = "defaults/admin.ftl";
+    private final String routesTemplatePath = "admin/routes.ftl";
+    private final String cacheTemplatePath = "admin/cache.ftl";
+    private final String configurationTemplatePath = "admin/configuration.ftl";
+    private final String metricsTemplatePath = "admin/metrics.ftl";
+    private final String schedulerTemplatePath = "admin/scheduler.ftl";
+    private final String systemTemplatePath = "admin/system.ftl";
+    private final String adminTemplatePath = "admin/index.ftl";
 
     Template () {
         try {
@@ -136,8 +135,8 @@ public enum Template {
     /**
      * @return The relative path of the config template
      */
-    public String configPath() {
-        return this.configTemplatePath;
+    public String configurationPath() {
+        return this.configurationTemplatePath;
     }
 
     /**
@@ -158,14 +157,7 @@ public enum Template {
      * @return The relative path of the properties template
      */
     public String propertiesPath() {
-        return this.propertiesTemplatePath;
-    }
-
-    /**
-     * @return The relative path of the memory template
-     */
-    public String memoryPath() {
-        return this.memoryTemplatePath;
+        return this.systemTemplatePath;
     }
 
     /**

@@ -56,7 +56,7 @@ public enum Default {
     AUTH_COOKIE_SECURE("false"), //NOSONAR
     CACHE_MAX_SIZE("5000"),
     APPLICATION_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
-    APPLICATION_ADMIN_URL("/@admin"),
+    APPLICATION_ADMIN_URL("/@admin/{space}"),
     APPLICATION_TIMER("false"),
     AUTH_COOKIE_ENCRYPT("false"),
     AUTH_COOKIE_VERSION("0"),
