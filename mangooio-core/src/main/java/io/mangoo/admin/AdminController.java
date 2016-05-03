@@ -39,11 +39,6 @@ public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final String JOBS = "jobs";
     private static final String STATS = "stats";
-    private static final String SCHEDULER = "scheduler";
-    private static final String METRICS = "metrics";
-    private static final String CONFIGURATION = "configuration";
-    private static final String CACHE = "cache";
-    private static final String ROUTES = "routes";
     private static final String SPACE = "space";
     private static final String VERSION = "version";
     private static final int MB = 1024*1024;
@@ -58,15 +53,15 @@ public class AdminController {
     public Response index(String space) {
         if (StringUtils.isBlank(space)) {
             return memory();
-        } else if (ROUTES.equals(space)) {
+        } else if (("routes").equals(space)) {
             return routes(space);
-        } else if (CACHE.equals(space)) {
+        } else if (("cache").equals(space)) {
             return cache(space);
-        } else if (CONFIGURATION.equals(space)) {
+        } else if (("configuration").equals(space)) {
             return configuration(space);
-        } else if (METRICS.equals(space)) {
+        } else if (("metrics").equals(space)) {
             return metrics(space);
-        } else if (SCHEDULER.equals(space)) {
+        } else if (("scheduler").equals(space)) {
             return scheduler(space);
         }
         
@@ -95,7 +90,7 @@ public class AdminController {
         return Response.withOk()
                 .andContent(SPACE, space)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(ROUTES, Router.getRoutes())
+                .andContent("routes", Router.getRoutes())
                 .andTemplate(Template.DEFAULT.routesPath());
     }
 
@@ -110,13 +105,13 @@ public class AdminController {
     }
 
     private Response configuration(String space) {
-        Map<String, String> configurations = Application.getConfig().getAllConfigurations();
-        configurations.remove(Key.APPLICATION_SECRET.toString());
+        Map<String, String> configuration = Application.getConfig().getAllConfigurations();
+        configuration.remove(Key.APPLICATION_SECRET.toString());
 
         return Response.withOk()
                 .andContent(SPACE, space)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(CONFIGURATION, configurations)
+                .andContent("configuration", configuration)
                 .andTemplate(Template.DEFAULT.configurationPath());
     }
 
@@ -126,7 +121,7 @@ public class AdminController {
         return Response.withOk()
                 .andContent(SPACE, space)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(METRICS, metrics.getMetrics())
+                .andContent("metrics", metrics.getMetrics())
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
 
