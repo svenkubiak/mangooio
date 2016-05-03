@@ -67,6 +67,7 @@ public class Watcher implements Runnable {
     private final AtomicInteger takeCount;
     private boolean shutdown;
 
+    @SuppressWarnings("all")
     public Watcher(Set<Path> watchDirectory, Set<String> includes, Set<String> excludes, Trigger trigger) throws IOException {
         this.watchService = FileSystems.getDefault().newWatchService();
         this.watchKeys = new HashMap<>();

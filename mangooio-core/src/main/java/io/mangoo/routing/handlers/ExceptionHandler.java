@@ -21,11 +21,14 @@ import io.undertow.util.StatusCodes;
  */
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
-    private static final String MESSAGE = "Failed to pass an exception to the frontend";
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Throwable throwable = exchange.getAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE);
+        if (throwable != null) {
+            LOG.error("Internal server exception", throwable);
+        }
+        
         try {
             exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
             exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.XSS_PROTECTION.toInt());
@@ -47,11 +50,7 @@ public class ExceptionHandler implements HttpHandler {
                 exchange.getResponseSender().send(Template.DEFAULT.serverError());
             }
         } catch (Exception e) { //NOSONAR
-            if (throwable ==  null) {
-                LOG.error(MESSAGE, e);
-            } else {
-                LOG.error(MESSAGE, throwable);
-            }
+            LOG.error("Failed to pass an exception to the frontend", e);
         }
     }
 }
