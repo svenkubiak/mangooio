@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.AfterClass;
 import org.junit.Test;
 
-import de.svenkubiak.embeddedmongodb.EmbeddedMongo;
 import interfaces.Constants;
 import io.mangoo.utils.http.HTTPRequest;
 import io.mangoo.utils.http.HTTPResponse;
@@ -82,10 +80,5 @@ public class ApplicationControllerTest {
 		assertNotNull(mangooResponse);
 		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
 		assertTrue(mangooResponse.getContent().contains("id"));
-	}
-	
-	@AfterClass
-	public static void stopMongoDB() {
-		EmbeddedMongo.DB.stop();
 	}
 }

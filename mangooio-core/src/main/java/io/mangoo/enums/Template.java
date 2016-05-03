@@ -28,13 +28,13 @@ public enum Template {
     private final String unauthorizedTemplatePath = "defaults/401.html";
     private final String forbiddenTemplatePath = "defaults/403.html";
     private final String serverErrorTemplatePath = "defaults/500.html";
-    private final String routesTemplatePath = "admin/routes.ftl";
-    private final String cacheTemplatePath = "admin/cache.ftl";
-    private final String configurationTemplatePath = "admin/configuration.ftl";
-    private final String metricsTemplatePath = "admin/metrics.ftl";
-    private final String schedulerTemplatePath = "admin/scheduler.ftl";
-    private final String systemTemplatePath = "admin/system.ftl";
-    private final String adminTemplatePath = "admin/index.ftl";
+    private final String routesTemplatePath = "defaults/routes.ftl";
+    private final String cacheTemplatePath = "defaults/cache.ftl";
+    private final String configurationTemplatePath = "defaults/configuration.ftl";
+    private final String metricsTemplatePath = "defaults/metrics.ftl";
+    private final String schedulerTemplatePath = "defaults/scheduler.ftl";
+    private final String systemTemplatePath = "defaults/system.ftl";
+    private final String adminTemplatePath = "defaults/index.ftl";
 
     Template () {
         try {
