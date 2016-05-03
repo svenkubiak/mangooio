@@ -628,11 +628,4 @@ public class Config {
     public boolean isAdminEnabled() {
         return getBoolean(Key.APPLICATION_ADMIN_ENABLE, false);
     }
-
-    /**
-     * @return application.admin.url or default value if undefined
-     */
-    public String getAdminURL() {
-        return getString(Key.APPLICATION_ADMIN_URL, Default.APPLICATION_ADMIN_URL.toString());
-    }
 }

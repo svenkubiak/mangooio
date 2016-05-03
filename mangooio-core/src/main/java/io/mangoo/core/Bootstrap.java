@@ -1,6 +1,5 @@
 package io.mangoo.core;
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -171,7 +169,7 @@ public class Bootstrap {
                                 if (mappings.length == 2) {
                                     final String [] classMethod = mappings[1].split("\\.");
                                     if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(getValidPackage(this.config.getControllerPackage()) + classMethod[0].trim()));
+                                        route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + classMethod[0].trim()));
                                         if (classMethod.length == 2) {
                                             final String controllerMethod = classMethod[1].trim();
                                             if (methodExists(controllerMethod, route.getControllerClass())) {
@@ -238,7 +236,7 @@ public class Bootstrap {
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
         if (this.config.isAdminEnabled()) {
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl(this.config.getAdminURL()).withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/{space}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
         }
 
@@ -338,28 +336,5 @@ public class Bootstrap {
 
     public LocalDateTime getStart() {
         return this.start;
-    }
-
-    private String getValidPackage(String packageName) {
-        Objects.requireNonNull(packageName, "package name can not be null");
-
-        if (!packageName.endsWith(".")) {
-            return packageName + '.';
-        }
-
-        return packageName;
-    }
-
-    public String preparteBaseDirectory() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(System.getProperty("user.dir"))
-        .append(File.separator)
-        .append("src")
-        .append(File.separator)
-        .append("main")
-        .append(File.separator)
-        .append("java");
-        
-        return buffer.toString();
     }
 }

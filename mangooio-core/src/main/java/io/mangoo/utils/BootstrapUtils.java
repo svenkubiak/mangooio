@@ -1,5 +1,6 @@
 package io.mangoo.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -109,5 +110,37 @@ public final class BootstrapUtils {
         }
 
         return logo;
+    }
+    
+    /**
+     * Checks that a given package name ends with an .
+     * 
+     * @param packageName The package name to check
+     * @return A valid package name
+     */
+    public static String getPackageName(String packageName) {
+        Objects.requireNonNull(packageName, "package name can not be null");
+
+        if (!packageName.endsWith(".")) {
+            return packageName + '.';
+        }
+
+        return packageName;
+    }
+
+    /**
+     * @return The OS specific path to src/main/java
+     */
+    public static String getBaseDirectory() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(System.getProperty("user.dir"))
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
+        
+        return buffer.toString();
     }
 }

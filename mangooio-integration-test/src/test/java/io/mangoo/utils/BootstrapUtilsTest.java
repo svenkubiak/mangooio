@@ -2,6 +2,8 @@ package io.mangoo.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
@@ -59,5 +61,22 @@ public class BootstrapUtilsTest {
         //then
         assertThat(BootstrapUtils.hasAuthentication(urlWithAuthentication), equalTo(true));
         assertThat(BootstrapUtils.hasAuthentication(urlWithNonAuthentication), equalTo(false));
-    }    
+    } 
+    
+    @Test
+    public void testGetPackageName() {
+        //given
+        String package1 = "io.mangoo";
+        String package2 = "io.mangoo.";
+        
+        //then
+        assertThat(BootstrapUtils.getPackageName(package1), equalTo(package2));
+        assertThat(BootstrapUtils.getPackageName(package2), equalTo(package2));
+    } 
+    
+    @Test
+    public void testGetBaseDirectory() {
+        //then
+        assertThat(BootstrapUtils.getBaseDirectory(), not(nullValue()));
+    } 
 }

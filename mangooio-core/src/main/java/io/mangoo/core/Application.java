@@ -16,6 +16,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Mode;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
+import io.mangoo.utils.BootstrapUtils;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -41,7 +42,7 @@ public final class Application {
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
-        baseDirectory = bootstrap.preparteBaseDirectory();
+        baseDirectory = BootstrapUtils.getBaseDirectory();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
