@@ -9,6 +9,7 @@
 * [#111](https://github.com/svenkubiak/mangooio/issues/111) Moved Authentication class to bindings package (svenkubiak)
 * Sonar refactorings
 * Version bumps (svenkubiak)
+	* undertow-core 1.3.21.Final -> 1.3.22.Final
 	* scribejava-apis 2.5.2 -> 2.5.3
 	* scribejava-core 2.5.2 -> 2.5.3
 	* mockito 2.0.46-Beta -> 2.0.52-Beta
