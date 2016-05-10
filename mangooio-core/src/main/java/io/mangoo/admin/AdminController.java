@@ -1,14 +1,19 @@
 package io.mangoo.admin;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -52,7 +57,7 @@ public class AdminController {
     
     public Response index(String space) {
         if (StringUtils.isBlank(space)) {
-            return memory();
+            return dashboard();
         } else if (("routes").equals(space)) {
             return routes(space);
         } else if (("cache").equals(space)) {
@@ -68,20 +73,19 @@ public class AdminController {
         return Response.withNotFound().andEmptyBody();
     }
     
-    private Response memory() {
+    private Response dashboard() {
         Runtime runtime = Runtime.getRuntime();
-        double usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / MB;
-        double freeMemory = runtime.freeMemory() / MB;
-        double totalMemory = runtime.totalMemory() / MB;
-        double maxMemory = runtime.maxMemory() / MB; 
+        double maxMemory = runtime.maxMemory() / MB;
+        
+        Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
+        PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
         
         return Response.withOk()
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(SPACE, null)
+                .andContent("uptime", prettyTime.format(Date.from(instant)))
+                .andContent("started", Application.getStart())
                 .andContent("properties", this.properties)
-                .andContent("usedMemory", usedMemory)
-                .andContent("freeMemory", freeMemory)
-                .andContent("totalMemory", totalMemory)
                 .andContent("maxMemory", maxMemory)
                 .andTemplate(Template.DEFAULT.adminPath());
     }

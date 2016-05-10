@@ -2,19 +2,10 @@
 <div class="row">
 	<div class="col-md-3 col-sm-6 col-xs-12">
     	<div class="info-box">
-        	<span class="info-box-icon bg-aqua"></span>
+        	<span class="info-box-icon bg-green"></span>
 			<div class="info-box-content">
-            	<span class="info-box-text">Used memorey</span>
-            	<span class="info-box-number">${usedMemory}<small> MB</small></span>
-            </div>
-		</div>
-	</div>
-    <div class="col-md-3 col-sm-6 col-xs-12">
-    	<div class="info-box">
-            <span class="info-box-icon bg-red"></span>
-        	<div class="info-box-content">
-            	<span class="info-box-text">Free memory</span>
-            	<span class="info-box-number">${freeMemory}<small> MB</small></span>
+            	<span class="info-box-text">Application started</span>
+            	<span class="info-box-number">${started}</span>
             </div>
 		</div>
 	</div>
@@ -22,8 +13,8 @@
     	<div class="info-box">
 			<span class="info-box-icon bg-green"></span>
             <div class="info-box-content">
-            	<span class="info-box-text">Max memory</span>
-            	<span class="info-box-number">${maxMemory}<small> MB</small></span>
+            	<span class="info-box-text">Uptime</span>
+            	<span class="info-box-number">since ${uptime}</span>
 			</div>
 		</div>
 	</div>
@@ -60,5 +51,4 @@
 		</div>
 	</div>
 </div>
-
 <#include "footer.ftl">

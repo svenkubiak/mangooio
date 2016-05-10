@@ -2,7 +2,7 @@
       </div>
       <footer class="main-footer">
         <div class="pull-right hidden-xs">
-          <b>Version</b> ${version}
+          <b>mangoo I/O version:</b> ${version}
         </div>
         <strong>&nbsp;</strong>
       </footer>
@@ -19,7 +19,7 @@
     <script><#include "js/jquery-jvectormap-world-mill-en.js"></script>
     <script><#include "js/jquery.knob.js"></script>
     <script><#include "js/app.min.js"></script>
-        <script>
+    <script>
       $(function () {
         /* jQueryKnob */
 
@@ -80,6 +80,9 @@
   <script type="text/javascript"><#include "js/stupidtable.min.js"></script>
   <script>
   $(document).ready(function(){
+  	var $table = $("table").stupidtable();
+	var $th_to_sort = $table.find("thead th").eq(0);
+	$th_to_sort.stupidsort();
   	(function ($) {
           $('#filter').keyup(function () {
               var rex = new RegExp($(this).val(), 'i');
