@@ -23,11 +23,17 @@
 	<div class="col-xs-12">
 		<div class="box">
 	    	<div class="box-header">
-	        	<h3 class="box-title">System properties</h3>
-	           	<div class="box-tools">
-	            	<div class="input-group">
-	                	<input type="text" name="table_search" size="50" id="filter" class="form-control input-large" placeholder="Start typing what you are looking for...">
-	                </div>
+	    		<h3>System properties</h3>
+	    	</div>
+	    </div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+	    	<div class="box-header">
+				<div class="form-group">
+	            	<input type="text" name="table_search" id="filter" class="form-control" placeholder="Start typing what you are looking for...">
 	            </div>
 	        </div>
 	        <div class="box-body table-responsive no-padding">
