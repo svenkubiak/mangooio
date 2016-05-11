@@ -24,7 +24,6 @@ public class AdminControllerTest {
     private static final String METRICS = "metrics";
     private static final String CACHE = "cache";
     private static final String ROUTES = "routes";
-    private static final String CONFIG = "config";
     private static final String ADMIN = "admin";
     private static final String PROPERTIES = "properties";
     
