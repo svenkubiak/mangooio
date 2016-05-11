@@ -53,32 +53,6 @@ public class AdminControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(PROPERTIES)));
     }
-    
-    @Test
-    public void testConfigAuthorized() {
-        //given
-        WebResponse response = WebRequest.get("/@admin/configuration")
-                .withBasicauthentication(ADMIN, ADMIN)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(CONFIG));
-    }
-    
-    @Test
-    public void testConfigUnauthorized() {
-        //given
-        WebResponse response = WebRequest.get("/@admin/configuration").execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), not(containsString(CONFIG)));
-    }
 
     @Test
     public void testRoutedAuthorized() {
