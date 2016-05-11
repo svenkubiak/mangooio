@@ -24,7 +24,6 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
@@ -62,9 +61,7 @@ public class AdminController {
             return routes(space);
         } else if (("cache").equals(space)) {
             return cache(space);
-        } else if (("configuration").equals(space)) {
-            return configuration(space);
-        } else if (("metrics").equals(space)) {
+        }  else if (("metrics").equals(space)) {
             return metrics(space);
         } else if (("scheduler").equals(space)) {
             return scheduler(space);
@@ -106,17 +103,6 @@ public class AdminController {
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(STATS, stats)
                 .andTemplate(Template.DEFAULT.cachePath());
-    }
-
-    private Response configuration(String space) {
-        Map<String, String> configuration = Application.getConfig().getAllConfigurations();
-        configuration.remove(Key.APPLICATION_SECRET.toString());
-
-        return Response.withOk()
-                .andContent(SPACE, space)
-                .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent("configuration", configuration)
-                .andTemplate(Template.DEFAULT.configurationPath());
     }
 
     private Response metrics(String space) {
