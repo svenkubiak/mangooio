@@ -1,5 +1,11 @@
 package io.mangoo.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.lessThan;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
@@ -11,12 +17,6 @@ import org.mockito.Mockito;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.when;
 
 /**
  * 
