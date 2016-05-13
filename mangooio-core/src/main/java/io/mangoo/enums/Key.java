@@ -21,10 +21,10 @@ public enum Key {
     APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),
     APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
-    APPLICATION_ADMIN_URL("application.admin.url"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_CONTROLLER("application.controller"),
+    APPLICATION_THREADPOOL("application.threadpool"),
     AUTH_COOKIE_NAME("auth.cookie.name"),
     AUTH_REDIRECT("auth.redirect"),
     AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
@@ -68,7 +68,6 @@ public enum Key {
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    EXECUTION_THREADPOOL("execution.threadpool"),
     TEMPLATE_ENGINE_CLASS("templateeninge.class"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 

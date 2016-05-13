@@ -548,7 +548,7 @@ public class Config {
      * @return execution.threadpool from application.yaml or default value if undefined
      */
     public int getExecutionPool() {
-        return getInt(Key.EXECUTION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
+        return getInt(Key.APPLICATION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
     }
 
     /**
