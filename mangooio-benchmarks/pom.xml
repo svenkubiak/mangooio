@@ -70,8 +70,8 @@
 							<artifactSet>
 								<excludes>
 									<exclude>junit:junit</exclude>
-									<exclude>com.yahoo.platform.yui:yuicompressor</exclude>
 									<exclude>rhino:js</exclude>
+									<exclude>com.hazelcast:*</exclude>
 									<exclude>com.google.com.findbugs:annotations</exclude>
 								</excludes>
 							</artifactSet>
