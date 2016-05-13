@@ -2,8 +2,6 @@ package io.mangoo.core;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import com.google.inject.Injector;
@@ -181,13 +179,6 @@ public final class Application {
         Objects.requireNonNull(clazz, "clazz can not be null");
 
         return injector.getInstance(clazz);
-    }
-
-    /**
-     * @return A list of all administrative URLs
-     */
-    public static List<String> getAdministrativeURLs() {
-        return Arrays.asList("@cache", "@metrics", "@config", "@routes", "@health", "@scheduler", "@memory", "@system");
     }
 
     /**

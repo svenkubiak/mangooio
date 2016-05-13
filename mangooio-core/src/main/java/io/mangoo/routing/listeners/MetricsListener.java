@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.ResponseCommitListener;
@@ -29,7 +28,7 @@ public class MetricsListener implements ResponseCommitListener {
     @Override
     public void beforeCommit(HttpServerExchange exchange) {
         String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase();
-        if (!Application.getAdministrativeURLs().contains(uri)) {
+        if (!uri.contains("@admin")) {
             this.metrics.inc(exchange.getStatusCode());
         }
     }
