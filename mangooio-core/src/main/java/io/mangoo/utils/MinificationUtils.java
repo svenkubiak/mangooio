@@ -141,23 +141,22 @@ public final class MinificationUtils {
     }
 
     private static void minifyJS(File inputFile) {
-        InputStreamReader inputStreamReader = null;
-        OutputStreamWriter outputStreamWriter = null;
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
         try { 
             File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
-            inputStreamReader = new InputStreamReader(new FileInputStream(inputFile), Charsets.UTF_8);
-            outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile), Charsets.UTF_8);
-
-            JSMin jsMin = new JSMin(new FileInputStream(inputFile), new FileOutputStream(outputFile));            
+            fileInputStream = new FileInputStream(inputFile);
+            fileOutputStream = new FileOutputStream(outputFile);
+            
+            JSMin jsMin = new JSMin(fileInputStream, fileOutputStream);            
             jsMin.jsmin();
             
-            outputStreamWriter.flush();
             logMinification(inputFile, outputFile);
         } catch (IOException | JSMinException e) {
             LOG.error("Failed to minify JS", e);
         } finally {
-            IOUtils.closeQuietly(inputStreamReader);
-            IOUtils.closeQuietly(outputStreamWriter);
+            IOUtils.closeQuietly(fileInputStream);
+            IOUtils.closeQuietly(fileOutputStream);
         }
     }
 
