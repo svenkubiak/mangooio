@@ -80,7 +80,11 @@ public enum Default {
     VALUE_REQUIRED("For a new cache entry a non null value is required"),
     KEY_REQUIRED("For a new cache entry a non null key is required"),
     TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker"),
-    UNDERTOW_MAX_ENTITY_SIZE("4194304");
+    UNDERTOW_MAX_ENTITY_SIZE("4194304"),
+    SMTP_PORT("25"),
+    SMTP_SSL("false"),
+    SMTP_HOST("localhost"),
+    SMTP_SERVER_NAME("smtp");
 
     private final String value;
 

@@ -120,18 +120,18 @@ public class Config {
     public void decrypt() {
         String key = null;
         Crypto crypto = null;
-        
-        for (Entry<String, String> entry : this.values.entrySet()) {
+
+        for (final Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
                 if (StringUtils.isBlank(key)) {
                     key = getMasterKey();
                     crypto = Application.getInstance(Crypto.class);
                 }
-                
+
                 if (StringUtils.isNotBlank(key) && crypto != null) {
-                    String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
+                    final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
-                        this.values.put(entry.getKey(), decryptedText);                         
+                        this.values.put(entry.getKey(), decryptedText);
                     }
                 }
             }
@@ -145,20 +145,20 @@ public class Config {
         if (Application.inTestMode()) {
             return Default.APPLICATION_MASTERKEY.toString();
         }
-        
+
         String key = null;
         try {
             key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to read master key", e);
         }
-        
+
         return key;
     }
 
     /**
      * Checks if a value is encrypt by checking for the prefix crpytex
-     * 
+     *
      * @param value The value to check
      * @return True if the value starts with cryptex, false othweise
      */
@@ -606,14 +606,14 @@ public class Config {
     public boolean isPreprocessSass() {
         return getBoolean(Key.APPLICATION_PREPROCESS_SASS, false);
     }
-    
+
     /**
      * @return application.preprocess.less or default value if undefined
      */
     public boolean isPreprocessLess() {
         return getBoolean(Key.APPLICATION_PREPROCESS_LESS, false);
     }
-    
+
     /**
      * @return application.assets.path (for testing purposes only)
      */
@@ -622,10 +622,45 @@ public class Config {
     }
 
     /**
-     * 
+     *
      * @return application.admin.enable or default value if undefined
      */
     public boolean isAdminEnabled() {
         return getBoolean(Key.APPLICATION_ADMIN_ENABLE, false);
+    }
+
+    /**
+     * @return smtp.host or default value if undefined
+     */
+    public String getSMTPHost() {
+        return getString(Key.SMTP_HOST, Default.SMTP_HOST.toString());
+    }
+
+    /**
+     * @return smtp.port or default value if undefined
+     */
+    public int getSMTPPort() {
+        return getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt());
+    }
+
+    /**
+     * @return smtp.ssl or default value if undefined
+     */
+    public boolean isSMTPSSL() {
+        return getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
+    }
+
+    /**
+     * @return smtp.username or null value if undefined
+     */
+    public String getSMTPUsername() {
+        return getString(Key.SMTP_USERNAME, null);
+    }
+
+    /**
+     * @return smtp.username or null value if undefined
+     */
+    public String getSMTPPassword() {
+        return getString(Key.SMTP_PASSWORD, null);
     }
 }
