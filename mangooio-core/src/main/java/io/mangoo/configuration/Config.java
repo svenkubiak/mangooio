@@ -632,35 +632,35 @@ public class Config {
     /**
      * @return smtp.host or default value if undefined
      */
-    public String getSMTPHost() {
+    public String getSmtpHost() {
         return getString(Key.SMTP_HOST, Default.SMTP_HOST.toString());
     }
 
     /**
      * @return smtp.port or default value if undefined
      */
-    public int getSMTPPort() {
+    public int getSmtpPort() {
         return getInt(Key.SMTP_PORT, Default.SMTP_PORT.toInt());
     }
 
     /**
      * @return smtp.ssl or default value if undefined
      */
-    public boolean isSMTPSSL() {
+    public boolean isSmtpSSL() {
         return getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
     }
 
     /**
      * @return smtp.username or null value if undefined
      */
-    public String getSMTPUsername() {
+    public String getSmtpUsername() {
         return getString(Key.SMTP_USERNAME, null);
     }
 
     /**
      * @return smtp.username or null value if undefined
      */
-    public String getSMTPPassword() {
+    public String getSmtpPassword() {
         return getString(Key.SMTP_PASSWORD, null);
     }
 }

@@ -29,12 +29,12 @@ public class Mailer {
 
     @Inject
     public Mailer(Config config) {
-        this.host = config.getSMTPHost();
-        this.port = config.getSMTPPort();
-        this.ssl = config.isSMTPSSL();
+        this.host = config.getSmtpHost();
+        this.port = config.getSmtpPort();
+        this.ssl = config.isSmtpSSL();
 
-        final String username = config.getSMTPUsername();
-        final String password = config.getSMTPPassword();
+        final String username = config.getSmtpUsername();
+        final String password = config.getSmtpPassword();
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
             this.defaultAuthenticator = new DefaultAuthenticator(username, password);
         }
@@ -49,7 +49,7 @@ public class Mailer {
      * @throws MangooMailerException
      */
     public void send(Email email) throws MangooMailerException {
-    	Objects.requireNonNull(email, "email can not be null");
+        Objects.requireNonNull(email, "email can not be null");
 
         email.setHostName(this.host);
         email.setSmtpPort(this.port);

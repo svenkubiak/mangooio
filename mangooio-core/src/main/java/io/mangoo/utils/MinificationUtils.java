@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 
 import org.apache.commons.io.FileUtils;
@@ -17,7 +15,6 @@ import com.github.sommeri.less4j.Less4jException;
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.LessCompiler.CompilationResult;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
-import com.google.common.base.Charsets;
 
 import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
@@ -60,16 +57,16 @@ public final class MinificationUtils {
             basePath = path;
         }
     }
-    
+
     public static void setConfig(Config configuration) {
         synchronized (Config.class) {
             config = configuration;
-        }       
+        }
     }
 
     /**
      * Minifies a JS or CSS file to a corresponding JS or CSS file
-     * 
+     *
      * @param absolutePath The absolute path to the file
      */
     public static void minify(String absolutePath) {
@@ -88,17 +85,17 @@ public final class MinificationUtils {
             minifyCSS(new File(absolutePath));
         }
     }
-    
+
     /**
      * Compiles a LESS or SASS file to a corresponding CSS file
-     * 
+     *
      * @param absolutePath The absolute path to the file
      */
     public static void preprocess(String absolutePath) {
         if (absolutePath == null) {
             return;
         }
-        
+
         if (config == null) {
             System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
@@ -112,27 +109,27 @@ public final class MinificationUtils {
     }
 
     private static void lessify(File lessFile) {
-        LessCompiler compiler = new DefaultLessCompiler();
+        final LessCompiler compiler = new DefaultLessCompiler();
         try {
-            File outputFile = getOutputFile(lessFile, Suffix.CSS);
-            
-            CompilationResult compilationResult = compiler.compile(lessFile);
+            final File outputFile = getOutputFile(lessFile, Suffix.CSS);
+
+            final CompilationResult compilationResult = compiler.compile(lessFile);
             FileUtils.writeStringToFile(outputFile, compilationResult.getCss(), Default.ENCODING.toString());
             logPreprocess(lessFile, outputFile);
         } catch (Less4jException | IOException e) {
             LOG.error("Failed to preprocess LESS file", e);
         }
     }
-    
-    private static void sassify(File sassFile) {
-        File outputFile = getOutputFile(sassFile, Suffix.CSS);
-        
-        URI inputURI = sassFile.toURI();
-        URI outputURI = outputFile.toURI();
 
-        Compiler compiler = new Compiler();
+    private static void sassify(File sassFile) {
+        final File outputFile = getOutputFile(sassFile, Suffix.CSS);
+
+        final URI inputURI = sassFile.toURI();
+        final URI outputURI = outputFile.toURI();
+
+        final Compiler compiler = new Compiler();
         try {
-          Output output = compiler.compileFile(inputURI, outputURI, new Options());
+          final Output output = compiler.compileFile(inputURI, outputURI, new Options());
           FileUtils.writeStringToFile(outputFile, output.getCss(), Default.ENCODING.toString());
           logPreprocess(sassFile, outputFile);
         } catch (CompilationException | IOException e) {
@@ -143,14 +140,14 @@ public final class MinificationUtils {
     private static void minifyJS(File inputFile) {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
-        try { 
-            File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
+        try {
+            final File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
             fileInputStream = new FileInputStream(inputFile);
             fileOutputStream = new FileOutputStream(outputFile);
-            
-            JSMin jsMin = new JSMin(fileInputStream, fileOutputStream);            
+
+            final JSMin jsMin = new JSMin(fileInputStream, fileOutputStream);
             jsMin.jsmin();
-            
+
             logMinification(inputFile, outputFile);
         } catch (IOException | JSMinException e) {
             LOG.error("Failed to minify JS", e);
@@ -163,29 +160,29 @@ public final class MinificationUtils {
     private static void logMinification(File inputFile, File outputFile) {
         LOG.info(String.format("Minified asset %s (%db) -> %s (%db) [compressed to %d%% of original size]", inputFile.getName(), inputFile.length(), outputFile.getName(), outputFile.length(), ratioOfSize(inputFile, outputFile)));
     }
-    
+
     private static void logPreprocess(File inputFile, File outputFile) {
         LOG.info(String.format("Preprocessed asset %s -> %s", inputFile.getName(), outputFile.getName()));
     }
 
     private static void minifyCSS(File inputFile) {
         try {
-            File outputFile = getOutputFile(inputFile, Suffix.CSS_MIN);
+            final File outputFile = getOutputFile(inputFile, Suffix.CSS_MIN);
 
-            StringBuffer stringBuffer = new StringBuffer();
-            CSSMinifier cssMinifier = new CSSMinifier();
-            
+            final StringBuffer stringBuffer = new StringBuffer();
+            final CSSMinifier cssMinifier = new CSSMinifier();
+
             stringBuffer.append(FileUtils.readFileToString(inputFile, Default.ENCODING.toString()));
-            StringBuffer minifyCSS = cssMinifier.minifyCSS(stringBuffer);
-            
+            final StringBuffer minifyCSS = cssMinifier.minifyCSS(stringBuffer);
+
             FileUtils.write(outputFile, minifyCSS.toString(), Default.ENCODING.toString());
-            
+
             logMinification(inputFile, outputFile);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Failed to minify CSS", e);
         }
     }
-    
+
     private static File getOutputFile(File inputfile, Suffix targetSuffix) {
         String fileName = inputfile.getName();
         fileName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -194,30 +191,30 @@ public final class MinificationUtils {
         if (!basePath.endsWith("/")) {
             basePath = basePath + "/";
         }
-        
+
         String assetPath = config.getAssetsPath();
         if (assetPath.startsWith("/")) {
             assetPath = assetPath.substring(1);
         }
-        
+
         if (!assetPath.endsWith("/")) {
             assetPath = assetPath + "/";
         }
-        
+
         String subpath = null;
         if (Suffix.CSS.equals(targetSuffix) || Suffix.CSS_MIN.equals(targetSuffix)) {
             subpath = Default.STYLESHEET_FOLDER.toString() + "/" + fileName;
         } else if (Suffix.JS.equals(targetSuffix) || Suffix.JS_MIN.equals(targetSuffix)) {
             subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
         }
-        
+
         return new File(basePath + assetPath + subpath);
     }
 
     private static long ratioOfSize(File inputFile, File outputFile) {
-        long inFile = Math.max(inputFile.length(), 1);
-        long outFile = Math.max(outputFile.length(), 1);
-        
+        final long inFile = Math.max(inputFile.length(), 1);
+        final long outFile = Math.max(outputFile.length(), 1);
+
         return (outFile * HUNDRED_PERCENT) / inFile;
     }
 }

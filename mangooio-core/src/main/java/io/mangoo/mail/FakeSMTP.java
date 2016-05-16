@@ -28,7 +28,7 @@ public class FakeSMTP {
 
     public void start() {
         if (Application.inDevMode() || Application.inTestMode()) {
-            this.greenMail = new GreenMail(new ServerSetup(this.config.getSMTPPort(), this.config.getSMTPHost(), Default.SMTP_SERVER_NAME.toString()));
+            this.greenMail = new GreenMail(new ServerSetup(this.config.getSmtpPort(), this.config.getSmtpHost(), Default.SMTP_SERVER_NAME.toString()));
             this.greenMail.start();
         }
     }
