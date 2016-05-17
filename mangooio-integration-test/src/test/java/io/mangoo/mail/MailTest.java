@@ -19,12 +19,12 @@ import io.mangoo.core.Application;
 public class MailTest {
     private static Mailer mailer;
     private static GreenMail greenMail;
-    private static FakeSMTP fakeSMTP;
+    private static Smtp fakeSMTP;
 
     @BeforeClass
     public static void init() {
         mailer = Application.getInstance(Mailer.class);
-        fakeSMTP = Application.getInstance(FakeSMTP.class);
+        fakeSMTP = Application.getInstance(Smtp.class);
         fakeSMTP.start();
         greenMail = fakeSMTP.getGreenMail();
     }

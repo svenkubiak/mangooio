@@ -17,12 +17,12 @@ import io.mangoo.enums.Default;
  *
  */
 @Singleton
-public class FakeSMTP {
+public class Smtp {
     private GreenMail greenMail;
     private final Config config;
 
     @Inject
-    public FakeSMTP(Config config) {
+    public Smtp(Config config) {
         this.config = Objects.requireNonNull(config, "config can not be null");
     }
 
