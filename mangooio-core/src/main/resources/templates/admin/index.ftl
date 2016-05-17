@@ -1,24 +1,22 @@
 <#include "header.ftl">
 <div class="row">
-	<div class="col-md-3 col-sm-6 col-xs-12">
-    	<div class="info-box">
-        	<span class="info-box-icon bg-green"></span>
-			<div class="info-box-content">
-            	<span class="info-box-text">Application started</span>
-            	<span class="info-box-number">${started}</span>
+	<div class="col-lg-3 col-xs-6">
+	    <div class="small-box bg-aqua">
+    	    <div class="inner">
+              <h3>Started</h3>
+              <p>${started}</p>
             </div>
-		</div>
-	</div>
-   	<div class="col-md-3 col-sm-6 col-xs-12">
-    	<div class="info-box">
-			<span class="info-box-icon bg-green"></span>
-            <div class="info-box-content">
-            	<span class="info-box-text">Uptime</span>
-            	<span class="info-box-number">since ${uptime}</span>
-			</div>
-		</div>
-	</div>
-</div> 
+        </div>
+    </div>
+    <div class="col-lg-3 col-xs-6">
+    	<div class="small-box bg-green">
+        	<div class="inner">
+            	<h3>Uptime</h3>
+            	<p>since ${uptime}</p>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box">
