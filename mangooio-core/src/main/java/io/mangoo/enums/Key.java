@@ -25,6 +25,7 @@ public enum Key {
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_THREADPOOL("application.threadpool"),
+    APPLICATION_TEMPLATEENGINE("application.templateengine"),
     SMTP_PORT("smtp.port"),
     SMTP_HOST("smtp.host"),
     SMTP_SSL("smtp.ssl"),
@@ -73,7 +74,6 @@ public enum Key {
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    TEMPLATE_ENGINE_CLASS("templateeninge.class"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 
     private final String value;

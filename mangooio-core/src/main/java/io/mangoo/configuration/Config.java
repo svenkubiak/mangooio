@@ -583,7 +583,7 @@ public class Config {
      * @return templateengine.class from application.yaml
      */
     public String getTemplateEngineClass() {
-        return getString(Key.TEMPLATE_ENGINE_CLASS, Default.TEMPLATE_ENGINE_CLASS.toString());
+        return getString(Key.APPLICATION_TEMPLATEENGINE, Default.TEMPLATE_ENGINE_CLASS.toString());
     }
 
     /**
