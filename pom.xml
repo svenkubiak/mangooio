@@ -319,7 +319,7 @@
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-sse</artifactId>
-				<version>2.22.2</version>
+				<version>2.23</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
@@ -379,19 +379,9 @@
 				<version>${scribejava.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>de.svenkubiak</groupId>
-				<artifactId>embedded-mongodb</artifactId>
-				<version>4.2.9</version>
-			</dependency>
-			<dependency>
 				<groupId>it.unimi.dsi</groupId>
 				<artifactId>dsiutils</artifactId>
 				<version>2.3.2</version>
-			</dependency>
-			<dependency>
-				<groupId>de.svenkubiak</groupId>
-				<artifactId>mangooio-mongodb-extension</artifactId>
-				<version>2.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.activation</groupId>
@@ -406,7 +396,7 @@
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
 				<artifactId>htmlunit-driver</artifactId>
-				<version>2.20</version>
+				<version>2.21</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
