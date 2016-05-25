@@ -14,7 +14,6 @@ import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
@@ -64,12 +63,17 @@ public class Mail {
     public Mail withTemplate(String template) {
         Objects.requireNonNull(template, "template can not be null");
         
+        if (template.startsWith("/") || template.startsWith("\\")) {
+            template = template.replaceFirst("/", "");
+            template = template.replaceFirst("\\", "");
+        }
+        
         this.template = template;
         return this;
     }
     
     public Mail withBCC(String recipient) {
-        Objects.requireNonNull(template, "bcc recipient can not be null");
+        Objects.requireNonNull(recipient, "bcc recipient can not be null");
         
         this.bcc.add(recipient);
         return this;
@@ -191,6 +195,6 @@ public class Mail {
     }
 
     private String render() throws MangooTemplateEngineException {
-        return Application.getInstance(TemplateEngine.class).render(Default.TEMPLATES_FOLDER.toString(), this.template, this.content);
+        return Application.getInstance(TemplateEngine.class).render("", this.template, this.content);
     }
 }

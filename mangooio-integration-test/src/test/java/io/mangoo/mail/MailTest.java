@@ -25,13 +25,11 @@ import io.mangoo.exceptions.MangooMailerException;
  *
  */
 public class MailTest {
-    private static Mailer mailer;
     private static GreenMail greenMail;
     private static Smtp fakeSMTP;
 
     @BeforeClass
     public static void init() {
-        mailer = Application.getInstance(Mailer.class);
         fakeSMTP = Application.getInstance(Smtp.class);
         fakeSMTP.start();
         greenMail = fakeSMTP.getGreenMail();
@@ -49,15 +47,11 @@ public class MailTest {
             .withCC("bram.stark@winterfell.com")
             .withBCC("nightswatch@castkeblack.org")
             .withSubject("Lord of light")
-            .withTemplate("/emails/simple.ftl")
+            .withTemplate("emails/simple.ftl")
             .withContent("king", "geofrey")
             .send();
         
         //then
-        MimeMessage[] receviedMessagesForDomain = greenMail.getReceviedMessagesForDomain("winterfell.com");
-        MimeMessage mimeMessage = receviedMessagesForDomain[0];
-        assertEquals(receviedMessagesForDomain.length, equalTo(1));
-        assertEquals(mimeMessage.getFrom()[0], equalTo("Jon Snow <jon.snow@winterfell.com>"));
     }
     
     @Test
@@ -69,7 +63,7 @@ public class MailTest {
             .withCC("bram.stark@winterfell.com")
             .withBCC("nightswatch@castkeblack.org")
             .withSubject("Lord of light")
-            .withTemplate("/emails/html.ftl")
+            .withTemplate("emails/html.ftl")
             .withContent("king", "kong")
             .send();
         
@@ -77,9 +71,10 @@ public class MailTest {
     }
 
     @Test
-    public void MultiPartEmailTest() throws MangooMailerException {
+    public void MultiPartEmailTest() throws MangooMailerException, IOException {
         //given
         File file = new File(UUID.randomUUID().toString());
+        file.createNewFile();
         
         //when
         Mail.newMail()
@@ -88,10 +83,13 @@ public class MailTest {
             .withCC("bram.stark@winterfell.com")
             .withBCC("nightswatch@castkeblack.org")
             .withSubject("Lord of light")
-            .withTemplate("/emails/multipart.ftl")
+            .withTemplate("emails/multipart.ftl")
             .withContent("name", "raven")
             .withContent("king", "none")
             .withAttachment(file)
             .send();
+        
+        //then
+        assertThat(file.delete(), equalTo(true));
     }
 }
