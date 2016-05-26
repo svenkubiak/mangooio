@@ -73,14 +73,11 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong cryptography and authentication
 * And many more ...
 
-**mangoo I/O in 2 Minutes**   
-[Google Presentation](https://docs.google.com/presentation/d/1wzWMA_3ePu8HUjVfBk0QagwyO7ZaIkrZWGdqRePt2is) 
-
 **Homepage**   
-[https://mangoo.io](https://mangoo.io) 
+[https://mangoo.io](https://mangoo.io)
 
 **Discussion board**   
-[https://groups.google.com/forum/#!forum/mangooio](https://groups.google.com/forum/#!forum/mangooio)
+[https://mangoo.io/forum](https://mangoo.io/forum)
 
 **Documentation**   
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
@@ -89,7 +86,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 
 **Apidocs**   
-[http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)  
+[https://mangoo.io/apidocs](https://mangoo.io/apidocs) 
 
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
