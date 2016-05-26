@@ -1,1 +1,3 @@
 multipart template
+${name}
+${king}

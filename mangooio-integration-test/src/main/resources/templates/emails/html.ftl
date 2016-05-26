@@ -1,1 +1,2 @@
 html template
+${king}

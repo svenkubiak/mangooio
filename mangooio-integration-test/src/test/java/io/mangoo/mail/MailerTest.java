@@ -1,6 +1,7 @@
 package io.mangoo.mail;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailAttachment;
@@ -19,35 +20,37 @@ import io.mangoo.core.Application;
 public class MailerTest {
     private static Mailer mailer;
     private static GreenMail greenMail;
-    private static Smtp fakeSMTP;
+    private static Smtp smtp;
 
     @BeforeClass
     public static void init() {
         mailer = Application.getInstance(Mailer.class);
-        fakeSMTP = Application.getInstance(Smtp.class);
-        fakeSMTP.start();
-        greenMail = fakeSMTP.getGreenMail();
+        smtp = Application.getInstance(Smtp.class);
+        smtp.start();
+        greenMail = smtp.getGreenMail();
     }
 
     @Test
     public void textTest() throws Exception {
-        assertEquals(0, greenMail.getReceviedMessagesForDomain("text.com").length);
-
+        //given
+        assertThat(greenMail.getReceviedMessagesForDomain("text.com").length, equalTo(0));
         final Email email = new SimpleEmail();
         email.setFrom("user@test.com");
         email.setSubject("plainTextTest");
         email.setMsg("This is a test plan text message");
         email.addTo("foo@text.com");
 
+        //when
         mailer.send(email);
 
-        assertEquals(1, greenMail.getReceviedMessagesForDomain("text.com").length);
+        //then
+        assertThat(greenMail.getReceviedMessagesForDomain("text.com").length, equalTo(1));
     }
 
     @Test
     public void multipartTest() throws Exception {
-        assertEquals(0, greenMail.getReceviedMessagesForDomain("multipart.com").length);
-
+        //given
+        assertThat(greenMail.getReceviedMessagesForDomain("multipart.com").length, equalTo(0));
         final EmailAttachment attachment = new EmailAttachment();
         attachment.setPath(Resources.getResource("attachment.txt").getPath());
         attachment.setDisposition(EmailAttachment.ATTACHMENT);
@@ -59,34 +62,36 @@ public class MailerTest {
         email.setFrom("me@apache.org", "Me");
         email.setSubject("The picture");
         email.setMsg("Here is the picture you wanted");
-
         email.attach(attachment);
 
+        //when
         mailer.send(email);
 
-        assertEquals(1, greenMail.getReceviedMessagesForDomain("multipart.com").length);
+        //then
+        assertThat(greenMail.getReceviedMessagesForDomain("multipart.com").length, equalTo(1));
     }
 
     @Test
     public void htmlTest() throws Exception {
-        assertEquals(0, greenMail.getReceviedMessagesForDomain("html.org").length);
-
+        //given
+        assertThat(greenMail.getReceviedMessagesForDomain("html.org").length, equalTo(0));
         final HtmlEmail email = new HtmlEmail();
         email.setHostName("mail.myserver.com");
         email.addTo("jdoe@html.org", "John Doe");
         email.setFrom("me@apache.org", "Me");
         email.setSubject("Test email with inline image");
-
         email.setHtmlMsg("<html>The apache logo - </html>");
         email.setTextMsg("Your email client does not support HTML messages");
 
+        //when
         mailer.send(email);
 
-        assertEquals(1, greenMail.getReceviedMessagesForDomain("html.org").length);
+        //then
+        assertThat(greenMail.getReceviedMessagesForDomain("html.org").length, equalTo(1));
     }
 
     @AfterClass
     public static void shutdown() {
-        fakeSMTP.stop();
+        smtp.stop();
     }
 }
