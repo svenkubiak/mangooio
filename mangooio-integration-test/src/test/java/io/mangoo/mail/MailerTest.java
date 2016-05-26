@@ -16,6 +16,8 @@ import com.google.common.io.Resources;
 import com.icegreen.greenmail.util.GreenMail;
 
 import io.mangoo.core.Application;
+import io.mangoo.email.Mailer;
+import io.mangoo.email.Smtp;
 
 public class MailerTest {
     private static Mailer mailer;

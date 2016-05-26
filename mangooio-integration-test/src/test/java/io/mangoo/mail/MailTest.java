@@ -18,6 +18,8 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
 
 import io.mangoo.core.Application;
+import io.mangoo.email.Mail;
+import io.mangoo.email.Smtp;
 import io.mangoo.exceptions.MangooMailerException;
 
 /**

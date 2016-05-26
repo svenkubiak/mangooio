@@ -1,4 +1,4 @@
-package io.mangoo.mail;
+package io.mangoo.email;
 
 import java.io.File;
 import java.util.ArrayList;
