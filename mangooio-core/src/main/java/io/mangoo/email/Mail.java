@@ -27,17 +27,17 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 public class Mail {
-    private static DefaultAuthenticator defaultAuthenticator;
-    private Map<String, Object> content = new HashMap<>();
-    private List<File> files = new ArrayList<>();
-    private List<String> recipients = new ArrayList<>();
-    private List<String> cc = new ArrayList<>();
-    private List<String> bcc = new ArrayList<>();
+    private static volatile DefaultAuthenticator defaultAuthenticator;
+    private final Map<String, Object> content = new HashMap<>();
+    private final List<File> files = new ArrayList<>();
+    private final List<String> recipients = new ArrayList<>();
+    private final List<String> cc = new ArrayList<>();
+    private final List<String> bcc = new ArrayList<>();
     private String template;
     private String subject;
     private String from;
     private String body;
-    private static String host;
+    private static volatile String host;
     private static int port;
     private boolean html;
     private boolean attachment;
@@ -106,7 +106,7 @@ public class Mail {
     public Mail withTemplate(String template) {
         Objects.requireNonNull(template, "template can not be null");
         
-        if (template.startsWith("/") || template.startsWith("\\")) {
+        if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.replaceFirst("/", "");
             template = template.replaceFirst("\\", "");
         }
