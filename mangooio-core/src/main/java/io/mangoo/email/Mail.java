@@ -201,6 +201,11 @@ public class Mail {
      * @throws MangooMailerException
      */
     public void send() throws MangooMailerException {
+        Config config = Application.getInstance(Config.class);
+        if (StringUtils.isBlank(this.from)) {
+            this.from = config.getSmtpFrom();
+        }
+        
         if (this.html) {
             sendHtmlEmail();
         } else if (this.attachment) {

@@ -663,4 +663,11 @@ public class Config {
     public String getSmtpPassword() {
         return getString(Key.SMTP_PASSWORD, null);
     }
+
+    /**
+     * @return smtp.from or default value if undefined
+     */
+    public String getSmtpFrom() {
+        return getString(Key.SMTP_FROM, Default.SMTP_FROM.toString());
+    }
 }
