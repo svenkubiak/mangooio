@@ -175,7 +175,7 @@ public class Mail {
      * 
      * @return A mail object instance
      */
-    public Mail isHTML() {
+    public Mail isHtml() {
         this.html = true;
         return this;
     }
