@@ -118,7 +118,7 @@ public class Mail {
     /**
      * Adds a bcc recipient to the mail
      * 
-     * @param subject The subject of the email
+     * @param recipient The subject of the email
      * @return A mail object instance
      */
     public Mail withBCC(String recipient) {
@@ -146,7 +146,7 @@ public class Mail {
     /**
      * Adds the from address to the mail
 
-     * @param from The from address, e.g. Jon Snow<jon.snow@winterfell.com>
+     * @param from The from address, e.g. jon.snow@winterfell.com
      * @return A mail object instance
      */
     public Mail withFrom(String from) {
@@ -198,7 +198,7 @@ public class Mail {
     /**
      * Sends the mail
      * 
-     * @throws MangooMailerException
+     * @throws MangooMailerException when sending the mail failed
      */
     public void send() throws MangooMailerException {
         Config config = Application.getInstance(Config.class);
