@@ -2,35 +2,28 @@ package io.mangoo.admin;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ocpsoft.prettytime.PrettyTime;
-import org.quartz.JobKey;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.Trigger.TriggerState;
-import org.quartz.impl.matchers.GroupMatcher;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Template;
+import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
-import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.utils.SchedulerUtils;
 
 /**
  * Controller class for administrative URLs
@@ -68,6 +61,26 @@ public class AdminController {
         }
         
         return Response.withNotFound().andEmptyBody();
+    }
+    
+    public Response execute(String name) {
+        try {
+            SchedulerUtils.executeJob(name);
+        } catch (MangooSchedulerException e) {
+            LOG.error("Failed to execute job with name: " + name, e);
+        }
+        
+        return Response.withRedirect("/@admin/scheduler");
+    }
+    
+    public Response state(String name) {
+        try {
+            SchedulerUtils.changeState(name);
+        } catch (MangooSchedulerException e) {
+            LOG.error("Failed to change the state of job with name: " + name, e);
+        }
+        
+        return Response.withRedirect("/@admin/scheduler");
     }
     
     private Response dashboard() {
@@ -116,20 +129,10 @@ public class AdminController {
     }
 
     private Response scheduler(String space)  {
-        List<Job> jobs = new ArrayList<>();
+        List<Job> jobs = null;
         try {
-            org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
-            if (scheduler != null) {
-                Set<JobKey> jobKeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(Default.SCHEDULER_JOB_GROUP.toString()));
-                for (JobKey jobKey : jobKeys) {
-                    List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-                    Trigger trigger = triggers.get(0);
-                    TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
-                    jobs.add(new Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
-                }
-            }
- 
-        } catch (SchedulerException e) {
+            jobs = SchedulerUtils.getAllJobs();
+        } catch (MangooSchedulerException e) {
             LOG.error("Failed to retrieve jobs from scheduler", e);
         }
 

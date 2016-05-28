@@ -238,6 +238,8 @@ public class Bootstrap {
         if (this.config.isAdminEnabled()) {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/{space}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/execute/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("execute").internalOnly());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/state/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("state").internalOnly());
         }
 
         Router.getRoutes().parallelStream().forEach(route -> {

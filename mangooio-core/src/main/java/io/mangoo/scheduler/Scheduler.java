@@ -41,7 +41,7 @@ public class Scheduler {
      *
      * @return Scheduler instance, null if scheduler is not initialize or started
      */
-    public org.quartz.Scheduler getScheduler() {
+    public org.quartz.Scheduler getQuartzScheduler() {
         return this.quartzScheduler;
     }
 
