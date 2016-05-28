@@ -132,7 +132,6 @@ public final class SchedulerUtils {
         try {
             for (String groupName : scheduler.getJobGroupNames()) {
                 jobKeys.addAll(scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName)));
-                scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName)).forEach(j -> System.out.println(j.getName()));
             }            
         } catch (SchedulerException e) {
             throw new MangooSchedulerException(e);
