@@ -43,7 +43,7 @@ public class AdminController {
     private static final String VERSION = "version";
     private static final int MB = 1024*1024;
     private final Map<String, String> properties = new HashMap<>();
-    private Scheduler scheduler;
+    private final Scheduler scheduler; //NOSONAR
     
     @Inject
     public AdminController(Scheduler scheduler) {

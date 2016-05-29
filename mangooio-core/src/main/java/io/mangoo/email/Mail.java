@@ -311,6 +311,6 @@ public class Mail {
     }
 
     private String render() throws MangooTemplateEngineException {
-        return (StringUtils.isNotBlank(this.body)) ? this.body : Application.getInstance(TemplateEngine.class).render("", this.template, this.content);
+        return StringUtils.isNotBlank(this.body) ? this.body : Application.getInstance(TemplateEngine.class).render("", this.template, this.content);
     }
 }

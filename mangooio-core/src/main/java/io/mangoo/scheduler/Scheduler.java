@@ -231,8 +231,7 @@ public class Scheduler {
     private TriggerState getTriggerState(org.quartz.Scheduler scheduler, JobKey jobKey) throws SchedulerException {
         List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
         Trigger trigger = triggers.get(0);  
-        TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
 
-        return triggerState;
+        return scheduler.getTriggerState(trigger.getKey());
     }
 }
