@@ -149,12 +149,11 @@ public class Scheduler {
     @SuppressWarnings("unchecked")
     public List<io.mangoo.models.Job> getAllJobs() throws MangooSchedulerException {
         List<io.mangoo.models.Job> jobs = new ArrayList<>();
-        org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         try {
             for (JobKey jobKey : getAllJobKeys()) {
-                List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+                List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
                 Trigger trigger = triggers.get(0);  
-                TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
+                TriggerState triggerState = quartzScheduler.getTriggerState(trigger.getKey());
                 jobs.add(new io.mangoo.models.Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
             }
         } catch (SchedulerException e) {
@@ -171,11 +170,10 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during execution of the job
      */
     public void executeJob(String jobName) throws MangooSchedulerException {
-        org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         try {
             for (JobKey jobKey : getAllJobKeys()) {
                 if (jobKey.getName().equalsIgnoreCase(jobName)) {
-                    scheduler.triggerJob(jobKey);  
+                    this.quartzScheduler.triggerJob(jobKey);  
                 }
             }
         } catch (SchedulerException | MangooSchedulerException e) {
@@ -191,10 +189,9 @@ public class Scheduler {
      */
     public List<JobKey> getAllJobKeys() throws MangooSchedulerException {
         List<JobKey> jobKeys = new ArrayList<>();
-        org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                jobKeys.addAll(scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName)));
+            for (String groupName : this.quartzScheduler.getJobGroupNames()) {
+                jobKeys.addAll(this.quartzScheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName)));
             }            
         } catch (SchedulerException e) {
             throw new MangooSchedulerException(e);
@@ -207,18 +204,17 @@ public class Scheduler {
      * Changes the state of a normally running job from pause to resume or resume to pause
      * 
      * @param jobName The name of the job
-     * @throws MangooSchedulerException if an error occurs during access to the quartz scheuler
+     * @throws MangooSchedulerException if an error occurs during access to the quartz scheduler
      */
     public void changeState(String jobName) throws MangooSchedulerException {
-        org.quartz.Scheduler scheduler = Application.getInstance(Scheduler.class).getScheduler();
         try {
             for (JobKey jobKey : getAllJobKeys()) {
                 if (jobKey.getName().equalsIgnoreCase(jobName)) {
-                    TriggerState triggerState = getTriggerState(scheduler, jobKey);
+                    TriggerState triggerState = getTriggerState(jobKey);
                     if (TriggerState.NORMAL.equals(triggerState)) {
-                        scheduler.pauseJob(jobKey);                        
+                        this.quartzScheduler.pauseJob(jobKey);                        
                     } else {
-                        scheduler.resumeJob(jobKey);
+                        this.quartzScheduler.resumeJob(jobKey);
                     }
                 }
             }            
@@ -228,10 +224,10 @@ public class Scheduler {
     }
 
     @SuppressWarnings("unchecked")
-    private TriggerState getTriggerState(org.quartz.Scheduler scheduler, JobKey jobKey) throws SchedulerException {
-        List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+    private TriggerState getTriggerState(JobKey jobKey) throws SchedulerException {
+        List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
         Trigger trigger = triggers.get(0);  
 
-        return scheduler.getTriggerState(trigger.getKey());
+        return this.quartzScheduler.getTriggerState(trigger.getKey());
     }
 }
