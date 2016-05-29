@@ -22,7 +22,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.5</log4j.version>
+		<log4j.version>2.6</log4j.version>
 		<maven.version>3.3.9</maven.version>
 		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<scribejava.version>2.6.0</scribejava.version>
