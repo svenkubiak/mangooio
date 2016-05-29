@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +39,10 @@ import io.mangoo.utils.BootstrapUtils;
 @FilterWith(AdminFilter.class)
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String SCHEDULER = "scheduler";
+    private static final String METRICS = "metrics";
+    private static final String CACHE = "cache";
+    private static final String ROUTES = "routes";
     private static final String JOBS = "jobs";
     private static final String STATS = "stats";
     private static final String SPACE = "space";
@@ -57,14 +63,14 @@ public class AdminController {
     public Response index(String space) {
         if (StringUtils.isBlank(space)) {
             return dashboard();
-        } else if (("routes").equals(space)) {
-            return routes(space);
-        } else if (("cache").equals(space)) {
-            return cache(space);
-        }  else if (("metrics").equals(space)) {
-            return metrics(space);
-        } else if (("scheduler").equals(space)) {
-            return scheduler(space);
+        } else if (ROUTES.equals(space)) {
+            return routes();
+        } else if (CACHE.equals(space)) {
+            return cache();
+        }  else if (METRICS.equals(space)) {
+            return metrics();
+        } else if (SCHEDULER.equals(space)) {
+            return scheduler();
         }
         
         return Response.withNotFound().andEmptyBody();
@@ -107,35 +113,51 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
-    private Response routes(String space) {
+    private Response routes() {
         return Response.withOk()
-                .andContent(SPACE, space)
+                .andContent(SPACE, ROUTES)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent("routes", Router.getRoutes())
+                .andContent(ROUTES, Router.getRoutes())
                 .andTemplate(Template.DEFAULT.routesPath());
     }
 
-    private Response cache(String space) {
+    private Response cache() {
         Map<String, Object> stats = Application.getInstance(Cache.class).getStats();
 
         return Response.withOk()
-                .andContent(SPACE, space)
+                .andContent(SPACE, CACHE)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(STATS, stats)
                 .andTemplate(Template.DEFAULT.cachePath());
     }
 
-    private Response metrics(String space) {
+    private Response metrics() {
         Metrics metrics = Application.getInstance(Metrics.class);
+        long totalRequests = 0;
+        long errorRequests = 0;
+        double errorRate = 0;
+        
+        for (Entry<Integer, LongAdder> entry :  metrics.getMetrics().entrySet()) {
+            if (String.valueOf(entry.getKey()).startsWith("5")) {
+                errorRequests = errorRequests + entry.getValue().longValue();
+            }
+            totalRequests = totalRequests + entry.getValue().longValue();
+        }
+        
+        if (errorRequests > 0) {
+            errorRate = totalRequests / errorRequests;
+        }
 
         return Response.withOk()
-                .andContent(SPACE, space)
+                .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent("metrics", metrics.getMetrics())
+                .andContent(METRICS, metrics.getMetrics())
+                .andContent("totalRequests", totalRequests)
+                .andContent("errorRate", errorRate)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
 
-    private Response scheduler(String space)  {
+    private Response scheduler()  {
         List<Job> jobs = null;
         try {
             jobs = this.scheduler.getAllJobs();
@@ -144,7 +166,7 @@ public class AdminController {
         }
 
         return Response.withOk()
-                .andContent(SPACE, space)
+                .andContent(SPACE, SCHEDULER)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(JOBS, jobs)
                 .andTemplate(Template.DEFAULT.schedulerPath());

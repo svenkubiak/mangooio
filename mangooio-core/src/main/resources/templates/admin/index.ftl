@@ -1,18 +1,10 @@
 <#include "header.ftl">
 <div class="row">
 	<div class="col-lg-3 col-xs-6">
-	    <div class="small-box bg-aqua">
+	    <div class="small-box bg-green">
     	    <div class="inner">
-              <h3>Started</h3>
-              <p>${started}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-xs-6">
-    	<div class="small-box bg-green">
-        	<div class="inner">
-            	<h3>Uptime</h3>
-            	<p>since ${uptime}</p>
+              <h3>${uptime}</h3>
+              <p>Application started</p>
             </div>
         </div>
     </div>
