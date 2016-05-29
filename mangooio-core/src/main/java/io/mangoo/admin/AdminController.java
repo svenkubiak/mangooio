@@ -7,11 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ocpsoft.prettytime.PrettyTime;
+
+import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
@@ -22,8 +25,8 @@ import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
+import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
-import io.mangoo.utils.SchedulerUtils;
 
 /**
  * Controller class for administrative URLs
@@ -40,8 +43,12 @@ public class AdminController {
     private static final String VERSION = "version";
     private static final int MB = 1024*1024;
     private final Map<String, String> properties = new HashMap<>();
+    private Scheduler scheduler;
     
-    public AdminController() {
+    @Inject
+    public AdminController(Scheduler scheduler) {
+        this.scheduler = Objects.requireNonNull(scheduler, "scheduler can not be null");
+        
         System.getProperties().entrySet().forEach(
                 entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
         );
@@ -65,7 +72,7 @@ public class AdminController {
     
     public Response execute(String name) {
         try {
-            SchedulerUtils.executeJob(name);
+            this.scheduler.executeJob(name);
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to execute job with name: " + name, e);
         }
@@ -75,7 +82,7 @@ public class AdminController {
     
     public Response state(String name) {
         try {
-            SchedulerUtils.changeState(name);
+            this.scheduler.changeState(name);
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to change the state of job with name: " + name, e);
         }
@@ -131,7 +138,7 @@ public class AdminController {
     private Response scheduler(String space)  {
         List<Job> jobs = null;
         try {
-            jobs = SchedulerUtils.getAllJobs();
+            jobs = this.scheduler.getAllJobs();
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to retrieve jobs from scheduler", e);
         }
