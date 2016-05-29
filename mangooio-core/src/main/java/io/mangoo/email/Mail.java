@@ -31,8 +31,8 @@ public class Mail {
     private final Map<String, Object> content = new HashMap<>();
     private final List<File> files = new ArrayList<>();
     private final List<String> recipients = new ArrayList<>();
-    private final List<String> cc = new ArrayList<>();
-    private final List<String> bcc = new ArrayList<>();
+    private final List<String> ccRecipients = new ArrayList<>();
+    private final List<String> bccRecipients = new ArrayList<>();
     private String template;
     private String subject;
     private String from;
@@ -80,7 +80,7 @@ public class Mail {
     public Mail withCC(String recipient) {
         Objects.requireNonNull(recipient, "cc recipient can not be null");
         
-        this.cc.add(recipient);
+        this.ccRecipients.add(recipient);
         return this;
     }
     
@@ -124,7 +124,7 @@ public class Mail {
     public Mail withBCC(String recipient) {
         Objects.requireNonNull(recipient, "bcc recipient can not be null");
         
-        this.bcc.add(recipient);
+        this.bccRecipients.add(recipient);
         return this;
     }
     
@@ -230,11 +230,11 @@ public class Mail {
                 email.addTo(recipient);
             }
             
-            for (String cc : this.cc) {
+            for (String cc : this.ccRecipients) {
                 email.addCc(cc);
             }
             
-            for (String bcc : this.bcc) {
+            for (String bcc : this.bccRecipients) {
                 email.addBcc(bcc);
             }
             
@@ -259,11 +259,11 @@ public class Mail {
                 multiPartEmail.addTo(recipient);
             }
             
-            for (String cc : this.cc) {
+            for (String cc : this.ccRecipients) {
                 multiPartEmail.addCc(cc);
             }
             
-            for (String bcc : this.bcc) {
+            for (String bcc : this.bccRecipients) {
                 multiPartEmail.addBcc(bcc);
             }
             
@@ -292,11 +292,11 @@ public class Mail {
                 htmlEmail.addTo(recipient);
             }
             
-            for (String cc : this.cc) {
+            for (String cc : this.ccRecipients) {
                 htmlEmail.addCc(cc);
             }
             
-            for (String bcc : this.bcc) {
+            for (String bcc : this.bccRecipients) {
                 htmlEmail.addBcc(bcc);
             }
             
