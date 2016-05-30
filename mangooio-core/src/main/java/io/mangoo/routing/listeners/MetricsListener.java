@@ -14,6 +14,9 @@ import io.undertow.server.HttpServerExchange;
  */
 public class MetricsListener implements ExchangeCompletionListener {
     private long start;
+    
+    public MetricsListener() {
+    }
 
     public MetricsListener(long start) {
         this.start = start;

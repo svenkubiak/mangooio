@@ -260,7 +260,6 @@ public class Bootstrap {
 
             final Undertow server = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
-                    .setServerOption(UndertowOptions.ENABLE_STATISTICS, this.config.isAdminEnabled())
                     .addHttpListener(this.port, this.host)
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
                     .build();
