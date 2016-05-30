@@ -40,9 +40,9 @@ import io.mangoo.utils.BootstrapUtils;
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final String SCHEDULER = "scheduler";
-    private static final String METRICS = "metrics";
-    private static final String CACHE = "cache";
-    private static final String ROUTES = "routes";
+    private static final String METRICS = "metrics"; //NOSONAR
+    private static final String CACHE = "cache";  //NOSONAR
+    private static final String ROUTES = "routes"; //NOSONAR
     private static final String JOBS = "jobs";
     private static final String STATS = "stats";
     private static final String SPACE = "space";
@@ -138,7 +138,7 @@ public class AdminController {
         double errorRate = 0;
         
         for (Entry<Integer, LongAdder> entry :  metrics.getMetrics().entrySet()) {
-            if (String.valueOf(entry.getKey()).startsWith("5")) {
+            if (String.valueOf(entry.getKey()).charAt(0) == '5') {
                 errorRequests = errorRequests + entry.getValue().longValue();
             }
             totalRequests = totalRequests + entry.getValue().longValue();

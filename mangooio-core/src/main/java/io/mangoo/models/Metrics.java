@@ -26,21 +26,21 @@ public class Metrics {
     }
 
     public void update(final int requestTime) {
-        int maxRequestTime;
+        int tempMaxRequestTime;
         do {
-            maxRequestTime = this.maxRequestTime;
-            if (requestTime < maxRequestTime) {
+            tempMaxRequestTime = this.maxRequestTime;
+            if (requestTime < tempMaxRequestTime) {
                 break;
             }
-        } while (!this.maxRequestTimeUpdater.compareAndSet(this, maxRequestTime, requestTime));
+        } while (!this.maxRequestTimeUpdater.compareAndSet(this, tempMaxRequestTime, requestTime));
 
-        int minRequestTime;
+        int tempMinRequestTime;
         do {
-            minRequestTime = this.minRequestTime;
-            if (requestTime > minRequestTime && minRequestTime != -1) {
+            tempMinRequestTime = this.minRequestTime;
+            if (requestTime > tempMinRequestTime && tempMinRequestTime != -1) {
                 break;
             }
-        } while (!this.minRequestTimeUpdater.compareAndSet(this, minRequestTime, requestTime));
+        } while (!this.minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime));
     }
 
     public Map<Integer, LongAdder> getMetrics() {
