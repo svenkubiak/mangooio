@@ -30,7 +30,7 @@
 	        	<table class="table table-hover">
 	            	<thead>
 						<tr>
-							<th data-sort="string"><b>Key</b></th>
+							<th data-sort="string"><b>Property</b></th>
 							<th data-sort="string"><b>Value</b></th>
 						</tr>
 					</thead>

@@ -153,6 +153,8 @@ public class AdminController {
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(METRICS, metrics.getMetrics())
                 .andContent("totalRequests", totalRequests)
+                .andContent("minRequestTime", metrics.getMinRequestTime())
+                .andContent("maxRequestTime", metrics.getMaxRequestTime())
                 .andContent("errorRate", errorRate)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }

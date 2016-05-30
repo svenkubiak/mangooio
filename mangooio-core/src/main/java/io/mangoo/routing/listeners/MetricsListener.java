@@ -1,35 +1,34 @@
 package io.mangoo.routing.listeners;
 
-import java.util.Objects;
 import java.util.Optional;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
+import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
+import io.undertow.server.ExchangeCompletionListener;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.ResponseCommitListener;
 
 /**
- * Listener that is invoked for counting metrics of HTTP response codes
- *
- * @author Kubiak
+ * 
+ * @author svenkubiak
  *
  */
-@Singleton
-public class MetricsListener implements ResponseCommitListener {
-    private final Metrics metrics;
+public class MetricsListener implements ExchangeCompletionListener {
+    private long start;
 
-    @Inject
-    public MetricsListener(Metrics metrics) {
-        this.metrics = Objects.requireNonNull(metrics, "metrics can not be null");
+    public MetricsListener(long start) {
+        this.start = start;
     }
 
     @Override
-    public void beforeCommit(HttpServerExchange exchange) {
+    public void exchangeEvent(HttpServerExchange exchange, NextListener nextListener) {
+        Metrics metrics = Application.getInstance(Metrics.class);
+        metrics.update((int) (System.currentTimeMillis() - this.start));
+        
         String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase();
         if (!uri.contains("@admin")) {
-            this.metrics.inc(exchange.getStatusCode());
+            metrics.inc(exchange.getStatusCode());
         }
+        
+        nextListener.proceed();
     }
 }

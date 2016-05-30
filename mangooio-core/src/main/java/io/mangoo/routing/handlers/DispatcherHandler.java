@@ -43,13 +43,11 @@ public class DispatcherHandler implements HttpHandler {
     private final TemplateEngine templateEngine;
     private final Messages messages;
     private final Crypto crypto;
-    private final MetricsListener metricsListener;
     private final Map<String, Class<?>> methodParameters;
     private final Class<?> controllerClass;
     private final String controllerClassName;
     private final String controllerMethodName;
     private final int methodParametersCount;
-    private final boolean metrics;
     private final boolean async;
     private final boolean hasRequestFilter;
 
@@ -59,7 +57,6 @@ public class DispatcherHandler implements HttpHandler {
 
         this.templateEngine = internal ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
-        this.metricsListener = Application.getInstance(MetricsListener.class);
         this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethod;
@@ -68,7 +65,6 @@ public class DispatcherHandler implements HttpHandler {
         this.methodParametersCount = this.methodParameters.size();
         this.async = async;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
-        this.metrics = CONFIG.isAdminEnabled();
 
         try {
             this.method = Application.getInstance(this.controllerClass)
@@ -86,8 +82,8 @@ public class DispatcherHandler implements HttpHandler {
             return;
         }
 
-        if (this.metrics) {
-            exchange.addResponseCommitListener(this.metricsListener);
+        if (CONFIG.isAdminEnabled()) {
+            exchange.addExchangeCompleteListener(new MetricsListener(System.currentTimeMillis()));
         }
 
         final Attachment attachment = Attachment.build()

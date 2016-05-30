@@ -12,7 +12,25 @@
     	<div class="small-box bg-red">
         	<div class="inner">
             	<h3>${errorRate} %</h3>
-            	<p>Error rates</p>
+            	<p>Error rate</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-xs-6">
+    	<div class="small-box bg-aqua">
+        	<div class="inner">
+            	<h3>${minRequestTime} ms</h3>
+            	<p>Min request time</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-xs-6">
+    	<div class="small-box bg-aqua">
+        	<div class="inner">
+            	<h3>${maxRequestTime} ms</h3>
+            	<p>Max request time</p>
             </div>
         </div>
     </div>
@@ -38,8 +56,8 @@
             	<table class="table table-hover">
                 	<thead>
 						<tr>
-							<th data-sort="string"><b>Key</b></th>
-							<th data-sort="string"><b>Value</b></th>
+							<th data-sort="string"><b>HTTP status</b></th>
+							<th data-sort="string"><b>Count</b></th>
 						</tr>
 					</thead>
 					<tbody class="searchable">

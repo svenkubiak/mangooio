@@ -49,7 +49,7 @@
 									&nbsp;&nbsp;
 									<a href="/@admin/scheduler/execute/${job.name}" class="simpletooltip">
 										<span class="simpletooltiptext">Execute job</span>
-										<i class="fa fa-random" aria-hidden="true"></i>
+										<i class="fa fa-fire" aria-hidden="true"></i>
 									</a>
 								</td>
 							</tr>
@@ -60,5 +60,4 @@
     	</div>
 	</div>
 </div>
-
 <#include "footer.ftl">
