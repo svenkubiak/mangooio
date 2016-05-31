@@ -34,6 +34,14 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-3 col-xs-6">
+    	<div class="small-box bg-aqua">
+        	<div class="inner">
+            	<h3>${avgRequestTime} ms</h3>
+            	<p>Avg request time</p>
+            </div>
+        </div>
+    </div>    
 </div>
 <div class="row">
 	<div class="col-xs-12">

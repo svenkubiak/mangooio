@@ -154,6 +154,7 @@ public class AdminController {
                 .andContent(METRICS, metrics.getMetrics())
                 .andContent("totalRequests", totalRequests)
                 .andContent("minRequestTime", metrics.getMinRequestTime())
+                .andContent("avgRequestTime", metrics.getAvgRequestTime())
                 .andContent("maxRequestTime", metrics.getMaxRequestTime())
                 .andContent("errorRate", errorRate)
                 .andTemplate(Template.DEFAULT.metricsPath());
