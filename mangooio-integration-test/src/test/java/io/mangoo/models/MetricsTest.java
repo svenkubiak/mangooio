@@ -1,9 +1,8 @@
 package io.mangoo.models;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.lessThan;
 
 import org.junit.Test;
 
@@ -43,7 +42,7 @@ public class MetricsTest {
         
         //then
         assertThat(metrics.getMaxRequestTime(), equalTo(2000));
-        assertThat(metrics.getMinRequestTime(), lessThan(1000));
-        assertThat(metrics.getAvgRequestTime(), lessThan(1000));
+        assertThat(metrics.getMinRequestTime(), lessThan(2000));
+        assertThat(metrics.getAvgRequestTime(), lessThan(2000));
     }
 }
