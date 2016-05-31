@@ -1,5 +1,6 @@
 package io.mangoo.routing.listeners;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import io.mangoo.core.Application;
@@ -27,7 +28,7 @@ public class MetricsListener implements ExchangeCompletionListener {
         Metrics metrics = Application.getInstance(Metrics.class);
         metrics.update((int) (System.currentTimeMillis() - this.start));
         
-        String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase();
+        String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase(Locale.ENGLISH);
         if (!uri.contains("@admin")) {
             metrics.inc(exchange.getStatusCode());
         }

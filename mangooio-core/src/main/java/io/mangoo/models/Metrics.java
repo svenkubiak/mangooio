@@ -26,11 +26,7 @@ public class Metrics {
     private volatile long totalRequestTime;
     private volatile long totalRequests;
     private volatile int minRequestTime = -1;
-    
-    public void inc(int responseCode) {
-        this.metricsCount.computeIfAbsent(responseCode, t -> new LongAdder()).increment();
-    }
-    
+
     public Metrics(){
     }
     
@@ -41,24 +37,28 @@ public class Metrics {
         this.totalRequests = copy.totalRequests;
     }
     
+    public void inc(int responseCode) {
+        this.metricsCount.computeIfAbsent(responseCode, t -> new LongAdder()).increment();
+    }
+    
     public void update(final int requestTime) {
         this.totalRequestTimeUpdater.addAndGet(this, requestTime);        
         
-        int maxRequestTime;
+        int tempMaxRequestTime;
         do {
-            maxRequestTime = this.maxRequestTime;
-            if (requestTime < maxRequestTime) {
+            tempMaxRequestTime = this.maxRequestTime;
+            if (requestTime < tempMaxRequestTime) {
                 break;
             }
-        } while (!this.maxRequestTimeUpdater.compareAndSet(this, maxRequestTime, requestTime));
+        } while (!this.maxRequestTimeUpdater.compareAndSet(this, tempMaxRequestTime, requestTime));
 
-        int minRequestTime;
+        int tempMinRequestTime;
         do {
-            minRequestTime = this.minRequestTime;
-            if (requestTime > minRequestTime && minRequestTime != -1) {
+            tempMinRequestTime = this.minRequestTime;
+            if (requestTime > tempMinRequestTime && tempMinRequestTime != -1) {
                 break;
             }
-        } while (!this.minRequestTimeUpdater.compareAndSet(this, minRequestTime, requestTime));
+        } while (!this.minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime));
         
         this.totalRequestsUpdater.incrementAndGet(this);
         this.avgRequestTime = (int) (this.totalRequestTime / this.totalRequests);
