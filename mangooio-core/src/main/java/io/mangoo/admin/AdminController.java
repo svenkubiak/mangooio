@@ -2,6 +2,7 @@ package io.mangoo.admin;
 
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -61,19 +61,20 @@ public class AdminController {
     }
     
     public Response index(String space) {
-        if (StringUtils.isBlank(space)) {
-            return dashboard();
-        } else if (ROUTES.equals(space)) {
-            return routes();
-        } else if (CACHE.equals(space)) {
-            return cache();
-        }  else if (METRICS.equals(space)) {
-            return metrics();
-        } else if (SCHEDULER.equals(space)) {
-            return scheduler();
-        }
+        Runtime runtime = Runtime.getRuntime();
+        double maxMemory = runtime.maxMemory() / MB;
         
-        return Response.withNotFound().andEmptyBody();
+        Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
+        PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
+        
+        return Response.withOk()
+                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(SPACE, null)
+                .andContent("uptime", prettyTime.format(Date.from(instant)))
+                .andContent("started", Application.getStart())
+                .andContent("properties", this.properties)
+                .andContent("maxMemory", maxMemory)
+                .andTemplate(Template.DEFAULT.adminPath());
     }
     
     public Response execute(String name) {
@@ -96,24 +97,7 @@ public class AdminController {
         return Response.withRedirect("/@admin/scheduler");
     }
     
-    private Response dashboard() {
-        Runtime runtime = Runtime.getRuntime();
-        double maxMemory = runtime.maxMemory() / MB;
-        
-        Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
-        PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
-        
-        return Response.withOk()
-                .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(SPACE, null)
-                .andContent("uptime", prettyTime.format(Date.from(instant)))
-                .andContent("started", Application.getStart())
-                .andContent("properties", this.properties)
-                .andContent("maxMemory", maxMemory)
-                .andTemplate(Template.DEFAULT.adminPath());
-    }
-    
-    private Response routes() {
+    public Response routes() {
         return Response.withOk()
                 .andContent(SPACE, ROUTES)
                 .andContent(VERSION, BootstrapUtils.getVersion())
@@ -121,17 +105,15 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.routesPath());
     }
 
-    private Response cache() {
-        Map<String, Object> stats = Application.getInstance(Cache.class).getStats();
-
+    public Response cache() {
         return Response.withOk()
                 .andContent(SPACE, CACHE)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(STATS, stats)
+                .andContent(STATS, Application.getInstance(Cache.class).getStats())
                 .andTemplate(Template.DEFAULT.cachePath());
     }
 
-    private Response metrics() {
+    public Response metrics() {
         Metrics metrics = Application.getInstance(Metrics.class);
         long totalRequests = 0;
         long errorRequests = 0;
@@ -160,8 +142,8 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
 
-    private Response scheduler()  {
-        List<Job> jobs = null;
+    public Response scheduler()  {
+        List<Job> jobs = new ArrayList<>();
         try {
             jobs = this.scheduler.getAllJobs();
         } catch (MangooSchedulerException e) {

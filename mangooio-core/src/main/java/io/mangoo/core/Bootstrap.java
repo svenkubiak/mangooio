@@ -236,15 +236,19 @@ public class Bootstrap {
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
         if (this.config.isAdminEnabled()) {
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/{space}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").internalOnly());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/execute/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("execute").internalOnly());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/state/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("state").internalOnly());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/routes").withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/cache").withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/metrics").withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/execute/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("execute").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/state/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("state").useInternalTemplateEngine());
         }
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                routingHandler.add(route.getRequestMethod(), route.getUrl(), new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed(), route.isInternal()));
+                routingHandler.add(route.getRequestMethod(),route.getUrl(),
+                		new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed(), route.isInternalTemplateEngine()));
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
             }

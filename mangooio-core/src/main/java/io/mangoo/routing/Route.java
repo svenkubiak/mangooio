@@ -18,14 +18,14 @@ public class Route {
     private final RouteType routeType;
     private boolean authentication;
     private boolean blocking;
-    private boolean internal;
+    private boolean internalTemplateEngine;
 
     public Route(RouteType routeType) {
         this.routeType = Objects.requireNonNull(routeType, "routeType can not be null");
     }
 
     public Route toUrl(String url) {
-        this.url = url;
+        this.url = Objects.requireNonNull(url, "url can not be null");
 
         if (RouteType.RESOURCE_PATH.equals(this.routeType)) {
             if ('/' != this.url.charAt(0)) {
@@ -69,8 +69,8 @@ public class Route {
         return this;
     }
     
-    public Route internalOnly() {
-        this.internal = true;
+    public Route useInternalTemplateEngine() {
+        this.internalTemplateEngine = true;
         return this;
     }
 
@@ -90,16 +90,16 @@ public class Route {
         return this.controllerMethod;
     }
 
+    public HttpString getRequestMethod() {
+        return this.requestMethod;
+    }
+
     public boolean isAuthenticationRequired() {
         return this.authentication;
     }
     
-    public boolean isInternal() {
-        return this.internal;
-    }
-
-    public HttpString getRequestMethod() {
-        return this.requestMethod;
+    public boolean isInternalTemplateEngine() {
+        return this.internalTemplateEngine;
     }
 
     public boolean isBlockingAllowed() {

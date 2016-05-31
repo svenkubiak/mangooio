@@ -15,6 +15,7 @@ import org.quartz.Trigger.TriggerState;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
@@ -31,15 +32,22 @@ import io.mangoo.exceptions.MangooSchedulerException;
 @Singleton
 public class Scheduler {
     private static final Logger LOG = LogManager.getLogger(Scheduler.class);
-    private static final Config CONFIG = Application.getConfig();
     private org.quartz.Scheduler quartzScheduler;
 
-    public Scheduler() {
-        CONFIG.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
+    @Inject
+    public Scheduler(Config config) {
+    	config.getAllConfigurations().entrySet().forEach((Map.Entry<String, String> entry) -> {
             if (entry.getKey().startsWith(Default.SCHEDULER_PREFIX.toString())) {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
         });
+        
+        try {
+            this.quartzScheduler = new StdSchedulerFactory().getScheduler();
+            this.quartzScheduler.setJobFactory(Application.getInstance(SchedulerFactory.class));
+        } catch (final SchedulerException e) {
+            LOG.error("Failed to initialize scheduler", e);
+        }
     }
 
     /**
@@ -63,7 +71,6 @@ public class Scheduler {
     }
 
     public void start() {
-        initialize();
         try {
             this.quartzScheduler.start();
             if (this.quartzScheduler.isStarted()) {
@@ -107,21 +114,6 @@ public class Scheduler {
     }
 
     /**
-     * Prepares the scheduler for being started by creating a
-     * scheduler instance from quartz scheduler factory
-     */
-    private void initialize() {
-        if (this.quartzScheduler == null) {
-            try {
-                this.quartzScheduler = new StdSchedulerFactory().getScheduler();
-                this.quartzScheduler.setJobFactory(Application.getInstance(SchedulerFactory.class));
-            } catch (final SchedulerException e) {
-                LOG.error("Failed to initialize scheduler", e);
-            }
-        }
-    }
-
-    /**
      * Adds a new job with a given JobDetail and Trigger to the scheduler
      *
      * @param jobDetail The JobDetail for the Job
@@ -130,7 +122,6 @@ public class Scheduler {
     public void schedule(JobDetail jobDetail, Trigger trigger) {
         Objects.requireNonNull(jobDetail, "JobDetail is required for schedule");
         Objects.requireNonNull(trigger, "trigger is required for schedule");
-        initialize();
 
         try {
             this.quartzScheduler.scheduleJob(jobDetail, trigger);
