@@ -29,6 +29,7 @@ public enum Key {
     SMTP_PORT("smtp.port"),
     SMTP_HOST("smtp.host"),
     SMTP_SSL("smtp.ssl"),
+    SMTP_FROM("smtp.from"),
     SMTP_USERNAME("smtp.username"),
     SMTP_PASSWORD("smtp.password"),
     AUTH_COOKIE_NAME("auth.cookie.name"),

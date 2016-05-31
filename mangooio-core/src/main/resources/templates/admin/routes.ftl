@@ -20,8 +20,11 @@
             	<table class="table table-hover">
                 	<thead>
 						<tr>
-							<th data-sort="string"><b>Key</b></th>
-							<th data-sort="string"><b>Value</b></th>
+							<th data-sort="string"><b>Method</b></th>
+							<th data-sort="string"><b>URL</b></th>
+							<th data-sort="string"><b>Controller class</b></th>
+							<th data-sort="string"><b>Controller method</b></th>
+							<th data-sort="string"><b>Type</b></th>
 						</tr>
 					</thead>
 					<tbody class="searchable">

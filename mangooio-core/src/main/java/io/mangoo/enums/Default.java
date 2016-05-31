@@ -84,7 +84,8 @@ public enum Default {
     SMTP_PORT("25"),
     SMTP_SSL("false"),
     SMTP_HOST("localhost"),
-    SMTP_SERVER_NAME("smtp");
+    SMTP_SERVER_NAME("smtp"),
+    SMTP_FROM("mangoo I/O application <noreply@example.com>");
 
     private final String value;
 

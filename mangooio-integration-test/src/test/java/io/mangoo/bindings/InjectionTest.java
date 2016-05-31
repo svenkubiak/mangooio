@@ -14,6 +14,7 @@ import io.mangoo.i18n.Messages;
 import io.mangoo.managers.ExecutionManager;
 import io.mangoo.managers.ServerEventManager;
 import io.mangoo.managers.WebSocketManager;
+import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -48,6 +49,7 @@ public class InjectionTest {
         WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
         ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
         MetricsListener metricsListener = Application.getInstance(MetricsListener.class);
+        Metrics metrics = Application.getInstance(Metrics.class);
         
         //then
         assertThat(form, not(nullValue()));
@@ -65,5 +67,6 @@ public class InjectionTest {
         assertThat(webSocketManager, not(nullValue()));
         assertThat(serverEventManager, not(nullValue()));
         assertThat(metricsListener, not(nullValue()));
+        assertThat(metrics, not(nullValue()));
     }
 }

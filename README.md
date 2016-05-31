@@ -74,10 +74,10 @@ Here are some used libraries and their purpose in mangoo I/O.
 * And many more ...
 
 **Homepage**   
-[https://mangoo.io](https://mangoo.io) 
+[https://mangoo.io](https://mangoo.io)
 
 **Discussion board**   
-[https://mangoo.io/forums/forum/mangooio/](https://mangoo.io/forums/forum/mangooio/) 
+[https://mangoo.io/forum](https://mangoo.io/forum)
 
 **Documentation**   
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
@@ -86,7 +86,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 
 **Apidocs**   
-[http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)  
+[https://mangoo.io/apidocs](https://mangoo.io/apidocs) 
 
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
