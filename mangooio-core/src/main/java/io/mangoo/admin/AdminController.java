@@ -60,7 +60,7 @@ public class AdminController {
         );
     }
     
-    public Response index(String space) {
+    public Response index() {
         Runtime runtime = Runtime.getRuntime();
         double maxMemory = runtime.maxMemory() / MB;
         
