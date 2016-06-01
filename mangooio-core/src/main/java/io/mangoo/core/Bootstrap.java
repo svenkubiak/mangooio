@@ -39,6 +39,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
+import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.routing.Route;
 import io.mangoo.routing.Router;
@@ -312,21 +313,31 @@ public class Bootstrap {
             final Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
             if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
                 final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
-                jobs.forEach(clazz -> {
+                mangooScheduler.initialize();
+                
+                for (Class<?> clazz : jobs) {
                     final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
                     if (CronExpression.isValidExpression(schedule.cron())) {
                         final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
                         final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
-                        mangooScheduler.schedule(jobDetail, trigger);
+                        try {
+							mangooScheduler.schedule(jobDetail, trigger);
+						} catch (Exception e) {
+							LOG.error("Failed to add a job to the scheduler", e);
+						}
                         LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
                         LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         this.error = true;
                     }
-                });
+                }
 
                 if (!hasError()) {
-                    mangooScheduler.start();
+                    try {
+						mangooScheduler.start();
+					} catch (MangooSchedulerException e) {
+						LOG.error("Failed to start the scheduler", e);
+					}
                 }
             }
         }

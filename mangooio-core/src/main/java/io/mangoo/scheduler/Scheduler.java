@@ -41,13 +41,19 @@ public class Scheduler {
                 System.setProperty(entry.getKey(), entry.getValue());
             }
         });
-        
+    }
+    
+    /***
+     * Initializes the scheduler by booting up Quartz
+     * 
+     */
+    public void initialize() {
         try {
             this.quartzScheduler = new StdSchedulerFactory().getScheduler();
             this.quartzScheduler.setJobFactory(Application.getInstance(SchedulerFactory.class));
         } catch (final SchedulerException e) {
             LOG.error("Failed to initialize scheduler", e);
-        }
+        }	
     }
 
     /**
@@ -70,7 +76,9 @@ public class Scheduler {
         return this.quartzScheduler;
     }
 
-    public void start() {
+    public void start() throws MangooSchedulerException {
+    	Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+    	
         try {
             this.quartzScheduler.start();
             if (this.quartzScheduler.isStarted()) {
@@ -79,12 +87,12 @@ public class Scheduler {
                 LOG.error("Scheduler is not started");
             }
         } catch (final SchedulerException e) {
-            LOG.error("Failed to start scheduler", e);
+        	throw new MangooSchedulerException(e);
         }
     }
 
-    public void shutdown() {
-        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized or started");
+    public void shutdown() throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
 
         try {
             this.quartzScheduler.shutdown();
@@ -94,12 +102,12 @@ public class Scheduler {
                 LOG.error("Failed to shutdown scheduler");
             }
         } catch (final SchedulerException e) {
-            LOG.error("Failed to shutdown scheduler", e);
+        	throw new MangooSchedulerException(e);
         }
     }
 
-    public void standby() {
-        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized or started");
+    public void standby() throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
 
         try {
             this.quartzScheduler.standby();
@@ -109,7 +117,7 @@ public class Scheduler {
                 LOG.error("Failed to put scheduler in standby");
             }
         } catch (final SchedulerException e) {
-            LOG.error("Failed to put scheduler in standby", e);
+        	throw new MangooSchedulerException(e);
         }
     }
 
@@ -119,14 +127,15 @@ public class Scheduler {
      * @param jobDetail The JobDetail for the Job
      * @param trigger The Trigger for the job
      */
-    public void schedule(JobDetail jobDetail, Trigger trigger) {
+    public void schedule(JobDetail jobDetail, Trigger trigger) throws MangooSchedulerException {
         Objects.requireNonNull(jobDetail, "JobDetail is required for schedule");
         Objects.requireNonNull(trigger, "trigger is required for schedule");
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
 
         try {
             this.quartzScheduler.scheduleJob(jobDetail, trigger);
         } catch (final SchedulerException e) {
-            LOG.error("Failed to schedule a new job", e);
+        	throw new MangooSchedulerException(e);
         }
     }
     
@@ -139,6 +148,8 @@ public class Scheduler {
      */
     @SuppressWarnings("unchecked")
     public List<io.mangoo.models.Job> getAllJobs() throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+        
         List<io.mangoo.models.Job> jobs = new ArrayList<>();
         try {
             for (JobKey jobKey : getAllJobKeys()) {
@@ -161,6 +172,8 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during execution of the job
      */
     public void executeJob(String jobName) throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+        
         try {
             for (JobKey jobKey : getAllJobKeys()) {
                 if (jobKey.getName().equalsIgnoreCase(jobName)) {
@@ -179,6 +192,8 @@ public class Scheduler {
      * @throws MangooSchedulerException if an errors occurs during access to the scheduler
      */
     public List<JobKey> getAllJobKeys() throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+        
         List<JobKey> jobKeys = new ArrayList<>();
         try {
             for (String groupName : this.quartzScheduler.getJobGroupNames()) {
@@ -198,6 +213,8 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during access to the quartz scheduler
      */
     public void changeState(String jobName) throws MangooSchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+        
         try {
             for (JobKey jobKey : getAllJobKeys()) {
                 if (jobKey.getName().equalsIgnoreCase(jobName)) {
@@ -216,6 +233,8 @@ public class Scheduler {
 
     @SuppressWarnings("unchecked")
     private TriggerState getTriggerState(JobKey jobKey) throws SchedulerException {
+        Objects.requireNonNull(this.quartzScheduler, "Scheduler is not initialized");
+        
         List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
         Trigger trigger = triggers.get(0);  
 
