@@ -144,10 +144,12 @@ public class AdminController {
 
     public Response scheduler()  {
         List<Job> jobs = new ArrayList<>();
-        try {
-            jobs = this.scheduler.getAllJobs();
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to retrieve jobs from scheduler", e);
+        if (this.scheduler.isInitialize()) {
+            try {
+                jobs = this.scheduler.getAllJobs();
+            } catch (MangooSchedulerException e) {
+                LOG.error("Failed to retrieve jobs from scheduler", e);
+            }   
         }
 
         return Response.withOk()

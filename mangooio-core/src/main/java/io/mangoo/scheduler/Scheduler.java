@@ -67,6 +67,15 @@ public class Scheduler {
     public org.quartz.Scheduler getScheduler() {
         return this.quartzScheduler;
     }
+
+    /**
+     * Checks if the scheduler has been initialized
+     * 
+     * @return True if the scheduler has been initializes, false otherwise
+     */
+    public boolean isInitialize() {
+        return this.quartzScheduler != null;
+    }
     
     /**
      * Returns the current quartz scheduler instance
