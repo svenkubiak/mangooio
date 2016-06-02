@@ -35,22 +35,25 @@ implementation, many of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
-* Intuitive convention-over-configuration
-* Highly scalable using a share-nothing stateless architecture
-* Hot-Compiling development mode for high productivity
-* Easy to use template engine
-* Support for Web Sockets
-* Support for Server-Sent Events
-* Simple and self-explaining form handling and validation
-* Plain scheduling for recurring tasks
-* Easy handling of JSON in- and output
-* Build-in asset minification in development mode
-* Flexible testing tools
-* Build-in authentication tools
-* Support for OAuth with Twitter, Google and Facebook
-* Simple Deployment and CI-Integration
-* i18N Internationalization
-* And many more...
+* Intuitive convention-over-configuration 
+* Highly scalable using a share-nothing stateless architecture 
+* Hot-Compiling development mode for high productivity 
+* Easy to use template engine(s) 
+* Support for Web Sockets 
+* Support for Server-Sent Events 
+* Simple and self-explaining form handling and validation 
+* Plain scheduling for recurring tasks 
+* Build-in authentication basics 
+* Easy handling of JSON in- and output 
+* Strong cryptography 
+* Build-in asset minification in development mode 
+* Flexible testing tools 
+* Build-in authentication tools 
+* Support for OAuth with Twitter, Google and Facebook 
+* Simple Deployment and CI-Integration 
+* Preprocessor for LESS and SASS 
+* i18N Internationalization 
+*  Any many more features...
 
 One main focus of mangoo I/O was to have a good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
