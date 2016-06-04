@@ -25,11 +25,13 @@ public class MetricsListener implements ExchangeCompletionListener {
 
     @Override
     public void exchangeEvent(HttpServerExchange exchange, NextListener nextListener) {
-        Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.update((int) (System.currentTimeMillis() - this.start));
+        String uri = Optional.ofNullable(exchange.getRequestURI())
+                .orElse("")
+                .toLowerCase(Locale.ENGLISH);
         
-        String uri = Optional.ofNullable(exchange.getRequestURI()).orElse("").replace("/", "").toLowerCase(Locale.ENGLISH);
         if (!uri.contains("@admin")) {
+            Metrics metrics = Application.getInstance(Metrics.class);
+            metrics.update((int) (System.currentTimeMillis() - this.start));
             metrics.inc(exchange.getStatusCode());
         }
         
