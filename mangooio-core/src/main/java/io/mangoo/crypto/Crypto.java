@@ -15,7 +15,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
@@ -27,7 +26,6 @@ import io.mangoo.enums.Key;
  * @author svenkubiak
  *
  */
-@Singleton
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final Config CONFIG = Application.getConfig();
@@ -39,7 +37,6 @@ public class Crypto {
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESFastEngine()));
-    private CipherParameters cipherParameters;
     
     /**
      * Decrypts an given encrypted text using the application secret property (application.secret) as key
@@ -64,8 +61,8 @@ public class Crypto {
         Objects.requireNonNull(encrytedText, "encrytedText can not be null");
         Objects.requireNonNull(key, "key can not be null");
 
-        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
-        this.cipher.init(false, this.cipherParameters);
+        CipherParameters cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
+        this.cipher.init(false, cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
     }
@@ -99,8 +96,8 @@ public class Crypto {
         Objects.requireNonNull(plainText, "plainText can not be null");
         Objects.requireNonNull(key, "key can not be null");
 
-        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
-        this.cipher.init(true, this.cipherParameters);
+        CipherParameters cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
+        this.cipher.init(true, cipherParameters);
 
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
