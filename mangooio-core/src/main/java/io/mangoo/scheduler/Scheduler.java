@@ -132,10 +132,11 @@ public class Scheduler {
     }
 
     /**
-     * Adds a new job with a given JobDetail and Trigger to the scheduler
-     *
+     * Adds a new job with a given JobDetail and Trigger to the scheduler 
+     * 
      * @param jobDetail The JobDetail for the Job
      * @param trigger The Trigger for the job
+     * @throws MangooSchedulerException when accessing the scheduler results in an error
      */
     public void schedule(JobDetail jobDetail, Trigger trigger) throws MangooSchedulerException {
         Objects.requireNonNull(jobDetail, "JobDetail is required for schedule");
