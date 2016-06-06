@@ -32,6 +32,7 @@ public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final Config CONFIG = Application.getConfig();
     private static final int KEYINDEX_START = 0;
+    private static final int BLOCK_SIZE = 16;
     private static final int KEYLENGTH_16 = 16;
     private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
@@ -63,7 +64,7 @@ public class Crypto {
         Objects.requireNonNull(encrytedText, "encrytedText can not be null");
         Objects.requireNonNull(key, "key can not be null");
 
-        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
+        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
         this.cipher.init(false, this.cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
@@ -98,7 +99,7 @@ public class Crypto {
         Objects.requireNonNull(plainText, "plainText can not be null");
         Objects.requireNonNull(key, "key can not be null");
 
-        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[KEYLENGTH_16]);
+        this.cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
         this.cipher.init(true, this.cipherParameters);
 
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
