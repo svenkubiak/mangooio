@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -19,9 +18,9 @@ public class TwoFactorUtilsTest {
     private static final String LINK = "https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth://totp/MyAccount?secret=MySecureSecret";
 
     @Test
-    public void testGetQRCode() {
+    public void testGenerateQRCode() {
         //when
-        String qrCode = TwoFactorUtils.getQRCode(ACCOUNT, SECRET);
+        String qrCode = TwoFactorUtils.generateQRCode(ACCOUNT, SECRET);
         
         //then
         assertThat(qrCode, not(equalTo(nullValue())));
@@ -29,23 +28,9 @@ public class TwoFactorUtilsTest {
     }
     
     @Test
-    public void testGenerateBase32Secret() {
-        //when
-        String secret = TwoFactorUtils.generateBase32Secret();
-
-        //then
-        assertThat(secret, not(equalTo(nullValue())));
-        assertThat(secret.length(), equalTo(16));
-        assertThat(secret, not(containsString("1")));
-        assertThat(secret, not(containsString("8")));
-        assertThat(secret, not(containsString("9")));
-        assertThat(secret, not(containsString("0")));
-    }
-    
-    @Test
     public void testGenerateCurrentNumber() {
         //when
-        String number = TwoFactorUtils.getNumber(SECRET);
+        String number = TwoFactorUtils.generateCurrentNumber(SECRET);
         
         //then
         assertThat(number, not(nullValue()));
@@ -59,27 +44,26 @@ public class TwoFactorUtilsTest {
 
         //then
         assertThat(number, not(nullValue()));
-        assertThat(number, equalTo("378301"));
+        assertThat(number, equalTo("453852"));
     }
-
-
+    
     @Test
-    public void testGenerateSecret() {
-        //given
-        String secret = TwoFactorUtils.generateBase32Secret();
+    public void testValidateCurrentNumber() {
+        //when
+        String number = TwoFactorUtils.generateCurrentNumber(SECRET);
 
-        //that
-        assertThat(secret, not(nullValue()));
-        assertThat(secret.length(), equalTo(16));
+        //then
+        assertThat(TwoFactorUtils.validateCurrentNumber((Integer.valueOf(number)), SECRET), equalTo(true));
     }
-
+    
     @Test
-    public void testCodeChecking() {
-        //given
-        String secret = TwoFactorUtils.generateBase32Secret();
-        int valid = Integer.parseInt(TwoFactorUtils.generateCurrentNumber(secret));
+    public void testNumberLength() {
+        //when
+        String number = TwoFactorUtils.generateCurrentNumber(SECRET);
 
-        //that
-        assertThat(TwoFactorUtils.validateCurrentNumber(valid, secret, 2), equalTo(true));
+        //then
+        for (int i=0 ; i <= 100000; i++) {
+            assertThat(number.length(), equalTo(6));
+        }
     }
 }

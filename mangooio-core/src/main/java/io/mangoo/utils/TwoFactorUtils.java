@@ -1,7 +1,7 @@
 package io.mangoo.utils;
 
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Objects;
@@ -13,7 +13,6 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.enums.Default;
 import io.mangoo.enums.ErrorMessage;
 
 /**
@@ -41,37 +40,30 @@ public final class TwoFactorUtils {
     private static final String BLOCK_OF_ZEROS = "000000";
     private static final int TIME_STEP_SECONDS = 30;
     private static final boolean USE_SHA1_THREAD_LOCAL = true;
-    private static final ThreadLocal<Mac> MAC_THREAD_LOCAL = new ThreadLocal<Mac>() {
-        @Override
-        protected Mac initialValue() {
-            try {
-                return Mac.getInstance(HMAC_SHA1);
-            } catch (final NoSuchAlgorithmException e) {
-                LOG.error("Unknown message authentication code instance", e);
-            }
-            
-            return null;
-        }
-    };
 
     private TwoFactorUtils() {
     }
 
     /**
      * Uses default length of 16, to generate the Base32 secret
+     * @deprecated As of release 3.2.0, will be removed in 4.0.0
      * 
      * @return Generate a 16 character secret key in base32 format
      */
+    @Deprecated
     public static String generateBase32Secret() {
         return generateBase32Secret(16);
     }
 
     /**
      * method to generate Base32 secret keys for the user
+     * @deprecated As of release 3.2.0, will be removed in 4.0.0
+     * 
      * @param length how long the key should be
      * 
      * @return Generate a secret key in base32 format (A-Z, 2-7)
      */
+    @Deprecated
     public static String generateBase32Secret(int length) {
         final StringBuilder buffer = new StringBuilder();
         for (int i = 0; i < length; i++) {
@@ -104,6 +96,7 @@ public final class TwoFactorUtils {
 
     /**
      * Validate a given code at a specific time, and specific window
+     * @deprecated As of release 3.2.0, replaced by {@link #validateCurrentNumber(int, String, int, long)}
      * 
      * @param number the code provided by the user.
      * @param secret the secret used to generate the users code
@@ -112,6 +105,7 @@ public final class TwoFactorUtils {
      * 
      * @return True if the code is valid within the timeframe, false otherwise
      */
+    @Deprecated
     public static boolean validateNumber(int number, String secret, int window, long time) {
         try {
             int current = Integer.parseInt(generateCurrentNumber(secret, time));
@@ -129,6 +123,35 @@ public final class TwoFactorUtils {
 
         return false;
     }
+    
+    /**
+     * Validate a given code at a specific time, and specific window
+     * 
+     * @param number the code provided by the user.
+     * @param secret the secret used to generate the users code
+     * @param window the number of windows to check around the time
+     * @param time the time in milliseconds at which the code should be checked
+     * 
+     * @return True if the code is valid within the timeframe, false otherwise
+     */
+    public static boolean validateCurrentNumber(int number, String secret, int window, long time) {
+        try {
+            int current = Integer.parseInt(generateCurrentNumber(secret, time));
+            if (number == current) {
+                return true;
+            } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
+                return true;
+            } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
+                return true;
+            }
+        }
+        catch(GeneralSecurityException e) {
+            LOG.error("Failed to validate number", e);
+        }
+
+        return false;
+    }
+    
     /**
      * Validate a given code using the secret, provided number, and number of windows
      * to check. Uses currentTimeMillis for time
@@ -142,7 +165,7 @@ public final class TwoFactorUtils {
     public static boolean validateCurrentNumber(int number, String secret, int window) {
         long time = System.currentTimeMillis();
 
-        return validateNumber(number, secret, window, time);
+        return validateCurrentNumber(number, secret, window, time);
     }
 
     private static boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
@@ -174,6 +197,7 @@ public final class TwoFactorUtils {
     /**
      * Return the current number to be checked against the user input, using the
      * time found in System.currentTimeMillis()
+     * @deprecated As of release 3.2.0, will be removed in 4.0.0
      *
      * WARNING: This requires a system clock that is in sync with the world.
      *
@@ -184,6 +208,7 @@ public final class TwoFactorUtils {
      * 
      * @return The current number to be checked
      */
+    @Deprecated
     public static String getNumber(String secret) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
         
@@ -191,15 +216,21 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Return the current number to be checked. This can be compared against user input.
+     * Return the current number to be checked against the user input, using the
+     * time found in System.currentTimeMillis()
      *
      * WARNING: This requires a system clock that is in sync with the world.
      *
+     * For more details of this magic algorithm, see:
+     * http://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
+     * 
      * @param secret The secret to use
      * 
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
+        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
+        
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
@@ -214,49 +245,43 @@ public final class TwoFactorUtils {
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
 
-        byte[] key = null;
-        try {
-            key = base32.decode(secret.getBytes(Default.ENCODING.toString()));
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to decode secrete to base32", e);
-        }
+        final byte[] key = secret.getBytes();
+        final byte[] data = new byte[8];
         
-        final byte[] data = new byte[8]; 
-        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS; 
-        for (int i = 7; value > 0; i--) { 
+        long value = currentTimeMillis / 1000 / TIME_STEP_SECONDS;
+        for (int i = 7; value > 0; i--) {
             data[i] = (byte) (value & 0xFF);
-            value >>= 8; 
+            value >>= 8;
         }
 
-        final SecretKeySpec signKey = new SecretKeySpec(key, HMAC_SHA1);
-        Mac mac;
-        byte[] hash = null;
+        SecretKeySpec signKey = new SecretKeySpec(key, HMAC_SHA1);
+        Mac mac = null;
         try {
-            if (USE_SHA1_THREAD_LOCAL) {
-                mac = MAC_THREAD_LOCAL.get();
-            } else {
-                mac = Mac.getInstance(HMAC_SHA1);
-            }
+            mac = Mac.getInstance(HMAC_SHA1);
             mac.init(signKey);
-            hash = mac.doFinal(data);
-        } catch (final GeneralSecurityException e) {
-            LOG.error("Failed to encrypt data with key", e);
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            LOG.error("Failed to get instance for HMAC SHA1", e);
         }
 
         long truncatedHash = 0;
-        final int offset = hash[hash.length - 1] & 0xF;
-        for (int i = offset; i < offset + 4; ++i) {
-            truncatedHash <<= 8;
-            truncatedHash |= (hash[i] & 0xFF);
+        if (mac != null) {
+            byte[] hash = mac.doFinal(data);
+            
+            int offset = hash[hash.length - 1] & 0xF;
+            for (int i = offset; i < offset + 4; ++i) {
+                truncatedHash <<= 8;
+                truncatedHash |= (hash[i] & 0xFF);
+            }
+            truncatedHash &= 0x7FFFFFFF;
+            truncatedHash %= 1000000;   
         }
-        truncatedHash &= 0x7FFFFFFF;
-        truncatedHash %= 1000000; 
 
-        return zeroPrepend(truncatedHash, 000000); 
+        return String.format("%06d", truncatedHash); 
     }
 
     /**
      * Return the QR image URL from Google Charts API.
+     * @deprecated As of release 3.2.0, replaced by {@link #generateQRCode(String, String)}
      * 
      * This can be shown to the user and scanned by the authenticator program as an easy way to enter the secret
      * 
@@ -265,6 +290,7 @@ public final class TwoFactorUtils {
      * 
      * @return A URL to the Google charts API
      */
+    @Deprecated
     public static String getQRCode(String accountName, String secret) {
         Objects.requireNonNull(accountName, "accountName can not be null");
         Objects.requireNonNull(secret, "secret can not be null");
@@ -279,21 +305,29 @@ public final class TwoFactorUtils {
 
         return buffer.toString();
     }
-
+    
     /**
-     * @return A string prepended with 0s. Tested as 10x faster than String.format("%06d", ...);
+     * Return the QR image URL from Google Charts API.
+     * 
+     * This can be shown to the user and scanned by the authenticator program as an easy way to enter the secret
+     * 
+     * @param accountName The account name used to display to the user
+     * @param secret The secret to use
+     * 
+     * @return A URL to the Google charts API
      */
-    private static String zeroPrepend(long num, int digits) {
-        final String hash = Long.toString(num);
-        if (hash.length() >= digits) {
-            return hash;
-        } else {
-            final int zeroCount = digits - hash.length();
-            final StringBuilder buffer = new StringBuilder(digits)
-                    .append(BLOCK_OF_ZEROS, 0, zeroCount)
-                    .append(hash);
+    public static String generateQRCode(String accountName, String secret) {
+        Objects.requireNonNull(accountName, "accountName can not be null");
+        Objects.requireNonNull(secret, "secret can not be null");
+        
+        final StringBuilder buffer = new StringBuilder(128);
+        buffer.append("https://chart.googleapis.com/chart")
+            .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
+            .append("otpauth://totp/")
+            .append(accountName)
+            .append("?secret=")
+            .append(secret);
 
-            return buffer.toString();
-        }
+        return buffer.toString();
     }
 }
