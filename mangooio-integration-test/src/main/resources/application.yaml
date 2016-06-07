@@ -11,7 +11,7 @@
 default:
     application:
         name       : TEST
-        secret     : myvoiceismypassword
+        secret     : myvoiceismypasswordmyvoiceismypassword
         language   : en
         host       : localhost
         port       : 9898

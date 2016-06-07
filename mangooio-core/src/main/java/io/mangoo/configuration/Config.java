@@ -374,9 +374,9 @@ public class Config {
 
     /**
      * Checks if the application.conf stored in conf/application.conf contains an application
-     * secret property (application.secret) that has at least 16 characters (128-Bit)
+     * secret property (application.secret) that has at least 32 characters (256-Bit)
      *
-     * @return True if the configuration contains an application.secret property with at least 16 characters
+     * @return True if the configuration contains an application.secret property with at least 32 characters
      */
     public boolean hasValidSecret() {
         final String secret = getString(Key.APPLICATION_SECRET);

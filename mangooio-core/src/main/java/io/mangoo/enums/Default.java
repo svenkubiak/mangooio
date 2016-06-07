@@ -31,7 +31,7 @@ public enum Default {
     LOGO_FILE("logo.txt"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
     SCHEDULER_PREFIX("org.quartz."),
-    APPLICATION_SECRET_MIN_LENGTH("16"),
+    APPLICATION_SECRET_MIN_LENGTH("32"),
     SERVER("Undertow"),
     CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),

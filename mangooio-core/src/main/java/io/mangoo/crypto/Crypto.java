@@ -3,7 +3,6 @@ package io.mangoo.crypto;
 import java.util.Base64;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
@@ -15,6 +14,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
@@ -31,8 +31,6 @@ public class Crypto {
     private static final Config CONFIG = Application.getConfig();
     private static final int KEYINDEX_START = 0;
     private static final int BLOCK_SIZE = 16;
-    private static final int KEYLENGTH_16 = 16;
-    private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
@@ -70,8 +68,7 @@ public class Crypto {
     /**
      * Encrypts a given plain text using the application secret property (application.secret) as key
      *
-     * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
-     * the size of the application.secret property length (16/24/32 characters)
+     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt
      * @return The encrypted text or null if encryption fails
@@ -85,8 +82,7 @@ public class Crypto {
     /**
      * Encrypts a given plain text using the given key
      *
-     * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
-     * the size of the application.secret property length (16/24/32 characters)
+     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt
      * @param key The key to use for encryption
@@ -127,23 +123,18 @@ public class Crypto {
 
     /**
      * Creates a secret for encrypt or decryption which has a length
-     * of 16, 24 or 32 characters, corresponding to 128, 192 or 256 Bits
+     * of 32 characters, corresponding to 256 Bits
+     * 
+     * If the provided secret has more than 32 characters it will be trimmed
+     * to 32 characters
      *
      * @param secret A given secret to trim
-     * @return A secret with 16, 24 or 32 characters
+     * @return A secret with at least 32 characters
      */
     private String getSizedKey(String secret) {
-        String key = "";
-        if (StringUtils.isNotBlank(secret)) {
-            if (secret.length() >= KEYLENGTH_32) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_32);
-            } else if (secret.length() >= KEYLENGTH_24) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_24);
-            } else if (secret.length() >= KEYLENGTH_16) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_16);
-            }
-        }
+        Objects.requireNonNull(secret, "secret can not be null");
+        Preconditions.checkArgument(secret.length() >= 32, "encryption key must be at least 32 characters");
 
-        return key;
+        return secret.substring(KEYINDEX_START, KEYLENGTH_32);
     }
 }

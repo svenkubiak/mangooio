@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 
 /**
  *
@@ -16,14 +17,16 @@ import io.mangoo.core.Application;
  */
 public class CookieParserTest {
     private String secret;
-    private final static String sessionCookie = "403a60f01814495528933074b157afd0eabc0d718f721c83b4cad04223eb6127fd1763c258d3b016603514bb10dbc35ddef40d2a369bb3ac8e605ae793fec069|IrJCsQX6dALPdRUd|2999-01-01T23:42:00.00|0#foo:this is a session value";
-    private final static String sessionCookieEncrypted = "NkOL0aYtndMFia9do46s2nQxdU2GaLWJryBE3TEknxEzu6O+q03pV5x/M+q6g1JzGtCOiJxDpIzU5MrQmm0oa9EayrMDVvDOCTwhz/r/b0Za86+7VTvD4V5UrD9wVyk4c2ZjsJMbqKJIPuZFwnuOhap9IHDiuxUMhg1RNzLHMsgWY4bOBq+hBJWYUxg4kEsaWH6Sr8i6OE8fqYiUCOjxKG+CqDfDpgK85MKAhsHBahaNqmdNy1BToSKhKyvpGW2ICdlkhaYLSfj7PQm9LGWEQg==";
-    private final static String authenticationCookie = "c1cccf94253f7399b0c09c018dfee2005c2fc1ee50f5cb9790aa3dbda5c87b7d91590725880387cfdd079b241fcc663773a539097267e249eb55cdc48faaf7e5|2999-01-01T23:42:00.00|0#foobar";
-    private final static String authenticationCookieEncrypted = "rt2CmjSDtgRysf180d+vCfqhGLhfzRsLNKME7puZMJh4LGdurUSYeYEXWI4QDw65zgxJQ5mClSAnzSCSRY5ouWpsRlNpCis4npveFmmg2wQXTrRnG5Lf4ksNMwJbvBxTv6kMa/qLmHKdI1eY9hGryXA745CQMc21QiQO72Ue+1AjhDf/8XpYYWv60buAnJR/XfAFcwh6gNDelN3vzRp0LkZf7S5pQ8xqZBRiZxGYzv8=";
+    private final static String sessionCookie = "04d62cafb17b81dc563037d1c23cba9cee83f52f2eeac0ef5e303572ba720977c29fae25b54ec3f480c9f84178fdac96b1c202259abd2252ed053b8541301f65|IrJCsQX6dALPdRUd|2999-01-01T23:42:00.00|0#foo:this is a session value";
+    private final static String authenticationCookie = "f4dddaf1e3f806ec48090404c5d92be55f29b12dde4e9e86c3029745d881313bdae6d629adc424bbfc31ddc0b83b3532f9f09affa79ff717446c9d213701e43d|2999-01-01T23:42:00.00|0#foobar";
+    private static String sessionCookieEncrypted = "";
+    private static String authenticationCookieEncrypted = "";
 
     @Before
     public void init() {
         this.secret = Application.getInstance(Config.class).getApplicationSecret();
+        sessionCookieEncrypted = Application.getInstance(Crypto.class).encrypt(sessionCookie);
+        authenticationCookieEncrypted = Application.getInstance(Crypto.class).encrypt(authenticationCookie);
     }
 
     @Test
