@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import io.mangoo.core.Application;
+import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.models.Metrics;
 import io.undertow.server.ExchangeCompletionListener;
 import io.undertow.server.HttpServerExchange;
@@ -30,9 +31,17 @@ public class MetricsListener implements ExchangeCompletionListener {
                 .toLowerCase(Locale.ENGLISH);
         
         if (!uri.contains("@admin")) {
+            int processTime = (int) (System.currentTimeMillis() - this.start);
+            
             Metrics metrics = Application.getInstance(Metrics.class);
-            metrics.update((int) (System.currentTimeMillis() - this.start));
+            metrics.update(processTime);
             metrics.inc(exchange.getStatusCode());
+
+            Application.getInstance(MangooLifecycle.class).requestCompleted(
+                    exchange.getRequestURL(),
+                    exchange.getStatusCode(),
+                    processTime,
+                    exchange.getResponseBytesSent());
         }
         
         nextListener.proceed();
