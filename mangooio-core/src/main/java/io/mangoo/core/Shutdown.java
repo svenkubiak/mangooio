@@ -20,7 +20,7 @@ import io.mangoo.scheduler.Scheduler;
 @Singleton
 public class Shutdown extends Thread {
     private static final Logger LOG = LogManager.getLogger(Shutdown.class);
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
     
     @Inject
     public Shutdown(Scheduler scheduler) {
