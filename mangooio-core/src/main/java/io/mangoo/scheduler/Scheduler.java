@@ -78,6 +78,23 @@ public class Scheduler {
     }
     
     /**
+     * Checks if the scheduler is initialized and started
+     * 
+     * @return true if the scheduler is started, false otherwise
+     * @throws MangooSchedulerException if an error occurred accessing the scheduler
+     */
+    public boolean isStarted() throws MangooSchedulerException {
+        boolean started;
+        try {
+            started = this.quartzScheduler != null && this.quartzScheduler.isStarted();
+        } catch (SchedulerException e) {
+            throw new MangooSchedulerException(e);
+        }
+        
+        return started;
+    }
+    
+    /**
      * Returns the current quartz scheduler instance
      *
      * @return Scheduler instance, null if scheduler is not initialize or started
@@ -105,11 +122,13 @@ public class Scheduler {
         Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
 
         try {
-            this.quartzScheduler.shutdown();
-            if (this.quartzScheduler.isShutdown()) {
-                LOG.info("Successfully shutdown quartz scheduler");
-            } else {
-                LOG.error("Failed to shutdown scheduler");
+            if (isStarted()) {
+                this.quartzScheduler.shutdown();
+                if (this.quartzScheduler.isShutdown()) {
+                    LOG.info("Successfully shutdown quartz scheduler");
+                } else {
+                    LOG.error("Failed to shutdown scheduler");
+                }  
             }
         } catch (final SchedulerException e) {
             throw new MangooSchedulerException(e);

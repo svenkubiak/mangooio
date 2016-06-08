@@ -15,6 +15,7 @@ import io.mangoo.enums.Mode;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
 import io.mangoo.utils.BootstrapUtils;
+import io.undertow.Undertow;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -24,6 +25,7 @@ import io.mangoo.utils.BootstrapUtils;
  */
 public final class Application {
     private static volatile Cache cache;
+    private static volatile Undertow undertow;
     private static volatile TemplateEngine templateEngine;
     private static volatile Config config;
     private static volatile Mode mode;
@@ -47,11 +49,13 @@ public final class Application {
         bootstrap.parseRoutes();
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
+        undertow = bootstrap.getUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
 
         if (bootstrap.isBootstrapSuccessful()) {
             getInstance(Config.class).decrypt();
+            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
@@ -186,5 +190,14 @@ public final class Application {
      */
     public static String getBaseDirectory() {
         return baseDirectory;
+    }
+    
+    /**
+     * Stops the underlying undertow server
+     * 
+     * WARNING: Use with caution!
+     */
+    public static void stopUndertow() {
+        undertow.stop();
     }
 }

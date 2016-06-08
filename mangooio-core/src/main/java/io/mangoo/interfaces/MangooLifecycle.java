@@ -18,6 +18,11 @@ public interface MangooLifecycle {
     public void applicationStarted();
     
     /**
+     * Executed after forcible signal of JVM shutdown has been send
+     */
+    public void applicationStopped();
+    
+    /**
      * Executed after the completion of a request
      * 
      * @param url The URL that was requested

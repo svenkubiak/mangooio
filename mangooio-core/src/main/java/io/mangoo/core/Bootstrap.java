@@ -73,6 +73,7 @@ public class Bootstrap {
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
     private final ResourceHandler pathResourceHandler;
+    private Undertow undertow;
     private PathHandler pathHandler;
     private Config config;
     private String host;
@@ -263,13 +264,13 @@ public class Bootstrap {
             this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
             this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
-            final Undertow server = Undertow.builder()
+            this.undertow = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
                     .addHttpListener(this.port, this.host)
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
                     .build();
-            
-            server.start();
+
+            this.undertow.start();
         }
     }
 
@@ -353,5 +354,9 @@ public class Bootstrap {
 
     public LocalDateTime getStart() {
         return this.start;
+    }
+    
+    public Undertow getUndertow() {
+        return this.undertow;
     }
 }
