@@ -18,7 +18,7 @@ public class Lifecycle implements MangooLifecycle {
     }
 
     @Override
-    public void requestCompleted(String url, int status, int processTime, long bytesSent) {
+    public void requestCompleted(String url, int status, int processTime, long bytesSend) {
         // Do nothing for now
     }
 
