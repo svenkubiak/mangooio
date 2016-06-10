@@ -1,8 +1,11 @@
 package io.mangoo.filters.oauth;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
@@ -31,6 +34,7 @@ import io.mangoo.utils.RequestUtils;
  *
  */
 public class OAuthCallbackFilter implements MangooFilter {
+    private static final Logger LOG = LogManager.getLogger(OAuthCallbackFilter.class);
     private static final String PROFILE_IMAGE_URL_HTTPS = "$.profile_image_url_https";
     private static final String SCREEN_NAME = "$.screen_name";
     private static final String PICTURE = "$.picture";
@@ -74,13 +78,26 @@ public class OAuthCallbackFilter implements MangooFilter {
 
         if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             final OAuth20Service oAuth20Service = (OAuth20Service ) oAuthService.get();
-            final OAuth2AccessToken oAuth2AccessToken = oAuth20Service.getAccessToken(code);
+            OAuth2AccessToken oAuth2AccessToken = null;
+            try {
+                oAuth2AccessToken = oAuth20Service.getAccessToken(code);
+            } catch (IOException e) {
+                LOG.error("Failed to get facebook OAuth2 accesstoken", e);
+            }
 
-            final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.FACEBOOK.toString());
-            final String scribeResponseBody = scribeResponse.getBody();
-            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
-                final ReadContext readContext = JsonPath.parse(scribeResponseBody);
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
+            if (oAuth2AccessToken != null) {
+                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.FACEBOOK.toString());
+                String scribeResponseBody = null;
+                try {
+                    scribeResponseBody = scribeResponse.getBody();
+                } catch (IOException e) {
+                    LOG.error("Failed to get response body for facebook OAuth2", e);
+                }
+                
+                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                    final ReadContext readContext = JsonPath.parse(scribeResponseBody);
+                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
+                }                
             }
         }
     }
@@ -96,13 +113,26 @@ public class OAuthCallbackFilter implements MangooFilter {
 
         if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             final OAuth20Service oAuth20Service = (OAuth20Service) oAuthService.get();
-            final OAuth2AccessToken oAuth2AccessToken = oAuth20Service.getAccessToken(code);
+            OAuth2AccessToken oAuth2AccessToken = null;
+            try {
+                oAuth2AccessToken = oAuth20Service.getAccessToken(code);
+            } catch (IOException e) {
+                LOG.error("Failed to get google OAuth2 access token", e);
+            }
 
-            final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.GOOGLE.toString());
-            final String scribeResponseBody = scribeResponse.getBody();
-            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
-                final ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
+            if (oAuth2AccessToken != null) {
+                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.GOOGLE.toString());
+                String scribeResponseBody = null;
+                try {
+                    scribeResponseBody = scribeResponse.getBody();
+                } catch (IOException e) {
+                    LOG.error("Failed to get response body for goolge OAuth2", e);
+                }
+                
+                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                    final ReadContext readContext = JsonPath.parse(scribeResponseBody);
+                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
+                }  
             }
         }
     }
@@ -120,13 +150,26 @@ public class OAuthCallbackFilter implements MangooFilter {
         if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService.isPresent()) {
             final OAuth1RequestToken requestToken = new OAuth1RequestToken(oauthToken, oauthVerifier);
             final OAuth10aService oAuth10aService = (OAuth10aService) oAuthService.get();
-            final OAuth1AccessToken oAuth1AccessToken = oAuth10aService.getAccessToken(requestToken, oauthVerifier);
+            OAuth1AccessToken oAuth1AccessToken = null;
+            try {
+                oAuth1AccessToken = oAuth10aService.getAccessToken(requestToken, oauthVerifier);
+            } catch (IOException e) {
+                LOG.error("Failed to get twitter OAuth access token", e);
+            }
 
-            final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, oAuth1AccessToken, OAuthResource.TWITTER.toString());
-            final String scribeResponseBody = scribeResponse.getBody();
-            if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
-                final ReadContext readContext = JsonPath.parse(scribeResponse.getBody());
-                request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponse.getBody(), readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
+            if (oAuth1AccessToken != null) {
+                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, oAuth1AccessToken, OAuthResource.TWITTER.toString());
+                String scribeResponseBody = null;
+                try {
+                    scribeResponseBody = scribeResponse.getBody();
+                } catch (IOException e) {
+                    LOG.error("Failed to get response body for goolge OAuth1" ,e);
+                }
+                
+                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                    final ReadContext readContext = JsonPath.parse(scribeResponseBody);
+                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
+                }  
             }
         }
     }

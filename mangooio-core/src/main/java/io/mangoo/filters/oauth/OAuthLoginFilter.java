@@ -1,9 +1,12 @@
 package io.mangoo.filters.oauth;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
@@ -24,6 +27,8 @@ import io.mangoo.utils.RequestUtils;
  *
  */
 public class OAuthLoginFilter implements MangooFilter {
+    private static final Logger LOG = LogManager.getLogger(OAuthCallbackFilter.class);
+    
     @Override
     public Response execute(Request request, Response response) {
         Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
@@ -32,21 +37,15 @@ public class OAuthLoginFilter implements MangooFilter {
             if (oAuthService.isPresent()) {
                 String url = null;
                 switch (oAuthProvider.get()) {
-                case TWITTER:
-                    OAuth10aService twitterService = (OAuth10aService) oAuthService.get();
-                    OAuth1RequestToken requestToken = twitterService.getRequestToken();
-                    url = twitterService.getAuthorizationUrl(requestToken);
+                    case TWITTER:
+                        url = getTwitterUrl(oAuthService);
+                        break;
+                    case GOOGLE:
+                    case FACEBOOK:
+                        url = getOAuth2Url(oAuthService);
+                        break;
+                    default:
                     break;
-                case GOOGLE:
-                    OAuth20Service googleService = (OAuth20Service) oAuthService.get();
-                    url = googleService.getAuthorizationUrl(null);
-                    break;
-                case FACEBOOK:
-                    OAuth20Service facebookService = (OAuth20Service) oAuthService.get();
-                    url = facebookService.getAuthorizationUrl(null);
-                    break;
-                default:
-                break;
                 }
 
                 if (StringUtils.isNotBlank(url)) {
@@ -56,5 +55,21 @@ public class OAuthLoginFilter implements MangooFilter {
         }
 
         return response;
+    }
+
+    private String getOAuth2Url(Optional<OAuthService> oAuthService) {
+        OAuth20Service facebookService = (OAuth20Service) oAuthService.get();
+        return facebookService.getAuthorizationUrl(null);
+    }
+
+    private String getTwitterUrl(Optional<OAuthService> oAuthService) {
+        OAuth10aService twitterService = (OAuth10aService) oAuthService.get();
+        OAuth1RequestToken requestToken = null;
+        try {
+            requestToken = twitterService.getRequestToken();
+        } catch (IOException e) {
+            LOG.error("Failed to get Url for twitter OAuth1", e);
+        }
+        return twitterService.getAuthorizationUrl(requestToken);
     }
 }
