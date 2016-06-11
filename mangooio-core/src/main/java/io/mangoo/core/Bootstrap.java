@@ -1,6 +1,6 @@
 package io.mangoo.core;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -10,8 +10,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +21,9 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.reflections.Reflections;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -147,56 +147,47 @@ public class Bootstrap {
     @SuppressWarnings("all")
     public void parseRoutes() {
         if (!hasError()) {
-            try (InputStream inputStream = Resources.getResource(Default.ROUTES_FILE.toString()).openStream()) {
-                final List<Map<String, String>> routes = (List<Map<String, String>>) new Yaml().load(inputStream);
+            final Constructor constructor = new Constructor(YamlRouter.class);
+            final TypeDescription typeDescription = new TypeDescription(YamlRoute.class);
+            typeDescription.putMapPropertyType("routes", YamlRoute.class, Object.class);
+            constructor.addTypeDescription(typeDescription);
 
-                for (final Map<String, String> routing : routes) {
-                    for (final Entry<String, String> entry : routing.entrySet()) {
-                        final String method = entry.getKey().trim();
-                        final String mapping = entry.getValue();
-                        final String [] mappings = mapping
-                                .replace(Default.AUTHENTICATION.toString(), "")
-                                .replace(Default.BLOCKING.toString(), "")
-                                .split("->");
+            final Yaml yaml = new Yaml(constructor);
+            try {
+                final YamlRouter yamlRouter = (YamlRouter) yaml.load(Resources.getResource("routes.yaml").openStream());
+                for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
+                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()));
+                    route.toUrl(yamlRoute.getUrl().trim());
+                    route.withRequest(HttpString.tryFromString(yamlRoute.getMethod()));
+                    route.withAuthentication(yamlRoute.isAuthentication());
+                    route.withTimer(yamlRoute.isTimer());
+                    route.allowBlocking(yamlRoute.isBlocking());
+                    
+                    String mapping = yamlRoute.getMapping();   
+                    try {
+                       String [] mapped = null;
+                       if (StringUtils.isNotBlank(mapping)) {
+                           mapped = mapping.split("\\.");
+                           route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapped[0].trim()));
+                           if (mapped.length == 2) {
+                               if (methodExists(mapped[1], route.getControllerClass())) {
+                                   route.withMethod(mapped[1]);
+                               }  
+                           }
+                       }
 
-                        if (mappings != null && mappings.length > 0) {
-                            final String url = mappings[0].trim();
-                            final Route route = new Route(BootstrapUtils.getRouteType(method));
-                            route.toUrl(url);
-                            route.withRequest(HttpString.tryFromString(method));
-                            route.withAuthentication(BootstrapUtils.hasAuthentication(mapping));
-                            route.allowBlocking(BootstrapUtils.hasBlocking(mapping));
-
-                            try {
-                                if (mappings.length == 2) {
-                                    final String [] classMethod = mappings[1].split("\\.");
-                                    if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + classMethod[0].trim()));
-                                        if (classMethod.length == 2) {
-                                            final String controllerMethod = classMethod[1].trim();
-                                            if (methodExists(controllerMethod, route.getControllerClass())) {
-                                                route.withMethod(controllerMethod);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Router.addRoute(route);
-                            } catch (final Exception e) {
-                                LOG.error("Failed to parse routing: " + routing);
-                                LOG.error("Please check, that your routes.yaml syntax is correct", e);
-                                this.error = true;
-
-                                throw new Exception();
-                            }
-                        }
+                       Router.addRoute(route);
+                    } catch (final Exception e) {
+                        LOG.error("Failed to parse routing");
+                        LOG.error("Please check, that your routes.yaml syntax is correct", e);
+                        this.error = true;
                     }
                 }
-            } catch (final Exception e) {
+            } catch (IOException e) {
                 LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
                 this.error = true;
             }
-
+            
             if (!hasError()) {
                 createRoutes();
             }
@@ -358,5 +349,74 @@ public class Bootstrap {
     
     public Undertow getUndertow() {
         return this.undertow;
+    }
+    
+    public static class YamlRoute {
+        private String method;
+        private String url;
+        private String mapping;
+        private boolean blocking;
+        private boolean authentication;
+        private boolean timer;
+        
+        public String getMethod() {
+            return method;
+        }
+        
+        public void setMethod(String method) {
+            this.method = method;
+        }
+        
+        public String getUrl() {
+            return url;
+        }
+        
+        public void setUrl(String url) {
+            this.url = url;
+        }
+        
+        public String getMapping() {
+            return mapping;
+        }
+        
+        public void setMapping(String mapping) {
+            this.mapping = mapping;
+        }
+        
+        public boolean isBlocking() {
+            return blocking;
+        }
+        
+        public void setBlocking(boolean blocking) {
+            this.blocking = blocking;
+        }
+        
+        public boolean isAuthentication() {
+            return authentication;
+        }
+        
+        public void setAuthentication(boolean authentication) {
+            this.authentication = authentication;
+        }
+        
+        public boolean isTimer() {
+            return timer;
+        }
+        
+        public void setTimer(boolean timer) {
+            this.timer = timer;
+        }
+    }
+    
+    public static class YamlRouter {
+        private List<YamlRoute> routes;
+
+        public List<YamlRoute> getRoutes() {
+            return routes;
+        }
+
+        public void setRoutes(List<YamlRoute> routes) {
+            this.routes = routes;
+        }
     }
 }

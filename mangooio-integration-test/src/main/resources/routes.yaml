@@ -1,9 +1,10 @@
+routes:
 # Routes configuration
-# 
+#
 # This file defines all application routes.
 # All routes start with an identifier of the method, followed by the
 # url, followed by a mapping to the controller class and method. For
-# some types a controller and method is not required.  
+# some types a controller and method is not required.
 #
 # You can find a detailed explation of the routing file in the documentation
 # https://mangoo.io/documentation#_routes
@@ -11,87 +12,254 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # FilterController
-- GET:     /filter                            -> FilterController.filter
-- GET:     /headerfilter                      -> FilterController.headerfilter
+- method: GET
+  url: /filter
+  mapping: FilterController.filter
+
+- method: GET
+  url: /headerfilter
+  mapping: FilterController.headerfilter
 
 # I18nController
-- GET:     /translation                       -> I18nController.translation
-- GET:     /localize                          -> I18nController.localize
+- method: GET
+  url: /translation
+  mapping: I18nController.translation
+
+- method: GET
+  url: /localize
+  mapping: I18nController.localize
 
 # FlashController
-- GET:     /flash                             -> FlashController.flash
-- GET:     /flashed                           -> FlashController.flashed
+- method: GET
+  url: /flash
+  mapping: FlashController.flash
+
+- method: GET
+  url: /flashed
+  mapping: FlashController.flashed
 
 # AuthenticationController
-- POST:    /dologin                           -> AuthenticationController.doLogin
-- POST:    /login                             -> AuthenticationController.login
-- GET:     /login                             -> AuthenticationController.login
-- GET:     /authenticationrequired            -> AuthenticationController.notauthenticated
-- GET:     /authenticate                      -> AuthenticationController.authenticate
-- GET:     /logout                            -> AuthenticationController.logout
+- method: POST
+  url: /dologin
+  mapping: AuthenticationController.doLogin
+
+- method: POST
+  url: /login
+  mapping: AuthenticationController.login
+
+- method: GET
+  url: /login
+  mapping: AuthenticationController.login
+
+- method: GET
+  url: /authenticationrequired
+  mapping: AuthenticationController.notauthenticated
+
+- method: GET
+  url: /authenticate
+  mapping: AuthenticationController.authenticate
+
+- method: GET
+  url: /logout
+  mapping: AuthenticationController.logout
 
 # SessionController
-- GET:     /session                           -> SessionController.session
+- method: GET
+  url: /session
+  mapping: SessionController.session
 
 # ParameterController
-- GET:     /string/{foo}                      -> ParameterController.stringParam
-- GET:     /int/{foo}                         -> ParameterController.intParam
-- GET:     /integer/{foo}                     -> ParameterController.integerParam
-- GET:     /doublePrimitive/{foo}             -> ParameterController.doublePrimitiveParam
-- GET:     /double/{foo}                      -> ParameterController.doubleParam
-- GET:     /float/{foo}                       -> ParameterController.floatParam
-- GET:     /floatPrimitive/{foo}              -> ParameterController.floatPrimitiveParam
-- GET:     /longPrimitive/{foo}               -> ParameterController.longPrimitiveParam
-- GET:     /long/{foo}                        -> ParameterController.longParam
-- GET:     /multiple/{foo}/{bar}              -> ParameterController.multipleParam
-- GET:     /path                              -> ParameterController.pathParam
-- GET:     /localdate/{localDate}             -> ParameterController.localdate
-- GET:     /localdatetime/{localDateTime}     -> ParameterController.localdatetime
+- method: GET
+  url: /string/{foo}
+  mapping: ParameterController.stringParam
+
+- method: GET
+  url: /int/{foo}
+  mapping: ParameterController.intParam
+
+- method: GET
+  url: /integer/{foo}
+  mapping: ParameterController.integerParam
+
+- method: GET
+  url: /doublePrimitive/{foo}
+  mapping: ParameterController.doublePrimitiveParam
+
+- method: GET
+  url: /double/{foo}
+  mapping: ParameterController.doubleParam
+
+- method: GET
+  url: /float/{foo}
+  mapping: ParameterController.floatParam
+
+- method: GET
+  url: /floatPrimitive/{foo}
+  mapping: ParameterController.floatPrimitiveParam
+
+- method: GET
+  url: /longPrimitive/{foo}
+  mapping: ParameterController.longPrimitiveParam
+
+- method: GET
+  url: /long/{foo}
+  mapping: ParameterController.longParam
+
+- method: GET
+  url: /multiple/{foo}/{bar}
+  mapping: ParameterController.multipleParam
+
+- method: GET
+  url: /path
+  mapping: ParameterController.pathParam
+
+- method: GET
+  url: /localdate/{localDate}
+  mapping: ParameterController.localdate
+
+- method: GET
+  url: /localdatetime/{localDateTime}
+  mapping: ParameterController.localdatetime
 
 # AuthenticityController
-- GET:     /authenticityform                  -> AuthenticityController.form
-- GET:     /authenticitytoken                 -> AuthenticityController.token
-- GET:     /valid                             -> AuthenticityController.valid
-- GET:     /invalid                           -> AuthenticityController.invalid
+- method: GET
+  url: /authenticityform
+  mapping: AuthenticityController.form
+
+- method: GET
+  url: /authenticitytoken
+  mapping: AuthenticityController.token
+
+- method: GET
+  url: /valid
+  mapping: AuthenticityController.valid
+
+- method: GET
+  url: /invalid
+  mapping: AuthenticityController.invalid
 
 #JsonController
-- GET:     /render                            -> JsonController.render
-- POST:    /parse                             -> JsonController.parse
-- POST:    /body                              -> JsonController.body
-- POST:    /requestAndJson                    -> JsonController.requestAndJson
+- method: GET
+  url: /render
+  mapping: JsonController.render
+
+- method: POST
+  url: /parse
+  mapping: JsonController.parse
+
+- method: POST
+  url: /body
+  mapping: JsonController.body
+
+- method: POST
+  url: /requestAndJson
+  mapping: JsonController.requestAndJson
 
 # FormController
-- POST:    /form                              -> FormController.form
-- POST:    /singlefile                        -> FormController.singlefile
-- POST:    /multifile                         -> FormController.multifile
-- POST:    /validateform                      -> FormController.validateform
+- method: POST
+  url: /form
+  mapping: FormController.form
+
+- method: POST
+  url: /singlefile
+  mapping: FormController.singlefile
+
+- method: POST
+  url: /multifile
+  mapping: FormController.multifile
+
+- method: POST
+  url: /validateform
+  mapping: FormController.validateform
 
 # ApplicationController
-- GET:     /                                  -> ApplicationController.index @blocking
-- GET:     /redirect                          -> ApplicationController.redirect
-- GET:     /text                              -> ApplicationController.text
-- GET:     /forbidden                         -> ApplicationController.forbidden
-- GET:     /badrequest                        -> ApplicationController.badrequest
-- GET:     /unauthorized                      -> ApplicationController.unauthorized
-- GET:     /binary                            -> ApplicationController.binary
-- GET:     /header                            -> ApplicationController.header @blocking
-- GET:     /etag                              -> ApplicationController.etag
-- GET:     /request                           -> ApplicationController.request
-- POST:    /post                              -> ApplicationController.post
-- PUT:     /put                               -> ApplicationController.put
-- POST:    /jsonpathpost                      -> ApplicationController.jsonPathPost
-- PUT:     /jsonpathput                       -> ApplicationController.jsonPathPut
-- POST:    /jsonboonpost                      -> ApplicationController.jsonBoonPost
-- PUT:     /jsonboonput                       -> ApplicationController.jsonBoonPut
+- method: GET
+  url: /
+  mapping: ApplicationController.index
+  blocking: true
+
+- method: GET
+  url: /redirect
+  mapping: ApplicationController.redirect
+
+- method: GET
+  url: /text
+  mapping: ApplicationController.text
+
+- method: GET
+  url: /forbidden
+  mapping: ApplicationController.forbidden
+
+- method: GET
+  url: /badrequest
+  mapping: ApplicationController.badrequest
+
+- method: GET
+  url: /unauthorized
+  mapping: ApplicationController.unauthorized
+
+- method: GET
+  url: /binary
+  mapping: ApplicationController.binary
+
+- method: GET
+  url: /header
+  mapping: ApplicationController.header
+  blocking: true
+
+- method: GET
+  url: /etag
+  mapping: ApplicationController.etag
+
+- method: GET
+  url: /request
+  mapping: ApplicationController.request
+
+- method: POST
+  url: /post
+  mapping: ApplicationController.post
+
+- method: PUT
+  url: /put
+  mapping: ApplicationController.put
+
+- method: POST
+  url: /jsonpathpost
+  mapping: ApplicationController.jsonPathPost
+
+- method: PUT
+  url: /jsonpathput
+  mapping: ApplicationController.jsonPathPut
+
+- method: POST
+  url: /jsonboonpost
+  mapping: ApplicationController.jsonBoonPost
+
+- method: PUT
+  url: /jsonboonput
+  mapping: ApplicationController.jsonBoonPut
 
 # WebSocketController
-- WSS:     /websocket						  -> WebSocketController
-- WSS:     /websocketauth                     -> WebSocketController @authentication
+- method: WSS
+  url: /websocket
+  mapping: WebSocketController
+
+- method: WSS
+  url: /websocketauth
+  mapping: WebSocketController
+  authentication: true
 
 # ServerSentEvent
-- SSE:     /sse
-- SSE:     /sseauth                           @authentication
+- method: SSE
+  url: /sse
+
+- method: SSE
+  url: /sseauth
+  authentication: true
 
 # Resource path and resource files
-- PATH:     /assets/
-- FILE:     /robots.txt
+- method: PATH
+  url: /assets/
+
+- method: FILE
+  url: /robots.txt

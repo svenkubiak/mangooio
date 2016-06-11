@@ -37,7 +37,7 @@ public final class BootstrapUtils {
      */
     public static RouteType getRouteType(String method) {
         Objects.requireNonNull(method, "method can not be null");
-
+        
         switch (method.toUpperCase(Locale.ENGLISH)) {
         case "GET":
         case "POST":
@@ -56,26 +56,6 @@ public final class BootstrapUtils {
         default:
             return null;
         }
-    }
-
-    /**
-     * Checks if a given mapping URL contains a blocking directive
-     *
-     * @param mapping The mapping to check
-     * @return True if the mapping contains a blocking directive, false otherwise
-     */
-    public static boolean hasBlocking(String mapping) {
-        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase(Locale.ENGLISH).contains(Default.BLOCKING.toString());
-    }
-
-    /**
-     * Checks if a given mapping URL contains an authentication directive
-     *
-     * @param mapping The mapping to check
-     * @return True if the mapping contains an authentication directive, false otherwise
-     */
-    public static boolean hasAuthentication(String mapping) {
-        return StringUtils.isNotBlank(mapping) && mapping.toLowerCase(Locale.ENGLISH).contains(Default.AUTHENTICATION.toString());
     }
 
     /**
@@ -142,5 +122,14 @@ public final class BootstrapUtils {
         .append("java");
         
         return buffer.toString();
+    }
+
+    public static String[] getMapping(String mapping) {
+        String [] mapped = new String[0];
+        if (StringUtils.isNotBlank(mapping)) {
+            mapped = mapping.split("\\.");
+        }
+        
+        return mapped;
     }
 }
