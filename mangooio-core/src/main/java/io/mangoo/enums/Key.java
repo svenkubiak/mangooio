@@ -17,7 +17,6 @@ public enum Key {
     APPLICATION_HOST("application.host"),
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_MODE("application.mode"),
-    APPLICATION_TIMER("application.timer"),
     APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),
     APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),

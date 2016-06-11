@@ -39,6 +39,7 @@ public class Attachment {
     private Messages messages;
     private TemplateEngine templateEngine;
     private boolean requestFilter;
+    private boolean timer;
 
     public static Attachment build() {
         return new Attachment();
@@ -101,6 +102,11 @@ public class Attachment {
 
     public Attachment withRequestFilter(boolean hasRequestFilter) {
         this.requestFilter = hasRequestFilter;
+        return this;
+    }
+    
+    public Attachment getWithTimer(boolean timer) {
+        this.timer = timer;
         return this;
     }
 
@@ -206,6 +212,10 @@ public class Attachment {
 
     public Response getResponse() {
         return this.response;
+    }
+    
+    public boolean isTimer() {
+        return this.timer;
     }
 
     public long getResponseTime() {

@@ -559,13 +559,6 @@ public class Config {
     }
 
     /**
-     * @return application.timer from application.yaml or default value if undefined
-     */
-    public boolean isTimerEnabled() {
-        return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
-    }
-
-    /**
      * @return cache.class from application.yaml or default value if undefined
      */
     public String getCacheClass() {

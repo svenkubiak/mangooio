@@ -49,9 +49,10 @@ public class DispatcherHandler implements HttpHandler {
     private final String controllerMethodName;
     private final int methodParametersCount;
     private final boolean async;
+    private final boolean timer;
     private final boolean hasRequestFilter;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine, boolean timer) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
@@ -64,6 +65,7 @@ public class DispatcherHandler implements HttpHandler {
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
         this.async = async;
+        this.timer = timer;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
 
         try {
@@ -97,6 +99,7 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestFilter(this.hasRequestFilter)
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
+            .getWithTimer(this.timer)
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto);
 
