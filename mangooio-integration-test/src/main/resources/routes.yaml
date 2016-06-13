@@ -177,6 +177,7 @@ routes:
   url: /
   mapping: ApplicationController.index
   blocking: true
+  timer: true
 
 - method: GET
   url: /redirect
