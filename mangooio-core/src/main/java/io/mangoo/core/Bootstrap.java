@@ -418,11 +418,11 @@ public class Bootstrap {
         private List<YamlRoute> routes;
 
         public List<YamlRoute> getRoutes() {
-            return routes;
+            return new ArrayList<>(routes);
         }
 
         public void setRoutes(List<YamlRoute> routes) {
-            this.routes = routes;
+            this.routes = new ArrayList<>(routes);
         }
     }
 }
