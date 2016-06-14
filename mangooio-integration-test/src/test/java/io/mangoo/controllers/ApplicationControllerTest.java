@@ -158,8 +158,8 @@ public class ApplicationControllerTest {
     public void testBinaryDownload() throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);
-        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+        final String host = config.getConnectorHttpHost();
+        final int port = config.getConnectorHttpPort();
         final File file = new File(UUID.randomUUID().toString());
         final FileOutputStream fileOutputStream = new FileOutputStream(file);
 
