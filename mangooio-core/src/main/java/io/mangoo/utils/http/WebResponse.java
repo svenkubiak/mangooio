@@ -35,11 +35,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -77,14 +73,9 @@ public class WebResponse {
     }
 
     private void init () {
-        final Config config = Application.getInstance(Config.class);
         multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
-
         this.cookieStore.clear();
-        this.responseUrl = "http://" + host + ":" + port;
         this.httpClientBuilder = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore);
     }
 

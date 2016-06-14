@@ -75,7 +75,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sse");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         final EventSource eventSource = EventSource.target(target).build();
         eventSource.open();
         Thread.sleep(500);
@@ -100,7 +100,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sse");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         final EventSource eventSource = EventSource.target(target).build();
         final EventListener listener = new EventListener() {
             @Override
@@ -132,7 +132,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sseauth");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
         final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, VALID_COOKIE_VALUE));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
@@ -165,7 +165,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sseauth");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
         final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, INVALID_COOKIE_VALUE));
         final EventSource eventSource = EventSource.target(customWebTarget).build();

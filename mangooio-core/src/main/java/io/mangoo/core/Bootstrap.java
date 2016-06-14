@@ -53,6 +53,7 @@ import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -76,12 +77,14 @@ public class Bootstrap {
     private Undertow undertow;
     private PathHandler pathHandler;
     private Config config;
-    private String host;
+    private String httpHost;
+    private String ajpHost;
     private Mode mode;
     private Injector injector;
     private boolean error;
-    private int port;
-
+    private int httpPort;
+    private int ajpPort;
+    
     public Bootstrap() {
         this.pathResourceHandler = new ResourceHandler(
                 new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
@@ -258,16 +261,34 @@ public class Bootstrap {
 
     public void startUndertow() {
         if (!hasError()) {
-            this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-            this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
 
-            this.undertow = Undertow.builder()
+            Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
-                    .addHttpListener(this.port, this.host)
-                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
-                    .build();
+                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
 
-            this.undertow.start();
+            boolean hasConnector = false;
+            this.httpHost = this.config.getConnectorHttpHost();
+            this.httpPort = this.config.getConnectorHttpPort();
+            this.ajpHost = this.config.getConnectorAjpHost();
+            this.ajpPort = this.config.getConnectorAjpCPort();
+            
+            if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
+                builder.addAjpListener(this.httpPort, this.httpHost);
+                hasConnector = true;
+            }
+            
+            if (StringUtils.isNotBlank(this.ajpHost) && this.ajpPort > 0) {
+                builder.addAjpListener(this.ajpPort, this.ajpHost);
+                hasConnector = true;
+            }
+                    
+            if (hasConnector) {
+                this.undertow = builder.build();
+                this.undertow.start();
+            } else {
+                this.error = true;
+                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
+            }
         }
     }
 
@@ -298,7 +319,16 @@ public class Bootstrap {
                 .append('\n');
 
             LOG.info(buffer.toString());
-            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
+            
+            if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
+                LOG.info("HTTP connector listening @{}:{}", this.httpHost,this.httpPort);
+            }
+            
+            if (StringUtils.isNotBlank(this.ajpHost) && this.ajpPort > 0) {
+                LOG.info("AJP connector listening @{}:{}", this.ajpHost,this.ajpPort);
+            }
+            
+            LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
 

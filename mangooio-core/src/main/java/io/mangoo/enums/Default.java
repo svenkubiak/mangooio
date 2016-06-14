@@ -16,9 +16,7 @@ public enum Default {
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
     COOKIE_EXPIRES("86400"),
     LOCALHOST("127.0.0.1"), //NOSONAR
-    APPLICATION_HOST("127.0.0.1"), //NOSONAR
     JBCRYPT_ROUNDS("12"),
-    APPLICATION_PORT("8080"),
     BUNDLE_NAME("translations/messages"),
     ASSETS_PATH("src/main/resources/files/assets/"),
     FILES_PATH("src/main/resources/files/"),

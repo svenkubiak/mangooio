@@ -25,7 +25,7 @@ public class WebSocketControllerTest {
     public void testWebSocketConnection() throws Exception {
         //given
         final Config config = Application.getInstance(Config.class);
-        final String uri = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String uri = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
         final WebSocketClientFactory factory = new WebSocketClientFactory();
 
         //when

@@ -24,7 +24,6 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Key;
 import io.mangoo.utils.http.WebRequest;
 import io.mangoo.utils.http.WebResponse;
 import io.undertow.util.Headers;
@@ -158,8 +157,8 @@ public class ApplicationControllerTest {
     public void testBinaryDownload() throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);
-        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+        final String host = config.getConnectorHttpHost();
+        final int port = config.getConnectorHttpPort();
         final File file = new File(UUID.randomUUID().toString());
         final FileOutputStream fileOutputStream = new FileOutputStream(file);
 

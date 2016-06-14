@@ -391,20 +391,6 @@ public class Config {
     }
 
     /**
-     * @return application.host from application.yaml
-     */
-    public String getApplicationHost() {
-        return getString(Key.APPLICATION_HOST);
-    }
-
-    /**
-     * @return appliction.port from application.yaml
-     */
-    public int getApplicationPort() {
-        return getInt(Key.APPLICATION_PORT);
-    }
-
-    /**
      * @return default name of flash cookie name
      */
     public String getFlashCookieName() {
@@ -662,5 +648,33 @@ public class Config {
      */
     public String getSmtpFrom() {
         return getString(Key.SMTP_FROM, Default.SMTP_FROM.toString());
+    }
+
+    /**
+     * @return connector.http.host or null if undefined
+     */
+    public String getConnectorHttpHost() {
+        return getString(Key.CONNECTOR_HTTP_HOST, null);
+    }
+
+    /**
+     * @return connector.http.host or 0 if undefined
+     */
+    public int getConnectorHttpPort() {
+        return getInt(Key.CONNECTOR_HTTP_PORT, 0);
+    }
+
+    /**
+     * @return connector.http.int or null if undefined
+     */
+    public String getConnectorAjpHost() {
+        return getString(Key.CONNECTOR_AJP_HOST, null);
+    }
+
+    /**
+     * @return connector.http.int or 0 if undefined
+     */
+    public int getConnectorAjpCPort() {
+        return getInt(Key.CONNECTOR_AJP_PORT, 0);
     }
 }

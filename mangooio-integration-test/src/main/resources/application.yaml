@@ -13,8 +13,6 @@ default:
         name       : TEST
         secret     : myvoiceismypasswordmyvoiceismypassword
         language   : en
-        host       : localhost
-        port       : 9898
         timer      : true
         minify:
             js        : true
@@ -22,6 +20,13 @@ default:
         preprocess:
             js        : true
             css       : true
+    connector:
+        http:
+            host      : localhost
+            port      : 9898
+        ajp:
+            host      : localhost
+            port      : 9899
     cookie:
        encrypt : true
     auth:
@@ -56,22 +61,34 @@ default:
 
 test:
     application:
-        port             : 10808
         foo              : cryptex[xOh1oRZzZNfBVl8Sw+O/OTqafBVD6ISKGjSmbljt/hw=]
         admin:
               enable     : true
               username   : admin
               password   : $2a$12$eEIuI88oeA7zcqZgPBsM8OsqFCZuoyxzqgWVJDUDddUUIfvR.I7Uy
+    connector:
+        http:
+            host      : localhost
+            port      : 10808
+        ajp:
+            host      : localhost
+            port      : 10809
     smtp:
         port       : 3055
         username   :
 
 dev:
     application:
-        port       : 50000
         admin:
               enable     : true
               username   : admin
               password   : $2a$12$eEIuI88oeA7zcqZgPBsM8OsqFCZuoyxzqgWVJDUDddUUIfvR.I7Uy
+    connector:
+        http:
+            host      : localhost
+            port      : 50000
+        ajp:
+            host      : localhost
+            port      : 50001
     smtp:
         port       : 3125

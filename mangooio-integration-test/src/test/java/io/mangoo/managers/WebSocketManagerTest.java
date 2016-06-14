@@ -73,7 +73,7 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
@@ -109,7 +109,7 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocket";
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
         final String data = "Server sent data FTW!";
         eventData = null;
 
@@ -155,7 +155,7 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
@@ -205,7 +205,7 @@ public class WebSocketManagerTest {
         webSocketManager.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
-        final String url = "ws://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/websocketauth";
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
