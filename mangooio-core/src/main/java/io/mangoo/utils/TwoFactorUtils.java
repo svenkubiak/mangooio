@@ -150,7 +150,7 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Same as {@link #getNumber(String)} except at a particular time in milliseconds
+     * Same as {@link #generateCurrentNumber(String)} except at a particular time in milliseconds
      * 
      * @param secret The secret to use
      * @param currentTimeMillis A provided time in milli seconds
