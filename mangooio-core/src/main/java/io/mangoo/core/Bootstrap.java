@@ -273,7 +273,7 @@ public class Bootstrap {
             this.ajpPort = this.config.getConnectorAjpCPort();
             
             if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
-                builder.addAjpListener(this.httpPort, this.httpHost);
+                builder.addHttpListener(this.httpPort, this.httpHost);
                 hasConnector = true;
             }
             
