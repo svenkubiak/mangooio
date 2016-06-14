@@ -58,17 +58,6 @@ public class Scheduler {
     }
 
     /**
-     * Returns the current scheduler instance
-     * @deprecated As of release 3.1.0, replaced by {@link #getQuartzScheduler()}
-     *
-     * @return Scheduler instance, null if scheduler is not initialize or started
-     */
-    @Deprecated
-    public org.quartz.Scheduler getScheduler() {
-        return this.quartzScheduler;
-    }
-
-    /**
      * Checks if the scheduler has been initialized
      * 
      * @return True if the scheduler has been initializes, false otherwise
