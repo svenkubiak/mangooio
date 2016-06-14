@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.utils.http.WebRequest;
-import io.mangoo.utils.http.WebResponse;
+import io.mangoo.test.utils.WebRequest;
+import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
 
 /**

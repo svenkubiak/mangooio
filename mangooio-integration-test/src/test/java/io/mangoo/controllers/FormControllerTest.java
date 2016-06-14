@@ -21,8 +21,8 @@ import org.junit.Test;
 import com.google.common.io.Resources;
 
 import io.mangoo.enums.ContentType;
-import io.mangoo.utils.http.WebRequest;
-import io.mangoo.utils.http.WebResponse;
+import io.mangoo.test.utils.WebRequest;
+import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
 
 /**
