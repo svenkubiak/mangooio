@@ -10,9 +10,9 @@ import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
 
-import io.mangoo.utils.http.WebBrowser;
-import io.mangoo.utils.http.WebRequest;
-import io.mangoo.utils.http.WebResponse;
+import io.mangoo.test.utils.WebBrowser;
+import io.mangoo.test.utils.WebRequest;
+import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 

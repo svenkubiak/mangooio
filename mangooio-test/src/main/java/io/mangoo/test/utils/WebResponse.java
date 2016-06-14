@@ -1,4 +1,4 @@
-package io.mangoo.utils.http;
+package io.mangoo.test.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
