@@ -21,10 +21,9 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.reflections.Reflections;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -150,14 +149,16 @@ public class Bootstrap {
     @SuppressWarnings("all")
     public void parseRoutes() {
         if (!hasError()) {
-            final Constructor constructor = new Constructor(YamlRouter.class);
-            final TypeDescription typeDescription = new TypeDescription(YamlRoute.class);
-            typeDescription.putMapPropertyType("routes", YamlRoute.class, Object.class);
-            constructor.addTypeDescription(typeDescription);
-
-            final Yaml yaml = new Yaml(constructor);
+            ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+            YamlRouter yamlRouter = null;
             try {
-                final YamlRouter yamlRouter = (YamlRouter) yaml.load(Resources.getResource("routes.yaml").openStream());
+                yamlRouter = objectMapper.readValue(Resources.getResource("routes.yaml").openStream(), YamlRouter.class);
+            } catch (IOException e) {
+                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
+                this.error = true;
+            }
+            
+            if (yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
                     final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()));
                     route.toUrl(yamlRoute.getUrl().trim());
@@ -181,14 +182,11 @@ public class Bootstrap {
 
                        Router.addRoute(route);
                     } catch (final Exception e) {
-                        LOG.error("Failed to parse routing");
-                        LOG.error("Please check, that your routes.yaml syntax is correct", e);
+                        LOG.error("Failed to create routes from routes.yaml");
+                        LOG.error("Please verify, that your routes.yaml mapping is correct", e);
                         this.error = true;
                     }
                 }
-            } catch (IOException e) {
-                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
-                this.error = true;
             }
             
             if (!hasError()) {
