@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Objects;
 
 import javax.crypto.Mac;
