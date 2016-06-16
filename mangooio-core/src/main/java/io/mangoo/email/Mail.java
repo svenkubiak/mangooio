@@ -44,6 +44,16 @@ public class Mail {
     private static boolean ssl;
 
     public static Mail newMail(){
+        init();
+        return new Mail();
+    }
+    
+    public static Mail newHtmlMail() {
+        init();
+        return new Mail().isHtml();
+    }
+
+    private static void init() {
         Config config = Application.getInstance(Config.class);
         host = config.getSmtpHost();
         port = config.getSmtpPort();
@@ -54,8 +64,6 @@ public class Mail {
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
             defaultAuthenticator = new DefaultAuthenticator(username, password);
         }
-        
-        return new Mail();
     }
     
     /**
