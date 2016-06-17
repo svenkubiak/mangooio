@@ -14,13 +14,13 @@ mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Fr
 Development of mangoo I/O was started in mid 2015 out of an interest in
 how difficult it would be to create an intuitive, developer friendly,
 full stack java web framework from scratch. After the fresh new breeze of
-java development for the Web with the [Play
+java development for the web with the [Play
 Framwork - Version 1](https://www.playframework.com), contributions to the
 [Ninja Framework](http://www.ninjaframework.org), and having seen a lot of
-cumbersome "Enterprise" Applications, I thought it was time for yet
+cumbersome "Enterprise" applications, I thought it was time for yet
 another full stack java framework.
 
-The foundation of mangoo I/O is the very performant, the
+The foundation of mangoo I/O is the very performant
 [Undertow](http://undertow.io) web server from JBoss. On top of that,
 standard, production ready java libraries are used - no reinventing of the
 wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
@@ -29,9 +29,9 @@ it is based on non-blocking I/O in the form of
 servlet API, one is not bound to use it in any way. This gives the developer
 the opportunity to work fully stateless.
 
-mangoo I/O is highly inspired by the [Ninja
+mangoo I/O is inspired by the [Ninja
 Web Framework](http://www.ninjaframework.org). Although the mangoo I/O core is a complete custom
-implementation, many of the ideas and methodologies were re-used.
+implementation, some of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
@@ -42,8 +42,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Support for Web Sockets 
 * Support for Server-Sent Events 
 * Simple and self-explaining form handling and validation 
-* Plain scheduling for recurring tasks 
-* Build-in authentication basics 
+* Plain scheduling for recurring tasks  
 * Easy handling of JSON in- and output 
 * Strong cryptography 
 * Build-in asset minification in development mode 
@@ -53,11 +52,11 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple Deployment and CI-Integration 
 * Preprocessor for LESS and SASS 
 * i18N Internationalization 
-*  Any many more features...
+*  Any many more...
 
-One main focus of mangoo I/O was to have a good and well documented code
+One main focus of mangoo I/O was to have a very good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
-[SonarQube](http://www.sonarqube.org) with a rule set of more than 600
+[SonarQube](http://www.sonarqube.org) with a rule set of more than 620
 checks. Additionally each build is checked against [Loader.io](https://loader.io/) to ensure, that
 code changes don't decrease the framework performance.
 
