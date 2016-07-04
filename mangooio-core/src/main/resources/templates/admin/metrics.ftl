@@ -22,7 +22,7 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${minRequestTime} ms</h3>
-            	<p>Min request time</p>
+            	<p>Min process time</p>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${maxRequestTime} ms</h3>
-            	<p>Max request time</p>
+            	<p>Max process time</p>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${avgRequestTime} ms</h3>
-            	<p>Avg request time</p>
+            	<p>Avg process time</p>
             </div>
         </div>
     </div>    
