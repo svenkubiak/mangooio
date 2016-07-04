@@ -8,6 +8,7 @@
 	    </div>
 	</div>
 </div>
+<#if jobs?size gt 0>
 <div class="row">
 	<div class="col-xs-12">
     	<div class="box">
@@ -60,4 +61,15 @@
     	</div>
 	</div>
 </div>
+<#else>
+<div class="row">
+	<div class="col-xs-12">
+    	<div class="box">
+	    	<div class="box-header">
+	        	No jobs are scheduled in the application.
+	        </div>
+    	</div>
+	</div>
+</div>
+</#if>
 <#include "footer.ftl">j
