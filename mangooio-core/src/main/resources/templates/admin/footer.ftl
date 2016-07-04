@@ -1,7 +1,7 @@
       </section>
       </div>
       <footer class="main-footer">
-        <div class="pull-right hidden-xs">
+        <div class="pull-right">
           <b>mangoo I/O version:</b> ${version}
         </div>
         <strong>&nbsp;</strong>
