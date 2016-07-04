@@ -31,8 +31,8 @@ public class MetricsListener implements ExchangeCompletionListener {
         
         if (!uri.contains("@admin")) {
             Metrics metrics = Application.getInstance(Metrics.class);
-            metrics.update((int) (System.currentTimeMillis() - this.start));
             metrics.inc(exchange.getStatusCode());
+            metrics.update((int) (System.currentTimeMillis() - this.start));
         }
         
         nextListener.proceed();
