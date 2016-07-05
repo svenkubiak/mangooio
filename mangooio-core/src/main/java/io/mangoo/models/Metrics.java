@@ -25,7 +25,7 @@ public class Metrics {
     private volatile long totalRequestTime;
     private volatile long totalRequests;
     private volatile int maxRequestTime;
-    private volatile int minRequestTime = -1;
+    private volatile int minRequestTime;
 
     public Metrics(){
     }
