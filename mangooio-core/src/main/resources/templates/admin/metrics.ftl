@@ -1,14 +1,8 @@
 <#include "header.ftl">
-<div class="row">
-	<div class="col-xs-12">
-    	<div class="box-header">
-			<div class="callout callout-warning">
-				<h4>Please note!</h4>
-            	<p>Only requests that are mapped in your route.yaml are monitored.</p>
-          	</div>
-    	</div>
-	</div>
-</div>
+<section class="content-header">
+	<h1>Metrics</h1>
+</section>
+<section class="content">
 <div class="row">
     <div class="col-lg-3 col-xs-6">
     	<div class="small-box bg-green">
@@ -55,15 +49,6 @@
 </div>
 <div class="row">
 	<div class="col-xs-12">
-		<div class="box">
-	    	<div class="box-header">
-	    		<h3>Metrics</h3>
-	    	</div>
-	    </div>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12">
     	<div class="box">
 	    	<div class="box-header">
 				<div class="form-group">
@@ -91,4 +76,5 @@
     	</div>
 	</div>
 </div>
+</section>
 <#include "footer.ftl">

@@ -1,13 +1,8 @@
 <#include "header.ftl">
-<div class="row">
-	<div class="col-xs-12">
-		<div class="box">
-	    	<div class="box-header">
-	    		<h3>Scheduler</h3>
-	    	</div>
-	    </div>
-	</div>
-</div>
+<section class="content-header">
+	<h1>Scheduler</h1>
+</section>
+<section class="content">
 <#if jobs?size gt 0>
 <div class="row">
 	<div class="col-xs-12">
@@ -72,4 +67,5 @@
 	</div>
 </div>
 </#if>
-<#include "footer.ftl">j
+</section>
+<#include "footer.ftl">
