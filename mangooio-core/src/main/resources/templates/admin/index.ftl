@@ -1,6 +1,6 @@
 <#include "header.ftl">
 <div class="row">
-	<div class="col-lg-3 col-xs-6">
+	<div class="col-lg-12">
 	    <div class="small-box bg-green">
     	    <div class="inner">
               <h3>${uptime}</h3>
