@@ -203,7 +203,7 @@ public class FormTest {
     }
 
     @Test
-    public void TestValidUrl() {
+    public void testValidUrl() {
         //given
         Form form = getNewForm();
         
@@ -216,7 +216,7 @@ public class FormTest {
     }
     
     @Test
-    public void TestInvalidUrl() {
+    public void testInvalidUrl() {
         //given
         Form form = getNewForm();
         

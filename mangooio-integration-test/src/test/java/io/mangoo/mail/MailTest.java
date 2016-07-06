@@ -39,7 +39,7 @@ public class MailTest {
     }
     
     @Test
-    public void SimpleEmailTest() throws MangooMailerException, MessagingException, IOException, FolderException {
+    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceviedMessagesForDomain("winterfell.com").length, equalTo(0));
@@ -59,7 +59,7 @@ public class MailTest {
     }
     
     @Test
-    public void HtmlEmailTest() throws MangooMailerException, FolderException, IOException, MessagingException {
+    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceviedMessagesForDomain("thewall.com").length, equalTo(0));
@@ -79,7 +79,7 @@ public class MailTest {
     }
 
     @Test
-    public void MultiPartEmailTest() throws MangooMailerException, IOException, FolderException, MessagingException {
+    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -103,7 +103,7 @@ public class MailTest {
     }
     
     @Test
-    public void BodyTest() throws MangooMailerException, IOException, FolderException, MessagingException {
+    public void testBody() throws MangooMailerException, IOException, FolderException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(0));

@@ -35,7 +35,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void fromJsonTest2() {
+    public void testFromJson() {
         //given
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
@@ -47,7 +47,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void fromJsonClassTest() {
+    public void testFromJsonToClass() {
         //given
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
@@ -62,7 +62,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void customSerializerTest(){
+    public void testCustomSerializer(){
         //given
         JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
         jsonSerializerFactory.useAnnotations();
