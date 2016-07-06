@@ -22,7 +22,7 @@ public class JsonUtilsTest {
     private final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test
-    public void toJsonTest() {
+    public void testToJson() {
         //given
         Car car = new Car();
         

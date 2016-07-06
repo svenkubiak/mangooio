@@ -43,7 +43,7 @@ import io.undertow.server.HttpServerExchange;
 public class TemplateEngineFreemarker implements TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
     private static final String TEMPLATE_SUFFIX = ".ftl";
-    private static final int MAX_CHARS = 65536;
+    private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 23);
