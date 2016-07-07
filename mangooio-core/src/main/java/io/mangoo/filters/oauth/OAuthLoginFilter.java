@@ -38,11 +38,11 @@ public class OAuthLoginFilter implements MangooFilter {
                 String url = null;
                 switch (oAuthProvider.get()) {
                     case TWITTER:
-                        url = getTwitterUrl(oAuthService);
+                        url = getTwitterUrl(oAuthService.get());
                         break;
                     case GOOGLE:
                     case FACEBOOK:
-                        url = getOAuth2Url(oAuthService);
+                        url = getOAuth2Url(oAuthService.get());
                         break;
                     default:
                     break;
@@ -57,13 +57,13 @@ public class OAuthLoginFilter implements MangooFilter {
         return response;
     }
 
-    private String getOAuth2Url(Optional<OAuthService> oAuthService) {
-        OAuth20Service facebookService = (OAuth20Service) oAuthService.get();
+    private String getOAuth2Url(OAuthService oAuthService) {
+        OAuth20Service facebookService = (OAuth20Service) oAuthService;
         return facebookService.getAuthorizationUrl(null);
     }
 
-    private String getTwitterUrl(Optional<OAuthService> oAuthService) {
-        OAuth10aService twitterService = (OAuth10aService) oAuthService.get();
+    private String getTwitterUrl(OAuthService oAuthService) {
+        OAuth10aService twitterService = (OAuth10aService) oAuthService;
         OAuth1RequestToken requestToken = null;
         try {
             requestToken = twitterService.getRequestToken();

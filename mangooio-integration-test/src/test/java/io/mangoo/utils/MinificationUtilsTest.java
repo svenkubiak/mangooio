@@ -50,7 +50,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void minifyCSSTest() throws IOException {
+    public void testMinifyCSS() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
@@ -77,7 +77,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void minifyJSTest() throws IOException {
+    public void testMinifyJS() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
@@ -104,7 +104,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void preprocessLessTest() throws IOException {
+    public void testPreprocessLess() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
@@ -132,7 +132,7 @@ public class MinificationUtilsTest {
     }
     
     @Test
-    public void preprocessSassTest() throws IOException {
+    public void testPreprocessSass() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();

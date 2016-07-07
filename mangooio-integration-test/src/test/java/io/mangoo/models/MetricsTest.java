@@ -43,6 +43,6 @@ public class MetricsTest {
         //then
         assertThat(metrics.getMaxRequestTime(), equalTo(2000));
         assertThat(metrics.getMinRequestTime(), lessThan(2000));
-        assertThat(metrics.getAvgRequestTime(), lessThan(2000));
+        assertThat(metrics.getAvgRequestTime(), lessThan(2000L));
     }
 }

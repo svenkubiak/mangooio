@@ -1,13 +1,8 @@
 <#include "header.ftl">
-<div class="row">
-	<div class="col-xs-12">
-		<div class="box">
-	    	<div class="box-header">
-	    		<h3>Routes</h3>
-	    	</div>
-	    </div>
-	</div>
-</div>
+<section class="content-header">
+	<h1>Routes</h1>
+</section>
+<section class="content">
 <div class="row">
 	<div class="col-xs-12">
     	<div class="box">
@@ -43,4 +38,5 @@
     	</div>
 	</div>
 </div>
+</section>
 <#include "footer.ftl">

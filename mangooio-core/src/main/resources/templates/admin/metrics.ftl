@@ -1,4 +1,8 @@
 <#include "header.ftl">
+<section class="content-header">
+	<h1>Metrics</h1>
+</section>
+<section class="content">
 <div class="row">
     <div class="col-lg-3 col-xs-6">
     	<div class="small-box bg-green">
@@ -22,7 +26,7 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${minRequestTime} ms</h3>
-            	<p>Min request time</p>
+            	<p>Min process time</p>
             </div>
         </div>
     </div>
@@ -30,7 +34,7 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${maxRequestTime} ms</h3>
-            	<p>Max request time</p>
+            	<p>Max process time</p>
             </div>
         </div>
     </div>
@@ -38,19 +42,10 @@
     	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${avgRequestTime} ms</h3>
-            	<p>Avg request time</p>
+            	<p>Avg process time</p>
             </div>
         </div>
     </div>    
-</div>
-<div class="row">
-	<div class="col-xs-12">
-		<div class="box">
-	    	<div class="box-header">
-	    		<h3>Metrics</h3>
-	    	</div>
-	    </div>
-	</div>
 </div>
 <div class="row">
 	<div class="col-xs-12">
@@ -81,4 +76,5 @@
     	</div>
 	</div>
 </div>
+</section>
 <#include "footer.ftl">
