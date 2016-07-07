@@ -283,7 +283,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.0.80-beta</version>
+				<version>2.0.81-beta</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
@@ -329,7 +329,7 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.24-incubating</version>
+				<version>2.3.25-incubating</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>
