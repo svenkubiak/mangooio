@@ -20,10 +20,10 @@
 						</tr>
 					</thead>
 					<tbody class="searchable">
-						<#list stats?keys as stat>
+						<#list stats as key, value>
 							<tr>
-								<td>${stat}</td>
-								<td>${stats[stat]}</td>
+								<td>${key}</td>
+								<td>${value}</td>
 							</tr>
 						</#list>
                 	</tbody>
