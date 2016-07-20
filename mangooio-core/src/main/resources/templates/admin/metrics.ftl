@@ -64,10 +64,10 @@
 						</tr>
 					</thead>
 					<tbody class="searchable">
-                    	<#list metrics?keys as prop>
+						<#list metrics as key, value>
 							<tr>
-								<td>${prop}</td>
-								<td>${metrics?api.get(prop)}</td>
+								<td>${key}</td>
+								<td>${value}</td>
 							</tr>
 						</#list>
                 	</tbody>

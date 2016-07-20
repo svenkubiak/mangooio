@@ -30,10 +30,10 @@
 						</tr>
 					</thead>
 					<tbody class="searchable">
-					<#list properties?keys as prop>
+					<#list properties as key, value>
 						<tr>
-							<td>${prop}</td>
-							<td>${properties[prop]}</td>
+							<td>${key}</td>
+							<td>${value}</td>
 						</tr>
 					</#list>
 	                </tbody>
