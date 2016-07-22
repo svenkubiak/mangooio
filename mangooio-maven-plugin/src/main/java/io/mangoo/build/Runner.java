@@ -65,7 +65,7 @@ public class Runner {
         this.outputStream = output;
     }
 
-    public StartedProcess getActiveProcess() {
+    public synchronized StartedProcess getActiveProcess() {
         return startedProcess;
     }
 
