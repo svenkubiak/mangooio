@@ -69,7 +69,7 @@ public class Runner {
         return startedProcess;
     }
 
-    public void setActiveProcess(StartedProcess activeProcess) {
+    public synchronized void setActiveProcess(StartedProcess activeProcess) {
         this.startedProcess = activeProcess;
     }
 
