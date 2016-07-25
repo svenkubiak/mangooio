@@ -20,6 +20,7 @@ import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
+import net.jawr.web.resource.FileNameUtils;
 
 /**
  * 
@@ -49,6 +50,8 @@ public class Mail {
     }
     
     public static Mail newHtmlMail() {
+        FileNameUtils.getName("fofofof");
+        
         init();
         return new Mail().isHtml();
     }
@@ -115,12 +118,18 @@ public class Mail {
         Objects.requireNonNull(template, "template can not be null");
         
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
-            template = template.replaceFirst("/", "");
-            template = template.replaceFirst("\\", "");
+            template = template.substring(1, template.length());
         }
         
         this.template = template;
         return this;
+    }
+    
+    /**
+     * @return The current template path
+     */
+    public String getTemplate() {
+        return this.template;
     }
     
     /**

@@ -42,7 +42,7 @@ public class MailTest {
     public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceviedMessagesForDomain("winterfell.com").length, equalTo(0));
+        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(0));
         
         //when
         Mail.newMail()
@@ -54,15 +54,15 @@ public class MailTest {
             .send();
         
         //then
-        assertThat(greenMail.getReceviedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey"));
-        assertThat(greenMail.getReceviedMessagesForDomain("winterfell.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey"));
+        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1));
     }
     
     @Test
     public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceviedMessagesForDomain("thewall.com").length, equalTo(0));
+        assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(0));
         
         //when
         Mail.newMail()
@@ -74,15 +74,15 @@ public class MailTest {
             .send();
         
         //then
-        assertThat(greenMail.getReceviedMessagesForDomain("thewall.com").length, equalTo(1));
-        assertThat(greenMail.getReceviedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong"));
+        assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong"));
     }
 
     @Test
     public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(0));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         File file = new File(UUID.randomUUID().toString());
         file.createNewFile();
         
@@ -99,14 +99,14 @@ public class MailTest {
         
         //then
         assertThat(file.delete(), equalTo(true));
-        assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
     }
     
     @Test
     public void testBody() throws MangooMailerException, IOException, FolderException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(0));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
         Mail.newMail()
@@ -117,8 +117,23 @@ public class MailTest {
             .send();
         
         //then
-        assertThat(greenMail.getReceviedMessagesForDomain("westeros.com").length, equalTo(1));
-        assertThat(greenMail.getReceviedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
+    }
+    
+    @Test
+    public void testTemplatePath() {
+        //given
+        Mail mail1 = Mail.newMail();
+        Mail mail2 = Mail.newMail();
+        
+        //when
+        mail1.withTemplate("/foo/vbar");
+        mail2.withTemplate("\\foo\\vbar");
+        
+        //then
+        assertThat(mail1.getTemplate(), equalTo("foo/vbar"));
+        assertThat(mail2.getTemplate(), equalTo("foo\\vbar"));
     }
     
     @AfterClass
