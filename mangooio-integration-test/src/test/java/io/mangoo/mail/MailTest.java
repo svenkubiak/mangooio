@@ -121,6 +121,21 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
     }
     
+    @Test
+    public void testTemplatePath() {
+        //given
+        Mail mail1 = Mail.newMail();
+        Mail mail2 = Mail.newMail();
+        
+        //when
+        mail1.withTemplate("/foo/vbar");
+        mail2.withTemplate("\\foo\\vbar");
+        
+        //then
+        assertThat(mail1.getTemplate(), equalTo("foo/vbar"));
+        assertThat(mail2.getTemplate(), equalTo("foo\\vbar"));
+    }
+    
     @AfterClass
     public static void shutdown() {
         smtp.stop();

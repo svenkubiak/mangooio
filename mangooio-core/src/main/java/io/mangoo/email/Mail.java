@@ -118,12 +118,18 @@ public class Mail {
         Objects.requireNonNull(template, "template can not be null");
         
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
-            template = template.replaceFirst("/", "");
-            template = template.replaceFirst("\\", "");
+            template = template.substring(1, template.length());
         }
         
         this.template = template;
         return this;
+    }
+    
+    /**
+     * @return The current template path
+     */
+    public String getTemplate() {
+        return this.template;
     }
     
     /**
