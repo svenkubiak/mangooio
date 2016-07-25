@@ -20,6 +20,7 @@ import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
+import net.jawr.web.resource.FileNameUtils;
 
 /**
  * 
@@ -49,6 +50,8 @@ public class Mail {
     }
     
     public static Mail newHtmlMail() {
+        FileNameUtils.getName("fofofof");
+        
         init();
         return new Mail().isHtml();
     }
