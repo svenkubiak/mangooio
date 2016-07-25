@@ -71,7 +71,7 @@ public class Runner {
         } 
     }
 
-    public synchronized void setActiveProcess(StartedProcess activeProcess) {
+    public void setActiveProcess(StartedProcess activeProcess) {
         synchronized(this) { 
             this.startedProcess = activeProcess;
         } 
