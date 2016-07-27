@@ -1,9 +1,9 @@
 # Routes configuration
-# 
+#
 # This file defines all application routes.
 # All routes start with an identifier of the method, followed by the
 # url, followed by a mapping to the controller class and method. For
-# some types a controller and method is not required.  
+# some types a controller and method is not required.
 #
 # You can find a detailed explation of the routing file in the documentation
 # https://mangoo.io/documentation#_routes
@@ -59,6 +59,10 @@
 - POST:    /parse                             -> JsonController.parse
 - POST:    /body                              -> JsonController.body
 - POST:    /requestAndJson                    -> JsonController.requestAndJson
+
+#JWTSController
+- GET:     /jwts/validate                     -> JwtsController.validate
+- GET:     /jwts/retrieve                     -> JwtsController.retrieve
 
 # FormController
 - POST:    /form                              -> FormController.form

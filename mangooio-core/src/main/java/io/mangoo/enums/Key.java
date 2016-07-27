@@ -26,6 +26,7 @@ public enum Key {
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_THREADPOOL("application.threadpool"),
     APPLICATION_TEMPLATEENGINE("application.templateengine"),
+    APPLICATION_JWTS_SIGNKEY("application.jwts.signkey"),
     SMTP_PORT("smtp.port"),
     SMTP_HOST("smtp.host"),
     SMTP_SSL("smtp.ssl"),

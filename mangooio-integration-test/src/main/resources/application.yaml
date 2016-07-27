@@ -15,6 +15,8 @@ default:
         language   : en
         host       : localhost
         port       : 9898
+        jwts       :
+            signkey   : myvoiceismypassword
         timer      : true
         minify:
             js        : true

@@ -670,4 +670,11 @@ public class Config {
     public String getSmtpFrom() {
         return getString(Key.SMTP_FROM, Default.SMTP_FROM.toString());
     }
+
+    /**
+     * @return application.jwts.signkey
+     */
+    public String getJWTSSignKey() {
+        return getString(Key.APPLICATION_JWTS_SIGNKEY, null);
+    }
 }
