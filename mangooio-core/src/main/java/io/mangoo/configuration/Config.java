@@ -672,9 +672,23 @@ public class Config {
     }
 
     /**
-     * @return application.jwts.signkey
+     * @return application.jwt.signkey
      */
-    public String getJWTSSignKey() {
-        return getString(Key.APPLICATION_JWTS_SIGNKEY, null);
+    public String getJwtsSignKey() {
+        return getString(Key.APPLICATION_JWT_SIGNKEY, null);
+    }
+
+    /**
+     * @return application.jwt.encrypt
+     */
+    public boolean isJwtsEncrypted() {
+        return getBoolean(Key.APPLICATION_JWT_ENCRYPT, Default.APPLICATION_JWT_ENCRYPT.toBoolean());
+    }
+
+    /**
+     * @return application.jwt.encryptionkey
+     */
+    public String getJwtsEncryptionKey() {
+        return getString(Key.APPLICATION_JWT_ENCRYPTION_KEY, getApplicationSecret());
     }
 }

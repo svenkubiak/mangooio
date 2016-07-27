@@ -1,10 +1,10 @@
 package io.mangoo.controllers;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.containsString;
 
 import org.junit.Test;
 
@@ -18,8 +18,8 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class JwtsControllerTest {
-    private static final String VALID_BEARER = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJKb2UifQ.uTpP-beHoL-yQ6Sq32LJBRnf3DUT2L5d2VOGMg6dReEfTSFTThHLHoFwslVOqXycrDHiNzkMGA1aMirJjkT2dw";
-    private static final String INVALID_BEARER = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ";
+    private static final String VALID_BEARER = "tVPJmD9ZgYJKt0p8yPGGbKFHaDekhcKiv70ISFsc2TYex7d2lbpzzgjIpU4sSd7KC+rJGGLshpcZj4wNTfadKJQ3YRZ2Tp4B3lXKduKc1J8uLjB4vI9xRKReqWkzjtVg4WnJQdYAuCc9SyFqrhtDa/7t8ksAu4bd9X6xxxgARWM=";
+    private static final String INVALID_BEARER = "UDpJn6svraIVYklop7L3txHn+GGr9LoU5vdnmHVXcPSsddIYt+798EToaiclhO2Pnh8yA4Pp99nWltL1WQ9/Ty9sdJlGXd6HDHDJziMRrmlxMbleBD51MXIwtwHE27uK5grDiEh1NNULLiHG3ETQACQ1/FHNGSEfsPVavPmwrRSUtzgILuMUXrUKNYf+l/KYUnP5wIdwSGRZsR6oJHQkTg==";
     
     @Test
     public void testNoBearerToken() {
