@@ -12,8 +12,8 @@ import io.jsonwebtoken.MissingClaimException;
  *
  */
 public class JsonWebToken {
-    private JwtParser jwtParser;
-    private String bearer;
+    private final JwtParser jwtParser;
+    private final String bearer;
 
     public JsonWebToken(JwtParser jwtParser, String bearer) {
         this.jwtParser = jwtParser;
