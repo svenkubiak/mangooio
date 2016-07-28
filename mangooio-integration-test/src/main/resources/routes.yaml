@@ -155,6 +155,15 @@ routes:
   url: /requestAndJson
   mapping: JsonController.requestAndJson
 
+# JWTSController
+- method: GET
+  url: /jwts/validate
+  mapping: JwtsController.validate
+
+- method: GET
+  url: /jwts/retrieve
+  mapping: JwtsController.retrieve
+
 # FormController
 - method: POST
   url: /form

@@ -3,6 +3,7 @@ package io.mangoo.routing.bindings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
@@ -10,6 +11,7 @@ import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooValidator;
+import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -31,6 +33,7 @@ public class Request implements MangooValidator {
     private Validator validator;
     private Map<String, String> parameter;
     private Map<String, Cookie> cookies;
+    private JsonWebToken jsonWebToken;
 
     public Request(){
     }
@@ -237,6 +240,23 @@ public class Request implements MangooValidator {
      */
     public String getPath() {
         return this.httpServerExchange.getRequestPath();
+    }
+    
+    /**
+     * Set a Json Web Token to the request
+     * @param jsonWebToken The Json Web Token
+     */
+    public void setJsonWebToken(JsonWebToken jsonWebToken) {
+        if (this.jsonWebToken == null) {
+            this.jsonWebToken = jsonWebToken;
+        }
+    }
+    
+    /**
+     * @return The validated Json Web Token if present
+     */
+    public Optional<JsonWebToken> getJsonWebToken() {
+        return Optional.ofNullable(this.jsonWebToken);
     }
 
     @Override
