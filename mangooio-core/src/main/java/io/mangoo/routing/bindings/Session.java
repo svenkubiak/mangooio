@@ -1,14 +1,15 @@
 package io.mangoo.routing.bindings;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.Sets;
 
 /**
  *
@@ -17,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final List<String> blacklist = Arrays.asList("|", ":", "&", " ");
+    private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values;
     private String authenticityToken;
     private boolean changed;
@@ -72,7 +73,7 @@ public class Session {
      * @param value The value to store
      */
     public void put(String key, String value) {
-        if (blacklist.contains(key) || blacklist.contains(value)) {
+        if (BLACKLIST.contains(key) || BLACKLIST.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
             this.changed = true;

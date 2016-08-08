@@ -1,12 +1,13 @@
 package io.mangoo.routing.bindings;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.Sets;
 
 import io.mangoo.enums.Key;
 
@@ -17,7 +18,7 @@ import io.mangoo.enums.Key;
  */
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
-    private static final List<String> BLACKLIST = Arrays.asList("|", ":", "&", " ");
+    private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private boolean discard;
 

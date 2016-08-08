@@ -29,16 +29,15 @@ import io.undertow.server.handlers.Cookie;
 public class InboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
-    private Attachment requestAttachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        this.requestAttachment.setSession(getSessionCookie(exchange));
-        this.requestAttachment.setAuthentication(getAuthenticationCookie(exchange));
-        this.requestAttachment.setFlash(getFlashCookie(exchange));
+        Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        requestAttachment.setSession(getSessionCookie(exchange));
+        requestAttachment.setAuthentication(getAuthenticationCookie(exchange));
+        requestAttachment.setFlash(getFlashCookie(exchange));
 
-        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, this.requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, requestAttachment);
         nextHandler(exchange);
     }
 
