@@ -63,4 +63,11 @@ public class ExecutionManager {
     public void execute(Runnable runnable) {
         this.executorService.execute(runnable);
     }
+    
+    /**
+     * Shuts down the executor service
+     */
+    public void shutdown() {
+        this.executorService.shutdown();
+    }
 }
