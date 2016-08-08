@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,8 +26,9 @@ public class FormController {
     
     public Response singlefile(Form form) {
         String content = "";
-        if (form.getFile().isPresent()) {
-            File file = form.getFile().get();
+        Optional<File> formFile = form.getFile();
+        if (formFile.isPresent()) {
+            File file = formFile.get();
             try {
                 content = Files.readFirstLine(file, Charset.defaultCharset());
             } catch (IOException e) {

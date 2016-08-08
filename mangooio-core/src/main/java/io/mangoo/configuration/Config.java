@@ -128,7 +128,7 @@ public class Config {
                     crypto = Application.getInstance(Crypto.class);
                 }
 
-                if (StringUtils.isNotBlank(key) && crypto != null) {
+                if (crypto != null && StringUtils.isNotBlank(key)) {
                     final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
                         this.values.put(entry.getKey(), decryptedText);
@@ -200,7 +200,7 @@ public class Config {
             return 0;
         }
 
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     /**
@@ -215,7 +215,7 @@ public class Config {
             return 0;
         }
 
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     /**

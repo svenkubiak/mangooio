@@ -124,7 +124,7 @@ public class Trigger extends Thread {
         this.restartLock.lock();
         try {
             triggerCount.incrementAndGet();
-            this.restartRequested.signal();
+            this.restartRequested.signalAll();
         } finally {
             this.restartLock.unlock();
         }
