@@ -17,31 +17,30 @@ import com.google.common.io.Resources;
 public enum Template {
     DEFAULT;
     private transient Logger LOG = LogManager.getLogger(Template.class); //NOSONAR
-    private static final String TEMPLATES_FOLDER = "templates/";
     private String notFoundContent;
     private String badRequestContent;
     private String unauthorizedContent;
     private String forbiddenContent;
     private String serverErrorContent;
-    private final String notFoundTemplatePath = "defaults/404.html";
-    private final String badRequestTemplatePath = "defaults/400.html";
-    private final String unauthorizedTemplatePath = "defaults/401.html";
-    private final String forbiddenTemplatePath = "defaults/403.html";
-    private final String serverErrorTemplatePath = "defaults/500.html";
-    private final String routesTemplatePath = "admin/routes.ftl";
-    private final String cacheTemplatePath = "admin/cache.ftl";
-    private final String configurationTemplatePath = "admin/configuration.ftl";
-    private final String metricsTemplatePath = "admin/metrics.ftl";
-    private final String schedulerTemplatePath = "admin/scheduler.ftl";
-    private final String adminTemplatePath = "admin/index.ftl";
+    private static final String TEMPLATES_FOLDER = "templates/";
+    private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
+    private static final String BAD_REQUEST_TEMPLATE_PATH = "defaults/400.html";
+    private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
+    private static final String FORBIDDEN_TAMPLTE_PATH = "defaults/403.html";
+    private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
+    private static final String ROUTES_TEMPLATE_PATH = "admin/routes.ftl";
+    private static final String CACHE_TEMPLATE_PATH = "admin/cache.ftl";
+    private static final String METRICS_TEMPLARE_PATH = "admin/metrics.ftl";
+    private static final String SCHEDULER_TEMPLATE_PATH = "admin/scheduler.ftl";
+    private static final String ADMIN_TEMPLATE_PATH = "admin/index.ftl";
 
     Template () {
         try {
-            this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.notFoundTemplatePath), Charsets.UTF_8);
-            this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.badRequestTemplatePath), Charsets.UTF_8);
-            this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.unauthorizedTemplatePath), Charsets.UTF_8);
-            this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.forbiddenTemplatePath), Charsets.UTF_8);
-            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + this.serverErrorTemplatePath), Charsets.UTF_8);
+            this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), Charsets.UTF_8);
+            this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH), Charsets.UTF_8);
+            this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH), Charsets.UTF_8);
+            this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH), Charsets.UTF_8);
+            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH), Charsets.UTF_8);
         } catch (IOException e) {
             LOG.error("Failed to load default templates", e);
         }
@@ -86,76 +85,69 @@ public enum Template {
      * @return The relative path of the forbidden template
      */
     public String forbiddenPath() {
-        return this.forbiddenTemplatePath;
+        return FORBIDDEN_TAMPLTE_PATH;
     }
 
     /**
      * @return The relative path of the not found template
      */
     public String notFoundPath() {
-        return this.notFoundTemplatePath;
+        return NOT_FOUND_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the bad request template
      */
     public String badRequestPath() {
-        return this.badRequestTemplatePath;
+        return BAD_REQUEST_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the unauthorized template
      */
     public String unauthorizedPath() {
-        return this.unauthorizedTemplatePath;
+        return UNAUTHORIZED_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the internal server error template
      */
     public String serverErrorPath() {
-        return this.serverErrorTemplatePath;
+        return INTERNAL_SERVER_ERROR_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the routes template
      */
     public String routesPath() {
-        return this.routesTemplatePath;
+        return ROUTES_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the cache template
      */
     public String cachePath() {
-        return this.cacheTemplatePath;
-    }
-
-    /**
-     * @return The relative path of the config template
-     */
-    public String configurationPath() {
-        return this.configurationTemplatePath;
+        return CACHE_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the metrics template
      */
     public String metricsPath() {
-        return this.metricsTemplatePath;
+        return METRICS_TEMPLARE_PATH;
     }
 
     /**
      * @return The relative path of the scheduler template
      */
     public String schedulerPath() {
-        return this.schedulerTemplatePath;
+        return SCHEDULER_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the admin template
      */
     public String adminPath() {
-        return this.adminTemplatePath;
+        return ADMIN_TEMPLATE_PATH;
     }
 }

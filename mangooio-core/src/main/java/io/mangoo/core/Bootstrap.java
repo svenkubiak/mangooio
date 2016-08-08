@@ -247,10 +247,10 @@ public class Bootstrap {
         }
 
         Router.getRoutes().parallelStream().forEach(route -> {
-            if (RouteType.REQUEST.equals(route.getRouteType())) {
+            if (RouteType.REQUEST == route.getRouteType()) {
                 routingHandler.add(route.getRequestMethod(),route.getUrl(),
                         new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed(), route.isInternalTemplateEngine()));
-            } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
+            } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
             }
         });
