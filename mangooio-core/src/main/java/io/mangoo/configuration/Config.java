@@ -231,7 +231,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     /**
@@ -247,7 +247,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     /**
@@ -262,7 +262,7 @@ public class Config {
             return false;
         }
 
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     /**
@@ -278,7 +278,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     /**
