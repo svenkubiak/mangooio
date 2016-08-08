@@ -95,7 +95,7 @@ public class Validator {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
-            if (Double.valueOf(value) < minLength) {
+            if (Double.parseDouble(value) < minLength) {
                 this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
             }
         } else {
@@ -152,7 +152,7 @@ public class Validator {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
-            if (Double.valueOf(value) > maxLength) {
+            if (Double.parseDouble(value) > maxLength) {
                 this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
             }
         } else {

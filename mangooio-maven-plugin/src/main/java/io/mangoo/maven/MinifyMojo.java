@@ -33,11 +33,14 @@ public class MinifyMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         String baseDir = project.getBasedir().getAbsolutePath();
         MinificationUtils.setBasePath(baseDir);
-        minifyFiles(baseDir + "/" + Default.FILES_PATH.toString());
+        minifyFiles(baseDir);
     }
     
     public void minifyFiles(String directoryName){
-        File directory = new File(directoryName); //NOSONAR
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(directoryName).append("/").append(Default.FILES_PATH.toString());
+        
+        File directory = new File(buffer.toString());
         File[] files = directory.listFiles();
         
         for (File file : files){
