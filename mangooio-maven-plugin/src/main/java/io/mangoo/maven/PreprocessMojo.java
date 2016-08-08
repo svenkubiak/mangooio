@@ -37,7 +37,6 @@ public class PreprocessMojo extends AbstractMojo {
     }
     
     public void preprocessFiles(String directoryName){
-        File directory = new File(directoryName); //NOSONAR
         StringBuilder buffer = new StringBuilder();
             buffer.append(directoryName).append("/").append(Default.FILES_PATH.toString());
         
