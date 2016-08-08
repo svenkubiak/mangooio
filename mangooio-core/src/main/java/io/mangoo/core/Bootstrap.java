@@ -299,7 +299,7 @@ public class Bootstrap {
                 .append(BootstrapUtils.getVersion())
                 .append('\n');
 
-            LOG.info(buffer.toString());
+            LOG.info(buffer.toString()); //NOSONAR
             LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }

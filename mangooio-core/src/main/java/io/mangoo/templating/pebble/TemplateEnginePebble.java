@@ -96,7 +96,7 @@ public class TemplateEnginePebble implements TemplateEngine {
             content.put("line", stackTraceElement.getLineNumber());
             content.put("causeSource", cause.toString());
             content.put("stackTraces", cause.getStackTrace());
-            content.put("sourceCodePath", StringUtils.substringAfter(new File(Application.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+            content.put("sourceCodePath", StringUtils.substringAfter(new File(Application.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber()); //NOSONAR
         }
 
         final Writer writer = new StringWriter();

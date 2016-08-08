@@ -37,7 +37,7 @@ public class PreprocessMojo extends AbstractMojo {
     }
     
     public void preprocessFiles(String directoryName){
-        File directory = new File(directoryName);
+        File directory = new File(directoryName); //NOSONAR
         File[] files = directory.listFiles();
         
         for (File file : files){

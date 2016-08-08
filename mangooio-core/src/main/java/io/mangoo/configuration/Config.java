@@ -76,7 +76,7 @@ public class Config {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
             } else {
-                inputStream = new FileInputStream(new File(path));
+                inputStream = new FileInputStream(new File(path)); //NOSONAR
             }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
@@ -148,7 +148,7 @@ public class Config {
 
         String key = null;
         try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString());
+            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString()); //NOSONAR
         } catch (final IOException e) {
             LOG.error("Failed to read master key", e);
         }

@@ -184,6 +184,7 @@ public class MangooMojo extends AbstractMojo {
         }
     }
 
+    @SuppressWarnings("all")
     public void checkClasses(String classesDirectory) {
         if (!new File(classesDirectory).exists()) {
             getLog().error("Directory with classes does not exist: " + classesDirectory);
