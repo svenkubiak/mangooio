@@ -40,7 +40,7 @@ public class PreprocessMojo extends AbstractMojo {
         StringBuilder buffer = new StringBuilder();
             buffer.append(directoryName).append("/").append(Default.FILES_PATH.toString());
         
-        File directory = new File(buffer.toString());
+        File directory = new File(buffer.toString()); //NOSONAR
         File[] files = directory.listFiles();
         
         for (File file : files){
