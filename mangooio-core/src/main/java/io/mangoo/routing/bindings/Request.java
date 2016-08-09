@@ -36,6 +36,7 @@ public class Request implements MangooValidator {
     private JsonWebToken jsonWebToken;
 
     public Request(){
+        //Empty constructor required for Google Guice
     }
 
     public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {

@@ -62,7 +62,7 @@ public class AdminController {
     
     public Response index() {
         Runtime runtime = Runtime.getRuntime();
-        double maxMemory = runtime.maxMemory() / MB;
+        double maxMemory = runtime.maxMemory() / (double) MB;
         
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
@@ -127,7 +127,7 @@ public class AdminController {
         }
         
         if (errorRequests > 0) {
-            errorRate = totalRequests / errorRequests;
+            errorRate = totalRequests / (double) errorRequests;
         }
 
         return Response.withOk()
