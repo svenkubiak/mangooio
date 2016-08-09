@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public final class Router {
-    private static Set<Route> routes = ConcurrentHashMap.newKeySet();
+    private static Set<Route> routes = ConcurrentHashMap.newKeySet(10000);
 
     private Router(){
     }
