@@ -13,14 +13,14 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 public abstract class MangooWebSocket extends AbstractReceiveListener {
     @Override
-    protected abstract void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message);
+    protected void onFullTextMessage(WebSocketChannel channel, BufferedTextMessage message) {}
 
     @Override
-    protected abstract void onFullBinaryMessage(WebSocketChannel channel, BufferedBinaryMessage message);
+    protected void onFullBinaryMessage(WebSocketChannel channel, BufferedBinaryMessage message) {}
 
     @Override
-    protected abstract void onFullPongMessage(WebSocketChannel channel, BufferedBinaryMessage message);
+    protected void onFullPongMessage(WebSocketChannel channel, BufferedBinaryMessage message) {}
 
     @Override
-    protected abstract void onCloseMessage(CloseMessage closeMessage, WebSocketChannel channel);
+    protected void onCloseMessage(CloseMessage closeMessage, WebSocketChannel channel) {}
 }

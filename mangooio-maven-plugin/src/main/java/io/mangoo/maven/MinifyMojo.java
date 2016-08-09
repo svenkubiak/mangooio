@@ -38,7 +38,7 @@ public class MinifyMojo extends AbstractMojo {
     
     public void minifyFiles(String directoryName){
         StringBuilder buffer = new StringBuilder();
-        buffer.append(directoryName).append("/").append(Default.FILES_PATH.toString());
+        buffer.append(directoryName).append('/').append(Default.FILES_PATH.toString());
         
         File directory = new File(buffer.toString()); //NOSONAR
         File[] files = directory.listFiles();
