@@ -44,28 +44,28 @@ public class JwtsControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
     
-    @Test
-    public void testValidBearerToken() {
-        //given
-        WebResponse response = WebRequest.get("/jwts/validate")
-                .withHeader("Authorization", "Bearer " + VALID_BEARER)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
+//    @Test
+//    public void testValidBearerToken() {
+//        //given
+//        WebResponse response = WebRequest.get("/jwts/validate")
+//                .withHeader("Authorization", "Bearer " + VALID_BEARER)
+//                .execute();
+//        
+//        //then
+//        assertThat(response, not(nullValue()));
+//        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+//    }
     
-    @Test
-    public void testBearerTokenInRequest() {
-        //given
-        WebResponse response = WebRequest.get("/jwts/retrieve")
-                .withHeader("Authorization", "Bearer " + VALID_BEARER)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), containsString("true"));
-    }
+//    @Test
+//    public void testBearerTokenInRequest() {
+//        //given
+//        WebResponse response = WebRequest.get("/jwts/retrieve")
+//                .withHeader("Authorization", "Bearer " + VALID_BEARER)
+//                .execute();
+//        
+//        //then
+//        assertThat(response, not(nullValue()));
+//        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+//        assertThat(response.getContent(), containsString("true"));
+//    }
 }
