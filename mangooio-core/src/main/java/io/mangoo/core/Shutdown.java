@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.managers.ExecutionManager;
 import io.mangoo.scheduler.Scheduler;
 
 /**
@@ -32,12 +33,17 @@ public class Shutdown extends Thread {
         invokeLifecycle();
         stopScheduler();
         stopUndertow();
+        stopExecutionManager();
     }
 
     private void invokeLifecycle() {
         Application.getInstance(MangooLifecycle.class).applicationStopped();        
     }
 
+    private void stopExecutionManager() {
+        Application.getInstance(ExecutionManager.class).shutdown();
+    }
+    
     private void stopScheduler() {
         try {
             this.scheduler.shutdown();
