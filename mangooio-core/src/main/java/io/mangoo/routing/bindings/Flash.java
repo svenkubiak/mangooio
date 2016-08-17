@@ -23,6 +23,7 @@ public class Flash {
     private boolean discard;
 
     public Flash() {
+      //Empty constructor required for Google Guice
     }
 
     public Flash(Map<String, String> values) {

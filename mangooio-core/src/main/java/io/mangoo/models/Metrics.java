@@ -27,7 +27,8 @@ public class Metrics {
     private volatile int maxRequestTime;
     private volatile int minRequestTime;
 
-    public Metrics(){
+    public Metrics() {
+        //Empty constructor for Google Guice
     }
     
     public Metrics(Metrics copy) {

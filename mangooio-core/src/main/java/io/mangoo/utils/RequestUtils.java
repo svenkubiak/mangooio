@@ -238,13 +238,16 @@ public final class RequestUtils {
     private static String getURL(URI uri) {
         final StringBuilder buffer = new StringBuilder();
         buffer.append(uri.getPath());
+        
+        String query = uri.getQuery();
+        String fragment = uri.getFragment();
 
-        if (StringUtils.isNotBlank(uri.getQuery())) {
-            buffer.append('?').append(uri.getQuery());
+        if (StringUtils.isNotBlank(query)) {
+            buffer.append('?').append(query);
         }
 
-        if (StringUtils.isNotBlank(uri.getFragment())) {
-            buffer.append('#').append(uri.getFragment());
+        if (StringUtils.isNotBlank(fragment)) {
+            buffer.append('#').append(fragment);
         }
 
         return buffer.toString();

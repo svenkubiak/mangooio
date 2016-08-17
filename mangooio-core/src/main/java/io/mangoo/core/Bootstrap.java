@@ -215,11 +215,11 @@ public class Bootstrap {
     private void createRoutes() {
         this.pathHandler = new PathHandler(getRoutingHandler());
         for (final Route route : Router.getRoutes()) {
-            if (RouteType.WEBSOCKET.equals(route.getRouteType())) {
+            if (RouteType.WEBSOCKET == route.getRouteType()) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(new WebSocketHandler(route.getControllerClass(), route.isAuthenticationRequired())));
-            } else if (RouteType.SERVER_SENT_EVENT.equals(route.getRouteType())) {
+            } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(new ServerSentEventHandler(route.isAuthenticationRequired())));
-            } else if (RouteType.RESOURCE_PATH.equals(route.getRouteType())) {
+            } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
                 this.pathHandler.addPrefixPath(route.getUrl(), new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
             }
         }
@@ -316,7 +316,7 @@ public class Bootstrap {
                 .append(BootstrapUtils.getVersion())
                 .append('\n');
 
-            LOG.info(buffer.toString());
+            LOG.info(buffer.toString()); //NOSONAR
             
             if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
                 LOG.info("HTTP connector listening @{}:{}", this.httpHost,this.httpPort);

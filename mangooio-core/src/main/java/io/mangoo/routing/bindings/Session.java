@@ -25,6 +25,7 @@ public class Session {
     private LocalDateTime expires;
 
     public Session(){
+      //Empty constructor required for Google Guice
     }
 
     public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {

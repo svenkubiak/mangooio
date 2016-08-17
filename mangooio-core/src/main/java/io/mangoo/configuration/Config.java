@@ -76,7 +76,7 @@ public class Config {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
             } else {
-                inputStream = new FileInputStream(new File(path));
+                inputStream = new FileInputStream(new File(path)); //NOSONAR
             }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
@@ -128,7 +128,7 @@ public class Config {
                     crypto = Application.getInstance(Crypto.class);
                 }
 
-                if (StringUtils.isNotBlank(key) && crypto != null) {
+                if (crypto != null && StringUtils.isNotBlank(key)) {
                     final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
                         this.values.put(entry.getKey(), decryptedText);
@@ -148,7 +148,7 @@ public class Config {
 
         String key = null;
         try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString());
+            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString()); //NOSONAR
         } catch (final IOException e) {
             LOG.error("Failed to read master key", e);
         }
@@ -200,7 +200,7 @@ public class Config {
             return 0;
         }
 
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     /**
@@ -215,7 +215,7 @@ public class Config {
             return 0;
         }
 
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     /**
@@ -231,7 +231,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     /**
@@ -247,7 +247,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     /**
@@ -262,7 +262,7 @@ public class Config {
             return false;
         }
 
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     /**
@@ -278,7 +278,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Boolean.valueOf(value);
+        return Boolean.parseBoolean(value);
     }
 
     /**

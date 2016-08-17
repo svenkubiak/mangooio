@@ -98,14 +98,14 @@ public enum Default {
     }
 
     public int toInt() {
-        return Integer.valueOf(this.value);
+        return Integer.parseInt(this.value);
     }
 
     public long toLong() {
-        return Long.valueOf(this.value);
+        return Long.parseLong(this.value);
     }
 
     public boolean toBoolean() {
-        return Boolean.valueOf(this.value);
+        return Boolean.parseBoolean(this.value);
     }
 }

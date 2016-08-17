@@ -37,7 +37,7 @@ public class JsonWebTokenFilter implements MangooFilter {
                 
                 Jwts.parser().setSigningKey(signKey).parseClaimsJws(bearer);
                 request.setJsonWebToken(new JsonWebToken(Jwts.parser().setSigningKey(signKey), bearer));
-            } catch (Exception e) {
+            } catch (Exception e) { //NOSONAR
                 return Response.withUnauthorized().end();
             }
             

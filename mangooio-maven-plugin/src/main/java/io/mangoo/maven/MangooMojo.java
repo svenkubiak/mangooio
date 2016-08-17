@@ -159,7 +159,7 @@ public class MangooMojo extends AbstractMojo {
         for (Artifact artifact : project.getArtifacts()) {
             File file = artifact.getFile();
 
-            if (file.isDirectory() && this.watchAllClassPathDirs) {
+            if (this.watchAllClassPathDirs && file.isDirectory()) {
                 watchDirectories.add(file.toPath().toAbsolutePath());
             } else if (file.getName().endsWith(".jar") && this.watchAllClassPathJars) {
                 File parentDir = file.getParentFile();
@@ -184,6 +184,7 @@ public class MangooMojo extends AbstractMojo {
         }
     }
 
+    @SuppressWarnings("all")
     public void checkClasses(String classesDirectory) {
         if (!new File(classesDirectory).exists()) {
             getLog().error("Directory with classes does not exist: " + classesDirectory);

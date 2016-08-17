@@ -45,7 +45,8 @@ public final class Response {
     private boolean redirect;
     private int statusCode = StatusCodes.OK;
 
-    public Response(){
+    public Response() {
+        //Empty constructor for Google Guice
     }
 
     private Response(int statusCode) {

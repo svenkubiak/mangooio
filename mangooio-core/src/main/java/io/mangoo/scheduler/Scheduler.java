@@ -175,7 +175,7 @@ public class Scheduler {
                 List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
                 Trigger trigger = triggers.get(0);  
                 TriggerState triggerState = quartzScheduler.getTriggerState(trigger.getKey());
-                jobs.add(new io.mangoo.models.Job(TriggerState.PAUSED.equals(triggerState) ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
+                jobs.add(new io.mangoo.models.Job(TriggerState.PAUSED == triggerState ? false : true, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
             }
         } catch (SchedulerException e) {
             throw new MangooSchedulerException(e);
@@ -238,7 +238,7 @@ public class Scheduler {
             for (JobKey jobKey : getAllJobKeys()) {
                 if (jobKey.getName().equalsIgnoreCase(jobName)) {
                     TriggerState triggerState = getTriggerState(jobKey);
-                    if (TriggerState.NORMAL.equals(triggerState)) {
+                    if (TriggerState.NORMAL == triggerState) {
                         this.quartzScheduler.pauseJob(jobKey);                        
                     } else {
                         this.quartzScheduler.resumeJob(jobKey);

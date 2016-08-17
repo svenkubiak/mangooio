@@ -8,6 +8,7 @@ import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
+import io.undertow.util.HeaderValues;
 import io.undertow.util.Headers;
 
 /**
@@ -26,8 +27,9 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
     public void connected(ServerSentEventConnection connection, String lastEventId) {
         if (this.requiresAuthentication) {
             String header = null;
-            if (connection.getRequestHeaders().get(Headers.COOKIE) != null) {
-                header = connection.getRequestHeaders().get(Headers.COOKIE).element();
+            HeaderValues headerValues = connection.getRequestHeaders().get(Headers.COOKIE);
+            if (headerValues != null) {
+                header = headerValues.element();
             }
 
             if (RequestUtils.hasValidAuthentication(header)) {
