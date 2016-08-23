@@ -268,7 +268,7 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-client</artifactId>
-				<version>3.6.4</version>
+				<version>3.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
@@ -391,7 +391,7 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
-				<version>1.54</version>
+				<version>1.55</version>
 			</dependency>
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
@@ -431,7 +431,7 @@
 			<dependency>
 				<groupId>net.jawr</groupId>
 				<artifactId>jawr-core</artifactId>
-				<version>3.8</version>
+				<version>3.9</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
