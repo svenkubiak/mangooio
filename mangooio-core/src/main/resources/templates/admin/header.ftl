@@ -66,6 +66,7 @@
             <li <#if space?? && space == 'scheduler'>class="active"</#if>><a href="/@admin/scheduler"><i class="fa fa-calendar"></i><span>Scheduler</span></a></li>
             <li <#if space?? && space == 'cache'>class="active"</#if>><a href="/@admin/cache"><i class="fa fa-cube"></i><span>Cache</span></a></li>
             <li <#if space?? && space == 'metrics'>class="active"</#if>><a href="/@admin/metrics"><i class="fa fa-signal"></i><span>Metrics</span></a></li>
+            <li <#if space?? && space == 'tools'>class="active"</#if>><a href="/@admin/tools"><i class="fa fa-wrench"></i><span>Tools</span></a></li>
           </ul>
         </section>
       </aside>
