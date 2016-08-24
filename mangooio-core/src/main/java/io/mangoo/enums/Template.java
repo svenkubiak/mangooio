@@ -30,6 +30,7 @@ public enum Template {
     private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
     private static final String ROUTES_TEMPLATE_PATH = "admin/routes.ftl";
     private static final String CACHE_TEMPLATE_PATH = "admin/cache.ftl";
+    private static final String TOOLS_TEMPLATE_PATH = "admin/tools.ftl";
     private static final String METRICS_TEMPLARE_PATH = "admin/metrics.ftl";
     private static final String SCHEDULER_TEMPLATE_PATH = "admin/scheduler.ftl";
     private static final String ADMIN_TEMPLATE_PATH = "admin/index.ftl";
@@ -128,6 +129,13 @@ public enum Template {
      */
     public String cachePath() {
         return CACHE_TEMPLATE_PATH;
+    }
+    
+    /**
+     * @return The relative path of the tools template
+     */
+    public String toolsPath() {
+        return TOOLS_TEMPLATE_PATH;
     }
 
     /**

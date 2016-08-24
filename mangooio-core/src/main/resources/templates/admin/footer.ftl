@@ -10,9 +10,7 @@
     </div>
 	<script><#include "js/jquery.min.js"></script>
 	<script><#include "js/jquery-ui.min.js"></script>
-    <script>
-      $.widget.bridge('uibutton', $.ui.button);
-    </script>
+    <script>$.widget.bridge('uibutton', $.ui.button);</script>
     <script><#include "js/bootstrap.min.js"></script>
     <script><#include "js/raphael-min.js"></script>
     <script><#include "js/jquery-jvectormap-1.2.2.min.js"></script>
@@ -21,26 +19,14 @@
     <script><#include "js/app.min.js"></script>
     <script>
       $(function () {
-        /* jQueryKnob */
-
         $(".knob").knob({
-          /*change : function (value) {
-           //console.log("change : " + value);
-           },
-           release : function (value) {
-           console.log("release : " + value);
-           },
-           cancel : function () {
-           console.log("cancel : " + this.value);
-           },*/
           draw: function () {
             if (this.$.data('skin') == 'tron') {
-
-              var a = this.angle(this.cv)  // Angle
-                      , sa = this.startAngle          // Previous start angle
-                      , sat = this.startAngle         // Start angle
-                      , ea                            // Previous end angle
-                      , eat = sat + a                 // End angle
+              var a = this.angle(this.cv)
+                      , sa = this.startAngle
+                      , sat = this.startAngle
+                      , ea 
+                      , eat = sat + a
                       , r = true;
 
               this.g.lineWidth = this.lineWidth;
@@ -92,6 +78,34 @@
               }).show();
           })
       }(jQuery));
+      
+      $("#hash_cleartext").change(function() {
+		$.ajax({
+  			type: "POST",
+  			processData: false,
+  			contentType : 'application/json',
+  			url: "/@admin/toolsrx",
+  			data: JSON.stringify({ "function": "hash", "cleartext" : $("#hash_cleartext").val(), "key" : "" }),
+  			dataType: "json",
+  			success: function(data){
+				$("#hashedvalue").val(data);
+  			}
+		});
+	  });
+	  
+	  $(".encrypt").change(function() {
+		$.ajax({
+  			type: "POST",
+  			processData: false,
+  			contentType : 'application/json',
+  			url: "/@admin/toolsrx",
+  			data: JSON.stringify({ "function": "encrypt", "cleartext" : $("#encrypt_cleartext").val(), "key" : $("#encrypt_key").val() }),
+  			dataType: "json",
+  			success: function(data){
+				$("#encryptedvalue").val(data);
+  			}
+		});
+	  });	  
 	});
   </script>
   </body>

@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -21,12 +22,15 @@ import com.google.inject.Inject;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
+import io.mangoo.routing.bindings.Authentication;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
 
@@ -44,16 +48,21 @@ public class AdminController {
     private static final String CACHE = "cache";  //NOSONAR
     private static final String ROUTES = "routes"; //NOSONAR
     private static final String JOBS = "jobs";
+    private static final String TOOLS = "tools";
     private static final String STATS = "stats";
     private static final String SPACE = "space";
     private static final String VERSION = "version";
     private static final int MB = 1024*1024;
     private final Map<String, String> properties = new HashMap<>();
     private final Scheduler scheduler; //NOSONAR
+    private final Crypto crypto; //NOSONAR
+    private final Authentication authentication; //NOSONAR
     
     @Inject
-    public AdminController(Scheduler scheduler) {
+    public AdminController(Scheduler scheduler, Crypto crypto, Authentication authentication) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler can not be null");
+        this.crypto = Objects.requireNonNull(crypto, "crypto can not be null");
+        this.authentication = Objects.requireNonNull(authentication, "authentication can not be null");
         
         System.getProperties().entrySet().forEach(
                 entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
@@ -111,6 +120,34 @@ public class AdminController {
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(STATS, Application.getInstance(Cache.class).getStats())
                 .andTemplate(Template.DEFAULT.cachePath());
+    }
+    
+    public Response tools() {
+        return Response.withOk()
+                .andContent(TOOLS, TOOLS)
+                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andTemplate(Template.DEFAULT.toolsPath());
+    }
+    
+    public Response toolsrx(Request request) {
+        Map<String, Object> body = request.getBodyAsJsonMap();
+        String function = body.get("function").toString();
+        String cleartext = body.get("cleartext").toString();
+        String key = body.get("key").toString();
+
+        String value = "";
+        if (("hash").equalsIgnoreCase(function)) {
+            value = this.authentication.getHashedPassword(cleartext);
+        } else if (("encrypt").equalsIgnoreCase(function)) {
+            if (StringUtils.isNotBlank(key)) {
+                value = this.crypto.encrypt(cleartext, key);
+            } else {
+                value = this.crypto.encrypt(cleartext);
+            }
+        }
+        
+        return Response.withOk()
+               .andJsonBody(value);
     }
 
     public Response metrics() {
