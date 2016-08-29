@@ -10,7 +10,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +19,6 @@ import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.reflections.Reflections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -31,6 +29,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -338,7 +337,11 @@ public class Bootstrap {
 
     public void startQuartzScheduler() {
         if (!hasError()) {
-            final Set<Class<?>> jobs = new Reflections(this.config.getSchedulerPackage()).getTypesAnnotatedWith(Schedule.class);
+            List<Class<?>> jobs = new ArrayList<>();
+            new FastClasspathScanner(this.config.getSchedulerPackage())
+                .matchClassesWithAnnotation(Schedule.class, jobs::add)
+                .scan();
+
             if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
                 final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 mangooScheduler.initialize();
