@@ -26,7 +26,7 @@ public final class Router {
      */
     public static void addRoute(Route route) {
         Objects.requireNonNull(route, "route can note be null");
-        Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum number of routes reached");
+        Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);
     }
