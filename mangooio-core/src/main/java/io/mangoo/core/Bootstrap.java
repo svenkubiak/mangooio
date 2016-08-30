@@ -316,7 +316,7 @@ public class Bootstrap {
                 .matchClassesWithAnnotation(Schedule.class, jobs::add)
                 .scan();
             
-            if (jobs != null && !jobs.isEmpty() && this.config.isSchedulerAutostart()) {
+            if (!jobs.isEmpty() && this.config.isSchedulerAutostart()) {
                 final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 mangooScheduler.initialize();
                 
