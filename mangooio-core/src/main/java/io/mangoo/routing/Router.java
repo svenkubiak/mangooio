@@ -5,13 +5,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Preconditions;
+
 /**
  *
  * @author svenkubiak
  *
  */
 public final class Router {
-    private static Set<Route> routes = ConcurrentHashMap.newKeySet(10000);
+    private static Set<Route> routes = ConcurrentHashMap.newKeySet();
+    private static int MAX_ROUTES = 100000;
 
     private Router(){
     }
@@ -23,7 +26,8 @@ public final class Router {
      */
     public static void addRoute(Route route) {
         Objects.requireNonNull(route, "route can note be null");
-
+        Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum number of routes reached");
+        
         routes.add(route);
     }
 
