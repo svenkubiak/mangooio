@@ -1,6 +1,8 @@
 package io.mangoo.routing;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,6 +41,8 @@ public class Attachment {
     private Messages messages;
     private TemplateEngine templateEngine;
     private boolean requestFilter;
+    private List<Annotation> classAnnotations;
+    private List<Annotation> methodAnnotations;
 
     public static Attachment build() {
         return new Attachment();
@@ -101,6 +105,16 @@ public class Attachment {
 
     public Attachment withRequestFilter(boolean hasRequestFilter) {
         this.requestFilter = hasRequestFilter;
+        return this;
+    }
+
+    public Attachment withClassAnnotations(List<Annotation> classAnnotations) {
+        this.classAnnotations = classAnnotations;
+        return this;
+    }
+    
+    public Attachment withMethodAnnotations(List<Annotation> methodAnnotations) {
+        this.methodAnnotations = methodAnnotations;
         return this;
     }
 
@@ -207,8 +221,16 @@ public class Attachment {
     public Response getResponse() {
         return this.response;
     }
-
+    
     public long getResponseTime() {
-        return System.currentTimeMillis() - this.start;
+        return this.start;
+    }
+
+    public List<Annotation> getClassAnnotations() {
+        return this.classAnnotations;
+    }
+    
+    public List<Annotation> getMethodAnnotations() {
+        return this.methodAnnotations;
     }
 }

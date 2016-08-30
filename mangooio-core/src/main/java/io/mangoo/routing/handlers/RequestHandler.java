@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -90,13 +91,13 @@ public class RequestHandler implements HttpHandler {
         }
 
         //execute controller filters
-        response = executeFilter(this.requestAttachment.getControllerClass().getAnnotations(), response);
+        response = executeFilter(this.requestAttachment.getClassAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
         }
 
         //execute method filters
-        response = executeFilter(this.requestAttachment.getMethod().getAnnotations(), response);
+        response = executeFilter(this.requestAttachment.getMethodAnnotations(), response);
         if (response.isEndResponse()) {
             return response;
         }
@@ -237,17 +238,15 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    protected Response executeFilter(Annotation[] annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(FilterWith.class)) {
-                final FilterWith filterWith = (FilterWith) annotation;
-                for (final Class<?> clazz : filterWith.value()) {
-                    if (response.isEndResponse()) {
-                        return response;
-                    } else {
-                        final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                        response = (Response) classMethod.invoke(Application.getInstance(clazz), this.requestAttachment.getRequest(), response);
-                    }
+            final FilterWith filterWith = (FilterWith) annotation;
+            for (final Class<?> clazz : filterWith.value()) {
+                if (response.isEndResponse()) {
+                    return response;
+                } else {
+                    final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
+                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.requestAttachment.getRequest(), response);
                 }
             }
         }
