@@ -42,8 +42,7 @@ public class LocaleHandler implements HttpHandler {
             locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
         }
 
-        Locale.setDefault(locale);
-        requestAttachment.getMessages().reload();
+        requestAttachment.getMessages().reload(locale);
         nextHandler(exchange);
     }
 
