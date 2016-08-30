@@ -84,7 +84,7 @@
   			type: "POST",
   			processData: false,
   			contentType : 'application/json',
-  			url: "/@admin/toolsrx",
+  			url: "/@admin/tools/ajax",
   			data: JSON.stringify({ "function": "hash", "cleartext" : $("#hash_cleartext").val(), "key" : "" }),
   			dataType: "json",
   			success: function(data){
@@ -98,7 +98,7 @@
   			type: "POST",
   			processData: false,
   			contentType : 'application/json',
-  			url: "/@admin/toolsrx",
+  			url: "/@admin/tools/ajax",
   			data: JSON.stringify({ "function": "encrypt", "cleartext" : $("#encrypt_cleartext").val(), "key" : $("#encrypt_key").val() }),
   			dataType: "json",
   			success: function(data){
