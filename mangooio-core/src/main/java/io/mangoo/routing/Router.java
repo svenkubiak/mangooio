@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
  */
 public final class Router {
     private static Set<Route> routes = ConcurrentHashMap.newKeySet();
-    private static int MAXROUTES = 100000;
+    private static final int MAX_ROUTES = 100000;
 
     private Router(){
     }
@@ -26,7 +26,7 @@ public final class Router {
      */
     public static void addRoute(Route route) {
         Objects.requireNonNull(route, "route can note be null");
-        Preconditions.checkArgument(routes.size() <= MAXROUTES, "Maximum of " + MAXROUTES + " routes reached");
+        Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);
     }
