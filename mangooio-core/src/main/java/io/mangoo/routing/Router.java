@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
  * @author svenkubiak
  *
  */
-@SuppressWarnings("all")
 public final class Router {
     private static Set<Route> routes = ConcurrentHashMap.newKeySet();
     private static int MAX_ROUTES = 100000;
