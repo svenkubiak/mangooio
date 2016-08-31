@@ -1,14 +1,18 @@
 package io.mangoo.routing.handlers;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -40,6 +44,8 @@ public class DispatcherHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
     private Method method;
+    private List<Annotation> methodAnnotations = new ArrayList<>();
+    private List<Annotation> classAnnotations = new ArrayList<>();
     private final TemplateEngine templateEngine;
     private final Messages messages;
     private final Crypto crypto;
@@ -72,8 +78,20 @@ public class DispatcherHandler implements HttpHandler {
             this.method = Application.getInstance(this.controllerClass)
                     .getClass()
                     .getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
+            
+            for (Annotation annotation : this.method.getAnnotations()) {
+                if (annotation.annotationType().equals(FilterWith.class)) {
+                    this.methodAnnotations.add(annotation);
+                }
+            }
         } catch (NoSuchMethodException | SecurityException e) {
             LOG.error("Failed to create DispatcherHandler", e);
+        }
+        
+        for (Annotation annotation : controllerClass.getAnnotations()) {
+            if (annotation.annotationType().equals(FilterWith.class)) {
+                this.classAnnotations.add(annotation);
+            }
         }
     }
 
@@ -93,6 +111,8 @@ public class DispatcherHandler implements HttpHandler {
             .withControllerClass(this.controllerClass)
             .withControllerClassName(this.controllerClassName)
             .withControllerMethodName(this.controllerMethodName)
+            .withClassAnnotations(this.classAnnotations)
+            .withMethodAnnotations(this.methodAnnotations)
             .withMethodParameters(this.methodParameters)
             .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)

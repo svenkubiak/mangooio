@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.inject.Singleton;
-
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Validation;
@@ -18,11 +16,9 @@ import io.mangoo.enums.Validation;
  * @author skubiak
  *
  */
-@Singleton
 public class Messages {
     private final Map<String, String> defaults = new ConcurrentHashMap<>(16, 0.9f, 1);
     private ResourceBundle bundle;
-    private Locale locale;
 
     public Messages() {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
@@ -44,11 +40,8 @@ public class Messages {
     /**
      * Refreshes the resource bundle by reloading the bundle with the default locale
      */
-    public void reload() {
-        if (!Locale.getDefault().equals(this.locale)) {
-            this.locale = Locale.getDefault();
-            this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
-        }
+    public void reload(Locale locale) {
+        this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), locale);
     }
 
     /**
