@@ -672,23 +672,59 @@ public class Config {
     }
 
     /**
-     * @return application.jwt.signkey
+     * @return application.jwt.signkey or null if undefined
      */
     public String getJwtsSignKey() {
         return getString(Key.APPLICATION_JWT_SIGNKEY, null);
     }
 
     /**
-     * @return application.jwt.encrypt
+     * @return application.jwt.encrypt or default value if undefined
      */
     public boolean isJwtsEncrypted() {
         return getBoolean(Key.APPLICATION_JWT_ENCRYPT, Default.APPLICATION_JWT_ENCRYPT.toBoolean());
     }
 
     /**
-     * @return application.jwt.encryptionkey
+     * @return application.jwt.encryptionkey or application secret if undefined
      */
     public String getJwtsEncryptionKey() {
         return getString(Key.APPLICATION_JWT_ENCRYPTION_KEY, getApplicationSecret());
+    }
+
+    /**
+     * 
+     * @return application.headers.xssprotection or default value if undefined
+     */
+    public int getXssProectionHeader() {
+        return getInt(Key.APPLICATION_HEADERS_XSSPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toInt());
+    }
+
+    /**
+     * @return application.headers.xcontenttypeoptions or default value if undefined
+     */
+    public String getXContentTypeOptionsHeader() {
+        return getString(Key.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString());
+    }
+
+    /**
+     * @return application.headers.xframeoptions or default value if undefined
+     */
+    public String getXFrameOptionsHeader() {
+        return getString(Key.APPLICATION_HEADERS_XFRAMEOPTIONS, Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString());
+    }
+
+    /**
+     * @return application.headers.server or default value if undefined
+     */
+    public String getServerHeader() {
+        return getString(Key.APPLICATION_HEADERS_SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
+    }
+
+    /**
+     * @return application.headers.contentsecuritypolicy or default value if undefined
+     */
+    public String getContentSecurityPolicyHeader() {
+        return getString(Key.APPLICATION_HEADERS_CONTENTSECURITYPOLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString());
     }
 }

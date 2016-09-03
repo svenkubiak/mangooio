@@ -27,7 +27,7 @@ public class BinaryHandler implements HttpHandler {
         exchange.setStatusCode(this.response.getStatusCode());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.getOutputStream().write(this.response.getBinaryContent());
     }
