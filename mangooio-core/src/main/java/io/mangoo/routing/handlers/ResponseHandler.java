@@ -59,7 +59,7 @@ public class ResponseHandler implements HttpHandler {
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.getResponseHeaders().put(Headers.SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.endExchange();
     }
@@ -95,11 +95,12 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
-        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.X_XSS_PPROTECTION.toInt());
-        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
-        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
+        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), CONFIG.getXssProectionHeader());
+        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), CONFIG.getXContentTypeOptionsHeader());
+        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), CONFIG.getXFrameOptionsHeader());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
+        exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), CONFIG.getContentSecurityPolicyHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
 
         if (this.requestAttachment.isTimer()) {

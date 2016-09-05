@@ -290,4 +290,19 @@ public class ApplicationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Header.X_RESPONSE_TIME.toString()), containsString("ms"));
     }
+    
+    @Test
+    public void testHeaders() {
+        //given
+        final WebResponse response = WebRequest.get("/").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader(Header.X_XSS_PPROTECTION.toString()), equalTo("1"));
+        assertThat(response.getHeader(Header.X_CONTENT_TYPE_OPTIONS.toString()), equalTo("nosniff"));
+        assertThat(response.getHeader(Header.X_FRAME_OPTIONS.toString()), equalTo("DENY"));
+        assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
+        assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));
+    }
 }
