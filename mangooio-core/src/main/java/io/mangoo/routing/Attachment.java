@@ -109,11 +109,6 @@ public class Attachment {
         return this;
     }
     
-    public Attachment getWithTimer(boolean timer) {
-        this.timer = timer;
-        return this;
-    }
-
     public Attachment withClassAnnotations(List<Annotation> classAnnotations) {
         this.classAnnotations = classAnnotations;
         return this;
@@ -121,6 +116,11 @@ public class Attachment {
     
     public Attachment withMethodAnnotations(List<Annotation> methodAnnotations) {
         this.methodAnnotations = methodAnnotations;
+        return this;
+    }
+    
+    public Attachment withTimer(boolean timer) {
+        this.timer = timer;
         return this;
     }
 

@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import filters.MyGlobalFilter;
-import io.mangoo.interfaces.MangooAuthenticator;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRequestFilter;
 
@@ -14,8 +13,5 @@ public class Module extends AbstractModule {
     protected void configure() {
         bind(MangooRequestFilter.class).to(MyGlobalFilter.class);
         bind(MangooLifecycle.class).to(Lifecycle.class);
-        bind(MangooAuthenticator.class).toInstance(
-                (username, password) -> ("foo").equals(username) && ("bar").equals(password)
-                );
     }
 }

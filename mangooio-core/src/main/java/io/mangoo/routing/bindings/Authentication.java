@@ -4,10 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mindrot.jbcrypt.BCrypt;
 
-import io.mangoo.enums.Default;
 import io.mangoo.models.OAuthUser;
+import io.mangoo.utils.CodecUtils;
 
 /**
  * Convenient class for handling authentication
@@ -96,7 +95,7 @@ public class Authentication {
     public String getHashedPassword(String password) {
         Objects.requireNonNull(password, "password is required for getHashedPassword");
 
-        return BCrypt.hashpw(password, BCrypt.gensalt(Default.JBCRYPT_ROUNDS.toInt()));
+        return CodecUtils.hexJBcrypt(password);
     }
 
     /**
@@ -113,7 +112,7 @@ public class Authentication {
 
         boolean authenticated = false;
         if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(hash)) {
-            authenticated = BCrypt.checkpw(password, hash);                
+            authenticated = CodecUtils.checkJBCrypt(password, hash);               
         }
 
         return authenticated;

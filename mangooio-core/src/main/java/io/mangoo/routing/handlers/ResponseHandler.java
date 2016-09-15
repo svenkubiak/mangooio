@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.routing.Attachment;
@@ -21,6 +23,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
     private Attachment requestAttachment;
 
     @Override

@@ -15,6 +15,8 @@ public class Route {
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
+    private String username;
+    private String password;
     private final RouteType routeType;
     private boolean authentication;
     private boolean blocking;
@@ -69,6 +71,16 @@ public class Route {
         this.authentication = authentication;
         return this;
     }
+    
+    public Route withUsername(String username) {
+        this.username = username;
+        return this;
+    }  
+    
+    public Route withPassword(String password) {
+        this.password = password;
+        return this;
+    }     
 
     public Route allowBlocking(boolean blocking) {
         this.blocking = blocking;
@@ -83,7 +95,15 @@ public class Route {
     public String getUrl() {
         return this.url;
     }
+    
+    public String getUsername() {
+        return this.username;
+    }    
 
+    public String getPassword() {
+        return this.password;
+    }    
+    
     public RouteType getRouteType() {
         return this.routeType;
     }

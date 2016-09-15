@@ -162,6 +162,8 @@ public class Bootstrap {
                     final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()));
                     route.toUrl(yamlRoute.getUrl().trim());
                     route.withRequest(HttpString.tryFromString(yamlRoute.getMethod()));
+                    route.withUsername(yamlRoute.getUsername());
+                    route.withPassword(yamlRoute.getPassword());
                     route.withAuthentication(yamlRoute.isAuthentication());
                     route.withTimer(yamlRoute.isTimer());
                     route.allowBlocking(yamlRoute.isBlocking());
@@ -247,7 +249,9 @@ public class Bootstrap {
                         route.getControllerMethod(),
                         route.isBlockingAllowed(),
                         route.isInternalTemplateEngine(),
-                        route.isTimerEnabled());
+                        route.isTimerEnabled(),
+                        route.getUsername(),
+                        route.getPassword());
         
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
@@ -394,6 +398,8 @@ public class Bootstrap {
         private String method;
         private String url;
         private String mapping;
+        private String username;
+        private String password;
         private boolean blocking;
         private boolean authentication;
         private boolean timer;
@@ -413,6 +419,22 @@ public class Bootstrap {
         public void setUrl(String url) {
             this.url = url;
         }
+        
+        public String getUsername() {
+            return username;
+        }
+        
+        public void setUsername(String username) {
+            this.username = username;
+        } 
+        
+        public String getPassword() {
+            return password;
+        }
+        
+        public void setPassword(String password) {
+            this.password = password;
+        }         
         
         public String getMapping() {
             return mapping;

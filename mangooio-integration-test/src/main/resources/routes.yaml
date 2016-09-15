@@ -11,6 +11,13 @@ routes:
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# BasicAuthenticationController
+- method: GET
+  url: /basicauth
+  mapping: BasicAuthenticationController.basicauth
+  username: foo
+  password: $2a$12$Po56ZgZQgDEoK6nws6gaAuZriIwcFT1thEHq.N2T9wLdUnhmlLKxG
+
 # FilterController
 - method: GET
   url: /filter
