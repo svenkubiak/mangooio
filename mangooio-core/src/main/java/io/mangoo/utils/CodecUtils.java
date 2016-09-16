@@ -10,7 +10,7 @@ import io.mangoo.enums.Default;
  * @author svenkubiak
  *
  */
-public class CodecUtils {
+public final class CodecUtils {
 
     /**
      * Hashes a given cleartext data with JBCrypt
@@ -30,6 +30,17 @@ public class CodecUtils {
      */
     public static String hexSHA512(String data) {
         return DigestUtils.sha512Hex(data);
+    }
+    
+    /**
+     * Hashes a given cleartext data with SHA512 and an appended salt
+     * 
+     * @param data The cleartext data
+     * @param salt The salt to use
+     * @return SHA512 hashed value
+     */
+    public static String hexSHA512(String data, String salt) {
+        return DigestUtils.sha512Hex(data + salt);
     }
     
     /**

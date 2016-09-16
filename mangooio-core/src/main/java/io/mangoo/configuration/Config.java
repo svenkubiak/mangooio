@@ -679,10 +679,10 @@ public class Config {
     }
     
     /**
-     * @return application.jwt.signkey or null if undefined
+     * @return application.jwt.signkey or application secret if undefined
      */
     public String getJwtsSignKey() {
-        return getString(Key.APPLICATION_JWT_SIGNKEY, null);
+        return getString(Key.APPLICATION_JWT_SIGNKEY, getApplicationSecret());
     }
 
     /**
