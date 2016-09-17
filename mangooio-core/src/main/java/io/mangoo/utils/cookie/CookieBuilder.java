@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.utils.cookie;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

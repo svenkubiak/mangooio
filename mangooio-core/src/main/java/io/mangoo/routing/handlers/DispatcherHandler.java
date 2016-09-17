@@ -167,7 +167,7 @@ public class DispatcherHandler implements HttpHandler {
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         if (requestHasAuthentication()) {
-            HttpHandler httpHandler = addSecurity(new AuthenticationHandler());
+            HttpHandler httpHandler = addSecurity(Application.getInstance(AuthenticationHandler.class));
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);
@@ -184,7 +184,7 @@ public class DispatcherHandler implements HttpHandler {
     }
 
     /**
-     * Adds a Wrapper to the handler when the request contains authentication
+     * Adds a Wrapper to the handler when the request requires authentication
      * 
      * @param wrap The Handler to wrap
      * @return A wrapped handler
@@ -192,7 +192,7 @@ public class DispatcherHandler implements HttpHandler {
     private HttpHandler addSecurity(final HttpHandler wrap) {
         HttpHandler handler = wrap;
         
-        final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication"));
+        final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required"));
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);

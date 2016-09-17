@@ -11,6 +11,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import io.mangoo.utils.cookie.CookieBuilder;
 import io.undertow.server.handlers.Cookie;
 
 /**

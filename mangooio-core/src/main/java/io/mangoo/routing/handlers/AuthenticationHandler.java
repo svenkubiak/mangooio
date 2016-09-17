@@ -10,7 +10,7 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class AuthenticationHandler implements HttpHandler {
-
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         nextHandler(exchange);

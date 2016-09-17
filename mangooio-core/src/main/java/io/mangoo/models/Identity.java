@@ -58,6 +58,7 @@ public class Identity implements IdentityManager {
     private Account getAccount(final String username) {
         if (this.username.equals(username)) {
             return new Account() {
+                private static final long serialVersionUID = -1097117887398334569L;
                 private final Principal principal = new Principal() {
                     @Override
                     public String getName() {
@@ -77,6 +78,7 @@ public class Identity implements IdentityManager {
 
             };
         }
+        
         return null;
     }
 }

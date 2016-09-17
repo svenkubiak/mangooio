@@ -9,6 +9,7 @@ import org.junit.Test;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.utils.cookie.CookieParser;
 
 /**
  *
