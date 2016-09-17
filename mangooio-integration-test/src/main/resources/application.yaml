@@ -18,7 +18,7 @@ default:
         jwt        :
             signkey       : myvoiceismypassword
             encrypt       : true
-            encryptionkey : myvoiceismypassword
+            encryptionkey : myvoiceismypasswordmyvoiceismypa
         timer      : true
         minify:
             js        : true

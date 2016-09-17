@@ -18,8 +18,8 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class JwtsControllerTest {
-    private static final String VALID_BEARER = "tVPJmD9ZgYJKt0p8yPGGbKFHaDekhcKiv70ISFsc2TYex7d2lbpzzgjIpU4sSd7KC+rJGGLshpcZj4wNTfadKJQ3YRZ2Tp4B3lXKduKc1J8uLjB4vI9xRKReqWkzjtVg4WnJQdYAuCc9SyFqrhtDa/7t8ksAu4bd9X6xxxgARWM=";
-    private static final String INVALID_BEARER = "UDpJn6svraIVYklop7L3txHn+GGr9LoU5vdnmHVXcPSsddIYt+798EToaiclhO2Pnh8yA4Pp99nWltL1WQ9/Ty9sdJlGXd6HDHDJziMRrmlxMbleBD51MXIwtwHE27uK5grDiEh1NNULLiHG3ETQACQ1/FHNGSEfsPVavPmwrRSUtzgILuMUXrUKNYf+l/KYUnP5wIdwSGRZsR6oJHQkTg==";
+    private static final String VALID_BEARER = "zcACe7mxq6DPTK1XXpoekqp2yNirjhXso+nkzsCnMw5r9r6Dg3oiabHsQDt7l2KsfxqSpYIH2FJ/Zl5Mkh3H7Z3LC1FvfIyNhL1jsbQq70XeTdcQVKO/HH4Evjv7daU9UARBVKVTgGei6Cbw8EAy+FmrkCbgUnk5jtKpo3pWkgU=";
+    private static final String INVALID_BEARER = "zcACe7mxq6DPTK1XXpoekqp2yNirjhXso+nkzsCnMw5r9r6Dg3oiabHsQDt7l2KsfxqSpYIH2FJ/Zl5Mkh3H7Z3LC1FvfIyNhL1jsbQq70V0S9C58S1ZiCxBcZ5TMUI/ExuaGxzAJWzslCnBsdHnEJvg4lBk9uLb8gGfxNt/AQ8=";
     
     @Test
     public void testNoBearerToken() {
@@ -44,28 +44,28 @@ public class JwtsControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
     
-//    @Test
-//    public void testValidBearerToken() {
-//        //given
-//        WebResponse response = WebRequest.get("/jwts/validate")
-//                .withHeader("Authorization", "Bearer " + VALID_BEARER)
-//                .execute();
-//        
-//        //then
-//        assertThat(response, not(nullValue()));
-//        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-//    }
+    @Test
+    public void testValidBearerToken() {
+        //given
+        WebResponse response = WebRequest.get("/jwts/validate")
+                .withHeader("Authorization", "Bearer " + VALID_BEARER)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
     
-//    @Test
-//    public void testBearerTokenInRequest() {
-//        //given
-//        WebResponse response = WebRequest.get("/jwts/retrieve")
-//                .withHeader("Authorization", "Bearer " + VALID_BEARER)
-//                .execute();
-//        
-//        //then
-//        assertThat(response, not(nullValue()));
-//        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-//        assertThat(response.getContent(), containsString("true"));
-//    }
+    @Test
+    public void testBearerTokenInRequest() {
+        //given
+        WebResponse response = WebRequest.get("/jwts/retrieve")
+                .withHeader("Authorization", "Bearer " + VALID_BEARER)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString("true"));
+    }
 }
