@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
@@ -74,7 +76,11 @@ public class Request implements MangooValidator {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
-        return JsonUtils.fromJson(this.body, Map.class);
+        if (StringUtils.isNotBlank(this.body)) {
+            return JsonUtils.fromJson(this.body, Map.class);
+        }
+        
+        return new HashMap<String, Object>();
     }
 
     /**

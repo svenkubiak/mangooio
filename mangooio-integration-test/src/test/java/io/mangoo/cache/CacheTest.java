@@ -59,21 +59,6 @@ public class CacheTest {
     }
     
     @Test
-    public void testGetAll() {
-        //given
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-        cache.clear();
-        cache.put("test", TEST_VALUE);
-        cache.put("test2", 1);
-        
-        //then
-        assertThat(cache.getAll(), not(nullValue()));
-        assertThat(cache.getAll().size(), equalTo(2));
-    }
-    
-    @Test
     public void testPutAll() {
         //given
         Cache cache = Application.getInstance(Cache.class);
@@ -85,32 +70,7 @@ public class CacheTest {
         cache.putAll(map);
         
         //then
-        assertThat(cache.getAll(), not(nullValue()));
-        assertThat(cache.getAll().size(), equalTo(2));
-    }
-    
-    @Test
-    public void testSize() {
-        //given
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //when
-        cache.clear();
-        cache.put("test1", TEST_VALUE);
-        cache.put("test2", TEST_VALUE);
-        cache.put("test3", TEST_VALUE);
-        cache.put("test4", TEST_VALUE);
-        
-        //then
-        assertThat(cache.size(), equalTo(4L));
-    }
-    
-    @Test
-    public void testStats() {
-        //given
-        Cache cache = Application.getInstance(Cache.class);
-        
-        //then
-        assertThat(cache.getStats(), not(nullValue()));
+        assertThat(cache.get("test"), equalTo(TEST_VALUE));
+        assertThat(cache.get("test2"), equalTo(1));
     }
 }

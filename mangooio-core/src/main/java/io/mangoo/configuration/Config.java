@@ -143,7 +143,7 @@ public class Config {
      */
     public String getMasterKey() {
         if (Application.inTestMode()) {
-            return Default.APPLICATION_MASTERKEY.toString();
+            return Default.APPLICATION_TEST_MASTERKEY.toString();
         }
 
         String key = null;
@@ -545,20 +545,6 @@ public class Config {
     }
 
     /**
-     * @return cache.class from application.yaml or default value if undefined
-     */
-    public String getCacheClass() {
-        return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
-    }
-
-    /**
-     * @return cache.addresses from application.yaml
-     */
-    public String getCacheAddresses() {
-        return getString(Key.CACHE_ADDRESSES);
-    }
-
-    /**
      * @return templateengine.class from application.yaml
      */
     public String getTemplateEngineClass() {
@@ -733,5 +719,19 @@ public class Config {
      */
     public String getContentSecurityPolicyHeader() {
         return getString(Key.APPLICATION_HEADERS_CONTENTSECURITYPOLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString());
+    }
+
+    /**
+     * @return cache.cluster.enabled or default value if undefined
+     */
+    public boolean isClusteredCached() {
+        return getBoolean(Key.CACHE_CLUSTER_ENABLE, Default.CACHE_CLUSTER_ENABLE.toBoolean());
+    }
+
+    /**
+     * @return cache.cluster.url or null if undefined
+     */
+    public String getCacheClusterUrl() {
+        return getString(Key.CACHE_CLUSTER_URL, null);
     }
 }

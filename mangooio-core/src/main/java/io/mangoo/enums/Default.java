@@ -31,7 +31,6 @@ public enum Default {
     SCHEDULER_PREFIX("org.quartz."),
     APPLICATION_SECRET_MIN_LENGTH("32"),
     SERVER("Undertow"),
-    CACHE_NAME("mangooio"),
     TEMPLATES_FOLDER("/templates/"),
     AUTH_COOKIE_EXPIRES("3600"),
     COOKIE_NAME("MANGOOIO-SESSION"),
@@ -51,8 +50,7 @@ public enum Default {
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     COOKIE_SECURE("false"), //NOSONAR
     AUTH_COOKIE_SECURE("false"), //NOSONAR
-    CACHE_MAX_SIZE("5000"),
-    APPLICATION_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
+    APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
     APPLICATION_ADMIN_URL("/@admin/{space}"),
     APPLICATION_TIMER("false"),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
@@ -77,7 +75,6 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-"),
     AUTHENTICATION("@authentication"),
     BLOCKING("@blocking"),
-    CACHE_CLASS("io.mangoo.cache.GuavaCache"),
     VALUE_REQUIRED("For a new cache entry a non null value is required"),
     KEY_REQUIRED("For a new cache entry a non null key is required"),
     TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker"),
@@ -86,7 +83,8 @@ public enum Default {
     SMTP_SSL("false"),
     SMTP_HOST("localhost"),
     SMTP_SERVER_NAME("smtp"),
-    SMTP_FROM("mangoo I/O application <noreply@example.com>");
+    SMTP_FROM("mangoo I/O application <noreply@example.com>"),
+    CACHE_CLUSTER_ENABLE("false");
 
     private final String value;
 

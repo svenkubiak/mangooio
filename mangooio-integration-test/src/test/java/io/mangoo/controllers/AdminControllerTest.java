@@ -22,8 +22,8 @@ public class AdminControllerTest {
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String SCHEDULER = "scheduler";
     private static final String METRICS = "metrics";
-    private static final String CACHE = "cache";
     private static final String ROUTES = "routes";
+    private static final String TOOLS = "tools";
     private static final String ADMIN = "admin";
     private static final String PROPERTIES = "properties";
     
@@ -80,32 +80,6 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void testCacheAuthorized() {
-        //given
-        WebResponse response = WebRequest.get("/@admin/cache")
-                .withBasicauthentication(ADMIN, ADMIN)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(CACHE));
-    }
-    
-    @Test
-    public void testCacheUnauthorized() {
-        //given
-        WebResponse response = WebRequest.get("/@admin/cache").execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), not(containsString(CACHE)));
-    }
-
-    @Test
     public void testMetricsAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/metrics")
@@ -154,6 +128,57 @@ public class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(SCHEDULER)));
+    }
+    
+    @Test
+    public void testToolsAuthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/tools")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(TOOLS));
+    }
+    
+    @Test
+    public void testToolsUnauthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/tools").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(TOOLS)));
+    }
+    
+    @Test
+    public void testToolsAjaxAuthorized() {
+        //given
+        WebResponse response = WebRequest.post("/@admin/tools/ajax")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo("application/json; charset=UTF-8"));
+    }
+    
+    @Test
+    public void testToolsAjaxUnauthorized() {
+        //given
+        WebResponse response = WebRequest.post("/@admin/tools/ajax").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
 }

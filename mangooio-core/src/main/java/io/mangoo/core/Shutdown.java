@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.managers.ExecutionManager;
+import io.mangoo.providers.CacheProvider;
 import io.mangoo.scheduler.Scheduler;
 
 /**
@@ -31,6 +32,7 @@ public class Shutdown extends Thread {
     @Override
     public void run() {
         invokeLifecycle();
+        closeCaches();
         stopScheduler();
         stopUndertow();
         stopExecutionManager();
@@ -54,5 +56,9 @@ public class Shutdown extends Thread {
     
     private void stopUndertow() {
         Application.stopUndertow();
+    }
+    
+    private void closeCaches() {
+        Application.getInstance(CacheProvider.class).close();
     }
 }

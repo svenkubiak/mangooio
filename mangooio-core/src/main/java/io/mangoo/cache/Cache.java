@@ -1,7 +1,6 @@
 package io.mangoo.cache;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 
@@ -26,13 +25,6 @@ public interface Cache {
     public void remove(String key);
 
     /**
-     * Returns the size (number of elements) of cached values
-     *
-     * @return Cache size
-     */
-    public long size();
-
-    /**
      * Clears the complete cache by invalidating all entries
      */
     public void clear();
@@ -54,16 +46,4 @@ public interface Cache {
      * @param map The map to add
      */
     public void putAll(Map<String, Object> map);
-
-    /**
-     * @return The complete content of the cache
-     */
-    public ConcurrentMap<String, Object> getAll();
-
-    /**
-     * Retrieves the cache statistics
-     *
-     * @return Map containing cache statistics
-     */
-    public Map<String, Object> getStats();
 }

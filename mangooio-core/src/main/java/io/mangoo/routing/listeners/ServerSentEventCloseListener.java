@@ -1,14 +1,18 @@
 package io.mangoo.routing.listeners;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.xnio.ChannelListener;
 
+import com.google.inject.Inject;
+
 import io.mangoo.cache.Cache;
-import io.mangoo.core.Application;
+import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
+import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
@@ -19,7 +23,13 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  */
 @Singleton
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
-    private final Cache cache = Application.getInternalCache();
+    private final Cache cache;
+    
+    @Inject
+    private ServerSentEventCloseListener(CacheProvider cacheProvider) {
+        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
+        this.cache = cacheProvider.getCache(CacheName.SSE);
+    }
 
     @Override
     public void handleEvent(ServerSentEventConnection connection) {

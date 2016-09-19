@@ -1,14 +1,18 @@
 package io.mangoo.routing.listeners;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.xnio.ChannelListener;
 
+import com.google.inject.Inject;
+
 import io.mangoo.cache.Cache;
-import io.mangoo.core.Application;
+import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
+import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -19,7 +23,13 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 @Singleton
 public class WebSocketCloseListener implements ChannelListener<WebSocketChannel> {
-    private final Cache cache = Application.getInternalCache();
+    private final Cache cache;
+    
+    @Inject
+    private WebSocketCloseListener(CacheProvider cacheProvider) {
+        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
+        this.cache = cacheProvider.getCache(CacheName.WSS);
+    }
 
     @Override
     public void handleEvent(WebSocketChannel channel) {

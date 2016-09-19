@@ -28,6 +28,7 @@
 		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<scribejava.version>3.2.0</scribejava.version>
 		<jackson.version>2.8.2</jackson.version>
+		<ehcache.version>3.1.2</ehcache.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -267,9 +268,37 @@
 				<version>4.12</version>
 			</dependency>
 			<dependency>
-				<groupId>com.hazelcast</groupId>
-				<artifactId>hazelcast-client</artifactId>
-				<version>3.7.1</version>
+				<groupId>org.ehcache.modules</groupId>
+				<artifactId>ehcache-core</artifactId>
+				<version>${ehcache.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache-clustered</artifactId>
+				<version>${ehcache.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>			
+			<dependency>
+				<groupId>org.ehcache.modules</groupId>
+				<artifactId>ehcache-impl</artifactId>
+				<version>${ehcache.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>

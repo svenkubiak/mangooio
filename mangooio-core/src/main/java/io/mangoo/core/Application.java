@@ -6,11 +6,7 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
-import io.mangoo.cache.Cache;
-import io.mangoo.cache.GuavaCache;
-import io.mangoo.cache.HazlecastCache;
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Mode;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
@@ -24,7 +20,6 @@ import io.undertow.Undertow;
  *
  */
 public final class Application {
-    private static volatile Cache cache;
     private static volatile Undertow undertow;
     private static volatile TemplateEngine templateEngine;
     private static volatile Config config;
@@ -144,21 +139,6 @@ public final class Application {
         }
 
         return templateEngine;
-    }
-
-    /**
-     * @return An instance of the internal cache
-     */
-    public static Cache getInternalCache() {
-        if (cache == null) {
-            if (Default.CACHE_CLASS.toString().equals(config.getCacheClass())) {
-                cache = new GuavaCache();
-            } else {
-                cache = new HazlecastCache();
-            }
-        }
-
-        return cache;
     }
 
     /**
