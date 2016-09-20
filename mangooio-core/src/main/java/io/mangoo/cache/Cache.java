@@ -1,6 +1,7 @@
 package io.mangoo.cache;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
@@ -46,4 +47,20 @@ public interface Cache {
      * @param map The map to add
      */
     public void putAll(Map<String, Object> map);
+    
+    /**
+     * Increments a cache counter with a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger
+     */
+    public AtomicInteger increment(String key);
+    
+    /**
+     * Decrements a cache counter with a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger
+     */
+    public AtomicInteger decrement(String key);
 }

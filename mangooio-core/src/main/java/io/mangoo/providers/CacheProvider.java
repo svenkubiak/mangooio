@@ -85,7 +85,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initRequestCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(1000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(10000))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(60, TimeUnit.SECONDS)))
                 .build();
         

@@ -30,6 +30,7 @@ import io.undertow.server.HttpServerExchange;
  * The request chain contains the following handlers in order:
  *
  * DispatcherHandler
+ * LimitHandler
  * LocalHandler
  * InboundCookiesHandler
  * FormHandler

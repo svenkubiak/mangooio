@@ -1,11 +1,8 @@
 package io.mangoo.routing.handlers;
 
-import java.net.InetSocketAddress;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.inject.Inject;
-import com.tc.text.StringUtils;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
@@ -36,31 +33,35 @@ public class LimitHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         if (this.requestAttachment.hasLimit()) {
-            String url = exchange.getRequestURL();
-            InetSocketAddress inetSocketAddress = exchange.getSourceAddress();
-            if (StringUtils.isNotBlank(url) && inetSocketAddress != null) {
-                String hostString = inetSocketAddress.getHostString();
-                String key = hostString.trim().toLowerCase() + url.trim().toLowerCase();
-                
-                AtomicInteger counter = this.cache.get(key) ;
-                if (counter == null) {
-                    counter = new AtomicInteger();
-                }
-                
-                if (this.requestAttachment.getLimit() >= counter.get()) {
-                    counter.incrementAndGet();
-                    this.cache.put(key, counter);   
-                } else {
-                    endRequest(exchange); 
-                }
+            String key = getCacheKey(exchange);
+            if (this.cache.increment(key).get() > this.requestAttachment.getLimit()) {
+                endRequest(exchange); 
             } else {
-                endRequest(exchange);
+                nextHandler(exchange);
             }
         } else {
             nextHandler(exchange);
         }
     }
     
+    /**
+     * Creates a key for used for limit an request containing the
+     * requested url and the source host
+     * 
+     * @param exchange The HttpServerExchange
+     * @return The key url + host
+     */
+    private String getCacheKey(HttpServerExchange exchange) {
+        String url = exchange.getRequestURL();
+        String host = exchange.getSourceAddress().getHostString();
+        
+        return url + host;
+    }
+
+    /**
+     * Ends the current request by senden an HTTP 429
+     * @param exchange The HttpServerExchange
+     */
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.TOO_MANY_REQUESTS);
         exchange.endExchange(); 
@@ -75,7 +76,8 @@ public class LimitHandler implements HttpHandler {
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         if (this.requestAttachment.hasAuthentication()) {
-            HttpHandler httpHandler = RequestUtils.wrapSecurity(Application.getInstance(LocaleHandler.class), this.requestAttachment.getUsername(), this.requestAttachment.getPassword());
+            HttpHandler httpHandler = RequestUtils.wrapSecurity(
+                    Application.getInstance(LocaleHandler.class), this.requestAttachment.getUsername(), this.requestAttachment.getPassword());
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
