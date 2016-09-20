@@ -12,6 +12,8 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HeaderValues;
+import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -52,10 +54,15 @@ public class LimitHandler implements HttpHandler {
      * @return The key url + host
      */
     private String getCacheKey(HttpServerExchange exchange) {
-        String url = exchange.getRequestURL();
-        String host = exchange.getSourceAddress().getHostString();
+        String host;
+        HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.X_FORWARDED_FOR);
+        if (headerValues != null) {
+            host = headerValues.element();
+        } else {
+            host = exchange.getSourceAddress().getHostString();
+        }
         
-        return url + host;
+        return exchange.getRequestURL() + host;
     }
 
     /**
