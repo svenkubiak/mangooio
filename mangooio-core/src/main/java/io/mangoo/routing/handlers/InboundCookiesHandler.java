@@ -7,19 +7,21 @@ import java.util.Map;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Splitter;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.cookie.CookieParser;
+import io.mangoo.utils.cookie.CookieUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 
 /**
  *
@@ -47,19 +49,23 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Session getSessionCookie(HttpServerExchange exchange) {
-        Session session;
+        Session session = null;
 
-        final CookieParser cookieParser = CookieParser
-                .create(exchange, CONFIG.getSessionCookieName(), CONFIG.getApplicationSecret(), CONFIG.isSessionCookieEncrypt());
+        CookieParser cookieParser = CookieParser.build()
+                .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getSessionCookieName()))
+                .withSecret(CONFIG.getApplicationSecret())
+                .isEncrypted(CONFIG.isSessionCookieEncrypt());
 
         if (cookieParser.hasValidSessionCookie()) {
-            session = new Session(cookieParser.getSessionValues(),
-                    cookieParser.getAuthenticityToken(),
-                    cookieParser.getExpiresDate());
+            session = Session.build()
+                    .withContent(cookieParser.getSessionValues())
+                    .withAuthenticityToken(cookieParser.getAuthenticityToken())
+                    .withExpires(cookieParser.getExpiresDate());
         } else {
-            session = new Session(new HashMap<>(),
-                    RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH),
-                    LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
+            session = Session.build()
+                    .withContent(new HashMap<>())
+                    .withAuthenticityToken(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH))
+                    .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
         }
 
         return session;
@@ -71,15 +77,21 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication;
+        Authentication authentication = null;
 
-        final CookieParser cookieParser = CookieParser
-                .create(exchange,CONFIG.getAuthenticationCookieName(),CONFIG.getApplicationSecret(), CONFIG.isAuthenticationCookieEncrypt());
-
+        final CookieParser cookieParser = CookieParser.build()
+                .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getAuthenticationCookieName()))
+                .withSecret(CONFIG.getApplicationSecret())
+                .isEncrypted(CONFIG.isAuthenticationCookieEncrypt());
+        
         if (cookieParser.hasValidAuthenticationCookie()) {
-            authentication = new Authentication(cookieParser.getExpiresDate(), cookieParser.getAuthenticatedUser());
+            authentication = Authentication.build()
+                    .withExpires(cookieParser.getExpiresDate())
+                    .withAuthenticatedUser(cookieParser.getAuthenticatedUser());
         } else {
-            authentication = new Authentication(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()), null);
+            authentication = Authentication.build()
+                    .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()))
+                    .withAuthenticatedUser(null);
         }
 
         return authentication;
@@ -90,22 +102,25 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
+    @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final Cookie cookie = exchange.getRequestCookies().get(CONFIG.getFlashCookieName());
-        if (cookie != null){
-            final String cookieValue = cookie.getValue();
-            if (StringUtils.isNotEmpty(cookieValue) && !("null").equals(cookieValue)) {
-                final Map<String, String> values = new HashMap<>();
-                for (final Map.Entry<String, String> entry : Splitter.on("&").withKeyValueSeparator(":").split(cookie.getValue()).entrySet()) {
-                    values.put(entry.getKey(), entry.getValue());
-                }
+        final String cookieValue = CookieUtils.getCookieValue(exchange, CONFIG.getFlashCookieName());
+        
+        if (StringUtils.isNotBlank(cookieValue)) {
+            Jws<Claims> jwsClaims = Jwts.parser()
+                .setSigningKey(CONFIG.getApplicationSecret())
+                .parseClaimsJws(cookieValue);
 
+            Claims claims = jwsClaims.getBody();
+            LocalDateTime expiration = DateUtils.dateToLocalDateTime(claims.getExpiration());
+            if (LocalDateTime.now().isBefore(expiration)) {
+                final Map<String, String> values = claims.get("data", Map.class);
                 flash = new Flash(values);
                 flash.setDiscard(true);
             }
         }
-
+        
         return flash == null ? new Flash() : flash;
     }
 

@@ -3,7 +3,7 @@ package io.mangoo.routing.bindings;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,19 +19,37 @@ import com.google.common.collect.Sets;
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
-    private Map<String, String> values;
+    private Map<String, String> values = new HashMap<String, String>();
     private String authenticityToken;
     private boolean changed;
     private LocalDateTime expires;
 
     public Session(){
-      //Empty constructor required for Google Guice
     }
-
-    public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
-        this.values = Optional.ofNullable(values).orElse(new HashMap<>());
+    
+    public static Session build() {
+        return new Session();
+    }
+    
+    public Session withContent(Map<String, String> values) {
+        Objects.requireNonNull(values, "values can not be null");
+        
+        this.values = values;
+        return this;
+    }
+    
+    public Session withAuthenticityToken(String authenticityToken) {
+        Objects.requireNonNull(authenticityToken, "authenticityToken can not be null");
+        
         this.authenticityToken = authenticityToken;
+        return this;
+    }
+    
+    public Session withExpires(LocalDateTime expires) {
+        Objects.requireNonNull(expires, "expires can not be null");
+        
         this.expires = expires;
+        return this;
     }
 
     /**

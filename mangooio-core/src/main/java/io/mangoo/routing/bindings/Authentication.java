@@ -22,12 +22,22 @@ public class Authentication {
     private boolean loggedOut;
 
     public Authentication() {
-      //Empty constructor required for Google Guice
     }
 
-    public Authentication(LocalDateTime expires, String authenticatedUser) {
+    public static Authentication build() {
+        return new Authentication();
+    }
+    
+    public Authentication withExpires(LocalDateTime expires) {
+        Objects.requireNonNull(expires, "expires can not be null");
+        
         this.expires = expires;
+        return this;
+    }
+    
+    public Authentication withAuthenticatedUser(String authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
+        return this;
     }
 
     /**

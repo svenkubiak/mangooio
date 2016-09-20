@@ -1,20 +1,19 @@
 package io.mangoo.utils.cookie;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Splitter;
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.Default;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
+import io.mangoo.utils.DateUtils;
 
 /**
  *
@@ -22,122 +21,86 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class CookieParser {
-    private static final int AUTH_PREFIX_LENGTH = 3;
-    private static final int SESSION_PREFIX_LENGTH = 4;
-    private static final int INDEX_0 = 0;
-    private static final int INDEX_1 = 1;
-    private static final int INDEX_2 = 2;
-    private static final int INDEX_3 = 3;
-    private final Map<String, String> sessionValues = new HashMap<>();
-    private final boolean encrypted;
-    private final String secret;
+    private Map<String, String> sessionValues = new HashMap<>();
+    private String secret;
     private String value;
-    private String sign;
-    private String expires;
     private String authenticityToken;
     private String authenticatedUser;
-    private String version;
     private LocalDateTime expiresDate;
+    private boolean encrypted;
+    
+    public CookieParser() {
+    }
+    
+    public static CookieParser build() {
+        return new CookieParser();
+    }
 
-    public CookieParser(String value, String secret, boolean encrypted) {
+    public CookieParser withContent(String value) {
         this.value = value;
-        this.encrypted = encrypted;
-        this.secret = secret;
+        return this;
     }
-
-    public static CookieParser create(HttpServerExchange exchange, String cookieName, String secret, boolean encrypted) {
-        Objects.requireNonNull(exchange, "exchange can not be null");
-        Objects.requireNonNull(cookieName, "cookieName can not be null");
+    
+    public CookieParser withSecret(String secret) {
         Objects.requireNonNull(secret, "application secret can not be null");
-
-        return new CookieParser(getCookieValue(exchange, cookieName), secret, encrypted);
+        
+        this.secret = secret;
+        return this;
     }
-
+    
+    public CookieParser isEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+        return this;
+    }
+    
+    @SuppressWarnings("unchecked")
     public boolean hasValidSessionCookie() {
         decrypt();
-        extractSession();
 
         boolean valid = false;
-        if (StringUtils.isNotBlank(this.sign) && StringUtils.isNotBlank(this.expires) && StringUtils.isNotBlank(this.authenticityToken)) {
-            final String data = this.value.substring(this.value.indexOf(Default.DATA_DELIMITER.toString()) + 1, this.value.length());
-            final LocalDateTime cookieExpiresDate = LocalDateTime.parse(this.expires);
-
-            final StringBuilder buffer = new StringBuilder();
-                buffer.append(data).append(this.authenticityToken).append(this.expires).append(this.version).append(this.secret);
-
-            if (LocalDateTime.now().isBefore(cookieExpiresDate) && DigestUtils.sha512Hex(buffer.toString()).equals(this.sign)) {
-                this.expiresDate = cookieExpiresDate;
-                valid = true;
-
-                if (StringUtils.isNotEmpty(data)) {
-                    Splitter.on(Default.SPLITTER.toString())
-                        .withKeyValueSeparator(Default.SEPERATOR.toString())
-                        .split(data)
-                        .entrySet()
-                        .forEach(entry -> this.sessionValues.put(entry.getKey(), entry.getValue()));
+        if (StringUtils.isNotBlank(this.value)) {
+            Jws<Claims> jwsClaims = Jwts.parser()
+                .setSigningKey(this.secret)
+                .parseClaimsJws(this.value);
+            
+            Claims claims = jwsClaims.getBody();
+            Date expiration = claims.getExpiration();
+            if (expiration != null && claims != null) {
+                LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
+                if (LocalDateTime.now().isBefore(expires)) {
+                    this.sessionValues = claims.get("data", Map.class);
+                    this.authenticityToken = claims.get("authenticityToken", String.class); 
+                    this.expiresDate = expires;  
+                    valid = true;
                 }
             }
         }
-
+        
         return valid;
     }
 
     public boolean hasValidAuthenticationCookie() {
         decrypt();
-        extractAuthentication();
 
         boolean valid = false;
-        if (StringUtils.isNotBlank(this.sign) && StringUtils.isNotBlank(this.expires)) {
-            final String username = this.value.substring(this.value.indexOf(Default.DATA_DELIMITER.toString()) + 1, this.value.length());
-            final LocalDateTime cookieExpires = LocalDateTime.parse(this.expires);
-
-            final StringBuilder buffer = new StringBuilder();
-                buffer.append(username).append(this.expires).append(this.version).append(this.secret);
-
-            if (LocalDateTime.now().isBefore(cookieExpires) && DigestUtils.sha512Hex(buffer.toString()).equals(this.sign)) {
-                this.expiresDate = cookieExpires;
-                this.authenticatedUser = username;
-                valid = true;
+        if (StringUtils.isNotBlank(this.value)) {
+            Jws<Claims> jwsClaims = Jwts.parser()
+                .setSigningKey(this.secret)
+                .parseClaimsJws(this.value);
+            
+            Claims claims = jwsClaims.getBody();
+            Date expiration = claims.getExpiration();
+            if (expiration != null && claims != null) {
+                LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
+                if (LocalDateTime.now().isBefore(expires)) {
+                    this.authenticatedUser = claims.getSubject();
+                    this.expiresDate = expires;
+                    valid = true;                        
+                }
             }
         }
 
         return valid;
-    }
-
-    private void extractSession() {
-        final String prefix = StringUtils.substringBefore(this.value, Default.DATA_DELIMITER.toString());
-        if (StringUtils.isNotBlank(prefix)) {
-            final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-            if (prefixes != null && prefixes.length == SESSION_PREFIX_LENGTH) {
-                this.sign = prefixes [INDEX_0];
-                this.authenticityToken = prefixes [INDEX_1];
-                this.expires = prefixes [INDEX_2];
-                this.version = prefixes [INDEX_3];
-            }
-        }
-    }
-
-    private void extractAuthentication() {
-        final String prefix = StringUtils.substringBefore(this.value, Default.DATA_DELIMITER.toString());
-        if (StringUtils.isNotBlank(prefix)) {
-            final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-
-            if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
-                this.sign = prefixes [INDEX_0];
-                this.expires = prefixes [INDEX_1];
-                this.version = prefixes [INDEX_2];
-            }
-        }
-    }
-
-    private static String getCookieValue(HttpServerExchange exchange, String cookieName) {
-        String value = null;
-        final Cookie cookie = exchange.getRequestCookies().get(cookieName);
-        if (cookie != null) {
-            value = cookie.getValue();
-        }
-
-        return value;
     }
 
     public Map<String, String> getSessionValues() {

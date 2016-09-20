@@ -17,9 +17,9 @@ import io.mangoo.utils.cookie.CookieParser;
  *
  */
 public class CookieParserTest {
+    private final static String sessionCookie = "eyJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7ImZvbyI6InRoaXMgaXMgYSBzZXNzaW9uIHZhbHVlIn0sImV4cCI6MzI0NzIyMjU3MjAsInZlcnNpb24iOiIwIiwiYXV0aGVudGljaXR5VG9rZW4iOiJJckpDc1FYNmRBTFBkUlVkIn0.H829037BVU-NZdT_vVVEUjhX4QCmxkpGJEMLr1-qT_shd-saaaHbDIMSd3ulU1v2ceTqhJqoyNIAP748KC1f9g";
+    private final static String authenticationCookie = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmb29iYXIiLCJleHAiOjMyNDcyMjI1NzIwLCJ2ZXJzaW9uIjoiMCJ9.EeI2mIdqR1vGKSGJhnOqv7OgJSzU77cY0A43UCplkKg4jV5QLlvl9yXZoYvKvHWDuY_zQgjmm3OnwDAFHHT2sQ";
     private String secret;
-    private final static String sessionCookie = "04d62cafb17b81dc563037d1c23cba9cee83f52f2eeac0ef5e303572ba720977c29fae25b54ec3f480c9f84178fdac96b1c202259abd2252ed053b8541301f65|IrJCsQX6dALPdRUd|2999-01-01T23:42:00.00|0#foo:this is a session value";
-    private final static String authenticationCookie = "f4dddaf1e3f806ec48090404c5d92be55f29b12dde4e9e86c3029745d881313bdae6d629adc424bbfc31ddc0b83b3532f9f09affa79ff717446c9d213701e43d|2999-01-01T23:42:00.00|0#foobar";
     private static String sessionCookieEncrypted = "";
     private static String authenticationCookieEncrypted = "";
 
@@ -33,7 +33,10 @@ public class CookieParserTest {
     @Test
     public void testValidSession() {
         //given
-        final CookieParser cookieParser = new CookieParser(sessionCookie, this.secret, false);
+        final CookieParser cookieParser = CookieParser.build()
+                .withContent(sessionCookie)
+                .withSecret(this.secret)
+                .isEncrypted(false);
 
         //then
         assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
@@ -42,7 +45,10 @@ public class CookieParserTest {
     @Test
     public void testValidSessionWithEncryption() {
         //given
-        final CookieParser cookieParser = new CookieParser(sessionCookieEncrypted, this.secret, true);
+        final CookieParser cookieParser = CookieParser.build()
+                .withContent(sessionCookieEncrypted)
+                .withSecret(this.secret)
+                .isEncrypted(true);
 
         //then
         assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
@@ -51,7 +57,10 @@ public class CookieParserTest {
     @Test
     public void testValidAuthentication() {
         //given
-        final CookieParser cookieParser = new CookieParser(authenticationCookie, this.secret, false);
+        final CookieParser cookieParser = CookieParser.build()
+                .withContent(authenticationCookie)
+                .withSecret(this.secret)
+                .isEncrypted(false);
 
         //then
         assertThat(cookieParser.hasValidAuthenticationCookie(), equalTo(true));
@@ -60,8 +69,11 @@ public class CookieParserTest {
     @Test
     public void testValidAuthenticationWithEncryption() {
         //given
-        final CookieParser cookieParser = new CookieParser(authenticationCookieEncrypted, this.secret, true);
-
+        final CookieParser cookieParser = CookieParser.build()
+                .withContent(authenticationCookieEncrypted)
+                .withSecret(this.secret)
+                .isEncrypted(true);
+        
         //then
         assertThat(cookieParser.hasValidAuthenticationCookie(), equalTo(true));
     }

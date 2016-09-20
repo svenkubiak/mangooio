@@ -13,18 +13,13 @@ import io.mangoo.routing.bindings.Session;
  *
  */
 public class SessionTest {
-
     private static final String BAR = "bar";
     private static final String FOO = "foo";
-
-    private Session getNewSession() {
-        return new Session(null, null, null);
-    }
 
     @Test
     public void testNoContent() {
         //given
-        final Session session = getNewSession();
+        final Session session = Session.build();
 
         //then
         assertThat(session.hasContent(), equalTo(false));
@@ -33,7 +28,7 @@ public class SessionTest {
     @Test
     public void testContent() {
         //given
-        final Session session = getNewSession();
+        final Session session = Session.build();
 
         //when
         session.put(FOO, BAR);
@@ -47,7 +42,7 @@ public class SessionTest {
     @Test
     public void testRemove() {
         //given
-        final Session session = new Session(null, null, null);
+        final Session session = Session.build();
 
         //when
         session.put(FOO, BAR);
@@ -62,7 +57,7 @@ public class SessionTest {
     @Test
     public void testClear() {
         //given
-        final Session session = new Session(null, null, null);
+        final Session session = Session.build();
 
         //when
         session.put(FOO, BAR);
@@ -77,7 +72,7 @@ public class SessionTest {
     @Test
     public void testInvalidCharacters() {
         //given
-        final Session session = getNewSession();
+        final Session session = Session.build();
 
         //when
         session.put("|", FOO);
