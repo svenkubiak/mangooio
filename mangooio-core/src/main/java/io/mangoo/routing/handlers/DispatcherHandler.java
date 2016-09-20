@@ -4,13 +4,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,18 +18,10 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
-import io.undertow.security.api.AuthenticationMechanism;
-import io.undertow.security.api.AuthenticationMode;
-import io.undertow.security.handlers.AuthenticationCallHandler;
-import io.undertow.security.handlers.AuthenticationConstraintHandler;
-import io.undertow.security.handlers.AuthenticationMechanismsHandler;
-import io.undertow.security.handlers.SecurityInitialHandler;
-import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -65,12 +55,13 @@ public class DispatcherHandler implements HttpHandler {
     private final String controllerMethodName;
     private final String username;
     private final String password;    
+    private final int limit;
     private final int methodParametersCount;
     private final boolean async;
     private final boolean timer;
     private final boolean hasRequestFilter;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine, boolean timer, String username, String password) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine, boolean timer, String username, String password, int limit) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
@@ -86,6 +77,7 @@ public class DispatcherHandler implements HttpHandler {
         this.methodParametersCount = this.methodParameters.size();
         this.async = async;
         this.timer = timer;
+        this.limit = limit;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
 
         try {
@@ -134,6 +126,9 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withTimer(this.timer)
+            .withLimit(this.limit)
+            .withUsername(this.username)
+            .withPassword(this.password)
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto);
 
@@ -166,38 +161,6 @@ public class DispatcherHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (requestHasAuthentication()) {
-            HttpHandler httpHandler = addSecurity(Application.getInstance(AuthenticationHandler.class));
-            httpHandler.handleRequest(exchange);
-        } else {
-            Application.getInstance(LocaleHandler.class).handleRequest(exchange);
-        }
-    }
-    
-    /**
-     * Checks if the request requires basic authentication
-     * 
-     * @return True if username and password are not blank, false otherwise
-     */
-    private boolean requestHasAuthentication() {
-        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
-    }
-
-    /**
-     * Adds a Wrapper to the handler when the request requires authentication
-     * 
-     * @param wrap The Handler to wrap
-     * @return A wrapped handler
-     */
-    private HttpHandler addSecurity(final HttpHandler wrap) {
-        HttpHandler handler = wrap;
-        
-        final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required"));
-        handler = new AuthenticationCallHandler(handler);
-        handler = new AuthenticationConstraintHandler(handler);
-        handler = new AuthenticationMechanismsHandler(handler, mechanisms);
-        handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(this.username, this.password), handler);
-        
-        return handler;
+        Application.getInstance(LimitHandler.class).handleRequest(exchange);
     }
 }

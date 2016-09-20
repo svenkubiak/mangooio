@@ -200,6 +200,11 @@ routes:
   mapping: ApplicationController.redirect
 
 - method: GET
+  url: /limit
+  mapping: ApplicationController.limit
+  limit: 10
+
+- method: GET
   url: /text
   mapping: ApplicationController.text
 

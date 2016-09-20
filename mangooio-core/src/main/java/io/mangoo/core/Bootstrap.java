@@ -159,14 +159,15 @@ public class Bootstrap {
             
             if (yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()));
-                    route.toUrl(yamlRoute.getUrl().trim());
-                    route.withRequest(HttpString.tryFromString(yamlRoute.getMethod()));
-                    route.withUsername(yamlRoute.getUsername());
-                    route.withPassword(yamlRoute.getPassword());
-                    route.withAuthentication(yamlRoute.isAuthentication());
-                    route.withTimer(yamlRoute.isTimer());
-                    route.allowBlocking(yamlRoute.isBlocking());
+                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
+                            .toUrl(yamlRoute.getUrl().trim())
+                            .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
+                            .withUsername(yamlRoute.getUsername())
+                            .withPassword(yamlRoute.getPassword())
+                            .withAuthentication(yamlRoute.isAuthentication())
+                            .withTimer(yamlRoute.isTimer())
+                            .withLimit(yamlRoute.getLimit())
+                            .allowBlocking(yamlRoute.isBlocking());
                     
                     String mapping = yamlRoute.getMapping();   
                     try {
@@ -250,7 +251,8 @@ public class Bootstrap {
                         route.isInternalTemplateEngine(),
                         route.isTimerEnabled(),
                         route.getUsername(),
-                        route.getPassword());
+                        route.getPassword(),
+                        route.getLimit());
         
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
@@ -399,6 +401,7 @@ public class Bootstrap {
         private String mapping;
         private String username;
         private String password;
+        private int limit;
         private boolean blocking;
         private boolean authentication;
         private boolean timer;
@@ -427,6 +430,10 @@ public class Bootstrap {
             this.username = username;
         } 
         
+        public void setLimit(int limit) {
+            this.limit = limit;
+        } 
+        
         public String getPassword() {
             return password;
         }
@@ -437,6 +444,10 @@ public class Bootstrap {
         
         public String getMapping() {
             return mapping;
+        }
+        
+        public int getLimit() {
+            return limit;
         }
         
         public void setMapping(String mapping) {

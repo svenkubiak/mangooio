@@ -11,13 +11,14 @@ import io.undertow.util.HttpString;
  *
  */
 public class Route {
+    private final RouteType routeType;
     private Class<?> controllerClass;
     private String controllerMethod;
     private HttpString requestMethod;
     private String url;
     private String username;
     private String password;
-    private final RouteType routeType;
+    private int limit;
     private boolean authentication;
     private boolean blocking;
     private boolean timer;
@@ -92,8 +93,17 @@ public class Route {
         return this;
     }
 
+    public Route withLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+
     public String getUrl() {
         return this.url;
+    }
+    
+    public int getLimit() {
+        return this.limit;
     }
     
     public String getUsername() {

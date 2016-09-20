@@ -50,6 +50,22 @@ public class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
+    
+    @Test
+    public void testLimit() {
+        //given
+        WebResponse response = null;
+
+        //then
+        for (int i=0; i <= 10; i++) {
+            response = WebRequest.get("/limit").execute();   
+            assertThat(response, not(nullValue()));
+            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        }
+        response = WebRequest.get("/limit").execute();   
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
+    }
 
     @Test
     public void testRequest() {

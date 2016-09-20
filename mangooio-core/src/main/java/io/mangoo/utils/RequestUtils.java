@@ -4,8 +4,10 @@ import java.net.URI;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +29,16 @@ import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.oauth.OAuthProvider;
+import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
+import io.undertow.security.api.AuthenticationMechanism;
+import io.undertow.security.api.AuthenticationMode;
+import io.undertow.security.handlers.AuthenticationCallHandler;
+import io.undertow.security.handlers.AuthenticationConstraintHandler;
+import io.undertow.security.handlers.AuthenticationMechanismsHandler;
+import io.undertow.security.handlers.SecurityInitialHandler;
+import io.undertow.security.impl.BasicAuthenticationMechanism;
+import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -251,5 +262,27 @@ public final class RequestUtils {
         }
 
         return buffer.toString();
+    }
+    
+
+    /**
+     * Adds a Wrapper to the handler when the request requires authentication
+     * 
+     * @param wrap The Handler to wrap
+     * @return A wrapped handler
+     */
+    public static HttpHandler wrapSecurity(HttpHandler wrap, String username, String password) {
+        Objects.requireNonNull(wrap, "HttpHandler to wrap can not be null");
+        Objects.requireNonNull(username, "username can not be null");
+        Objects.requireNonNull(password, "password can not be null");
+        
+        HttpHandler handler = wrap;
+        final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required"));
+        handler = new AuthenticationCallHandler(handler);
+        handler = new AuthenticationConstraintHandler(handler);
+        handler = new AuthenticationMechanismsHandler(handler, mechanisms);
+        handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), handler);
+        
+        return handler;
     }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Authentication;
@@ -23,12 +25,15 @@ import io.mangoo.templating.TemplateEngine;
 public class Attachment {
     private final long start = System.currentTimeMillis();
     private int methodParametersCount;
+    private int limit;
     private Class<?> controllerClass;
     private Object controllerInstance;
     private Map<String, Class<?>> methodParameters;
     private String controllerClassName;
     private String controllerMethodName;
     private String body;
+    private String username;
+    private String password;
     private Method method;
     private Authentication authentication;
     private Session session;
@@ -121,6 +126,21 @@ public class Attachment {
     
     public Attachment withTimer(boolean timer) {
         this.timer = timer;
+        return this;
+    }
+
+    public Attachment withLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+    
+    public Attachment withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+    
+    public Attachment withPassword(String password) {
+        this.password = password;
         return this;
     }
 
@@ -230,6 +250,26 @@ public class Attachment {
     
     public boolean isTimer() {
         return this.timer;
+    }
+    
+    public String getUsername() {
+        return this.username;
+    }
+    
+    public String getPassword() {
+        return this.password;
+    }
+    
+    public int getLimit() {
+        return this.limit;
+    }
+    
+    public boolean hasAuthentication() {
+        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
+    }
+    
+    public boolean hasLimit() {
+        return this.limit > 0;
     }
 
     public long getResponseTime() {
