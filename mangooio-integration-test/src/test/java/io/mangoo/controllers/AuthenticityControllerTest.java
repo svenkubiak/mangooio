@@ -63,7 +63,7 @@ public class AuthenticityControllerTest {
         assertThat(response.getContent().length(), equalTo(16));
         
         //when
-        response = instance.withUri("/valid?authenticityToken=" + token)
+        response = instance.withUri("/valid?authenticity=" + token)
                 .withMethod(Methods.GET)
                 .execute();
         

@@ -20,7 +20,7 @@ public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<String, String>();
-    private String authenticityToken;
+    private String authenticity;
     private boolean changed;
     private LocalDateTime expires;
 
@@ -38,10 +38,10 @@ public class Session {
         return this;
     }
     
-    public Session withAuthenticityToken(String authenticityToken) {
-        Objects.requireNonNull(authenticityToken, "authenticityToken can not be null");
+    public Session withAuthenticity(String authenticity) {
+        Objects.requireNonNull(authenticity, "authenticity can not be null");
         
-        this.authenticityToken = authenticityToken;
+        this.authenticity = authenticity;
         return this;
     }
     
@@ -128,8 +128,8 @@ public class Session {
     /**
      * @return The current authenticity token and marks the session as changed
      */
-    public String getAuthenticityToken() {
+    public String getAuthenticity() {
         this.changed = true;
-        return this.authenticityToken;
+        return this.authenticity;
     }
 }

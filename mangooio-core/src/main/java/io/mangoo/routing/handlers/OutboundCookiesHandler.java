@@ -48,7 +48,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setSessionCookie(HttpServerExchange exchange, Session session) {
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
-            claims.put(ClaimKey.AUHTNETICITYTOKEN.toString(), session.getAuthenticityToken());
+            claims.put(ClaimKey.AUHTNETICITY.toString(), session.getAuthenticity());
             claims.put(ClaimKey.VERSION.toString(), CONFIG.getCookieVersion());
             claims.put(ClaimKey.DATA.toString(), session.getValues());
             

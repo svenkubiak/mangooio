@@ -58,13 +58,13 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Request getRequest(HttpServerExchange exchange) {
-        final String authenticityToken = Optional.ofNullable(this.attachment.getRequestParameter()
-                .get(Default.AUTHENTICITY_TOKEN.toString()))
-                .orElse(this.attachment.getForm().get(Default.AUTHENTICITY_TOKEN.toString()));
+        final String authenticity = Optional.ofNullable(this.attachment.getRequestParameter()
+                .get(Default.AUTHENTICITY.toString()))
+                .orElse(this.attachment.getForm().get(Default.AUTHENTICITY.toString()));
         
         Request request = new Request(exchange)
                 .withSession(this.attachment.getSession())
-                .withAuthenticityToken(authenticityToken)
+                .withAuthenticity(authenticity)
                 .withAuthentication(this.attachment.getAuthentication())
                 .withParameter(this.attachment.getRequestParameter())
                 .withBody(this.attachment.getBody());

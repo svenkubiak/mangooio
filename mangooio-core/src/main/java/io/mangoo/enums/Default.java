@@ -40,7 +40,7 @@ public enum Default {
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("nosniff"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
     FILTER_METHOD("execute"),
-    AUTHENTICITY_TOKEN("authenticityToken"),
+    AUTHENTICITY("authenticity"),
     XSS_PROTECTION("1"),
     FILES_FOLDER("files"),
     MODULE_CLASS("conf.Module"),

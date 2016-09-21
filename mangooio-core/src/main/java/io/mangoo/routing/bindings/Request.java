@@ -30,7 +30,7 @@ public class Request implements MangooValidator {
     private HttpServerExchange httpServerExchange;
     private String body;
     private Session session;
-    private String authenticityToken;
+    private String authenticity;
     private Authentication authentication;
     private Validator validator;
     private Map<String, String> parameter;
@@ -54,8 +54,8 @@ public class Request implements MangooValidator {
         return this;
     }
     
-    public Request withAuthenticityToken(String authenticityToken) {
-        this.authenticityToken = authenticityToken;
+    public Request withAuthenticity(String authenticity) {
+        this.authenticity = authenticity;
         return this;
     }
     
@@ -117,7 +117,7 @@ public class Request implements MangooValidator {
      * @return True if the token matches, false otherwise
      */
     public boolean authenticityMatches() {
-        return this.session.getAuthenticityToken().equals(this.authenticityToken);
+        return this.session.getAuthenticity().equals(this.authenticity);
     }
 
     /**

@@ -70,7 +70,7 @@ public class CookieParser {
                 LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
                 if (LocalDateTime.now().isBefore(expires)) {
                     this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
-                    this.authenticityToken = claims.get(ClaimKey.AUHTNETICITYTOKEN.toString(), String.class); 
+                    this.authenticityToken = claims.get(ClaimKey.AUHTNETICITY.toString(), String.class); 
                     this.expiresDate = expires;  
                     valid = true;
                 }
@@ -108,7 +108,7 @@ public class CookieParser {
         return this.sessionValues;
     }
 
-    public String getAuthenticityToken() {
+    public String getAuthenticity() {
         return this.authenticityToken;
     }
 

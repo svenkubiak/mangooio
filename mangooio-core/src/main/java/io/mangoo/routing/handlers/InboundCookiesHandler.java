@@ -59,12 +59,12 @@ public class InboundCookiesHandler implements HttpHandler {
         if (cookieParser.hasValidSessionCookie()) {
             session = Session.build()
                     .withContent(cookieParser.getSessionValues())
-                    .withAuthenticityToken(cookieParser.getAuthenticityToken())
+                    .withAuthenticity(cookieParser.getAuthenticity())
                     .withExpires(cookieParser.getExpiresDate());
         } else {
             session = Session.build()
                     .withContent(new HashMap<>())
-                    .withAuthenticityToken(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH))
+                    .withAuthenticity(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH))
                     .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
         }
 

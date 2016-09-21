@@ -8,7 +8,7 @@ package io.mangoo.enums;
 public enum ClaimKey {
     VERSION("version"),
     DATA("data"),
-    AUHTNETICITYTOKEN("authenticityToken"),
+    AUHTNETICITY("authenticity"),
     AUTHENTICATEDUSER("authenticatedUser");
 
     private final String value;

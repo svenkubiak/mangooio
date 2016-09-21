@@ -1,1 +1,1 @@
-<@authenticityToken/>
+<@authenticity/>

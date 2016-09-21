@@ -79,7 +79,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("flash", flash);
         content.put("session", session);
         content.put("i18n", new I18nMethod(messages));
-        content.put("authenticityToken", new AuthenticityTokenDirective(session));
+        content.put("authenticity", new AuthenticityTokenDirective(session));
         content.put("authenticityForm", new AuthenticityFormDirective(session));
 
         return processTemplate(content, template);
