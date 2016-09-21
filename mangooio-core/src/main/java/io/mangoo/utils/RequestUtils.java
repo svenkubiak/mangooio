@@ -264,12 +264,13 @@ public final class RequestUtils {
         return buffer.toString();
     }
     
-
     /**
      * Adds a Wrapper to the handler when the request requires authentication
      * 
      * @param wrap The Handler to wrap
-     * @return A wrapped handler
+     * @param username The username to use
+     * @param password The password to use
+     * @return An HttpHandler wrapped through BasicAuthentication
      */
     public static HttpHandler wrapSecurity(HttpHandler wrap, String username, String password) {
         Objects.requireNonNull(wrap, "HttpHandler to wrap can not be null");
