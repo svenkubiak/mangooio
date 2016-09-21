@@ -5,7 +5,7 @@ package io.mangoo.enums;
  * @author svenkubiak
  *
  */
-public enum Claims {
+public enum ClaimKey {
     VERSION("version"),
     DATA("data"),
     AUHTNETICITYTOKEN("authenticityToken"),
@@ -13,7 +13,7 @@ public enum Claims {
 
     private final String value;
 
-    Claims (String value) {
+    ClaimKey (String value) {
         this.value = value;
     }
 

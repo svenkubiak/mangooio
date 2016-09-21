@@ -13,6 +13,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.ClaimKey;
 import io.mangoo.utils.DateUtils;
 
 /**
@@ -68,8 +69,8 @@ public class CookieParser {
             if (expiration != null && claims != null) {
                 LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
                 if (LocalDateTime.now().isBefore(expires)) {
-                    this.sessionValues = claims.get("data", Map.class);
-                    this.authenticityToken = claims.get("authenticityToken", String.class); 
+                    this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
+                    this.authenticityToken = claims.get(ClaimKey.AUHTNETICITYTOKEN.toString(), String.class); 
                     this.expiresDate = expires;  
                     valid = true;
                 }

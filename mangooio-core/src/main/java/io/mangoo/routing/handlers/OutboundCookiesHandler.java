@@ -8,7 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Claims;
+import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -48,9 +48,9 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setSessionCookie(HttpServerExchange exchange, Session session) {
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
-            claims.put(Claims.AUHTNETICITYTOKEN.toString(), session.getAuthenticityToken());
-            claims.put(Claims.VERSION.toString(), CONFIG.getCookieVersion());
-            claims.put(Claims.DATA.toString(), session.getValues());
+            claims.put(ClaimKey.AUHTNETICITYTOKEN.toString(), session.getAuthenticityToken());
+            claims.put(ClaimKey.VERSION.toString(), CONFIG.getCookieVersion());
+            claims.put(ClaimKey.DATA.toString(), session.getValues());
             
             final LocalDateTime expires = session.getExpires();
             String jwt = Jwts.builder()
@@ -93,7 +93,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 cookie.setDiscard(true);
             } else {
                 Map<String, Object> claims = new HashMap<>();
-                claims.put(Claims.VERSION.toString(), CONFIG.getAuthCookieVersion());
+                claims.put(ClaimKey.VERSION.toString(), CONFIG.getAuthCookieVersion());
                 
                 final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusHours(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
                 String jwt = Jwts.builder()
@@ -128,7 +128,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setFlashCookie(HttpServerExchange exchange, Flash flash) {
         if (flash != null && !flash.isDiscard() && flash.hasContent()) {
             Map<String, Object> claims = new HashMap<>();
-            claims.put(Claims.DATA.toString(), flash.getValues());
+            claims.put(ClaimKey.DATA.toString(), flash.getValues());
             
             final LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
             String jwt = Jwts.builder()
