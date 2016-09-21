@@ -27,15 +27,15 @@ import io.undertow.server.handlers.Cookie;
  */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private Attachment requestAttachment;
+    private Attachment attachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
 
-        setSessionCookie(exchange, requestAttachment.getSession());
-        setFlashCookie(exchange, requestAttachment.getFlash());
-        setAuthenticationCookie(exchange, requestAttachment.getAuthentication());
+        setSessionCookie(exchange, attachment.getSession());
+        setFlashCookie(exchange, attachment.getFlash());
+        setAuthenticationCookie(exchange, attachment.getAuthentication());
 
         nextHandler(exchange);
     }
@@ -60,7 +60,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .compact();
 
             if (CONFIG.isSessionCookieEncrypt()) {
-                jwt = this.requestAttachment.getCrypto().encrypt(jwt);
+                jwt = this.attachment.getCrypto().encrypt(jwt);
             }
 
             final Cookie cookie = CookieBuilder.create()
@@ -104,7 +104,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .compact();
                 
                 if (CONFIG.isAuthenticationCookieEncrypt()) {
-                    jwt = this.requestAttachment.getCrypto().encrypt(jwt);
+                    jwt = this.attachment.getCrypto().encrypt(jwt);
                 }
 
                 cookie = CookieBuilder.create()

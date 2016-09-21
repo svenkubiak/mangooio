@@ -248,7 +248,7 @@ public class Attachment {
         return this.response;
     }
     
-    public boolean isTimer() {
+    public boolean hasTimer() {
         return this.timer;
     }
     

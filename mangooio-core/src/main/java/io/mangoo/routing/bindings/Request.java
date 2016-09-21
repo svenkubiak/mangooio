@@ -38,23 +38,42 @@ public class Request implements MangooValidator {
     private JsonWebToken jsonWebToken;
 
     public Request(){
-        //Empty constructor required for Google Guice
     }
 
-    public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
+    public Request(HttpServerExchange httpServerExchange) {
         Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
 
         this.httpServerExchange = httpServerExchange;
-        this.session = session;
-        this.authenticityToken = authenticityToken;
-        this.authentication = authentication;
-        this.body = body;
-        this.parameter = parameter;
         this.validator = Application.getInstance(Validator.class);
         this.validator.setValues(this.parameter);
         this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
+    public Request withSession(Session session) {
+        this.session = session;
+        return this;
+    }
+    
+    public Request withAuthenticityToken(String authenticityToken) {
+        this.authenticityToken = authenticityToken;
+        return this;
+    }
+    
+    public Request withAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+        return this;
+    }
+    
+    public Request withParameter(Map<String, String> parameter) {
+        this.parameter = parameter;
+        return this;
+    }
+    
+    public Request withBody(String body) {
+        this.body = body;
+        return this;
+    }
+    
     /**
      * @return The current session
      */

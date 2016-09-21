@@ -54,31 +54,27 @@ public class DispatcherHandler implements HttpHandler {
     private final Class<?> controllerClass;
     private final String controllerClassName;
     private final String controllerMethodName;
-    private final String username;
-    private final String password;    
-    private final int limit;
-    private final int methodParametersCount;
-    private final boolean async;
-    private final boolean timer;
     private final boolean hasRequestFilter;
+    private String username;
+    private String password;    
+    private int limit;
+    private final int methodParametersCount;
+    private boolean blocking;
+    private boolean internalTemplateEngine;
+    private boolean timer;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine, boolean timer, String username, String password, int limit) {
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
-        this.templateEngine = internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
+        this.templateEngine = this.internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethod;
         this.controllerClassName = controllerClass.getSimpleName();
-        this.username = username;
-        this.password = password;
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
-        this.async = async;
-        this.timer = timer;
-        this.limit = limit;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
 
         try {
@@ -101,10 +97,40 @@ public class DispatcherHandler implements HttpHandler {
             }
         }
     }
+    
+    public DispatcherHandler isBlocking(boolean blocking) {
+        this.blocking = blocking;
+        return this;
+    }
 
+    public DispatcherHandler withInternalTemplateEngine(boolean internalTemplateEngine) {
+        this.internalTemplateEngine = internalTemplateEngine;
+        return this;
+    }
+    
+    public DispatcherHandler withTimer(boolean timer) {
+        this.timer = timer;
+        return this;
+    }
+    
+    public DispatcherHandler withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+    
+    public DispatcherHandler withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+    
+    public DispatcherHandler withLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostOrPut(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }

@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.mangoo.enums.oauth.OAuthProvider;
+import io.undertow.Handlers;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -57,5 +60,17 @@ public class RequestUtilsTest {
     	
         //then
         assertThat(url, equalTo("/path/data?key=value#fragid1"));
+    }
+    
+    @Test
+    public void testWrapSecurity() {
+        //given
+        PathHandler path = Handlers.path();
+        
+        //when
+        HttpHandler wrapSecurity = RequestUtils.wrapSecurity(path, "foo", "bar");
+        
+        //then
+        assertThat(wrapSecurity instanceof HttpHandler, equalTo(true));
     }
 }

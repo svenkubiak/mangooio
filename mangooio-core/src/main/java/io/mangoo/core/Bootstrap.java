@@ -244,15 +244,14 @@ public class Bootstrap {
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST.equals(route.getRouteType())) {
-                DispatcherHandler dispatcherHandler = new DispatcherHandler(
-                        route.getControllerClass(),
-                        route.getControllerMethod(),
-                        route.isBlockingAllowed(),
-                        route.isInternalTemplateEngine(),
-                        route.isTimerEnabled(),
-                        route.getUsername(),
-                        route.getPassword(),
-                        route.getLimit());
+                DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
+                        .isBlocking(route.isBlockingAllowed())
+                        .withInternalTemplateEngine(route.isInternalTemplateEngine())
+                        .withTimer(route.isTimerEnabled())
+                        .withUsername(route.getUsername())
+                        .withPassword(route.getPassword())
+                        .withLimit(route.getLimit());
+
         
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {

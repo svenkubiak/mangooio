@@ -22,7 +22,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class LimitHandler implements HttpHandler {
-    private Attachment requestAttachment;
+    private Attachment attachment;
     private Cache cache;
     
     @Inject
@@ -33,10 +33,11 @@ public class LimitHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        if (this.requestAttachment.hasLimit()) {
+        this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        
+        if (this.attachment.hasLimit()) {
             String key = getCacheKey(exchange);
-            if (this.cache.increment(key).get() > this.requestAttachment.getLimit()) {
+            if (this.cache.increment(key).get() > this.attachment.getLimit()) {
                 endRequest(exchange); 
             } else {
                 nextHandler(exchange);
@@ -66,7 +67,7 @@ public class LimitHandler implements HttpHandler {
     }
 
     /**
-     * Ends the current request by senden an HTTP 429
+     * Ends the current request by sending a HTTP 429 status code
      * @param exchange The HttpServerExchange
      */
     private void endRequest(HttpServerExchange exchange) {
@@ -82,9 +83,9 @@ public class LimitHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (this.requestAttachment.hasAuthentication()) {
+        if (this.attachment.hasAuthentication()) {
             HttpHandler httpHandler = RequestUtils.wrapSecurity(
-                    Application.getInstance(LocaleHandler.class), this.requestAttachment.getUsername(), this.requestAttachment.getPassword());
+                    Application.getInstance(LocaleHandler.class), this.attachment.getUsername(), this.attachment.getPassword());
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);    

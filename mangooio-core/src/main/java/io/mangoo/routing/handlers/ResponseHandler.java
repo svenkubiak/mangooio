@@ -24,12 +24,12 @@ import io.undertow.util.StatusCodes;
  */
 public class ResponseHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private Attachment requestAttachment;
+    private Attachment attachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        final Response response = this.requestAttachment.getResponse();
+        this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        final Response response = this.attachment.getResponse();
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);
@@ -106,8 +106,8 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), CONFIG.getContentSecurityPolicyHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
 
-        if (this.requestAttachment.isTimer()) {
-            exchange.getResponseHeaders().put(Header.X_RESPONSE_TIME.toHttpString(), this.requestAttachment.getResponseTime() + " ms");
+        if (this.attachment.hasTimer()) {
+            exchange.getResponseHeaders().put(Header.X_RESPONSE_TIME.toHttpString(), this.attachment.getResponseTime() + " ms");
         }
 
         exchange.getResponseSender().send(getResponseBody(exchange, response));

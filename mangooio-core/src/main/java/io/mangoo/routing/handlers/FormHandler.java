@@ -27,10 +27,10 @@ public class FormHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        final Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        requestAttachment.setForm(getForm(exchange));
+        final Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        attachment.setForm(getForm(exchange));
 
-        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 

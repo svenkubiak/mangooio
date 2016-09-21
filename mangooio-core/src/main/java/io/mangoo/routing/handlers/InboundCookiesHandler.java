@@ -34,12 +34,12 @@ public class InboundCookiesHandler implements HttpHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Attachment requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        requestAttachment.setSession(getSessionCookie(exchange));
-        requestAttachment.setAuthentication(getAuthenticationCookie(exchange));
-        requestAttachment.setFlash(getFlashCookie(exchange));
+        Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        attachment.setSession(getSessionCookie(exchange));
+        attachment.setAuthentication(getAuthenticationCookie(exchange));
+        attachment.setFlash(getFlashCookie(exchange));
 
-        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, requestAttachment);
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 

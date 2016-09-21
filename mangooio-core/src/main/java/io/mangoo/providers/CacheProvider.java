@@ -64,7 +64,7 @@ public class CacheProvider implements Provider<Cache> {
     
     private void initApplicationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(1000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .build();
         
         org.ehcache.Cache<String, Object> applicationCache = cacheManager.createCache(CacheName.APPLICATION.toString(), configuration);
@@ -74,7 +74,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initAuthenticationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(1000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(60, TimeUnit.MINUTES)))
                 .build();
         
@@ -85,7 +85,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initRequestCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(10000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(40000))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(60, TimeUnit.SECONDS)))
                 .build();
         
@@ -96,7 +96,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initServerEventCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(1000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToIdleExpiration(Duration.of(30, TimeUnit.MINUTES)))
                 .build();
         
@@ -107,7 +107,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initWebSocketCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(1000))
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToIdleExpiration(Duration.of(30, TimeUnit.MINUTES)))
                 .build();
         
