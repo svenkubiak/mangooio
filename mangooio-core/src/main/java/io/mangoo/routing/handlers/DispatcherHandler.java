@@ -47,7 +47,6 @@ public class DispatcherHandler implements HttpHandler {
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
-    private final TemplateEngine templateEngine;
     private final Messages messages;
     private final Crypto crypto;
     private final Map<String, Class<?>> methodParameters;
@@ -55,19 +54,18 @@ public class DispatcherHandler implements HttpHandler {
     private final String controllerClassName;
     private final String controllerMethodName;
     private final boolean hasRequestFilter;
+    private TemplateEngine templateEngine;
     private String username;
     private String password;    
     private int limit;
     private final int methodParametersCount;
     private boolean blocking;
-    private boolean internalTemplateEngine;
     private boolean timer;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
         Objects.requireNonNull(controllerClass, "controllerClass can not be null");
         Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
 
-        this.templateEngine = this.internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
@@ -104,7 +102,7 @@ public class DispatcherHandler implements HttpHandler {
     }
 
     public DispatcherHandler withInternalTemplateEngine(boolean internalTemplateEngine) {
-        this.internalTemplateEngine = internalTemplateEngine;
+        this.templateEngine = internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         return this;
     }
     
