@@ -28,6 +28,7 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
@@ -272,12 +273,12 @@ public final class RequestUtils {
      * @param password The password to use
      * @return An HttpHandler wrapped through BasicAuthentication
      */
-    public static HttpHandler wrapSecurity(HttpHandler wrap, String username, String password) {
-        Objects.requireNonNull(wrap, "HttpHandler to wrap can not be null");
-        Objects.requireNonNull(username, "username can not be null");
-        Objects.requireNonNull(password, "password can not be null");
+    public static HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
+        Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
         
-        HttpHandler handler = wrap;
+        HttpHandler handler = httpHandler;
         final List<AuthenticationMechanism> mechanisms = Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required"));
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);

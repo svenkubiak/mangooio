@@ -34,9 +34,6 @@ public class CookieParser {
     private LocalDateTime expiresDate;
     private boolean encrypted;
     
-    public CookieParser() {
-    }
-    
     public static CookieParser build() {
         return new CookieParser();
     }

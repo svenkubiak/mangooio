@@ -10,6 +10,9 @@ import io.undertow.server.handlers.Cookie;
  */
 public final class CookieUtils {
 
+    private CookieUtils() {
+    }
+    
     /**
      * Retrieves the value of a cookie with a given name from a HttpServerExchange
      * 

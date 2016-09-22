@@ -11,6 +11,9 @@ import io.mangoo.enums.Default;
  *
  */
 public final class CodecUtils {
+    
+    private CodecUtils() {
+    }
 
     /**
      * Hashes a given cleartext data with JBCrypt

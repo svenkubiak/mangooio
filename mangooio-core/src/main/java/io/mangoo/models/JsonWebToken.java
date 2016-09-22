@@ -1,10 +1,8 @@
 package io.mangoo.models;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.IncorrectClaimException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.MissingClaimException;
 
 /**
  * 
@@ -24,7 +22,7 @@ public class JsonWebToken {
         return this.jwtParser;
     }
     
-    public Jws<Claims> validate() throws MissingClaimException, IncorrectClaimException {
+    public Jws<Claims> validate() {
         return this.jwtParser.parseClaimsJws(bearer);
     }
 }

@@ -30,6 +30,9 @@ public final class ValidationUtils {
         defaults.put(Key.VALIDATION_NUMERIC.toString(), Validation.NUMERIC.toString());
     }
     
+    private ValidationUtils() {
+    }
+    
     public static Map<String, String> getDefaults() {
         return defaults;
     }
