@@ -268,7 +268,7 @@ public final class RequestUtils {
     /**
      * Adds a Wrapper to the handler when the request requires authentication
      * 
-     * @param wrap The Handler to wrap
+     * @param httpHandler The Handler to wrap
      * @param username The username to use
      * @param password The password to use
      * @return An HttpHandler wrapped through BasicAuthentication

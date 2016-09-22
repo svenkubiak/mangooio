@@ -12,6 +12,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooValidator;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
@@ -41,7 +42,7 @@ public class Request implements MangooValidator {
     }
 
     public Request(HttpServerExchange httpServerExchange) {
-        Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
+        Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         this.httpServerExchange = httpServerExchange;
         this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
@@ -99,7 +100,7 @@ public class Request implements MangooValidator {
             return JsonUtils.fromJson(this.body, Map.class);
         }
         
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     /**

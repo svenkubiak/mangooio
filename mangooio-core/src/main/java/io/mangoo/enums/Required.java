@@ -17,7 +17,10 @@ public enum Required {
     DATE("date can not be null"),
     LOCAL_DATE_TIME("localDateTime can not be null"),
     LOCAL_DATE("localDate can not be null"),
-    HTTP_HANDLER("httpHandler can not be null");
+    HTTP_HANDLER("httpHandler can not be null"),
+    AUTHENTICITY("authenticity can not be null"),
+    VALUES("values can not be null"),
+    HTTP_SERVER_EXCHANGE("httpServerExchange can not be null");
 
     private final String value;
 

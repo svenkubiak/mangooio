@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Sets;
 
+import io.mangoo.enums.Required;
+
 /**
  *
  * @author svenkubiak
@@ -19,7 +21,7 @@ import com.google.common.collect.Sets;
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
-    private Map<String, String> values = new HashMap<String, String>();
+    private Map<String, String> values = new HashMap<>();
     private String authenticity;
     private boolean changed;
     private LocalDateTime expires;
@@ -32,21 +34,21 @@ public class Session {
     }
     
     public Session withContent(Map<String, String> values) {
-        Objects.requireNonNull(values, "values can not be null");
+        Objects.requireNonNull(values, Required.VALUES.toString());
         
         this.values = values;
         return this;
     }
     
     public Session withAuthenticity(String authenticity) {
-        Objects.requireNonNull(authenticity, "authenticity can not be null");
+        Objects.requireNonNull(authenticity, Required.AUTHENTICITY.toString());
         
         this.authenticity = authenticity;
         return this;
     }
     
     public Session withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, "expires can not be null");
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
         
         this.expires = expires;
         return this;
