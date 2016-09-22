@@ -66,7 +66,7 @@ public class CookieParser {
             
             Claims claims = jwsClaims.getBody();
             Date expiration = claims.getExpiration();
-            if (expiration != null && claims != null) {
+            if (expiration != null) {
                 LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
                 if (LocalDateTime.now().isBefore(expires)) {
                     this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
@@ -91,7 +91,7 @@ public class CookieParser {
             
             Claims claims = jwsClaims.getBody();
             Date expiration = claims.getExpiration();
-            if (expiration != null && claims != null) {
+            if (expiration != null) {
                 LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
                 if (LocalDateTime.now().isBefore(expires)) {
                     this.authenticatedUser = claims.getSubject();

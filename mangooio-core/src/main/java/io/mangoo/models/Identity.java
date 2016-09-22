@@ -12,11 +12,12 @@ import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
 
 /**
- * A simple {@link IdentityManager} implementation
+ * 
+ * A simple IdentityManager implementation
+ * 
+ * @author svenkubiak
  *
- *
-* @author svenkubiak
-*/
+ */
 public class Identity implements IdentityManager {
     private String username;
     private String password;
@@ -59,7 +60,7 @@ public class Identity implements IdentityManager {
         if (this.username.equals(username)) {
             return new Account() {
                 private static final long serialVersionUID = -1097117887398334569L;
-                private final transient Principal principal = new Principal() {
+                private transient Principal principal = new Principal() {
                     @Override
                     public String getName() {
                         return username;
