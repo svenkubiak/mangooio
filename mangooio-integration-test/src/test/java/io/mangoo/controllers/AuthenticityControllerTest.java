@@ -32,7 +32,7 @@ public class AuthenticityControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), startsWith("<input type=\"hidden\" value=\""));
-        assertThat(response.getContent(), endsWith(" name=\"authenticityToken\" />"));
+        assertThat(response.getContent(), endsWith(" name=\"authenticity\" />"));
     }
     
     @Test
@@ -75,7 +75,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        WebResponse response = WebRequest.get("/invalid?authenticityToken=fdjsklfjsd82jkfldsjkl").execute();
+        WebResponse response = WebRequest.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

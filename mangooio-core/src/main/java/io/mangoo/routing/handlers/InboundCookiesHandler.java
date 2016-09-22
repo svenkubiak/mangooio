@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -16,7 +18,6 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.cookie.CookieParser;
 import io.mangoo.utils.cookie.CookieUtils;
@@ -29,6 +30,7 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class InboundCookiesHandler implements HttpHandler {
+    private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
 
@@ -108,16 +110,17 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = CookieUtils.getCookieValue(exchange, CONFIG.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookieValue)) {
-            Jws<Claims> jwsClaims = Jwts.parser()
-                .setSigningKey(CONFIG.getApplicationSecret())
-                .parseClaimsJws(cookieValue);
+            try {
+                Jws<Claims> jwsClaims = Jwts.parser()
+                        .setSigningKey(CONFIG.getApplicationSecret())
+                        .parseClaimsJws(cookieValue);
 
-            Claims claims = jwsClaims.getBody();
-            LocalDateTime expiration = DateUtils.dateToLocalDateTime(claims.getExpiration());
-            if (LocalDateTime.now().isBefore(expiration)) {
+                Claims claims = jwsClaims.getBody();
                 final Map<String, String> values = claims.get("data", Map.class);
                 flash = new Flash(values);
-                flash.setDiscard(true);
+                flash.setDiscard(true); 
+            } catch (Exception e) { //NOSONAR
+                LOG.error("Failed to parse JWT for flash cookie", e);
             }
         }
         

@@ -42,8 +42,8 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class DispatcherHandler implements HttpHandler {
-    private static final Config CONFIG = Application.getConfig();
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final Config CONFIG = Application.getConfig();
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();

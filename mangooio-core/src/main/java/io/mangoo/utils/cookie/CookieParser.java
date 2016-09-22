@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -14,6 +16,7 @@ import io.jsonwebtoken.Jwts;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.utils.DateUtils;
 
 /**
@@ -22,6 +25,7 @@ import io.mangoo.utils.DateUtils;
  *
  */
 public class CookieParser {
+    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
     private Map<String, String> sessionValues = new HashMap<>();
     private String secret;
     private String value;
@@ -60,20 +64,21 @@ public class CookieParser {
 
         boolean valid = false;
         if (StringUtils.isNotBlank(this.value)) {
-            Jws<Claims> jwsClaims = Jwts.parser()
-                .setSigningKey(this.secret)
-                .parseClaimsJws(this.value);
-            
-            Claims claims = jwsClaims.getBody();
-            Date expiration = claims.getExpiration();
-            if (expiration != null) {
-                LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
-                if (LocalDateTime.now().isBefore(expires)) {
+            try {
+                Jws<Claims> jwsClaims = Jwts.parser()
+                        .setSigningKey(this.secret)
+                        .parseClaimsJws(this.value);
+                    
+                Claims claims = jwsClaims.getBody();
+                Date expiration = claims.getExpiration();
+                if (expiration != null) {
                     this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
                     this.authenticityToken = claims.get(ClaimKey.AUHTNETICITY.toString(), String.class); 
-                    this.expiresDate = expires;  
+                    this.expiresDate = DateUtils.dateToLocalDateTime(expiration);  
                     valid = true;
-                }
+                } 
+            } catch (Exception e) { //NOSONAR
+                LOG.error("Failed to parse JWS for seesion cookie", e);
             }
         }
         
@@ -85,19 +90,20 @@ public class CookieParser {
 
         boolean valid = false;
         if (StringUtils.isNotBlank(this.value)) {
-            Jws<Claims> jwsClaims = Jwts.parser()
-                .setSigningKey(this.secret)
-                .parseClaimsJws(this.value);
-            
-            Claims claims = jwsClaims.getBody();
-            Date expiration = claims.getExpiration();
-            if (expiration != null) {
-                LocalDateTime expires = DateUtils.dateToLocalDateTime(expiration);
-                if (LocalDateTime.now().isBefore(expires)) {
+            try {
+                Jws<Claims> jwsClaims = Jwts.parser()
+                        .setSigningKey(this.secret)
+                        .parseClaimsJws(this.value);
+                    
+                Claims claims = jwsClaims.getBody();
+                Date expiration = claims.getExpiration();
+                if (expiration != null) {
                     this.authenticatedUser = claims.getSubject();
-                    this.expiresDate = expires;
+                    this.expiresDate = DateUtils.dateToLocalDateTime(expiration);
                     valid = true;                        
-                }
+                }  
+            } catch (Exception e) { //NOSONAR
+                LOG.error("Failed to parse JWS for authentication cookie", e);
             }
         }
 
