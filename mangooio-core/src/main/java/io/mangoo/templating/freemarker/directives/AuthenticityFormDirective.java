@@ -26,7 +26,7 @@ public class AuthenticityFormDirective implements TemplateDirectiveModel {
     @Override
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
         if (this.session != null) {
-            environment.getOut().append("<input type=\"hidden\" value=\"" + this.session.getAuthenticity() + "\" name=\"authenticityToken\" />");
+            environment.getOut().append("<input type=\"hidden\" value=\"" + this.session.getAuthenticity() + "\" name=\"authenticity\" />");
         }
     }
 }
