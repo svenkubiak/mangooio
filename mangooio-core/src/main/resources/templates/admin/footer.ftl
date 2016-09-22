@@ -94,17 +94,22 @@
 	  });
 	  
 	  $(".encrypt").change(function() {
-		$.ajax({
-  			type: "POST",
-  			processData: false,
-  			contentType : 'application/json',
-  			url: "/@admin/tools/ajax",
-  			data: JSON.stringify({ "function": "encrypt", "cleartext" : $("#encrypt_cleartext").val(), "key" : $("#encrypt_key").val() }),
-  			dataType: "json",
-  			success: function(data){
-				$("#encryptedvalue").val(data);
-  			}
-		});
+	  	var cleartext = $("#encrypt_cleartext").val();
+	  	var key = $("#encrypt_key").val();
+	  	
+	  	if (key.length == 0 || key.length == 32) {
+			$.ajax({
+	  			type: "POST",
+	  			processData: false,
+	  			contentType : 'application/json',
+	  			url: "/@admin/tools/ajax",
+	  			data: JSON.stringify({ "function": "encrypt", "cleartext" : cleartext, "key" : key }),
+	  			dataType: "json",
+	  			success: function(data){
+					$("#encryptedvalue").val(data);
+	  			}
+			});
+	  	}
 	  });	  
 	});
   </script>
