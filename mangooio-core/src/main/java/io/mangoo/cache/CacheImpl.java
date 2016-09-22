@@ -60,6 +60,12 @@ public class CacheImpl implements Cache {
         
         return counter;
     }
+    
+    @Override
+    public AtomicInteger getCounter(String key) {
+        Objects.requireNonNull(key, "key can not be null");
+        return get(key);
+    }
 
     @Override
     public AtomicInteger decrement(String key) {

@@ -85,11 +85,11 @@ public class InboundCookiesHandler implements HttpHandler {
                 .isEncrypted(CONFIG.isAuthenticationCookieEncrypt());
         
         if (cookieParser.hasValidAuthenticationCookie()) {
-            authentication = Authentication.build()
+            authentication = Application.getInstance(Authentication.class)
                     .withExpires(cookieParser.getExpiresDate())
                     .withAuthenticatedUser(cookieParser.getAuthenticatedUser());
         } else {
-            authentication = Authentication.build()
+            authentication = Application.getInstance(Authentication.class)
                     .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()))
                     .withAuthenticatedUser(null);
         }

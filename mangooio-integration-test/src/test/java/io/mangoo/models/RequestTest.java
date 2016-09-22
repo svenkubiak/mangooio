@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 
+import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
@@ -19,7 +20,7 @@ public class RequestTest {
     public void testBuild() {
         //given
         Request reqeust = new Request()
-                .withAuthentication(new Authentication())
+                .withAuthentication(Application.getInstance(Authentication.class))
                 .withBody("bar")
                 .withSession(new Session())
                 .withParameter(new HashMap<String, String>());

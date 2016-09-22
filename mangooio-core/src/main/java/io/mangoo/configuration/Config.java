@@ -729,6 +729,13 @@ public class Config {
     }
 
     /**
+     * @return authentication.lock or default value if undefined
+     */
+    public int getAuthenticationLock() {
+        return getInt(Key.AUTH_LOCK, Default.AUTH_LOCK.toInt());
+    }
+
+    /**
      * @return cache.cluster.url or null if undefined
      */
     public String getCacheClusterUrl() {

@@ -28,10 +28,10 @@ import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
-import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.utils.CodecUtils;
 
 /**
  * Controller class for administrative URLs
@@ -53,13 +53,11 @@ public class AdminController {
     private final Map<String, String> properties = new HashMap<>();
     private final Scheduler scheduler; //NOSONAR
     private final Crypto crypto; //NOSONAR
-    private final Authentication authentication; //NOSONAR
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto, Authentication authentication) {
+    public AdminController(Scheduler scheduler, Crypto crypto) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler can not be null");
         this.crypto = Objects.requireNonNull(crypto, "crypto can not be null");
-        this.authentication = Objects.requireNonNull(authentication, "authentication can not be null");
         
         System.getProperties().entrySet().forEach(
                 entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
@@ -128,7 +126,7 @@ public class AdminController {
             String key = body.get("key").toString();
 
             if (("hash").equalsIgnoreCase(function)) {
-                value = this.authentication.getHashedPassword(cleartext);
+                value = CodecUtils.hexJBcrypt(cleartext);
             } else if (("encrypt").equalsIgnoreCase(function)) {
                 if (StringUtils.isNotBlank(key)) {
                     value = this.crypto.encrypt(cleartext, key);

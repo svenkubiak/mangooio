@@ -63,4 +63,12 @@ public interface Cache {
      * @return A counter based on AtomicInteger
      */
     public AtomicInteger decrement(String key);
+
+    /**
+     * Retrieves the current counter for a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger or null if none found
+     */
+    public AtomicInteger getCounter(String key);
 }
