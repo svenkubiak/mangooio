@@ -59,7 +59,7 @@ public class Identity implements IdentityManager {
         if (this.username.equals(username)) {
             return new Account() {
                 private static final long serialVersionUID = -1097117887398334569L;
-                private final Principal principal = new Principal() {
+                private final transient Principal principal = new Principal() {
                     @Override
                     public String getName() {
                         return username;

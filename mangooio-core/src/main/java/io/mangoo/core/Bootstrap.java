@@ -243,7 +243,7 @@ public class Bootstrap {
         }
 
         Router.getRoutes().parallelStream().forEach(route -> {
-            if (RouteType.REQUEST.equals(route.getRouteType())) {
+            if (RouteType.REQUEST == route.getRouteType()) {
                 DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
                         .withInternalTemplateEngine(route.isInternalTemplateEngine())
@@ -254,7 +254,7 @@ public class Bootstrap {
 
         
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
-            } else if (RouteType.RESOURCE_FILE.equals(route.getRouteType())) {
+            } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
             }
         });
@@ -275,12 +275,12 @@ public class Bootstrap {
             this.ajpHost = this.config.getConnectorAjpHost();
             this.ajpPort = this.config.getConnectorAjpCPort();
             
-            if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
+            if (this.httpPort > 0 && StringUtils.isNotBlank(this.httpHost)) {
                 builder.addHttpListener(this.httpPort, this.httpHost);
                 hasConnector = true;
             }
             
-            if (StringUtils.isNotBlank(this.ajpHost) && this.ajpPort > 0) {
+            if (this.ajpPort > 0 && StringUtils.isNotBlank(this.ajpHost)) {
                 builder.addAjpListener(this.ajpPort, this.ajpHost);
                 hasConnector = true;
             }
@@ -323,12 +323,12 @@ public class Bootstrap {
 
             LOG.info(buffer.toString()); //NOSONAR
             
-            if (StringUtils.isNotBlank(this.httpHost) && this.httpPort > 0) {
-                LOG.info("HTTP connector listening @{}:{}", this.httpHost,this.httpPort);
+            if (this.httpPort > 0 && StringUtils.isNotBlank(this.httpHost)) {
+                LOG.info("HTTP connector listening @{}:{}", this.httpHost, this.httpPort);
             }
             
-            if (StringUtils.isNotBlank(this.ajpHost) && this.ajpPort > 0) {
-                LOG.info("AJP connector listening @{}:{}", this.ajpHost,this.ajpPort);
+            if (this.ajpPort > 0 && StringUtils.isNotBlank(this.ajpHost)) {
+                LOG.info("AJP connector listening @{}:{}", this.ajpHost, this.ajpPort);
             }
             
             LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());

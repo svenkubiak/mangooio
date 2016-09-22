@@ -49,7 +49,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Session getSessionCookie(HttpServerExchange exchange) {
-        Session session = null;
+        Session session;
 
         CookieParser cookieParser = CookieParser.build()
                 .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getSessionCookieName()))
@@ -77,7 +77,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = null;
+        Authentication authentication;
 
         final CookieParser cookieParser = CookieParser.build()
                 .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getAuthenticationCookieName()))

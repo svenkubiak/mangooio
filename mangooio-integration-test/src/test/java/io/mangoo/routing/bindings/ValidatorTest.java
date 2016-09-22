@@ -1,4 +1,4 @@
-package io.mangoo.bindings;
+package io.mangoo.routing.bindings;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;

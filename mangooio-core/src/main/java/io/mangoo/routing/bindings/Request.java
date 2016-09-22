@@ -44,8 +44,6 @@ public class Request implements MangooValidator {
         Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
 
         this.httpServerExchange = httpServerExchange;
-        this.validator = Application.getInstance(Validator.class);
-        this.validator.setValues(this.parameter);
         this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
@@ -66,6 +64,8 @@ public class Request implements MangooValidator {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
+        this.validator = Application.getInstance(Validator.class);
+        this.validator.setValues(this.parameter);
         return this;
     }
     

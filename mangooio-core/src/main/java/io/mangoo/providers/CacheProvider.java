@@ -1,8 +1,7 @@
 package io.mangoo.providers;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 import java.util.concurrent.TimeUnit;
 
 import org.ehcache.CacheManager;
@@ -31,7 +30,7 @@ import io.mangoo.enums.CacheName;
  */
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private Map<CacheName, Cache> caches = new HashMap<>();
+    private EnumMap<CacheName, Cache> caches = new EnumMap<>(CacheName.class);
     private CacheManager cacheManager;
     private Cache cache;
 
