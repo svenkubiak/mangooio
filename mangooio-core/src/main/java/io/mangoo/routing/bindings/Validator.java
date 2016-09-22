@@ -14,6 +14,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import com.google.inject.Inject;
 
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 
 /**
@@ -28,7 +29,7 @@ public class Validator {
 
     @Inject
     public Validator(Messages messages) {
-        this.messages =  Objects.requireNonNull(messages, "Messages can not be null");
+        this.messages =  Objects.requireNonNull(messages, Required.MESSAGES.toString());
     }
 
     /**

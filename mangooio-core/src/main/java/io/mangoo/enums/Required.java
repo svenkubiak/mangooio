@@ -20,7 +20,8 @@ public enum Required {
     HTTP_HANDLER("httpHandler can not be null"),
     AUTHENTICITY("authenticity can not be null"),
     VALUES("values can not be null"),
-    HTTP_SERVER_EXCHANGE("httpServerExchange can not be null");
+    HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),
+    MESSAGES("messages can not be null");
 
     private final String value;
 
