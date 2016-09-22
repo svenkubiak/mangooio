@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
@@ -32,14 +33,14 @@ public class Authentication {
 
     @Inject
     public Authentication(CacheProvider cacheProvider, Config config) {
-        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
-        Objects.requireNonNull(config, "config can not be null");
+        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
+        Objects.requireNonNull(config, Required.CONFIG.toString());
         this.cache = cacheProvider.getCache(CacheName.AUTH);
         this.config = config;
     }
     
     public Authentication withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, "expires can not be null");
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
         
         this.expires = expires;
         return this;
@@ -116,9 +117,9 @@ public class Authentication {
      * @return True if the new hashed password matches the hash, false otherwise
      */
     public boolean login(String username, String password, String hash) {
-        Objects.requireNonNull(username, "username can not be null");
-        Objects.requireNonNull(password, "password can not be null");
-        Objects.requireNonNull(hash, "hash can not be null");
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(hash, Required.HASH.toString());
 
         boolean authenticated = false;
         if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
@@ -142,7 +143,7 @@ public class Authentication {
      * @return true if the user has a lock, false otherwise
      */
     public boolean userHasLock(String username) {
-        Objects.requireNonNull(username, "username can not be null");
+        Objects.requireNonNull(username, Required.USERNAME.toString());
         boolean lock = false;
         
         AtomicInteger counter = this.cache.getCounter(username);
@@ -176,7 +177,7 @@ public class Authentication {
      * @return True if the given user name is authenticates
      */
     public boolean isAuthenticated(String username) {
-        Objects.requireNonNull(username, "username can not be null");
+        Objects.requireNonNull(username, Required.USERNAME.toString());
 
         return username.equals(this.authenticatedUser);
     }

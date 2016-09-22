@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
@@ -23,8 +24,8 @@ public class Identity implements IdentityManager {
     private String password;
     
     public Identity(String username, String password) {
-        this.username = Objects.requireNonNull(username, "username can not be null");
-        this.password = Objects.requireNonNull(password, "password can not be null");
+        this.username = Objects.requireNonNull(username, Required.USERNAME.toString());
+        this.password = Objects.requireNonNull(password, Required.PASSWORD.toString());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class Identity implements IdentityManager {
     @Override
     public Account verify(String username, Credential credential) {
         Account account = getAccount(username);
-        if (account != null && verifyCredential(account, credential)) {
+        if (account != null && verifyCredential(credential)) {
             return account;
         }
 
@@ -47,10 +48,11 @@ public class Identity implements IdentityManager {
         return null;
     }
 
-    private boolean verifyCredential(Account account, Credential credential) {
+    private boolean verifyCredential(Credential credential) {
         if (credential instanceof PasswordCredential) {
-            String password = new String(((PasswordCredential) credential).getPassword());
-            return CodecUtils.checkJBCrypt(password, this.password);
+            return CodecUtils.checkJBCrypt(
+                    new String(((PasswordCredential) credential).getPassword()),
+                    this.password);
         }
         
         return false;

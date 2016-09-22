@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.mangoo.enums.Required;
+
 /**
  * Concrete Cache implementation 
  * 
@@ -19,13 +21,13 @@ public class CacheImpl implements Cache {
     
     @Override
     public void put(String key, Object value) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         ehCache.put(key, value);
     }
 
     @Override
     public void remove(String key) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         ehCache.remove(key);
     }
 
@@ -37,19 +39,19 @@ public class CacheImpl implements Cache {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         return (T) ehCache.get(key);
     }
 
     @Override
     public void putAll(Map<String, Object> map) {
-        Objects.requireNonNull(map, "map can not be null");
+        Objects.requireNonNull(map, Required.MAP.toString());
         ehCache.putAll(map);
     }
 
     @Override
     public AtomicInteger increment(String key) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         
         AtomicInteger counter = get(key);
         if (counter == null) {
@@ -63,13 +65,13 @@ public class CacheImpl implements Cache {
     
     @Override
     public AtomicInteger getCounter(String key) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         return get(key);
     }
 
     @Override
     public AtomicInteger decrement(String key) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         AtomicInteger counter = get(key);
         if (counter == null) {

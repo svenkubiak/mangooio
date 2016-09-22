@@ -62,14 +62,12 @@ public class RequestHandler implements HttpHandler {
                 .get(Default.AUTHENTICITY.toString()))
                 .orElse(this.attachment.getForm().get(Default.AUTHENTICITY.toString()));
         
-        Request request = new Request(exchange)
+        return new Request(exchange)
                 .withSession(this.attachment.getSession())
                 .withAuthenticity(authenticity)
                 .withAuthentication(this.attachment.getAuthentication())
                 .withParameter(this.attachment.getRequestParameter())
                 .withBody(this.attachment.getBody());
-        
-        return request;
     }
 
     /**
