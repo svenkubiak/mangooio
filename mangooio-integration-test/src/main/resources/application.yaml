@@ -13,8 +13,6 @@ default:
         name       : TEST
         secret     : myvoiceismypasswordmyvoiceismypassword
         language   : en
-        host       : localhost
-        port       : 9898
         jwt        :
             signkey       : myvoiceismypassword
             encrypt       : true

@@ -39,6 +39,7 @@ public class Request implements MangooValidator {
     private JsonWebToken jsonWebToken;
 
     public Request(){
+        //Required empty constructor
     }
 
     public Request(HttpServerExchange httpServerExchange) {

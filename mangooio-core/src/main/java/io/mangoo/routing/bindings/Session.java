@@ -26,9 +26,6 @@ public class Session {
     private boolean changed;
     private LocalDateTime expires;
 
-    public Session(){
-    }
-    
     public static Session build() {
         return new Session();
     }
