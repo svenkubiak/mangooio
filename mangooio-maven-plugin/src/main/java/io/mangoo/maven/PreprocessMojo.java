@@ -43,15 +43,17 @@ public class PreprocessMojo extends AbstractMojo {
         File directory = new File(buffer.toString()); //NOSONAR
         File[] files = directory.listFiles();
         
-        for (File file : files){
-            if (file.isFile()){
-                String fileName = file.getName();
-                if (fileName.endsWith(Suffix.LESS.toString()) || fileName.endsWith(Suffix.SASS.toString())) {
-                    MinificationUtils.preprocess(file.getAbsolutePath());
+        if (files != null) {
+            for (File file : files){
+                if (file.isFile()){
+                    String fileName = file.getName();
+                    if (fileName.endsWith(Suffix.LESS.toString()) || fileName.endsWith(Suffix.SASS.toString())) {
+                        MinificationUtils.preprocess(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()){
+                    preprocessFiles(file.getAbsolutePath());
                 }
-            } else if (file.isDirectory()){
-                preprocessFiles(file.getAbsolutePath());
-            }
+            }   
         }
     }
 }

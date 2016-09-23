@@ -43,15 +43,17 @@ public class MinifyMojo extends AbstractMojo {
         File directory = new File(buffer.toString()); //NOSONAR
         File[] files = directory.listFiles();
         
-        for (File file : files){
-            if (file.isFile()){
-                String fileName = file.getName();
-                if (fileName.endsWith(Suffix.CSS.toString()) || (fileName.endsWith(Suffix.JS.toString()) && !fileName.contains("min"))) {
-                    MinificationUtils.minify(file.getAbsolutePath());
+        if (files != null) {
+            for (File file : files){
+                if (file.isFile()){
+                    String fileName = file.getName();
+                    if (fileName.endsWith(Suffix.CSS.toString()) || (fileName.endsWith(Suffix.JS.toString()) && !fileName.contains("min"))) {
+                        MinificationUtils.minify(file.getAbsolutePath());
+                    }
+                } else if (file.isDirectory()){
+                    minifyFiles(file.getAbsolutePath());
                 }
-            } else if (file.isDirectory()){
-                minifyFiles(file.getAbsolutePath());
-            }
+            }    
         }
     }
 }
