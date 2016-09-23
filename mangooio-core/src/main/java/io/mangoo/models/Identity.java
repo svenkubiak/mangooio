@@ -48,6 +48,7 @@ public class Identity implements IdentityManager {
         return account;
     }
 
+    @SuppressWarnings("all")
     private Account getAccount(String username) {
         return new Account() {
             private static final long serialVersionUID = 5311970975103831035L;
