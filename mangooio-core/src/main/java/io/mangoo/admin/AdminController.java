@@ -22,6 +22,7 @@ import com.google.inject.Inject;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
@@ -56,8 +57,8 @@ public class AdminController {
     
     @Inject
     public AdminController(Scheduler scheduler, Crypto crypto) {
-        this.scheduler = Objects.requireNonNull(scheduler, "scheduler can not be null");
-        this.crypto = Objects.requireNonNull(crypto, "crypto can not be null");
+        this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
+        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         
         System.getProperties().entrySet().forEach(
                 entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())

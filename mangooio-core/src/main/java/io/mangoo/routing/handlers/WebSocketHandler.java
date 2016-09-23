@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.xnio.ChannelListener;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.utils.RequestUtils;
@@ -25,7 +26,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
     private final Class<?> controllerClass;
     
     public WebSocketHandler(Class<?> controllerClass, boolean hasAuthentication) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        this.controllerClass = Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         this.hasAuthentication = hasAuthentication;
     }
 

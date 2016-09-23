@@ -24,6 +24,7 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
+import io.mangoo.enums.Required;
 
 /**
  * Main configuration class for all properties configured in application.yaml
@@ -43,8 +44,8 @@ public class Config {
     }
 
     public Config(String configFile, Mode mode) {
-        Objects.requireNonNull(configFile, "configFile can not be null");
-        Objects.requireNonNull(mode, "mode can not be null");
+        Objects.requireNonNull(configFile, Required.CONFIG_FILE.toString());
+        Objects.requireNonNull(mode, Required.MODE.toString());
 
         prepare(configFile, mode);
     }
@@ -160,10 +161,10 @@ public class Config {
      * Checks if a value is encrypt by checking for the prefix crpytex
      *
      * @param value The value to check
-     * @return True if the value starts with cryptex, false othweise
-     */
+     * @return True if the value starts with cryptex, false otherwise
+    */
     public boolean isEncrypted(String value) {
-        Objects.requireNonNull(value, "value can not be null");
+        Objects.requireNonNull(value, Required.VALUE.toString());
         return value.startsWith("cryptex[");
     }
 

@@ -16,6 +16,7 @@ import com.google.common.io.Resources;
 
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.RouteType;
 
 /**
@@ -36,7 +37,7 @@ public final class BootstrapUtils {
      * @return The RouteType enum or null if given method is undefined
      */
     public static RouteType getRouteType(String method) {
-        Objects.requireNonNull(method, "method can not be null");
+        Objects.requireNonNull(method, Required.METHOD.toString());
         
         switch (method.toUpperCase(Locale.ENGLISH)) {
         case "GET":
@@ -99,7 +100,7 @@ public final class BootstrapUtils {
      * @return A valid package name
      */
     public static String getPackageName(String packageName) {
-        Objects.requireNonNull(packageName, "package name can not be null");
+        Objects.requireNonNull(packageName, Required.PACKAGE_NAME.toString());
 
         if (!packageName.endsWith(".")) {
             return packageName + '.';

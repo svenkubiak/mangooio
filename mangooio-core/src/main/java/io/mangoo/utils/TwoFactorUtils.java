@@ -12,7 +12,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.enums.ErrorMessage;
+import io.mangoo.enums.Required;
 
 /**
  * Two factor Java implementation for the Time-based One-Time Password (TOTP) algorithm.
@@ -143,7 +143,7 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
-        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
@@ -157,7 +157,7 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
-        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
+        Objects.requireNonNull(secret, Required.GROUP_NAME.toString());
 
         final byte[] key = secret.getBytes();
         final byte[] data = new byte[8];
@@ -204,8 +204,8 @@ public final class TwoFactorUtils {
      * @return A URL to the Google charts API
      */
     public static String generateQRCode(String accountName, String secret) {
-        Objects.requireNonNull(accountName, "accountName can not be null");
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(accountName, Required.ACCOUNT_NAME.toString());
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         
         final StringBuilder buffer = new StringBuilder(128);
         buffer.append("https://chart.googleapis.com/chart")

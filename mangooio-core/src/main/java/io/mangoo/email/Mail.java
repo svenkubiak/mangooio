@@ -17,6 +17,7 @@ import org.apache.commons.mail.SimpleEmail;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateEngine;
@@ -73,7 +74,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withRecipient(String recipient) {
-        Objects.requireNonNull(recipient, "recipient can not be null");
+        Objects.requireNonNull(recipient, Required.RECIPIENT.toString());
         
         this.recipients.add(recipient);
         return this;
@@ -86,7 +87,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withCC(String recipient) {
-        Objects.requireNonNull(recipient, "cc recipient can not be null");
+        Objects.requireNonNull(recipient, Required.CC_RECIPIENT.toString());
         
         this.ccRecipients.add(recipient);
         return this;
@@ -99,7 +100,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withSubject(String subject) {
-        Objects.requireNonNull(subject, "subject can not be null");
+        Objects.requireNonNull(subject, Required.SUBJECT.toString());
         
         this.subject = subject;
         return this;
@@ -112,7 +113,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withTemplate(String template) {
-        Objects.requireNonNull(template, "template can not be null");
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
         
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             this.template = template.substring(1, template.length());
@@ -137,7 +138,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withBCC(String recipient) {
-        Objects.requireNonNull(recipient, "bcc recipient can not be null");
+        Objects.requireNonNull(recipient, Required.BCC_RECIPIENT.toString());
         
         this.bccRecipients.add(recipient);
         return this;
@@ -152,7 +153,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withBody(String body) {
-        Objects.requireNonNull(body, "body can not be null");
+        Objects.requireNonNull(body, Required.BODY.toString());
         
         this.body = body;
         return this;
@@ -165,7 +166,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withFrom(String from) {
-        Objects.requireNonNull(from, "from can not be null");
+        Objects.requireNonNull(from, Required.FROM.toString());
         
         this.from = from;
         return this;
@@ -178,7 +179,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withAttachment(File file) {
-        Objects.requireNonNull(file, "file can not be null");
+        Objects.requireNonNull(file, Required.FILE.toString());
         
         this.attachment = true;
         this.files.add(file);
@@ -203,8 +204,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail withContent(String key, Object value) {
-        Objects.requireNonNull(key, "key can not be null");
-        Objects.requireNonNull(value, "value can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(value, Required.VALUE.toString());
         
         content.put(key, value);
         return this;

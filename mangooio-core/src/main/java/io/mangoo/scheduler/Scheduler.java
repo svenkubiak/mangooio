@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooSchedulerException;
 
 /**
@@ -32,7 +33,6 @@ import io.mangoo.exceptions.MangooSchedulerException;
 @Singleton
 public class Scheduler {
     private static final Logger LOG = LogManager.getLogger(Scheduler.class);
-    private static final String SCHEDULER_IS_NOT_INITIALIZED = "Scheduler is not initialized";
     private org.quartz.Scheduler quartzScheduler;
 
     @Inject
@@ -93,7 +93,7 @@ public class Scheduler {
     }
 
     public void start() throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         try {
             this.quartzScheduler.start();
@@ -108,7 +108,7 @@ public class Scheduler {
     }
 
     public void shutdown() throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
 
         try {
             if (isStarted()) {
@@ -125,7 +125,7 @@ public class Scheduler {
     }
 
     public void standby() throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
 
         try {
             this.quartzScheduler.standby();
@@ -147,9 +147,9 @@ public class Scheduler {
      * @throws MangooSchedulerException when accessing the scheduler results in an error
      */
     public void schedule(JobDetail jobDetail, Trigger trigger) throws MangooSchedulerException {
-        Objects.requireNonNull(jobDetail, "JobDetail is required for schedule");
-        Objects.requireNonNull(trigger, "trigger is required for schedule");
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(jobDetail, Required.JOB_DETAIL.toString());
+        Objects.requireNonNull(trigger, Required.TRIGGER.toString());
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
 
         try {
             this.quartzScheduler.scheduleJob(jobDetail, trigger);
@@ -167,7 +167,7 @@ public class Scheduler {
      */
     @SuppressWarnings("unchecked")
     public List<io.mangoo.models.Job> getAllJobs() throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         List<io.mangoo.models.Job> jobs = new ArrayList<>();
         try {
@@ -191,7 +191,7 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during execution of the job
      */
     public void executeJob(String jobName) throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         try {
             for (JobKey jobKey : getAllJobKeys()) {
@@ -211,7 +211,7 @@ public class Scheduler {
      * @throws MangooSchedulerException if an errors occurs during access to the scheduler
      */
     public List<JobKey> getAllJobKeys() throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         List<JobKey> jobKeys = new ArrayList<>();
         try {
@@ -232,7 +232,7 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during access to the quartz scheduler
      */
     public void changeState(String jobName) throws MangooSchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         try {
             for (JobKey jobKey : getAllJobKeys()) {
@@ -252,7 +252,7 @@ public class Scheduler {
 
     @SuppressWarnings("unchecked")
     private TriggerState getTriggerState(JobKey jobKey) throws SchedulerException {
-        Objects.requireNonNull(this.quartzScheduler, SCHEDULER_IS_NOT_INITIALIZED);
+        Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
         List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
         Trigger trigger = triggers.get(0);  

@@ -8,6 +8,7 @@ import com.google.inject.Injector;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Mode;
+import io.mangoo.enums.Required;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
 import io.mangoo.utils.BootstrapUtils;
@@ -121,7 +122,7 @@ public final class Application {
      * @return An instance of the current application config
      */
     public static Config getConfig() {
-        Objects.requireNonNull(mode, "cant't create config instance without application mode");
+        Objects.requireNonNull(mode, Required.MODE.toString());
 
         if (config == null) {
             config = new Config();
@@ -145,7 +146,7 @@ public final class Application {
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
-        Objects.requireNonNull(start, "Can not calculate duration without application start time");
+        Objects.requireNonNull(start, Required.START.toString());
 
         return Duration.between(start, LocalDateTime.now());
     }
@@ -160,7 +161,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "clazz can not be null");
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return injector.getInstance(clazz);
     }

@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -55,52 +56,52 @@ public class Attachment {
     }
 
     public Attachment withControllerClass(Class<?> controllerClass) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
+        this.controllerClass = Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         return this;
     }
 
     public Attachment withControllerClassName(String controllerClassName) {
-        this.controllerClassName = Objects.requireNonNull(controllerClassName, "controllerClassName can not be null");
+        this.controllerClassName = Objects.requireNonNull(controllerClassName, Required.CONTROLLER_NAME.toString());
         return this;
     }
 
     public Attachment withControllerMethodName(String controllerMethodName) {
-        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, "controllerMethodName can not be null");
+        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
         return this;
     }
 
     public Attachment withControllerInstance(Object controllerInstance) {
-        this.controllerInstance = Objects.requireNonNull(controllerInstance, "controllerInstance can no be null");
+        this.controllerInstance = Objects.requireNonNull(controllerInstance, Required.CONTROLLER_INSTANCE.toString());
         return this;
     }
 
     public Attachment withCrypto(Crypto crypto) {
-        this.crypto = Objects.requireNonNull(crypto, "crypto can no be null");
+        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         return this;
     }
 
     public Attachment withMethodParameters(Map<String, Class<?>> methodParameters) {
-        this.methodParameters = Objects.requireNonNull(methodParameters, "methodParameters can no be null");
+        this.methodParameters = Objects.requireNonNull(methodParameters, Required.METHOD_PARAMETERS.toString());
         return this;
     }
 
     public Attachment withMessages(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, "messages can no be null");
+        this.messages = Objects.requireNonNull(messages, Required.MESSAGES.toString());
         return this;
     }
 
     public Attachment withTemplateEngine(TemplateEngine templateEngine) {
-        this.templateEngine = Objects.requireNonNull(templateEngine, "templateEngine can no be null");
+        this.templateEngine = Objects.requireNonNull(templateEngine, Required.TEMPLATE_ENGINE.toString());
         return this;
     }
 
     public Attachment withRequestParameter(Map<String, String> requestParameter) {
-        this.requestParameter = Objects.requireNonNull(requestParameter, "requestParameter can no be null");
+        this.requestParameter = Objects.requireNonNull(requestParameter, Required.REQUEST_PARAMETER.toString());
         return this;
     }
 
     public Attachment withMethod(Method method) {
-        this.method = Objects.requireNonNull(method, "method can no be null");
+        this.method = Objects.requireNonNull(method, Required.METHOD.toString());
         return this;
     }
 

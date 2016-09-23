@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -18,7 +19,7 @@ public class BinaryHandler implements HttpHandler {
     private final Response response;
 
     public BinaryHandler(Response response) {
-        this.response = Objects.requireNonNull(response, "response can not be null");
+        this.response = Objects.requireNonNull(response, Required.RESPONSE.toString());
     }
 
     @Override

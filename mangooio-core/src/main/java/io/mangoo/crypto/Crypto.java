@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 
 /**
  * Convenient class for encryption and decryption
@@ -42,7 +43,7 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
-        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
 
         return decrypt(encrytedText, getSizedKey(CONFIG.getString(Key.APPLICATION_SECRET)));
     }
@@ -55,8 +56,8 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
-        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(false, cipherParameters);
@@ -73,7 +74,7 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        Objects.requireNonNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
 
         return encrypt(plainText, getSizedKey(CONFIG.getApplicationSecret()));
     }
@@ -88,8 +89,8 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
-        Objects.requireNonNull(plainText, "plainText can not be null");
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(true, cipherParameters);
@@ -131,7 +132,7 @@ public class Crypto {
      * @return A secret with at least 32 characters
      */
     private String getSizedKey(String secret) {
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         Preconditions.checkArgument(secret.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
 
         return secret.substring(KEYINDEX_START, KEYLENGTH_32);

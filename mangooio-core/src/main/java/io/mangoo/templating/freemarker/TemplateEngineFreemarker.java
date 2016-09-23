@@ -22,6 +22,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.Version;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.models.Source;
@@ -152,8 +153,8 @@ public class TemplateEngineFreemarker implements TemplateEngine {
      * @throws IOException IOException
      */
     private String processTemplate(Map<String, Object> content, Template template) throws MangooTemplateEngineException {
-        Objects.requireNonNull(content, "content can not be null");
-        Objects.requireNonNull(template, "template can not be null");
+        Objects.requireNonNull(content, Required.CONTENT.toString());
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
         
         StringWriter buffer = new StringWriter(MAX_CHARS);
         try {
@@ -167,7 +168,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
     @Override
     public String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, "templateName can not be null");
+        Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
 
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }

@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
@@ -27,7 +28,7 @@ public class LimitHandler implements HttpHandler {
     
     @Inject
     public LimitHandler(CacheProvider cacheProvider) {
-        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
+        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         this.cache = cacheProvider.getCache(CacheName.REQUEST);
     }
     

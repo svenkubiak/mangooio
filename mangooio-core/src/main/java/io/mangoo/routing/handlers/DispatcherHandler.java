@@ -16,6 +16,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Attachment;
@@ -63,8 +64,8 @@ public class DispatcherHandler implements HttpHandler {
     private boolean timer;
 
     public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
-        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
+        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
 
         this.messages = Application.getInstance(Messages.class);
         this.crypto = Application.getInstance(Crypto.class);

@@ -12,7 +12,7 @@ import com.google.inject.Singleton;
 import io.mangoo.cache.Cache;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.ErrorMessage;
+import io.mangoo.enums.Required;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -29,7 +29,7 @@ public class ServerEventManager {
     
     @Inject
     private ServerEventManager(CacheProvider cacheProvider) {
-        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
+        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         
         this.cache = cacheProvider.getCache(CacheName.SSE);
     }
@@ -41,7 +41,7 @@ public class ServerEventManager {
      */
     @SuppressWarnings("all")
     public void addConnection(ServerSentEventConnection connection) {
-        Objects.requireNonNull(connection, "connection can not be null");
+        Objects.requireNonNull(connection, Required.CONNECTION.toString());
 
         final String url = RequestUtils.getServerSentEventURL(connection);
         Set<ServerSentEventConnection> uriConnections = getConnections(url);
@@ -61,7 +61,7 @@ public class ServerEventManager {
      * @param data The event data
      */
     public void send(String uri, String data) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
+        Objects.requireNonNull(uri, Required.URI.toString());
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -82,8 +82,8 @@ public class ServerEventManager {
      * @param eventCallback A callback that is notified on Success or failure
      */
     public void send(String uri, String data, EventCallback eventCallback) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
-        Objects.requireNonNull(eventCallback, "eventCallback can not be null");
+        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(eventCallback, Required.EVENT_CALLBACK.toString());
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -101,7 +101,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void close(String uri) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
+        Objects.requireNonNull(uri, Required.URI.toString());
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
@@ -122,7 +122,7 @@ public class ServerEventManager {
      * @return A Set of connections for the URI resource
      */
     public Set<ServerSentEventConnection> getConnections(String uri) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
+        Objects.requireNonNull(uri, Required.URI.toString());
 
         final Set<ServerSentEventConnection> uriConnections = this.cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
 
@@ -136,8 +136,8 @@ public class ServerEventManager {
      * @param uriConnections The connections for the URI resource
      */
     public void setConnections(String uri, Set<ServerSentEventConnection> uriConnections) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
-        Objects.requireNonNull(uriConnections, "uriConnections can not be null");
+        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uriConnections, Required.URI_CONNECTIONS.toString());
 
         this.cache.put(Default.SSE_CACHE_PREFIX.toString() + uri, uriConnections);
     }
@@ -148,7 +148,7 @@ public class ServerEventManager {
      * @param uri The URI resource for the connection
      */
     public void removeConnections(String uri) {
-        Objects.requireNonNull(uri, ErrorMessage.URI.toString());
+        Objects.requireNonNull(uri, Required.URI.toString());
 
         this.cache.remove(Default.SSE_CACHE_PREFIX.toString() + uri);
     }

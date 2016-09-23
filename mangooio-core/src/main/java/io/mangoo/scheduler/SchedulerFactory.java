@@ -8,6 +8,7 @@ import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 
 /**
  * Factory method for passing Scheduler job instance to the Google Guice injector
@@ -18,8 +19,8 @@ import io.mangoo.core.Application;
 public class SchedulerFactory implements JobFactory {
     @Override
     public Job newJob(final TriggerFiredBundle triggerFiredBundle, final Scheduler scheduler) {
-        Objects.requireNonNull(triggerFiredBundle, "triggerFiredBundle is required for a new job");
-        Objects.requireNonNull(scheduler, "scheduler is required for a new job");
+        Objects.requireNonNull(triggerFiredBundle, Required.TRIGGER_FIRE_BUNDLE.toString());
+        Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
 
         return Application.getInstance(triggerFiredBundle.getJobDetail().getJobClass());
     }

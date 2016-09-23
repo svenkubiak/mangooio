@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -27,7 +28,7 @@ public class ServerSentEventCloseListener implements ChannelListener<ServerSentE
     
     @Inject
     private ServerSentEventCloseListener(CacheProvider cacheProvider) {
-        Objects.requireNonNull(cacheProvider, "cacheProvider can not be null");
+        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         this.cache = cacheProvider.getCache(CacheName.SSE);
     }
 

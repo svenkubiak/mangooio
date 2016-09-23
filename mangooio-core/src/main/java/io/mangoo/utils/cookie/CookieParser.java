@@ -16,6 +16,7 @@ import io.jsonwebtoken.Jwts;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.enums.Required;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.utils.DateUtils;
 
@@ -44,7 +45,7 @@ public class CookieParser {
     }
     
     public CookieParser withSecret(String secret) {
-        Objects.requireNonNull(secret, "application secret can not be null");
+        Objects.requireNonNull(secret, Required.APPLICATION_SECRET.toString());
         
         this.secret = secret;
         return this;

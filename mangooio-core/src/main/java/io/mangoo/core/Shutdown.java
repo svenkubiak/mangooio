@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.managers.ExecutionManager;
@@ -26,7 +27,7 @@ public class Shutdown extends Thread {
     
     @Inject
     public Shutdown(Scheduler scheduler) {
-        this.scheduler = Objects.requireNonNull(scheduler, "Scheduler can not be null");
+        this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
     }
     
     @Override

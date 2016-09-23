@@ -2,6 +2,7 @@ package io.mangoo.routing;
 
 import java.util.Objects;
 
+import io.mangoo.enums.Required;
 import io.mangoo.enums.RouteType;
 import io.undertow.util.HttpString;
 
@@ -25,11 +26,11 @@ public class Route {
     private boolean internalTemplateEngine;
 
     public Route(RouteType routeType) {
-        this.routeType = Objects.requireNonNull(routeType, "routeType can not be null");
+        this.routeType = Objects.requireNonNull(routeType, Required.ROUTE_TYPE.toString());
     }
 
     public Route toUrl(String url) {
-        this.url = Objects.requireNonNull(url, "url can not be null");
+        this.url = Objects.requireNonNull(url, Required.URL.toString());
 
         if (RouteType.RESOURCE_PATH == this.routeType) {
             if ('/' != this.url.charAt(0)) {

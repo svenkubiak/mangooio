@@ -13,6 +13,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import com.google.inject.Inject;
 
+import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooValidator;
 
 /**
@@ -21,7 +22,6 @@ import io.mangoo.interfaces.MangooValidator;
  *
  */
 public class Form implements MangooValidator {
-    private static final String KEY_ERROR = "Key can not be null";
     private final List<File> files = new ArrayList<>();
     private final Map<String, String> values = new HashMap<>();
     private final Validator validator;
@@ -29,7 +29,7 @@ public class Form implements MangooValidator {
     
     @Inject
     public Form (Validator validator) {
-        this.validator = Objects.requireNonNull(validator, "Validator can not be null");
+        this.validator = Objects.requireNonNull(validator, Required.VALIDATOR.toString());
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Form implements MangooValidator {
      * @return The value of the form or null if not present
      */
     public String get(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         return this.values.get(key);
     }
@@ -80,7 +80,7 @@ public class Form implements MangooValidator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -102,7 +102,7 @@ public class Form implements MangooValidator {
      * @return Optional of Boolean
      */
     public Optional<Boolean> getBoolean(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -127,7 +127,7 @@ public class Form implements MangooValidator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
@@ -144,7 +144,7 @@ public class Form implements MangooValidator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
@@ -161,7 +161,7 @@ public class Form implements MangooValidator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
