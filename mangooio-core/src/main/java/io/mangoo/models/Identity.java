@@ -34,54 +34,49 @@ public class Identity implements IdentityManager {
     }
 
     @Override
-    public Account verify(String username, Credential credential) {
-        Account account = getAccount(username);
-        if (account != null && verifyCredential(credential)) {
-            return account;
-        }
-
+    public Account verify(Credential credential) {
         return null;
     }
 
     @Override
-    public Account verify(Credential credential) {
-        return null;
+    public Account verify(String username, Credential credential) {
+        Account account = null;
+        if (this.username.equals(username) && verifyCredential(credential)) {
+            account = getAccount(username);
+        }
+
+        return account;
+    }
+
+    private Account getAccount(String username) {
+        return new Account() {
+            private static final long serialVersionUID = 5311970975103831035L;
+            private transient Principal principal = new Principal() {
+                @Override
+                public String getName() {
+                    return username;
+                }
+            };
+
+            @Override
+            public Principal getPrincipal() {
+                return principal;
+            }
+
+            @Override
+            public Set<String> getRoles() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     private boolean verifyCredential(Credential credential) {
         if (credential instanceof PasswordCredential) {
             return CodecUtils.checkJBCrypt(
-                    new String(((PasswordCredential) credential).getPassword()),
+                    new String (((PasswordCredential) credential).getPassword()),
                     this.password);
         }
         
         return false;
-    }
-
-    private Account getAccount(final String username) {
-        if (this.username.equals(username)) {
-            return new Account() {
-                private static final long serialVersionUID = -1097117887398334569L;
-                private transient Principal principal = new Principal() {
-                    @Override
-                    public String getName() {
-                        return username;
-                    }
-                };
-
-                @Override
-                public Principal getPrincipal() {
-                    return principal;
-                }
-
-                @Override
-                public Set<String> getRoles() {
-                    return Collections.emptySet();
-                }
-
-            };
-        }
-        
-        return null;
     }
 }
