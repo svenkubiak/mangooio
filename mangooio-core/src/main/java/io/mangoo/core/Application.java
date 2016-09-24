@@ -38,7 +38,6 @@ public final class Application {
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
-        baseDirectory = BootstrapUtils.getBaseDirectory();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
@@ -52,6 +51,7 @@ public final class Application {
         if (bootstrap.isBootstrapSuccessful()) {
             getInstance(Config.class).decrypt();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+            baseDirectory = BootstrapUtils.getBaseDirectory();
             started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR

@@ -84,8 +84,7 @@ public class Bootstrap {
     private int ajpPort;
     
     public Bootstrap() {
-        this.pathResourceHandler = new ResourceHandler(
-                new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
+        this.pathResourceHandler = Handlers.resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
     }
 
     public Mode prepareMode() {
@@ -140,7 +139,7 @@ public class Bootstrap {
     public void prepareConfig() {
         this.config = this.injector.getInstance(Config.class);
         if (!this.config.hasValidSecret()) {
-            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
+            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
             this.error = true;
         }
     }
@@ -153,7 +152,7 @@ public class Bootstrap {
             try {
                 yamlRouter = objectMapper.readValue(Resources.getResource("routes.yaml").openStream(), YamlRouter.class);
             } catch (IOException e) {
-                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
+                LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
                 this.error = true;
             }
             
@@ -185,7 +184,7 @@ public class Bootstrap {
                        Router.addRoute(route);
                     } catch (final Exception e) {
                         LOG.error("Failed to create routes from routes.yaml");
-                        LOG.error("Please verify, that your routes.yaml mapping is correct", e);
+                        LOG.error("Please verify that your routes.yaml mapping is correct", e);
                         this.error = true;
                     }
                 }
@@ -264,7 +263,6 @@ public class Bootstrap {
 
     public void startUndertow() {
         if (!hasError()) {
-
             Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
