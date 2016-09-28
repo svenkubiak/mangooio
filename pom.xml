@@ -402,7 +402,7 @@
 			<dependency>
 				<groupId>org.eclipse.jetty.websocket</groupId>
 				<artifactId>websocket-client</artifactId>
-				<version>9.3.11.v20160721</version>
+				<version>9.3.12.v20160915</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
