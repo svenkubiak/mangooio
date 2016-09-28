@@ -1,3 +1,4 @@
+routes:
 # Routes configuration
 # 
 # This file defines all application routes.
@@ -10,4 +11,22 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- GET:    /     ->    ApplicationController.index
+- method: GET
+  url: /
+  mapping: ApplicationController.index
+  
+- method: GET
+  url: /auth
+  mapping: ApplicationController.auth
+  
+- method: GET
+  url: /json
+  mapping: ApplicationController.json
+  
+- method: POST
+  url: /authenticate
+  mapping: AuthenticationController.authenticate  
+  
+- method: GET
+  url: /logout
+  mapping: AuthenticationController.logout 

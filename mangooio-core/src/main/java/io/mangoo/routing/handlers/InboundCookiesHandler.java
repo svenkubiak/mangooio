@@ -14,6 +14,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.models.Subject;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -33,12 +34,14 @@ public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
-
+    private Subject subject;
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
         attachment.setSession(getSessionCookie(exchange));
         attachment.setAuthentication(getAuthenticationCookie(exchange));
+        attachment.setSubject(this.subject);
         attachment.setFlash(getFlashCookie(exchange));
 
         exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
@@ -90,10 +93,14 @@ public class InboundCookiesHandler implements HttpHandler {
             authentication = Application.getInstance(Authentication.class)
                     .withExpires(cookieParser.getExpiresDate())
                     .withAuthenticatedUser(cookieParser.getAuthenticatedUser());
+            
+            this.subject = new Subject(cookieParser.getAuthenticatedUser(), true);
         } else {
             authentication = Application.getInstance(Authentication.class)
                     .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()))
                     .withAuthenticatedUser(null);
+            
+            this.subject = new Subject("", false);
         }
 
         return authentication;

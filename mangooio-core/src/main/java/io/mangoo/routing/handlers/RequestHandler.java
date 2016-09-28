@@ -142,6 +142,7 @@ public class RequestHandler implements HttpHandler {
                     this.attachment.getSession(),
                     this.attachment.getForm(),
                     this.attachment.getMessages(),
+                    this.attachment.getSubject(),
                     getTemplatePath(invokedResponse),
                     invokedResponse.getContent()));
         }

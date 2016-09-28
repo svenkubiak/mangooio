@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
+import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -38,6 +39,7 @@ public class Attachment {
     private Method method;
     private Authentication authentication;
     private Session session;
+    private Subject subject;
     private Flash flash;
     private Form form;
     private Request request;
@@ -159,6 +161,10 @@ public class Attachment {
 
     public void setFlash(Flash flash) {
         this.flash = flash;
+    }
+    
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
     public void setAuthentication(Authentication authentication) {
@@ -283,5 +289,9 @@ public class Attachment {
     
     public List<Annotation> getMethodAnnotations() {
         return this.methodAnnotations;
+    }
+
+    public Subject getSubject() {
+        return this.subject;
     }
 }
