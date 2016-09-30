@@ -308,7 +308,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.fluentlenium</groupId>
-				<artifactId>fluentlenium-junit</artifactId>
+				<artifactId>fluentlenium-core</artifactId>
 				<version>0.13.2</version>
 			</dependency>
 			<dependency>
