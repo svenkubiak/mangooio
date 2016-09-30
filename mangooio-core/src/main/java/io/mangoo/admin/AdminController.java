@@ -124,12 +124,12 @@ public class AdminController {
     
     public Response tools() {
         return Response.withOk()
-                .andContent(TOOLS, TOOLS)
+                .andContent(SPACE, TOOLS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andTemplate(Template.DEFAULT.toolsPath());
     }
     
-    public Response toolsrx(Request request) {
+    public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         String function = body.get("function").toString();
         String cleartext = body.get("cleartext").toString();

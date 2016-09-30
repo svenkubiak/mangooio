@@ -1,5 +1,7 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Template;
@@ -14,12 +16,15 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class FallbackHandler implements HttpHandler {
+    private static final Config CONFIG = Application.getConfig();
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), Default.XSS_PROTECTION.toInt());
-        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), Default.NOSNIFF.toString());
-        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), Default.SAMEORIGIN.toString());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.SERVER.toString());
+        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), CONFIG.getXssProectionHeader());
+        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), CONFIG.getXContentTypeOptionsHeader());
+        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), CONFIG.getXFrameOptionsHeader());
+        exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
+        exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), CONFIG.getContentSecurityPolicyHeader());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, Default.CONTENT_TYPE.toString());
         exchange.setStatusCode(StatusCodes.NOT_FOUND);
         exchange.getResponseSender().send(Template.DEFAULT.notFound());

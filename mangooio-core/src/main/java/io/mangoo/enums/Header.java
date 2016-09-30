@@ -12,6 +12,7 @@ public enum Header {
     X_XSS_PPROTECTION("X-XSS-Protection"),
     X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options"),
     X_FRAME_OPTIONS("X-Frame-Options"),
+    CONTENT_SECURITY_POLICY("Content-Security-Policy"),
     X_RESPONSE_TIME("X-Response-Time");
 
     private final String value;

@@ -39,6 +39,8 @@ public class Messages {
 
     /**
      * Refreshes the resource bundle by reloading the bundle with the default locale
+     * 
+     * @param locale The locale to use
      */
     public void reload(Locale locale) {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), locale);
