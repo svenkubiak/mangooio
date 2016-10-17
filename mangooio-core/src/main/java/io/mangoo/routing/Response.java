@@ -19,6 +19,7 @@ import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
+import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
@@ -233,6 +234,7 @@ public final class Response {
     public Response andContentType(String contentType) {
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
         this.contentType = contentType;
+        this.headers.put(Headers.CONTENT_TYPE, contentType);
 
         return this;
     }

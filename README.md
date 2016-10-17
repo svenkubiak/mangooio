@@ -1,10 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
 [![Travis Build Status](https://travis-ci.org/svenkubiak/mangooio.svg?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
 
-If this software is useful to you, you can support further development by using Flattr. Thank you!
-
-[![Flattr this repository](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=svenkubiak&url=https://github.com/svenkubiak/mangooio&title=mangooio&language=en&tags=github&category=software)
-
 
 mangoo I/O
 ================
@@ -35,23 +31,23 @@ implementation, some of the ideas and methodologies were re-used.
 
 Here are some key features of mangoo I/O in a nutshell:
 
-* Intuitive convention-over-configuration 
-* Highly scalable using a share-nothing stateless architecture 
-* Hot-Compiling development mode for high productivity 
-* Easy to use template engine(s) 
-* Support for Web Sockets 
-* Support for Server-Sent Events 
-* Simple and self-explaining form handling and validation 
+* Intuitive convention-over-configuration
+* Highly scalable using a share-nothing stateless architecture
+* Hot-Compiling development mode for high productivity
+* Easy to use template engine(s)
+* Support for Web Sockets
+* Support for Server-Sent Events
+* Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
-* Easy handling of JSON in- and output 
-* Strong cryptography 
-* Build-in asset minification in development mode 
-* Flexible testing tools 
-* Build-in authentication tools 
-* Support for OAuth with Twitter, Google and Facebook 
-* Simple Deployment and CI-Integration 
-* Preprocessor for LESS and SASS 
-* i18N Internationalization 
+* Easy handling of JSON in- and output
+* Strong cryptography
+* Build-in asset minification in development mode
+* Flexible testing tools
+* Build-in authentication tools
+* Support for OAuth with Twitter, Google and Facebook
+* Simple Deployment and CI-Integration
+* Preprocessor for LESS and SASS
+* i18N Internationalization
 *  Any many more...
 
 One main focus of mangoo I/O was to have a very good and well documented code
@@ -88,7 +84,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 
 **Apidocs**   
-[https://mangoo.io/apidocs](https://mangoo.io/apidocs) 
+[https://mangoo.io/apidocs](https://mangoo.io/apidocs)
 
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
