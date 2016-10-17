@@ -3,7 +3,6 @@ package io.mangoo.crypto;
 import java.util.Base64;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
@@ -133,15 +132,16 @@ public class Crypto {
      * @return A secret with 16, 24 or 32 characters
      */
     private String getSizedKey(String secret) {
+        Objects.requireNonNull(secret, "secret can not be null");
+        secret = secret.replaceAll("[^\\x00-\\x7F]", "");
+        
         String key = "";
-        if (StringUtils.isNotBlank(secret)) {
-            if (secret.length() >= KEYLENGTH_32) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_32);
-            } else if (secret.length() >= KEYLENGTH_24) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_24);
-            } else if (secret.length() >= KEYLENGTH_16) {
-                key = secret.substring(KEYINDEX_START, KEYLENGTH_16);
-            }
+        if (secret.length() >= KEYLENGTH_32) {
+            key = secret.substring(KEYINDEX_START, KEYLENGTH_32);
+        } else if (secret.length() >= KEYLENGTH_24) {
+            key = secret.substring(KEYINDEX_START, KEYLENGTH_24);
+        } else if (secret.length() >= KEYLENGTH_16) {
+            key = secret.substring(KEYINDEX_START, KEYLENGTH_16);
         }
 
         return key;
