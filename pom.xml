@@ -22,11 +22,11 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.6.2</log4j.version>
+		<log4j.version>2.7</log4j.version>
 		<maven.version>3.3.9</maven.version>
 		<httpcomponents.version>4.5.2</httpcomponents.version>
 		<scribejava.version>3.2.0</scribejava.version>
-		<jackson.version>2.8.3</jackson.version>
+		<jackson.version>2.8.4</jackson.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
@@ -268,7 +268,7 @@
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-client</artifactId>
-				<version>3.7.1</version>
+				<version>3.7.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
@@ -283,7 +283,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.1.0-RC.2</version>
+				<version>2.2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
@@ -319,7 +319,7 @@
 			<dependency>
 				<groupId>io.github.lukehutch</groupId>
 				<artifactId>fast-classpath-scanner</artifactId>
-				<version>2.0.3</version>
+				<version>2.0.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -426,7 +426,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.4</version>
+				<version>3.5</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
