@@ -43,7 +43,7 @@
 										</#if>
 									</a>
 									&nbsp;&nbsp;
-									<a href="/@admin/scheduler/execute/${job.name}" onclick="return confirm('Are you sure you want to exectue the job?');"class="simpletooltip">
+									<a href="/@admin/scheduler/execute/${job.name}" onclick="return confirm('Are you sure you want to exectue the job?');" class="simpletooltip">
 										<span class="simpletooltiptext">Execute job</span>
 										<i class="fa fa-fire" aria-hidden="true"></i>
 									</a>
