@@ -134,7 +134,8 @@ public class Crypto {
     private String getSizedKey(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         Preconditions.checkArgument(secret.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
-
+        secret = secret.replaceAll("[^\\x00-\\x7F]", "");
+        
         return secret.substring(KEYINDEX_START, KEYLENGTH_32);
     }
 }
