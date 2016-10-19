@@ -48,13 +48,15 @@ public class Runner {
     private final String mainClass;
     private final String classpath;
     private final File mavenBaseDir;
+    private final int jpdaPort;
 
-    public Runner(String mainClass, String classpath, File mavenBaseDir) {
+    public Runner(String mainClass, String classpath, File mavenBaseDir, int jpdaPort) {
         this.outputStream = System.out; //NOSONAR
         this.mainClass = mainClass;
         this.classpath = classpath;
         this.mavenBaseDir = mavenBaseDir;
         this.restarting = new AtomicBoolean(false);
+        this.jpdaPort = jpdaPort;
     }
 
     public OutputStream getOutput() {
@@ -107,6 +109,12 @@ public class Runner {
         String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
 
         commandLine.add(javaBin);
+        if (jpdaPort > 0) {
+            LOG.warn("Listening for jpda Connection at "+jpdaPort);
+            //-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8090
+            commandLine.add("-Xdebug");
+            commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
+        }
         commandLine.add("-Dapplication.mode=dev");
         commandLine.add("-cp");
         commandLine.add(classpath);
