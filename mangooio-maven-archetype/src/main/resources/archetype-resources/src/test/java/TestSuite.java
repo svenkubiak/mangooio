@@ -1,4 +1,4 @@
-package test;
+package controllers;
 
 import io.mangoo.test.MangooRunner;
 
