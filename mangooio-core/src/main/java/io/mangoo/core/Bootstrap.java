@@ -3,6 +3,7 @@ package io.mangoo.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -107,23 +108,32 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void prepareLogger() {
-        final String configurationFile = "log4j2." + this.mode.toString() + ".yaml";
-        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
-            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-        } else {
-            try {
-                final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
-                final LoggerContext context = (LoggerContext) LogManager.getContext(false);
-                context.setConfigLocation(resource.toURI());
-            } catch (final URISyntaxException e) {
-                e.printStackTrace(); //NOSONAR
+        String configurationFile = System.getProperty(Key.APPLICATION_LOG.toString());
+        if (StringUtils.isNotBlank(configurationFile)) {
+            final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+            context.setConfigLocation(URI.create(configurationFile));
+            if (!context.isInitialized()) {
                 this.error = true;
             }
-
-            if (!hasError()) {
+        } else {
+            configurationFile = "log4j2." + this.mode.toString() + ".yaml";
+            if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
                 LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-                LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
-            }
+            } else {
+                try {
+                    final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
+                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                    context.setConfigLocation(resource.toURI());
+                } catch (final URISyntaxException e) {
+                    e.printStackTrace(); //NOSONAR
+                    this.error = true;
+                }
+
+                if (!hasError()) {
+                    LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+                    LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
+                }
+            }  
         }
     }
 

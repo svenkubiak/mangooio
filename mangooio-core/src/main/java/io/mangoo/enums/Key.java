@@ -13,6 +13,7 @@ public enum Key {
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
     APPLICATION_SECRET("application.secret"),
+    APPLICATION_LOG("application.log"),
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_MODE("application.mode"),
     APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),

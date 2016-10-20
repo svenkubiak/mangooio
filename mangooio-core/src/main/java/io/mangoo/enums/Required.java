@@ -81,7 +81,8 @@ public enum Required {
     CRON("cron can no be null"),
     STACK_TRACE_ELEMENT("stack trace element can not be null"),
     SOURCE_PATH("source path can not be null"),
-    ACCOUNT_NAME("account name can not be null");
+    ACCOUNT_NAME("account name can not be null"),
+    EHCACHE("ehCache can not be null");
 
     private final String value;
 

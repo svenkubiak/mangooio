@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.mangoo.enums.Required;
 
 /**
- * Concrete Cache implementation 
+ * EhCache implementation 
  * 
  * @author sven.kubiak
  *
@@ -16,6 +16,7 @@ public class CacheImpl implements Cache {
     private org.ehcache.Cache<String, Object> ehCache;
     
     public CacheImpl(org.ehcache.Cache<String, Object> ehCache) {
+        Objects.requireNonNull(ehCache, Required.EHCACHE.toString());
         this.ehCache = ehCache;
     }
     
