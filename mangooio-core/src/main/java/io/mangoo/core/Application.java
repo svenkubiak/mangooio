@@ -48,7 +48,7 @@ public final class Application {
         bootstrap.showLogo();
         bootstrap.applicationStarted();
 
-        if (bootstrap.isBootstrapSuccessful()) {
+        if (bootstrap.bootstrapSuccess()) {
             getInstance(Config.class).decrypt();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             baseDirectory = BootstrapUtils.getBaseDirectory();
@@ -175,8 +175,6 @@ public final class Application {
     
     /**
      * Stops the underlying undertow server
-     * 
-     * WARNING: Use with caution!
      */
     public static void stopUndertow() {
         undertow.stop();

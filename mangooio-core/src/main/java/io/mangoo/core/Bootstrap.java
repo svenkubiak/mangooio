@@ -34,6 +34,8 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
+import io.mangoo.core.yaml.YamlRoute;
+import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -72,7 +74,7 @@ public class Bootstrap {
     private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
-    private final ResourceHandler pathResourceHandler;
+    private final ResourceHandler resourceHandler;
     private Undertow undertow;
     private PathHandler pathHandler;
     private Config config;
@@ -85,7 +87,7 @@ public class Bootstrap {
     private int ajpPort;
     
     public Bootstrap() {
-        this.pathResourceHandler = Handlers.resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
+        this.resourceHandler = Handlers.resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
     }
 
     public Mode prepareMode() {
@@ -115,6 +117,11 @@ public class Bootstrap {
             if (!context.isInitialized()) {
                 this.error = true;
             }
+            
+            if (!bootstrapError()) {
+                LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+                LOG.info("Found specific Log4j2 configuration. Using configuration file: " + configurationFile);
+            }
         } else {
             configurationFile = "log4j2." + this.mode.toString() + ".yaml";
             if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
@@ -129,7 +136,7 @@ public class Bootstrap {
                     this.error = true;
                 }
 
-                if (!hasError()) {
+                if (!bootstrapError()) {
                     LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
                     LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
                 }
@@ -156,7 +163,7 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void parseRoutes() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
             YamlRouter yamlRouter = null;
             try {
@@ -166,7 +173,7 @@ public class Bootstrap {
                 this.error = true;
             }
             
-            if (yamlRouter != null) {
+            if (!bootstrapError() && yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
                     final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
                             .toUrl(yamlRoute.getUrl().trim())
@@ -200,7 +207,7 @@ public class Bootstrap {
                 }
             }
             
-            if (!hasError()) {
+            if (!bootstrapError()) {
                 createRoutes();
             }
         }
@@ -261,10 +268,9 @@ public class Bootstrap {
                         .withPassword(route.getPassword())
                         .withLimit(route.getLimit());
 
-        
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
-                routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
+                routingHandler.add(Methods.GET, route.getUrl(), this.resourceHandler);
             }
         });
 
@@ -272,7 +278,7 @@ public class Bootstrap {
     }
 
     public void startUndertow() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
@@ -305,7 +311,7 @@ public class Bootstrap {
 
     private List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
-        if (!hasError()) {
+        if (!bootstrapError()) {
             try {
                 final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
                 modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
@@ -321,7 +327,7 @@ public class Bootstrap {
     }
 
     public void showLogo() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
@@ -348,7 +354,7 @@ public class Bootstrap {
     }
 
     public void startQuartzScheduler() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             List<Class<?>> jobs = new ArrayList<>();
             new FastClasspathScanner(this.config.getSchedulerPackage())
                 .matchClassesWithAnnotation(Schedule.class, jobs::add)
@@ -375,7 +381,7 @@ public class Bootstrap {
                     }
                 }
 
-                if (!hasError()) {
+                if (!bootstrapError()) {
                     try {
                         mangooScheduler.start();
                     } catch (MangooSchedulerException e) {
@@ -386,11 +392,11 @@ public class Bootstrap {
         }
     }
 
-    public boolean isBootstrapSuccessful() {
+    public boolean bootstrapSuccess() {
         return !this.error;
     }
 
-    private boolean hasError() {
+    private boolean bootstrapError() {
         return this.error;
     }
 
@@ -400,101 +406,5 @@ public class Bootstrap {
     
     public Undertow getUndertow() {
         return this.undertow;
-    }
-    
-    public static class YamlRoute {
-        private String method;
-        private String url;
-        private String mapping;
-        private String username;
-        private String password;
-        private int limit;
-        private boolean blocking;
-        private boolean authentication;
-        private boolean timer;
-        
-        public String getMethod() {
-            return method;
-        }
-        
-        public void setMethod(String method) {
-            this.method = method;
-        }
-        
-        public String getUrl() {
-            return url;
-        }
-        
-        public void setUrl(String url) {
-            this.url = url;
-        }
-        
-        public String getUsername() {
-            return username;
-        }
-        
-        public void setUsername(String username) {
-            this.username = username;
-        } 
-        
-        public void setLimit(int limit) {
-            this.limit = limit;
-        } 
-        
-        public String getPassword() {
-            return password;
-        }
-        
-        public void setPassword(String password) {
-            this.password = password;
-        }         
-        
-        public String getMapping() {
-            return mapping;
-        }
-        
-        public int getLimit() {
-            return limit;
-        }
-        
-        public void setMapping(String mapping) {
-            this.mapping = mapping;
-        }
-        
-        public boolean isBlocking() {
-            return blocking;
-        }
-        
-        public void setBlocking(boolean blocking) {
-            this.blocking = blocking;
-        }
-        
-        public boolean isAuthentication() {
-            return authentication;
-        }
-        
-        public void setAuthentication(boolean authentication) {
-            this.authentication = authentication;
-        }
-        
-        public boolean isTimer() {
-            return timer;
-        }
-        
-        public void setTimer(boolean timer) {
-            this.timer = timer;
-        }
-    }
-    
-    public static class YamlRouter {
-        private List<YamlRoute> routes;
-
-        public List<YamlRoute> getRoutes() {
-            return new ArrayList<>(routes);
-        }
-
-        public void setRoutes(List<YamlRoute> routes) {
-            this.routes = new ArrayList<>(routes);
-        }
     }
 }
