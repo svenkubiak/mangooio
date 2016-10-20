@@ -16,7 +16,10 @@
        			</div>
 	   			<div class="form-group">
 	   				<textarea class="form-control input-lg" id="hashedvalue" disabled></textarea>
-       			</div>       		
+       			</div>  
+	   			<div class="form-group">
+	   				<button type="submit" class="btn btn-primary input-lg btn-block" id="hash" >Hash value</button> 
+       			</div>         			
    			</div>
 		</div>
 		<div class="row">
@@ -30,12 +33,16 @@
 	   			<div class="form-group">
 		   			<input type="text" pattern=".{32,32}" required title="32 characters required" size="32" class="form-control encrypt input-lg" id="encrypt_cleartext" placeholder="Enter cleartext ...">
        			</div>
-	   			<div class="form-group">
+	   			<div class="form-group" id="key">
 		   			<input type="text" class="form-control encrypt input-lg" id="encrypt_key" placeholder="Enter encryption key (optional) ">
+		   			<span class="help-block" id="key-help" style="display:none;"></span>
        			</div>       		
 	   			<div class="form-group">
 	   				<textarea class="form-control input-lg" id="encryptedvalue" disabled></textarea>
-       			</div>       		
+       			</div>  
+	   			<div class="form-group">
+	   				<button type="submit" class="btn btn-primary input-lg btn-block" id="encrypt">Encrypt value</button> 
+       			</div>        			     		
    			</div>   		
 		</div>
 	</div>

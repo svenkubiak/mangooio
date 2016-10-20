@@ -79,7 +79,7 @@
           })
       }(jQuery));
       
-      $("#hash_cleartext").change(function() {
+      $("#hash").click(function() {
 		$.ajax({
   			type: "POST",
   			processData: false,
@@ -93,11 +93,19 @@
 		});
 	  });
 	  
-	  $(".encrypt").change(function() {
+	  $("#encrypt").click(function() {
 	  	var cleartext = $("#encrypt_cleartext").val();
 	  	var key = $("#encrypt_key").val();
 	  	
+	  	if (key.length > 0 && key.length != 32) {
+	  		$("#key").addClass("has-error");
+	  		$("#key-help").text("Encryption key must be exactly 32 characters. Currently " + key.length + " characters.");
+	  		$("#key-help").show();
+	  	}
+	  	
 	  	if (key.length == 0 || key.length == 32) {
+	  		$("#key").removeClass("has-error");
+	  		$("#key-help").hide();
 			$.ajax({
 	  			type: "POST",
 	  			processData: false,
