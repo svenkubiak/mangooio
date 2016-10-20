@@ -133,15 +133,14 @@ public class Crypto {
      */
     private String getSizedKey(String secret) {
         Objects.requireNonNull(secret, "secret can not be null");
-        secret = secret.replaceAll("[^\\x00-\\x7F]", "");
+        String key = secret.replaceAll("[^\\x00-\\x7F]", "");
         
-        String key = "";
-        if (secret.length() >= KEYLENGTH_32) {
-            key = secret.substring(KEYINDEX_START, KEYLENGTH_32);
-        } else if (secret.length() >= KEYLENGTH_24) {
-            key = secret.substring(KEYINDEX_START, KEYLENGTH_24);
-        } else if (secret.length() >= KEYLENGTH_16) {
-            key = secret.substring(KEYINDEX_START, KEYLENGTH_16);
+        if (key.length() >= KEYLENGTH_32) {
+            key = key.substring(KEYINDEX_START, KEYLENGTH_32);
+        } else if (key.length() >= KEYLENGTH_24) {
+            key = key.substring(KEYINDEX_START, KEYLENGTH_24);
+        } else if (key.length() >= KEYLENGTH_16) {
+            key = key.substring(KEYINDEX_START, KEYLENGTH_16);
         }
 
         return key;
