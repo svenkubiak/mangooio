@@ -110,8 +110,7 @@ public class Runner {
 
         commandLine.add(javaBin);
         if (jpdaPort > 0) {
-            LOG.warn("Listening for jpda Connection at "+jpdaPort);
-            //-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8090
+            LOG.info("Listening for jpda connection at " + jpdaPort);
             commandLine.add("-Xdebug");
             commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
         }
