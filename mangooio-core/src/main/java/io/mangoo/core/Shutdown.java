@@ -1,14 +1,10 @@
 package io.mangoo.core;
 
-import java.util.Objects;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.managers.ExecutionManager;
@@ -23,11 +19,8 @@ import io.mangoo.scheduler.Scheduler;
 @Singleton
 public class Shutdown extends Thread {
     private static final Logger LOG = LogManager.getLogger(Shutdown.class);
-    private final Scheduler scheduler;
     
-    @Inject
-    public Shutdown(Scheduler scheduler) {
-        this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
+    public Shutdown() {
     }
     
     @Override
@@ -48,8 +41,11 @@ public class Shutdown extends Thread {
     }
     
     private void stopScheduler() {
+        Scheduler scheduler = Application.getInstance(Scheduler.class);
         try {
-            this.scheduler.shutdown();
+            if (scheduler != null) {
+                scheduler.shutdown();                
+            }
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to stop scheduler during application shutdown", e);
         }
