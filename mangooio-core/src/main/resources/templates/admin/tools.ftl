@@ -15,7 +15,7 @@
 		   			<input type="text" class="form-control input-lg" id="hash_cleartext" placeholder="Enter cleartext ...">
        			</div>
 	   			<div class="form-group">
-	   				<textarea class="form-control input-lg" id="hashedvalue" disabled></textarea>
+	   				<textarea class="form-control input-lg" id="hashedvalue"></textarea>
        			</div>  
 	   			<div class="form-group">
 	   				<button type="submit" class="btn btn-primary input-lg btn-block" id="hash" >Hash value</button> 
@@ -38,7 +38,7 @@
 		   			<span class="help-block" id="key-help" style="display:none;"></span>
        			</div>       		
 	   			<div class="form-group">
-	   				<textarea class="form-control input-lg" id="encryptedvalue" disabled></textarea>
+	   				<textarea class="form-control input-lg" id="encryptedvalue"></textarea>
        			</div>  
 	   			<div class="form-group">
 	   				<button type="submit" class="btn btn-primary input-lg btn-block" id="encrypt">Encrypt value</button> 
