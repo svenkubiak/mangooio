@@ -246,20 +246,19 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException
      */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Response filterResponse = response;
         for (final Annotation annotation : annotations) {
             final FilterWith filterWith = (FilterWith) annotation;
             for (final Class<?> clazz : filterWith.value()) {
                 if (response.isEndResponse()) {
-                    return filterResponse;
+                    return response;
                 } else {
                     final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                    filterResponse = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response);
+                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response);
                 }
             }
         }
 
-        return filterResponse;
+        return response;
     }
 
     /**
