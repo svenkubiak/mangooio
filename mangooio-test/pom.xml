@@ -24,10 +24,6 @@
 			<artifactId>junit-toolbox</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.jetty.websocket</groupId>
-			<artifactId>websocket-client</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.doctester</groupId>
 			<artifactId>doctester-core</artifactId>
 		</dependency>
