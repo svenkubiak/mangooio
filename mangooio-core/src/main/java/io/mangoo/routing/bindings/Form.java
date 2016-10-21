@@ -130,7 +130,7 @@ public class Form implements MangooValidator {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
+        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Integer.valueOf(value));
         }
 
@@ -147,7 +147,7 @@ public class Form implements MangooValidator {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
+        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Double.valueOf(value));
         }
 
@@ -164,7 +164,7 @@ public class Form implements MangooValidator {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
-        if (StringUtils.isNotBlank(value) && NumberUtils.isNumber(value)) {
+        if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Float.valueOf(value));
         }
 
