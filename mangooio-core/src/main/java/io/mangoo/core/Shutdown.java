@@ -43,7 +43,7 @@ public class Shutdown extends Thread {
     private void stopScheduler() {
         Scheduler scheduler = Application.getInstance(Scheduler.class);
         try {
-            if (scheduler != null) {
+            if (scheduler != null && scheduler.isInitialize()) {
                 scheduler.shutdown();                
             }
         } catch (MangooSchedulerException e) {
