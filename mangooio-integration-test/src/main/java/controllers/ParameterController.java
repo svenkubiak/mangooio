@@ -14,7 +14,7 @@ public class ParameterController {
     public Response stringParam(String foo) {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
-
+    
     public Response doubleParam(Double foo) {
         return Response.withOk().andTextBody(String.valueOf(foo));
     }

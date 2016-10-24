@@ -31,6 +31,17 @@ public class ParameterControllerTest {
     }
     
     @Test
+    public void testUmlautParameter() {
+        //given
+        WebResponse response = WebRequest.get("/string/äöü").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("äöü"));
+    }
+    
+    @Test
     public void testStringParameterWithSpecialCharacters() {
         //given
         WebResponse response = WebRequest.get("/string/tüsätö-$ß_").execute();
