@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.advantageous.boon.core.Str;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -119,7 +118,7 @@ public class Runner {
             commandLine.add("-Xdebug");
             commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
         }
-        if(StringUtils.isNotEmpty(jvmArgs)){
+        if (StringUtils.isNotBlank(jvmArgs)){
             Arrays.stream(jvmArgs.split(" "))
                     .filter(arg->arg.length()>0)
                     .forEach(arg->commandLine.add(arg));
