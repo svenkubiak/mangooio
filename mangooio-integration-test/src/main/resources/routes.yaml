@@ -26,6 +26,10 @@ routes:
 - method: GET
   url: /headerfilter
   mapping: FilterController.headerfilter
+  
+- method: GET
+  url: /filters
+  mapping: FilterController.filters
 
 # I18nController
 - method: GET

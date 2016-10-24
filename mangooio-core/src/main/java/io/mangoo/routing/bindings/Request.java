@@ -34,6 +34,7 @@ public class Request implements MangooValidator {
     private String authenticity;
     private Authentication authentication;
     private Validator validator;
+    private Map<String, Object> attributes = new HashMap<>();
     private Map<String, String> parameter;
     private Map<String, Cookie> cookies;
     private JsonWebToken jsonWebToken;
@@ -238,6 +239,17 @@ public class Request implements MangooValidator {
     public String getCharset() {
         return this.httpServerExchange.getRequestCharset();
     }
+    
+    /**
+     * Adds an attribute to the internal attributes map
+     * 
+     * @param key The key to store the attribute
+     * @param value The value to store
+     */
+    public void addAttribute(String key, Object value) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        this.attributes.put(key, value);
+    }
 
     /**
      * @return The content length of the request, or <code>-1</code> if it has not been set
@@ -268,6 +280,24 @@ public class Request implements MangooValidator {
      */
     public String getPath() {
         return this.httpServerExchange.getRequestPath();
+    }
+    
+    /**
+     * Returns an object attribute from a given key
+     * 
+     * @param key The key the attribute is stored
+     * @return Object the value from the attribues map
+     */
+    public Object getAttribute(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        return this.attributes.get(key);
+    }
+    
+    /**
+     * @return All attributes of the request
+     */
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
     }
     
     /**

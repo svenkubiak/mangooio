@@ -40,4 +40,15 @@ public class FilterControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Headers.CONTENT_MD5_STRING), equalTo("12"));
     }
+    
+    @Test
+    public void testMultipleFilters() {
+        //given
+        WebResponse response = WebRequest.get("/filters").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("filteronefiltertwofilterthree"));
+    }
 }
