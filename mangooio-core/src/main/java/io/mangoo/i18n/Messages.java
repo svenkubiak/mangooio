@@ -12,7 +12,7 @@ import io.mangoo.utils.ValidationUtils;
 /**
  * Convenient class for handling translations
  *
- * @author skubiak
+ * @author svenkubiak
  *
  */
 public class Messages {

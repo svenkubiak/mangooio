@@ -19,6 +19,7 @@ import io.mangoo.managers.ServerEventManager;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
+import io.mangoo.providers.TemplateEngineProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
@@ -219,6 +220,15 @@ public class InjectionTest {
         
         //then
         assertThat(cacheProvider, not(nullValue()));
+    }
+    
+    @Test
+    public void testTemplateEngineProvider() {
+        //given
+        TemplateEngineProvider templateEngineProvider = Application.getInstance(TemplateEngineProvider.class);
+        
+        //then
+        assertThat(templateEngineProvider, not(nullValue()));
     }
     
     @Test
