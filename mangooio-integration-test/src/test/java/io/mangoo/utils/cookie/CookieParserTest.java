@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.utils.cookie;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

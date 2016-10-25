@@ -69,6 +69,7 @@ public final class ThrowableUtils {
 
         List<Source> sources = new ArrayList<Source>();
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
+        
         if (templateFile.exists()) {
             List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 
