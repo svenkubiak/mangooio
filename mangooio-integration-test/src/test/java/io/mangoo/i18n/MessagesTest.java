@@ -21,6 +21,7 @@ public class MessagesTest {
     public void testReload() {
         //given
         Messages messages = Application.getInstance(Messages.class);
+        Locale.setDefault(Locale.GERMAN);
         
         //then
         assertThat(messages.get("welcome"), equalTo("willkommen"));
@@ -36,6 +37,7 @@ public class MessagesTest {
     public void testGet() {
         //given
         Messages messages = Application.getInstance(Messages.class);
+        Locale.setDefault(Locale.GERMAN);
         
         //then
         assertThat(messages.get("welcome"), equalTo("willkommen"));
@@ -45,6 +47,7 @@ public class MessagesTest {
     public void testGetWithKey() {
         //given
         Messages messages = Application.getInstance(Messages.class);
+        messages.reload(Locale.ENGLISH);
         
         //then
         assertThat(messages.get(Key.VALIDATION_EMAIL, "foo"), equalTo("foo must be a valid eMail address"));
