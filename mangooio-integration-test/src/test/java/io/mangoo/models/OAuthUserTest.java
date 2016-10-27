@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import org.junit.Test;
+
 /**
  * 
  * @author svenkubiak
@@ -12,6 +14,7 @@ import static org.hamcrest.Matchers.nullValue;
  */
 public class OAuthUserTest {
 
+    @Test
     public void testCreateOAuthUser() {
         //given
         OAuthUser oAuthUser = new OAuthUser("1", "foo", "bar", "foobar");

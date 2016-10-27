@@ -21,6 +21,7 @@ public class Shutdown extends Thread {
     private static final Logger LOG = LogManager.getLogger(Shutdown.class);
     
     public Shutdown() {
+        //Empty constructor for Google Guice
     }
     
     @Override
