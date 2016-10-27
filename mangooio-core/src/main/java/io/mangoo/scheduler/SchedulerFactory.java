@@ -18,7 +18,7 @@ import io.mangoo.enums.Required;
  */
 public class SchedulerFactory implements JobFactory {
     @Override
-    public Job newJob(final TriggerFiredBundle triggerFiredBundle, final Scheduler scheduler) {
+    public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) {
         Objects.requireNonNull(triggerFiredBundle, Required.TRIGGER_FIRE_BUNDLE.toString());
         Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
 

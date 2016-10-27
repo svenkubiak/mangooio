@@ -37,7 +37,9 @@ public class MessagesTest {
     public void testGet() {
         //given
         Messages messages = Application.getInstance(Messages.class);
-        Locale.setDefault(Locale.GERMAN);
+
+        //when
+        messages.reload(Locale.GERMAN);
         
         //then
         assertThat(messages.get("welcome"), equalTo("willkommen"));
