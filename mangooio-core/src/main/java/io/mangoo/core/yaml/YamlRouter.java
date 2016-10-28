@@ -3,8 +3,6 @@ package io.mangoo.core.yaml;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.mangoo.core.yaml.YamlRoute;
-
 /**
  * 
  * @author sven.kubiak

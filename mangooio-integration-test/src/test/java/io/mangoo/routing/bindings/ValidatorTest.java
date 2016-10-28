@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.routing.bindings.Validator;
 
 /**
  * 

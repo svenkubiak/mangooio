@@ -5,8 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.Test;
 
-import io.mangoo.routing.bindings.Session;
-
 /**
  *
  * @author svenkubiak

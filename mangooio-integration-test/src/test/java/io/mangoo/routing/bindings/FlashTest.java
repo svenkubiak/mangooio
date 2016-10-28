@@ -8,8 +8,6 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.routing.bindings.Flash;
-
 /**
  *
  * @author svenkubiak

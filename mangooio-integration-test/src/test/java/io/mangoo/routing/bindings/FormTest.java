@@ -12,7 +12,6 @@ import java.util.UUID;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.routing.bindings.Form;
 
 /**
  * 
