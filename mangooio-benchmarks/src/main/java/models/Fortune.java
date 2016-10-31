@@ -7,6 +7,11 @@ import org.mongodb.morphia.annotations.Indexed;
 
 import de.svenkubiak.mangooio.morphia.MorphiaModel;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @Entity(value = "fortunes", noClassnameStored = true)
 public class Fortune extends MorphiaModel implements Serializable, Comparable<Fortune> {
     private static final long serialVersionUID = 3493429313579555024L;

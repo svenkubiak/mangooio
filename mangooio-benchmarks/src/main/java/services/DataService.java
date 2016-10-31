@@ -25,8 +25,6 @@ public class DataService {
     public DataService(MongoDB mongoDB) {
         this.mongoDB = mongoDB;
         this.mongoDB.ensureIndexes(false);
-        this.mongoDB.getDatastore().ensureIndexes(World.class);
-        this.mongoDB.getDatastore().ensureIndexes(Fortune.class);
     }
 
     public World findById(int worldId) {
@@ -57,7 +55,7 @@ public class DataService {
     }
 
     public void dropDatabase() {
-        this.mongoDB.getDatastore();
+        this.mongoDB.dropDatabase();
         this.mongoDB.ensureIndexes(false);
         this.mongoDB.getDatastore().ensureIndexes(World.class);
         this.mongoDB.getDatastore().ensureIndexes(Fortune.class);

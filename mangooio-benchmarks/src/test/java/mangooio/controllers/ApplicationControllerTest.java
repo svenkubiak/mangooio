@@ -1,8 +1,10 @@
 package mangooio.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
@@ -14,62 +16,54 @@ import utils.RandomUtils;
 
 public class ApplicationControllerTest {
 	private static final String HELLO_WORLD_JSON = "{\"text\":\"Hello, World!\"}";
-
-	@Test
-	public void testIndex() {
-		WebResponse mangooResponse = WebRequest.get("/").execute();
-		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-	}
 	
 	@Test
 	public void testJson() {
 		WebResponse mangooResponse = WebRequest.get("/json").execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertEquals(HELLO_WORLD_JSON, mangooResponse.getContent());
+        assertThat(mangooResponse, not(nullValue()));
+        assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+        assertThat(HELLO_WORLD_JSON, equalTo(mangooResponse.getContent()));
 	}
 	
 	@Test
 	public void testDb() {
 		WebResponse mangooResponse = WebRequest.get("/db").execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertTrue(mangooResponse.getContent().contains("id"));
-		assertTrue(mangooResponse.getContent().contains("randomNumber"));
+		assertThat(mangooResponse, not(nullValue()));
+		assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+		assertThat(mangooResponse.getContent(), containsString("worldId"));
+		assertThat(mangooResponse.getContent(), containsString("randomNumber"));
 	}
 	
 	@Test
 	public void testQueries() {
 		int queries = RandomUtils.getRandomId();
-		WebResponse mangooResponse = WebRequest.get("/db?queries=" + queries).execute();
+		WebResponse mangooResponse = WebRequest.get("/queries?queries=" + queries).execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertTrue(mangooResponse.getContent().contains("id"));
-		assertTrue(mangooResponse.getContent().contains("randomNumber"));
+		assertThat(mangooResponse, not(nullValue()));
+		assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+        assertThat(mangooResponse.getContent(), containsString("worldId"));
+        assertThat(mangooResponse.getContent(), containsString("randomNumber"));
 	}
 	
 	@Test
 	public void testPlaintext() {
 		WebResponse mangooResponse = WebRequest.get("/plaintext").execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertEquals(Constants.HELLO_WORLD, mangooResponse.getContent());
+		assertThat(mangooResponse, not(nullValue()));
+		assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+		assertThat(mangooResponse.getContent(), containsString(Constants.HELLO_WORLD));
 	}
 	
 	@Test
 	public void testFortunes() {
 		WebResponse mangooResponse = WebRequest.get("/fortunes").execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertTrue(mangooResponse.getContent().contains("id"));
-		assertTrue(mangooResponse.getContent().contains(Constants.FORTUNE_MESSAGE));
+		assertThat(mangooResponse, not(nullValue()));
+		assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+		assertThat(mangooResponse.getContent(), containsString("id"));
+		assertThat(mangooResponse.getContent(), containsString(Constants.FORTUNE_MESSAGE));
 	}
 	
 	@Test
@@ -77,8 +71,8 @@ public class ApplicationControllerTest {
 		int queries = RandomUtils.getRandomId();
 		WebResponse mangooResponse = WebRequest.get("/updates?queries=" + queries).execute();
 		
-		assertNotNull(mangooResponse);
-		assertEquals(StatusCodes.OK, mangooResponse.getStatusCode());
-		assertTrue(mangooResponse.getContent().contains("id"));
+		assertThat(mangooResponse, not(nullValue()));
+		assertThat(StatusCodes.OK, equalTo(mangooResponse.getStatusCode()));
+		assertThat(mangooResponse.getContent(), containsString("worldId"));
 	}
 }

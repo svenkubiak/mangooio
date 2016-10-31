@@ -6,7 +6,7 @@
 <tr><th>id</th><th>message</th></tr>
 <#if fortunes?has_content>
 <#list fortunes as fortune>
-<tr><td>${fortune.id}</td><td>${fortune.message}</td></tr>
+<tr><td>${fortune.fortuneId}</td><td>${fortune.message}</td></tr>
 </#list>
 </#if>
 </table>
