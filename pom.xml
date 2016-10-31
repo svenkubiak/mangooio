@@ -35,6 +35,7 @@
 	</prerequisites>
 	<modules>
 		<module>mangooio-core</module>
+		<module>mangooio-benchmarks</module>
 		<module>mangooio-maven-plugin</module>
 		<module>mangooio-maven-archetype</module>
 		<module>mangooio-integration-test</module>
