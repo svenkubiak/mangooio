@@ -42,7 +42,7 @@ public class ApplicationController {
     }
 
     public Response queries() {
-        final List<World> worlds = dataService.getWorlds();
+        final List<World> worlds = dataService.findWorlds(RandomUtils.getRandomWorlds());
         return Response.withOk()
                 .andJsonBody(worlds);
     }
@@ -58,7 +58,7 @@ public class ApplicationController {
 
     public Response updates() {
         final List<World> output = new ArrayList<>();
-        List<World> worlds = dataService.getWorlds();
+        List<World> worlds = dataService.findWorlds(RandomUtils.getRandomWorlds());
         
         for (World world : worlds) {
             world.setRandomnumber(RandomUtils.getRandomId());

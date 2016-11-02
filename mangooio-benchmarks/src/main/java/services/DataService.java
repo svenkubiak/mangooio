@@ -1,6 +1,5 @@
 package services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -9,7 +8,6 @@ import com.google.inject.Singleton;
 import de.svenkubiak.mangooio.mongodb.MongoDB;
 import models.Fortune;
 import models.World;
-import utils.RandomUtils;
 
 /**
  *
@@ -34,15 +32,8 @@ public class DataService {
         this.mongoDB.getDatastore().save(object);
     }
 
-    public List<World> getWorlds() {
-        int queries = RandomUtils.getRandomQueries();
-        
-        final List<World> worlds = new ArrayList<>();
-        for (int i=0; i < queries; i++) {
-            worlds.add(findById(RandomUtils.getRandomId()));
-        }
-        
-        return worlds;
+    public List<World> findWorlds(int limit) {
+        return this.mongoDB.getDatastore().find(World.class).limit(limit).asList();
     }
 
     public List<Fortune> findAllFortunes() {

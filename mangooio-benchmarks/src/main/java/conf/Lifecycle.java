@@ -30,10 +30,12 @@ public class Lifecycle implements MangooLifecycle {
         
         final DataService dataService = Application.getInstance(DataService.class);
         dataService.dropDatabase();
-        for (int i=1; i <= Constants.ROWS; i++) {
+        for (int i=1; i <= Constants.WORLDS; i++) {
             final World world = new World(i, RandomUtils.getRandomId());
             dataService.save(world);
-
+        }
+        
+        for (int i=1; i <= Constants.FORTUNES; i++) {
             final Fortune fortune = new Fortune(i, UUID.randomUUID().toString());
             dataService.save(fortune);
         }

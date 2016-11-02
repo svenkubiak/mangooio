@@ -15,10 +15,10 @@ public final class RandomUtils {
     }
 
     public static int getRandomId() {
-        return random.nextInt(Constants.ROWS - 1) + 1;
+        return random.nextInt(Constants.WORLDS - 1) + 1;
     }
 
-    public static int getRandomQueries() {
+    public static int getRandomWorlds() {
         return random.nextInt(Constants.MAX_QUERIES - 1) + 1;
     }
 }
