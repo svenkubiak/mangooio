@@ -72,6 +72,11 @@
 									<exclude>junit:junit</exclude>
 									<exclude>rhino:js</exclude>
 									<exclude>com.hazelcast:*</exclude>
+									<exclude>org.eclipse.jetty:*</exclude>
+									<exclude>org.glassfish.jersey.media:*</exclude>
+									<exclude>org.glassfish.jersey.core:*</exclude>
+									<exclude>org.glassfish.hk2:*</exclude>
+									<exclude>org.glassfish.hk2:external</exclude>
 									<exclude>com.google.com.findbugs:annotations</exclude>
 								</excludes>
 							</artifactSet>
@@ -86,7 +91,7 @@
 									</excludes>
 								</filter>
 							</filters>
-							<finalName>mangooioapp</finalName>
+							<finalName>mangooiobench</finalName>
 						</configuration>
 					</execution>
 				</executions>
@@ -108,17 +113,14 @@
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
 			<artifactId>embedded-mongodb</artifactId>
-			<version>4.2.10</version>
 		</dependency>
 		<dependency>
 			<groupId>it.unimi.dsi</groupId>
 			<artifactId>dsiutils</artifactId>
-			<version>2.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
 			<artifactId>mangooio-mongodb-extension</artifactId>
-			<version>3.0.2</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -18,7 +18,6 @@ import utils.RandomUtils;
  */
 @Singleton
 public class DataService {
-    private static final int MAX_QUERIES = 500;
     private final MongoDB mongoDB;
 
     @Inject
@@ -35,13 +34,9 @@ public class DataService {
         this.mongoDB.getDatastore().save(object);
     }
 
-    public List<World> getWorlds(int queries) {
-        if (queries < 1) {
-            queries = 1;
-        } else if (queries > MAX_QUERIES) {
-            queries = MAX_QUERIES;
-        }
-
+    public List<World> getWorlds() {
+        int queries = RandomUtils.getRandomQueries();
+        
         final List<World> worlds = new ArrayList<>();
         for (int i=0; i < queries; i++) {
             worlds.add(findById(RandomUtils.getRandomId()));

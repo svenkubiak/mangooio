@@ -41,8 +41,8 @@ public class ApplicationController {
                 .andJsonBody(world);
     }
 
-    public Response queries(int queries) {
-        final List<World> worlds = dataService.getWorlds(queries);
+    public Response queries() {
+        final List<World> worlds = dataService.getWorlds();
         return Response.withOk()
                 .andJsonBody(worlds);
     }
@@ -56,9 +56,9 @@ public class ApplicationController {
                 .andContent("fortunes", fortunes);
     }
 
-    public Response updates(int queries) {
+    public Response updates() {
         final List<World> output = new ArrayList<>();
-        List<World> worlds = dataService.getWorlds(queries);
+        List<World> worlds = dataService.getWorlds();
         
         for (World world : worlds) {
             world.setRandomnumber(RandomUtils.getRandomId());
