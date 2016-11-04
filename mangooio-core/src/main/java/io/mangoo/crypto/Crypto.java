@@ -135,15 +135,6 @@ public class Crypto {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         String key = secret.replaceAll("[^\\x00-\\x7F]", "");
 
-        
-        if (key.length() >= KEYLENGTH_32) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_32);
-        } else if (key.length() >= KEYLENGTH_24) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_24);
-        } else if (key.length() >= KEYLENGTH_16) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_16);
-        }
-
         Preconditions.checkArgument(key.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
         
         return key.substring(KEYINDEX_START, KEYLENGTH_32);
