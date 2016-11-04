@@ -57,15 +57,15 @@ public class ApplicationController {
     }
 
     public Response updates() {
-        final List<World> output = new ArrayList<>();
         List<World> worlds = dataService.findWorlds(RandomUtils.getRandomWorlds());
-        
         for (World world : worlds) {
             world.setRandomnumber(RandomUtils.getRandomId());
             dataService.save(world);
-            output.add(world);
         }
 
+        final List<World> output = new ArrayList<>();
+        output.addAll(worlds);
+        
         return Response.withOk()
                 .andJsonBody(output);
     }

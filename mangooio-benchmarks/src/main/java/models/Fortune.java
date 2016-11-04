@@ -49,8 +49,7 @@ public class Fortune extends MorphiaModel implements Serializable, Comparable<Fo
         int result = 1;
         result = PRIME * result + (int) (fortuneId ^ (fortuneId >>> 32));
         result = PRIME * result + ((message == null) ? 0 : message.hashCode());
-        result = PRIME * result + ((objectId == null) ? 0 : objectId.hashCode());
-        return result;
+        return PRIME * result + ((objectId == null) ? 0 : objectId.hashCode());
     }
 
     @Override
