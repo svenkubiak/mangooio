@@ -73,6 +73,12 @@ public class MangooMojo extends AbstractMojo {
     @Parameter(property = "mangoo.skip", defaultValue="false", required = true)
     private boolean skip;
 
+    @Parameter(property = "mangoo.jpdaPort", defaultValue="8000", required = true)
+    private int jpdaPort;
+
+    @Parameter(property = "mangoo.jvmArgs", required = false)
+    private String jvmArgs;
+
     @Parameter(property = "mangoo.outputDirectory", defaultValue = "${project.build.outputDirectory}", required = true)
     private String buildOutputDirectory;
 
@@ -136,7 +142,12 @@ public class MangooMojo extends AbstractMojo {
 
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
         try {
-            Runner machine = new Runner(Application.class.getName(), StringUtils.join(classpathItems, File.pathSeparator), project.getBasedir());
+            Runner machine = new Runner(
+                    Application.class.getName(),
+                    StringUtils.join(classpathItems, File.pathSeparator),
+                    project.getBasedir(),
+                    jpdaPort,
+                    jvmArgs);
 
             Trigger restartTrigger = new Trigger(machine);
             restartTrigger.setSettleDownMillis(settleDownMillis);

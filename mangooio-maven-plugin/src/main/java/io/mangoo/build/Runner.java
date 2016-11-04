@@ -20,10 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -48,13 +50,17 @@ public class Runner {
     private final String mainClass;
     private final String classpath;
     private final File mavenBaseDir;
+    private final int jpdaPort;
+    private final String jvmArgs;
 
-    public Runner(String mainClass, String classpath, File mavenBaseDir) {
+    public Runner(String mainClass, String classpath, File mavenBaseDir, int jpdaPort, String jvmArgs) {
         this.outputStream = System.out; //NOSONAR
         this.mainClass = mainClass;
         this.classpath = classpath;
         this.mavenBaseDir = mavenBaseDir;
         this.restarting = new AtomicBoolean(false);
+        this.jpdaPort = jpdaPort;
+        this.jvmArgs = jvmArgs;
     }
 
     public OutputStream getOutput() {
@@ -107,6 +113,16 @@ public class Runner {
         String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
 
         commandLine.add(javaBin);
+        if (jpdaPort > 0) {
+            LOG.info("Listening for jpda connection at " + jpdaPort);
+            commandLine.add("-Xdebug");
+            commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
+        }
+        if (StringUtils.isNotBlank(jvmArgs)){
+            Arrays.stream(jvmArgs.split(" "))
+                    .filter(arg->arg.length()>0)
+                    .forEach(arg->commandLine.add(arg));
+        }
         commandLine.add("-Dapplication.mode=dev");
         commandLine.add("-cp");
         commandLine.add(classpath);
