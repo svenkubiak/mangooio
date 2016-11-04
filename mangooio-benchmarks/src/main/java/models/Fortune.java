@@ -23,6 +23,7 @@ public class Fortune extends MorphiaModel implements Serializable, Comparable<Fo
     private String message;
 
     public Fortune(){
+        //Empty constructor for injection
     }
 
     public Fortune(long fortuneId, String message) {

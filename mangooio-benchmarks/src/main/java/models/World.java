@@ -22,6 +22,7 @@ public class World extends MorphiaModel implements Serializable {
     private int randomNumber;
 
     public World() {
+        //Empty constructor for injection
     }
 
     public World(long worldId, int randomNumber) {
