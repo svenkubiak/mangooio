@@ -9,17 +9,16 @@ public class Lifecycle implements MangooLifecycle {
 
 	@Override
     public void applicationStarted() {
+	    // Do nothing for now
     }
 
     @Override
     public void applicationInitialized() {
+        // Do nothing for now
     }
 
     @Override
     public void applicationStopped() {
-    }
-
-    @Override
-    public void requestCompleted(String url, int status, int processTime, long bytesSend) {
+        // Do nothing for now
     }
 }
