@@ -18,7 +18,6 @@ import com.google.common.base.Preconditions;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 
 /**
@@ -45,7 +44,7 @@ public class Crypto {
     public String decrypt(String encrytedText) {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
 
-        return decrypt(encrytedText, getSizedKey(CONFIG.getString(Key.APPLICATION_SECRET)));
+        return decrypt(encrytedText, getSizedKey(CONFIG.getApplicationSecret()));
     }
 
     /**

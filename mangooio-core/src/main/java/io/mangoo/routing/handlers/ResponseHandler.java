@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
@@ -62,7 +61,7 @@ public class ResponseHandler implements HttpHandler {
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-        exchange.getResponseHeaders().put(Headers.SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
+        exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.endExchange();
     }
