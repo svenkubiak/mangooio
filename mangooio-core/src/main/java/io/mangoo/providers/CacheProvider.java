@@ -1,7 +1,8 @@
 package io.mangoo.providers;
 
 import java.net.URI;
-import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.ehcache.CacheManager;
@@ -30,7 +31,7 @@ import io.mangoo.enums.CacheName;
  */
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private EnumMap<CacheName, Cache> caches = new EnumMap<>(CacheName.class);
+    private Map<String, Cache> caches = new HashMap<>();
     private CacheManager cacheManager;
     private Cache cache;
 
@@ -40,16 +41,16 @@ public class CacheProvider implements Provider<Cache> {
             CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder() 
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
                     .autoCreate());
-            
+
             this.cacheManager = clusteredCacheManagerBuilder.build(true);
         } else {
-            this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(); 
-            this.cacheManager.init();             
+            this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build();
+            this.cacheManager.init();
         }
-        
+
         initializeCaches();
     }
-    
+
     /**
      * Initializes all caches required for applications and internal use
      */
@@ -60,15 +61,13 @@ public class CacheProvider implements Provider<Cache> {
         initServerEventCache();
         initWebSocketCache();
     }
-    
+
     private void initApplicationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .build();
-        
-        org.ehcache.Cache<String, Object> applicationCache = cacheManager.createCache(CacheName.APPLICATION.toString(), configuration);
-        
-        this.cache = new CacheImpl(applicationCache);
+
+        this.cache = registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
     }
 
     private void initAuthenticationCache() {
@@ -76,10 +75,8 @@ public class CacheProvider implements Provider<Cache> {
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(60, TimeUnit.MINUTES)))
                 .build();
-        
-        org.ehcache.Cache<String, Object> authCache = cacheManager.createCache(CacheName.AUTH.toString(), configuration);
-        
-        this.caches.put(CacheName.AUTH, new CacheImpl(authCache));
+
+        registerCacheConfiguration(CacheName.AUTH.toString(), configuration);
     }
 
     private void initRequestCache() {
@@ -87,10 +84,8 @@ public class CacheProvider implements Provider<Cache> {
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(40000))
                 .withExpiry(Expirations.timeToLiveExpiration(Duration.of(60, TimeUnit.SECONDS)))
                 .build();
-        
-        org.ehcache.Cache<String, Object> requestCache = cacheManager.createCache(CacheName.REQUEST.toString(), configuration);
-        
-        this.caches.put(CacheName.REQUEST, new CacheImpl(requestCache));
+
+        registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
     }
 
     private void initServerEventCache() {
@@ -98,10 +93,8 @@ public class CacheProvider implements Provider<Cache> {
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToIdleExpiration(Duration.of(30, TimeUnit.MINUTES)))
                 .build();
-        
-        org.ehcache.Cache<String, Object> sseCache = cacheManager.createCache(CacheName.SSE.toString(), configuration);
-        
-        this.caches.put(CacheName.SSE, new CacheImpl(sseCache));
+
+        registerCacheConfiguration(CacheName.SSE.toString(), configuration);
     }
 
     private void initWebSocketCache() {
@@ -109,27 +102,44 @@ public class CacheProvider implements Provider<Cache> {
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(20000))
                 .withExpiry(Expirations.timeToIdleExpiration(Duration.of(30, TimeUnit.MINUTES)))
                 .build();
-        
-        org.ehcache.Cache<String, Object> wssCache = cacheManager.createCache(CacheName.WSS.toString(), configuration);
-        
-        this.caches.put(CacheName.WSS, new CacheImpl(wssCache));
+
+        registerCacheConfiguration(CacheName.WSS.toString(), configuration);
+    }
+
+    public Cache registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
+        cache = new CacheImpl(cacheManager.createCache(name, configuration));
+        this.caches.put(name, cache);
+
+        return cache;
     }
 
     @Override
     public Cache get() {
         return this.cache;
     }
-    
+
     /**
      * Retrieves a cache by its name from the cache pool
      * 
-     * @param name The name of the cache
+     * @param name
+     *            The name of the cache
      * @return An Cache instance
      */
     public Cache getCache(CacheName name) {
+        return getCache(name.toString());
+    }
+
+    /**
+     * Retrieves a cache by its name from the cache pool
+     * 
+     * @param name
+     *            The name of the cache
+     * @return An Cache instance
+     */
+    public Cache getCache(String name) {
         return this.caches.get(name);
     }
-    
+
     /**
      * Closes all caches
      */
