@@ -3,6 +3,7 @@ package io.mangoo.providers;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.ehcache.CacheManager;
@@ -37,6 +38,8 @@ public class CacheProvider implements Provider<Cache> {
 
     @Inject
     public CacheProvider(Config config) {
+        Objects.requireNonNull(config, "config can not be null");
+        
         if (config.isClusteredCached()) {
             CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder() 
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
@@ -48,13 +51,6 @@ public class CacheProvider implements Provider<Cache> {
             this.cacheManager.init();
         }
 
-        initializeCaches();
-    }
-
-    /**
-     * Initializes all caches required for applications and internal use
-     */
-    private void initializeCaches() {
         initApplicationCache();
         initAuthenticationCache();
         initRequestCache();
@@ -121,8 +117,7 @@ public class CacheProvider implements Provider<Cache> {
     /**
      * Retrieves a cache by its name from the cache pool
      * 
-     * @param name
-     *            The name of the cache
+     * @param name The name of the cache
      * @return An Cache instance
      */
     public Cache getCache(CacheName name) {
@@ -132,8 +127,7 @@ public class CacheProvider implements Provider<Cache> {
     /**
      * Retrieves a cache by its name from the cache pool
      * 
-     * @param name
-     *            The name of the cache
+     * @param name The name of the cache
      * @return An Cache instance
      */
     public Cache getCache(String name) {
