@@ -167,7 +167,7 @@ public class Bootstrap {
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
             YamlRouter yamlRouter = null;
             try {
-                yamlRouter = objectMapper.readValue(Resources.getResource("routes.yaml").openStream(), YamlRouter.class);
+                yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
             } catch (IOException e) {
                 LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
                 this.error = true;
