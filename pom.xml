@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>4.0.0-Beta10</version>
+	<version>4.0.0-RC1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>https://mangoo.io</url>
 	<licenses>
@@ -45,7 +45,7 @@
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
 		<developerConnection>scm:git:git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<url>github.com:svenkubiak/mangooio.git</url>
-		<tag>4.0.0-Beta10</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<build>
 		<pluginManagement>
