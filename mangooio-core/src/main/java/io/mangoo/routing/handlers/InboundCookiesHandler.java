@@ -1,8 +1,13 @@
 package io.mangoo.routing.handlers;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +20,13 @@ import io.jsonwebtoken.Jwts;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.enums.Required;
 import io.mangoo.models.Subject;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.cookie.CookieParser;
 import io.mangoo.utils.cookie.CookieUtils;
@@ -131,7 +136,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 final Map<String, String> values = claims.get(ClaimKey.DATA.toString(), Map.class);
 
                 if (claims.containsKey(ClaimKey.FORM.toString())) {
-                    this.form = CodecUtils.deserializeFromString(claims.get(ClaimKey.FORM.toString(), String.class));
+                    this.form = deserializeFromString(claims.get(ClaimKey.FORM.toString(), String.class));
                 } 
                 
                 flash = new Flash(values);
@@ -142,6 +147,28 @@ public class InboundCookiesHandler implements HttpHandler {
         }
         
         return flash == null ? new Flash() : flash;
+    }
+    
+    
+    /**
+     * Deserialize a given Base64 encoded data string into an object
+     * 
+     * @param data The base64 encoded data string
+     * @return The required object
+     */
+    @SuppressWarnings("unchecked")
+    private <T> T deserializeFromString(String data) {
+        Objects.requireNonNull(data, Required.DATA.toString());
+        
+        byte[] bytes = Base64.getDecoder().decode(data);
+        Object object = null;
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));) {
+            object = objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            LOG.error("Failed to deserialize object from string: " + data, e);
+        }
+
+        return (object != null) ? (T) object : null;
     }
 
     /**

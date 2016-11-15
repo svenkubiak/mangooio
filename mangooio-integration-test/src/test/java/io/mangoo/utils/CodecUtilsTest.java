@@ -21,7 +21,6 @@ public class CodecUtilsTest {
     private static final String BASE64 = "dGhpcyBpcyBhIHBsYWluIHRleHQ=";
     private static final String PLAIN = "this is a plain text";
     private static final String JBCRYPT_HASH = "$2a$12$I.tRIbGLB82DDLUHTz.IUOSGeHCwUgX/MnGj67SRFvfzoNZzx2je6";
-    private static final String SERIALIZED = "rO0ABXNyAB9pby5tYW5nb28ucm91dGluZy5iaW5kaW5ncy5Gb3Jtr0x38MTUh5ACAARaAAVmbGFzaFoACXN1Ym1pdHRlZEwABWZpbGVzdAAQTGphdmEvdXRpbC9MaXN0O0wABnZhbHVlc3QAD0xqYXZhL3V0aWwvTWFwO3hyACRpby5tYW5nb28ucm91dGluZy5iaW5kaW5ncy5WYWxpZGF0b3LdwRhCEEkJPAIAA0wABmVycm9yc3EAfgACTAAIbWVzc2FnZXN0ABlMaW8vbWFuZ29vL2kxOG4vTWVzc2FnZXM7TAAGdmFsdWVzcQB+AAJ4cHNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAB3CAAAABAAAAAAeHNyABdpby5tYW5nb28uaTE4bi5NZXNzYWdlc2jq6LbuouS6AgABTAAIZGVmYXVsdHNxAH4AAnhwc3EAfgAGP0AAAAAAAAx3CAAAABAAAAAMdAAQdmFsaWRhdGlvbi5tYXRjaHQAEnswfSBtdXN0IG1hdGNoIHsxfXQAEHZhbGlkYXRpb24uZW1haWx0ACF7MH0gbXVzdCBiZSBhIHZhbGlkIGVNYWlsIGFkZHJlc3N0AA92YWxpZGF0aW9uLmlwdjR0ACB7MH0gbXVzdCBiZSBhIHZhbGlkIElQdjQgYWRkcmVzc3QAD3ZhbGlkYXRpb24uaXB2NnQAIHswfSBtdXN0IGJlIGEgdmFsaWQgSVB2NiBhZGRyZXNzdAATdmFsaWRhdGlvbi5yZXF1aXJlZHQAD3swfSBpcyByZXF1aXJlZHQADnZhbGlkYXRpb24udXJsdAAXezB9IG11c3QgYmUgYSB2YWxpZCBVUkx0ABJ2YWxpZGF0aW9uLm51bWVyaWN0ABt7MH0gbXVzdCBiZSBhIG51bWVyaWMgdmFsdWV0ABB2YWxpZGF0aW9uLnJlZ2V4dAAOezB9IGlzIGludmFsaWR0ABV2YWxpZGF0aW9uLmV4YWN0TWF0Y2h0ABp7MH0gbXVzdCBleGFjdGx5IG1hdGNoIHsxfXQADnZhbGlkYXRpb24ubWF4dAAfezB9IG11c3QgaGF2ZSBhIHNpemUgb2YgbWF4IHsxfXQAEHZhbGlkYXRpb24ucmFuZ2V0ACh7MH0gbXVzdCBoYXZlIGEgc2l6ZSBiZXR3ZWVuIHsxfSBhbmQgezJ9dAAOdmFsaWRhdGlvbi5taW50ACN7MH0gbXVzdCBoYXZlIGEgbGVhc3QgYSBzaXplIG9mIHsxfXhzcQB+AAY/QAAAAAAAAHcIAAAAEAAAAAB4AABzcgATamF2YS51dGlsLkFycmF5TGlzdHiB0h2Zx2GdAwABSQAEc2l6ZXhwAAAAAHcEAAAAAHhzcQB+AAY/QAAAAAAAAHcIAAAAEAAAAAB4";
 
     @Test
     public void testHexJBcrypt() {
@@ -110,14 +109,5 @@ public class CodecUtilsTest {
 
         //then
         assertThat(base64, not(nullValue()));
-    }
-    
-    @Test
-    public void testDeseralize() {
-        //given
-        Form form = CodecUtils.deserializeFromString(SERIALIZED);
-        
-        //then
-        assertThat(form, not(nullValue()));
     }
 }

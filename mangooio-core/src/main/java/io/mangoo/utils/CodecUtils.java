@@ -1,12 +1,9 @@
 package io.mangoo.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -95,14 +92,7 @@ public final class CodecUtils {
     public static String encodeBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
-        String encoded = null;
-        try {
-            encoded = new String(base64Encoder.encode(data.getBytes("UTF-8")), Charsets.UTF_8);
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to encode data string: " + data,  e);
-        }
-        
-        return encoded;
+        return new String(base64Encoder.encode(data.getBytes(Charsets.UTF_8)), Charsets.UTF_8);
     }
     
     /**
@@ -114,14 +104,7 @@ public final class CodecUtils {
     public static String decodeBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
-        String decoded = null;
-        try {
-            decoded = new String(base64Decoder.decode(data.getBytes("UTF-8")), Charsets.UTF_8);
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to encode data string: " + data,  e);
-        }
-        
-        return decoded;
+        return new String(base64Decoder.decode(data.getBytes(Charsets.UTF_8)), Charsets.UTF_8);
     }
     
     /**
@@ -146,27 +129,6 @@ public final class CodecUtils {
         Objects.requireNonNull(data, Required.DATA.toString());
         
         return new String(base64Decoder.decode(data), Charsets.UTF_8);
-    }
-    
-    /**
-     * Deserialize a given Base64 encoded data string into an object
-     * 
-     * @param data The base64 encoded data string
-     * @return The required object
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T deserializeFromString(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        byte[] bytes = Base64.getDecoder().decode(data);
-        Object object = null;
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));) {
-            object = objectInputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            LOG.error("Failed to deserialize object from string: " + data, e);
-        }
-
-        return (object != null) ? (T) object : null;
     }
 
     /**

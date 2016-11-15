@@ -29,19 +29,20 @@ import io.undertow.util.HttpString;
  */
 public class Request extends Validator implements Serializable {
     private static final long serialVersionUID = 1901891944955577394L;
-    private HttpServerExchange httpServerExchange;
+    private transient HttpServerExchange httpServerExchange;
+    private transient Map<String, Cookie> cookies;
+    private transient JsonWebToken jsonWebToken;
+    private transient Session session;
+    private transient Authentication authentication;
+    private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
-    private Session session;
     private String authenticity;
-    private Authentication authentication;
     private Validator validator;
-    private Map<String, Object> attributes = new HashMap<>();
     private Map<String, String> parameter;
-    private Map<String, Cookie> cookies;
-    private JsonWebToken jsonWebToken;
+
 
     public Request(){
-        //Required empty constructor
+        //Empty constructor for google guice
     }
 
     public Request(HttpServerExchange httpServerExchange) {
