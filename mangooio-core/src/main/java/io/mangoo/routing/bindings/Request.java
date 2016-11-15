@@ -30,11 +30,11 @@ import io.undertow.util.HttpString;
 public class Request extends Validator implements Serializable {
     private static final long serialVersionUID = 1901891944955577394L;
     private transient HttpServerExchange httpServerExchange;
-    private transient Map<String, Cookie> cookies;
     private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
-    private transient Map<String, Object> attributes = new HashMap<>();
+    private Map<String, Cookie> cookies;
+    private Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
     private Validator validator;

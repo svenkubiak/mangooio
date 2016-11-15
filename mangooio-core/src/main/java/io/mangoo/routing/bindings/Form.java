@@ -31,18 +31,6 @@ public class Form extends Validator implements Serializable {
     }
     
     /**
-     * Retrieves a form value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return The value of the form or null if not present
-     */
-    public String get(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-
-        return this.values.get(key);
-    }
-
-    /**
      * Retrieves an optional string value corresponding to the name of the form element
      *
      * @param key The name of the form element

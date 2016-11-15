@@ -141,7 +141,7 @@ public final class CodecUtils {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);) {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
             objectOutputStream.writeObject(object);
         } catch (IOException e) {
             LOG.error("Failed to serialize object: " + object, e);

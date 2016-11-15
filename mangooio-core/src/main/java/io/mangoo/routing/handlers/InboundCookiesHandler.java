@@ -162,7 +162,7 @@ public class InboundCookiesHandler implements HttpHandler {
         
         byte[] bytes = Base64.getDecoder().decode(data);
         Object object = null;
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));) {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
             object = objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             LOG.error("Failed to deserialize object from string: " + data, e);

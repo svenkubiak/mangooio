@@ -3,6 +3,7 @@ package io.mangoo.routing.bindings;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import com.google.inject.Inject;
 
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 
 /**
@@ -378,7 +380,15 @@ public class Validator implements Serializable {
         return this.errors.size() > 0;
     }
 
+    /**
+     * Retrieves a form value corresponding to the name of the form element
+     *
+     * @param key The name of the form element
+     * @return The value of the form or null if not present
+     */
     public String get(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+
         return this.values.get(key);
     }
 
