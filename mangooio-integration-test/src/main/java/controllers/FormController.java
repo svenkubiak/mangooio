@@ -55,17 +55,17 @@ public class FormController {
     }
 
     public Response validateform(Form form) {
-        form.validation().required("name");
-        form.validation().email("email");
-        form.validation().exactMatch("password", "passwordconfirm"); //NOSONAR
-        form.validation().match("email2", "email2confirm");
-        form.validation().ipv4("ipv4");
-        form.validation().ipv6("ipv6");
-        form.validation().regex("regex", Pattern.compile("[a-z]"));
-        form.validation().max("phone", MAX_SIZE);
-        form.validation().min("fax", MIN_SIZE);
+        form.required("name");
+        form.email("email");
+        form.exactMatch("password", "passwordconfirm"); //NOSONAR
+        form.match("email2", "email2confirm");
+        form.ipv4("ipv4");
+        form.ipv6("ipv6");
+        form.regex("regex", Pattern.compile("[a-z]"));
+        form.max("phone", MAX_SIZE);
+        form.min("fax", MIN_SIZE);
 
-        if (!form.validation().hasErrors()) {
+        if (form.isValid()) {
             return Response.withOk().andTextBody("Fancy that!");
         }
 

@@ -11,56 +11,22 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.google.inject.Inject;
-
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooValidator;
 
 /**
  *
  * @author svenkubiak
  *
  */
-public class Form implements MangooValidator {
+public class Form extends Validator {
     private final List<File> files = new ArrayList<>();
     private final Map<String, String> values = new HashMap<>();
-    private final Validator validator;
     private boolean submitted;
     
-    @Inject
-    public Form (Validator validator) {
-        this.validator = Objects.requireNonNull(validator, Required.VALIDATOR.toString());
-    }
-
-    @Override
-    public Validator validation() {
-        return this.validator;
-    }
-
-    @Override
-    public String getError(String fieldName) {
-        return this.validator.hasError(fieldName) ? this.validator.getError(fieldName) : "";
+    public Form() {
+        //Empty constructor for google guice
     }
     
-    /**
-     * Checks if a given field has a validation error
-     * 
-     * @param fieldName The field name to check
-     * @return True if field has error, false otherwise
-     */
-    public boolean hasError(String fieldName) {
-        return this.validator.hasError(fieldName);
-    }
-    
-    /**
-     * Checks if any field in the validation has an error
-     *
-     * @return True if at least one field has an error, false otherwise
-     */
-    public boolean hasErrors() {
-        return this.validator.hasErrors();
-    }
-
     /**
      * Retrieves a form value corresponding to the name of the form element
      *
@@ -205,6 +171,10 @@ public class Form implements MangooValidator {
         return this.values;
     }
 
+    public boolean isValid() {
+        return !hasErrors();
+    }
+    
     public boolean isSubmitted() {
         return submitted;
     }
@@ -219,6 +189,6 @@ public class Form implements MangooValidator {
 
     public void addValue(String key, String value) {
         this.values.put(key, value);
-        this.validator.add(key, value);
+        add(key, value);
     }
 }

@@ -13,7 +13,6 @@ import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooValidator;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
@@ -27,7 +26,7 @@ import io.undertow.util.HttpString;
  * @author svenkubiak
  *
  */
-public class Request implements MangooValidator {
+public class Request extends Validator {
     private HttpServerExchange httpServerExchange;
     private String body;
     private Session session;
@@ -315,15 +314,5 @@ public class Request implements MangooValidator {
      */
     public Optional<JsonWebToken> getJsonWebToken() {
         return Optional.ofNullable(this.jsonWebToken);
-    }
-
-    @Override
-    public Validator validation() {
-        return this.validator;
-    }
-
-    @Override
-    public String getError(String name) {
-        return this.validator.hasError(name) ? this.validator.getError(name) : "";
     }
 }

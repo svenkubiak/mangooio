@@ -2,7 +2,6 @@ package io.mangoo.routing.bindings;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -14,7 +13,6 @@ import org.apache.commons.validator.routines.UrlValidator;
 import com.google.inject.Inject;
 
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 
 /**
@@ -25,12 +23,9 @@ import io.mangoo.i18n.Messages;
 public class Validator {
     private final Map<String, String> errors = new HashMap<>();
     private Map<String, String> values = new HashMap<>();
-    private final Messages messages;
-
+    
     @Inject
-    public Validator(Messages messages) {
-        this.messages =  Objects.requireNonNull(messages, Required.MESSAGES.toString());
-    }
+    private Messages messages;
 
     /**
      * Checks if a give field has a validation error

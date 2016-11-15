@@ -43,10 +43,10 @@ public class FormTest {
         //when
         form.addValue(FOO, "BlA");
         form.addValue(BAR, "BlA");
-        form.validation().exactMatch(FOO, BAR);
+        form.exactMatch(FOO, BAR);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -57,10 +57,10 @@ public class FormTest {
         //when
         form.addValue(FOO, "BlA");
         form.addValue(BAR, "Bla");
-        form.validation().exactMatch(FOO, BAR);
+        form.exactMatch(FOO, BAR);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -71,10 +71,10 @@ public class FormTest {
         //when
         form.addValue(FOO, "BLA");
         form.addValue(BAR, "bla");
-        form.validation().match(FOO, BAR);
+        form.match(FOO, BAR);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -85,10 +85,10 @@ public class FormTest {
         //when
         form.addValue(FOO, "BLA");
         form.addValue(BAR, "bla2");
-        form.validation().match(FOO, BAR);
+        form.match(FOO, BAR);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -98,10 +98,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.validation().required(FOO);
+        form.required(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -111,10 +111,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "");
-        form.validation().required(FOO);
+        form.required(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -124,10 +124,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.validation().min(FOO, 3);
+        form.min(FOO, 3);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -137,10 +137,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "ba");
-        form.validation().min(FOO, 4);
+        form.min(FOO, 4);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -150,10 +150,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.validation().max(FOO, 3);
+        form.max(FOO, 3);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -163,10 +163,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "bars");
-        form.validation().max(FOO, 3);
+        form.max(FOO, 3);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -176,16 +176,16 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "foo@bar.com");
-        form.validation().email(FOO);
+        form.email(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
         
         form = getNewForm();
         form.addValue(FOO, "foobar");
-        form.validation().email(FOO);
+        form.email(FOO);
 
-        assertTrue(form.validation().hasErrors());
+        assertTrue(form.hasErrors());
     }
     
     @Test
@@ -195,10 +195,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "foobar");
-        form.validation().email(FOO);
+        form.email(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -208,10 +208,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_URL);
-        form.validation().url(FOO);
+        form.url(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -221,10 +221,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_URL);
-        form.validation().url(FOO);
+        form.url(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -234,10 +234,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_IPV4_ADDRESS);
-        form.validation().ipv4(FOO);
+        form.ipv4(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -247,10 +247,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_IPV4_ADDRESS);
-        form.validation().ipv4(FOO);
+        form.ipv4(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -260,10 +260,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_IPV6_ADDRESS);
-        form.validation().ipv6(FOO);
+        form.ipv6(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -273,10 +273,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_IPV6_ADDRESS);
-        form.validation().ipv6(FOO);
+        form.ipv6(FOO);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
 
     @Test
@@ -286,10 +286,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.validation().range(FOO, 1, 3);
+        form.range(FOO, 1, 3);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
@@ -299,10 +299,10 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "barddddd");
-        form.validation().range(FOO, 1, 4);
+        form.range(FOO, 1, 4);
 
         //then
-        assertThat(form.validation().hasErrors(), equalTo(true));
+        assertThat(form.hasErrors(), equalTo(true));
     }
     
     @Test
