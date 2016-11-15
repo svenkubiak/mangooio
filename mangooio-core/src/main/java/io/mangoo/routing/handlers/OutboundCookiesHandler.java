@@ -12,7 +12,9 @@ import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
+import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.cookie.CookieBuilder;
@@ -33,9 +35,9 @@ public class OutboundCookiesHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
 
-        setSessionCookie(exchange, attachment.getSession());
-        setFlashCookie(exchange, attachment.getFlash());
-        setAuthenticationCookie(exchange, attachment.getAuthentication());
+        setSessionCookie(exchange);
+        setFlashCookie(exchange);
+        setAuthenticationCookie(exchange);
 
         nextHandler(exchange);
     }
@@ -45,7 +47,9 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setSessionCookie(HttpServerExchange exchange, Session session) {
+    protected void setSessionCookie(HttpServerExchange exchange) {
+        Session session = this.attachment.getSession();
+        
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
             claims.put(ClaimKey.AUHTNETICITY.toString(), session.getAuthenticity());
@@ -80,7 +84,9 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setAuthenticationCookie(HttpServerExchange exchange, Authentication authentication) {
+    protected void setAuthenticationCookie(HttpServerExchange exchange) {
+        Authentication authentication = this.attachment.getAuthentication();
+        
         if (authentication != null && authentication.hasAuthenticatedUser()) {
             Cookie cookie;
             final String cookieName = CONFIG.getAuthenticationCookieName();
@@ -125,10 +131,17 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setFlashCookie(HttpServerExchange exchange, Flash flash) {
-        if (flash != null && !flash.isDiscard() && flash.hasContent()) {
+    protected void setFlashCookie(HttpServerExchange exchange) {
+        Flash flash = this.attachment.getFlash();
+        Form form = this.attachment.getForm();
+        
+        if (flash != null && !flash.isDiscard() && (flash.hasContent() || form.flashify())) {
             Map<String, Object> claims = new HashMap<>();
             claims.put(ClaimKey.DATA.toString(), flash.getValues());
+            
+            if (form.flashify()) {
+                claims.put(ClaimKey.FORM.toString(), CodecUtils.serializeToString(form));
+            }
             
             final LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
             String jwt = Jwts.builder()

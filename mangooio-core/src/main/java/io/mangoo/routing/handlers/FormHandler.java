@@ -28,7 +28,9 @@ public class FormHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         final Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
-        attachment.setForm(getForm(exchange));
+        if (attachment.getForm() == null) {
+            attachment.setForm(getForm(exchange));   
+        }
 
         exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);

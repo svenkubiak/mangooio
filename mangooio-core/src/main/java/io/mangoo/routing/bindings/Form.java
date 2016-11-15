@@ -1,6 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,12 @@ import io.mangoo.enums.Required;
  * @author svenkubiak
  *
  */
-public class Form extends Validator {
+public class Form extends Validator implements Serializable {
+    private static final long serialVersionUID = -5815141142864033904L;
     private final List<File> files = new ArrayList<>();
     private final Map<String, String> values = new HashMap<>();
     private boolean submitted;
+    private boolean flash;
     
     public Form() {
         //Empty constructor for google guice
@@ -170,7 +173,22 @@ public class Form extends Validator {
     public Map<String, String> getValues() {
         return this.values;
     }
-
+ 
+    /**
+     * Adds the form values to the flash scope
+     */
+    public void flash() {
+        this.flash = true;
+    }
+    
+    /**
+     * Checks if the form values are to put in the flash scope
+     * @return True if form values should be put into flash scope, false otherwise
+     */
+    public boolean flashify() {
+        return this.flash;
+    }
+    
     public boolean isValid() {
         return !hasErrors();
     }

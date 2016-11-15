@@ -1,5 +1,6 @@
 package io.mangoo.routing.bindings;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +21,8 @@ import io.mangoo.i18n.Messages;
  * @author svenkubiak
  *
  */
-public class Validator {
+public class Validator implements Serializable {
+    private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
     private Map<String, String> values = new HashMap<>();
     

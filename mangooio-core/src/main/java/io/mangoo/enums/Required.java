@@ -82,7 +82,9 @@ public enum Required {
     STACK_TRACE_ELEMENT("stack trace element can not be null"),
     SOURCE_PATH("source path can not be null"),
     ACCOUNT_NAME("account name can not be null"),
-    EHCACHE("ehCache can not be null");
+    EHCACHE("ehCache can not be null"),
+    DATA("data can not be null"),
+    SALT("salt can not be null");
 
     private final String value;
 

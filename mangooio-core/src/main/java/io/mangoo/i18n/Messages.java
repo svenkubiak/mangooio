@@ -1,5 +1,6 @@
 package io.mangoo.i18n;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
@@ -15,9 +16,10 @@ import io.mangoo.utils.ValidationUtils;
  * @author svenkubiak
  *
  */
-public class Messages {
+public class Messages implements Serializable {
+    private static final long serialVersionUID = 7560110796880143546L;
     private final Map<String, String> defaults = ValidationUtils.getDefaults();
-    private ResourceBundle bundle;
+    private transient ResourceBundle bundle;
 
     public Messages() {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());

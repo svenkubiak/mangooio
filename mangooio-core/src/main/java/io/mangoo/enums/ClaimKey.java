@@ -9,8 +9,9 @@ public enum ClaimKey {
     VERSION("version"),
     DATA("data"),
     AUHTNETICITY("authenticity"),
-    AUTHENTICATEDUSER("authenticatedUser");
-
+    AUTHENTICATEDUSER("authenticatedUser"),
+    FORM("form");
+    
     private final String value;
 
     ClaimKey (String value) {
