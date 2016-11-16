@@ -7,7 +7,7 @@ mangoo I/O
 
 mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-Development of mangoo I/O was started in mid 2015 out of an interest in
+Development of mangoo I/O started in mid 2015 out of an interest in
 how difficult it would be to create an intuitive, developer friendly,
 full stack java web framework from scratch. After the fresh new breeze of
 java development for the web with the [Play
@@ -34,13 +34,14 @@ Here are some key features of mangoo I/O in a nutshell:
 * Intuitive convention-over-configuration
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
-* Easy to use template engine(s)
+* Easy to use template engine
 * Support for Web Sockets
 * Support for Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
 * Easy handling of JSON in- and output
-* Strong cryptography
+* Simple form handling and validation
+* Strong cryptography and enforced security
 * Build-in asset minification in development mode
 * Flexible testing tools
 * Build-in authentication tools
@@ -48,11 +49,11 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
-*  Any many more...
+* Any many more...
 
 One main focus of mangoo I/O was to have a very good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
-[SonarQube](http://www.sonarqube.org) with a rule set of more than 620
+[SonarQube](http://www.sonarqube.org) with a rule set of more than 1000
 checks. Additionally each build is checked against [Loader.io](https://loader.io/) to ensure, that
 code changes don't decrease the framework performance.
 
@@ -62,11 +63,10 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Undertow](http://undertow.io/) - Web Server
 * [Google Guice](https://github.com/google/guice) - Dependency injection
 * [Log4j 2](https://logging.apache.org/log4j/2.x/) - Logging
-* [Freemarker](http://freemarker.org/), [Pebble](http://www.mitchellbosecke.com/pebble/home) - Template engines
+* [Ehcache](http://www.ehcache.org/) - Cacheing
+* [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
-* [Google Guava](https://github.com/google/guava), [Hazelcast](https://hazelcast.com/) - Caching
-* [Boon JSON](https://github.com/boonproject/boon), [JSONPath](http://goessner.net/articles/JsonPath/) - JSON parser
-* [SnakeYaml](https://bitbucket.org/asomov/snakeyaml) - Configuration handling
+* [Boon JSON](https://github.com/boonproject/boon), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
 * [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [Mockito](http://mockito.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong cryptography and authentication
 * And many more ...
@@ -76,6 +76,9 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 **Documentation**   
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
+
+**Discuss**   
+[https://mangoo-io.mobilize.io/](https://mangoo-io.mobilize.io/)  
 
 **Changelog**   
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
