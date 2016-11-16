@@ -32,8 +32,8 @@ public class Request extends Validator implements Serializable {
     private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
-    private transient Map<String, Cookie> cookies;
-    private transient Map<String, Object> attributes = new HashMap<>();
+    private Map<String, Cookie> cookies; //NOSONAR
+    private Map<String, Object> attributes = new HashMap<>(); //NOSONAR
     private String body;
     private String authenticity;
     private Map<String, String> parameter;
