@@ -33,11 +33,10 @@ public class Request extends Validator implements Serializable {
     private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
-    private Map<String, Cookie> cookies;
-    private Map<String, Object> attributes = new HashMap<>();
+    private transient Map<String, Cookie> cookies;
+    private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
-    private Validator validator;
     private Map<String, String> parameter;
 
 
@@ -69,8 +68,7 @@ public class Request extends Validator implements Serializable {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
-        this.validator = Application.getInstance(Validator.class);
-        this.validator.setValues(this.parameter);
+        Application.getInstance(Validator.class).setValues(this.parameter);
         return this;
     }
     
