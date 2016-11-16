@@ -1,20 +1,13 @@
 package io.mangoo.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Base64;
 import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.common.base.Charsets;
 
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
@@ -24,7 +17,6 @@ import io.mangoo.enums.Required;
  *
  */
 public final class CodecUtils {
-    private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     
@@ -129,24 +121,5 @@ public final class CodecUtils {
         Objects.requireNonNull(data, Required.DATA.toString());
         
         return new String(base64Decoder.decode(data), Charsets.UTF_8);
-    }
-
-    /**
-     * Serializes an object into an Base64 encoded data string
-     * 
-     * @param object The object to serialize
-     * @return The base64 encoded data string
-     */
-    public static String serializeToString(Serializable object)  {
-        Objects.requireNonNull(object, Required.OBJECT.toString());
-        
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-            objectOutputStream.writeObject(object);
-        } catch (IOException e) {
-            LOG.error("Failed to serialize object: " + object, e);
-        }
-
-        return Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
     }
 }

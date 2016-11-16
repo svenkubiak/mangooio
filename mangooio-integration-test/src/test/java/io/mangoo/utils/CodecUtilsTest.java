@@ -9,9 +9,6 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 
-import io.mangoo.core.Application;
-import io.mangoo.routing.bindings.Form;
-
 /**
  * 
  * @author svenkubiak
@@ -99,15 +96,5 @@ public class CodecUtilsTest {
         //then
         assertThat(base64, not(nullValue()));
         assertThat(base64, equalTo(PLAIN));
-    }
-    
-    @Test
-    public void testSerialize() {
-        //given
-        Form form = Application.getInstance(Form.class);
-        String base64 = CodecUtils.serializeToString(form);
-
-        //then
-        assertThat(base64, not(nullValue()));
     }
 }
