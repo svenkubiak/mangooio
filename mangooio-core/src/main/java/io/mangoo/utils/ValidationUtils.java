@@ -28,6 +28,7 @@ public final class ValidationUtils {
         defaults.put(Key.VALIDATION_URL.toString(), Validation.URL.toString());
         defaults.put(Key.VALIDATION_REGEX.toString(), Validation.REGEX.toString());
         defaults.put(Key.VALIDATION_NUMERIC.toString(), Validation.NUMERIC.toString());
+        defaults.put(Key.VALIDATION_DOMAIN_NAME.toString(), Validation.DOMAIN_NAME.toString());
     }
     
     private ValidationUtils() {

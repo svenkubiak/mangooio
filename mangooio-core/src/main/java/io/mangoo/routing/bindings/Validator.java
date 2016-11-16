@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -26,7 +27,7 @@ import io.mangoo.i18n.Messages;
 public class Validator implements Serializable {
     private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
-    private Map<String, String> values = new HashMap<>();
+    protected Map<String, String> values = new HashMap<>();
     
     @Inject
     private Messages messages;
@@ -259,6 +260,29 @@ public class Validator implements Serializable {
             this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV4, name)));
         }
     }
+    
+    /**
+     * Validates a field to be a valid IPv4 address
+     *
+     * @param name The field to check
+     */
+    public void expectDomainName(String name) {
+        expectDomainName(name, messages.get(Key.VALIDATION_IPV4, name));
+    }
+
+    /**
+     * Validates a field to be a valid IPv4 address
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     */
+    public void expectDomainName(String name, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (!DomainValidator.getInstance().isValid(value)) {
+            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_DOMAIN_NAME, name)));
+        }
+    }
 
     /**
      * Validates a field to be a valid IPv6 address
@@ -399,8 +423,8 @@ public class Validator implements Serializable {
     public void setValues(Map<String, String> values) {
         this.values = values;
     }
-
-    public void add(String key, String value) {
+    
+    public void addValue(String key, String value) {
         this.values.put(key, value);
     }
     

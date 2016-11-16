@@ -181,6 +181,14 @@ routes:
   mapping: FormController.form
 
 - method: POST
+  url: /submit
+  mapping: FormController.submit
+  
+- method: GET
+  url: /flashify
+  mapping: FormController.flashify  
+
+- method: POST
   url: /singlefile
   mapping: FormController.singlefile
 

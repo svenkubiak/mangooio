@@ -71,4 +71,14 @@ public class FormController {
 
         return Response.withOk();
     }
+    
+    public Response flashify() {
+        return Response.withOk();
+    }
+    
+    public Response submit(Form form) {
+        form.keep();
+        
+        return Response.withRedirect("/flashify");
+    }
 }

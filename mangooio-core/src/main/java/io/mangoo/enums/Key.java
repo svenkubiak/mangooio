@@ -73,7 +73,7 @@ public enum Key {
     SUCCESS("success"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize"),
     VALIDATION_EMAIL("validation.email"),
-    VALIDATION_EXACT_MATCH("validation.exactMatch"),
+    VALIDATION_EXACT_MATCH("validation.exactmatch"),
     VALIDATION_IPV4("validation.ipv4"),
     VALIDATION_IPV6("validation.ipv6"),
     VALIDATION_MATCH("validation.match"),
@@ -84,6 +84,7 @@ public enum Key {
     VALIDATION_REGEX("validation.regex"),
     VALIDATION_REQUIRED("validation.required"),
     VALIDATION_URL("validation.url"),
+    VALIDATION_DOMAIN_NAME("validation.domainname"),
     VERSION("version"),
     WARNING("warning");
 

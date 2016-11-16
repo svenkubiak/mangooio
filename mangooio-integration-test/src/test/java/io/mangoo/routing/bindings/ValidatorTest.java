@@ -28,6 +28,7 @@ public class ValidatorTest {
     private static final String EXACT_MATCH = "exactMatch";
     private static final String EXACT_MATCH2 = "exactMatch2";
     private static final String MAX = "max";
+    private static final String DOMAIN_NAME = "domainname";
     private static final String NUMERIC = "numeric";
     private static final String MIN = "min";
     private static final String REQUIRED = "required";
@@ -39,18 +40,18 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(URL, "");
-        validator.add(REGEX, "");
-        validator.add(RANGE, "");
-        validator.add(IPV6, "");
-        validator.add(IPV4, "");
-        validator.add(EMAIL, "");
-        validator.add(MATCH, "");
-        validator.add(EXACT_MATCH, "");
-        validator.add(MAX, "abc");
-        validator.add(MIN, "");
-        validator.add(REQUIRED, "");
-        validator.add(NUMERIC, "");
+        validator.addValue(URL, "");
+        validator.addValue(REGEX, "");
+        validator.addValue(RANGE, "");
+        validator.addValue(IPV6, "");
+        validator.addValue(IPV4, "");
+        validator.addValue(EMAIL, "");
+        validator.addValue(MATCH, "");
+        validator.addValue(EXACT_MATCH, "");
+        validator.addValue(MAX, "abc");
+        validator.addValue(MIN, "");
+        validator.addValue(REQUIRED, "");
+        validator.addValue(NUMERIC, "");
         validator.expectUrl(URL);
         validator.expectRegex(REGEX, PATTERN);
         validator.expectRange(RANGE, 23, 42);
@@ -86,20 +87,20 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(URL, "");
-        validator.add(REGEX, "");
-        validator.add(RANGE, "");
-        validator.add(IPV6, "");
-        validator.add(IPV4, "");
-        validator.add(EMAIL, "");
-        validator.add(MATCH, "");
-        validator.add(MATCH2, "");
-        validator.add(EXACT_MATCH, "");
-        validator.add(EXACT_MATCH2, "");
-        validator.add(MAX, "abc");
-        validator.add(MIN, "");
-        validator.add(REQUIRED, "");
-        validator.add(NUMERIC, "");
+        validator.addValue(URL, "");
+        validator.addValue(REGEX, "");
+        validator.addValue(RANGE, "");
+        validator.addValue(IPV6, "");
+        validator.addValue(IPV4, "");
+        validator.addValue(EMAIL, "");
+        validator.addValue(MATCH, "");
+        validator.addValue(MATCH2, "");
+        validator.addValue(EXACT_MATCH, "");
+        validator.addValue(EXACT_MATCH2, "");
+        validator.addValue(MAX, "abc");
+        validator.addValue(MIN, "");
+        validator.addValue(REQUIRED, "");
+        validator.addValue(NUMERIC, "");
         validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
         validator.expectValue(REGEX, CUSTOM_ERROR_MESSAGE);
         validator.expectRange(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
@@ -135,7 +136,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(REQUIRED, REQUIRED);
+        validator.addValue(REQUIRED, REQUIRED);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -148,7 +149,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(REQUIRED, "");
+        validator.addValue(REQUIRED, "");
         validator.expectValue(REQUIRED);
 
         //then
@@ -162,7 +163,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MIN, "abcdef");
+        validator.addValue(MIN, "abcdef");
         validator.min(MIN, 4);
 
         //then
@@ -176,7 +177,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MIN, "abcdef");
+        validator.addValue(MIN, "abcdef");
         validator.min(MIN, 8);
 
         //then
@@ -190,7 +191,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MIN, "6");
+        validator.addValue(MIN, "6");
         validator.min(MIN, 4);
 
         //then
@@ -204,7 +205,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MIN, "4");
+        validator.addValue(MIN, "4");
         validator.min(MIN, 8);
 
         //then
@@ -218,7 +219,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MAX, "abcdef");
+        validator.addValue(MAX, "abcdef");
         validator.expectMax(MAX, 10);
 
         //then
@@ -232,7 +233,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MAX, "abcdef");
+        validator.addValue(MAX, "abcdef");
         validator.expectMax(MAX, 3);
 
         //then
@@ -246,7 +247,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
             
         //when
-        validator.add(MAX, "3");
+        validator.addValue(MAX, "3");
         validator.expectMax(MAX, 4);
 
         //then
@@ -260,13 +261,42 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(MAX, "4");
+        validator.addValue(MAX, "4");
         validator.expectMax(MAX, 2);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MAX), equalTo(true));
     }
+    
+    @Test
+    public void testValidDomainName() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+            
+        //when
+        validator.addValue(DOMAIN_NAME, "www.mangoo.io");
+        validator.expectDomainName(DOMAIN_NAME);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(DOMAIN_NAME), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidDomainName() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+
+        //when
+        validator.addValue(DOMAIN_NAME, "mangooio");
+        validator.expectDomainName(DOMAIN_NAME);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(DOMAIN_NAME), equalTo(true));
+    }
+
 
     @Test
     public void testValidExactMatch() {
@@ -274,7 +304,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(EXACT_MATCH, EXACT_MATCH);
+        validator.addValue(EXACT_MATCH, EXACT_MATCH);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH);
 
         //then
@@ -288,8 +318,8 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(MATCH, MATCH);
-        validator.add(MATCH2, MATCH2);
+        validator.addValue(MATCH, MATCH);
+        validator.addValue(MATCH2, MATCH2);
         validator.expectExactMatch(MATCH, MATCH2);
 
         //then
@@ -303,8 +333,8 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MATCH, MATCH);
-        validator.add(MATCH2, "mAtcH");
+        validator.addValue(MATCH, MATCH);
+        validator.addValue(MATCH2, "mAtcH");
         validator.expectMatch(MATCH, MATCH2);
 
         //then
@@ -318,7 +348,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(MATCH, MATCH);
+        validator.addValue(MATCH, MATCH);
         validator.expectExactMatch(MATCH, "foo");
 
         //then
@@ -332,7 +362,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(EMAIL, "foo@bar.com");
+        validator.addValue(EMAIL, "foo@bar.com");
         validator.expectEmail(EMAIL);
 
         //then
@@ -346,7 +376,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(EMAIL, "foo @");
+        validator.addValue(EMAIL, "foo @");
         validator.expectExactMatch(EMAIL, "foo");
 
         //then
@@ -360,7 +390,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(IPV4, "192.168.2.1");
+        validator.addValue(IPV4, "192.168.2.1");
         validator.expectIpv4(IPV4);
 
         //then
@@ -374,7 +404,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(IPV4, "192.189.383.122");
+        validator.addValue(IPV4, "192.189.383.122");
         validator.expectIpv4(IPV4);
 
         //then
@@ -388,7 +418,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(IPV6, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344");
+        validator.addValue(IPV6, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344");
         validator.expectIpv6(IPV6);
 
         //then
@@ -402,7 +432,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(IPV6, "1f::::0");
+        validator.addValue(IPV6, "1f::::0");
         validator.expectIpv6(IPV6);
 
         //then
@@ -416,7 +446,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(RANGE, "abcdefg");
+        validator.addValue(RANGE, "abcdefg");
         validator.expectRange(RANGE, 4, 10);
 
         //then
@@ -430,7 +460,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(RANGE, "abcdef");
+        validator.addValue(RANGE, "abcdef");
         validator.expectRange(RANGE, 8, 12);
 
         //then
@@ -444,7 +474,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(RANGE, "6");
+        validator.addValue(RANGE, "6");
         validator.expectRange(RANGE, 4, 10);
 
         //then
@@ -458,7 +488,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(RANGE, "4");
+        validator.addValue(RANGE, "4");
         validator.expectRange(RANGE, 8, 12);
 
         //then
@@ -472,7 +502,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
 
         //when
-        validator.add(REGEX, "abc");
+        validator.addValue(REGEX, "abc");
         validator.expectRegex(REGEX, PATTERN);
 
         //then
@@ -486,7 +516,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(REGEX, "abc03");
+        validator.addValue(REGEX, "abc03");
         validator.expectRegex(REGEX, Pattern.compile("[a-z]"));
 
         //then
@@ -500,7 +530,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(URL, "https://mangoo.io");
+        validator.addValue(URL, "https://mangoo.io");
         validator.expectUrl(URL);
 
         //then
@@ -514,7 +544,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(URL, "https:/mangoo.io");
+        validator.addValue(URL, "https:/mangoo.io");
         validator.expectUrl(URL);
 
         //then
@@ -528,7 +558,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(NUMERIC, "2342");
+        validator.addValue(NUMERIC, "2342");
         validator.expectNumeric(NUMERIC);
 
         //then
@@ -542,7 +572,7 @@ public class ValidatorTest {
         Validator validator = Application.getInstance(Validator.class);
         
         //when
-        validator.add(NUMERIC, "asjcn");
+        validator.addValue(NUMERIC, "asjcn");
         validator.expectNumeric(NUMERIC);
 
         //then

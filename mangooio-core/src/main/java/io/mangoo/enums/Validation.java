@@ -18,7 +18,8 @@ public enum Validation {
     IPV6("{0} must be a valid IPv6 address"),
     RANGE("{0} must have a size between {1} and {2}"),
     URL("{0} must be a valid URL"),
-    NUMERIC("{0} must be a numeric value");
+    NUMERIC("{0} must be a numeric value"),
+    DOMAIN_NAME("{0} must be a valid domain name");
 
     private final String value;
 

@@ -31,6 +31,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,6 +132,16 @@ public class WebResponse {
      */
     public WebResponse withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
+        return this;
+    }
+    
+    /**
+     * Enables the LaxRedirectsStragey allowing more methods to be redirected
+     *
+     * @return Response
+     */
+    public WebResponse withLaxRedirectStrategy() {
+        this.httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         return this;
     }
 
@@ -283,7 +294,7 @@ public class WebResponse {
 
         this.headers.entrySet().forEach(entry -> request.setHeader(entry.getKey(), entry.getValue())); //NOSONAR
 
-        if (responseDisbaleRedirects) {
+        if (this.responseDisbaleRedirects) {
             this.httpClientBuilder.disableRedirectHandling();
         }
 
