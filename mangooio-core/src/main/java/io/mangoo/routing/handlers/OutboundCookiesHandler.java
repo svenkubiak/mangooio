@@ -1,29 +1,20 @@
 package io.mangoo.routing.handlers;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
-import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.cookie.CookieBuilder;
@@ -37,7 +28,6 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class OutboundCookiesHandler implements HttpHandler {
-    private static final Logger LOG = LogManager.getLogger(OutboundCookiesHandler.class);
     private static final Config CONFIG = Application.getConfig();
     private Attachment attachment;
 
@@ -150,7 +140,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             claims.put(ClaimKey.DATA.toString(), flash.getValues());
             
             if (form.flashify()) {
-                claims.put(ClaimKey.FORM.toString(), serializeToString(form));
+                claims.put(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
             }
             
             final LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
@@ -191,25 +181,5 @@ public class OutboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(ResponseHandler.class).handleRequest(exchange);
-    }
-    
-
-    /**
-     * Serializes an object into an Base64 encoded data string
-     * 
-     * @param object The object to serialize
-     * @return The base64 encoded data string
-     */
-    public String serializeToString(Serializable object)  {
-        Objects.requireNonNull(object, Required.OBJECT.toString());
-        
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-            objectOutputStream.writeObject(object);
-        } catch (IOException e) {
-            LOG.error("Failed to serialize object: " + object, e);
-        }
-
-        return Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
     }
 }

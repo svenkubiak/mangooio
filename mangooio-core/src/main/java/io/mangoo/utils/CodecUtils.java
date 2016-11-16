@@ -1,9 +1,11 @@
 package io.mangoo.utils;
 
+import java.io.Serializable;
 import java.util.Base64;
 import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.common.base.Charsets;
@@ -76,30 +78,6 @@ public final class CodecUtils {
     }
     
     /**
-     * Encodes a given String of data to Base64
-     * 
-     * @param data The String to convert
-     * @return Base64 encoded String
-     */
-    public static String encodeBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        return new String(base64Encoder.encode(data.getBytes(Charsets.UTF_8)), Charsets.UTF_8);
-    }
-    
-    /**
-     * Decodes a given String of data to Base64
-     * 
-     * @param data The String to convert
-     * @return Base64 encoded String
-     */
-    public static String decodeBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        return new String(base64Decoder.decode(data.getBytes(Charsets.UTF_8)), Charsets.UTF_8);
-    }
-    
-    /**
      * Encodes a given byte array of data to Base64
      * 
      * @param data The String to convert
@@ -121,5 +99,31 @@ public final class CodecUtils {
         Objects.requireNonNull(data, Required.DATA.toString());
         
         return new String(base64Decoder.decode(data), Charsets.UTF_8);
+    }
+    
+    /**
+     * Serializes an object into an Base64 encoded data string
+     * 
+     * @param object The object to serialize
+     * @return The base64 encoded data string
+     */
+    public static String serializeToBase64(Serializable object)  {
+        Objects.requireNonNull(object, Required.OBJECT.toString());
+        
+        byte[] serialize = SerializationUtils.serialize(object);
+        return base64Encoder.encodeToString(serialize);
+    }
+    
+    /**
+     * Deserialize a given Base64 encoded data string into an object
+     * 
+     * @param data The base64 encoded data string
+     * @return The required object
+     */
+    public static <T> T deserializeFromBase64(String data) {
+        Objects.requireNonNull(data, Required.DATA.toString());
+        
+        byte[] bytes = base64Decoder.decode(data);
+        return SerializationUtils.deserialize(bytes);
     }
 }
