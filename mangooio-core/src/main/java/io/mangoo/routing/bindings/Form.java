@@ -165,7 +165,7 @@ public class Form extends Validator implements Serializable {
     /**
      * Adds the form values to the flash scope
      */
-    public void flash() {
+    public void keep() {
         this.flash = true;
     }
     
@@ -175,10 +175,6 @@ public class Form extends Validator implements Serializable {
      */
     public boolean flashify() {
         return this.flash;
-    }
-    
-    public boolean isValid() {
-        return !hasErrors();
     }
     
     public boolean isSubmitted() {

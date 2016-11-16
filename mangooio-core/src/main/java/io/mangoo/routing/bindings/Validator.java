@@ -52,21 +52,21 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates a given field to be required
+     * Validates a given field to be present with a value
      *
      * @param name The field to check
      */
-    public void required(String name) {
-        required(name, messages.get(Key.VALIDATION_REQUIRED, name));
+    public void expectValue(String name) {
+        expectValue(name, messages.get(Key.VALIDATION_REQUIRED, name));
     }
 
     /**
-     * Validates a given field to be required
+     * Validates a given field to be present with a value
      *
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void required(String name, String message) {
+    public void expectValue(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
@@ -81,7 +81,7 @@ public class Validator implements Serializable {
      * @param minLength The minimum length
      */
     public void min(String name, double minLength) {
-        min(name, minLength, messages.get(Key.VALIDATION_MIN, name, minLength));
+        expectMin(name, minLength, messages.get(Key.VALIDATION_MIN, name, minLength));
     }
 
     /**
@@ -91,7 +91,7 @@ public class Validator implements Serializable {
      * @param minLength The minimum length
      * @param message A custom error message instead of the default one
      */
-    public void min(String name, double minLength, String message) {
+    public void expectMin(String name, double minLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
@@ -112,8 +112,8 @@ public class Validator implements Serializable {
      * @param name The field to check
      *
      */
-    public void max(String name, double maxLength) {
-        max(name, maxLength, messages.get(Key.VALIDATION_MAX, name, maxLength));
+    public void expectMax(String name, double maxLength) {
+        expectMax(name, maxLength, messages.get(Key.VALIDATION_MAX, name, maxLength));
     }
     
     /**
@@ -122,8 +122,8 @@ public class Validator implements Serializable {
      * @param name The field to check
      *
      */
-    public void numeric(String name) {
-        numeric(name, messages.get(Key.VALIDATION_NUMERIC, name));
+    public void expectNumeric(String name) {
+        expectNumeric(name, messages.get(Key.VALIDATION_NUMERIC, name));
     }
     
     /**
@@ -133,7 +133,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      *
      */
-    public void numeric(String name, String message) {
+    public void expectNumeric(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!StringUtils.isNumeric(value)) {
@@ -148,7 +148,7 @@ public class Validator implements Serializable {
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
-    public void max(String name, double maxLength, String message) {
+    public void expectMax(String name, double maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
@@ -168,8 +168,8 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param anotherName The field to check against
      */
-    public void exactMatch(String name, String anotherName) {
-        exactMatch(name, anotherName, messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName));
+    public void expectExactMatch(String name, String anotherName) {
+        expectExactMatch(name, anotherName, messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName));
     }
 
     /**
@@ -179,7 +179,7 @@ public class Validator implements Serializable {
      * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
-    public void exactMatch(String name, String anotherName, String message) {
+    public void expectExactMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
@@ -194,8 +194,8 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param anotherName The field to check against
      */
-    public void match(String name, String anotherName) {
-        match(name, anotherName, messages.get(Key.VALIDATION_MATCH, name, anotherName));
+    public void expectMatch(String name, String anotherName) {
+        expectMatch(name, anotherName, messages.get(Key.VALIDATION_MATCH, name, anotherName));
     }
 
     /**
@@ -205,7 +205,7 @@ public class Validator implements Serializable {
      * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
-    public void match(String name, String anotherName, String message) {
+    public void expectMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
@@ -219,8 +219,8 @@ public class Validator implements Serializable {
      *
      * @param name The field to check
      */
-    public void email(String name) {
-        email(name, messages.get(Key.VALIDATION_EMAIL, name));
+    public void expectEmail(String name) {
+        expectEmail(name, messages.get(Key.VALIDATION_EMAIL, name));
     }
 
     /**
@@ -229,7 +229,7 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void email(String name, String message) {
+    public void expectEmail(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!EmailValidator.getInstance().isValid(value)) {
@@ -242,8 +242,8 @@ public class Validator implements Serializable {
      *
      * @param name The field to check
      */
-    public void ipv4(String name) {
-        ipv4(name, messages.get(Key.VALIDATION_IPV4, name));
+    public void expectIpv4(String name) {
+        expectIpv4(name, messages.get(Key.VALIDATION_IPV4, name));
     }
 
     /**
@@ -252,7 +252,7 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void ipv4(String name, String message) {
+    public void expectIpv4(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
@@ -265,8 +265,8 @@ public class Validator implements Serializable {
      *
      * @param name The field to check
      */
-    public void ipv6(String name) {
-        ipv6(name, messages.get(Key.VALIDATION_IPV6, name));
+    public void expectIpv6(String name) {
+        expectIpv6(name, messages.get(Key.VALIDATION_IPV6, name));
     }
 
     /**
@@ -275,7 +275,7 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void ipv6(String name, String message) {
+    public void expectIpv6(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
@@ -290,8 +290,8 @@ public class Validator implements Serializable {
      * @param minLength The minimum length
      * @param maxLength The maximum length
      */
-    public void range(String name, int minLength, int maxLength) {
-        range(name, minLength, maxLength, messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength));
+    public void expectRange(String name, int minLength, int maxLength) {
+        expectRange(name, minLength, maxLength, messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength));
     }
 
     /**
@@ -302,7 +302,7 @@ public class Validator implements Serializable {
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
-    public void range(String name, int minLength, int maxLength, String message) {
+    public void expectRange(String name, int minLength, int maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
@@ -326,8 +326,8 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param pattern The pre-compiled pattern
      */
-    public void regex(String name, Pattern pattern) {
-        regex(name, pattern, messages.get(Key.VALIDATION_REGEX, name));
+    public void expectRegex(String name, Pattern pattern) {
+        expectRegex(name, pattern, messages.get(Key.VALIDATION_REGEX, name));
     }
 
     /**
@@ -340,7 +340,7 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void regex(String name, Pattern pattern, String message) {
+    public void expectRegex(String name, Pattern pattern, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!pattern.matcher(value).matches()) {
@@ -353,8 +353,8 @@ public class Validator implements Serializable {
      *
      * @param name The field to check
      */
-    public void url(String name) {
-        url(name, messages.get(Key.VALIDATION_URL, name));
+    public void expectUrl(String name) {
+        expectUrl(name, messages.get(Key.VALIDATION_URL, name));
     }
 
     /**
@@ -363,7 +363,7 @@ public class Validator implements Serializable {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void url(String name, String message) {
+    public void expectUrl(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!UrlValidator.getInstance().isValid(value)) {
@@ -402,5 +402,9 @@ public class Validator implements Serializable {
 
     public void add(String key, String value) {
         this.values.put(key, value);
+    }
+    
+    public boolean isValid() {
+        return !hasErrors();
     }
 }

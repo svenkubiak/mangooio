@@ -51,19 +51,19 @@ public class ValidatorTest {
         validator.add(MIN, "");
         validator.add(REQUIRED, "");
         validator.add(NUMERIC, "");
-        validator.url(URL);
-        validator.regex(REGEX, PATTERN);
-        validator.range(RANGE, 23, 42);
-        validator.ipv6(IPV6);
-        validator.ipv4(IPV4);
-        validator.email(EMAIL);
-        validator.match(MATCH, MATCH2);
-        validator.exactMatch(EXACT_MATCH, EXACT_MATCH2);
-        validator.max(MAX, 1);
+        validator.expectUrl(URL);
+        validator.expectRegex(REGEX, PATTERN);
+        validator.expectRange(RANGE, 23, 42);
+        validator.expectIpv6(IPV6);
+        validator.expectIpv4(IPV4);
+        validator.expectEmail(EMAIL);
+        validator.expectMatch(MATCH, MATCH2);
+        validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2);
+        validator.expectMax(MAX, 1);
         validator.min(MIN, 42);
-        validator.required(REQUIRED);
-        validator.url(URL);
-        validator.numeric(NUMERIC);
+        validator.expectValue(REQUIRED);
+        validator.expectUrl(URL);
+        validator.expectNumeric(NUMERIC);
         
         //then
         assertThat(validator.getError(URL), containsString("must be a valid URL"));
@@ -100,19 +100,19 @@ public class ValidatorTest {
         validator.add(MIN, "");
         validator.add(REQUIRED, "");
         validator.add(NUMERIC, "");
-        validator.url(URL, CUSTOM_ERROR_MESSAGE);
-        validator.required(REGEX, CUSTOM_ERROR_MESSAGE);
-        validator.range(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
-        validator.ipv6(IPV6, CUSTOM_ERROR_MESSAGE);
-        validator.ipv4(IPV4, CUSTOM_ERROR_MESSAGE);
-        validator.email(EMAIL, CUSTOM_ERROR_MESSAGE);
-        validator.match(MATCH, MATCH2, CUSTOM_ERROR_MESSAGE);
-        validator.exactMatch(EXACT_MATCH, EXACT_MATCH2, CUSTOM_ERROR_MESSAGE);
-        validator.max(MAX, 1, CUSTOM_ERROR_MESSAGE);
-        validator.min(MIN, 42, CUSTOM_ERROR_MESSAGE);
-        validator.required(REQUIRED, CUSTOM_ERROR_MESSAGE);
-        validator.url(URL, CUSTOM_ERROR_MESSAGE);
-        validator.numeric(NUMERIC, CUSTOM_ERROR_MESSAGE);
+        validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
+        validator.expectValue(REGEX, CUSTOM_ERROR_MESSAGE);
+        validator.expectRange(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
+        validator.expectIpv6(IPV6, CUSTOM_ERROR_MESSAGE);
+        validator.expectIpv4(IPV4, CUSTOM_ERROR_MESSAGE);
+        validator.expectEmail(EMAIL, CUSTOM_ERROR_MESSAGE);
+        validator.expectMatch(MATCH, MATCH2, CUSTOM_ERROR_MESSAGE);
+        validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2, CUSTOM_ERROR_MESSAGE);
+        validator.expectMax(MAX, 1, CUSTOM_ERROR_MESSAGE);
+        validator.expectMin(MIN, 42, CUSTOM_ERROR_MESSAGE);
+        validator.expectValue(REQUIRED, CUSTOM_ERROR_MESSAGE);
+        validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
+        validator.expectNumeric(NUMERIC, CUSTOM_ERROR_MESSAGE);
         
         //then
         assertThat(validator.getError(URL), equalTo(CUSTOM_ERROR_MESSAGE));
@@ -149,7 +149,7 @@ public class ValidatorTest {
         
         //when
         validator.add(REQUIRED, "");
-        validator.required(REQUIRED);
+        validator.expectValue(REQUIRED);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -219,7 +219,7 @@ public class ValidatorTest {
         
         //when
         validator.add(MAX, "abcdef");
-        validator.max(MAX, 10);
+        validator.expectMax(MAX, 10);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -233,7 +233,7 @@ public class ValidatorTest {
         
         //when
         validator.add(MAX, "abcdef");
-        validator.max(MAX, 3);
+        validator.expectMax(MAX, 3);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -247,7 +247,7 @@ public class ValidatorTest {
             
         //when
         validator.add(MAX, "3");
-        validator.max(MAX, 4);
+        validator.expectMax(MAX, 4);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -261,7 +261,7 @@ public class ValidatorTest {
 
         //when
         validator.add(MAX, "4");
-        validator.max(MAX, 2);
+        validator.expectMax(MAX, 2);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -275,7 +275,7 @@ public class ValidatorTest {
         
         //when
         validator.add(EXACT_MATCH, EXACT_MATCH);
-        validator.exactMatch(EXACT_MATCH, EXACT_MATCH);
+        validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -290,7 +290,7 @@ public class ValidatorTest {
         //when
         validator.add(MATCH, MATCH);
         validator.add(MATCH2, MATCH2);
-        validator.exactMatch(MATCH, MATCH2);
+        validator.expectExactMatch(MATCH, MATCH2);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -305,7 +305,7 @@ public class ValidatorTest {
         //when
         validator.add(MATCH, MATCH);
         validator.add(MATCH2, "mAtcH");
-        validator.match(MATCH, MATCH2);
+        validator.expectMatch(MATCH, MATCH2);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -319,7 +319,7 @@ public class ValidatorTest {
         
         //when
         validator.add(MATCH, MATCH);
-        validator.exactMatch(MATCH, "foo");
+        validator.expectExactMatch(MATCH, "foo");
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -333,7 +333,7 @@ public class ValidatorTest {
         
         //when
         validator.add(EMAIL, "foo@bar.com");
-        validator.email(EMAIL);
+        validator.expectEmail(EMAIL);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -347,7 +347,7 @@ public class ValidatorTest {
 
         //when
         validator.add(EMAIL, "foo @");
-        validator.exactMatch(EMAIL, "foo");
+        validator.expectExactMatch(EMAIL, "foo");
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -361,7 +361,7 @@ public class ValidatorTest {
         
         //when
         validator.add(IPV4, "192.168.2.1");
-        validator.ipv4(IPV4);
+        validator.expectIpv4(IPV4);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -375,7 +375,7 @@ public class ValidatorTest {
 
         //when
         validator.add(IPV4, "192.189.383.122");
-        validator.ipv4(IPV4);
+        validator.expectIpv4(IPV4);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -389,7 +389,7 @@ public class ValidatorTest {
         
         //when
         validator.add(IPV6, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344");
-        validator.ipv6(IPV6);
+        validator.expectIpv6(IPV6);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -403,7 +403,7 @@ public class ValidatorTest {
         
         //when
         validator.add(IPV6, "1f::::0");
-        validator.ipv6(IPV6);
+        validator.expectIpv6(IPV6);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -417,7 +417,7 @@ public class ValidatorTest {
 
         //when
         validator.add(RANGE, "abcdefg");
-        validator.range(RANGE, 4, 10);
+        validator.expectRange(RANGE, 4, 10);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -431,7 +431,7 @@ public class ValidatorTest {
         
         //when
         validator.add(RANGE, "abcdef");
-        validator.range(RANGE, 8, 12);
+        validator.expectRange(RANGE, 8, 12);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -445,7 +445,7 @@ public class ValidatorTest {
         
         //when
         validator.add(RANGE, "6");
-        validator.range(RANGE, 4, 10);
+        validator.expectRange(RANGE, 4, 10);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -459,7 +459,7 @@ public class ValidatorTest {
 
         //when
         validator.add(RANGE, "4");
-        validator.range(RANGE, 8, 12);
+        validator.expectRange(RANGE, 8, 12);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -473,7 +473,7 @@ public class ValidatorTest {
 
         //when
         validator.add(REGEX, "abc");
-        validator.regex(REGEX, PATTERN);
+        validator.expectRegex(REGEX, PATTERN);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -487,7 +487,7 @@ public class ValidatorTest {
         
         //when
         validator.add(REGEX, "abc03");
-        validator.regex(REGEX, Pattern.compile("[a-z]"));
+        validator.expectRegex(REGEX, Pattern.compile("[a-z]"));
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -501,7 +501,7 @@ public class ValidatorTest {
         
         //when
         validator.add(URL, "https://mangoo.io");
-        validator.url(URL);
+        validator.expectUrl(URL);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -515,7 +515,7 @@ public class ValidatorTest {
         
         //when
         validator.add(URL, "https:/mangoo.io");
-        validator.url(URL);
+        validator.expectUrl(URL);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -529,7 +529,7 @@ public class ValidatorTest {
         
         //when
         validator.add(NUMERIC, "2342");
-        validator.numeric(NUMERIC);
+        validator.expectNumeric(NUMERIC);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -543,7 +543,7 @@ public class ValidatorTest {
         
         //when
         validator.add(NUMERIC, "asjcn");
-        validator.numeric(NUMERIC);
+        validator.expectNumeric(NUMERIC);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));

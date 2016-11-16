@@ -55,14 +55,14 @@ public class FormController {
     }
 
     public Response validateform(Form form) {
-        form.required("name");
-        form.email("email");
-        form.exactMatch("password", "passwordconfirm"); //NOSONAR
-        form.match("email2", "email2confirm");
-        form.ipv4("ipv4");
-        form.ipv6("ipv6");
-        form.regex("regex", Pattern.compile("[a-z]"));
-        form.max("phone", MAX_SIZE);
+        form.expectValue("name");
+        form.expectEmail("email");
+        form.expectExactMatch("password", "passwordconfirm"); //NOSONAR
+        form.expectMatch("email2", "email2confirm");
+        form.expectIpv4("ipv4");
+        form.expectIpv6("ipv6");
+        form.expectRegex("regex", Pattern.compile("[a-z]"));
+        form.expectMax("phone", MAX_SIZE);
         form.min("fax", MIN_SIZE);
 
         if (form.isValid()) {

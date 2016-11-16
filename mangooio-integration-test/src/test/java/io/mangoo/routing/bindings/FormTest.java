@@ -43,7 +43,7 @@ public class FormTest {
         //when
         form.addValue(FOO, "BlA");
         form.addValue(BAR, "BlA");
-        form.exactMatch(FOO, BAR);
+        form.expectExactMatch(FOO, BAR);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -57,7 +57,7 @@ public class FormTest {
         //when
         form.addValue(FOO, "BlA");
         form.addValue(BAR, "Bla");
-        form.exactMatch(FOO, BAR);
+        form.expectExactMatch(FOO, BAR);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -71,7 +71,7 @@ public class FormTest {
         //when
         form.addValue(FOO, "BLA");
         form.addValue(BAR, "bla");
-        form.match(FOO, BAR);
+        form.expectMatch(FOO, BAR);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -85,7 +85,7 @@ public class FormTest {
         //when
         form.addValue(FOO, "BLA");
         form.addValue(BAR, "bla2");
-        form.match(FOO, BAR);
+        form.expectMatch(FOO, BAR);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -98,7 +98,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.required(FOO);
+        form.expectValue(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -111,7 +111,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "");
-        form.required(FOO);
+        form.expectValue(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -150,7 +150,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.max(FOO, 3);
+        form.expectMax(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -163,7 +163,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "bars");
-        form.max(FOO, 3);
+        form.expectMax(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -176,14 +176,14 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "foo@bar.com");
-        form.email(FOO);
+        form.expectEmail(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
         
         form = getNewForm();
         form.addValue(FOO, "foobar");
-        form.email(FOO);
+        form.expectEmail(FOO);
 
         assertTrue(form.hasErrors());
     }
@@ -195,7 +195,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "foobar");
-        form.email(FOO);
+        form.expectEmail(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -208,7 +208,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_URL);
-        form.url(FOO);
+        form.expectUrl(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -221,7 +221,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_URL);
-        form.url(FOO);
+        form.expectUrl(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -234,7 +234,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_IPV4_ADDRESS);
-        form.ipv4(FOO);
+        form.expectIpv4(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -247,7 +247,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_IPV4_ADDRESS);
-        form.ipv4(FOO);
+        form.expectIpv4(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -260,7 +260,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, VALID_IPV6_ADDRESS);
-        form.ipv6(FOO);
+        form.expectIpv6(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -273,7 +273,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, INVALID_IPV6_ADDRESS);
-        form.ipv6(FOO);
+        form.expectIpv6(FOO);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -286,7 +286,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.range(FOO, 1, 3);
+        form.expectRange(FOO, 1, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -299,7 +299,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "barddddd");
-        form.range(FOO, 1, 4);
+        form.expectRange(FOO, 1, 4);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
