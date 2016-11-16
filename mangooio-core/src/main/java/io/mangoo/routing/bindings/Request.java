@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
@@ -68,7 +67,7 @@ public class Request extends Validator implements Serializable {
     
     public Request withParameter(Map<String, String> parameter) {
         this.parameter = parameter;
-        Application.getInstance(Validator.class).setValues(this.parameter);
+        this.setValues(this.parameter);
         return this;
     }
     
