@@ -26,6 +26,7 @@ public final class ValidationUtils {
         defaults.put(Key.VALIDATION_IPV6.toString(), Validation.IPV6.toString());
         defaults.put(Key.VALIDATION_RANGE.toString(), Validation.RANGE.toString());
         defaults.put(Key.VALIDATION_URL.toString(), Validation.URL.toString());
+        defaults.put(Key.VALIDATION_MATCH_VALUES.toString(), Validation.MACTH_VALUES.toString());
         defaults.put(Key.VALIDATION_REGEX.toString(), Validation.REGEX.toString());
         defaults.put(Key.VALIDATION_NUMERIC.toString(), Validation.NUMERIC.toString());
         defaults.put(Key.VALIDATION_DOMAIN_NAME.toString(), Validation.DOMAIN_NAME.toString());

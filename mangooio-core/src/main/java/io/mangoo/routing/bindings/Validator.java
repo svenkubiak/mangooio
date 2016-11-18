@@ -2,6 +2,7 @@ package io.mangoo.routing.bindings;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -74,7 +75,7 @@ public class Validator implements Serializable {
             this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REQUIRED, name)));
         }
     }
-
+    
     /**
      * Validates a given field to have a minimum length
      *
@@ -212,6 +213,31 @@ public class Validator implements Serializable {
 
         if ((StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) || !value.equalsIgnoreCase(anotherValue)) {
             this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH, name, anotherName)));
+        }
+    }
+    
+    /**
+     * Validates to list of given values to (case-sensitive) match
+     *
+     * @param name The field to check
+     * @param values A list of given values to check against
+     */
+    public void expectMatch(String name, List<String> values) {
+        expectMatch(name, messages.get(Key.VALIDATION_MATCH_VALUES, name), values);
+    }
+
+    /**
+     * Validates to fields to (case-sensitive) match
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     * @param values A list of given values to check against
+     */
+    public void expectMatch(String name, String message, List<String> values) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (!(values).contains(value)) {
+            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH_VALUES, name)));
         }
     }
 

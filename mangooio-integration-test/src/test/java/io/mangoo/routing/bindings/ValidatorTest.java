@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
@@ -354,6 +355,34 @@ public class ValidatorTest {
         //then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MATCH), equalTo(true));
+    }
+    
+    @Test
+    public void testValidMatchValues() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+        
+        //when
+        validator.addValue("foo", "bar");
+        validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bar"));
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError("foo"), equalTo(false));
+    }
+
+    @Test
+    public void testInvalidMatchValues() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+        
+        //when
+        validator.addValue("foo", "bar");
+        validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bra"));
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError("foo"), equalTo(true));
     }
 
     @Test

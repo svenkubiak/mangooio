@@ -85,6 +85,7 @@ public enum Key {
     VALIDATION_REQUIRED("validation.required"),
     VALIDATION_URL("validation.url"),
     VALIDATION_DOMAIN_NAME("validation.domainname"),
+    VALIDATION_MATCH_VALUES("validation.matchvalues"),
     VERSION("version"),
     WARNING("warning");
 

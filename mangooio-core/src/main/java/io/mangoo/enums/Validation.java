@@ -19,6 +19,7 @@ public enum Validation {
     RANGE("{0} must have a size between {1} and {2}"),
     URL("{0} must be a valid URL"),
     NUMERIC("{0} must be a numeric value"),
+    MACTH_VALUES("The values of {0} is not valid"),
     DOMAIN_NAME("{0} must be a valid domain name");
 
     private final String value;
