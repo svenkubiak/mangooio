@@ -72,7 +72,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REQUIRED, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REQUIRED, name)));
         }
     }
     
@@ -98,11 +98,11 @@ public class Validator implements Serializable {
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) < minLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
             }
         } else {
             if (value.length() < minLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
             }
         }
     }
@@ -139,7 +139,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!StringUtils.isNumeric(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_NUMERIC, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_NUMERIC, name)));
         }
     }
 
@@ -155,11 +155,11 @@ public class Validator implements Serializable {
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
             }
         } else {
             if (value.length() > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
             }
         }
     }
@@ -186,7 +186,7 @@ public class Validator implements Serializable {
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
         if ( (StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) || !value.equals(anotherValue)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
         }
     }
 
@@ -212,7 +212,7 @@ public class Validator implements Serializable {
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
         if ((StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) || !value.equalsIgnoreCase(anotherValue)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH, name, anotherName)));
         }
     }
     
@@ -237,7 +237,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!(values).contains(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH_VALUES, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH_VALUES, name)));
         }
     }
 
@@ -260,7 +260,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!EmailValidator.getInstance().isValid(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EMAIL, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EMAIL, name)));
         }
     }
 
@@ -283,7 +283,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV4, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV4, name)));
         }
     }
     
@@ -306,7 +306,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!DomainValidator.getInstance().isValid(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_DOMAIN_NAME, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_DOMAIN_NAME, name)));
         }
     }
 
@@ -329,7 +329,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV6, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV6, name)));
         }
     }
 
@@ -358,11 +358,11 @@ public class Validator implements Serializable {
         if (StringUtils.isNumeric(value)) {
             double doubleValue = Double.parseDouble(value);
             if (doubleValue < minLength || doubleValue > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
             }
         } else {
             if (value.length() < minLength || value.length() > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
             }
         }
     }
@@ -394,7 +394,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!pattern.matcher(value).matches()) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REGEX, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REGEX, name)));
         }
     }
 
@@ -417,7 +417,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!UrlValidator.getInstance().isValid(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_URL, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_URL, name)));
         }
     }
 
@@ -440,6 +440,15 @@ public class Validator implements Serializable {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         return this.values.get(key);
+    }
+
+    private void addError(String name, String message) {
+        Objects.requireNonNull(name, "name can not be null");
+        Objects.requireNonNull(message, "message can not be null");
+        
+        if (!this.errors.containsKey(name)) {
+            this.errors.put(name, message);            
+        }
     }
 
     public Map<String, String> getErrors() {

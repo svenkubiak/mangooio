@@ -72,6 +72,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void facebookOAuth(Request request) {
         final String code = request.getParameter(CODE);
         final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
@@ -107,6 +108,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void googleOAuth(Request request) {
         final String code = request.getParameter(CODE);
         final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
@@ -142,6 +144,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void twitterOAuth(Request request) {
         final String oauthToken = request.getParameter(OAUTH_TOKEN);
         final String oauthVerifier = request.getParameter(OAUTH_VERIFIER);

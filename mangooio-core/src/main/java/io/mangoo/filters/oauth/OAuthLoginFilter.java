@@ -30,6 +30,7 @@ public class OAuthLoginFilter implements MangooFilter {
     private static final Logger LOG = LogManager.getLogger(OAuthCallbackFilter.class);
     
     @Override
+    @SuppressWarnings("rawtypes")
     public Response execute(Request request, Response response) {
         Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
         if (oAuthProvider.isPresent()) {

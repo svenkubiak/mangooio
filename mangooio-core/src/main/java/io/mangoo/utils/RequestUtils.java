@@ -116,6 +116,7 @@ public final class RequestUtils {
      * @param oAuthProvider The OAuth provider Enum
      * @return An OAuthService object or null if creating failed
      */
+    @SuppressWarnings("rawtypes")
     public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 
