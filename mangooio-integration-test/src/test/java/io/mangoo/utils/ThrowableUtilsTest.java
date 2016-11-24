@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.io.File;
+
 import org.junit.Test;
 
 /**
@@ -17,6 +19,7 @@ public class ThrowableUtilsTest {
     @Test
     public void testGetSourceCodePath() {
         //given
+        String separator = File.separator;
         StackTraceElement stackTraceElement = new StackTraceElement("io.mangoo.core.Bootstrap", "parseRoutes", "Bootstrap.java", 173);
         
         //when
@@ -24,6 +27,6 @@ public class ThrowableUtilsTest {
         
         //then
         assertThat(sourceCodePath, not(equalTo(nullValue())));
-        assertThat(sourceCodePath, equalTo("io/mangoo/core/Bootstrap.java"));
+        assertThat(sourceCodePath, equalTo("io" + separator + "mangoo" + separator + "core" + separator + "Bootstrap.java"));
     }
 }

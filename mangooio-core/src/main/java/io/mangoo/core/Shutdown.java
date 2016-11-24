@@ -27,10 +27,10 @@ public class Shutdown extends Thread {
     @Override
     public void run() {
         invokeLifecycle();
-        closeCaches();
-        stopScheduler();
         stopUndertow();
+        stopScheduler();
         stopExecutionManager();
+        closeCaches();
     }
 
     private void invokeLifecycle() {
