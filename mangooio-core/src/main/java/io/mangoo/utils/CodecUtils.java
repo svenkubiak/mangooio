@@ -118,6 +118,7 @@ public final class CodecUtils {
      * Deserialize a given Base64 encoded data string into an object
      * 
      * @param data The base64 encoded data string
+     * @param <T> Just for JavaDoc can be ignored
      * @return The required object
      */
     public static <T> T deserializeFromBase64(String data) {
