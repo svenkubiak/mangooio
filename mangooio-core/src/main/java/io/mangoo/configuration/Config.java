@@ -24,6 +24,7 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
+import io.mangoo.enums.Required;
 
 /**
  * Main configuration class for all properties configured in application.yaml
@@ -43,8 +44,8 @@ public class Config {
     }
 
     public Config(String configFile, Mode mode) {
-        Objects.requireNonNull(configFile, "configFile can not be null");
-        Objects.requireNonNull(mode, "mode can not be null");
+        Objects.requireNonNull(configFile, Required.CONFIG_FILE.toString());
+        Objects.requireNonNull(mode, Required.MODE.toString());
 
         prepare(configFile, mode);
     }
@@ -143,7 +144,7 @@ public class Config {
      */
     public String getMasterKey() {
         if (Application.inTestMode()) {
-            return Default.APPLICATION_MASTERKEY.toString();
+            return Default.APPLICATION_TEST_MASTERKEY.toString();
         }
 
         String key = null;
@@ -160,10 +161,10 @@ public class Config {
      * Checks if a value is encrypt by checking for the prefix crpytex
      *
      * @param value The value to check
-     * @return True if the value starts with cryptex, false othweise
-     */
+     * @return True if the value starts with cryptex, false otherwise
+    */
     public boolean isEncrypted(String value) {
-        Objects.requireNonNull(value, "value can not be null");
+        Objects.requireNonNull(value, Required.VALUE.toString());
         return value.startsWith("cryptex[");
     }
 
@@ -374,12 +375,12 @@ public class Config {
 
     /**
      * Checks if the application.conf stored in conf/application.conf contains an application
-     * secret property (application.secret) that has at least 16 characters (128-Bit)
+     * secret property (application.secret) that has at least 32 characters (256-Bit)
      *
-     * @return True if the configuration contains an application.secret property with at least 16 characters
+     * @return True if the configuration contains an application.secret property with at least 32 characters
      */
     public boolean hasValidSecret() {
-        final String secret = getString(Key.APPLICATION_SECRET);
+        final String secret = getApplicationSecret();
         return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
     }
 
@@ -388,20 +389,6 @@ public class Config {
      */
     public String getApplicationName() {
         return getString(Key.APPLICATION_NAME);
-    }
-
-    /**
-     * @return application.host from application.yaml
-     */
-    public String getApplicationHost() {
-        return getString(Key.APPLICATION_HOST);
-    }
-
-    /**
-     * @return appliction.port from application.yaml
-     */
-    public int getApplicationPort() {
-        return getInt(Key.APPLICATION_PORT);
     }
 
     /**
@@ -559,27 +546,6 @@ public class Config {
     }
 
     /**
-     * @return application.timer from application.yaml or default value if undefined
-     */
-    public boolean isTimerEnabled() {
-        return getBoolean(Key.APPLICATION_TIMER, Default.APPLICATION_TIMER.toBoolean());
-    }
-
-    /**
-     * @return cache.class from application.yaml or default value if undefined
-     */
-    public String getCacheClass() {
-        return getString(Key.CACHE_CLASS, Default.CACHE_CLASS.toString());
-    }
-
-    /**
-     * @return cache.addresses from application.yaml
-     */
-    public String getCacheAddresses() {
-        return getString(Key.CACHE_ADDRESSES);
-    }
-
-    /**
      * @return templateengine.class from application.yaml
      */
     public String getTemplateEngineClass() {
@@ -672,10 +638,38 @@ public class Config {
     }
 
     /**
-     * @return application.jwt.signkey or null if undefined
+     * @return connector.http.host or null if undefined
+     */
+    public String getConnectorHttpHost() {
+        return getString(Key.CONNECTOR_HTTP_HOST, null);
+    }
+
+    /**
+     * @return connector.http.host or 0 if undefined
+     */
+    public int getConnectorHttpPort() {
+        return getInt(Key.CONNECTOR_HTTP_PORT, 0);
+    }
+
+    /**
+     * @return connector.http.int or null if undefined
+     */
+    public String getConnectorAjpHost() {
+        return getString(Key.CONNECTOR_AJP_HOST, null);
+    }
+
+    /**
+     * @return connector.http.int or 0 if undefined
+     */
+    public int getConnectorAjpCPort() {
+        return getInt(Key.CONNECTOR_AJP_PORT, 0);
+    }
+    
+    /**
+     * @return application.jwt.signkey or application secret if undefined
      */
     public String getJwtsSignKey() {
-        return getString(Key.APPLICATION_JWT_SIGNKEY, null);
+        return getString(Key.APPLICATION_JWT_SIGNKEY, getApplicationSecret());
     }
 
     /**
@@ -726,5 +720,26 @@ public class Config {
      */
     public String getContentSecurityPolicyHeader() {
         return getString(Key.APPLICATION_HEADERS_CONTENTSECURITYPOLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString());
+    }
+
+    /**
+     * @return cache.cluster.enabled or default value if undefined
+     */
+    public boolean isClusteredCached() {
+        return getBoolean(Key.CACHE_CLUSTER_ENABLE, Default.CACHE_CLUSTER_ENABLE.toBoolean());
+    }
+
+    /**
+     * @return authentication.lock or default value if undefined
+     */
+    public int getAuthenticationLock() {
+        return getInt(Key.AUTH_LOCK, Default.AUTH_LOCK.toInt());
+    }
+
+    /**
+     * @return cache.cluster.url or null if undefined
+     */
+    public String getCacheClusterUrl() {
+        return getString(Key.CACHE_CLUSTER_URL, null);
     }
 }

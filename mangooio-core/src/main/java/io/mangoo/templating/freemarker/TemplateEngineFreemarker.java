@@ -22,9 +22,11 @@ import freemarker.template.TemplateException;
 import freemarker.template.Version;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.models.Source;
+import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
@@ -67,7 +69,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
     @Override
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
+    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
         Template template;
         try {
             template = configuration.getTemplate(templatePath);
@@ -78,8 +80,9 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
+        content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
-        content.put("authenticityToken", new AuthenticityTokenDirective(session));
+        content.put("authenticity", new AuthenticityTokenDirective(session));
         content.put("authenticityForm", new AuthenticityFormDirective(session));
 
         return processTemplate(content, template);
@@ -152,8 +155,8 @@ public class TemplateEngineFreemarker implements TemplateEngine {
      * @throws IOException IOException
      */
     private String processTemplate(Map<String, Object> content, Template template) throws MangooTemplateEngineException {
-        Objects.requireNonNull(content, "content can not be null");
-        Objects.requireNonNull(template, "template can not be null");
+        Objects.requireNonNull(content, Required.CONTENT.toString());
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
         
         StringWriter buffer = new StringWriter(MAX_CHARS);
         try {
@@ -167,7 +170,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
     @Override
     public String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, "templateName can not be null");
+        Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
 
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }

@@ -1,7 +1,7 @@
 package io.mangoo.cache;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
@@ -26,13 +26,6 @@ public interface Cache {
     public void remove(String key);
 
     /**
-     * Returns the size (number of elements) of cached values
-     *
-     * @return Cache size
-     */
-    public long size();
-
-    /**
      * Clears the complete cache by invalidating all entries
      */
     public void clear();
@@ -54,16 +47,28 @@ public interface Cache {
      * @param map The map to add
      */
     public void putAll(Map<String, Object> map);
+    
+    /**
+     * Increments a cache counter with a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger
+     */
+    public AtomicInteger increment(String key);
+    
+    /**
+     * Decrements a cache counter with a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger
+     */
+    public AtomicInteger decrement(String key);
 
     /**
-     * @return The complete content of the cache
+     * Retrieves the current counter for a given key
+     * 
+     * @param key The key for the cached value
+     * @return A counter based on AtomicInteger or null if none found
      */
-    public ConcurrentMap<String, Object> getAll();
-
-    /**
-     * Retrieves the cache statistics
-     *
-     * @return Map containing cache statistics
-     */
-    public Map<String, Object> getStats();
+    public AtomicInteger getCounter(String key);
 }

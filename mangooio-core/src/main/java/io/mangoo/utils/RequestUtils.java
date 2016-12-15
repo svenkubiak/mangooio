@@ -4,6 +4,7 @@ import java.net.URI;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,8 +27,18 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.oauth.OAuthProvider;
+import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
+import io.undertow.security.api.AuthenticationMechanism;
+import io.undertow.security.api.AuthenticationMode;
+import io.undertow.security.handlers.AuthenticationCallHandler;
+import io.undertow.security.handlers.AuthenticationConstraintHandler;
+import io.undertow.security.handlers.AuthenticationMechanismsHandler;
+import io.undertow.security.handlers.SecurityInitialHandler;
+import io.undertow.security.impl.BasicAuthenticationMechanism;
+import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -46,7 +57,6 @@ import io.undertow.websockets.core.WebSocketChannel;
 public final class RequestUtils {
     public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
     private static final Config CONFIG = Application.getConfig();
-    private static final String EXCHANGE_REQUIRED = "HttpServerExchange can not be null";
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
     private static final int AUTH_PREFIX_LENGTH = 3;
@@ -64,7 +74,7 @@ public final class RequestUtils {
      * @return A single map contain both request and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final Map<String, String> requestParamater = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
@@ -81,7 +91,7 @@ public final class RequestUtils {
      * @return True if the request is a POST or a PUT request, false otherwise
      */
     public static boolean isPostOrPut(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
     }
@@ -93,7 +103,7 @@ public final class RequestUtils {
      * @return True if the request content-type contains application/json, false otherwise
      */
     public static boolean isJsonRequest(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, EXCHANGE_REQUIRED);
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
@@ -106,8 +116,9 @@ public final class RequestUtils {
      * @param oAuthProvider The OAuth provider Enum
      * @return An OAuthService object or null if creating failed
      */
+    @SuppressWarnings("rawtypes")
     public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
-        Objects.requireNonNull(oAuthProvider, "oAuthProvider can not be null");
+        Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 
         OAuthService oAuthService = null;
         switch (oAuthProvider) {
@@ -251,5 +262,25 @@ public final class RequestUtils {
         }
 
         return buffer.toString();
+    }
+    
+    /**
+     * Adds a Wrapper to the handler when the request requires authentication
+     * 
+     * @param httpHandler The Handler to wrap
+     * @param username The username to use
+     * @param password The password to use
+     * @return An HttpHandler wrapped through BasicAuthentication
+     */
+    public static HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
+        Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        
+        HttpHandler wrap = new AuthenticationCallHandler(httpHandler);
+        wrap = new AuthenticationConstraintHandler(wrap);
+        wrap = new AuthenticationMechanismsHandler(wrap, Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required")));
+        
+        return new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), wrap);
     }
 }

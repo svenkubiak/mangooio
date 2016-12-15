@@ -10,6 +10,7 @@ import com.icegreen.greenmail.util.ServerSetup;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 
 /**
  *
@@ -23,7 +24,7 @@ public class Smtp {
 
     @Inject
     public Smtp(Config config) {
-        this.config = Objects.requireNonNull(config, "config can not be null");
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
     }
 
     public void start() {

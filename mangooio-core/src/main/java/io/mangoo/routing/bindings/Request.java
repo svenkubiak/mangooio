@@ -1,16 +1,18 @@
 package io.mangoo.routing.bindings;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.mangoo.core.Application;
-import io.mangoo.interfaces.MangooValidator;
+import io.mangoo.enums.Required;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
@@ -24,35 +26,56 @@ import io.undertow.util.HttpString;
  * @author svenkubiak
  *
  */
-public class Request implements MangooValidator {
-    private HttpServerExchange httpServerExchange;
+public class Request extends Validator implements Serializable {
+    private static final long serialVersionUID = 1901891944955577394L;
+    private transient HttpServerExchange httpServerExchange;
+    private transient JsonWebToken jsonWebToken;
+    private transient Session session;
+    private transient Authentication authentication;
+    private Map<String, Cookie> cookies; //NOSONAR
+    private Map<String, Object> attributes = new HashMap<>(); //NOSONAR
     private String body;
-    private Session session;
-    private String authenticityToken;
-    private Authentication authentication;
-    private Validator validator;
+    private String authenticity;
     private Map<String, String> parameter;
-    private Map<String, Cookie> cookies;
-    private JsonWebToken jsonWebToken;
+
 
     public Request(){
-        //Empty constructor required for Google Guice
+        //Empty constructor for google guice
     }
 
-    public Request(HttpServerExchange httpServerExchange, Session session, String authenticityToken, Authentication authentication, Map<String, String> parameter, String body) {
-        Objects.requireNonNull(httpServerExchange, "httpServerExchange can not be null");
+    public Request(HttpServerExchange httpServerExchange) {
+        Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         this.httpServerExchange = httpServerExchange;
-        this.session = session;
-        this.authenticityToken = authenticityToken;
-        this.authentication = authentication;
-        this.body = body;
-        this.parameter = parameter;
-        this.validator = Application.getInstance(Validator.class);
-        this.validator.setValues(this.parameter);
         this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
     }
 
+    public Request withSession(Session session) {
+        this.session = session;
+        return this;
+    }
+    
+    public Request withAuthenticity(String authenticity) {
+        this.authenticity = authenticity;
+        return this;
+    }
+    
+    public Request withAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+        return this;
+    }
+    
+    public Request withParameter(Map<String, String> parameter) {
+        this.parameter = parameter;
+        this.setValues(this.parameter);
+        return this;
+    }
+    
+    public Request withBody(String body) {
+        this.body = body;
+        return this;
+    }
+    
     /**
      * @return The current session
      */
@@ -74,7 +97,11 @@ public class Request implements MangooValidator {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
-        return JsonUtils.fromJson(this.body, Map.class);
+        if (StringUtils.isNotBlank(this.body)) {
+            return JsonUtils.fromJson(this.body, Map.class);
+        }
+        
+        return new HashMap<>();
     }
 
     /**
@@ -92,7 +119,7 @@ public class Request implements MangooValidator {
      * @return True if the token matches, false otherwise
      */
     public boolean authenticityMatches() {
-        return this.session.getAuthenticityToken().equals(this.authenticityToken);
+        return this.session.getAuthenticity().equals(this.authenticity);
     }
 
     /**
@@ -211,6 +238,17 @@ public class Request implements MangooValidator {
     public String getCharset() {
         return this.httpServerExchange.getRequestCharset();
     }
+    
+    /**
+     * Adds an attribute to the internal attributes map
+     * 
+     * @param key The key to store the attribute
+     * @param value The value to store
+     */
+    public void addAttribute(String key, Object value) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        this.attributes.put(key, value);
+    }
 
     /**
      * @return The content length of the request, or <code>-1</code> if it has not been set
@@ -244,6 +282,24 @@ public class Request implements MangooValidator {
     }
     
     /**
+     * Returns an object attribute from a given key
+     * 
+     * @param key The key the attribute is stored
+     * @return Object the value from the attribues map
+     */
+    public Object getAttribute(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        return this.attributes.get(key);
+    }
+    
+    /**
+     * @return All attributes of the request
+     */
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
+    
+    /**
      * Set a Json Web Token to the request
      * @param jsonWebToken The Json Web Token
      */
@@ -258,15 +314,5 @@ public class Request implements MangooValidator {
      */
     public Optional<JsonWebToken> getJsonWebToken() {
         return Optional.ofNullable(this.jsonWebToken);
-    }
-
-    @Override
-    public Validator validation() {
-        return this.validator;
-    }
-
-    @Override
-    public String getError(String name) {
-        return this.validator.hasError(name) ? this.validator.getError(name) : "";
     }
 }

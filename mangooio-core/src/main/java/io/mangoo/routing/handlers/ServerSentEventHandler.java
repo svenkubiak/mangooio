@@ -17,15 +17,15 @@ import io.undertow.util.Headers;
  *
  */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private final boolean requiresAuthentication;
+    private final boolean hasAuthentication;
 
-    public ServerSentEventHandler(boolean requiresAuthentication) {
-        this.requiresAuthentication = requiresAuthentication;
+    public ServerSentEventHandler(boolean hasAuthentication) {
+        this.hasAuthentication = hasAuthentication;
     }
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
-        if (this.requiresAuthentication) {
+        if (this.hasAuthentication) {
             String header = null;
             HeaderValues headerValues = connection.getRequestHeaders().get(Headers.COOKIE);
             if (headerValues != null) {

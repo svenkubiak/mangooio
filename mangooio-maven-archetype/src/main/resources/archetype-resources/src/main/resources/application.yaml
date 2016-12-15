@@ -12,15 +12,10 @@ default:
         name       : ${application-name} 
         secret     : ${application-secret}
         language   : en
-        host       : localhost
-        port       : 8080
-        minify:
-            js        : false
-            css       : false
-            jsfolder  : /foo
-            cssfolder : /bar
-            gzipjs    : false
-            gzipcss   : false
+    connector:
+        http:
+            host      : localhost
+            port      : 8080          
     auth:
         redirect  : /login
         cookie:
@@ -39,11 +34,17 @@ default:
         ssl        : false
         
 test:
-    application:
-        port       : 10808
+    connector:
+        http:
+            host      : localhost
+            port      : 9090 
     smtp:
-        port       : 3055
+        port       : 3025
         
 dev:
+    connector:
+        http:
+            host      : localhost
+            port      : 9090 
     smtp:
         port       : 3025

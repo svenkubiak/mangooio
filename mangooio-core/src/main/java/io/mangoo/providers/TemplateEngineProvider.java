@@ -42,5 +42,4 @@ public class TemplateEngineProvider implements Provider<TemplateEngine> {
     public TemplateEngine get() {
         return this.templateEngine;
     }
-
 }

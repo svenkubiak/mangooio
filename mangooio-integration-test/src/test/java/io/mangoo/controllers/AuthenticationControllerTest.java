@@ -54,6 +54,7 @@ public class AuthenticationControllerTest {
         
         //then
         assertThat(response, not(nullValue()));
+        assertThat(response.getContent(), equalTo("foo"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when

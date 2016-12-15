@@ -13,6 +13,8 @@ import org.quartz.Trigger;
 
 import com.google.common.base.Preconditions;
 
+import io.mangoo.enums.Required;
+
 /**
  * 
  * @author svenkubiak
@@ -35,9 +37,9 @@ public final class SchedulerUtils {
      * @return A new Trigger object
      */
     public static Trigger createTrigger(String identity, String groupName, String description, String cron) {
-        Objects.requireNonNull(identity, "Identity is required for creating a new trigger");
-        Objects.requireNonNull(groupName, "groupName is required for new trigger");
-        Objects.requireNonNull(cron, "cron is required for new trigger");
+        Objects.requireNonNull(identity, Required.IDENTITY.toString());
+        Objects.requireNonNull(groupName, Required.GROUP_NAME.toString());
+        Objects.requireNonNull(cron, Required.CRON.toString());
         Preconditions.checkArgument(CronExpression.isValidExpression(cron), "cron expression is invalid");
 
         return newTrigger()
@@ -58,9 +60,9 @@ public final class SchedulerUtils {
      * @return A new JobDetail object
      */
     public static JobDetail createJobDetail(String identity, String groupName, Class<? extends Job> clazz) {
-        Objects.requireNonNull(identity, "identity is required for new JobDetail");
-        Objects.requireNonNull(groupName, "groupName is required for new JobDetail");
-        Objects.requireNonNull(clazz, "clazz is required for new JobDetail");
+        Objects.requireNonNull(identity, Required.IDENTITY.toString());
+        Objects.requireNonNull(groupName, Required.GROUP_NAME.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return newJob(clazz)
                 .withIdentity(identity, groupName)

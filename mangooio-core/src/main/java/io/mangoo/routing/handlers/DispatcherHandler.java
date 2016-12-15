@@ -16,6 +16,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Attachment;
@@ -30,6 +31,7 @@ import io.undertow.server.HttpServerExchange;
  * The request chain contains the following handlers in order:
  *
  * DispatcherHandler
+ * LimitHandler
  * LocalHandler
  * InboundCookiesHandler
  * FormHandler
@@ -41,27 +43,30 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class DispatcherHandler implements HttpHandler {
-    private static final Config CONFIG = Application.getConfig();
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final Config CONFIG = Application.getConfig();
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
-    private final TemplateEngine templateEngine;
     private final Messages messages;
     private final Crypto crypto;
     private final Map<String, Class<?>> methodParameters;
     private final Class<?> controllerClass;
     private final String controllerClassName;
     private final String controllerMethodName;
-    private final int methodParametersCount;
-    private final boolean async;
     private final boolean hasRequestFilter;
+    private TemplateEngine templateEngine;
+    private String username;
+    private String password;    
+    private int limit;
+    private final int methodParametersCount;
+    private boolean blocking;
+    private boolean timer;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod, boolean async, boolean internalTemplateEngine) {
-        Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        Objects.requireNonNull(controllerMethod, "controllerMethod can not be null");
+    public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
+        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
 
-        this.templateEngine = internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
@@ -69,7 +74,6 @@ public class DispatcherHandler implements HttpHandler {
         this.controllerClassName = controllerClass.getSimpleName();
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
-        this.async = async;
         this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
 
         try {
@@ -92,10 +96,40 @@ public class DispatcherHandler implements HttpHandler {
             }
         }
     }
+    
+    public DispatcherHandler isBlocking(boolean blocking) {
+        this.blocking = blocking;
+        return this;
+    }
 
+    public DispatcherHandler withInternalTemplateEngine(boolean internalTemplateEngine) {
+        this.templateEngine = internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
+        return this;
+    }
+    
+    public DispatcherHandler withTimer(boolean timer) {
+        this.timer = timer;
+        return this;
+    }
+    
+    public DispatcherHandler withUsername(String username) {
+        this.username = username;
+        return this;
+    }
+    
+    public DispatcherHandler withPassword(String password) {
+        this.password = password;
+        return this;
+    }
+    
+    public DispatcherHandler withLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostOrPut(exchange) || this.async) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostOrPut(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }
@@ -117,6 +151,10 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestFilter(this.hasRequestFilter)
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
+            .withTimer(this.timer)
+            .withLimit(this.limit)
+            .withUsername(this.username)
+            .withPassword(this.password)
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto);
 
@@ -149,6 +187,6 @@ public class DispatcherHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(LocaleHandler.class).handleRequest(exchange);
+        Application.getInstance(LimitHandler.class).handleRequest(exchange);
     }
 }

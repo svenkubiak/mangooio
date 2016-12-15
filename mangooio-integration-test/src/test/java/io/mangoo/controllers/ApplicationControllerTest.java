@@ -24,7 +24,6 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Key;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.Headers;
@@ -50,6 +49,22 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+    
+    @Test
+    public void testLimit() {
+        //given
+        WebResponse response = null;
+
+        //then
+        for (int i=0; i <= 10; i++) {
+            response = WebRequest.get("/limit").execute();   
+            assertThat(response, not(nullValue()));
+            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        }
+        response = WebRequest.get("/limit").execute();   
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
     }
 
     @Test
@@ -158,8 +173,8 @@ public class ApplicationControllerTest {
     public void testBinaryDownload() throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);
-        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+        final String host = config.getConnectorHttpHost();
+        final int port = config.getConnectorHttpPort();
         final File file = new File(UUID.randomUUID().toString());
         final FileOutputStream fileOutputStream = new FileOutputStream(file);
 

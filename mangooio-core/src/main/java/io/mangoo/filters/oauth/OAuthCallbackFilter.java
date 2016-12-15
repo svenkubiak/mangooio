@@ -72,6 +72,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void facebookOAuth(Request request) {
         final String code = request.getParameter(CODE);
         final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
@@ -107,6 +108,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void googleOAuth(Request request) {
         final String code = request.getParameter(CODE);
         final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
@@ -142,6 +144,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      *
      * @param request The current request
      */
+    @SuppressWarnings("rawtypes")
     private void twitterOAuth(Request request) {
         final String oauthToken = request.getParameter(OAUTH_TOKEN);
         final String oauthVerifier = request.getParameter(OAUTH_VERIFIER);
@@ -184,7 +187,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      * @return A OAuth response
      */
     private com.github.scribejava.core.model.Response getResourceResponse(OAuth20Service oAuth20Service, OAuth2AccessToken oAuth2AccessToken, String resource) {
-        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth20Service);
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth20Service.getConfig());
         oAuth20Service.signRequest(oAuth2AccessToken, request);
 
         return request.send();
@@ -200,7 +203,7 @@ public class OAuthCallbackFilter implements MangooFilter {
      * @return A OAuth response
      */
     private com.github.scribejava.core.model.Response getResourceResponse(OAuth10aService oAuth10aService, OAuth1AccessToken oAuth1AccessToken, String resource) {
-        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth10aService);
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth10aService.getConfig());
         oAuth10aService.signRequest(oAuth1AccessToken, request);
 
         return request.send();

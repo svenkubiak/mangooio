@@ -1,20 +1,23 @@
 package io.mangoo.routing.handlers;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
-import com.google.common.base.Joiner;
-
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
+import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
+import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.CookieBuilder;
+import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.cookie.CookieBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -26,15 +29,15 @@ import io.undertow.server.handlers.Cookie;
  */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
-    private Attachment requestAttachment;
+    private Attachment attachment;
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.requestAttachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
 
-        setSessionCookie(exchange, requestAttachment.getSession());
-        setFlashCookie(exchange, requestAttachment.getFlash());
-        setAuthenticationCookie(exchange, requestAttachment.getAuthentication());
+        setSessionCookie(exchange);
+        setFlashCookie(exchange);
+        setAuthenticationCookie(exchange);
 
         nextHandler(exchange);
     }
@@ -44,31 +47,29 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setSessionCookie(HttpServerExchange exchange, Session session) {
+    protected void setSessionCookie(HttpServerExchange exchange) {
+        Session session = this.attachment.getSession();
+        
         if (session != null && session.hasChanges()) {
-            final String data = Joiner.on(Default.SPLITTER.toString()).withKeyValueSeparator(Default.SEPERATOR.toString()).join(session.getValues());
-            final String version = CONFIG.getCookieVersion();
-            final String authenticityToken = session.getAuthenticityToken();
+            Map<String, Object> claims = new HashMap<>();
+            claims.put(ClaimKey.AUHTNETICITY.toString(), session.getAuthenticity());
+            claims.put(ClaimKey.VERSION.toString(), CONFIG.getCookieVersion());
+            claims.put(ClaimKey.DATA.toString(), session.getValues());
+            
             final LocalDateTime expires = session.getExpires();
-            final StringBuilder buffer = new StringBuilder()
-                    .append(DigestUtils.sha512Hex(data + authenticityToken + expires + version + CONFIG.getApplicationSecret()))
-                    .append(Default.DELIMITER.toString())
-                    .append(authenticityToken)
-                    .append(Default.DELIMITER.toString())
-                    .append(expires)
-                    .append(Default.DELIMITER.toString())
-                    .append(version)
-                    .append(Default.DATA_DELIMITER.toString())
-                    .append(data);
+            String jwt = Jwts.builder()
+                    .setClaims(claims)
+                    .setExpiration(DateUtils.localDateTimeToDate(expires))
+                    .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                    .compact();
 
-            String value = buffer.toString();
             if (CONFIG.isSessionCookieEncrypt()) {
-                value = this.requestAttachment.getCrypto().encrypt(value);
+                jwt = this.attachment.getCrypto().encrypt(jwt);
             }
 
             final Cookie cookie = CookieBuilder.create()
                 .name(CONFIG.getSessionCookieName())
-                .value(value)
+                .value(jwt)
                 .secure(CONFIG.isSessionCookieSecure())
                 .httpOnly(true)
                 .expires(expires)
@@ -83,7 +84,9 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setAuthenticationCookie(HttpServerExchange exchange, Authentication authentication) {
+    protected void setAuthenticationCookie(HttpServerExchange exchange) {
+        Authentication authentication = this.attachment.getAuthentication();
+        
         if (authentication != null && authentication.hasAuthenticatedUser()) {
             Cookie cookie;
             final String cookieName = CONFIG.getAuthenticationCookieName();
@@ -95,27 +98,24 @@ public class OutboundCookiesHandler implements HttpHandler {
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
-                final String authenticatedUser = authentication.getAuthenticatedUser();
-                final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
-                final String version = CONFIG.getAuthCookieVersion();
-
-                final StringBuilder buffer = new StringBuilder()
-                        .append(DigestUtils.sha512Hex(authenticatedUser + expires + version + CONFIG.getApplicationSecret()))
-                        .append(Default.DELIMITER.toString())
-                        .append(expires)
-                        .append(Default.DELIMITER.toString())
-                        .append(version)
-                        .append(Default.DATA_DELIMITER.toString())
-                        .append(authenticatedUser);
-
-                String value = buffer.toString();
+                Map<String, Object> claims = new HashMap<>();
+                claims.put(ClaimKey.VERSION.toString(), CONFIG.getAuthCookieVersion());
+                
+                final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusHours(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
+                String jwt = Jwts.builder()
+                        .setClaims(claims)
+                        .setSubject(authentication.getAuthenticatedUser())
+                        .setExpiration(DateUtils.localDateTimeToDate(expires))
+                        .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                        .compact();
+                
                 if (CONFIG.isAuthenticationCookieEncrypt()) {
-                    value = this.requestAttachment.getCrypto().encrypt(value);
+                    jwt = this.attachment.getCrypto().encrypt(jwt);
                 }
 
                 cookie = CookieBuilder.create()
                         .name(cookieName)
-                        .value(value)
+                        .value(jwt)
                         .secure(CONFIG.isAuthenticationCookieSecure())
                         .httpOnly(true)
                         .expires(expires)
@@ -131,15 +131,31 @@ public class OutboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    protected void setFlashCookie(HttpServerExchange exchange, Flash flash) {
-        if (flash != null && !flash.isDiscard() && flash.hasContent()) {
-            final String values = Joiner.on("&").withKeyValueSeparator(":").join(flash.getValues());
-
+    protected void setFlashCookie(HttpServerExchange exchange) {
+        Flash flash = this.attachment.getFlash();
+        Form form = this.attachment.getForm();
+        
+        if (flash != null && !flash.isDiscard() && (flash.hasContent() || form.flashify())) {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put(ClaimKey.DATA.toString(), flash.getValues());
+            
+            if (form.flashify()) {
+                claims.put(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
+            }
+            
+            final LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
+            String jwt = Jwts.builder()
+                    .setClaims(claims)
+                    .setExpiration(DateUtils.localDateTimeToDate(expires))
+                    .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                    .compact();
+            
             final Cookie cookie = CookieBuilder.create()
                     .name(CONFIG.getFlashCookieName())
-                    .value(values)
+                    .value(jwt)
                     .secure(CONFIG.isFlashCookieSecure())
                     .httpOnly(true)
+                    .expires(expires)
                     .build();
 
             exchange.setResponseCookie(cookie);

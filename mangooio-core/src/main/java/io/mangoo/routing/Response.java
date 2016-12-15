@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.base.Charsets;
 
 import io.mangoo.enums.ContentType;
+import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.Headers;
@@ -55,7 +56,7 @@ public final class Response {
     }
 
     private Response(String redirectTo) {
-        Objects.requireNonNull(redirectTo, "redirectTo can not be null");
+        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO.toString());
         
         this.redirect = true;
         this.rendered = true;
@@ -206,7 +207,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public static Response withRedirect(String redirectTo) {
-        Objects.requireNonNull(redirectTo, "redirectTo can not be null");
+        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO.toString());
 
         return new Response(redirectTo);
     }
@@ -218,7 +219,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andTemplate(String template) {
-        Objects.requireNonNull(template, "template can not be null");
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
         this.template = template;
 
         return this;
@@ -231,7 +232,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContentType(String contentType) {
-        Objects.requireNonNull(contentType, "contentType can not be null");
+        Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
         this.contentType = contentType;
         this.headers.put(Headers.CONTENT_TYPE, contentType);
 
@@ -245,7 +246,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andCharset(String charset) {
-        Objects.requireNonNull(charset, "charset can not be null");
+        Objects.requireNonNull(charset, Required.CHARSET.toString());
         this.charset = charset;
 
         return this;
@@ -259,7 +260,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(String name, Object object) {
-        Objects.requireNonNull(name, "name can not be null");
+        Objects.requireNonNull(name, Required.NAME.toString());
         this.content.put(name, object);
 
         return this;
@@ -287,7 +288,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andCookie(Cookie cookie) {
-        Objects.requireNonNull(cookie, "cookie can not be null");
+        Objects.requireNonNull(cookie, Required.COOKIE.toString());
         this.cookies.add(cookie);
 
         return this;
@@ -302,7 +303,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andJsonBody(Object jsonObject) {
-        Objects.requireNonNull(jsonObject, "jsonObject can not be null");
+        Objects.requireNonNull(jsonObject, Required.JSON_OBJECT.toString());
 
         this.contentType = ContentType.APPLICATION_JSON.toString();
         this.body = JsonUtils.toJson(jsonObject);
@@ -318,7 +319,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andBinaryFile(File file) {
-        Objects.requireNonNull(file, "file can not be null");
+        Objects.requireNonNull(file, Required.FILE.toString());
 
         try (FileInputStream fileInputStream = new FileInputStream(file)){
             this.binaryFileName = file.getName();
@@ -339,7 +340,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andBinaryContent(byte [] content) {
-        Objects.requireNonNull(content, "content can not be null");
+        Objects.requireNonNull(content, Required.CONTENT.toString());
 
         this.binaryContent = content.clone();
         this.binary = true;
@@ -386,7 +387,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeader(HttpString key, String value) {
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
         this.headers.put(key, value);
 
         return this;
@@ -400,7 +401,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(Map<String, Object> content) {
-        Objects.requireNonNull(content, "content can not be null");
+        Objects.requireNonNull(content, Required.CONTENT.toString());
         this.content.putAll(content);
 
         return this;
@@ -414,7 +415,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeaders(Map<HttpString, String> headers) {
-        Objects.requireNonNull(headers, "headers can not be null");
+        Objects.requireNonNull(headers, Required.HEADERS.toString());
         this.headers.putAll(headers);
 
         return this;

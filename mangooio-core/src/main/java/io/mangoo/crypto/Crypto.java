@@ -7,17 +7,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
-import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.engines.AESLightEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 
 /**
  * Convenient class for encryption and decryption
@@ -29,13 +30,10 @@ public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private static final Config CONFIG = Application.getConfig();
     private static final int KEYINDEX_START = 0;
-    private static final int BLOCK_SIZE = 16;
-    private static final int KEYLENGTH_16 = 16;
-    private static final int KEYLENGTH_24 = 24;
     private static final int KEYLENGTH_32 = 32;
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
-    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESFastEngine()));
+    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
     
     /**
      * Decrypts an given encrypted text using the application secret property (application.secret) as key
@@ -44,9 +42,9 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText) {
-        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
+        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
 
-        return decrypt(encrytedText, getSizedKey(CONFIG.getString(Key.APPLICATION_SECRET)));
+        return decrypt(encrytedText, getSizedKey(CONFIG.getApplicationSecret()));
     }
 
     /**
@@ -57,10 +55,10 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encrytedText, String key) {
-        Objects.requireNonNull(encrytedText, "encrytedText can not be null");
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
+        Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(false, cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
@@ -69,14 +67,13 @@ public class Crypto {
     /**
      * Encrypts a given plain text using the application secret property (application.secret) as key
      *
-     * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
-     * the size of the application.secret property length (16/24/32 characters)
+     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        Objects.requireNonNull(plainText, "plainText can not be null");
+        Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
 
         return encrypt(plainText, getSizedKey(CONFIG.getApplicationSecret()));
     }
@@ -84,18 +81,17 @@ public class Crypto {
     /**
      * Encrypts a given plain text using the given key
      *
-     * Encryption is done by using AES and CBC Cipher and a key length of 128/192/256 bit depending on
-     * the size of the application.secret property length (16/24/32 characters)
+     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt
      * @param key The key to use for encryption
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText, String key) {
-        Objects.requireNonNull(plainText, "plainText can not be null");
-        Objects.requireNonNull(key, "key can not be null");
+        Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
+        Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithIV(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)), new byte[BLOCK_SIZE]);
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(true, cipherParameters);
 
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
@@ -126,23 +122,20 @@ public class Crypto {
 
     /**
      * Creates a secret for encrypt or decryption which has a length
-     * of 16, 24 or 32 characters, corresponding to 128, 192 or 256 Bits
+     * of 32 characters, corresponding to 256 Bits
+     * 
+     * If the provided secret has more than 32 characters it will be trimmed
+     * to 32 characters
      *
      * @param secret A given secret to trim
-     * @return A secret with 16, 24 or 32 characters
+     * @return A secret with at least 32 characters
      */
     private String getSizedKey(String secret) {
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         String key = secret.replaceAll("[^\\x00-\\x7F]", "");
-        
-        if (key.length() >= KEYLENGTH_32) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_32);
-        } else if (key.length() >= KEYLENGTH_24) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_24);
-        } else if (key.length() >= KEYLENGTH_16) {
-            key = key.substring(KEYINDEX_START, KEYLENGTH_16);
-        }
 
-        return key;
+        Preconditions.checkArgument(key.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
+        
+        return key.substring(KEYINDEX_START, KEYLENGTH_32);
     }
 }

@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Objects;
 
 import javax.crypto.Mac;
@@ -13,7 +12,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.enums.ErrorMessage;
+import io.mangoo.enums.Required;
 
 /**
  * Two factor Java implementation for the Time-based One-Time Password (TOTP) algorithm.
@@ -45,40 +44,6 @@ public final class TwoFactorUtils {
     }
 
     /**
-     * Uses default length of 16, to generate the Base32 secret
-     * @deprecated As of release 3.2.0, will be removed in 4.0.0
-     * 
-     * @return Generate a 16 character secret key in base32 format
-     */
-    @Deprecated
-    public static String generateBase32Secret() {
-        return generateBase32Secret(16);
-    }
-
-    /**
-     * method to generate Base32 secret keys for the user
-     * @deprecated As of release 3.2.0, will be removed in 4.0.0
-     * 
-     * @param length how long the key should be
-     * 
-     * @return Generate a secret key in base32 format (A-Z, 2-7)
-     */
-    @Deprecated
-    public static String generateBase32Secret(int length) {
-        final StringBuilder buffer = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            final int value = new SecureRandom().nextInt(32);
-            if (value < 26) { 
-                buffer.append((char) ('A' + value));
-            } else {
-                buffer.append((char) ('2' + (value - 26))); 
-            }
-        }
-
-        return buffer.toString();
-    }
-
-    /**
      * Validate a given code using the secret, defaults to window of 3 either side,
      * allowing a margin of error equivalent to three windows to adjust for time
      * discrepancies.
@@ -92,36 +57,6 @@ public final class TwoFactorUtils {
      */
     public static boolean validateCurrentNumber(int number, String secret) {
         return validateCurrentNumber(number, secret, 3);
-    }
-
-    /**
-     * Validate a given code at a specific time, and specific window
-     * @deprecated As of release 3.2.0, replaced by {@link #validateCurrentNumber(int, String, int, long)}
-     * 
-     * @param number the code provided by the user.
-     * @param secret the secret used to generate the users code
-     * @param window the number of windows to check around the time
-     * @param time the time in milliseconds at which the code should be checked
-     * 
-     * @return True if the code is valid within the timeframe, false otherwise
-     */
-    @Deprecated
-    public static boolean validateNumber(int number, String secret, int window, long time) {
-        try {
-            int current = Integer.parseInt(generateCurrentNumber(secret, time));
-            if (number == current) {
-                return true;
-            } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
-                return true;
-            } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
-                return true;
-            }
-        }
-        catch(GeneralSecurityException e) {
-            LOG.error("Failed to validate number", e);
-        }
-
-        return false;
     }
     
     /**
@@ -197,27 +132,6 @@ public final class TwoFactorUtils {
     /**
      * Return the current number to be checked against the user input, using the
      * time found in System.currentTimeMillis()
-     * @deprecated As of release 3.2.0, will be removed in 4.0.0
-     *
-     * WARNING: This requires a system clock that is in sync with the world.
-     *
-     * For more details of this magic algorithm, see:
-     * http://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm
-     * 
-     * @param secret The secret to use
-     * 
-     * @return The current number to be checked
-     */
-    @Deprecated
-    public static String getNumber(String secret) {
-        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
-        
-        return generateCurrentNumber(secret, System.currentTimeMillis());
-    }
-
-    /**
-     * Return the current number to be checked against the user input, using the
-     * time found in System.currentTimeMillis()
      *
      * WARNING: This requires a system clock that is in sync with the world.
      *
@@ -229,13 +143,13 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret) {
-        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         
         return generateCurrentNumber(secret, System.currentTimeMillis());
     }
 
     /**
-     * Same as {@link #getNumber(String)} except at a particular time in milliseconds
+     * Same as {@link #generateCurrentNumber(String)} except at a particular time in milliseconds
      * 
      * @param secret The secret to use
      * @param currentTimeMillis A provided time in milli seconds
@@ -243,7 +157,7 @@ public final class TwoFactorUtils {
      * @return The current number to be checked
      */
     public static String generateCurrentNumber(String secret, long currentTimeMillis) {
-        Objects.requireNonNull(secret, ErrorMessage.SECRET.toString());
+        Objects.requireNonNull(secret, Required.GROUP_NAME.toString());
 
         final byte[] key = secret.getBytes();
         final byte[] data = new byte[8];
@@ -278,33 +192,6 @@ public final class TwoFactorUtils {
 
         return String.format("%06d", truncatedHash); 
     }
-
-    /**
-     * Return the QR image URL from Google Charts API.
-     * @deprecated As of release 3.2.0, replaced by {@link #generateQRCode(String, String)}
-     * 
-     * This can be shown to the user and scanned by the authenticator program as an easy way to enter the secret
-     * 
-     * @param accountName The account name used to display to the user
-     * @param secret The secret to use
-     * 
-     * @return A URL to the Google charts API
-     */
-    @Deprecated
-    public static String getQRCode(String accountName, String secret) {
-        Objects.requireNonNull(accountName, "accountName can not be null");
-        Objects.requireNonNull(secret, "secret can not be null");
-        
-        final StringBuilder buffer = new StringBuilder(128);
-        buffer.append("https://chart.googleapis.com/chart")
-            .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
-            .append("otpauth://totp/")
-            .append(accountName)
-            .append("?secret=")
-            .append(secret);
-
-        return buffer.toString();
-    }
     
     /**
      * Return the QR image URL from Google Charts API.
@@ -317,8 +204,8 @@ public final class TwoFactorUtils {
      * @return A URL to the Google charts API
      */
     public static String generateQRCode(String accountName, String secret) {
-        Objects.requireNonNull(accountName, "accountName can not be null");
-        Objects.requireNonNull(secret, "secret can not be null");
+        Objects.requireNonNull(accountName, Required.ACCOUNT_NAME.toString());
+        Objects.requireNonNull(secret, Required.SECRET.toString());
         
         final StringBuilder buffer = new StringBuilder(128);
         buffer.append("https://chart.googleapis.com/chart")

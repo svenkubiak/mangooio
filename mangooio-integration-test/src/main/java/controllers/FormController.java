@@ -55,20 +55,30 @@ public class FormController {
     }
 
     public Response validateform(Form form) {
-        form.validation().required("name");
-        form.validation().email("email");
-        form.validation().exactMatch("password", "passwordconfirm"); //NOSONAR
-        form.validation().match("email2", "email2confirm");
-        form.validation().ipv4("ipv4");
-        form.validation().ipv6("ipv6");
-        form.validation().regex("regex", Pattern.compile("[a-z]"));
-        form.validation().max("phone", MAX_SIZE);
-        form.validation().min("fax", MIN_SIZE);
+        form.expectValue("name");
+        form.expectEmail("email");
+        form.expectExactMatch("password", "passwordconfirm"); //NOSONAR
+        form.expectMatch("email2", "email2confirm");
+        form.expectIpv4("ipv4");
+        form.expectIpv6("ipv6");
+        form.expectRegex("regex", Pattern.compile("[a-z]"));
+        form.expectMax("phone", MAX_SIZE);
+        form.min("fax", MIN_SIZE);
 
-        if (!form.validation().hasErrors()) {
+        if (form.isValid()) {
             return Response.withOk().andTextBody("Fancy that!");
         }
 
         return Response.withOk();
+    }
+    
+    public Response flashify() {
+        return Response.withOk();
+    }
+    
+    public Response submit(Form form) {
+        form.keep();
+        
+        return Response.withRedirect("/flashify");
     }
 }

@@ -25,7 +25,7 @@ public class JsonWebTokenFilter implements MangooFilter {
         String bearer = request.getHeader(Headers.AUTHORIZATION);
         String signKey = CONFIG.getJwtsSignKey();
         Crypto crypto = Application.getInstance(Crypto.class);
-        
+
         if (StringUtils.isNotBlank(signKey) && StringUtils.isNotBlank(bearer)) {
             bearer = bearer.replace("Bearer", "");
             bearer = bearer.trim();

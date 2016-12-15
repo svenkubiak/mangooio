@@ -30,8 +30,8 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 public class ServerEventManagerTest {
     private static String eventData;
     private static final String COOKIE_NAME = "TEST-AUTH";
-    private static final String VALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooio";
-    private static final String INVALID_COOKIE_VALUE = "359770bc1a7b38a6dee6ea0ce9875a3d71313f78470174fd460258e4010a51cb2db9c728c5d588958c52d2ef9fe9f6f63ed3aeb4f1ab828e29ce963703eb9237|2999-11-11T11:11:11.111|0#mangooiO";
+    private static final String VALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooio";
+    private static final String INVALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooiO";
 
     @Test
     public void testAddConnection() {
@@ -75,7 +75,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sse");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         final EventSource eventSource = EventSource.target(target).build();
         eventSource.open();
         Thread.sleep(500);
@@ -100,7 +100,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sse");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         final EventSource eventSource = EventSource.target(target).build();
         final EventListener listener = new EventListener() {
             @Override
@@ -132,7 +132,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sseauth");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
         final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, VALID_COOKIE_VALUE));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
@@ -165,7 +165,7 @@ public class ServerEventManagerTest {
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
-                .target("http://" + config.getApplicationHost() + ":" + config.getApplicationPort() + "/sseauth");
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
         final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, INVALID_COOKIE_VALUE));
         final EventSource eventSource = EventSource.target(customWebTarget).build();

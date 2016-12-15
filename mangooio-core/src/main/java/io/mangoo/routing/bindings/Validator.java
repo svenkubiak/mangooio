@@ -1,12 +1,15 @@
 package io.mangoo.routing.bindings;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -14,6 +17,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import com.google.inject.Inject;
 
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 
 /**
@@ -21,15 +25,13 @@ import io.mangoo.i18n.Messages;
  * @author svenkubiak
  *
  */
-public class Validator {
+public class Validator implements Serializable {
+    private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
-    private Map<String, String> values = new HashMap<>();
-    private final Messages messages;
-
+    protected Map<String, String> values = new HashMap<>(); //NOSONAR
+    
     @Inject
-    public Validator(Messages messages) {
-        this.messages =  Objects.requireNonNull(messages, "Messages can not be null");
-    }
+    private Messages messages;
 
     /**
      * Checks if a give field has a validation error
@@ -52,28 +54,28 @@ public class Validator {
     }
 
     /**
-     * Validates a given field to be required
+     * Validates a given field to be present with a value
      *
      * @param name The field to check
      */
-    public void required(String name) {
-        required(name, messages.get(Key.VALIDATION_REQUIRED, name));
+    public void expectValue(String name) {
+        expectValue(name, messages.get(Key.VALIDATION_REQUIRED, name));
     }
 
     /**
-     * Validates a given field to be required
+     * Validates a given field to be present with a value
      *
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void required(String name, String message) {
+    public void expectValue(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REQUIRED, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REQUIRED, name)));
         }
     }
-
+    
     /**
      * Validates a given field to have a minimum length
      *
@@ -81,7 +83,7 @@ public class Validator {
      * @param minLength The minimum length
      */
     public void min(String name, double minLength) {
-        min(name, minLength, messages.get(Key.VALIDATION_MIN, name, minLength));
+        expectMin(name, minLength, messages.get(Key.VALIDATION_MIN, name, minLength));
     }
 
     /**
@@ -91,16 +93,16 @@ public class Validator {
      * @param minLength The minimum length
      * @param message A custom error message instead of the default one
      */
-    public void min(String name, double minLength, String message) {
+    public void expectMin(String name, double minLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) < minLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
             }
         } else {
             if (value.length() < minLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MIN, name, minLength)));
             }
         }
     }
@@ -112,8 +114,8 @@ public class Validator {
      * @param name The field to check
      *
      */
-    public void max(String name, double maxLength) {
-        max(name, maxLength, messages.get(Key.VALIDATION_MAX, name, maxLength));
+    public void expectMax(String name, double maxLength) {
+        expectMax(name, maxLength, messages.get(Key.VALIDATION_MAX, name, maxLength));
     }
     
     /**
@@ -122,8 +124,8 @@ public class Validator {
      * @param name The field to check
      *
      */
-    public void numeric(String name) {
-        numeric(name, messages.get(Key.VALIDATION_NUMERIC, name));
+    public void expectNumeric(String name) {
+        expectNumeric(name, messages.get(Key.VALIDATION_NUMERIC, name));
     }
     
     /**
@@ -133,11 +135,11 @@ public class Validator {
      * @param message A custom error message instead of the default one
      *
      */
-    public void numeric(String name, String message) {
+    public void expectNumeric(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!StringUtils.isNumeric(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_NUMERIC, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_NUMERIC, name)));
         }
     }
 
@@ -148,16 +150,16 @@ public class Validator {
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
-    public void max(String name, double maxLength, String message) {
+    public void expectMax(String name, double maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
             }
         } else {
             if (value.length() > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MAX, name, maxLength)));
             }
         }
     }
@@ -168,8 +170,8 @@ public class Validator {
      * @param name The field to check
      * @param anotherName The field to check against
      */
-    public void exactMatch(String name, String anotherName) {
-        exactMatch(name, anotherName, messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName));
+    public void expectExactMatch(String name, String anotherName) {
+        expectExactMatch(name, anotherName, messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName));
     }
 
     /**
@@ -179,12 +181,12 @@ public class Validator {
      * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
-    public void exactMatch(String name, String anotherName, String message) {
+    public void expectExactMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
         if ( (StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) || !value.equals(anotherValue)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
         }
     }
 
@@ -194,8 +196,8 @@ public class Validator {
      * @param name The field to check
      * @param anotherName The field to check against
      */
-    public void match(String name, String anotherName) {
-        match(name, anotherName, messages.get(Key.VALIDATION_MATCH, name, anotherName));
+    public void expectMatch(String name, String anotherName) {
+        expectMatch(name, anotherName, messages.get(Key.VALIDATION_MATCH, name, anotherName));
     }
 
     /**
@@ -205,12 +207,37 @@ public class Validator {
      * @param anotherName The field to check against
      * @param message A custom error message instead of the default one
      */
-    public void match(String name, String anotherName, String message) {
+    public void expectMatch(String name, String anotherName, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
         if ((StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) || !value.equalsIgnoreCase(anotherValue)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH, name, anotherName)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH, name, anotherName)));
+        }
+    }
+    
+    /**
+     * Validates to list of given values to (case-sensitive) match
+     *
+     * @param name The field to check
+     * @param values A list of given values to check against
+     */
+    public void expectMatch(String name, List<String> values) {
+        expectMatch(name, messages.get(Key.VALIDATION_MATCH_VALUES, name), values);
+    }
+
+    /**
+     * Validates to fields to (case-sensitive) match
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     * @param values A list of given values to check against
+     */
+    public void expectMatch(String name, String message, List<String> values) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (!(values).contains(value)) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_MATCH_VALUES, name)));
         }
     }
 
@@ -219,8 +246,8 @@ public class Validator {
      *
      * @param name The field to check
      */
-    public void email(String name) {
-        email(name, messages.get(Key.VALIDATION_EMAIL, name));
+    public void expectEmail(String name) {
+        expectEmail(name, messages.get(Key.VALIDATION_EMAIL, name));
     }
 
     /**
@@ -229,11 +256,11 @@ public class Validator {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void email(String name, String message) {
+    public void expectEmail(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!EmailValidator.getInstance().isValid(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EMAIL, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EMAIL, name)));
         }
     }
 
@@ -242,8 +269,8 @@ public class Validator {
      *
      * @param name The field to check
      */
-    public void ipv4(String name) {
-        ipv4(name, messages.get(Key.VALIDATION_IPV4, name));
+    public void expectIpv4(String name) {
+        expectIpv4(name, messages.get(Key.VALIDATION_IPV4, name));
     }
 
     /**
@@ -252,11 +279,34 @@ public class Validator {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void ipv4(String name, String message) {
+    public void expectIpv4(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV4, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV4, name)));
+        }
+    }
+    
+    /**
+     * Validates a field to be a valid IPv4 address
+     *
+     * @param name The field to check
+     */
+    public void expectDomainName(String name) {
+        expectDomainName(name, messages.get(Key.VALIDATION_IPV4, name));
+    }
+
+    /**
+     * Validates a field to be a valid IPv4 address
+     *
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     */
+    public void expectDomainName(String name, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (!DomainValidator.getInstance().isValid(value)) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_DOMAIN_NAME, name)));
         }
     }
 
@@ -265,8 +315,8 @@ public class Validator {
      *
      * @param name The field to check
      */
-    public void ipv6(String name) {
-        ipv6(name, messages.get(Key.VALIDATION_IPV6, name));
+    public void expectIpv6(String name) {
+        expectIpv6(name, messages.get(Key.VALIDATION_IPV6, name));
     }
 
     /**
@@ -275,11 +325,11 @@ public class Validator {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void ipv6(String name, String message) {
+    public void expectIpv6(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV6, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_IPV6, name)));
         }
     }
 
@@ -290,8 +340,8 @@ public class Validator {
      * @param minLength The minimum length
      * @param maxLength The maximum length
      */
-    public void range(String name, int minLength, int maxLength) {
-        range(name, minLength, maxLength, messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength));
+    public void expectRange(String name, int minLength, int maxLength) {
+        expectRange(name, minLength, maxLength, messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength));
     }
 
     /**
@@ -302,17 +352,17 @@ public class Validator {
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
-    public void range(String name, int minLength, int maxLength, String message) {
+    public void expectRange(String name, int minLength, int maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
             double doubleValue = Double.parseDouble(value);
             if (doubleValue < minLength || doubleValue > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
             }
         } else {
             if (value.length() < minLength || value.length() > maxLength) {
-                this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_RANGE, name, minLength, maxLength)));
             }
         }
     }
@@ -326,8 +376,8 @@ public class Validator {
      * @param name The field to check
      * @param pattern The pre-compiled pattern
      */
-    public void regex(String name, Pattern pattern) {
-        regex(name, pattern, messages.get(Key.VALIDATION_REGEX, name));
+    public void expectRegex(String name, Pattern pattern) {
+        expectRegex(name, pattern, messages.get(Key.VALIDATION_REGEX, name));
     }
 
     /**
@@ -340,11 +390,11 @@ public class Validator {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void regex(String name, Pattern pattern, String message) {
+    public void expectRegex(String name, Pattern pattern, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!pattern.matcher(value).matches()) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REGEX, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_REGEX, name)));
         }
     }
 
@@ -353,8 +403,8 @@ public class Validator {
      *
      * @param name The field to check
      */
-    public void url(String name) {
-        url(name, messages.get(Key.VALIDATION_URL, name));
+    public void expectUrl(String name) {
+        expectUrl(name, messages.get(Key.VALIDATION_URL, name));
     }
 
     /**
@@ -363,11 +413,11 @@ public class Validator {
      * @param name The field to check
      * @param message A custom error message instead of the default one
      */
-    public void url(String name, String message) {
+    public void expectUrl(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (!UrlValidator.getInstance().isValid(value)) {
-            this.errors.put(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_URL, name)));
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_URL, name)));
         }
     }
 
@@ -380,8 +430,25 @@ public class Validator {
         return this.errors.size() > 0;
     }
 
+    /**
+     * Retrieves a form value corresponding to the name of the form element
+     *
+     * @param key The name of the form element
+     * @return The value of the form or null if not present
+     */
     public String get(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+
         return this.values.get(key);
+    }
+
+    private void addError(String name, String message) {
+        Objects.requireNonNull(name, "name can not be null");
+        Objects.requireNonNull(message, "message can not be null");
+        
+        if (!this.errors.containsKey(name)) {
+            this.errors.put(name, message);            
+        }
     }
 
     public Map<String, String> getErrors() {
@@ -391,8 +458,12 @@ public class Validator {
     public void setValues(Map<String, String> values) {
         this.values = values;
     }
-
-    public void add(String key, String value) {
+    
+    public void addValue(String key, String value) {
         this.values.put(key, value);
+    }
+    
+    public boolean isValid() {
+        return !hasErrors();
     }
 }

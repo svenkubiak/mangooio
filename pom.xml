@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>3.10.1-SNAPSHOT</version>
+	<version>4.0.0-RC4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>https://mangoo.io</url>
 	<licenses>
@@ -25,14 +25,17 @@
 		<log4j.version>2.7</log4j.version>
 		<maven.version>3.3.9</maven.version>
 		<httpcomponents.version>4.5.2</httpcomponents.version>
-		<scribejava.version>3.2.0</scribejava.version>
+		<scribejava.version>3.4.0</scribejava.version>
 		<jackson.version>2.8.5</jackson.version>
+		<fluentlenium.version>3.0.4</fluentlenium.version>
+		<websocket.version>9.4.0.v20161208</websocket.version>
 	</properties>
 	<prerequisites>
 		<maven>3.3.0</maven>
 	</prerequisites>
 	<modules>
 		<module>mangooio-core</module>
+		<module>mangooio-benchmarks</module>
 		<module>mangooio-maven-plugin</module>
 		<module>mangooio-maven-archetype</module>
 		<module>mangooio-integration-test</module>
@@ -50,7 +53,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.6.0</version>
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
@@ -72,7 +75,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>3.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -97,7 +100,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -191,17 +194,6 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.mitchellbosecke</groupId>
-				<artifactId>pebble</artifactId>
-				<version>2.3.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
 				<version>3.5</version>
@@ -266,9 +258,15 @@
 				<version>4.12</version>
 			</dependency>
 			<dependency>
-				<groupId>com.hazelcast</groupId>
-				<artifactId>hazelcast-client</artifactId>
-				<version>3.7.2</version>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache-clustered</artifactId>
+				<version>3.1.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
@@ -305,11 +303,6 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.fluentlenium</groupId>
-				<artifactId>fluentlenium-core</artifactId>
-				<version>0.13.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
@@ -458,6 +451,56 @@
 						<artifactId>commons-beanutils</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.fluentlenium</groupId>
+				<artifactId>fluentlenium-junit</artifactId>
+				<version>${fluentlenium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.fluentlenium</groupId>
+				<artifactId>fluentlenium-assertj</artifactId>
+				<version>${fluentlenium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.svenkubiak</groupId>
+				<artifactId>embedded-mongodb</artifactId>
+				<version>4.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>it.unimi.dsi</groupId>
+				<artifactId>dsiutils</artifactId>
+				<version>2.3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>de.svenkubiak</groupId>
+				<artifactId>mangooio-mongodb-extension</artifactId>
+				<version>3.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>htmlunit-driver</artifactId>
+				<version>2.23.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty.websocket</groupId>
+				<artifactId>websocket-api</artifactId>
+				<version>${websocket.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty.websocket</groupId>
+				<artifactId>websocket-client</artifactId>
+				<version>${websocket.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>xml-apis</groupId>
+				<artifactId>xml-apis</artifactId>
+				<version>1.4.01</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-junit</artifactId>
+				<version>2.0.0.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -31,6 +31,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +39,6 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -80,8 +79,8 @@ public class WebResponse {
         final Config config = Application.getInstance(Config.class);
         multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-        final String host = config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-        final int port = config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
+        final String host = config.getConnectorHttpHost();
+        final int port =  config.getConnectorHttpPort();
 
         this.cookieStore.clear();
         this.responseUrl = "http://" + host + ":" + port;
@@ -133,6 +132,16 @@ public class WebResponse {
      */
     public WebResponse withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
+        return this;
+    }
+    
+    /**
+     * Enables the LaxRedirectsStragey allowing more methods to be redirected
+     *
+     * @return Response
+     */
+    public WebResponse withLaxRedirectStrategy() {
+        this.httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         return this;
     }
 
@@ -285,7 +294,7 @@ public class WebResponse {
 
         this.headers.entrySet().forEach(entry -> request.setHeader(entry.getKey(), entry.getValue())); //NOSONAR
 
-        if (responseDisbaleRedirects) {
+        if (this.responseDisbaleRedirects) {
             this.httpClientBuilder.disableRedirectHandling();
         }
 

@@ -1,8 +1,9 @@
 package io.mangoo.core;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -10,8 +11,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +20,9 @@ import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.yaml.snakeyaml.Yaml;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -34,6 +34,8 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
+import io.mangoo.core.yaml.YamlRoute;
+import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -52,6 +54,7 @@ import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -71,18 +74,20 @@ public class Bootstrap {
     private static volatile Logger LOG; //NOSONAR
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
-    private final ResourceHandler pathResourceHandler;
+    private final ResourceHandler resourceHandler;
+    private Undertow undertow;
     private PathHandler pathHandler;
     private Config config;
-    private String host;
+    private String httpHost;
+    private String ajpHost;
     private Mode mode;
     private Injector injector;
     private boolean error;
-    private int port;
-
+    private int httpPort;
+    private int ajpPort;
+    
     public Bootstrap() {
-        this.pathResourceHandler = new ResourceHandler(
-                new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + "/"));
+        this.resourceHandler = Handlers.resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
     }
 
     public Mode prepareMode() {
@@ -105,23 +110,37 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void prepareLogger() {
-        final String configurationFile = "log4j2." + this.mode.toString() + ".yaml";
-        if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
-            LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-        } else {
-            try {
-                final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
-                final LoggerContext context = (LoggerContext) LogManager.getContext(false);
-                context.setConfigLocation(resource.toURI());
-            } catch (final URISyntaxException e) {
-                e.printStackTrace(); //NOSONAR
+        String configurationFile = System.getProperty(Key.APPLICATION_LOG.toString());
+        if (StringUtils.isNotBlank(configurationFile)) {
+            final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+            context.setConfigLocation(URI.create(configurationFile));
+            if (!context.isInitialized()) {
                 this.error = true;
             }
-
-            if (!hasError()) {
+            
+            if (!bootstrapError()) {
                 LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-                LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
+                LOG.info("Found specific Log4j2 configuration. Using configuration file: " + configurationFile);
             }
+        } else {
+            configurationFile = "log4j2." + this.mode.toString() + ".yaml";
+            if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
+                LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+            } else {
+                try {
+                    final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
+                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
+                    context.setConfigLocation(resource.toURI());
+                } catch (final URISyntaxException e) {
+                    e.printStackTrace(); //NOSONAR
+                    this.error = true;
+                }
+
+                if (!bootstrapError()) {
+                    LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
+                    LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
+                }
+            }  
         }
     }
 
@@ -137,65 +156,58 @@ public class Bootstrap {
     public void prepareConfig() {
         this.config = this.injector.getInstance(Config.class);
         if (!this.config.hasValidSecret()) {
-            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 16 characters");
+            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
             this.error = true;
         }
     }
 
     @SuppressWarnings("all")
     public void parseRoutes() {
-        if (!hasError()) {
-            try (InputStream inputStream = Resources.getResource(Default.ROUTES_FILE.toString()).openStream()) {
-                final List<Map<String, String>> routes = (List<Map<String, String>>) new Yaml().load(inputStream);
-
-                for (final Map<String, String> routing : routes) {
-                    for (final Entry<String, String> entry : routing.entrySet()) {
-                        final String method = entry.getKey().trim();
-                        final String mapping = entry.getValue();
-                        final String [] mappings = mapping
-                                .replace(Default.AUTHENTICATION.toString(), "")
-                                .replace(Default.BLOCKING.toString(), "")
-                                .split("->");
-
-                        if (mappings != null && mappings.length > 0) {
-                            final String url = mappings[0].trim();
-                            final Route route = new Route(BootstrapUtils.getRouteType(method));
-                            route.toUrl(url);
-                            route.withRequest(HttpString.tryFromString(method));
-                            route.withAuthentication(BootstrapUtils.hasAuthentication(mapping));
-                            route.allowBlocking(BootstrapUtils.hasBlocking(mapping));
-
-                            try {
-                                if (mappings.length == 2) {
-                                    final String [] classMethod = mappings[1].split("\\.");
-                                    if (classMethod != null && classMethod.length > 0) {
-                                        route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + classMethod[0].trim()));
-                                        if (classMethod.length == 2) {
-                                            final String controllerMethod = classMethod[1].trim();
-                                            if (methodExists(controllerMethod, route.getControllerClass())) {
-                                                route.withMethod(controllerMethod);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                Router.addRoute(route);
-                            } catch (final Exception e) {
-                                LOG.error("Failed to parse routing: " + routing);
-                                LOG.error("Please check, that your routes.yaml syntax is correct", e);
-                                this.error = true;
-
-                                throw new Exception();
-                            }
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-                LOG.error("Failed to load routes.yaml Please check, that routes.yaml exists in your application resource folder", e);
+        if (!bootstrapError()) {
+            ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+            YamlRouter yamlRouter = null;
+            try {
+                yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
+            } catch (IOException e) {
+                LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
                 this.error = true;
             }
+            
+            if (!bootstrapError() && yamlRouter != null) {
+                for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
+                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
+                            .toUrl(yamlRoute.getUrl().trim())
+                            .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
+                            .withUsername(yamlRoute.getUsername())
+                            .withPassword(yamlRoute.getPassword())
+                            .withAuthentication(yamlRoute.isAuthentication())
+                            .withTimer(yamlRoute.isTimer())
+                            .withLimit(yamlRoute.getLimit())
+                            .allowBlocking(yamlRoute.isBlocking());
+                    
+                    String mapping = yamlRoute.getMapping();   
+                    try {
+                       String [] mapped = null;
+                       if (StringUtils.isNotBlank(mapping)) {
+                           mapped = mapping.split("\\.");
+                           route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapped[0].trim()));
+                           if (mapped.length == 2) {
+                               if (methodExists(mapped[1], route.getControllerClass())) {
+                                   route.withMethod(mapped[1]);
+                               }  
+                           }
+                       }
 
-            if (!hasError()) {
+                       Router.addRoute(route);
+                    } catch (final Exception e) {
+                        LOG.error("Failed to create routes from routes.yaml");
+                        LOG.error("Please verify that your routes.yaml mapping is correct", e);
+                        this.error = true;
+                    }
+                }
+            }
+            
+            if (!bootstrapError()) {
                 createRoutes();
             }
         }
@@ -239,7 +251,6 @@ public class Bootstrap {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/routes").withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/cache").withRequest(Methods.GET).withClass(AdminController.class).withMethod("cache").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/metrics").withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/tools").withRequest(Methods.GET).withClass(AdminController.class).withMethod("tools").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/tools/ajax").withRequest(Methods.POST).withClass(AdminController.class).withMethod("toolsajax").useInternalTemplateEngine());
@@ -249,10 +260,17 @@ public class Bootstrap {
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST == route.getRouteType()) {
-                routingHandler.add(route.getRequestMethod(),route.getUrl(),
-                        new DispatcherHandler(route.getControllerClass(), route.getControllerMethod(), route.isBlockingAllowed(), route.isInternalTemplateEngine()));
+                DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
+                        .isBlocking(route.isBlockingAllowed())
+                        .withInternalTemplateEngine(route.isInternalTemplateEngine())
+                        .withTimer(route.isTimerEnabled())
+                        .withUsername(route.getUsername())
+                        .withPassword(route.getPassword())
+                        .withLimit(route.getLimit());
+
+                routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
-                routingHandler.add(Methods.GET, route.getUrl(), this.pathResourceHandler);
+                routingHandler.add(Methods.GET, route.getUrl(), this.resourceHandler);
             }
         });
 
@@ -260,23 +278,40 @@ public class Bootstrap {
     }
 
     public void startUndertow() {
-        if (!hasError()) {
-            this.host = this.config.getString(Key.APPLICATION_HOST, Default.APPLICATION_HOST.toString());
-            this.port = this.config.getInt(Key.APPLICATION_PORT, Default.APPLICATION_PORT.toInt());
-
-            final Undertow server = Undertow.builder()
+        if (!bootstrapError()) {
+            Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
-                    .addHttpListener(this.port, this.host)
-                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)))
-                    .build();
+                    .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
+
+            boolean hasConnector = false;
+            this.httpHost = this.config.getConnectorHttpHost();
+            this.httpPort = this.config.getConnectorHttpPort();
+            this.ajpHost = this.config.getConnectorAjpHost();
+            this.ajpPort = this.config.getConnectorAjpCPort();
             
-            server.start();
+            if (this.httpPort > 0 && StringUtils.isNotBlank(this.httpHost)) {
+                builder.addHttpListener(this.httpPort, this.httpHost);
+                hasConnector = true;
+            }
+            
+            if (this.ajpPort > 0 && StringUtils.isNotBlank(this.ajpHost)) {
+                builder.addAjpListener(this.ajpPort, this.ajpHost);
+                hasConnector = true;
+            }
+                    
+            if (hasConnector) {
+                this.undertow = builder.build();
+                this.undertow.start();
+            } else {
+                this.error = true;
+                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
+            }
         }
     }
 
     private List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
-        if (!hasError()) {
+        if (!bootstrapError()) {
             try {
                 final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
                 modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
@@ -292,7 +327,7 @@ public class Bootstrap {
     }
 
     public void showLogo() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
@@ -301,7 +336,16 @@ public class Bootstrap {
                 .append('\n');
 
             LOG.info(buffer.toString()); //NOSONAR
-            LOG.info("mangoo I/O application started @{}:{} in {} ms in {} mode. Enjoy.", this.host, this.port, ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
+            
+            if (this.httpPort > 0 && StringUtils.isNotBlank(this.httpHost)) {
+                LOG.info("HTTP connector listening @{}:{}", this.httpHost, this.httpPort);
+            }
+            
+            if (this.ajpPort > 0 && StringUtils.isNotBlank(this.ajpHost)) {
+                LOG.info("AJP connector listening @{}:{}", this.ajpHost, this.ajpPort);
+            }
+            
+            LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(this.start, LocalDateTime.now()), this.mode.toString());
         }
     }
 
@@ -310,12 +354,12 @@ public class Bootstrap {
     }
 
     public void startQuartzScheduler() {
-        if (!hasError()) {
+        if (!bootstrapError()) {
             List<Class<?>> jobs = new ArrayList<>();
             new FastClasspathScanner(this.config.getSchedulerPackage())
                 .matchClassesWithAnnotation(Schedule.class, jobs::add)
                 .scan();
-            
+
             if (!jobs.isEmpty() && this.config.isSchedulerAutostart()) {
                 final Scheduler mangooScheduler = this.injector.getInstance(Scheduler.class);
                 mangooScheduler.initialize();
@@ -337,7 +381,7 @@ public class Bootstrap {
                     }
                 }
 
-                if (!hasError()) {
+                if (!bootstrapError()) {
                     try {
                         mangooScheduler.start();
                     } catch (MangooSchedulerException e) {
@@ -348,15 +392,19 @@ public class Bootstrap {
         }
     }
 
-    public boolean isBootstrapSuccessful() {
+    public boolean bootstrapSuccess() {
         return !this.error;
     }
 
-    private boolean hasError() {
+    private boolean bootstrapError() {
         return this.error;
     }
 
     public LocalDateTime getStart() {
         return this.start;
+    }
+    
+    public Undertow getUndertow() {
+        return this.undertow;
     }
 }

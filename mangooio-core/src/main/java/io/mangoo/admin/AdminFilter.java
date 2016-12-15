@@ -2,7 +2,6 @@ package io.mangoo.admin;
 
 import java.util.Base64;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Charsets;
@@ -14,6 +13,7 @@ import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.utils.CodecUtils;
 import io.undertow.util.Headers;
 
 /**
@@ -71,6 +71,6 @@ public class AdminFilter implements MangooFilter {
                StringUtils.isNotBlank(CONFIG.getAdminAuthenticationUser()) &&
                StringUtils.isNotBlank(CONFIG.getAdminAuthenticationPassword()) &&
                CONFIG.getAdminAuthenticationUser().equals(username) &&
-               CONFIG.getAdminAuthenticationPassword().equals(DigestUtils.sha512Hex(password));
+               CodecUtils.checkJBCrypt(password, CONFIG.getAdminAuthenticationPassword());
     }
 }

@@ -61,7 +61,7 @@
 	<div class="col-xs-12">
     	<div class="box">
 	    	<div class="box-header">
-	        	No jobs are scheduled in the application.
+	        	No jobs are scheduled in this application.
 	        </div>
     	</div>
 	</div>

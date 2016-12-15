@@ -1,19 +1,13 @@
 package io.mangoo.test;
 
-import org.fluentlenium.adapter.FluentTest;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.fluentlenium.adapter.junit.FluentTest;
+import org.fluentlenium.configuration.FluentConfiguration;
 
 /**
  *
  * @author svenkubiak
  *
  */
+@FluentConfiguration(webDriver="htmlunit")
 public class MangooFluent extends FluentTest {
-    private final WebDriver webDriver = new HtmlUnitDriver();
-
-    @Override
-    public WebDriver getDefaultDriver() {
-        return webDriver;
-    }
 }

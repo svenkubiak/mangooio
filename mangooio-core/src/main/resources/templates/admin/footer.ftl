@@ -79,7 +79,7 @@
           })
       }(jQuery));
       
-      $("#hash_cleartext").change(function() {
+      $("#hash").click(function() {
 		$.ajax({
   			type: "POST",
   			processData: false,
@@ -93,18 +93,31 @@
 		});
 	  });
 	  
-	  $(".encrypt").change(function() {
-		$.ajax({
-  			type: "POST",
-  			processData: false,
-  			contentType : 'application/json',
-  			url: "/@admin/tools/ajax",
-  			data: JSON.stringify({ "function": "encrypt", "cleartext" : $("#encrypt_cleartext").val(), "key" : $("#encrypt_key").val() }),
-  			dataType: "json",
-  			success: function(data){
-				$("#encryptedvalue").val(data);
-  			}
-		});
+	  $("#encrypt").click(function() {
+	  	var cleartext = $("#encrypt_cleartext").val();
+	  	var key = $("#encrypt_key").val();
+	  	
+	  	if (key.length > 0 && key.length != 32) {
+	  		$("#key").addClass("has-error");
+	  		$("#key-help").text("Encryption key must be exactly 32 characters. Currently " + key.length + " characters.");
+	  		$("#key-help").show();
+	  	}
+	  	
+	  	if (key.length == 0 || key.length == 32) {
+	  		$("#key").removeClass("has-error");
+	  		$("#key-help").hide();
+			$.ajax({
+	  			type: "POST",
+	  			processData: false,
+	  			contentType : 'application/json',
+	  			url: "/@admin/tools/ajax",
+	  			data: JSON.stringify({ "function": "encrypt", "cleartext" : cleartext, "key" : key }),
+	  			dataType: "json",
+	  			success: function(data){
+					$("#encryptedvalue").val(data);
+	  			}
+			});
+	  	}
 	  });	  
 	});
   </script>

@@ -22,8 +22,8 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString(Key.APPLICATION_PORT), equalTo("10808"));
-        assertThat(config.getString(Key.APPLICATION_PORT.toString()), equalTo("10808"));
+        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
+        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT.toString()), equalTo("10808"));
     }
 
     @Test
@@ -32,8 +32,8 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getInt(Key.APPLICATION_PORT), equalTo(10808));
-        assertThat(config.getInt(Key.APPLICATION_PORT.toString()), equalTo(10808));
+        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
+        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808));
     }
 
     @Test
@@ -52,8 +52,8 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getLong(Key.APPLICATION_PORT), equalTo(10808L));
-        assertThat(config.getLong(Key.APPLICATION_PORT.toString()), equalTo(10808L));
+        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
+        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808L));
     }
 
     @Test

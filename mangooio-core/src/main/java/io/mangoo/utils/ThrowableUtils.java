@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Charsets;
 
+import io.mangoo.enums.Required;
 import io.mangoo.models.Source;
 
 /**
@@ -31,7 +32,7 @@ public final class ThrowableUtils {
      * @return Source code filename
      */
     public static String getSourceCodePath(StackTraceElement stackTraceElement) {
-        Objects.requireNonNull(stackTraceElement, "stackTraceElement can not be null");
+        Objects.requireNonNull(stackTraceElement, Required.STACK_TRACE_ELEMENT.toString());
 
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');
@@ -55,7 +56,7 @@ public final class ThrowableUtils {
      */
     @SuppressWarnings("all")
     public static List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
-        Objects.requireNonNull("sourcePath", "sourcePath can not be null");
+        Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
         StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
@@ -68,6 +69,7 @@ public final class ThrowableUtils {
 
         List<Source> sources = new ArrayList<Source>();
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
+        
         if (templateFile.exists()) {
             List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 

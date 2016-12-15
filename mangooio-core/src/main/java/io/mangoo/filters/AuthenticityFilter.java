@@ -15,7 +15,9 @@ public class AuthenticityFilter implements MangooFilter {
     @Override
     public Response execute(Request request, Response response) {
         if (!request.authenticityMatches()) {
-            return Response.withForbidden().andBody(Template.DEFAULT.forbidden()).end();
+            return Response.withForbidden()
+                    .andBody(Template.DEFAULT.forbidden())
+                    .end();
         }
 
         return response;

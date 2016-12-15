@@ -16,4 +16,9 @@ public interface MangooLifecycle {
      * Executed after the application is completely started
      */
     public void applicationStarted();
+    
+    /**
+     * Executed after forcible signal of JVM shutdown has been send
+     */
+    public void applicationStopped();
 }

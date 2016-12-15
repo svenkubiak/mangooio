@@ -1,8 +1,8 @@
 package io.mangoo.routing.bindings;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,68 +11,23 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.google.inject.Inject;
-
-import io.mangoo.interfaces.MangooValidator;
+import io.mangoo.enums.Required;
 
 /**
  *
  * @author svenkubiak
  *
  */
-public class Form implements MangooValidator {
-    private static final String KEY_ERROR = "Key can not be null";
+public class Form extends Validator implements Serializable {
+    private static final long serialVersionUID = -5815141142864033904L;
     private final List<File> files = new ArrayList<>();
-    private final Map<String, String> values = new HashMap<>();
-    private final Validator validator;
     private boolean submitted;
+    private boolean flash;
     
-    @Inject
-    public Form (Validator validator) {
-        this.validator = Objects.requireNonNull(validator, "Validator can not be null");
-    }
-
-    @Override
-    public Validator validation() {
-        return this.validator;
-    }
-
-    @Override
-    public String getError(String fieldName) {
-        return this.validator.hasError(fieldName) ? this.validator.getError(fieldName) : "";
+    public Form() {
+        //Empty constructor for google guice
     }
     
-    /**
-     * Checks if a given field has a validation error
-     * 
-     * @param fieldName The field name to check
-     * @return True if field has error, false otherwise
-     */
-    public boolean hasError(String fieldName) {
-        return this.validator.hasError(fieldName);
-    }
-    
-    /**
-     * Checks if any field in the validation has an error
-     *
-     * @return True if at least one field has an error, false otherwise
-     */
-    public boolean hasErrors() {
-        return this.validator.hasErrors();
-    }
-
-    /**
-     * Retrieves a form value corresponding to the name of the form element
-     *
-     * @param key The name of the form element
-     * @return The value of the form or null if not present
-     */
-    public String get(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
-
-        return this.values.get(key);
-    }
-
     /**
      * Retrieves an optional string value corresponding to the name of the form element
      *
@@ -80,7 +35,7 @@ public class Form implements MangooValidator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -102,7 +57,7 @@ public class Form implements MangooValidator {
      * @return Optional of Boolean
      */
     public Optional<Boolean> getBoolean(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -127,7 +82,7 @@ public class Form implements MangooValidator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -144,7 +99,7 @@ public class Form implements MangooValidator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -161,7 +116,7 @@ public class Form implements MangooValidator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, KEY_ERROR);
+        Objects.requireNonNull(key, Required.KEY.toString());
 
         String value = this.values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -204,7 +159,22 @@ public class Form implements MangooValidator {
     public Map<String, String> getValues() {
         return this.values;
     }
-
+ 
+    /**
+     * Adds the form values to the flash scope
+     */
+    public void keep() {
+        this.flash = true;
+    }
+    
+    /**
+     * Checks if the form values are to put in the flash scope
+     * @return True if form values should be put into flash scope, false otherwise
+     */
+    public boolean flashify() {
+        return this.flash;
+    }
+    
     public boolean isSubmitted() {
         return submitted;
     }
@@ -215,10 +185,5 @@ public class Form implements MangooValidator {
 
     public void setSubmitted(boolean submitted) {
         this.submitted = submitted;
-    }
-
-    public void addValue(String key, String value) {
-        this.values.put(key, value);
-        this.validator.add(key, value);
     }
 }

@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Preconditions;
 
+import io.mangoo.enums.Required;
+
 /**
  *
  * @author svenkubiak
@@ -25,7 +27,7 @@ public final class Router {
      * @param route The route to add
      */
     public static void addRoute(Route route) {
-        Objects.requireNonNull(route, "route can note be null");
+        Objects.requireNonNull(route, Required.ROUTE.toString());
         Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);

@@ -20,6 +20,10 @@ public class ApplicationController {
     public Response text() {
         return Response.withOk().andTextBody("foo");
     }
+    
+    public Response limit() {
+        return Response.withOk().andEmptyBody();
+    }
 
     public Response forbidden() {
         return Response.withForbidden().andEmptyBody();

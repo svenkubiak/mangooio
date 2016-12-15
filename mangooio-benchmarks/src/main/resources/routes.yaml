@@ -1,0 +1,37 @@
+routes:
+# Routes configuration
+#
+# This file defines all application routes.
+# All routes start with an identifier of the method, followed by the
+# url, followed by a mapping to the controller class and method. For
+# some types a controller and method is not required.
+#
+# You can find a detailed explation of the routing file in the documentation
+# https://mangoo.io/documentation#_routes
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ApplicationController
+- method: GET
+  url: /json
+  mapping: ApplicationController.json
+
+- method: GET
+  url: /db
+  mapping: ApplicationController.db
+
+- method: GET
+  url: /queries
+  mapping: ApplicationController.queries
+
+- method: GET
+  url: /fortunes
+  mapping: ApplicationController.fortunes
+
+- method: GET
+  url: /updates
+  mapping: ApplicationController.updates
+
+- method: GET
+  url: /plaintext
+  mapping: ApplicationController.plaintext

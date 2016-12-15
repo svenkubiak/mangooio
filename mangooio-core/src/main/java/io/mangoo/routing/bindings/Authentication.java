@@ -2,12 +2,19 @@ package io.mangoo.routing.bindings;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mindrot.jbcrypt.BCrypt;
 
-import io.mangoo.enums.Default;
+import com.google.inject.Inject;
+
+import io.mangoo.cache.Cache;
+import io.mangoo.configuration.Config;
+import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
+import io.mangoo.providers.CacheProvider;
+import io.mangoo.utils.CodecUtils;
 
 /**
  * Convenient class for handling authentication
@@ -16,19 +23,32 @@ import io.mangoo.models.OAuthUser;
  *
  */
 public class Authentication {
+    private Config config;
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
     private String authenticatedUser;
+    private Cache cache;
     private boolean remember;
     private boolean loggedOut;
 
-    public Authentication() {
-      //Empty constructor required for Google Guice
+    @Inject
+    public Authentication(CacheProvider cacheProvider, Config config) {
+        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
+        Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.cache = cacheProvider.getCache(CacheName.AUTH);
+        this.config = config;
     }
-
-    public Authentication(LocalDateTime expires, String authenticatedUser) {
+    
+    public Authentication withExpires(LocalDateTime expires) {
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        
         this.expires = expires;
+        return this;
+    }
+    
+    public Authentication withAuthenticatedUser(String authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
+        return this;
     }
 
     /**
@@ -88,35 +108,50 @@ public class Authentication {
     }
 
     /**
-     * Hashes a given clear text password using JBCrypt
-     *
-     * @param password The clear text password
-     * @return The hashed password
-     */
-    public String getHashedPassword(String password) {
-        Objects.requireNonNull(password, "password is required for getHashedPassword");
-
-        return BCrypt.hashpw(password, BCrypt.gensalt(Default.JBCRYPT_ROUNDS.toInt()));
-    }
-
-    /**
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
      *
+     *@param username The username to authenticate
      * @param password The clear text password
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean authenticate(String password, String hash) {
-        Objects.requireNonNull(password, "password is required for authenticate");
-        Objects.requireNonNull(hash, "Hashed password is required for authenticate");
+    public boolean login(String username, String password, String hash) {
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(hash, Required.HASH.toString());
 
         boolean authenticated = false;
-        if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(hash)) {
-            authenticated = BCrypt.checkpw(password, hash);                
+        if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
+            this.authenticatedUser = username;
+            authenticated = true;
+        } else {
+            this.cache.increment(username);
         }
 
         return authenticated;
+    }
+    
+    public void remember(boolean remember) {
+        this.remember = remember;
+    }
+ 
+    /**
+     * Checks if a username is locked because of to many failed login attempts
+     * 
+     * @param username The username to check
+     * @return true if the user has a lock, false otherwise
+     */
+    public boolean userHasLock(String username) {
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        boolean lock = false;
+        
+        AtomicInteger counter = this.cache.getCounter(username);
+        if (counter != null && counter.get() > this.config.getAuthenticationLock()) {
+            lock = true;
+        }
+        
+        return lock;
     }
 
     /**
@@ -124,33 +159,6 @@ public class Authentication {
      */
     public void logout() {
         this.loggedOut = true;
-    }
-
-    /**
-     * Performs a login for a given user name
-     *
-     * @param username The user name to login
-     * @param remember If true, the user will stay logged in for (default) 2 weeks
-     */
-    public void login(String username, boolean remember) {
-        Objects.requireNonNull(username, "Username is required for login");
-
-        if (StringUtils.isNotBlank(StringUtils.trimToNull(username))) {
-            this.authenticatedUser = username;
-            this.remember = remember;
-        }
-    }
-
-    /**
-     * Convenient method that calls {@link #login(String, boolean) login} with
-     * remember set to false
-     *
-     * @param username The user name to login
-     */
-    public void login(String username) {
-        Objects.requireNonNull(username, "username is required for isAuthenticated");
-        
-        login(username, false);
     }
 
     /**
@@ -169,7 +177,7 @@ public class Authentication {
      * @return True if the given user name is authenticates
      */
     public boolean isAuthenticated(String username) {
-        Objects.requireNonNull(username, "username is required for isAuthenticated");
+        Objects.requireNonNull(username, Required.USERNAME.toString());
 
         return username.equals(this.authenticatedUser);
     }

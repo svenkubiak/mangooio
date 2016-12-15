@@ -6,15 +6,13 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
-import io.mangoo.cache.Cache;
-import io.mangoo.cache.GuavaCache;
-import io.mangoo.cache.HazlecastCache;
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Mode;
+import io.mangoo.enums.Required;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.templating.freemarker.TemplateEngineFreemarker;
 import io.mangoo.utils.BootstrapUtils;
+import io.undertow.Undertow;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -23,7 +21,7 @@ import io.mangoo.utils.BootstrapUtils;
  *
  */
 public final class Application {
-    private static volatile Cache cache;
+    private static volatile Undertow undertow;
     private static volatile TemplateEngine templateEngine;
     private static volatile Config config;
     private static volatile Mode mode;
@@ -40,18 +38,20 @@ public final class Application {
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         injector = bootstrap.prepareInjector();
-        baseDirectory = BootstrapUtils.getBaseDirectory();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
         bootstrap.parseRoutes();
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
+        undertow = bootstrap.getUndertow();
         bootstrap.showLogo();
         bootstrap.applicationStarted();
 
-        if (bootstrap.isBootstrapSuccessful()) {
+        if (bootstrap.bootstrapSuccess()) {
             getInstance(Config.class).decrypt();
+            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+            baseDirectory = BootstrapUtils.getBaseDirectory();
             started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
@@ -122,7 +122,7 @@ public final class Application {
      * @return An instance of the current application config
      */
     public static Config getConfig() {
-        Objects.requireNonNull(mode, "cant't create config instance without application mode");
+        Objects.requireNonNull(mode, Required.MODE.toString());
 
         if (config == null) {
             config = new Config();
@@ -143,25 +143,10 @@ public final class Application {
     }
 
     /**
-     * @return An instance of the internal cache
-     */
-    public static Cache getInternalCache() {
-        if (cache == null) {
-            if (Default.CACHE_CLASS.toString().equals(config.getCacheClass())) {
-                cache = new GuavaCache();
-            } else {
-                cache = new HazlecastCache();
-            }
-        }
-
-        return cache;
-    }
-
-    /**
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
-        Objects.requireNonNull(start, "Can not calculate duration without application start time");
+        Objects.requireNonNull(start, Required.START.toString());
 
         return Duration.between(start, LocalDateTime.now());
     }
@@ -176,7 +161,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "clazz can not be null");
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return injector.getInstance(clazz);
     }
@@ -186,5 +171,12 @@ public final class Application {
      */
     public static String getBaseDirectory() {
         return baseDirectory;
+    }
+    
+    /**
+     * Stops the underlying undertow server
+     */
+    public static void stopUndertow() {
+        undertow.stop();
     }
 }

@@ -167,4 +167,24 @@ public class FormControllerTest {
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("Fancy that!"));
 	}
+
+    @Test
+    public void testFlashify() {
+        // given
+        String data = "this is my namefoo@bar.com";
+        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+        parameter.add(new BasicNameValuePair("name", "this is my name"));
+        parameter.add(new BasicNameValuePair("email", "foo@bar.com"));
+        
+        // when
+        WebResponse response = WebRequest.post("/submit")
+                .withLaxRedirectStrategy()
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter).execute();
+
+        // then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo(data));
+    }
 }

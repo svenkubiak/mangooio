@@ -1,0 +1,59 @@
+# Application configuration
+# 
+# This file defines all configuration values for a mangoo I/O application.
+# The default values are loaded by default and overwritten by environment specific
+# values if they are configured.
+#
+# Possible environments are test and dev.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+default:
+    application:
+        name       : mangooio.benchmark 
+        secret     : myvoiceismypasswordmyvoiceismypassword
+        language   : en
+    connector:
+        http:
+            host      : localhost
+            port      : 8080               
+    cookie:
+        name       : TEST-SESSION
+        expires    : 86400
+        encryption : false
+    mongodb:
+        host       : 127.0.0.1
+        port       : 27017
+        dbname     : hello_word
+        user       :
+        pass       :
+        authdb     :
+    morphia:
+        package    : models
+        init       : true
+        
+test:
+    connector:
+        http:
+            host      : localhost
+            port      : 10808
+    mongodb:
+        host       : localhost
+        port       : 29019
+        dbname     : test
+        user       :
+        pass       :
+        authdb     :       
+  
+dev:
+    connector:
+        http:
+            host      : localhost
+            port      : 50000
+    mongodb:
+        host       : localhost
+        port       : 29019
+        dbname     : test
+        user       :
+        pass       :
+        authdb     :          

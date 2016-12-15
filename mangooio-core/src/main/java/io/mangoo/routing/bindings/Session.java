@@ -3,13 +3,15 @@ package io.mangoo.routing.bindings;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Sets;
+
+import io.mangoo.enums.Required;
 
 /**
  *
@@ -19,19 +21,34 @@ import com.google.common.collect.Sets;
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
-    private Map<String, String> values;
-    private String authenticityToken;
+    private Map<String, String> values = new HashMap<>();
+    private String authenticity;
     private boolean changed;
     private LocalDateTime expires;
 
-    public Session(){
-      //Empty constructor required for Google Guice
+    public static Session build() {
+        return new Session();
     }
-
-    public Session(Map<String, String> values, String authenticityToken, LocalDateTime expires) {
-        this.values = Optional.ofNullable(values).orElse(new HashMap<>());
-        this.authenticityToken = authenticityToken;
+    
+    public Session withContent(Map<String, String> values) {
+        Objects.requireNonNull(values, Required.VALUES.toString());
+        
+        this.values = values;
+        return this;
+    }
+    
+    public Session withAuthenticity(String authenticity) {
+        Objects.requireNonNull(authenticity, Required.AUTHENTICITY.toString());
+        
+        this.authenticity = authenticity;
+        return this;
+    }
+    
+    public Session withExpires(LocalDateTime expires) {
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        
         this.expires = expires;
+        return this;
     }
 
     /**
@@ -110,8 +127,8 @@ public class Session {
     /**
      * @return The current authenticity token and marks the session as changed
      */
-    public String getAuthenticityToken() {
+    public String getAuthenticity() {
         this.changed = true;
-        return this.authenticityToken;
+        return this.authenticity;
     }
 }

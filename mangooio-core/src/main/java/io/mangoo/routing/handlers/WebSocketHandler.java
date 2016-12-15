@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.xnio.ChannelListener;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.utils.RequestUtils;
@@ -21,17 +22,17 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
  */
 @SuppressWarnings("unchecked")
 public class WebSocketHandler implements WebSocketConnectionCallback {
-    private final boolean requiresAuthentication;
+    private final boolean hasAuthentication;
     private final Class<?> controllerClass;
     
-    public WebSocketHandler(Class<?> controllerClass, boolean requiresAuthentication) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, "controllerClass can not be null");
-        this.requiresAuthentication = requiresAuthentication;
+    public WebSocketHandler(Class<?> controllerClass, boolean hasAuthentication) {
+        this.controllerClass = Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
+        this.hasAuthentication = hasAuthentication;
     }
 
     @Override
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
-        if (this.requiresAuthentication) {
+        if (this.hasAuthentication) {
             String header = null;
             if (exchange.getRequestHeader(Headers.COOKIE_STRING) != null) {
                 header = exchange.getRequestHeader(Headers.COOKIE_STRING);

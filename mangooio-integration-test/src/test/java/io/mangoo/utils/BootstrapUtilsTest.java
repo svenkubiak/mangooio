@@ -42,28 +42,6 @@ public class BootstrapUtilsTest {
     }
     
     @Test
-    public void testHasBlocking() {
-        //given
-        String urlWithBlocking = "- GET: / -> ApplicationController.index @blocking";
-        String urlWithNonBlocking = "- GET: /text -> ApplicationController.text";
-        
-        //then
-        assertThat(BootstrapUtils.hasBlocking(urlWithBlocking), equalTo(true));
-        assertThat(BootstrapUtils.hasBlocking(urlWithNonBlocking), equalTo(false));
-    }
-    
-    @Test
-    public void testHasAuthentication() {
-        //given
-        String urlWithAuthentication = "- WSS: /websocket -> WebSocketController @authentication";
-        String urlWithNonAuthentication = "- WSS: /websocketauth -> WebSocketController";
-        
-        //then
-        assertThat(BootstrapUtils.hasAuthentication(urlWithAuthentication), equalTo(true));
-        assertThat(BootstrapUtils.hasAuthentication(urlWithNonAuthentication), equalTo(false));
-    } 
-    
-    @Test
     public void testGetPackageName() {
         //given
         String package1 = "io.mangoo";
