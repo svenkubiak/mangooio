@@ -20,6 +20,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
+import com.google.common.base.Charsets;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
@@ -173,7 +175,7 @@ public class ApplicationControllerTest {
 
         //then
         assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(FileUtils.readFileToString(file), equalTo("This is an attachment"));
+        assertThat(FileUtils.readFileToString(file, Charsets.UTF_8), equalTo("This is an attachment"));
         assertThat(file.delete(), equalTo(true));
     }
 

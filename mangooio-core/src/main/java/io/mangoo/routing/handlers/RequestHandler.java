@@ -12,6 +12,8 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Charsets;
+
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
@@ -267,7 +269,7 @@ public class RequestHandler implements HttpHandler {
         String body = "";
         if (RequestUtils.isPostOrPut(exchange)) {
             exchange.startBlocking();
-            body = IOUtils.toString(exchange.getInputStream());
+            body = IOUtils.toString(exchange.getInputStream(), Charsets.UTF_8);
         }
 
         return body;

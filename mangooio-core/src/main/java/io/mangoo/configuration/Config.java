@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
@@ -148,7 +149,7 @@ public class Config {
         
         String key = null;
         try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())));
+            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Charsets.UTF_8);
         } catch (IOException e) {
             LOG.error("Failed to read master key", e);
         }

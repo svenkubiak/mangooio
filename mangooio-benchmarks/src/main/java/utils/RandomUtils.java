@@ -1,7 +1,7 @@
 package utils;
 
 import interfaces.Constants;
-import it.unimi.dsi.util.XorShift128PlusRandom;
+import it.unimi.dsi.util.XoRoShiRo128PlusRandom;
 
 /**
  *
@@ -9,7 +9,7 @@ import it.unimi.dsi.util.XorShift128PlusRandom;
  *
  */
 public final class RandomUtils {
-    private static XorShift128PlusRandom random = new XorShift128PlusRandom();
+    private static XoRoShiRo128PlusRandom random = new XoRoShiRo128PlusRandom();
 
     private RandomUtils() {
     }
