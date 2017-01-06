@@ -7,27 +7,26 @@ mangoo I/O
 
 mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-Development of mangoo I/O started in mid 2015 out of an interest in
+Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
-full stack java web framework from scratch. After the fresh new breeze of
-java development for the web with the [Play
+full stack Java web framework in from scratch. After I had a fresh new breeze of
+Java development for the web with the [Play
 Framwork - Version 1](https://www.playframework.com), contributions to the
 [Ninja Framework](http://www.ninjaframework.org), and having seen a lot of
 cumbersome "Enterprise" applications, I thought it was time for yet
-another full stack java framework.
+another full stack Java web framework.
 
-The foundation of mangoo I/O is the very performant
-[Undertow](http://undertow.io) web server from JBoss. On top of that,
-standard, production ready java libraries are used - no reinventing of the
-wheel, no bytecode manipulation, no magic whatsoever. The main reason for using Undertow was, that
-it is based on non-blocking I/O in the form of
-[XNIO](http://xnio.jboss.org). And although Undertow does support the
-servlet API, one is not bound to use it in any way. This gives the developer
-the opportunity to work fully stateless.
+For me, developing mangoo I/O will always be about having a developer friendly,
+fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
+This will be the untouchable base line.
 
-mangoo I/O is inspired by the [Ninja
-Web Framework](http://www.ninjaframework.org). Although the mangoo I/O core is a complete custom
-implementation, some of the ideas and methodologies were re-used.
+At its core, mangoo I/O is a classic MVC-Framework. The foundation of mangoo I/O is the high
+performant [Undertow](http://undertow.io) web server from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no bytecode manipulation, no magic whatsoever.
+
+The main reason for using Undertow was that it is based on non-blocking I/O in the form of XNIO. And although Undertow does support the servlet API, one is not bound to use it in any way, giving a Java developer the opportunity to work fully stateless and being independent to the servlet API.
+
+As I did some contributions to the Ninja Web Framework, mangoo I/O is in some parts inspired by the [Ninja
+Web Framework](http://www.ninjaframework.org). If you have worked with Ninja you probably feel comfortable from the start.
 
 Here are some key features of mangoo I/O in a nutshell:
 
@@ -68,7 +67,8 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
 * [Boon JSON](https://github.com/boonproject/boon), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
 * [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [Mockito](http://mockito.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
-* [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong cryptography and authentication
+* [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong hashing
+* [Bouncy Castle](https://www.bouncycastle.org/) - Strong cryptography
 * And many more ...
 
 **Homepage**   
@@ -78,7 +78,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
 
 **Discuss**   
-[https://mangoo-io.mobilize.io/](https://mangoo-io.mobilize.io/)  
+[https://mangoo.io/discuss](https://mangoo.io/discuss)  
 
 **Changelog**   
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
