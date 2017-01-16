@@ -3,6 +3,7 @@ package io.mangoo.filters.oauth;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -66,7 +67,7 @@ public class OAuthLoginFilter implements MangooFilter {
         OAuth1RequestToken requestToken = null;
         try {
             requestToken = oAuthService.getRequestToken();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             LOG.error("Failed to get Url for twitter OAuth1", e);
         }
         return oAuthService.getAuthorizationUrl(requestToken);

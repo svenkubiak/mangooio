@@ -2,6 +2,7 @@ package io.mangoo.filters.oauth;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -82,16 +83,17 @@ public class OAuthCallbackFilter implements MangooFilter {
             OAuth2AccessToken oAuth2AccessToken = null;
             try {
                 oAuth2AccessToken = oAuth20Service.getAccessToken(code);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get facebook OAuth2 accesstoken", e);
             }
 
             if (oAuth2AccessToken != null) {
-                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.FACEBOOK.toString());
+                com.github.scribejava.core.model.Response scribeResponse = null;
                 String scribeResponseBody = null;
                 try {
+                    scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.FACEBOOK.toString());
                     scribeResponseBody = scribeResponse.getBody();
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for facebook OAuth2", e);
                 }
                 
@@ -118,16 +120,17 @@ public class OAuthCallbackFilter implements MangooFilter {
             OAuth2AccessToken oAuth2AccessToken = null;
             try {
                 oAuth2AccessToken = oAuth20Service.getAccessToken(code);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get google OAuth2 access token", e);
             }
 
             if (oAuth2AccessToken != null) {
-                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.GOOGLE.toString());
+                com.github.scribejava.core.model.Response scribeResponse = null;
                 String scribeResponseBody = null;
                 try {
+                    scribeResponse = getResourceResponse(oAuth20Service, oAuth2AccessToken, OAuthResource.GOOGLE.toString());
                     scribeResponseBody = scribeResponse.getBody();
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for goolge OAuth2", e);
                 }
                 
@@ -156,16 +159,17 @@ public class OAuthCallbackFilter implements MangooFilter {
             OAuth1AccessToken oAuth1AccessToken = null;
             try {
                 oAuth1AccessToken = oAuth10aService.getAccessToken(requestToken, oauthVerifier);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get twitter OAuth access token", e);
             }
 
             if (oAuth1AccessToken != null) {
-                final com.github.scribejava.core.model.Response scribeResponse = getResourceResponse(oAuth10aService, oAuth1AccessToken, OAuthResource.TWITTER.toString());
+                com.github.scribejava.core.model.Response scribeResponse = null;
                 String scribeResponseBody = null;
                 try {
+                    scribeResponse = getResourceResponse(oAuth10aService, oAuth1AccessToken, OAuthResource.TWITTER.toString());
                     scribeResponseBody = scribeResponse.getBody();
-                } catch (IOException e) {
+                } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for goolge OAuth1" ,e);
                 }
                 
@@ -185,12 +189,15 @@ public class OAuthCallbackFilter implements MangooFilter {
      * @param resource The resource URL to access
      *
      * @return A OAuth response
+     * @throws IOException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    private com.github.scribejava.core.model.Response getResourceResponse(OAuth20Service oAuth20Service, OAuth2AccessToken oAuth2AccessToken, String resource) {
-        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth20Service.getConfig());
+    private com.github.scribejava.core.model.Response getResourceResponse(OAuth20Service oAuth20Service, OAuth2AccessToken oAuth2AccessToken, String resource) throws InterruptedException, ExecutionException, IOException {
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource);
         oAuth20Service.signRequest(oAuth2AccessToken, request);
 
-        return request.send();
+        return oAuth20Service.execute(request);
     }
 
     /**
@@ -201,11 +208,14 @@ public class OAuthCallbackFilter implements MangooFilter {
      * @param resource The resource URL to access
      *
      * @return A OAuth response
+     * @throws IOException 
+     * @throws ExecutionException 
+     * @throws InterruptedException 
      */
-    private com.github.scribejava.core.model.Response getResourceResponse(OAuth10aService oAuth10aService, OAuth1AccessToken oAuth1AccessToken, String resource) {
-        final OAuthRequest request = new OAuthRequest(Verb.GET, resource, oAuth10aService.getConfig());
+    private com.github.scribejava.core.model.Response getResourceResponse(OAuth10aService oAuth10aService, OAuth1AccessToken oAuth1AccessToken, String resource) throws InterruptedException, ExecutionException, IOException {
+        final OAuthRequest request = new OAuthRequest(Verb.GET, resource);
         oAuth10aService.signRequest(oAuth1AccessToken, request);
 
-        return request.send();
+        return oAuth10aService.execute(request);
     }
 }
