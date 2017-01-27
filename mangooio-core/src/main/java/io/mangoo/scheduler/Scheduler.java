@@ -158,7 +158,6 @@ public class Scheduler {
         }
     }
     
-
     /**
      * Retrieves a list of all jobs and their current status
      * 
@@ -182,6 +181,78 @@ public class Scheduler {
         }
         
         return jobs;
+    }
+    
+    /**
+     * Pauses a job by a given name
+     * @param name The name of the job to pause
+     * 
+     * @throws MangooSchedulerException when pausing fails
+     */
+    public void pauseJob(String name) throws MangooSchedulerException {
+        Objects.requireNonNull(name, Required.NAME.toString());
+        
+        try {
+            JobKey jobKey = getJobKey(name);
+            this.quartzScheduler.pauseJob(jobKey);
+        } catch (SchedulerException | MangooSchedulerException e) {
+            throw new MangooSchedulerException(e);
+        }            
+    }
+    
+    /**
+     * Resume a job by a given name
+     * @param name The name of the job to resume
+     * 
+     * @throws MangooSchedulerException if resuming fails
+     */
+    public void resumeJob(String name) throws MangooSchedulerException {
+        Objects.requireNonNull(name, Required.NAME.toString());
+        
+        try {
+            JobKey jobKey = getJobKey(name);
+            this.quartzScheduler.resumeJob(jobKey);
+        } catch (SchedulerException | MangooSchedulerException e) {
+            throw new MangooSchedulerException(e);
+        }        
+    }
+    
+    /**
+     * Delete a job by a given name
+     * @param name The name of the job to delete
+     * 
+     * @throws MangooSchedulerException if deletion fails
+     */
+    public void deleteJob(String name) throws MangooSchedulerException {
+        Objects.requireNonNull(name, Required.NAME.toString());
+        
+        try {
+            JobKey jobKey = getJobKey(name);
+            this.quartzScheduler.deleteJob(jobKey);
+        } catch (SchedulerException | MangooSchedulerException e) {
+            throw new MangooSchedulerException(e);
+        }          
+    }
+    
+    /**
+     * Retrieves a JobKey by it given name
+     * 
+     * @param name The name of the Job in the Scheduler
+     * @return Optional of JobKey
+     * 
+     * @throws MangooSchedulerException if retrieving the job fails
+     */
+    public JobKey getJobKey(String name) throws MangooSchedulerException {
+        Objects.requireNonNull(name, Required.NAME.toString());
+        
+        List<JobKey> allJobKeys = getAllJobKeys();
+        for (JobKey jobKey : allJobKeys) {
+            if (jobKey.getName().equalsIgnoreCase(name)) {
+                return jobKey;
+            }
+        }
+        
+        return null;
     }
     
     /**

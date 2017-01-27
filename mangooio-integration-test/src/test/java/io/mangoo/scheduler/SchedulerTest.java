@@ -2,6 +2,7 @@ package io.mangoo.scheduler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -84,6 +85,50 @@ public class SchedulerTest {
     public void testExecuteJob() throws MangooSchedulerException {
         //when
         scheduler.executeJob(JOB_NAME);
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testPauseJob() throws MangooSchedulerException, SchedulerException {
+        //given
+        JobKey jobKey = scheduler.getJobKey("jobs.InfoJob");
+        
+        //when
+        scheduler.pauseJob("jobs.InfoJob");
+        
+        //then
+        List<Trigger> triggers = (List<Trigger>) scheduler.getQuartzScheduler().getTriggersOfJob(jobKey);
+        Trigger trigger = triggers.get(0);  
+        TriggerState triggerState = scheduler.getQuartzScheduler().getTriggerState(trigger.getKey());
+                
+        assertThat(triggerState, equalTo(TriggerState.PAUSED));
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testResumeJob() throws MangooSchedulerException, SchedulerException {
+        //given
+        JobKey jobKey = scheduler.getJobKey("jobs.InfoJob");
+        
+        //when
+        scheduler.resumeJob("jobs.InfoJob");
+        
+        //then
+        List<Trigger> triggers = (List<Trigger>) scheduler.getQuartzScheduler().getTriggersOfJob(jobKey);
+        Trigger trigger = triggers.get(0);  
+        TriggerState triggerState = scheduler.getQuartzScheduler().getTriggerState(trigger.getKey());
+                
+        assertThat(triggerState, equalTo(TriggerState.NORMAL));
+    }
+    
+    @Test
+    public void testGetJobKey() throws MangooSchedulerException {
+        //given
+        JobKey jobKey = scheduler.getJobKey("jobs.InfoJob");
+        
+        //then
+        assertThat(jobKey, not(nullValue()));
+        assertThat(jobKey, instanceOf(JobKey.class));
     }
 
     @Test
