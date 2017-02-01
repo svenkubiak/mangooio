@@ -25,15 +25,15 @@ public class I18nMethod implements TemplateMethodModelEx {
     }
 
     @Override
-    public TemplateModel exec(List args) throws TemplateModelException {
+    public TemplateModel exec(List arguments) throws TemplateModelException {
         String messageValue = "";
-        if (args.size() == NUM_ARGUMENTS) {
-            String messageKey = ((SimpleScalar) args.get(0)).getAsString();
+        if (arguments.size() == NUM_ARGUMENTS) {
+            String messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
             messageValue = messages.get(messageKey);
 
-        } else if (args.size() > NUM_ARGUMENTS) {
+        } else if (arguments.size() > NUM_ARGUMENTS) {
             List<String> strings = new ArrayList<>();
-            for (Object object : args) {
+            for (Object object : arguments) {
                 if (object instanceof SimpleScalar) {
                     strings.add(((SimpleScalar) object).getAsString());
                 } else if (object instanceof SimpleNumber) {

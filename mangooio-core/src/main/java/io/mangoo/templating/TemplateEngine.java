@@ -26,11 +26,12 @@ public interface TemplateEngine {
      * @param subject The current subject
      * @param templatePath The path to the template to render
      * @param content The content map which is passed to the template
+     * @param uri 
      * @return A rendered template
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException;
+    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String uri) throws MangooTemplateEngineException;
 
     /**
      * Renders a template for a specific controller class and method

@@ -1,0 +1,1 @@
+<#if location("/location")>we are at location</#if><#if location("/mylocation")>we are at mylocation</#if>

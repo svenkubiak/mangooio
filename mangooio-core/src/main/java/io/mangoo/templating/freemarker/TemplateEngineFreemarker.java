@@ -31,9 +31,10 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
-import io.mangoo.templating.freemarker.directives.AuthenticityFormDirective;
-import io.mangoo.templating.freemarker.directives.AuthenticityTokenDirective;
+import io.mangoo.templating.freemarker.directives.FormDirective;
+import io.mangoo.templating.freemarker.directives.TokenDirective;
 import io.mangoo.templating.freemarker.methods.I18nMethod;
+import io.mangoo.templating.freemarker.methods.LocationMethod;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 
@@ -69,7 +70,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
     @Override
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content) throws MangooTemplateEngineException {
+    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String uri) throws MangooTemplateEngineException {
         Template template;
         try {
             template = configuration.getTemplate(templatePath);
@@ -82,8 +83,9 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("session", session);
         content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
-        content.put("authenticity", new AuthenticityTokenDirective(session));
-        content.put("authenticityForm", new AuthenticityFormDirective(session));
+        content.put("location", new LocationMethod(uri));
+        content.put("authenticity", new TokenDirective(session));
+        content.put("authenticityForm", new FormDirective(session));
 
         return processTemplate(content, template);
     }

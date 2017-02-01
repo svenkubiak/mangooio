@@ -76,6 +76,10 @@ public class ApplicationController {
     public Response jsonBoonPut(Request request) {
         return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
     }
+    
+    public Response location() {
+        return Response.withOk();
+    }
 
     public Response header() {
         return Response

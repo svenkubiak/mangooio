@@ -16,10 +16,10 @@ import io.mangoo.routing.bindings.Session;
  *
  */
 @SuppressWarnings("rawtypes")
-public class AuthenticityTokenDirective implements TemplateDirectiveModel {
+public class TokenDirective implements TemplateDirectiveModel {
     private final Session session;
 
-    public AuthenticityTokenDirective(Session session) {
+    public TokenDirective(Session session) {
         this.session = session;
     }
 
