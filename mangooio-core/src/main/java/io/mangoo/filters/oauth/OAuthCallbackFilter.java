@@ -97,7 +97,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     LOG.error("Failed to get response body for facebook OAuth2", e);
                 }
                 
-                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                if (StringUtils.isNotBlank(scribeResponseBody) && scribeResponse.isSuccessful()) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
                     request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
                 }                
@@ -134,7 +134,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     LOG.error("Failed to get response body for goolge OAuth2", e);
                 }
                 
-                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                if (StringUtils.isNotBlank(scribeResponseBody) && scribeResponse.isSuccessful()) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
                     request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
                 }  
@@ -173,7 +173,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     LOG.error("Failed to get response body for goolge OAuth1" ,e);
                 }
                 
-                if (scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
+                if (StringUtils.isNotBlank(scribeResponseBody) && scribeResponse.isSuccessful()) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
                     request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
                 }  
