@@ -84,7 +84,8 @@ public enum Required {
     ACCOUNT_NAME("account name can not be null"),
     EHCACHE("ehCache can not be null"),
     DATA("data can not be null"),
-    SALT("salt can not be null");
+    SALT("salt can not be null"),
+    PATH("path can not be null");
 
     private final String value;
 

@@ -64,6 +64,18 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testLocationWithParameter() {
+        //given
+        final WebResponse response = WebRequest.get("/location/8282838477").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("we are at location"));
+    }
+    
+    @Test
     public void testLimit() {
         //given
         WebResponse response = null;

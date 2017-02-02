@@ -77,7 +77,7 @@ public class ApplicationController {
         return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
     }
     
-    public Response location() {
+    public Response location(String myloc) {
         return Response.withOk();
     }
 
