@@ -32,7 +32,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
                 Date date = DateUtils.localDateToDate(((LocalDateAdapter) object).getObject());
                 result = this.prettyTime.format(date);              
             } else {
-                throw new RuntimeException("Invalid object found for pretty time. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
+                throw new TemplateModelException("Invalid object found for pretty time. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }
         }
         
