@@ -43,6 +43,9 @@ public class LocaleHandler implements HttpHandler {
         }
 
         attachment.getMessages().reload(locale);
+        attachment.withLocale(locale);
+        
+        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 

@@ -85,7 +85,8 @@ public enum Required {
     EHCACHE("ehCache can not be null"),
     DATA("data can not be null"),
     SALT("salt can not be null"),
-    PATH("path can not be null");
+    PATH("path can not be null"),
+    LOCALE("locale can not be null");
 
     private final String value;
 

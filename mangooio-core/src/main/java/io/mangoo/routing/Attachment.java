@@ -3,6 +3,7 @@ package io.mangoo.routing;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,6 +53,7 @@ public class Attachment {
     private boolean timer;
     private List<Annotation> classAnnotations;
     private List<Annotation> methodAnnotations;
+    private Locale locale;
 
     public static Attachment build() {
         return new Attachment();
@@ -104,6 +106,11 @@ public class Attachment {
 
     public Attachment withMethod(Method method) {
         this.method = Objects.requireNonNull(method, Required.METHOD.toString());
+        return this;
+    }
+    
+    public Attachment withLocale(Locale locale) {
+        this.locale = Objects.requireNonNull(locale, Required.LOCALE.toString());
         return this;
     }
 
@@ -281,6 +288,10 @@ public class Attachment {
 
     public long getResponseTime() {
         return System.currentTimeMillis() - this.start;
+    }
+    
+    public Locale getLocale() {
+        return this.locale;
     }
 
     public List<Annotation> getClassAnnotations() {

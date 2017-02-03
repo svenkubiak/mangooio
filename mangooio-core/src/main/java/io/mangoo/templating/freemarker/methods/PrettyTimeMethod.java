@@ -2,12 +2,15 @@ package io.mangoo.templating.freemarker.methods;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
 import freemarker.template.SimpleDate;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
+import io.mangoo.enums.Required;
 import io.mangoo.utils.DateUtils;
 import no.api.freemarker.java8.time.LocalDateAdapter;
 import no.api.freemarker.java8.time.LocalDateTimeAdapter;
@@ -15,7 +18,12 @@ import no.api.freemarker.java8.time.LocalDateTimeAdapter;
 @SuppressWarnings("rawtypes")
 public class PrettyTimeMethod implements TemplateMethodModelEx {
     private static final int NUM_ARGUMENTS = 1;
-    private PrettyTime prettyTime = new PrettyTime();
+    private PrettyTime prettyTime;
+    
+    public PrettyTimeMethod (Locale locale) {
+        Objects.requireNonNull(locale, Required.LOCALE.toString());
+        this.prettyTime = new PrettyTime(locale);
+    }
 
     @Override
     public String exec(List arguments) throws TemplateModelException {
