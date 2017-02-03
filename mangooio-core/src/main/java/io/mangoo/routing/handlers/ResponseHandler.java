@@ -100,6 +100,7 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), CONFIG.getXssProectionHeader());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), CONFIG.getXContentTypeOptionsHeader());
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), CONFIG.getXFrameOptionsHeader());
+        exchange.getResponseHeaders().put(Header.REFERER_POLICY.toHttpString(), CONFIG.getRefererPolicy());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), CONFIG.getContentSecurityPolicyHeader());

@@ -8,10 +8,10 @@ package io.mangoo.enums;
  */
 public enum ContentType {
     APPLICATION_JSON("application/json"),
+    APPLICATION_OCTET_STREAM("application/octet-stream"),
     APPLICATION_X_WWW_FORM_URLENCODED("application/x-www-form-urlencoded"),
     TEXT_HTML("text/html"),
-    TEXT_PLAIN("text/plain"),
-    APPLICATION_OCTET_STREAM("application/octet-stream");
+    TEXT_PLAIN("text/plain");
 
     private final String value;
 

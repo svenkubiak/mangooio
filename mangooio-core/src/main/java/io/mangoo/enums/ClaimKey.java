@@ -6,11 +6,11 @@ package io.mangoo.enums;
  *
  */
 public enum ClaimKey {
-    VERSION("version"),
-    DATA("data"),
     AUHTNETICITY("authenticity"),
     AUTHENTICATEDUSER("authenticatedUser"),
-    FORM("form");
+    DATA("data"),
+    FORM("form"),
+    VERSION("version");
     
     private final String value;
 

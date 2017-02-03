@@ -7,12 +7,12 @@ package io.mangoo.enums;
  *
  */
 public enum Suffix {
-    SASS(".sass"),
-    LESS(".less"),
     CSS(".css"),
-    JS(".js"),
     CSS_MIN(".min.css"),
-    JS_MIN(".min.js");
+    JS(".js"),
+    JS_MIN(".min.js"),
+    LESS(".less"),
+    SASS(".sass");
 
     private final String value;
 

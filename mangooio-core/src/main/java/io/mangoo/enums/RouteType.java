@@ -8,8 +8,8 @@ package io.mangoo.enums;
  */
 public enum RouteType {
     REQUEST,
-    WEBSOCKET,
-    SERVER_SENT_EVENT,
     RESOURCE_FILE,
-    RESOURCE_PATH
+    RESOURCE_PATH,
+    SERVER_SENT_EVENT,
+    WEBSOCKET
 }

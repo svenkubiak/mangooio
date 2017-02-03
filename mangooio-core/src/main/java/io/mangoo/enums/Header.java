@@ -9,11 +9,12 @@ import io.undertow.util.HttpString;
  *
  */
 public enum Header {
-    X_XSS_PPROTECTION("X-XSS-Protection"),
+    CONTENT_SECURITY_POLICY("Content-Security-Policy"),
+    REFERER_POLICY("Referrer-Policy"),
     X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options"),
     X_FRAME_OPTIONS("X-Frame-Options"),
-    CONTENT_SECURITY_POLICY("Content-Security-Policy"),
-    X_RESPONSE_TIME("X-Response-Time");
+    X_RESPONSE_TIME("X-Response-Time"),
+    X_XSS_PPROTECTION("X-XSS-Protection");
 
     private final String value;
 
@@ -21,12 +22,12 @@ public enum Header {
         this.value = value;
     }
 
+    public HttpString toHttpString() {
+        return new HttpString(this.value);
+    }
+
     @Override
     public String toString() {
         return this.value;
-    }
-
-    public HttpString toHttpString() {
-        return new HttpString(this.value);
     }
 }

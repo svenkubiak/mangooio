@@ -10,6 +10,7 @@ package io.mangoo.enums;
 public enum Default {
     APPLICATION_CONTROLLER("controllers."),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
+    APPLICATION_HEADERS_REFERERPOLICY("no-referrer"),
     APPLICATION_HEADERS_SERVER("Undertow"),
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("nosniff"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
@@ -40,13 +41,13 @@ public enum Default {
     COOKIE_VERSION("0"),
     DATA_DELIMITER("#"),
     DEFAULT_CONFIGURATION("default"),
-    DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
+    DEFAULT_TEMPLATES_DIR("/templates/defaults/"), //NOSONAR
     DELIMITER("|"), //NOSONAR
-    ENCODING("UTF-8"), //NOSONAR
+    ENCODING("UTF-8"),
     EXECUTION_THREADPOOL("10"),
     FILES_FOLDER("files"),
-    FILTER_METHOD("execute"),
     FILES_PATH("src/main/resources/files/"),
+    FILTER_METHOD("execute"),
     FLASH_COOKIE_NAME("MANGOOIO-FLASH"),
     JAVASCRIPT_FOLDER("javascript"),
     JBCRYPT_ROUNDS("12"),

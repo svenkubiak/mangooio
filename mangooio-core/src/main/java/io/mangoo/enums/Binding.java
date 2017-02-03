@@ -6,34 +6,29 @@ package io.mangoo.enums;
  *
  */
 public enum Binding {
-    FORM("io.mangoo.routing.bindings.Form"),
-    SESSION("io.mangoo.routing.bindings.Session"),
-    FLASH("io.mangoo.routing.bindings.Flash"),
-    REQUEST("io.mangoo.routing.bindings.Request"),
+    AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
     BODY("io.mangoo.routing.bindings.Body"),
-    LOCALDATE("java.time.LocalDate"),
-    STRING("java.lang.String"),
-    INTEGER("java.lang.Integer"),
-    INT_PRIMITIVE("int"),
-    FLOAT("java.lang.Float"),
-    FLOAT_PRIMITIVE("float"),
-    LONG("java.lang.Long"),
-    LONG_PRIMITIVE("long"),
     DOUBLE("java.lang.Double"),
     DOUBLE_PRIMITIVE("double"),
+    FLASH("io.mangoo.routing.bindings.Flash"),
+    FLOAT("java.lang.Float"),
+    FLOAT_PRIMITIVE("float"),
+    FORM("io.mangoo.routing.bindings.Form"),
+    INT_PRIMITIVE("int"),
+    INTEGER("java.lang.Integer"),
+    LOCALDATE("java.time.LocalDate"),
     LOCALDATETIME("java.time.LocalDateTime"),
-    AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
+    LONG("java.lang.Long"),
+    LONG_PRIMITIVE("long"),
+    REQUEST("io.mangoo.routing.bindings.Request"),
+    SESSION("io.mangoo.routing.bindings.Session"),
+    STRING("java.lang.String"),
     UNDEFINED("undefined");
 
     private final String value;
 
     Binding (String value) {
         this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return this.value;
     }
 
     public static Binding fromString(String value) {
@@ -44,5 +39,10 @@ public enum Binding {
         }
 
         return null;
+    }
+    
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

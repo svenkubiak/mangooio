@@ -7,11 +7,11 @@ package io.mangoo.enums;
  *
  */
 public enum CacheName {
-    WSS("mangooio-wss"),
-    SSE("mangooio-sse"),
+    APPLICATION("mangooio-application"),
     AUTH("mangooio-auth"),
     REQUEST("mangooio-request"),
-    APPLICATION("mangooio-application");
+    SSE("mangooio-sse"),
+    WSS("mangooio-wss");
 
     private final String value;
 

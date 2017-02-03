@@ -742,4 +742,8 @@ public class Config {
     public String getCacheClusterUrl() {
         return getString(Key.CACHE_CLUSTER_URL, null);
     }
+
+    public String getRefererPolicy() {
+        return getString(Key.APPLICATION_HEADERS_REFERERPOLICY, Default.APPLICATION_HEADERS_REFERERPOLICY.toString());
+    }
 }

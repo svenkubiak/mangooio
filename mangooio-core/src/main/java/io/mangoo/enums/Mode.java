@@ -8,8 +8,8 @@ package io.mangoo.enums;
  */
 public enum Mode {
     DEV("dev"),
-    TEST("test"),
-    PROD("prod");
+    PROD("prod"),
+    TEST("test");
 
     private final String value;
 
