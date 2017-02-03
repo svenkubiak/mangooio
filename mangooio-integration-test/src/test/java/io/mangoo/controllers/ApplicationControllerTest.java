@@ -76,6 +76,18 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testPrettyTime() {
+        //given
+        final WebResponse response = WebRequest.get("/prettytime").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString("gerade"));
+    }
+    
+    @Test
     public void testLimit() {
         //given
         WebResponse response = null;
