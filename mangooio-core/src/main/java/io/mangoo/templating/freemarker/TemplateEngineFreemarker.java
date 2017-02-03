@@ -35,8 +35,10 @@ import io.mangoo.templating.freemarker.directives.FormDirective;
 import io.mangoo.templating.freemarker.directives.TokenDirective;
 import io.mangoo.templating.freemarker.methods.I18nMethod;
 import io.mangoo.templating.freemarker.methods.LocationMethod;
+import io.mangoo.templating.freemarker.methods.PrettyTimeMethod;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
+import no.api.freemarker.java8.Java8ObjectWrapper;
 
 /**
  * 
@@ -49,7 +51,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 23);
+    private static final Version VERSION = new Version(2, 3, 25);
 
     public TemplateEngineFreemarker() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
@@ -59,6 +61,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
         this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
         this.configuration.setAPIBuiltinEnabled(true);
+        this.configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
 
         if (Application.inDevMode()) {
             this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
@@ -84,6 +87,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
         content.put("location", new LocationMethod(path));
+        content.put("prettytime", new PrettyTimeMethod());
         content.put("authenticity", new TokenDirective(session));
         content.put("authenticityForm", new FormDirective(session));
 

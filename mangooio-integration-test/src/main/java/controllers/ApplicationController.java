@@ -2,6 +2,9 @@ package controllers;
 
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -23,6 +26,17 @@ public class ApplicationController {
     
     public Response limit() {
         return Response.withOk().andEmptyBody();
+    }
+    
+    public Response prettytime() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDate localDate = LocalDate.now();
+        Date date = new Date();
+        
+        return Response.withOk()
+                .andContent("localDateTime", localDateTime)
+                .andContent("localDate", localDate)
+                .andContent("date", date);
     }
 
     public Response forbidden() {
