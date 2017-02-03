@@ -78,7 +78,9 @@ public class ApplicationControllerTest {
     @Test
     public void testPrettyTime() {
         //given
-        final WebResponse response = WebRequest.get("/prettytime").execute();
+        final WebResponse response = WebRequest.get("/prettytime")
+                .withHeader("Accept-Language", "de-DE")
+                .execute();
 
         //then
         assertThat(response, not(nullValue()));
