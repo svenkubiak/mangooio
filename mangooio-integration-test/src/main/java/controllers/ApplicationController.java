@@ -92,7 +92,7 @@ public class ApplicationController {
     }
     
     public Response location(String myloc) {
-        return Response.withOk();
+        return Response.withOk().andContent("myloc", myloc);
     }
 
     public Response header() {

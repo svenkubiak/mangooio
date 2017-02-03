@@ -23,12 +23,18 @@ public class LocationMethod implements TemplateMethodModelEx {
     @Override
     public Boolean exec(List arguments) throws TemplateModelException {
         boolean valid = false;
-        if (arguments != null && arguments.size() == NUM_ARGUMENTS && StringUtils.isNotBlank(this.path)) {
-            if (this.path.startsWith(((SimpleScalar) arguments.get(0)).getAsString().toLowerCase())) {
-                valid = true;
-            }
+        if (validArguments(arguments) && pathMatches(arguments)) {
+            valid = true;
         }
         
         return Boolean.valueOf(valid);
+    }
+    
+    private boolean validArguments(List arguments) {
+        return arguments != null && arguments.size() == NUM_ARGUMENTS && StringUtils.isNotBlank(this.path);
+    }
+    
+    private boolean pathMatches(List arguments) {
+        return this.path.startsWith(((SimpleScalar) arguments.get(0)).getAsString().toLowerCase());
     }
 }
