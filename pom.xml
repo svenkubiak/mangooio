@@ -294,11 +294,6 @@
 				<version>2.7.3</version>
 			</dependency>
 			<dependency>
-				<groupId>org.ocpsoft.prettytime</groupId>
-				<artifactId>prettytime</artifactId>
-				<version>4.0.1.Final</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>fluent-hc</artifactId>
 				<version>${httpcomponents.version}</version>
