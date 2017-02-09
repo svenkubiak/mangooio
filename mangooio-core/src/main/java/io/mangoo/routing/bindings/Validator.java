@@ -187,7 +187,7 @@ public class Validator implements Serializable {
 
         if (StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
-        } else if (!value.equals(anotherValue)) {
+        } else if (StringUtils.isNotBlank(value) && !value.equals(anotherValue)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Key.VALIDATION_EXACT_MATCH, name, anotherName)));
         }
     }
