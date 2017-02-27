@@ -31,6 +31,17 @@ public class ParameterControllerTest {
     }
     
     @Test
+    public void testWithoutParameter() {
+        //given
+        WebResponse response = WebRequest.get("/string").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("isNull"));
+    }
+    
+    @Test
     public void testUmlautParameter() {
         //given
         WebResponse response = WebRequest.get("/string/äöü").execute();

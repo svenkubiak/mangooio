@@ -83,6 +83,10 @@ routes:
 - method: GET
   url: /string/{foo}
   mapping: ParameterController.stringParam
+  
+- method: GET
+  url: /string
+  mapping: ParameterController.stringParam
 
 - method: GET
   url: /int/{foo}

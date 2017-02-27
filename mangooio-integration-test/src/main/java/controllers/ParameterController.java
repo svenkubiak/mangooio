@@ -12,6 +12,7 @@ public class ParameterController {
     private static final String MULTIPARAM_TEMPLATE = "/ParameterController/multiparam.ftl";
 
     public Response stringParam(String foo) {
+        if (foo == null) {foo = "isNull";}
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
     
