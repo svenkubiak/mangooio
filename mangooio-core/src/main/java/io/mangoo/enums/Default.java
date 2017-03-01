@@ -19,25 +19,25 @@ public enum Default {
     APPLICATION_SECRET_MIN_LENGTH("32"),
     APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
     ASSETS_PATH("src/main/resources/files/assets/"),
-    AUTH_COOKIE_ENCRYPT("false"),
+    AUTH_COOKIE_ENCRYPT(Constants.FALSE),
     AUTH_COOKIE_EXPIRES("3600"),
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
     AUTH_COOKIE_REMEMBER_EXPIRES("1209600"),
-    AUTH_COOKIE_SECURE("false"),
+    AUTH_COOKIE_SECURE(Constants.FALSE),
     AUTH_COOKIE_VERSION("0"),
     AUTH_LOCK("10"),
     AUTHENTICITY("authenticity"),
     BASICAUTH_CREDENTIALS_LENGTH("2"),
     BUNDLE_NAME("translations/messages"),
-    CACHE_CLUSTER_ENABLE("false"),
+    CACHE_CLUSTER_ENABLE(Constants.FALSE),
     CONFIG_PATH("/src/main/resources/application.yaml"),
     CONFIGURATION_FILE("application.yaml"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
-    COOKIE_ENCRYPTION("false"),
+    COOKIE_ENCRYPTION(Constants.FALSE),
     COOKIE_EXPIRES("86400"),
     COOKIE_I18N_NAME("MANGOOIO-I18N"),
     COOKIE_NAME("MANGOOIO-SESSION"),
-    COOKIE_SECURE("false"),
+    COOKIE_SECURE(Constants.FALSE),
     COOKIE_VERSION("0"),
     DATA_DELIMITER("#"),
     DEFAULT_CONFIGURATION("default"),
@@ -66,7 +66,7 @@ public enum Default {
     SMTP_HOST("localhost"),
     SMTP_PORT("25"),
     SMTP_SERVER_NAME("smtp"),
-    SMTP_SSL("false"),
+    SMTP_SSL(Constants.FALSE),
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
     STYLESHEET_FOLDER("stylesheet"),
     TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker"),
@@ -97,5 +97,9 @@ public enum Default {
     @Override
     public String toString() {
         return this.value;
+    }
+    
+    private static class Constants {
+        public static final String FALSE = "false";
     }
 }
