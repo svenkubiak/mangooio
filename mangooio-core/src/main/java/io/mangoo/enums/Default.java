@@ -101,5 +101,8 @@ public enum Default {
     
     private static class Constants {
         public static final String FALSE = "false";
+        
+        private Constants() {
+        }
     }
 }
