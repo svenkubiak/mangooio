@@ -28,6 +28,7 @@ public interface TemplateEngine {
      * @param templatePath The path to the template to render
      * @param content The content map which is passed to the template
      * @param path The relative path of the request 
+     * @param locale The locale to be used 
      * @return A rendered template
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
