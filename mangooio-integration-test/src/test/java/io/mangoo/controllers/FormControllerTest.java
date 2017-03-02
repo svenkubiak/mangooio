@@ -50,6 +50,26 @@ public class FormControllerTest {
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("vip;secret"));
 	}
+	
+    @Test
+    public void testMultiValue() {
+        // given
+        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+        parameter.add(new BasicNameValuePair("foo[]", "1"));
+        parameter.add(new BasicNameValuePair("foo[]", "2"));
+        parameter.add(new BasicNameValuePair("foo[]", "3"));
+
+        // when
+        WebResponse response = WebRequest.post("/multivalued")
+                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withPostParameters(parameter)
+                .execute();
+
+        // then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("1\n2\n3\n"));
+    }
 
 	@Test
 	public void testSingleFileUpload() throws IOException {
@@ -159,8 +179,10 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("regex", "a"));
 
 		// when
-		WebResponse response = WebRequest.post("/validateform").withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
-				.withPostParameters(parameter).execute();
+		WebResponse response = WebRequest.post("/validateform")
+		        .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+				.withPostParameters(parameter)
+				.execute();
 
 		// then
 		assertThat(response, not(nullValue()));

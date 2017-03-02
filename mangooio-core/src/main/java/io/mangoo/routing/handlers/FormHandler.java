@@ -2,6 +2,7 @@ package io.mangoo.routing.handlers;
 
 import java.io.IOException;
 import java.util.Deque;
+import java.util.Iterator;
 
 import com.google.common.base.Charsets;
 
@@ -62,7 +63,14 @@ public class FormHandler implements HttpHandler {
                             if (formValue.isFile() && formValue.getPath() != null) {
                                 form.addFile(formValue.getPath().toFile());
                             } else {
-                                form.addValue(new HttpString(data).toString(), formValue.getValue());
+                                if (data.contains("[]")) {
+                                    String key = data.replace("[]", "");
+                                    for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
+                                        form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
+                                    }
+                                } else {
+                                    form.addValue(new HttpString(data).toString(), formValue.getValue());
+                                }
                             }    
                         }
                     }

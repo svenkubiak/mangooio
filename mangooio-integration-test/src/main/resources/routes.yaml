@@ -185,6 +185,10 @@ routes:
   mapping: FormController.form
 
 - method: POST
+  url: /multivalued
+  mapping: FormController.multivalued
+
+- method: POST
   url: /submit
   mapping: FormController.submit
   
