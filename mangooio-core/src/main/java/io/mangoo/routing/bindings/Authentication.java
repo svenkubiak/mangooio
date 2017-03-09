@@ -15,6 +15,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.TwoFactorUtils;
 
 /**
  * Convenient class for handling authentication
@@ -152,6 +153,19 @@ public class Authentication {
         }
         
         return lock;
+    }
+    
+    /**
+     * Checks if a given number for 2FA is valid for the given secret
+     * 
+     * @param secret The secret to use for checking
+     * @param number The number entered by the user
+     * @return True is number is valid, false otherweise
+     */
+    public boolean validTwoFactor(String secret, int number) {
+        Objects.requireNonNull(secret, Required.SECRET.toString());
+        
+        return TwoFactorUtils.validateCurrentNumber(number, secret);
     }
 
     /**

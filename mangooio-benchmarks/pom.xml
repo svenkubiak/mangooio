@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>4.1.2-SNAPSHOT</version>
+		<version>4.2.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-benchmark</artifactId>
 	<packaging>jar</packaging>
@@ -49,7 +49,7 @@
 			<plugin>
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>4.1.2-SNAPSHOT</version>
+				<version>4.2.1-SNAPSHOT</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -102,12 +102,12 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-			<version>4.1.2-SNAPSHOT</version>
+			<version>4.2.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-test</artifactId>
-			<version>4.1.2-SNAPSHOT</version>
+			<version>4.2.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

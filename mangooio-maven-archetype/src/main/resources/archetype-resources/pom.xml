@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://mangoo.io</url>
 	<properties>
-		<mangooio.version>4.1.0</mangooio.version>
+		<mangooio.version>4.2.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>
@@ -81,6 +81,8 @@
 								<excludes>
 									<exclude>junit:junit</exclude>
 									<exclude>rhino:js</exclude>
+									<exclude>c3p0:c3p0</exclude>
+									<exclude>com.icegreen:greenmail</exclude>
 									<exclude>org.eclipse.jetty:*</exclude>
 									<exclude>org.glassfish.jersey.media:*</exclude>
 									<exclude>org.glassfish.jersey.core:*</exclude>
