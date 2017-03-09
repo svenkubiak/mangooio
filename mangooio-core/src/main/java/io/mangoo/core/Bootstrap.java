@@ -189,7 +189,7 @@ public class Bootstrap {
                     try {
                         if (StringUtils.isNotBlank(mapping)) {
                             //mapping package.subpackage.Controller.method
-                            int lastIndexOf = mapping.lastIndexOf('.');
+                            int lastIndexOf = mapping.trim().lastIndexOf('.');
                             if (lastIndexOf != -1) {
                                 //from position 0 to last '.'
                                 String controllerName = mapping.substring(0, lastIndexOf);
