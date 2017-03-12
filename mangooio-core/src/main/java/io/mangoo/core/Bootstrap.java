@@ -200,6 +200,11 @@ public class Bootstrap {
                                 if (methodExists(methodName, route.getControllerClass())) {
                                     route.withMethod(methodName);
                                 }
+                            }else {
+                                //check for WSS/SSE routes
+                                String controllerName = mapping;
+                                String controllerClass = BootstrapUtils.getPackageName(this.config.getControllerPackage()) + controllerName;
+                                route.withClass(Class.forName(controllerClass));
                             }
                         }
 

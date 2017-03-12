@@ -293,6 +293,24 @@ routes:
   url: /jsonboonput
   mapping: ApplicationController.jsonBoonPut
 
+# Controllers in Sub Packages
+- method: GET
+  url: /api/item
+  mapping: api.ItemController.getItem
+
+- method: POST
+  url: /api/item
+  mapping: api.ItemController.createItem
+
+- method: PUT
+  url: /api/item
+  mapping: api.ItemController.updateItem
+
+- method: DELETE
+  url: /api/item
+  mapping: api.ItemController.deleteItem
+
+
 # WebSocketController
 - method: WSS
   url: /websocket
