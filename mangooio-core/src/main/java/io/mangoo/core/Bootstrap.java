@@ -175,7 +175,8 @@ public class Bootstrap {
             
             if (!bootstrapError() && yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
+                    RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
+                    final Route route = new Route(routeType)
                             .toUrl(yamlRoute.getUrl().trim())
                             .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
                             .withUsername(yamlRoute.getUsername())
@@ -188,9 +189,9 @@ public class Bootstrap {
                     String mapping = yamlRoute.getMapping();   
                     try {
                         if (StringUtils.isNotBlank(mapping)) {
-                            //mapping package.subpackage.Controller.method
-                            int lastIndexOf = mapping.trim().lastIndexOf('.');
-                            if (lastIndexOf != -1) {
+                            if (routeType == RouteType.REQUEST) {
+                                //mapping package.subpackage.Controller.method
+                                int lastIndexOf = mapping.trim().lastIndexOf('.');
                                 //from position 0 to last '.'
                                 String controllerName = mapping.substring(0, lastIndexOf);
                                 //from position of last '.' + 1 to end
