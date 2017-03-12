@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * Created by gowthaman on 12/3/17.
  */
-public class ItemController {
+public class ItemControllerTest {
 
 
     @Test
