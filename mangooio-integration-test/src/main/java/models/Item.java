@@ -22,4 +22,12 @@ public class Item {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", active=" + active +
+                '}';
+    }
 }
