@@ -305,4 +305,8 @@ public class Attachment {
     public Subject getSubject() {
         return this.subject;
     }
+
+    public String getControllerAndMethod() {
+        return this.controllerClassName + ":" + this.controllerMethodName;
+    }
 }

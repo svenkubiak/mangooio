@@ -145,7 +145,7 @@ public class RequestHandler implements HttpHandler {
                     this.attachment.getSubject(),
                     getTemplatePath(invokedResponse),
                     invokedResponse.getContent(),
-                    exchange.getRelativePath(),
+                    this.attachment.getControllerAndMethod(),
                     this.attachment.getLocale()));
         }
 
