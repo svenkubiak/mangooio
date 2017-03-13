@@ -18,4 +18,12 @@ public class I18nController {
         
         return Response.withOk().andCookie(cookie);
     }
+    
+    public Response special() {
+        return Response.withOk();
+    }
+    
+    public Response umlaute() {
+        return Response.withOk();
+    }
 }

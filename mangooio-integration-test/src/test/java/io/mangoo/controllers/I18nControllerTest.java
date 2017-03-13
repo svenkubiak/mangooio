@@ -33,6 +33,32 @@ public class I18nControllerTest {
     }
     
     @Test
+    public void testSpecialCharacters() {
+        //given
+        WebResponse response = WebRequest.get("/special")
+                .withHeader("Accept-Language", "fr-FR")
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Côte d&#39;Ivoire"));
+    }
+    
+    @Test
+    public void testUmlaute() {
+        //given
+        WebResponse response = WebRequest.get("/umlaute")
+                .withHeader("Accept-Language", "de-DE")
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Umlaute test : äöü und special (§&amp;! charcter- . te;;st"));
+    }
+    
+    @Test
     public void testWithAdditionalHeaderDe() {
         //given
         WebResponse response = WebRequest.get("/translation")
