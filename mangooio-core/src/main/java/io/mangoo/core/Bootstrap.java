@@ -175,7 +175,8 @@ public class Bootstrap {
             
             if (!bootstrapError() && yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
+                    RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
+                    final Route route = new Route(routeType)
                             .toUrl(yamlRoute.getUrl().trim())
                             .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
                             .withUsername(yamlRoute.getUsername())
@@ -187,16 +188,26 @@ public class Bootstrap {
                     
                     String mapping = yamlRoute.getMapping();   
                     try {
-                       String [] mapped = null;
-                       if (StringUtils.isNotBlank(mapping)) {
-                           mapped = mapping.split("\\.");
-                           route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapped[0].trim()));
-                           if (mapped.length == 2) {
-                               if (methodExists(mapped[1], route.getControllerClass())) {
-                                   route.withMethod(mapped[1]);
-                               }  
-                           }
-                       }
+                        if (StringUtils.isNotBlank(mapping)) {
+                            if (routeType == RouteType.REQUEST) {
+                                //mapping package.subpackage.Controller.method
+                                int lastIndexOf = mapping.trim().lastIndexOf('.');
+                                //from position 0 to last '.'
+                                String controllerName = mapping.substring(0, lastIndexOf);
+                                //from position of last '.' + 1 to end
+                                String methodName = mapping.substring(lastIndexOf + 1);
+                                String controllerClass = BootstrapUtils.getPackageName(this.config.getControllerPackage()) + controllerName;
+                                route.withClass(Class.forName(controllerClass));
+                                if (methodExists(methodName, route.getControllerClass())) {
+                                    route.withMethod(methodName);
+                                }
+                            }else {
+                                //check for WSS/SSE routes
+                                String controllerName = mapping;
+                                String controllerClass = BootstrapUtils.getPackageName(this.config.getControllerPackage()) + controllerName;
+                                route.withClass(Class.forName(controllerClass));
+                            }
+                        }
 
                        Router.addRoute(route);
                     } catch (final Exception e) {

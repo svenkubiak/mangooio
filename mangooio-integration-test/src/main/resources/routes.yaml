@@ -293,6 +293,11 @@ routes:
   url: /jsonboonput
   mapping: ApplicationController.jsonBoonPut
 
+# Controllers in Sub Packages
+- method: GET
+  url: /api/item
+  mapping: api.ItemController.getItem
+
 # WebSocketController
 - method: WSS
   url: /websocket
