@@ -1,4 +1,4 @@
-package io.mangoo.controllers.api;
+package io.mangoo.controllers;
 
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
@@ -8,17 +8,15 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class ItemControllerTest {
-
+public class SubControllerTest {
     @Test
     public void testSubPackageGet() {
         //given
-        WebResponse response = WebRequest.get("/api/item").execute();
+        WebResponse response = WebRequest.get("/subcontroller").execute();
 
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(""));
     }
-
 }
