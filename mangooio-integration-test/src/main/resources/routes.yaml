@@ -35,6 +35,16 @@ routes:
 - method: GET
   url: /translation
   mapping: I18nController.translation
+  
+# I18nController
+- method: GET
+  url: /special
+  mapping: I18nController.special
+
+# I18nController
+- method: GET
+  url: /umlaute
+  mapping: I18nController.umlaute
 
 - method: GET
   url: /localize
@@ -292,6 +302,11 @@ routes:
 - method: PUT
   url: /jsonboonput
   mapping: ApplicationController.jsonBoonPut
+
+# Controllers in Sub Packages
+- method: GET
+  url: /subcontroller
+  mapping: subcontrollers.SubController.check
 
 # WebSocketController
 - method: WSS

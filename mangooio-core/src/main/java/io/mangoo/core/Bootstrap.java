@@ -175,7 +175,8 @@ public class Bootstrap {
             
             if (!bootstrapError() && yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                    final Route route = new Route(BootstrapUtils.getRouteType(yamlRoute.getMethod()))
+                    RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
+                    final Route route = new Route(routeType)
                             .toUrl(yamlRoute.getUrl().trim())
                             .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
                             .withUsername(yamlRoute.getUsername())
@@ -185,19 +186,22 @@ public class Bootstrap {
                             .withLimit(yamlRoute.getLimit())
                             .allowBlocking(yamlRoute.isBlocking());
                     
-                    String mapping = yamlRoute.getMapping();   
                     try {
-                       String [] mapped = null;
-                       if (StringUtils.isNotBlank(mapping)) {
-                           mapped = mapping.split("\\.");
-                           route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapped[0].trim()));
-                           if (mapped.length == 2) {
-                               if (methodExists(mapped[1], route.getControllerClass())) {
-                                   route.withMethod(mapped[1]);
-                               }  
-                           }
-                       }
+                        String mapping = yamlRoute.getMapping();   
+                        if (StringUtils.isNotBlank(mapping)) {
+                            if (routeType == RouteType.REQUEST) {
+                                int lastIndexOf = mapping.trim().lastIndexOf('.');
+                                String controllerClass = BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapping.substring(0, lastIndexOf);
+                                route.withClass(Class.forName(controllerClass));
 
+                                String methodName = mapping.substring(lastIndexOf + 1);
+                                if (methodExists(methodName, route.getControllerClass())) {
+                                    route.withMethod(methodName);
+                                }
+                            } else {
+                                route.withClass(Class.forName(BootstrapUtils.getPackageName(this.config.getControllerPackage()) + mapping));
+                            }
+                        }
                        Router.addRoute(route);
                     } catch (final Exception e) {
                         LOG.error("Failed to create routes from routes.yaml");

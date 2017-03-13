@@ -74,7 +74,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
 
     @Override
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String path, Locale locale) throws MangooTemplateEngineException {
+    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String controller, Locale locale) throws MangooTemplateEngineException {
         Template template;
         try {
             template = configuration.getTemplate(templatePath);
@@ -87,7 +87,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("session", session);
         content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
-        content.put("location", new LocationMethod(path));
+        content.put("location", new LocationMethod(controller));
         content.put("prettytime", new PrettyTimeMethod(locale));
         content.put("authenticity", new TokenDirective(session));
         content.put("authenticityForm", new FormDirective(session));
