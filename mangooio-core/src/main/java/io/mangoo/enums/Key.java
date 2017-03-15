@@ -10,6 +10,8 @@ public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
+    
+    @Deprecated /** Use Jvm.APPLICATION_CONFIG instead **/
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY("application.headers.contentsecuritypolicy"),
@@ -22,10 +24,14 @@ public enum Key {
     APPLICATION_JWT_ENCRYPTION_KEY("application.jwt.encryptionkey"),
     APPLICATION_JWT_SIGNKEY("application.jwt.signkey"),
     APPLICATION_LANGUAGE("application.language"),
+    
+    @Deprecated /** Use Jvm.APPLICATION_LOG instead **/
     APPLICATION_LOG("application.log"),
     APPLICATION_MASTERKEY("application.masterkey"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
     APPLICATION_MINIFY_JS("application.minify.js"),
+    
+    @Deprecated /** Use Jvm.APPLICATION_MODE instead **/
     APPLICATION_MODE("application.mode"),
     APPLICATION_NAME("application.name"),
     APPLICATION_PREPROCESS_LESS("application.preprocess.less"),   
@@ -53,7 +59,6 @@ public enum Key {
     COOKIE_NAME("cookie.name"),
     COOKIE_SECURE("cookie.secure"),
     COOKIE_VERSION("cookie.version"),
-    ERROR("error"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     OAUTH_FACEBOOK_KEY("oauth.facebook.key"),
     OAUTH_FACEBOOK_SECRET("oauth.facebook.secret"),
@@ -71,22 +76,9 @@ public enum Key {
     SMTP_PORT("smtp.port"),
     SMTP_SSL("smtp.ssl"),
     SMTP_USERNAME("smtp.username"),
-    SUCCESS("success"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize"),
-    VALIDATION_DOMAIN_NAME("validation.domainname"),
-    VALIDATION_EMAIL("validation.email"),
-    VALIDATION_EXACT_MATCH("validation.exactmatch"),
-    VALIDATION_IPV4("validation.ipv4"),
-    VALIDATION_IPV6("validation.ipv6"),
-    VALIDATION_MATCH("validation.match"),
-    VALIDATION_MATCH_VALUES("validation.matchvalues"),
-    VALIDATION_MAX("validation.max"),
-    VALIDATION_MIN("validation.min"),
-    VALIDATION_NUMERIC("validation.numeric"),
-    VALIDATION_RANGE("validation.range"),
-    VALIDATION_REGEX("validation.regex"),
-    VALIDATION_REQUIRED("validation.required"),
-    VALIDATION_URL("validation.url"),
+    ERROR("error"),
+    SUCCESS("success"),
     VERSION("version"),
     WARNING("warning");
 

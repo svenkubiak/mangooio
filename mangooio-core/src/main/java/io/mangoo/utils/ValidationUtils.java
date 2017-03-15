@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.mangoo.enums.Key;
 import io.mangoo.enums.Validation;
 
 /**
@@ -16,20 +15,20 @@ public final class ValidationUtils {
     static
     {
         defaults = new HashMap<>();
-        defaults.put(Key.VALIDATION_REQUIRED.toString(), Validation.REQUIRED.toString());
-        defaults.put(Key.VALIDATION_MIN.toString(), Validation.MIN.toString());
-        defaults.put(Key.VALIDATION_MAX.toString(), Validation.MAX.toString());
-        defaults.put(Key.VALIDATION_EXACT_MATCH.toString(), Validation.EXACT_MATCH.toString());
-        defaults.put(Key.VALIDATION_MATCH.toString(), Validation.MATCH.toString());
-        defaults.put(Key.VALIDATION_EMAIL.toString(), Validation.EMAIL.toString());
-        defaults.put(Key.VALIDATION_IPV4.toString(), Validation.IPV4.toString());
-        defaults.put(Key.VALIDATION_IPV6.toString(), Validation.IPV6.toString());
-        defaults.put(Key.VALIDATION_RANGE.toString(), Validation.RANGE.toString());
-        defaults.put(Key.VALIDATION_URL.toString(), Validation.URL.toString());
-        defaults.put(Key.VALIDATION_MATCH_VALUES.toString(), Validation.MACTH_VALUES.toString());
-        defaults.put(Key.VALIDATION_REGEX.toString(), Validation.REGEX.toString());
-        defaults.put(Key.VALIDATION_NUMERIC.toString(), Validation.NUMERIC.toString());
-        defaults.put(Key.VALIDATION_DOMAIN_NAME.toString(), Validation.DOMAIN_NAME.toString());
+        defaults.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
+        defaults.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
+        defaults.put(Validation.MAX_KEY.name(), Validation.MAX.toString());
+        defaults.put(Validation.EXACT_MATCH_KEY.name(), Validation.EXACT_MATCH.toString());
+        defaults.put(Validation.MATCH_KEY.name(), Validation.MATCH.toString());
+        defaults.put(Validation.EMAIL_KEY.name(), Validation.EMAIL.toString());
+        defaults.put(Validation.IPV4_KEY.name(), Validation.IPV4.toString());
+        defaults.put(Validation.IPV6_KEY.name(), Validation.IPV6.toString());
+        defaults.put(Validation.RANGE_KEY.name(), Validation.RANGE.toString());
+        defaults.put(Validation.URL_KEY.name(), Validation.URL.toString());
+        defaults.put(Validation.MATCH_VALUES_KEY.name(), Validation.MATCH_VALUES.toString());
+        defaults.put(Validation.REGEX_KEY.name(), Validation.REGEX.toString());
+        defaults.put(Validation.NUMERIC_KEY.name(), Validation.NUMERIC.toString());
+        defaults.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
     }
     
     private ValidationUtils() {
