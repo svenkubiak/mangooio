@@ -22,7 +22,7 @@ public class RouteMethod implements TemplateMethodModelEx {
 
     @Override
     public TemplateModel exec(List arguments) throws TemplateModelException {
-        String url = "";
+        String url;
         if (arguments.size() >= MIN_ARGUMENTS) {
             String controller = ((SimpleScalar) arguments.get(0)).getAsString();
             Route route = Router.getReverseRoute(controller);
