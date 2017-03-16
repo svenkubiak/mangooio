@@ -29,6 +29,7 @@ public class Authentication {
     private OAuthUser oAuthUser;
     private String authenticatedUser;
     private Cache cache;
+    private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
 
@@ -67,14 +68,14 @@ public class Authentication {
      * @return A LocalDateTime object or null if unset
      */
     public LocalDateTime getExpires() {
-        return expires;
+        return this.expires;
     }
 
     /**
      * @return True if the user wants to logout, false otherwise
      */
     public boolean isLogout() {
-        return loggedOut;
+        return this.loggedOut;
     }
 
     /**
@@ -82,7 +83,14 @@ public class Authentication {
      * @return True if the user wants to stay logged in, false otherwise
      */
     public boolean isRemember() {
-        return remember;
+        return this.remember;
+    }
+    
+    /**
+     * @return True if two factor authentication is enabled for this user
+     */
+    public boolean isTwoFactor() {
+        return this.twoFactor;
     }
 
     /**
@@ -133,8 +141,29 @@ public class Authentication {
         return authenticated;
     }
     
+    /**
+     * Sets the remember me functionality
+     * @deprecated  As of release 4.3.0, replaced by {@link #withRememberMe()}
+     * 
+     * @param remember true or false
+     */
+    @Deprecated
     public void remember(boolean remember) {
         this.remember = remember;
+    }
+    
+    /**
+     * Sets the remember me functionality, default false
+     */
+    public void withRememberMe() {
+        this.remember = true;
+    }
+    
+    /**
+     * Sets the requirement of the two factor authentication
+     */
+    public void withTwoFactorAuthentication() {
+        this.twoFactor = true;
     }
  
     /**
@@ -160,12 +189,17 @@ public class Authentication {
      * 
      * @param secret The secret to use for checking
      * @param number The number entered by the user
-     * @return True is number is valid, false otherweise
+     * @return True is number is valid, false otherwise
      */
     public boolean validTwoFactor(String secret, int number) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
-        return TwoFactorUtils.validateCurrentNumber(number, secret);
+        boolean valid = TwoFactorUtils.validateCurrentNumber(number, secret);
+        if (valid) {
+            this.twoFactor = false;
+        }
+        
+        return valid;
     }
 
     /**

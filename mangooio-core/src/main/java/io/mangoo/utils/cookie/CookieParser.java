@@ -34,6 +34,7 @@ public class CookieParser {
     private String authenticatedUser;
     private LocalDateTime expiresDate;
     private boolean encrypted;
+    private boolean twoFactor;
     
     public static CookieParser build() {
         return new CookieParser();
@@ -56,6 +57,10 @@ public class CookieParser {
         return this;
     }
     
+    public boolean isTwoFactor() {
+        return this.twoFactor;
+    }
+    
     @SuppressWarnings("unchecked")
     public boolean hasValidSessionCookie() {
         decrypt();
@@ -71,7 +76,7 @@ public class CookieParser {
                 Date expiration = claims.getExpiration();
                 if (expiration != null) {
                     this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
-                    this.authenticityToken = claims.get(ClaimKey.AUHTNETICITY.toString(), String.class); 
+                    this.authenticityToken = claims.get(ClaimKey.AUTHENTICITY.toString(), String.class); 
                     this.expiresDate = DateUtils.dateToLocalDateTime(expiration);  
                     valid = true;
                 } 
@@ -97,6 +102,7 @@ public class CookieParser {
                 Date expiration = claims.getExpiration();
                 if (expiration != null) {
                     this.authenticatedUser = claims.getSubject();
+                    this.twoFactor = claims.get(ClaimKey.TWO_FACTOR.toString(), Boolean.class);
                     this.expiresDate = DateUtils.dateToLocalDateTime(expiration);
                     valid = true;                        
                 }  

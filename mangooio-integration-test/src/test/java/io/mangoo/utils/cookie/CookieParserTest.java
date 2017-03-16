@@ -17,7 +17,7 @@ import io.mangoo.crypto.Crypto;
  */
 public class CookieParserTest {
     private final static String sessionCookie = "eyJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7ImZvbyI6InRoaXMgaXMgYSBzZXNzaW9uIHZhbHVlIn0sImV4cCI6MzI0NzIyMjU3MjAsInZlcnNpb24iOiIwIiwiYXV0aGVudGljaXR5VG9rZW4iOiJJckpDc1FYNmRBTFBkUlVkIn0.H829037BVU-NZdT_vVVEUjhX4QCmxkpGJEMLr1-qT_shd-saaaHbDIMSd3ulU1v2ceTqhJqoyNIAP748KC1f9g";
-    private final static String authenticationCookie = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmb29iYXIiLCJleHAiOjMyNDcyMjI1NzIwLCJ2ZXJzaW9uIjoiMCJ9.EeI2mIdqR1vGKSGJhnOqv7OgJSzU77cY0A43UCplkKg4jV5QLlvl9yXZoYvKvHWDuY_zQgjmm3OnwDAFHHT2sQ";
+    private final static String authenticationCookie = "eyJhbGciOiJIUzUxMiJ9.eyJ0d29GYWN0b3IiOmZhbHNlLCJzdWIiOiJmb28iLCJleHAiOjQ2NDUzNjgyMjMsInZlcnNpb24iOiIxIn0.bCVh6yEWwtptlBbQZK_zfcqXKX0wXfO3tlkYGfIZXsy2IwCHnDaIT3bE5w4iA3xaDw5iuTdFqCndvvHdKBdwsQ";
     private String secret;
     private static String sessionCookieEncrypted = "";
     private static String authenticationCookieEncrypted = "";

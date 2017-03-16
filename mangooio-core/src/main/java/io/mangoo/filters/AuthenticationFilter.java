@@ -22,14 +22,20 @@ public class AuthenticationFilter implements MangooFilter {
     @Override
     public Response execute(Request request, Response response) {
         if (!request.getAuthentication().hasAuthenticatedUser()) {
-            String redirect = CONFIG.getString(Key.AUTH_REDIRECT.toString());
-            if (StringUtils.isNotBlank(redirect)) {
-                return Response.withRedirect(redirect).end();
-            } else {
-                return Response.withUnauthorized().andBody(Template.DEFAULT.forbidden()).end();
-            }
+            return login();
+        } else if (request.getAuthentication().hasAuthenticatedUser() && request.getAuthentication().isTwoFactor()) {
+            return login();
         }
 
         return response;
+    }
+
+    private Response login() {
+        String redirect = CONFIG.getString(Key.AUTH_REDIRECT.toString());
+        if (StringUtils.isNotBlank(redirect)) {
+            return Response.withRedirect(redirect).end();
+        } else {
+            return Response.withUnauthorized().andBody(Template.DEFAULT.forbidden()).end();
+        }
     }
 }
