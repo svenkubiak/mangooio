@@ -656,7 +656,7 @@ public class Config {
     public int getConnectorHttpPort() {
         String httpPort = System.getProperty(Jvm.HTTP_PORT.toString());
         if (StringUtils.isNotBlank(httpPort)) {
-            return Integer.valueOf(httpPort);
+            return Integer.parseInt(httpPort);
         }
         
         return getInt(Key.CONNECTOR_HTTP_PORT, 0);
@@ -680,7 +680,7 @@ public class Config {
     public int getConnectorAjpPort() {
         String ajpPort = System.getProperty(Jvm.AJP_PORT.toString());
         if (StringUtils.isNotBlank(ajpPort)) {
-            return Integer.valueOf(ajpPort);
+            return Integer.parseInt(ajpPort);
         }
         
         return getInt(Key.CONNECTOR_AJP_PORT, 0);

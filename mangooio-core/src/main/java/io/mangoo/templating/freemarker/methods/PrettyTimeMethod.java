@@ -27,7 +27,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
 
     @Override
     public String exec(List arguments) throws TemplateModelException {
-        String result = "";
+        String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {
             Object object = arguments.get(0);
             if (object instanceof SimpleDate) {
@@ -42,7 +42,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
             } else {
                 throw new TemplateModelException("Invalid object found for pretty time. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }
-        } else if (arguments.size() > NUM_ARGUMENTS) {
+        } else if (arguments != null && arguments.size() > NUM_ARGUMENTS) {
             throw new TemplateModelException("Too many arguments for prettytime function. Allowed arguments: " + NUM_ARGUMENTS);
         }
         
