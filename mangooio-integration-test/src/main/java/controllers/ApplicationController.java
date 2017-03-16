@@ -28,6 +28,10 @@ public class ApplicationController {
         return Response.withOk().andEmptyBody();
     }
     
+    public Response reverse() {
+        return Response.withOk();
+    }
+    
     public Response prettytime() {
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDate localDate = LocalDate.now();

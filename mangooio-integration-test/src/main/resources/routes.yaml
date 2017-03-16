@@ -226,6 +226,10 @@ routes:
   timer: true
 
 - method: GET
+  url: /reverse
+  mapping: ApplicationController.reverse
+
+- method: GET
   url: /location
   mapping: ApplicationController.location
 

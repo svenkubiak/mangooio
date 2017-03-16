@@ -1,6 +1,7 @@
 package io.mangoo.routing;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.common.base.Preconditions;
 
 import io.mangoo.enums.Required;
+import io.mangoo.enums.RouteType;
 
 /**
  *
@@ -16,6 +18,7 @@ import io.mangoo.enums.Required;
  */
 public final class Router {
     private static Set<Route> routes = ConcurrentHashMap.newKeySet();
+    private static Map<String, Route> reverseRoutes = new ConcurrentHashMap<>();
     private static final int MAX_ROUTES = 100000;
 
     private Router(){
@@ -31,6 +34,9 @@ public final class Router {
         Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);
+        if (route.getRouteType() == RouteType.REQUEST) {
+            reverseRoutes.put(route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod(), route);    
+        }
     }
 
     /**
@@ -38,5 +44,12 @@ public final class Router {
      */
     public static Set<Route> getRoutes() {
         return Collections.unmodifiableSet(routes);
+    }
+    
+    /**
+     * @return A route object based on the given controller and method or null if none found
+     */
+    public static Route getReverseRoute(String key) {
+        return reverseRoutes.get(key);
     }
 }

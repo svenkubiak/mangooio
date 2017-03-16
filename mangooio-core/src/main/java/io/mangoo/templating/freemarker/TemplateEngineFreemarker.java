@@ -37,6 +37,7 @@ import io.mangoo.templating.freemarker.directives.TokenDirective;
 import io.mangoo.templating.freemarker.methods.I18nMethod;
 import io.mangoo.templating.freemarker.methods.LocationMethod;
 import io.mangoo.templating.freemarker.methods.PrettyTimeMethod;
+import io.mangoo.templating.freemarker.methods.RouteMethod;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
@@ -87,6 +88,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         content.put("session", session);
         content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
+        content.put("route", new RouteMethod());
         content.put("location", new LocationMethod(controller));
         content.put("prettytime", new PrettyTimeMethod(locale));
         content.put("authenticity", new TokenDirective(session));

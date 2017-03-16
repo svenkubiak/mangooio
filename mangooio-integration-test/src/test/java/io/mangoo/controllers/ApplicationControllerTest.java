@@ -52,6 +52,18 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testReverse() {
+        //given
+        final WebResponse response = WebRequest.get("/reverse").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("/string\n/int/23\n/multiple/11/42"));
+    }
+    
+    @Test
     public void testLocation() {
         //given
         final WebResponse response = WebRequest.get("/location").execute();
