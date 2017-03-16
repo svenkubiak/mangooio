@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -38,6 +39,7 @@ import io.mangoo.templating.freemarker.methods.I18nMethod;
 import io.mangoo.templating.freemarker.methods.LocationMethod;
 import io.mangoo.templating.freemarker.methods.PrettyTimeMethod;
 import io.mangoo.templating.freemarker.methods.RouteMethod;
+import io.mangoo.utils.TemplateUtils;
 import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
@@ -81,6 +83,13 @@ public class TemplateEngineFreemarker implements TemplateEngine {
             template = configuration.getTemplate(templatePath);
         } catch (IOException e) {
             throw new MangooTemplateEngineException("Template was not found on path:" + templatePath, e);
+        }
+        
+        if (!Application.inProdMode()) { 
+            Optional<String> key = TemplateUtils.containsInvalidKey(content);
+            if (key.isPresent()) {
+                throw new MangooTemplateEngineException(templatePath + " contains the following restricted key: " + key.get());
+            }
         }
         
         content.put("form", form);

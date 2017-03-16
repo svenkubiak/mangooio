@@ -26,7 +26,7 @@ public class MetricsTest {
         metrics.inc(420);
         
         //then
-        assertThat(metrics.getMetrics().get(500), equalTo(null));
+        assertThat(metrics.getMetrics().get(301), equalTo(null));
         assertThat(metrics.getMetrics().get(418).intValue(), equalTo(2));
         assertThat(metrics.getMetrics().get(420).intValue(), equalTo(1));
     }

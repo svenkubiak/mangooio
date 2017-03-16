@@ -11,4 +11,8 @@ public class MangooTemplateEngineException extends Exception {
     public MangooTemplateEngineException(String message, Exception e) {
         super(message, e);
     }
+
+    public MangooTemplateEngineException(String message) {
+        super(message);
+    }
 }
