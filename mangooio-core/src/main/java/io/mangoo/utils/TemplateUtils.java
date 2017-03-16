@@ -17,6 +17,9 @@ public final class TemplateUtils {
             "form", "flash", "session", "subject", "i18n", "route", "location", "prettytime", "authenticity", "authenticityForm"
             );
     
+    private TemplateUtils() {
+    }
+    
     public static Optional<String> containsInvalidKey(Map<String, Object> content) {
         String found = null;
         for (String key : blacklist) {
