@@ -24,7 +24,7 @@ public class AuthenticationTest {
         Authentication authentication = Application.getInstance(Authentication.class);
         
         //when
-        authentication.login("foo", "bar", VALID_HASH);
+        authentication.validLogin("foo", "bar", VALID_HASH);
         
         //then
         assertThat(authentication.userHasLock("foo"), equalTo(false));
@@ -37,7 +37,7 @@ public class AuthenticationTest {
         
         //when
         for (int i=1; i <= 20; i++) {
-            authentication.login("foobar", "bla", VALID_HASH);   
+            authentication.validLogin("foobar", "bla", VALID_HASH);   
         }
         
         //then

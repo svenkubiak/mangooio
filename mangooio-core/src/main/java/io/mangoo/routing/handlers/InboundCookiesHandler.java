@@ -97,12 +97,9 @@ public class InboundCookiesHandler implements HttpHandler {
         if (cookieParser.hasValidAuthenticationCookie()) {
             authentication = Application.getInstance(Authentication.class)
                     .withExpires(cookieParser.getExpiresDate())
-                    .withAuthenticatedUser(cookieParser.getAuthenticatedUser());
+                    .withAuthenticatedUser(cookieParser.getAuthenticatedUser())
+                    .twoFactorAuthentication(cookieParser.isTwoFactor());
 
-            if (cookieParser.isTwoFactor()) {
-                authentication.withTwoFactorAuthentication();
-            }
-            
             this.subject = new Subject(cookieParser.getAuthenticatedUser(), true);
         } else {
             authentication = Application.getInstance(Authentication.class)

@@ -24,7 +24,7 @@ public class AuthenticationController {
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
         if (authentication.hasAuthenticatedUser()) {
-            authentication.login(authentication.getAuthenticatedUser(), "bar", CodecUtils.hexJBcrypt("bar"));
+            authentication.validLogin(authentication.getAuthenticatedUser(), "bar", CodecUtils.hexJBcrypt("bar"));
             return Response.withRedirect("/authenticationrequired");
         }
 
@@ -32,7 +32,7 @@ public class AuthenticationController {
     }
 
     public Response doLogin(Authentication authentication) {
-        authentication.login("foo", "bar", CodecUtils.hexJBcrypt("bar"));
+        authentication.validLogin("foo", "bar", CodecUtils.hexJBcrypt("bar"));
         return Response.withRedirect("/authenticationrequired");
     }
 
