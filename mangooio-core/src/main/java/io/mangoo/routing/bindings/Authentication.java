@@ -176,7 +176,7 @@ public class Authentication {
     
     /**
      * Sets the remember me functionality
-     * @deprecated  As of release 4.3.0, replaced by {@link #rememberMe()}
+     * @deprecated  As of release 4.3.0, replaced by {@link #rememberMe(boolean)}
      * 
      * @param remember true or false
      */
@@ -188,12 +188,25 @@ public class Authentication {
     /**
      * Sets the remember me functionality, default is false
      */
+    
+    /**
+     * Sets the remember me functionality, default is false
+     * 
+     * @param rememmber True for activatin remember me, false otherwise
+     */
     public void rememberMe(boolean rememmber) {
         this.remember = rememmber;
     }
     
     /**
      * Sets the requirement of the two factor authentication, default is false
+     */
+    
+    /**
+     * Sets the requirement of the two factor authentication, default is false
+     * 
+     * @param twoFactor True for enabling two factor authentication, false otherwise
+     * @return Authentication object
      */
     public Authentication twoFactorAuthentication(boolean twoFactor) {
         this.twoFactor = twoFactor;

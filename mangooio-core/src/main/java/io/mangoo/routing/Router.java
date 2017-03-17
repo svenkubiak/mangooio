@@ -47,6 +47,9 @@ public final class Router {
     }
     
     /**
+     * Retrieves a reverse route by its key
+     * 
+     * @param key The passed route information (e.g. /foo/{bar})
      * @return A route object based on the given controller and method or null if none found
      */
     public static Route getReverseRoute(String key) {
