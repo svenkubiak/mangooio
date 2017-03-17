@@ -71,6 +71,14 @@ routes:
 - method: GET
   url: /login
   mapping: AuthenticationController.login
+  
+- method: GET
+  url: /twofactorlogin
+  mapping: AuthenticationController.doLoginTwoFactor
+
+- method: POST
+  url: /factorize
+  mapping: AuthenticationController.factorize
 
 - method: GET
   url: /authenticationrequired
