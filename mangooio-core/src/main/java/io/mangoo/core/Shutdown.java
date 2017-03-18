@@ -33,15 +33,15 @@ public class Shutdown extends Thread {
         closeCaches();
     }
 
-    private void invokeLifecycle() {
+    private static void invokeLifecycle() {
         Application.getInstance(MangooLifecycle.class).applicationStopped();        
     }
 
-    private void stopExecutionManager() {
+    private static void stopExecutionManager() {
         Application.getInstance(ExecutionManager.class).shutdown();
     }
     
-    private void stopScheduler() {
+    private static void stopScheduler() {
         Scheduler scheduler = Application.getInstance(Scheduler.class);
         try {
             if (scheduler != null && scheduler.isInitialize()) {
@@ -52,11 +52,11 @@ public class Shutdown extends Thread {
         }
     }
     
-    private void stopUndertow() {
+    private static void stopUndertow() {
         Application.stopUndertow();
     }
     
-    private void closeCaches() {
+    private static void closeCaches() {
         Application.getInstance(CacheProvider.class).close();
     }
 }

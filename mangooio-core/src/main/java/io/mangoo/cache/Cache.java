@@ -16,19 +16,19 @@ public interface Cache {
      * @param key The key for the cached value
      * @param value The value to store
      */
-    public void put(String key, Object value);
+    void put(String key, Object value);
 
     /**
      * Removes a value with a given key from the cache
      *
      * @param key The key for the cached value
      */
-    public void remove(String key);
+    void remove(String key);
 
     /**
      * Clears the complete cache by invalidating all entries
      */
-    public void clear();
+    void clear();
 
     /**
      * Retrieves an object from the caches and converts it to
@@ -39,14 +39,14 @@ public interface Cache {
      *
      * @return A converted cache class value
      */
-    public <T> T get(String key);
+    <T> T get(String key);
 
     /**
      * Adds a complete map of objects to the cache
      *
      * @param map The map to add
      */
-    public void putAll(Map<String, Object> map);
+    void putAll(Map<String, Object> map);
     
     /**
      * Increments a cache counter with a given key
@@ -54,7 +54,7 @@ public interface Cache {
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    public AtomicInteger increment(String key);
+    AtomicInteger increment(String key);
     
     /**
      * Decrements a cache counter with a given key
@@ -62,7 +62,7 @@ public interface Cache {
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    public AtomicInteger decrement(String key);
+    AtomicInteger decrement(String key);
 
     /**
      * Retrieves the current counter for a given key
@@ -70,5 +70,5 @@ public interface Cache {
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger or null if none found
      */
-    public AtomicInteger getCounter(String key);
+    AtomicInteger getCounter(String key);
 }
