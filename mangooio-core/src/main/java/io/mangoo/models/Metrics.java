@@ -20,7 +20,7 @@ public class Metrics {
     private final AtomicIntegerFieldUpdater<Metrics> minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
     private final AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
     private final AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-    private final Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;

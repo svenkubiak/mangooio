@@ -38,7 +38,7 @@ import io.mangoo.enums.Required;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9F, 1);
 
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
