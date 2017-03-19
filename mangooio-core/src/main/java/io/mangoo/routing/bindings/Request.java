@@ -1,6 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +25,7 @@ import io.undertow.util.HttpString;
  * @author svenkubiak
  *
  */
-public class Request extends Validator implements Serializable {
+public class Request extends Validator {
     private static final long serialVersionUID = 1901891944955577394L;
     private transient HttpServerExchange httpServerExchange;
     private transient JsonWebToken jsonWebToken;

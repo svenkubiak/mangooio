@@ -20,7 +20,7 @@ import io.mangoo.enums.Required;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHRACTERTS = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private String authenticity;
     private boolean changed;
@@ -91,7 +91,7 @@ public class Session {
      * @param value The value to store
      */
     public void put(String key, String value) {
-        if (BLACKLIST.contains(key) || BLACKLIST.contains(value)) {
+        if (INVALID_CHRACTERTS.contains(key) || INVALID_CHRACTERTS.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
             this.changed = true;

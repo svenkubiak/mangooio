@@ -1,7 +1,6 @@
 package io.mangoo.routing.bindings;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,7 @@ import io.mangoo.enums.Required;
  * @author svenkubiak
  *
  */
-public class Form extends Validator implements Serializable {
+public class Form extends Validator {
     private static final long serialVersionUID = -5815141142864033904L;
     private final List<File> files = new ArrayList<>();
     private final Map<String, List<String>> valueList = new HashMap<>();
