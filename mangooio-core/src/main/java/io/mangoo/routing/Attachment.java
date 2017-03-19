@@ -126,12 +126,12 @@ public class Attachment {
     }
     
     public Attachment withClassAnnotations(List<Annotation> classAnnotations) {
-        this.classAnnotations = new ArrayList<Annotation>(classAnnotations);
+        this.classAnnotations = new ArrayList<>(classAnnotations);
         return this;
     }
     
     public Attachment withMethodAnnotations(List<Annotation> methodAnnotations) {
-        this.methodAnnotations = new ArrayList<Annotation>(methodAnnotations);
+        this.methodAnnotations = new ArrayList<>(methodAnnotations);
         return this;
     }
     
