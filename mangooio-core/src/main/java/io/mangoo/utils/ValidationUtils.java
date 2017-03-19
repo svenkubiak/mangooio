@@ -12,8 +12,7 @@ import io.mangoo.enums.Validation;
  */
 public final class ValidationUtils {
     private static final Map<String, String> defaults;
-    static
-    {
+    static {
         defaults = new HashMap<>();
         defaults.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
         defaults.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
