@@ -267,12 +267,15 @@ public class Bootstrap {
             if (RouteType.REQUEST == route.getRouteType()) {
                 DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
-                        .withInternalTemplateEngine(route.isInternalTemplateEngine())
                         .withTimer(route.isTimerEnabled())
                         .withUsername(route.getUsername())
                         .withPassword(route.getPassword())
                         .withLimit(route.getLimit());
 
+                if (route.isInternalTemplateEngine()) {
+                    dispatcherHandler.withInternalTemplateEngine();    
+                }
+                
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.resourceHandler);

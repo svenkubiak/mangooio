@@ -30,7 +30,7 @@ public class AuthenticationFilter implements MangooFilter {
         return response;
     }
 
-    private static Response login() {
+    private Response login() {
         String redirect = CONFIG.getString(Key.AUTH_REDIRECT.toString());
         if (StringUtils.isNotBlank(redirect)) {
             return Response.withRedirect(redirect).end();
