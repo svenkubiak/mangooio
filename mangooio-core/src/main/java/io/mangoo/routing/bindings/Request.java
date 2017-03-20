@@ -318,27 +318,15 @@ public class Request extends Validator {
     }
     
     private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeObject(httpServerExchange);
-        objectOutputStream.writeObject(jsonWebToken);
-        objectOutputStream.writeObject(session);
-        objectOutputStream.writeObject(authentication);
-        objectOutputStream.writeObject(cookies);
         objectOutputStream.writeObject(attributes);
         objectOutputStream.writeObject(body);
         objectOutputStream.writeObject(authenticity);
-        objectOutputStream.writeObject(parameter);
     }
 
     @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
-        this.httpServerExchange = (HttpServerExchange) objectInputStream.readObject();
-        this.jsonWebToken = (JsonWebToken) objectInputStream.readObject();
-        this.session = (Session) objectInputStream.readObject();
-        this.authentication = (Authentication) objectInputStream.readObject();
-        this.cookies = (Map<String, Cookie>) objectInputStream.readObject();
         this.attributes = (Map<String, Object>) objectInputStream.readObject();
         this.body = (String) objectInputStream.readObject();
         this.authentication = (Authentication) objectInputStream.readObject();
-        this.parameter = (Map<String, String>) objectInputStream.readObject();
     }
 }
