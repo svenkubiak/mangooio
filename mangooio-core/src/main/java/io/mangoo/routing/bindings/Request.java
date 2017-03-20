@@ -31,8 +31,8 @@ public class Request extends Validator {
     private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
-    private Map<String, Cookie> cookies; //NOSONAR
-    private Map<String, Object> attributes = new HashMap<>(); //NOSONAR
+    private Map<String, Cookie> cookies;
+    private Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
     private Map<String, String> parameter;

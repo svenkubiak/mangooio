@@ -21,7 +21,7 @@ import io.mangoo.enums.Required;
 public class Form extends Validator {
     private static final long serialVersionUID = -5815141142864033904L;
     private final List<File> files = new ArrayList<>();
-    private final Map<String, List<String>> valueList = new HashMap<>();
+    private final Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean flash;
     
@@ -176,16 +176,16 @@ public class Form extends Validator {
     public void addValueList(String key, String value) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        if (!valueList.containsKey(key)) {
+        if (!valueMap.containsKey(key)) {
             List<String> values = new ArrayList<>();
             values.add(value);
             
-            valueList.put(key, values);
+            valueMap.put(key, values);
         } else {
-            List<String> values = valueList.get(key);
+            List<String> values = valueMap.get(key);
             values.add(value);
             
-            valueList.put(key, values);
+            valueMap.put(key, values);
         }
     }
     
@@ -198,7 +198,7 @@ public class Form extends Validator {
     public List<String> getValueList(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
-        return this.valueList.get(key);
+        return this.valueMap.get(key);
     }
     
     /**

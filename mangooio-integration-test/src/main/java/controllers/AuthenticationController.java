@@ -11,6 +11,7 @@ import io.mangoo.utils.CodecUtils;
 
 public class AuthenticationController {
     private static final String SECRET = "MyVoiceIsMySecret";
+    private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
     @FilterWith(AuthenticationFilter.class)
     public Response notauthenticated(Authentication authentication) {
@@ -27,7 +28,7 @@ public class AuthenticationController {
     public Response authenticate(Authentication authentication) {
         if (authentication.hasAuthenticatedUser()) {
             authentication.validLogin(authentication.getAuthenticatedUser(), "bar", CodecUtils.hexJBcrypt("bar"));
-            return Response.withRedirect("/authenticationrequired");
+            return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
 
         return Response.withOk().andEmptyBody();
@@ -35,7 +36,7 @@ public class AuthenticationController {
 
     public Response doLogin(Authentication authentication) {
         authentication.validLogin("foo", "bar", CodecUtils.hexJBcrypt("bar"));
-        return Response.withRedirect("/authenticationrequired");
+        return Response.withRedirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
@@ -47,7 +48,7 @@ public class AuthenticationController {
     
     public Response factorize(Form form, Authentication authentication) {
         if (authentication.hasAuthenticatedUser() && authentication.validSecondFactor(SECRET, form.getInteger("twofactor").orElse(0))) {
-            return Response.withRedirect("/authenticationrequired");
+            return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
         
         return Response.withRedirect("/");
