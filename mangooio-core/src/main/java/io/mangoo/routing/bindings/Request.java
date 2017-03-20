@@ -318,14 +318,11 @@ public class Request extends Validator {
     }
     
     private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
-        objectOutputStream.writeObject(attributes);
         objectOutputStream.writeObject(body);
         objectOutputStream.writeObject(authenticity);
     }
 
-    @SuppressWarnings("unchecked")
     private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
-        this.attributes = (Map<String, Object>) objectInputStream.readObject();
         this.body = (String) objectInputStream.readObject();
         this.authentication = (Authentication) objectInputStream.readObject();
     }
