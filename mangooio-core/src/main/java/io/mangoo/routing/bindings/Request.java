@@ -1,5 +1,8 @@
 package io.mangoo.routing.bindings;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +39,6 @@ public class Request extends Validator {
     private String body;
     private String authenticity;
     private Map<String, String> parameter;
-
 
     public Request(){
         //Empty constructor for google guice
@@ -313,5 +315,30 @@ public class Request extends Validator {
      */
     public Optional<JsonWebToken> getJsonWebToken() {
         return Optional.ofNullable(this.jsonWebToken);
+    }
+    
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.writeObject(httpServerExchange);
+        objectOutputStream.writeObject(jsonWebToken);
+        objectOutputStream.writeObject(session);
+        objectOutputStream.writeObject(authentication);
+        objectOutputStream.writeObject(cookies);
+        objectOutputStream.writeObject(attributes);
+        objectOutputStream.writeObject(body);
+        objectOutputStream.writeObject(authenticity);
+        objectOutputStream.writeObject(parameter);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        this.httpServerExchange = (HttpServerExchange) objectInputStream.readObject();
+        this.jsonWebToken = (JsonWebToken) objectInputStream.readObject();
+        this.session = (Session) objectInputStream.readObject();
+        this.authentication = (Authentication) objectInputStream.readObject();
+        this.cookies = (Map<String, Cookie>) objectInputStream.readObject();
+        this.attributes = (Map<String, Object>) objectInputStream.readObject();
+        this.body = (String) objectInputStream.readObject();
+        this.authentication = (Authentication) objectInputStream.readObject();
+        this.parameter = (Map<String, String>) objectInputStream.readObject();
     }
 }
