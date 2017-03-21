@@ -44,6 +44,7 @@ public final class BootstrapUtils {
         case "POST":
         case "PUT":
         case "DELETE":
+        case "OPTIONS":
         case "HEAD":
             return RouteType.REQUEST;
         case "WSS":

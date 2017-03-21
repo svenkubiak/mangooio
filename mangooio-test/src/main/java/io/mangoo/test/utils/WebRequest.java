@@ -62,4 +62,28 @@ public final class WebRequest {
         
         return new WebResponse(uri, Methods.DELETE);
     }
+    
+    /**
+     * Creates a new HTTP HEAD request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static WebResponse head(String uri) {
+        Objects.requireNonNull(uri, URI_ERROR);
+        
+        return new WebResponse(uri, Methods.HEAD);
+    }
+    
+    /**
+     * Creates a new HTTP OPTIONS request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static WebResponse options(String uri) {
+        Objects.requireNonNull(uri, URI_ERROR);
+        
+        return new WebResponse(uri, Methods.OPTIONS);
+    }
 }
