@@ -69,6 +69,10 @@ routes:
 - method: GET
   url: /login
   mapping: AuthenticationController.login
+
+- method: GET
+  url: /subject
+  mapping: AuthenticationController.subject  
   
 - method: GET
   url: /twofactorlogin
@@ -230,6 +234,10 @@ routes:
   mapping: ApplicationController.index
   blocking: true
   timer: true
+  
+- method: GET
+  url: /route
+  mapping: ApplicationController.route  
   
 - method: POST
   url: /

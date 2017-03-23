@@ -52,6 +52,18 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testRoute() {
+        //given
+        final WebResponse response = WebRequest.get("/route").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("/route"));
+    }
+    
+    @Test
     public void testRestricted() {
         //given
         final WebResponse response = WebRequest.get("/restricted").execute();

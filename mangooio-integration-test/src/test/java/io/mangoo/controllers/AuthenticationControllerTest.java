@@ -42,6 +42,39 @@ public class AuthenticationControllerTest {
     }
     
     @Test
+    public void testSubject() {
+        //given
+        WebResponse response = WebRequest.get("/subject")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("\tHello Guest!\n\t//Display navigation for not authenticated user\n"));
+        
+        //given
+        WebBrowser instance = WebBrowser.open();
+        response = instance.withUri("/dologin")
+                .withMethod(Methods.POST)
+                .withDisableRedirects(true)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+        
+        //given
+        instance.withUri("/subject")
+                .withMethod(Methods.GET)
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("\tHello foo!\n\t//Display navigation for authenticated user\n"));
+    }
+    
+    @Test
     public void testTwoFactorAuthentication() {
         //given
         WebBrowser instance = WebBrowser.open();

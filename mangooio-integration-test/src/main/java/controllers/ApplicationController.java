@@ -15,6 +15,10 @@ public class ApplicationController {
     public Response index() {
         return Response.withOk();
     }
+    
+    public Response route() {
+        return Response.withOk();
+    }
 
     public Response redirect() {
         return Response.withRedirect("/");

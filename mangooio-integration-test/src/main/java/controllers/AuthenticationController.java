@@ -58,4 +58,8 @@ public class AuthenticationController {
         authentication.logout();
         return Response.withOk().andEmptyBody();
     }
+    
+    public Response subject() {
+        return Response.withOk();
+    }
 }
