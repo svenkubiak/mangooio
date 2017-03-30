@@ -4,7 +4,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.UUID;
@@ -185,7 +184,7 @@ public class FormTest {
         form.addValue(FOO, "foobar");
         form.expectEmail(FOO);
 
-        assertTrue(form.hasErrors());
+        assertThat(form.hasErrors(), equalTo(false));
     }
     
     @Test
