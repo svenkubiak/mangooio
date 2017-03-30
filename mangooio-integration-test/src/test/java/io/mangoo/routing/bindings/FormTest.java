@@ -184,7 +184,7 @@ public class FormTest {
         form.addValue(FOO, "foobar");
         form.expectEmail(FOO);
 
-        assertThat(form.hasErrors(), equalTo(false));
+        assertThat(form.hasErrors(), equalTo(true));
     }
     
     @Test
