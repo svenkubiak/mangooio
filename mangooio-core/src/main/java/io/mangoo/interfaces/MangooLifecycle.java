@@ -10,15 +10,15 @@ public interface MangooLifecycle {
      * Executed after config is loaded and injector is initialized
      *
      */
-    public void applicationInitialized();
+    void applicationInitialized();
 
     /**
      * Executed after the application is completely started
      */
-    public void applicationStarted();
+    void applicationStarted();
     
     /**
      * Executed after forcible signal of JVM shutdown has been send
      */
-    public void applicationStopped();
+    void applicationStopped();
 }

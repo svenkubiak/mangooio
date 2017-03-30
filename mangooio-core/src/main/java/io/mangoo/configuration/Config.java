@@ -22,6 +22,7 @@ import com.google.inject.Singleton;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
@@ -37,7 +38,7 @@ import io.mangoo.enums.Required;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9F, 1);
 
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
@@ -51,7 +52,7 @@ public class Config {
     }
 
     private void prepare(String configFile, Mode mode) {
-        final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
+        final String configPath = System.getProperty(Jvm.APPLICATION_CONFIG.toString());
 
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
@@ -638,30 +639,50 @@ public class Config {
     }
 
     /**
-     * @return connector.http.host or null if undefined
+     * @return jvm property http.host or connector.http.host or null if undefined
      */
     public String getConnectorHttpHost() {
+        String httpHost = System.getProperty(Jvm.HTTP_HOST.toString());
+        if (StringUtils.isNotBlank(httpHost)) {
+            return httpHost;
+        }
+        
         return getString(Key.CONNECTOR_HTTP_HOST, null);
     }
 
     /**
-     * @return connector.http.host or 0 if undefined
+     * @return jvm property http.port or connector.http.port or 0 if undefined
      */
     public int getConnectorHttpPort() {
+        String httpPort = System.getProperty(Jvm.HTTP_PORT.toString());
+        if (StringUtils.isNotBlank(httpPort)) {
+            return Integer.parseInt(httpPort);
+        }
+        
         return getInt(Key.CONNECTOR_HTTP_PORT, 0);
     }
 
     /**
-     * @return connector.http.int or null if undefined
+     * @return jvm property ajp.host or connector.ajp.host or null if undefined
      */
     public String getConnectorAjpHost() {
+        String ajpHost = System.getProperty(Jvm.AJP_HOST.toString());
+        if (StringUtils.isNotBlank(ajpHost)) {
+            return ajpHost;
+        }
+        
         return getString(Key.CONNECTOR_AJP_HOST, null);
     }
 
     /**
-     * @return connector.http.int or 0 if undefined
+     * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
      */
-    public int getConnectorAjpCPort() {
+    public int getConnectorAjpPort() {
+        String ajpPort = System.getProperty(Jvm.AJP_PORT.toString());
+        if (StringUtils.isNotBlank(ajpPort)) {
+            return Integer.parseInt(ajpPort);
+        }
+        
         return getInt(Key.CONNECTOR_AJP_PORT, 0);
     }
     

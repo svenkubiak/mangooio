@@ -10,5 +10,4 @@ public class MyGlobalFilter implements MangooRequestFilter {
     public Response execute(Request request, Response response) {
         return response;
     }
-
 }

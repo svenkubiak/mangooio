@@ -37,6 +37,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
@@ -91,7 +92,7 @@ public class Bootstrap {
     }
 
     public Mode prepareMode() {
-        final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
+        final String applicationMode = System.getProperty(Jvm.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
             switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
                 case "dev"  : this.mode = Mode.DEV;
@@ -110,7 +111,7 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void prepareLogger() {
-        String configurationFile = System.getProperty(Key.APPLICATION_LOG.toString());
+        String configurationFile = System.getProperty(Jvm.APPLICATION_LOG.toString());
         if (StringUtils.isNotBlank(configurationFile)) {
             final LoggerContext context = (LoggerContext) LogManager.getContext(false);
             context.setConfigLocation(URI.create(configurationFile));
@@ -266,12 +267,15 @@ public class Bootstrap {
             if (RouteType.REQUEST == route.getRouteType()) {
                 DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
-                        .withInternalTemplateEngine(route.isInternalTemplateEngine())
                         .withTimer(route.isTimerEnabled())
                         .withUsername(route.getUsername())
                         .withPassword(route.getPassword())
                         .withLimit(route.getLimit());
 
+                if (route.isInternalTemplateEngine()) {
+                    dispatcherHandler.withInternalTemplateEngine();    
+                }
+                
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
                 routingHandler.add(Methods.GET, route.getUrl(), this.resourceHandler);
@@ -291,7 +295,7 @@ public class Bootstrap {
             this.httpHost = this.config.getConnectorHttpHost();
             this.httpPort = this.config.getConnectorHttpPort();
             this.ajpHost = this.config.getConnectorAjpHost();
-            this.ajpPort = this.config.getConnectorAjpCPort();
+            this.ajpPort = this.config.getConnectorAjpPort();
             
             if (this.httpPort > 0 && StringUtils.isNotBlank(this.httpHost)) {
                 builder.addHttpListener(this.httpPort, this.httpHost);

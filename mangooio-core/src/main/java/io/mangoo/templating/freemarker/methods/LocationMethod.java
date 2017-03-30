@@ -1,6 +1,7 @@
 package io.mangoo.templating.freemarker.methods;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ public class LocationMethod implements TemplateMethodModelEx {
 
     public LocationMethod(String path) {
         Objects.requireNonNull(path, Required.PATH.toString());
-        this.controller = path.toLowerCase();
+        this.controller = path.toLowerCase(Locale.ENGLISH);
     }
 
     @Override
@@ -35,6 +36,6 @@ public class LocationMethod implements TemplateMethodModelEx {
     }
     
     private boolean matches(List arguments) {
-        return this.controller.equalsIgnoreCase(((SimpleScalar) arguments.get(0)).getAsString().toLowerCase());
+        return this.controller.equalsIgnoreCase(((SimpleScalar) arguments.get(0)).getAsString().toLowerCase(Locale.ENGLISH));
     }
 }

@@ -74,9 +74,9 @@ public final class TwoFactorUtils {
             int current = Integer.parseInt(generateCurrentNumber(secret, time));
             if (number == current) {
                 return true;
-            } else if(validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
+            } else if (validateCurrentNumberLow(number, secret, window - 1, time - TIME_STEP_SECONDS * 1000)) {
                 return true;
-            } else if(validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
+            } else if (validateCurrentNumberHigh(number, secret, window - 1, time + TIME_STEP_SECONDS * 1000)) {
                 return true;
             }
         }
@@ -199,7 +199,7 @@ public final class TwoFactorUtils {
      * This can be shown to the user and scanned by the authenticator program as an easy way to enter the secret
      * 
      * @param accountName The account name used to display to the user
-     * @param secret The secret to use
+     * @param secret The plaintext secret to use
      * 
      * @return A URL to the Google charts API
      */
@@ -213,7 +213,7 @@ public final class TwoFactorUtils {
             .append("otpauth://totp/")
             .append(accountName)
             .append("?secret=")
-            .append(secret);
+            .append(base32.encodeAsString(secret.getBytes()));
 
         return buffer.toString();
     }

@@ -18,7 +18,7 @@ import io.mangoo.enums.Key;
  */
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
-    private static final Set<String> BLACKLIST = Sets.newHashSet("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHARACTERS = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private boolean discard;
 
@@ -113,7 +113,7 @@ public class Flash {
      * @return True if the given string is valid, false otherwise
      */
     private boolean validCharacters(String value) {
-        if (BLACKLIST.contains(value)) {
+        if (INVALID_CHARACTERS.contains(value)) {
             LOG.error("Flash key or value can not contain the following characters: spaces, |, & or :");
             return false;
         }

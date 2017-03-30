@@ -55,7 +55,7 @@ public class DispatcherHandler implements HttpHandler {
     private final String controllerClassName;
     private final String controllerMethodName;
     private final boolean hasRequestFilter;
-    private TemplateEngine templateEngine;
+    private TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
     private String username;
     private String password;    
     private int limit;
@@ -102,8 +102,8 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
 
-    public DispatcherHandler withInternalTemplateEngine(boolean internalTemplateEngine) {
-        this.templateEngine = internalTemplateEngine ? Application.getInternalTemplateEngine() : Application.getInstance(TemplateEngine.class);
+    public DispatcherHandler withInternalTemplateEngine() {
+        this.templateEngine = Application.getInternalTemplateEngine();
         return this;
     }
     

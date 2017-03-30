@@ -36,12 +36,10 @@ routes:
   url: /translation
   mapping: I18nController.translation
   
-# I18nController
 - method: GET
   url: /special
   mapping: I18nController.special
 
-# I18nController
 - method: GET
   url: /umlaute
   mapping: I18nController.umlaute
@@ -71,6 +69,18 @@ routes:
 - method: GET
   url: /login
   mapping: AuthenticationController.login
+
+- method: GET
+  url: /subject
+  mapping: AuthenticationController.subject  
+  
+- method: GET
+  url: /twofactorlogin
+  mapping: AuthenticationController.doLoginTwoFactor
+
+- method: POST
+  url: /factorize
+  mapping: AuthenticationController.factorize
 
 - method: GET
   url: /authenticationrequired
@@ -224,6 +234,38 @@ routes:
   mapping: ApplicationController.index
   blocking: true
   timer: true
+  
+- method: GET
+  url: /route
+  mapping: ApplicationController.route  
+  
+- method: POST
+  url: /
+  mapping: ApplicationController.index
+
+- method: PUT
+  url: /
+  mapping: ApplicationController.index
+
+- method: HEAD
+  url: /
+  mapping: ApplicationController.index
+
+- method: DELETE
+  url: /
+  mapping: ApplicationController.index
+  
+- method: OPTIONS
+  url: /
+  mapping: ApplicationController.index
+
+- method: GET
+  url: /reverse
+  mapping: ApplicationController.reverse
+
+- method: GET
+  url: /restricted
+  mapping: ApplicationController.restricted
 
 - method: GET
   url: /location

@@ -1,7 +1,5 @@
 package models;
 
-import java.io.Serializable;
-
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Indexed;
 
@@ -13,7 +11,7 @@ import de.svenkubiak.mangooio.morphia.MorphiaModel;
  *
  */
 @Entity(value = "worlds", noClassnameStored = true)
-public class World extends MorphiaModel implements Serializable {
+public class World extends MorphiaModel {
     private static final long serialVersionUID = -3219780537751230815L;
 
     @Indexed

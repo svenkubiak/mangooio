@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import controllers.ApplicationController;
 import io.mangoo.enums.RouteType;
 
 /**
@@ -19,7 +20,7 @@ public class RouterTest {
     @Test
     public void testAddRoute() {
         //given
-        Router.addRoute(new Route(RouteType.REQUEST));
+        Router.addRoute(new Route(RouteType.REQUEST).toUrl("/foo").withMethod("bar").withClass(ApplicationController.class));
         
         //then
         assertThat(Router.getRoutes(), not(nullValue()));
@@ -30,7 +31,7 @@ public class RouterTest {
     public void testMaxRoutes() {
         //given
         for (int i=0; i <= 100000; i++) {
-            Router.addRoute(new Route(RouteType.REQUEST));  
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/foo").withMethod("bar").withClass(ApplicationController.class));  
         }
     }
 }

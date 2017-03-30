@@ -1,7 +1,5 @@
 package models;
 
-import java.io.Serializable;
-
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Indexed;
 
@@ -13,7 +11,7 @@ import de.svenkubiak.mangooio.morphia.MorphiaModel;
  *
  */
 @Entity(value = "fortunes", noClassnameStored = true)
-public class Fortune extends MorphiaModel implements Serializable, Comparable<Fortune> {
+public class Fortune extends MorphiaModel implements Comparable<Fortune> {
     private static final long serialVersionUID = 3493429313579555024L;
     private static final int PRIME = 31;
 

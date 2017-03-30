@@ -8,7 +8,7 @@ import java.util.Locale;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.enums.Key;
+import io.mangoo.enums.Validation;
 
 /**
  * 
@@ -52,6 +52,6 @@ public class MessagesTest {
         messages.reload(Locale.ENGLISH);
         
         //then
-        assertThat(messages.get(Key.VALIDATION_EMAIL, "foo"), equalTo("foo must be a valid eMail address"));
+        assertThat(messages.get(Validation.EMAIL_KEY.name(), "foo"), equalTo("foo must be a valid eMail address"));
     }
 }

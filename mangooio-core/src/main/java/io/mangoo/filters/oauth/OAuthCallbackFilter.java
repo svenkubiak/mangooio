@@ -99,7 +99,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
-                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
+                    request.getAuthentication().withOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE_DATA_URL)));
                 }                
             }
         }
@@ -136,7 +136,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
-                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
+                    request.getAuthentication().withOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(NAME), readContext.read(PICTURE)));
                 }  
             }
         }
@@ -175,7 +175,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
                     final ReadContext readContext = JsonPath.parse(scribeResponseBody);
-                    request.getAuthentication().setOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
+                    request.getAuthentication().withOAuthUser(new OAuthUser(readContext.read(ID), scribeResponseBody, readContext.read(SCREEN_NAME), readContext.read(PROFILE_IMAGE_URL_HTTPS)));
                 }  
             }
         }

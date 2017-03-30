@@ -29,6 +29,7 @@ public class Authentication {
     private OAuthUser oAuthUser;
     private String authenticatedUser;
     private Cache cache;
+    private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
 
@@ -42,13 +43,18 @@ public class Authentication {
     
     public Authentication withExpires(LocalDateTime expires) {
         Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        if (this.expires == null) {
+            this.expires = expires;            
+        }
         
-        this.expires = expires;
         return this;
     }
     
     public Authentication withAuthenticatedUser(String authenticatedUser) {
-        this.authenticatedUser = authenticatedUser;
+        if (StringUtils.isBlank(this.authenticatedUser)) {
+            this.authenticatedUser = authenticatedUser;            
+        }
+        
         return this;
     }
 
@@ -67,22 +73,29 @@ public class Authentication {
      * @return A LocalDateTime object or null if unset
      */
     public LocalDateTime getExpires() {
-        return expires;
+        return this.expires;
     }
 
     /**
      * @return True if the user wants to logout, false otherwise
      */
     public boolean isLogout() {
-        return loggedOut;
+        return this.loggedOut;
     }
 
     /**
      *
      * @return True if the user wants to stay logged in, false otherwise
      */
-    public boolean isRemember() {
-        return remember;
+    public boolean isRememberMe() {
+        return this.remember;
+    }
+    
+    /**
+     * @return True if two factor authentication is enabled for this user
+     */
+    public boolean isTwoFactor() {
+        return this.twoFactor;
     }
 
     /**
@@ -91,7 +104,7 @@ public class Authentication {
      *
      * @param oAuthUser An OAuthUser
      */
-    public void setOAuthUser(OAuthUser oAuthUser) {
+    public void withOAuthUser(OAuthUser oAuthUser) {
         if (this.oAuthUser == null) {
             this.oAuthUser = oAuthUser;
         }
@@ -111,12 +124,15 @@ public class Authentication {
     /**
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
+     * 
+     * @deprecated  As of release 4.3.0, replaced by {@link #validLogin(String, String, String)}
      *
-     *@param username The username to authenticate
+     * @param username The username to authenticate
      * @param password The clear text password
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
+    @Deprecated
     public boolean login(String username, String password, String hash) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
@@ -133,8 +149,68 @@ public class Authentication {
         return authenticated;
     }
     
+    /**
+     * Creates a hashed value of a given clear text password and checks if the
+     * value matches a given, already hashed password
+     *
+     * @param username The username to authenticate
+     * @param password The clear text password
+     * @param hash The previously hashed password to check
+     * @return True if the new hashed password matches the hash, false otherwise
+     */
+    public boolean validLogin(String username, String password, String hash) {
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(hash, Required.HASH.toString());
+
+        boolean authenticated = false;
+        if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
+            this.authenticatedUser = username;
+            authenticated = true;
+        } else {
+            this.cache.increment(username);
+        }
+
+        return authenticated;
+    }
+    
+    /**
+     * Sets the remember me functionality
+     * @deprecated  As of release 4.3.0, replaced by {@link #rememberMe(boolean)}
+     * 
+     * @param remember true or false
+     */
+    @Deprecated
     public void remember(boolean remember) {
         this.remember = remember;
+    }
+    
+    /**
+     * Sets the remember me functionality, default is false
+     */
+    
+    /**
+     * Sets the remember me functionality, default is false
+     * 
+     * @param rememmber True for activatin remember me, false otherwise
+     */
+    public void rememberMe(boolean rememmber) {
+        this.remember = rememmber;
+    }
+    
+    /**
+     * Sets the requirement of the two factor authentication, default is false
+     */
+    
+    /**
+     * Sets the requirement of the two factor authentication, default is false
+     * 
+     * @param twoFactor True for enabling two factor authentication, false otherwise
+     * @return Authentication object
+     */
+    public Authentication twoFactorAuthentication(boolean twoFactor) {
+        this.twoFactor = twoFactor;
+        return this;
     }
  
     /**
@@ -158,14 +234,19 @@ public class Authentication {
     /**
      * Checks if a given number for 2FA is valid for the given secret
      * 
-     * @param secret The secret to use for checking
+     * @param secret The plaintext secret to use for checking
      * @param number The number entered by the user
-     * @return True is number is valid, false otherweise
+     * @return True if number is valid, false otherwise
      */
-    public boolean validTwoFactor(String secret, int number) {
+    public boolean validSecondFactor(String secret, int number) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
-        return TwoFactorUtils.validateCurrentNumber(number, secret);
+        boolean valid = TwoFactorUtils.validateCurrentNumber(number, secret);
+        if (valid) {
+            this.twoFactor = false;
+        }
+        
+        return valid;
     }
 
     /**
@@ -186,10 +267,12 @@ public class Authentication {
 
     /**
      * Checks if the given user name is authenticated
+     * @deprecated  As of release 4.3.0, will be removed in 5.0.0
      *
      * @param username The user name to check
      * @return True if the given user name is authenticates
      */
+    @Deprecated
     public boolean isAuthenticated(String username) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
 

@@ -38,7 +38,7 @@ public class InboundCookiesHandler implements HttpHandler {
     private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
     private Subject subject;
-    private Form form = null;
+    private Form form;
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -97,8 +97,9 @@ public class InboundCookiesHandler implements HttpHandler {
         if (cookieParser.hasValidAuthenticationCookie()) {
             authentication = Application.getInstance(Authentication.class)
                     .withExpires(cookieParser.getExpiresDate())
-                    .withAuthenticatedUser(cookieParser.getAuthenticatedUser());
-            
+                    .withAuthenticatedUser(cookieParser.getAuthenticatedUser())
+                    .twoFactorAuthentication(cookieParser.isTwoFactor());
+
             this.subject = new Subject(cookieParser.getAuthenticatedUser(), true);
         } else {
             authentication = Application.getInstance(Authentication.class)

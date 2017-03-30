@@ -1,6 +1,8 @@
 package io.mangoo.routing.bindings;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,18 +28,17 @@ import io.undertow.util.HttpString;
  * @author svenkubiak
  *
  */
-public class Request extends Validator implements Serializable {
+public class Request extends Validator {
     private static final long serialVersionUID = 1901891944955577394L;
     private transient HttpServerExchange httpServerExchange;
     private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
-    private Map<String, Cookie> cookies; //NOSONAR
-    private Map<String, Object> attributes = new HashMap<>(); //NOSONAR
+    private Map<String, Cookie> cookies;
+    private Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
     private Map<String, String> parameter;
-
 
     public Request(){
         //Empty constructor for google guice
@@ -314,5 +315,15 @@ public class Request extends Validator implements Serializable {
      */
     public Optional<JsonWebToken> getJsonWebToken() {
         return Optional.ofNullable(this.jsonWebToken);
+    }
+    
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.writeObject(body);
+        objectOutputStream.writeObject(authenticity);
+    }
+
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        this.body = (String) objectInputStream.readObject();
+        this.authentication = (Authentication) objectInputStream.readObject();
     }
 }

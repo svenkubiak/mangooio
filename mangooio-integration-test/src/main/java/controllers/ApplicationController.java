@@ -15,9 +15,17 @@ public class ApplicationController {
     public Response index() {
         return Response.withOk();
     }
+    
+    public Response route() {
+        return Response.withOk();
+    }
 
     public Response redirect() {
         return Response.withRedirect("/");
+    }
+    
+    public Response restricted() {
+        return Response.withOk().andContent("form", "foo");
     }
 
     public Response text() {
@@ -26,6 +34,10 @@ public class ApplicationController {
     
     public Response limit() {
         return Response.withOk().andEmptyBody();
+    }
+    
+    public Response reverse() {
+        return Response.withOk();
     }
     
     public Response prettytime() {

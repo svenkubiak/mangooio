@@ -33,7 +33,7 @@ public interface TemplateEngine {
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String path, Locale locale) throws MangooTemplateEngineException;
+    String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String path, Locale locale) throws MangooTemplateEngineException;
 
     /**
      * Renders a template for a specific controller class and method
@@ -45,7 +45,7 @@ public interface TemplateEngine {
      * 
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException;
+    String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException;
     
     /**
      * When in dev mode, this method is used to pass the framework exception to the frontend
@@ -57,7 +57,7 @@ public interface TemplateEngine {
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException;
+    String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException;
     
     
     /**
@@ -67,5 +67,5 @@ public interface TemplateEngine {
      * @param templateName The name of the template file
      * @return The template name with correct suffix
      */
-    public String getTemplateName(String templateName);
+    String getTemplateName(String templateName);
 }

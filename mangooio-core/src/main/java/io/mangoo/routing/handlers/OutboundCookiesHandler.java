@@ -52,7 +52,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
-            claims.put(ClaimKey.AUHTNETICITY.toString(), session.getAuthenticity());
+            claims.put(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
             claims.put(ClaimKey.VERSION.toString(), CONFIG.getCookieVersion());
             claims.put(ClaimKey.DATA.toString(), session.getValues());
             
@@ -100,8 +100,9 @@ public class OutboundCookiesHandler implements HttpHandler {
             } else {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put(ClaimKey.VERSION.toString(), CONFIG.getAuthCookieVersion());
+                claims.put(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
                 
-                final LocalDateTime expires = authentication.isRemember() ? LocalDateTime.now().plusHours(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
+                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
                 String jwt = Jwts.builder()
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())

@@ -20,6 +20,8 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -276,6 +278,14 @@ public class WebResponse {
             final HttpDelete httpDelete = new HttpDelete(this.responseUrl + this.responseUri);
 
             return doRequest(httpDelete);
+        } else if ((Methods.HEAD).equals(this.responseMethod)) {
+            final HttpHead httpHead = new HttpHead(this.responseUrl + this.responseUri);
+
+            return doRequest(httpHead);
+        } else if ((Methods.OPTIONS).equals(this.responseMethod)) {
+            final HttpOptions httpOptions = new HttpOptions(this.responseUrl + this.responseUri);
+
+            return doRequest(httpOptions);
         }
 
         return this;

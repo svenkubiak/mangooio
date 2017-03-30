@@ -3,10 +3,35 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>4.2.2-SNAPSHOT</version>
+		<version>4.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-integration-test</artifactId>
 	<packaging>jar</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>io.mangoo</groupId>
+			<artifactId>mangooio-core</artifactId>
+			<version>4.3.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.mangoo</groupId>
+			<artifactId>mangooio-test</artifactId>
+			<version>4.3.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-websocket</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-sse</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<resources>
 			<resource>
@@ -38,7 +63,7 @@
 			<plugin>
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>4.2.2-SNAPSHOT</version>
+				<version>4.3.0-SNAPSHOT</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -52,24 +77,34 @@
 						<configuration>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer" />
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>io.mangoo.core.Application</mainClass>
 								</transformer>
 							</transformers>
 							<artifactSet>
 								<excludes>
-									<exclude>junit:junit</exclude>
-									<exclude>rhino:js</exclude>
+									<exclude>junit:*</exclude>
+									<exclude>rhino:*</exclude>
+									<exclude>io.bit3:*</exclude>
 									<exclude>com.hazelcast:*</exclude>
 									<exclude>org.eclipse.jetty:*</exclude>
 									<exclude>org.glassfish.jersey.media:*</exclude>
 									<exclude>org.glassfish.jersey.core:*</exclude>
 									<exclude>org.glassfish.hk2:*</exclude>
-									<exclude>org.glassfish.hk2:external</exclude>
-									<exclude>com.google.com.findbugs:annotations</exclude>
+									<exclude>org.glassfish.hk2.external:*</exclude>
+									<exclude>com.google.com.findbugs:*</exclude>
+									<exclude>com.google.xing:*</exclude>
+									<exclude>com.icegreen:*</exclude>
+									<exclude>org.hamcrest:*</exclude>
+									<exclude>c3p0:*</exclude>
+									<exclude>aopalliance:*</exclude>
 								</excludes>
 							</artifactSet>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
@@ -87,25 +122,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>io.mangoo</groupId>
-			<artifactId>mangooio-core</artifactId>
-			<version>4.2.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>io.mangoo</groupId>
-			<artifactId>mangooio-test</artifactId>
-			<version>4.2.2-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-websocket</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-sse</artifactId>
-		</dependency>
-	</dependencies>
 </project>
