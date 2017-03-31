@@ -99,8 +99,6 @@
 									<exclude>com.google.xing:*</exclude>
 									<exclude>com.icegreen:*</exclude>
 									<exclude>org.hamcrest:*</exclude>
-									<exclude>c3p0:*</exclude>
-									<exclude>aopalliance:*</exclude>
 								</excludes>
 							</artifactSet>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
