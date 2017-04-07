@@ -131,7 +131,7 @@ public class CookieParser {
     }
 
     private void decrypt() {
-        if (this.encrypted && !this.value.contains("\\|")) {
+        if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
             this.value = Application.getInstance(Crypto.class).decrypt(this.value);
         }
     }

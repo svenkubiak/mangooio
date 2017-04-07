@@ -55,7 +55,7 @@ default:
     cookie:
         name       : TEST-SESSION
         expires    : 86400
-        encryption : false
+        encryption : true
     smtp:
         host       : localhost
         port       : 25
