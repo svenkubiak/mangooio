@@ -65,10 +65,11 @@ default:
 
 test:
     application:
-        foo              : cryptex[xOh1oRZzZNfBVl8Sw+O/OTqafBVD6ISKGjSmbljt/hw=]
+        masterkey        : ./key/masterkey.txt
+        foo              : cryptex[MloJcu6/zaaNs7gfpfZATg==]
         admin:
               enable     : true
-              username   : admin
+              username   : cryptex[MloJcu6/zaaNs7gfpfZATg==]
               password   : $2a$12$eEIuI88oeA7zcqZgPBsM8OsqFCZuoyxzqgWVJDUDddUUIfvR.I7Uy
     connector:
         http:
@@ -83,9 +84,10 @@ test:
 
 dev:
     application:
+        masterkey        : ./key/masterkey.txt
         admin:
               enable     : true
-              username   : admin
+              username   : cryptex[MloJcu6/zaaNs7gfpfZATg==]
               password   : $2a$12$eEIuI88oeA7zcqZgPBsM8OsqFCZuoyxzqgWVJDUDddUUIfvR.I7Uy
     connector:
         http:

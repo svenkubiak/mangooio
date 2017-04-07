@@ -265,7 +265,7 @@ public class Bootstrap {
 
         Router.getRoutes().parallelStream().forEach(route -> {
             if (RouteType.REQUEST == route.getRouteType()) {
-                DispatcherHandler dispatcherHandler = new DispatcherHandler(route.getControllerClass(), route.getControllerMethod())
+                DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class).dispatch(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
                         .withTimer(route.isTimerEnabled())
                         .withUsername(route.getUsername())

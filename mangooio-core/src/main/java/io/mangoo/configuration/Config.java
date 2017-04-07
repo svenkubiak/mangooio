@@ -119,40 +119,47 @@ public class Config {
     /**
      * Decrypts all encrypted config value
      */
-    public void decrypt() {
+    public boolean decrypt() {
         String key = null;
-        Crypto crypto = null;
+        boolean decrypt = true;
+        Crypto crypto = Application.getInstance(Crypto.class);
 
         for (final Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
                 if (StringUtils.isBlank(key)) {
                     key = getMasterKey();
-                    crypto = Application.getInstance(Crypto.class);
                 }
 
-                if (crypto != null && StringUtils.isNotBlank(key)) {
+                if (StringUtils.isNotBlank(key)) {
                     final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
                         this.values.put(entry.getKey(), decryptedText);
                     }
+                } else {
+                    LOG.error("Found encrypted config value '" + entry.getKey() + "' but no masterkey was set.");
+                    decrypt = false;
                 }
             }
         }
+        
+        return decrypt;
     }
 
     /**
      * @return The master key for encrypted config value, returns a default value if in test mode
      */
     public String getMasterKey() {
-        if (Application.inTestMode()) {
-            return Default.APPLICATION_TEST_MASTERKEY.toString();
-        }
-
         String key = null;
-        try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString()); //NOSONAR
-        } catch (final IOException e) {
-            LOG.error("Failed to read master key", e);
+        String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY.toString());
+        
+        if (StringUtils.isNotBlank(masterkeyFile)) {
+            try {
+                key = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
+            } catch (final IOException e) {
+                LOG.error("Failed to read master key", e);
+            }
+        } else {
+            LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
         }
 
         return key;

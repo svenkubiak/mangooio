@@ -23,7 +23,6 @@ import io.undertow.Undertow;
 public final class Application {
     private static volatile Undertow undertow;
     private static volatile TemplateEngine templateEngine;
-    private static volatile Config config;
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
@@ -45,14 +44,17 @@ public final class Application {
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
         undertow = bootstrap.getUndertow();
-        bootstrap.showLogo();
-        bootstrap.applicationStarted();
 
         if (bootstrap.bootstrapSuccess()) {
-            getInstance(Config.class).decrypt();
-            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
-            baseDirectory = BootstrapUtils.getBaseDirectory();
-            started = true;
+            if (getInstance(Config.class).decrypt()) {
+                bootstrap.showLogo();
+                bootstrap.applicationStarted();
+                Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+                baseDirectory = BootstrapUtils.getBaseDirectory();
+                started = true;
+            } else {
+                System.exit(1); //NOSONAR 
+            }
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
             System.exit(1); //NOSONAR
@@ -116,19 +118,6 @@ public final class Application {
      */
     public static LocalDateTime getStart() {
         return start;
-    }
-
-    /**
-     * @return An instance of the current application config
-     */
-    public static Config getConfig() {
-        Objects.requireNonNull(mode, Required.MODE.toString());
-
-        if (config == null) {
-            config = new Config();
-        }
-
-        return config;
     }
 
     /**
