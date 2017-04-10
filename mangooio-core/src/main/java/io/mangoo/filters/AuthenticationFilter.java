@@ -1,10 +1,14 @@
 package io.mangoo.filters;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.inject.Inject;
+
 import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
@@ -17,7 +21,12 @@ import io.mangoo.routing.bindings.Request;
  *
  */
 public class AuthenticationFilter implements MangooFilter {
-    private static final Config CONFIG = Application.getConfig();
+    private Config config;
+    
+    @Inject
+    public AuthenticationFilter(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
     
     @Override
     public Response execute(Request request, Response response) {
@@ -31,7 +40,7 @@ public class AuthenticationFilter implements MangooFilter {
     }
 
     private Response login() {
-        String redirect = CONFIG.getString(Key.AUTH_REDIRECT.toString());
+        String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
         if (StringUtils.isNotBlank(redirect)) {
             return Response.withRedirect(redirect).end();
         } else {

@@ -1,11 +1,16 @@
 package io.mangoo.filters;
 
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.inject.Inject;
 
 import io.jsonwebtoken.Jwts;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.routing.Response;
@@ -18,12 +23,17 @@ import io.undertow.util.Headers;
  *
  */
 public class JsonWebTokenFilter implements MangooFilter {
-    private static final Config CONFIG = Application.getConfig();
+    private Config config;
+    
+    @Inject
+    public JsonWebTokenFilter(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
     
     @Override
     public Response execute(Request request, Response response) {
         String bearer = request.getHeader(Headers.AUTHORIZATION);
-        String signKey = CONFIG.getJwtsSignKey();
+        String signKey = this.config.getJwtsSignKey();
         Crypto crypto = Application.getInstance(Crypto.class);
 
         if (StringUtils.isNotBlank(signKey) && StringUtils.isNotBlank(bearer)) {
@@ -31,8 +41,8 @@ public class JsonWebTokenFilter implements MangooFilter {
             bearer = bearer.trim();
 
             try {
-                if (CONFIG.isJwtsEncrypted()) {
-                    bearer = crypto.decrypt(bearer, CONFIG.getJwtsEncryptionKey());
+                if (this.config.isJwtsEncrypted()) {
+                    bearer = crypto.decrypt(bearer, this.config.getJwtsEncryptionKey());
                 }
                 
                 Jwts.parser().setSigningKey(signKey).parseClaimsJws(bearer);

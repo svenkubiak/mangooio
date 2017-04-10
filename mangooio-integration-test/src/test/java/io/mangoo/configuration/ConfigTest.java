@@ -137,6 +137,6 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("application.foo"), equalTo("thisisatestvalue"));
+        assertThat(config.getString("application.foo"), equalTo("admin"));
     }
 }

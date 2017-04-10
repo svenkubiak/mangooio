@@ -56,7 +56,6 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 public final class RequestUtils {
     public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
-    private static final Config CONFIG = Application.getConfig();
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
     private static final int AUTH_PREFIX_LENGTH = 3;
@@ -120,29 +119,30 @@ public final class RequestUtils {
     public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 
+        Config config = Application.getInstance(Config.class);
         OAuthService oAuthService = null;
         switch (oAuthProvider) {
         case TWITTER:
             oAuthService = new ServiceBuilder()
-            .callback(CONFIG.getString(Key.OAUTH_TWITTER_CALLBACK))
-            .apiKey(CONFIG.getString(Key.OAUTH_TWITTER_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_TWITTER_SECRET))
+            .callback(config.getString(Key.OAUTH_TWITTER_CALLBACK))
+            .apiKey(config.getString(Key.OAUTH_TWITTER_KEY))
+            .apiSecret(config.getString(Key.OAUTH_TWITTER_SECRET))
             .build(TwitterApi.instance());
             break;
         case GOOGLE:
             oAuthService = new ServiceBuilder()
             .scope(SCOPE)
-            .callback(CONFIG.getString(Key.OAUTH_GOOGLE_CALLBACK))
-            .apiKey(CONFIG.getString(Key.OAUTH_GOOGLE_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_GOOGLE_SECRET))
+            .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
+            .apiKey(config.getString(Key.OAUTH_GOOGLE_KEY))
+            .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET))
             .state("secret" + new SecureRandom().nextInt(MAX_RANDOM))
             .build(GoogleApi20.instance());
             break;
         case FACEBOOK:
             oAuthService = new ServiceBuilder()
-            .callback(CONFIG.getString(Key.OAUTH_FACEBOOK_CALLBACK))
-            .apiKey(CONFIG.getString(Key.OAUTH_FACEBOOK_KEY))
-            .apiSecret(CONFIG.getString(Key.OAUTH_FACEBOOK_SECRET))
+            .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
+            .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
+            .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET))
             .build(FacebookApi.instance());
             break;
         default:
@@ -183,9 +183,10 @@ public final class RequestUtils {
         if (StringUtils.isNotBlank(cookieHeader)) {
             final Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
 
-            String cookieValue = cookies.get(CONFIG.getAuthenticationCookieName()).getValue();
+            Config config = Application.getInstance(Config.class);
+            String cookieValue = cookies.get(config.getAuthenticationCookieName()).getValue();
             if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
-                if (CONFIG.isAuthenticationCookieEncrypt()) {
+                if (config.isAuthenticationCookieEncrypt()) {
                     cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
                 }
 
@@ -207,7 +208,7 @@ public final class RequestUtils {
                     final String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
                     final LocalDateTime expiresDate = LocalDateTime.parse(expires);
 
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + CONFIG.getApplicationSecret()).equals(sign)) {
+                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + config.getApplicationSecret()).equals(sign)) {
                         validAuthentication = true;
                     }
                 }

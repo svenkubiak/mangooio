@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.templating.TemplateEngine;
@@ -23,7 +22,6 @@ import io.undertow.Undertow;
 public final class Application {
     private static volatile Undertow undertow;
     private static volatile TemplateEngine templateEngine;
-    private static volatile Config config;
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start;
@@ -45,11 +43,10 @@ public final class Application {
         bootstrap.startQuartzScheduler();
         bootstrap.startUndertow();
         undertow = bootstrap.getUndertow();
-        bootstrap.showLogo();
-        bootstrap.applicationStarted();
 
         if (bootstrap.bootstrapSuccess()) {
-            getInstance(Config.class).decrypt();
+            bootstrap.showLogo();
+            bootstrap.applicationStarted();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             baseDirectory = BootstrapUtils.getBaseDirectory();
             started = true;
@@ -116,19 +113,6 @@ public final class Application {
      */
     public static LocalDateTime getStart() {
         return start;
-    }
-
-    /**
-     * @return An instance of the current application config
-     */
-    public static Config getConfig() {
-        Objects.requireNonNull(mode, Required.MODE.toString());
-
-        if (config == null) {
-            config = new Config();
-        }
-
-        return config;
     }
 
     /**

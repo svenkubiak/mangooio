@@ -15,9 +15,9 @@ import org.bouncycastle.crypto.params.ParametersWithRandom;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 
 /**
@@ -28,12 +28,17 @@ import io.mangoo.enums.Required;
  */
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
-    private static final Config CONFIG = Application.getConfig();
     private static final int KEYINDEX_START = 0;
     private static final int KEYLENGTH_32 = 32;
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
+    private Config config;
+    
+    @Inject
+    public Crypto(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
     
     /**
      * Decrypts an given encrypted text using the application secret property (application.secret) as key
@@ -44,7 +49,7 @@ public class Crypto {
     public String decrypt(String encrytedText) {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
 
-        return decrypt(encrytedText, getSizedKey(CONFIG.getApplicationSecret()));
+        return decrypt(encrytedText, getSizedKey(this.config.getApplicationSecret()));
     }
 
     /**
@@ -75,7 +80,7 @@ public class Crypto {
     public String encrypt(String plainText) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
 
-        return encrypt(plainText, getSizedKey(CONFIG.getApplicationSecret()));
+        return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
     }
 
     /**

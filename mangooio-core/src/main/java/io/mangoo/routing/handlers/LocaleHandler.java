@@ -1,11 +1,15 @@
 package io.mangoo.routing.handlers;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.inject.Inject;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -22,14 +26,19 @@ import io.undertow.util.LocaleUtils;
  *
  */
 public class LocaleHandler implements HttpHandler {
-    private static final Config CONFIG = Application.getConfig();
-
+    private Config config;
+    
+    @Inject
+    public LocaleHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Locale locale = Locale.forLanguageTag(CONFIG.getApplicationLanguage());
+        Locale locale = Locale.forLanguageTag(this.config.getApplicationLanguage());
         Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
 
-        Cookie i18nCookie = exchange.getRequestCookies().get(CONFIG.getI18nCookieName());
+        Cookie i18nCookie = exchange.getRequestCookies().get(this.config.getI18nCookieName());
         if (i18nCookie == null) {
             final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
             if (headerValues != null) {

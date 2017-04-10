@@ -1,13 +1,17 @@
 package io.mangoo.routing.handlers;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.inject.Inject;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
+import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
@@ -22,9 +26,14 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
-    private static final Config CONFIG = Application.getConfig();
     private Attachment attachment;
-
+    private Config config;
+    
+    @Inject
+    public ResponseHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
@@ -49,7 +58,7 @@ public class ResponseHandler implements HttpHandler {
      * @throws IOException
      */
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
-        exchange.dispatch(exchange.getDispatchExecutor(), new BinaryHandler(response));
+        exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));
     }
 
     /**
@@ -61,7 +70,7 @@ public class ResponseHandler implements HttpHandler {
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-        exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
+        exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.endExchange();
     }
@@ -97,13 +106,13 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
-        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), CONFIG.getXssProectionHeader());
-        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), CONFIG.getXContentTypeOptionsHeader());
-        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), CONFIG.getXFrameOptionsHeader());
-        exchange.getResponseHeaders().put(Header.REFERER_POLICY.toHttpString(), CONFIG.getRefererPolicy());
+        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getXssProectionHeader());
+        exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getXContentTypeOptionsHeader());
+        exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getXFrameOptionsHeader());
+        exchange.getResponseHeaders().put(Header.REFERER_POLICY.toHttpString(), this.config.getRefererPolicy());
         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-        exchange.getResponseHeaders().put(Headers.SERVER, CONFIG.getServerHeader());
-        exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), CONFIG.getContentSecurityPolicyHeader());
+        exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
+        exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getContentSecurityPolicyHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
 
         if (this.attachment.hasTimer()) {

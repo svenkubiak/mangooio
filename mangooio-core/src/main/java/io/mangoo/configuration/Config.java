@@ -39,9 +39,11 @@ import io.mangoo.enums.Required;
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9F, 1);
-
+    private boolean decrypted = true;
+    
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
+        decrypt();
     }
 
     public Config(String configFile, Mode mode) {
@@ -49,6 +51,7 @@ public class Config {
         Objects.requireNonNull(mode, Required.MODE.toString());
 
         prepare(configFile, mode);
+        decrypt();
     }
 
     private void prepare(String configFile, Mode mode) {
@@ -119,40 +122,53 @@ public class Config {
     /**
      * Decrypts all encrypted config value
      */
-    public void decrypt() {
+    private void decrypt() {
         String key = null;
-        Crypto crypto = null;
+        Crypto crypto = new Crypto(this);
 
         for (final Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
                 if (StringUtils.isBlank(key)) {
                     key = getMasterKey();
-                    crypto = Application.getInstance(Crypto.class);
                 }
 
-                if (crypto != null && StringUtils.isNotBlank(key)) {
+                if (StringUtils.isNotBlank(key)) {
                     final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
                         this.values.put(entry.getKey(), decryptedText);
+                    } else {
+                        decrypted = false;
                     }
+                } else {
+                    LOG.error("Found encrypted config value '" + entry.getKey() + "' but no masterkey was set.");
+                    decrypted = false;
                 }
             }
         }
+    }
+    
+    /**
+     * @return True if decryption of config values was successful, false otherwise
+     */
+    public boolean isDecrypted() {
+        return decrypted;
     }
 
     /**
      * @return The master key for encrypted config value, returns a default value if in test mode
      */
     public String getMasterKey() {
-        if (Application.inTestMode()) {
-            return Default.APPLICATION_TEST_MASTERKEY.toString();
-        }
-
         String key = null;
-        try {
-            key = FileUtils.readFileToString(new File(this.values.get(Key.APPLICATION_MASTERKEY.toString())), Default.ENCODING.toString()); //NOSONAR
-        } catch (final IOException e) {
-            LOG.error("Failed to read master key", e);
+        String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY.toString());
+        
+        if (StringUtils.isNotBlank(masterkeyFile)) {
+            try {
+                key = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
+            } catch (final IOException e) {
+                LOG.error("Failed to read master key", e);
+            }
+        } else {
+            LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
         }
 
         return key;

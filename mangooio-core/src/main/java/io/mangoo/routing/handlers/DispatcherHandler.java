@@ -12,6 +12,8 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.inject.Inject;
+
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
@@ -44,33 +46,38 @@ import io.undertow.server.HttpServerExchange;
  */
 public class DispatcherHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
-    private static final Config CONFIG = Application.getConfig();
+    private Config config;
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
-    private final Messages messages;
-    private final Crypto crypto;
-    private final Map<String, Class<?>> methodParameters;
-    private final Class<?> controllerClass;
-    private final String controllerClassName;
-    private final String controllerMethodName;
-    private final boolean hasRequestFilter;
+    private Messages messages;
+    private Crypto crypto;
+    private Map<String, Class<?>> methodParameters;
+    private Class<?> controllerClass;
+    private String controllerClassName;
+    private String controllerMethodName;
+    private boolean hasRequestFilter;
     private TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
     private String username;
     private String password;    
     private int limit;
-    private final int methodParametersCount;
+    private int methodParametersCount;
     private boolean blocking;
     private boolean timer;
 
-    public DispatcherHandler(Class<?> controllerClass, String controllerMethod) {
+    @Inject
+    public DispatcherHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
+    
+    public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
-        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
+        Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
 
         this.messages = Application.getInstance(Messages.class);
         this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
-        this.controllerMethodName = controllerMethod;
+        this.controllerMethodName = controllerMethodName;
         this.controllerClassName = controllerClass.getSimpleName();
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
@@ -95,6 +102,8 @@ public class DispatcherHandler implements HttpHandler {
                 this.classAnnotations.add(annotation);
             }
         }
+        
+        return this;
     }
     
     public DispatcherHandler isBlocking(boolean blocking) {
@@ -134,7 +143,7 @@ public class DispatcherHandler implements HttpHandler {
             return;
         }
 
-        if (CONFIG.isAdminEnabled()) {
+        if (this.config.isAdminEnabled()) {
             exchange.addExchangeCompleteListener(new MetricsListener(System.currentTimeMillis()));
         }
 

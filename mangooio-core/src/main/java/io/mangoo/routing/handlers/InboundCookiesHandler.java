@@ -3,11 +3,14 @@ package io.mangoo.routing.handlers;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.inject.Inject;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -15,6 +18,7 @@ import io.jsonwebtoken.Jwts;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.enums.Required;
 import io.mangoo.models.Subject;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
@@ -35,10 +39,15 @@ import io.undertow.server.HttpServerExchange;
  */
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
-    private static final Config CONFIG = Application.getConfig();
     private static final int TOKEN_LENGTH = 16;
+    private Config config;
     private Subject subject;
     private Form form;
+
+    @Inject
+    public InboundCookiesHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -62,9 +71,9 @@ public class InboundCookiesHandler implements HttpHandler {
         Session session;
 
         CookieParser cookieParser = CookieParser.build()
-                .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getSessionCookieName()))
-                .withSecret(CONFIG.getApplicationSecret())
-                .isEncrypted(CONFIG.isSessionCookieEncrypt());
+                .withContent(CookieUtils.getCookieValue(exchange, this.config.getSessionCookieName()))
+                .withSecret(this.config.getApplicationSecret())
+                .isEncrypted(this.config.isSessionCookieEncrypt());
 
         if (cookieParser.hasValidSessionCookie()) {
             session = Session.build()
@@ -75,7 +84,7 @@ public class InboundCookiesHandler implements HttpHandler {
             session = Session.build()
                     .withContent(new HashMap<>())
                     .withAuthenticity(RandomStringUtils.randomAlphanumeric(TOKEN_LENGTH))
-                    .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getSessionExpires()));
+                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
         return session;
@@ -90,9 +99,9 @@ public class InboundCookiesHandler implements HttpHandler {
         Authentication authentication;
 
         final CookieParser cookieParser = CookieParser.build()
-                .withContent(CookieUtils.getCookieValue(exchange, CONFIG.getAuthenticationCookieName()))
-                .withSecret(CONFIG.getApplicationSecret())
-                .isEncrypted(CONFIG.isAuthenticationCookieEncrypt());
+                .withContent(CookieUtils.getCookieValue(exchange, this.config.getAuthenticationCookieName()))
+                .withSecret(this.config.getApplicationSecret())
+                .isEncrypted(this.config.isAuthenticationCookieEncrypt());
         
         if (cookieParser.hasValidAuthenticationCookie()) {
             authentication = Application.getInstance(Authentication.class)
@@ -103,7 +112,7 @@ public class InboundCookiesHandler implements HttpHandler {
             this.subject = new Subject(cookieParser.getAuthenticatedUser(), true);
         } else {
             authentication = Application.getInstance(Authentication.class)
-                    .withExpires(LocalDateTime.now().plusSeconds(CONFIG.getAuthenticationExpires()))
+                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()))
                     .withAuthenticatedUser(null);
             
             this.subject = new Subject("", false);
@@ -120,12 +129,12 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final String cookieValue = CookieUtils.getCookieValue(exchange, CONFIG.getFlashCookieName());
+        final String cookieValue = CookieUtils.getCookieValue(exchange, this.config.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(CONFIG.getApplicationSecret())
+                        .setSigningKey(this.config.getApplicationSecret())
                         .parseClaimsJws(cookieValue);
 
                 Claims claims = jwsClaims.getBody();

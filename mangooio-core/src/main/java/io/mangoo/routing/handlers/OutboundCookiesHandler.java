@@ -3,12 +3,16 @@ package io.mangoo.routing.handlers;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import com.google.inject.Inject;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -28,9 +32,14 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class OutboundCookiesHandler implements HttpHandler {
-    private static final Config CONFIG = Application.getConfig();
     private Attachment attachment;
-
+    private Config config;
+    
+    @Inject
+    public OutboundCookiesHandler(Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    }
+    
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
@@ -53,24 +62,24 @@ public class OutboundCookiesHandler implements HttpHandler {
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
             claims.put(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
-            claims.put(ClaimKey.VERSION.toString(), CONFIG.getCookieVersion());
+            claims.put(ClaimKey.VERSION.toString(), this.config.getCookieVersion());
             claims.put(ClaimKey.DATA.toString(), session.getValues());
             
             final LocalDateTime expires = session.getExpires();
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
                     .compact();
 
-            if (CONFIG.isSessionCookieEncrypt()) {
+            if (this.config.isSessionCookieEncrypt()) {
                 jwt = this.attachment.getCrypto().encrypt(jwt);
             }
 
             final Cookie cookie = CookieBuilder.create()
-                .name(CONFIG.getSessionCookieName())
+                .name(this.config.getSessionCookieName())
                 .value(jwt)
-                .secure(CONFIG.isSessionCookieSecure())
+                .secure(this.config.isSessionCookieSecure())
                 .httpOnly(true)
                 .expires(expires)
                 .build();
@@ -89,35 +98,35 @@ public class OutboundCookiesHandler implements HttpHandler {
         
         if (authentication != null && authentication.hasAuthenticatedUser()) {
             Cookie cookie;
-            final String cookieName = CONFIG.getAuthenticationCookieName();
+            final String cookieName = this.config.getAuthenticationCookieName();
             if (authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
-                cookie.setSecure(CONFIG.isAuthenticationCookieSecure());
+                cookie.setSecure(this.config.isAuthenticationCookieSecure());
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
                 cookie.setDiscard(true);
             } else {
                 Map<String, Object> claims = new HashMap<>();
-                claims.put(ClaimKey.VERSION.toString(), CONFIG.getAuthCookieVersion());
+                claims.put(ClaimKey.VERSION.toString(), this.config.getAuthCookieVersion());
                 claims.put(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
                 
-                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(CONFIG.getAuthenticationRememberExpires()) : authentication.getExpires();
+                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(this.config.getAuthenticationRememberExpires()) : authentication.getExpires();
                 String jwt = Jwts.builder()
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())
                         .setExpiration(DateUtils.localDateTimeToDate(expires))
-                        .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                        .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
                         .compact();
                 
-                if (CONFIG.isAuthenticationCookieEncrypt()) {
+                if (this.config.isAuthenticationCookieEncrypt()) {
                     jwt = this.attachment.getCrypto().encrypt(jwt);
                 }
 
                 cookie = CookieBuilder.create()
                         .name(cookieName)
                         .value(jwt)
-                        .secure(CONFIG.isAuthenticationCookieSecure())
+                        .secure(this.config.isAuthenticationCookieSecure())
                         .httpOnly(true)
                         .expires(expires)
                         .build();
@@ -148,23 +157,23 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, CONFIG.getApplicationSecret())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
                     .compact();
             
             final Cookie cookie = CookieBuilder.create()
-                    .name(CONFIG.getFlashCookieName())
+                    .name(this.config.getFlashCookieName())
                     .value(jwt)
-                    .secure(CONFIG.isFlashCookieSecure())
+                    .secure(this.config.isFlashCookieSecure())
                     .httpOnly(true)
                     .expires(expires)
                     .build();
 
             exchange.setResponseCookie(cookie);
         } else {
-            final Cookie cookie = exchange.getRequestCookies().get(CONFIG.getFlashCookieName());
+            final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
-                .setSecure(CONFIG.isFlashCookieSecure())
+                .setSecure(this.config.isFlashCookieSecure())
                 .setPath("/")
                 .setMaxAge(0);
 
