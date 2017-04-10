@@ -60,8 +60,10 @@ public class Config {
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
             map = (Map) loadConfiguration(configPath, false);
+            LOG.info("Loading application.yaml from: classpath");
         } else {
             map = (Map) loadConfiguration(configFile, true);
+            LOG.info("Loading application.yaml from: " + configFile);
         }
 
         if (map != null) {
