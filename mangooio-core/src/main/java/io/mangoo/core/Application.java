@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.templating.TemplateEngine;
@@ -46,15 +45,11 @@ public final class Application {
         undertow = bootstrap.getUndertow();
 
         if (bootstrap.bootstrapSuccess()) {
-            if (getInstance(Config.class).decrypt()) {
-                bootstrap.showLogo();
-                bootstrap.applicationStarted();
-                Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
-                baseDirectory = BootstrapUtils.getBaseDirectory();
-                started = true;
-            } else {
-                System.exit(1); //NOSONAR 
-            }
+            bootstrap.showLogo();
+            bootstrap.applicationStarted();
+            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+            baseDirectory = BootstrapUtils.getBaseDirectory();
+            started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
             System.exit(1); //NOSONAR

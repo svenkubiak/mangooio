@@ -39,9 +39,11 @@ import io.mangoo.enums.Required;
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9F, 1);
-
+    private boolean decrypted = true;
+    
     public Config() {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
+        decrypt();
     }
 
     public Config(String configFile, Mode mode) {
@@ -49,6 +51,7 @@ public class Config {
         Objects.requireNonNull(mode, Required.MODE.toString());
 
         prepare(configFile, mode);
+        decrypt();
     }
 
     private void prepare(String configFile, Mode mode) {
@@ -119,10 +122,9 @@ public class Config {
     /**
      * Decrypts all encrypted config value
      */
-    public boolean decrypt() {
+    private void decrypt() {
         String key = null;
-        boolean decrypt = true;
-        Crypto crypto = Application.getInstance(Crypto.class);
+        Crypto crypto = new Crypto(this);
 
         for (final Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
@@ -134,15 +136,22 @@ public class Config {
                     final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
                     if (StringUtils.isNotBlank(decryptedText)) {
                         this.values.put(entry.getKey(), decryptedText);
+                    } else {
+                        decrypted = false;
                     }
                 } else {
                     LOG.error("Found encrypted config value '" + entry.getKey() + "' but no masterkey was set.");
-                    decrypt = false;
+                    decrypted = false;
                 }
             }
         }
-        
-        return decrypt;
+    }
+    
+    /**
+     * @return True if decryption of config values was successful, false otherwise
+     */
+    public boolean isDecrypted() {
+        return decrypted;
     }
 
     /**

@@ -160,6 +160,11 @@ public class Bootstrap {
             LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
             this.error = true;
         }
+        
+        if (!this.config.isDecrypted()) {
+            LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
+            this.error = true;
+        }
     }
 
     @SuppressWarnings("all")
@@ -322,8 +327,8 @@ public class Bootstrap {
         if (!bootstrapError()) {
             try {
                 final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
-                modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
                 modules.add(new io.mangoo.core.Module());
+                modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                     | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
                 LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
