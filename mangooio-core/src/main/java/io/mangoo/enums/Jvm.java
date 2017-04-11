@@ -10,6 +10,7 @@ public enum Jvm {
     APPLICATION_CONFIG("application.config"),
     APPLICATION_MODE("application.mode"),
     APPLICATION_LOG("application.log"),
+    APPLICATION_MASTERKEY("application.masterkey"),    
     HTTP_HOST("http.host"),
     HTTP_PORT("http.port"),
     AJP_HOST("ajp.host"),

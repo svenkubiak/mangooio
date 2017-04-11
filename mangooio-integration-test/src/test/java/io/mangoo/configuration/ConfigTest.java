@@ -12,6 +12,7 @@ import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -138,5 +139,15 @@ public class ConfigTest {
 
         //then
         assertThat(config.getString("application.foo"), equalTo("admin"));
+    }
+    
+    @Test
+    public void testGetMasterKey() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+        System.setProperty(Jvm.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
+
+        //then
+        assertThat(config.getMasterKey(), equalTo("thisismymasterkey"));
     }
 }

@@ -160,20 +160,21 @@ public class Config {
      * @return The master key for encrypted config value, returns a default value if in test mode
      */
     public String getMasterKey() {
-        String key = null;
-        String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY.toString());
-        
-        if (StringUtils.isNotBlank(masterkeyFile)) {
-            try {
-                key = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
-            } catch (final IOException e) {
-                LOG.error("Failed to read master key", e);
+        String masterkey = System.getProperty(Jvm.APPLICATION_MASTERKEY.toString());
+        if (StringUtils.isBlank(masterkey)) {
+            String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY.toString());
+            if (StringUtils.isNotBlank(masterkeyFile)) {
+                try {
+                    masterkey = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
+                } catch (final IOException e) {
+                    LOG.error("Failed to read master key", e);
+                }
+            } else {
+                LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
             }
-        } else {
-            LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
         }
 
-        return key;
+        return masterkey;
     }
 
     /**

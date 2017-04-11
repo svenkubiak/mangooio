@@ -86,7 +86,10 @@ public class LimitHandler implements HttpHandler {
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         if (this.attachment.hasAuthentication()) {
             HttpHandler httpHandler = RequestUtils.wrapSecurity(
-                    Application.getInstance(LocaleHandler.class), this.attachment.getUsername(), this.attachment.getPassword());
+                    Application.getInstance(LocaleHandler.class),
+                    this.attachment.getUsername(),
+                    this.attachment.getPassword());
+            
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
