@@ -27,7 +27,10 @@ public enum Key {
     
     @Deprecated /** Use Jvm.APPLICATION_LOG instead **/
     APPLICATION_LOG("application.log"),
+
+    @Deprecated /** Use APPLICATION_MASTERKEY_FILE instead **/
     APPLICATION_MASTERKEY("application.masterkey"),
+    APPLICATION_MASTERKEY_FILE("application.masterkeyfile"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
     APPLICATION_MINIFY_JS("application.minify.js"),
     

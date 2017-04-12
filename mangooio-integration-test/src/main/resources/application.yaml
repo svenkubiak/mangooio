@@ -65,7 +65,7 @@ default:
 
 test:
     application:
-        masterkey        : ./key/masterkey.txt
+        masterkeyfile    : ./key/masterkey.txt
         foo              : cryptex[MloJcu6/zaaNs7gfpfZATg==]
         admin:
               enable     : true
@@ -84,7 +84,7 @@ test:
 
 dev:
     application:
-        masterkey        : ./key/masterkey.txt
+        masterkeyfile    : ./key/masterkey.txt
         admin:
               enable     : true
               username   : cryptex[MloJcu6/zaaNs7gfpfZATg==]

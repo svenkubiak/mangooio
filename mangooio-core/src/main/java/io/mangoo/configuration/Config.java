@@ -115,7 +115,13 @@ public class Config {
                 if (value instanceof Map) {
                     load(parentKey + "." + key, (Map<String, Object>) value);
                 } else {
-                    this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), (value == null) ? "" : String.valueOf(value));
+                    if (value == null) {
+                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), "");   
+                    } else if (("${arg}").equalsIgnoreCase(String.valueOf(value))) {
+                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), System.getProperty(entry.getKey()));   
+                    } else {
+                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), String.valueOf(value));   
+                    }
                 }
             }
         }
@@ -162,7 +168,7 @@ public class Config {
     public String getMasterKey() {
         String masterkey = System.getProperty(Jvm.APPLICATION_MASTERKEY.toString());
         if (StringUtils.isBlank(masterkey)) {
-            String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY.toString());
+            String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY_FILE.toString());
             if (StringUtils.isNotBlank(masterkeyFile)) {
                 try {
                     masterkey = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
