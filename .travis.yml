@@ -1,7 +1,4 @@
 language: java
-os:
-  - linux
-  - osx
 jdk:
   - oraclejdk8
 script: "mvn clean test -Dgpg.skip=true"
