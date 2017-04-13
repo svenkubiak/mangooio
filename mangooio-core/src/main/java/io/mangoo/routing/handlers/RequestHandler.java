@@ -84,7 +84,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      * @throws MangooTemplateEngineException 
      */
-    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, MangooTemplateEngineException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         //execute global request filter
         Response response = Response.withOk();
         if (this.attachment.hasRequestFilter()) {
