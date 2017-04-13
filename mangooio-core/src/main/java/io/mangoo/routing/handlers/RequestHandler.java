@@ -124,7 +124,7 @@ public class RequestHandler implements HttpHandler {
      * @throws TemplateException
      * @throws MangooTemplateEngineException 
      */
-    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, TemplateException, MangooTemplateEngineException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, MangooTemplateEngineException {
         Response invokedResponse;
 
         if (this.attachment.getMethodParameters().isEmpty()) {
@@ -172,7 +172,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    protected Object[] getConvertedParameters(HttpServerExchange exchange) throws IOException {
+    protected Object[] getConvertedParameters(HttpServerExchange exchange) {
         final Object [] convertedParameters = new Object[this.attachment.getMethodParametersCount()];
 
         int index = 0;

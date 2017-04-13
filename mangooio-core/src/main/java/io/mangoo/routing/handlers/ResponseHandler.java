@@ -57,7 +57,7 @@ public class ResponseHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) throws IOException {
+    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));
     }
 
