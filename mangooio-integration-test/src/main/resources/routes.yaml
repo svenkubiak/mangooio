@@ -246,6 +246,10 @@ routes:
 - method: PUT
   url: /
   mapping: ApplicationController.index
+  
+- method: PATCH
+  url: /
+  mapping: ApplicationController.index  
 
 - method: HEAD
   url: /

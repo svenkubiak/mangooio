@@ -76,6 +76,18 @@ public final class WebRequest {
     }
     
     /**
+     * Creates a new HTTP PACTH request to the given URI
+     * 
+     * @param uri The URI to call
+     * @return A MangooResponse
+     */
+    public static WebResponse patch(String uri) {
+        Objects.requireNonNull(uri, URI_ERROR);
+        
+        return new WebResponse(uri, Methods.PATCH);
+    }
+    
+    /**
      * Creates a new HTTP OPTIONS request to the given URI
      * 
      * @param uri The URI to call

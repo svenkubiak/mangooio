@@ -20,6 +20,8 @@ public class BootstrapUtilsTest {
     public void testGetRouteType() {
         //given
         String get      = "get";
+        String patch    = "patch";
+        String options   = "options";
         String post     = "post";
         String put      = "put";
         String delete   = "delete";
@@ -30,6 +32,8 @@ public class BootstrapUtilsTest {
         String path     = "path";
         
         //then
+        assertThat(BootstrapUtils.getRouteType(options), equalTo(RouteType.REQUEST));
+        assertThat(BootstrapUtils.getRouteType(patch), equalTo(RouteType.REQUEST));
         assertThat(BootstrapUtils.getRouteType(get), equalTo(RouteType.REQUEST));
         assertThat(BootstrapUtils.getRouteType(post), equalTo(RouteType.REQUEST));
         assertThat(BootstrapUtils.getRouteType(put), equalTo(RouteType.REQUEST));

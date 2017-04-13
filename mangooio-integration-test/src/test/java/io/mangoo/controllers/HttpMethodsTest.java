@@ -76,4 +76,14 @@ public class HttpMethodsTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
+    
+    @Test
+    public void testPatch() {
+        //given
+        final WebResponse response = WebRequest.patch("/").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
 }

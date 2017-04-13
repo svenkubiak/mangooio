@@ -22,6 +22,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -286,6 +287,10 @@ public class WebResponse {
             final HttpOptions httpOptions = new HttpOptions(this.responseUrl + this.responseUri);
 
             return doRequest(httpOptions);
+        } else if ((Methods.PATCH).equals(this.responseMethod)) {
+            final HttpPatch httpPatch = new HttpPatch(this.responseUrl + this.responseUri);
+
+            return doRequest(httpPatch);
         }
 
         return this;

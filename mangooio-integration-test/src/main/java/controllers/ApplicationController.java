@@ -83,6 +83,10 @@ public class ApplicationController {
         return Response.withOk().andTextBody(request.getBody());
     }
 
+    public Response patch(Request request) {
+        return Response.withOk().andTextBody(request.getBody());
+    }
+    
     public Response put(Request request) {
         return Response.withOk().andTextBody(request.getBody());
     }
