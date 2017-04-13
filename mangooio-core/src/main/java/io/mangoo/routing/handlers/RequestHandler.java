@@ -84,7 +84,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      * @throws MangooTemplateEngineException 
      */
-    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, TemplateException, MangooTemplateEngineException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, MangooTemplateEngineException {
         //execute global request filter
         Response response = Response.withOk();
         if (this.attachment.hasRequestFilter()) {
@@ -124,7 +124,7 @@ public class RequestHandler implements HttpHandler {
      * @throws TemplateException
      * @throws MangooTemplateEngineException 
      */
-    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, IOException, MangooTemplateEngineException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         Response invokedResponse;
 
         if (this.attachment.getMethodParameters().isEmpty()) {
