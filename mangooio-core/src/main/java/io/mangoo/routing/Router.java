@@ -35,7 +35,7 @@ public final class Router {
         
         routes.add(route);
         if (route.getRouteType() == RouteType.REQUEST) {
-            reverseRoutes.put(route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod(), route);    
+            reverseRoutes.put((route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod()).toLowerCase(), route);    
         }
     }
 
@@ -47,12 +47,13 @@ public final class Router {
     }
     
     /**
-     * Retrieves a reverse route by its key
+     * Retrieves a reverse route by its controller class and controller method
      * 
-     * @param key The passed route information (e.g. /foo/{bar})
+     * @param key The controller class and method in the form ControllerClass:ControllerMethod
      * @return A route object based on the given controller and method or null if none found
      */
     public static Route getReverseRoute(String key) {
-        return reverseRoutes.get(key);
+        Objects.requireNonNull(key, Required.KEY.toString());
+        return reverseRoutes.get(key.toLowerCase());
     }
 }
