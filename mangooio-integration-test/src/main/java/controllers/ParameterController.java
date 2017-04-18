@@ -3,6 +3,7 @@ package controllers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import io.mangoo.routing.Response;
 
@@ -56,6 +57,10 @@ public class ParameterController {
     }
 
     public Response pathParam(String foo) {
+        return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
+    }
+    
+    public Response optionalParam(Optional<String> foo) {
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);
     }
 

@@ -230,6 +230,9 @@ public class RequestHandler implements HttpHandler {
             case LONG:
                 convertedParameters[index] = StringUtils.isBlank(this.attachment.getRequestParameter().get(key)) ? null : Long.valueOf(this.attachment.getRequestParameter().get(key));
                 break;
+            case OPTIONAL:
+                convertedParameters[index] = StringUtils.isBlank(this.attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(this.attachment.getRequestParameter().get(key));
+                break;                
             case UNDEFINED:
                 convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(this.attachment.getBody(), clazz) : null;
                 break;

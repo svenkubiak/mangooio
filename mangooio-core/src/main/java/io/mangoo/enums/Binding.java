@@ -9,6 +9,7 @@ public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
     BODY("io.mangoo.routing.bindings.Body"),
     DOUBLE("java.lang.Double"),
+    OPTIONAL("java.util.Optional"),    
     DOUBLE_PRIMITIVE("double"),
     FLASH("io.mangoo.routing.bindings.Flash"),
     FLOAT("java.lang.Float"),

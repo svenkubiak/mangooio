@@ -105,6 +105,10 @@ routes:
   mapping: ParameterController.stringParam
   
 - method: GET
+  url: /optional/{foo}
+  mapping: ParameterController.optionalParam  
+  
+- method: GET
   url: /string
   mapping: ParameterController.stringParam
 
