@@ -52,6 +52,19 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testOverwriteDefaultTemplates() {
+        //given
+        final WebResponse response = WebRequest.get("/lala").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
+        assertThat(response.getContent(), equalTo("my 404"));
+    }
+    
+    
+    @Test
     public void testRoute() {
         //given
         final WebResponse response = WebRequest.get("/route").execute();

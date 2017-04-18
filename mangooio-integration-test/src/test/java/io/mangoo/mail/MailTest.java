@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMultipart;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -134,6 +135,70 @@ public class MailTest {
         //then
         assertThat(mail1.getTemplate(), equalTo("foo/vbar"));
         assertThat(mail2.getTemplate(), equalTo("foo\\vbar"));
+    }
+    
+    @Test
+    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException, MessagingException {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
+        
+        //when
+        Mail.newMail()
+            .withFrom("Jon Snow <jon.snow@westeros.com>")
+            .withRecipient("sansa.stark@westeros.com")
+            .withSubject("ÄÜÖ")
+            .withBody("This is a body with üäö")
+            .send();
+        
+        //then
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), equalTo("This is a body with üäö\r\n"));
+    }
+    
+    @Test
+    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
+        
+        //when
+        Mail.newHtmlMail()
+            .withFrom("Jon Snow <jon.snow@westeros.com>")
+            .withRecipient("sansa.stark@westeros.com")
+            .withSubject("ÄÜÖ")
+            .withBody("This is a body with üäö")
+            .send();
+        
+        //then
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
+        assertThat(((MimeMultipart)(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent())).getBodyPart(0).getContent().toString(), equalTo("This is a body with üäö"));
+    }
+    
+    @Test
+    public void testMultipartEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
+        File file = new File(UUID.randomUUID().toString());
+        file.createNewFile();
+        
+        //when
+        Mail.newMail()
+            .withFrom("Jon Snow <jon.snow@westeros.com>")
+            .withRecipient("sansa.stark@westeros.com")
+            .withSubject("ÄÜÖ")
+            .withBody("This is a body with üäö")
+            .withAttachment(file)
+            .send();
+        
+        //then
+        assertThat(file.delete(), equalTo(true));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
+        assertThat(((MimeMultipart)(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent())).getBodyPart(0).getContent().toString(), equalTo("This is a body with üäö"));
     }
     
     @AfterClass
