@@ -10,6 +10,7 @@ public enum Required {
     APPLICATION_SECRET("application secret can not be null"),
     AUTHENTICITY("authenticity can not be null"),
     BCC_RECIPIENT("bcc recipient can not be null"),
+    BINDING("binding can not be null"),
     BODY("body can not be null"),
     CACHE_PROVIDER("cacheProvider can not be null"),
     CC_RECIPIENT("cc recipient can not be null"),
