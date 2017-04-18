@@ -31,9 +31,20 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testOptionalParameter() {
+    public void testOptionalRequestParameter() {
         //given
         WebResponse response = WebRequest.get("/optional/bar").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Optional[bar]"));
+    }
+    
+    @Test
+    public void testOptionalQueryParameter() {
+        //given
+        WebResponse response = WebRequest.get("/optional/?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
