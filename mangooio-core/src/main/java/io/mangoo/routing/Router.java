@@ -1,6 +1,7 @@
 package io.mangoo.routing;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -54,6 +55,6 @@ public final class Router {
      */
     public static Route getReverseRoute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return reverseRoutes.get(key.toLowerCase());
+        return reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
     }
 }

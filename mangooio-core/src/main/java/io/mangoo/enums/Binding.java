@@ -1,5 +1,6 @@
 package io.mangoo.enums;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +42,7 @@ public enum Binding {
         Objects.requireNonNull(value, Required.BINDING.toString());
         if (values.isEmpty()) {
             for (Binding binding : Binding.values()) {
-                values.put(binding.toString().toLowerCase(), binding);
+                values.put(binding.toString().toLowerCase(Locale.ENGLISH), binding);
             }  
         }
 
