@@ -19,6 +19,9 @@
 							<th data-sort="string"><b>URL</b></th>
 							<th data-sort="string"><b>Controller class</b></th>
 							<th data-sort="string"><b>Controller method</b></th>
+							<th data-sort="string"><b>Rate limit</b></th>
+							<th data-sort="string"><b>Authentication</b></th>
+							<th data-sort="string"><b>Blocking</b></th>
 							<th data-sort="string"><b>Type</b></th>
 						</tr>
 					</thead>
@@ -29,6 +32,9 @@
 								<td><#if route.url??>${route.url}</#if></td>
 								<td><#if route.controllerClass??>${route.controllerClass.name}</#if></td>
 								<td><#if route.controllerMethod??>${route.controllerMethod}</#if></td>
+								<td><#if route.url??>${route.limit}</#if></td>
+								<td><#if route.url??>${route.authenticationRequired?string('yes', 'no')}</#if></td>
+								<td><#if route.url??>${route.blockingAllowed?string('yes', 'no')}</#if></td>
 								<td><#if route.routeType??>${route.routeType}</#if></td>
 							</tr>
 						</#list>
