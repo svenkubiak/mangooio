@@ -17,6 +17,7 @@ import org.apache.commons.mail.SimpleEmail;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
@@ -53,7 +54,7 @@ public class Mail {
         init();
         return new Mail().isHtml();
     }
-
+    
     private static void init() {
         Config config = Application.getInstance(Config.class);
         host = config.getSmtpHost();
@@ -189,8 +190,10 @@ public class Mail {
     /**
      * Mark the mail as an HTML mail
      * 
+     * @deprecated As of version 4.4.0, will be private in 5.0.0., use {@link #newHtmlMail()} instead.
      * @return A mail object instance
      */
+    @Deprecated
     public Mail isHtml() {
         this.html = true;
         return this;
@@ -234,6 +237,7 @@ public class Mail {
     private void sendSimpleEmail() throws MangooMailerException {
         try {
             Email email = new SimpleEmail();
+            email.setCharset(Default.ENCODING.toString());
             email.setHostName(host);
             email.setSmtpPort(port);
             email.setAuthenticator(defaultAuthenticator);
@@ -263,6 +267,7 @@ public class Mail {
     private void sendMultipartEmail() throws MangooMailerException {
         try {
             MultiPartEmail multiPartEmail = new MultiPartEmail();
+            multiPartEmail.setCharset(Default.ENCODING.toString());
             multiPartEmail.setHostName(host);
             multiPartEmail.setSmtpPort(port);
             multiPartEmail.setAuthenticator(defaultAuthenticator);
@@ -296,6 +301,7 @@ public class Mail {
     private void sendHtmlEmail() throws MangooMailerException {
         try {
             HtmlEmail htmlEmail = new HtmlEmail();
+            htmlEmail.setCharset(Default.ENCODING.toString());
             htmlEmail.setHostName(host);
             htmlEmail.setSmtpPort(port);
             htmlEmail.setAuthenticator(defaultAuthenticator);
