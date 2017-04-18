@@ -36,7 +36,7 @@ public final class Router {
         
         routes.add(route);
         if (route.getRouteType() == RouteType.REQUEST) {
-            reverseRoutes.put((route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod()).toLowerCase(), route);    
+            reverseRoutes.put((route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod()).toLowerCase(Locale.ENGLISH), route);    
         }
     }
 

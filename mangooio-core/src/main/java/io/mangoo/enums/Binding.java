@@ -46,7 +46,7 @@ public enum Binding {
             }  
         }
 
-        return values.get(value.toLowerCase());
+        return values.get(value.toLowerCase(Locale.ENGLISH));
     }
     
     @Override
