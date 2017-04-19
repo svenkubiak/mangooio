@@ -34,7 +34,8 @@ public enum Template {
     private static final String METRICS_TEMPLARE_PATH = "admin/metrics.ftl";
     private static final String SCHEDULER_TEMPLATE_PATH = "admin/scheduler.ftl";
     private static final String ADMIN_TEMPLATE_PATH = "admin/index.ftl";
-
+    private static final String LOGGER_TEMPLATE_PATH = "admin/logger.ftl";
+    
     Template () {
         try {
             this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), Charsets.UTF_8);
@@ -129,6 +130,13 @@ public enum Template {
      */
     public String cachePath() {
         return CACHE_TEMPLATE_PATH;
+    }
+    
+    /**
+     * @return The relative path of the cache template
+     */
+    public String loggerPath() {
+        return LOGGER_TEMPLATE_PATH;
     }
     
     /**

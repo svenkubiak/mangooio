@@ -13,37 +13,7 @@
     <style><#include "css/skin-blue.min.css"></style>
     <style><#include "css/blue.min.css"></style>
     <style><#include "css/jquery-jvectormap.min.css"></style>
-<style>
-/* Tooltip container */
-.simpletooltip {
-    position: relative;
-    display: inline-block;
-}
-
-/* Tooltip text */
-.simpletooltip .simpletooltiptext {
-    visibility: hidden;
-    width: 100px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
- 
-    position: absolute;
-    z-index: 1;
-    
-    
-    bottom: 100%;
-    left: 50%; 
-    margin-left: -60px;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.simpletooltip:hover .simpletooltiptext {
-    visibility: visible;
-}
-</style>
+    <style>.simpletooltip{position:relative;display:inline-block}.simpletooltip .simpletooltiptext{visibility:hidden;width:100px;background-color:#000;color:#fff;text-align:center;padding:5px 0;border-radius:6px;position:absolute;z-index:1;bottom:100%;left:50%;margin-left:-60px}.simpletooltip:hover .simpletooltiptext{visibility:visible}</style>
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
@@ -62,6 +32,7 @@
         <section class="sidebar">
           <ul class="sidebar-menu">
             <li <#if !space??>class="active"</#if>><a href="/@admin"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
+            <li <#if space?? && space == 'logger'>class="active"</#if>><a href="/@admin/logger"><i class="fa fa-file-o"></i><span>Logger</span></a></li>
             <li <#if space?? && space == 'routes'>class="active"</#if>><a href="/@admin/routes"><i class="fa fa-arrows"></i><span>Routes</span></a></li>
             <li <#if space?? && space == 'scheduler'>class="active"</#if>><a href="/@admin/scheduler"><i class="fa fa-calendar"></i><span>Scheduler</span></a></li>
             <li <#if space?? && space == 'metrics'>class="active"</#if>><a href="/@admin/metrics"><i class="fa fa-signal"></i><span>Metrics</span></a></li>

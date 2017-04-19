@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
 
@@ -45,6 +46,7 @@ public class AdminController {
     private static final String METRICS = "metrics"; //NOSONAR
     private static final String ROUTES = "routes"; //NOSONAR
     private static final String JOBS = "jobs";
+    private static final String LOGGER = "logger";    
     private static final String TOOLS = "tools";
     private static final String SPACE = "space";
     private static final String VERSION = "version";
@@ -110,6 +112,16 @@ public class AdminController {
                 .andContent(SPACE, TOOLS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andTemplate(Template.DEFAULT.toolsPath());
+    }
+    
+    public Response logger() {
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        
+        return Response.withOk()
+                .andContent(SPACE, LOGGER)
+                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent("loggers", loggerContext.getLoggers())
+                .andTemplate(Template.DEFAULT.loggerPath());
     }
     
     public Response toolsajax(Request request) {
