@@ -208,4 +208,29 @@ public class AdminControllerTest {
         assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
+    
+    @Test
+    public void testLoggerAjaxAuthorized() {
+        //given
+        WebResponse response = WebRequest.post("/@admin/logger/ajax")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
+    }
+    
+    @Test
+    public void testLoggerAjaxUnauthorized() {
+        //given
+        WebResponse response = WebRequest.post("/@admin/logger/ajax").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
+        assertThat(response.getContent(), not(containsString(SCHEDULER)));
+    }
 }

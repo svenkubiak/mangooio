@@ -12,8 +12,9 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
@@ -41,7 +42,7 @@ import io.mangoo.utils.CodecUtils;
  */
 @FilterWith(AdminFilter.class)
 public class AdminController {
-    private static final Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
     private static final String SCHEDULER = "scheduler";
     private static final String METRICS = "metrics"; //NOSONAR
     private static final String ROUTES = "routes"; //NOSONAR
@@ -122,6 +123,26 @@ public class AdminController {
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent("loggers", loggerContext.getLoggers())
                 .andTemplate(Template.DEFAULT.loggerPath());
+    }
+    
+    public Response loggerajax(Request request) {
+        Map<String, Object> body = request.getBodyAsJsonMap();
+        
+        if (body != null && body.size() > 0) {
+            String clazz = body.get("class").toString();
+            String level = body.get("level").toString();
+            if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
+                LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+                for (Logger logger : loggerContext.getLoggers()) {
+                    if (clazz.equals(logger.getName())) {
+                        logger.setLevel(Level.getLevel(level));
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return Response.withOk().andEmptyBody();
     }
     
     public Response toolsajax(Request request) {

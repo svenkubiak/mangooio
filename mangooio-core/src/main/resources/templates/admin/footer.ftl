@@ -118,7 +118,27 @@
 	  			}
 			});
 	  	}
-	  });	  
+	  });	
+
+	$( ".loglevel" ).change(function() {
+		var $this = $(this);
+		var level = $this.val();
+		var clazz = $(this).data("class");
+		
+		$.ajax({
+	  			type: "POST",
+	  			processData: false,
+	  			contentType : 'application/json',
+	  			url: "/@admin/logger/ajax",
+	  			data: JSON.stringify({ "class": clazz, "level" : level }),
+	  			dataType: "text",
+	  			success: function(data){
+					$this.parent().addClass("has-success");
+					$this.parent().find(".help-block").show().delay(1000).fadeOut('slow');
+	  			}
+		});
+    }); 
+   
 	});
   </script>
   </body>
