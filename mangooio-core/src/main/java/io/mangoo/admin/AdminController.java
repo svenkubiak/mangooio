@@ -76,7 +76,7 @@ public class AdminController {
                 .andContent("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory))
                 .andContent("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory))
                 .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
-                .andContent("totalFreeMemory", FileUtils.byteCountToDisplaySize((freeMemory + (maxMemory - allocatedMemory))))
+                .andContent("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
@@ -133,7 +133,7 @@ public class AdminController {
             String level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
                 LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-                for (Logger logger : loggerContext.getLoggers()) {
+                for (Logger logger : loggerContext.getLoggers()) { //NOSONAR
                     if (clazz.equals(logger.getName())) {
                         logger.setLevel(Level.getLevel(level));
                         break;
