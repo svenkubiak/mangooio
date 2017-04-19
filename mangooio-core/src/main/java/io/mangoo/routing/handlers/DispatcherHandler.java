@@ -138,7 +138,7 @@ public class DispatcherHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostOrPut(exchange) || this.blocking) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }

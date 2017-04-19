@@ -86,15 +86,30 @@ public final class RequestUtils {
     /**
      * Checks if the request is a POST or a PUT request
      *
+     * @deprecated As of version 4.4.0, replaced by {@link #isPostPutPatch(HttpServerExchange)}
+     *
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request is a POST or a PUT request, false otherwise
      */
+    @Deprecated
     public static boolean isPostOrPut(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
     }
 
+    /**
+     * Checks if the request is a POST, PUT or PATCH request
+     *
+     * @param exchange The Undertow HttpServerExchange
+     * @return True if the request is a POST, PUT or PATCH request, false otherwise
+     */
+    public static boolean isPostPutPatch(HttpServerExchange exchange) {
+        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
+
+        return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
+    }
+    
     /**
      * Checks if the requests content-type contains application/json
      *

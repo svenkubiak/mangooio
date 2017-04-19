@@ -284,7 +284,7 @@ public class RequestHandler implements HttpHandler {
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
         String body = "";
-        if (RequestUtils.isPostOrPut(exchange)) {
+        if (RequestUtils.isPostPutPatch(exchange)) {
             exchange.startBlocking();
             body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING.toString());
         }
