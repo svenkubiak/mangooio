@@ -4,18 +4,16 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import com.google.inject.Inject;
 
@@ -50,8 +48,6 @@ public class AdminController {
     private static final String TOOLS = "tools";
     private static final String SPACE = "space";
     private static final String VERSION = "version";
-    private static final int MB = 1024*1024;
-    private final Map<String, String> properties = new HashMap<>();
     private final Scheduler scheduler; //NOSONAR
     private final Crypto crypto; //NOSONAR
     
@@ -59,26 +55,25 @@ public class AdminController {
     public AdminController(Scheduler scheduler, Crypto crypto) {
         this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
-        
-        System.getProperties().entrySet().forEach(
-                entry -> this.properties.put(entry.getKey().toString(), entry.getValue().toString())
-        );
     }
     
     public Response index() {
         Runtime runtime = Runtime.getRuntime();
-        double maxMemory = runtime.maxMemory() / (double) MB;
-        
+        long maxMemory = runtime.maxMemory();
+        long allocatedMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
-        PrettyTime prettyTime = new PrettyTime(Locale.ENGLISH);
         
         return Response.withOk()
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(SPACE, null)
-                .andContent("uptime", prettyTime.format(Date.from(instant)))
+                .andContent("uptime", Date.from(instant))
                 .andContent("started", Application.getStart())
-                .andContent("properties", this.properties)
-                .andContent("maxMemory", maxMemory)
+                .andContent("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory))
+                .andContent("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory))
+                .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
+                .andContent("totalFreeMemory", FileUtils.byteCountToDisplaySize((freeMemory + (maxMemory - allocatedMemory))))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
