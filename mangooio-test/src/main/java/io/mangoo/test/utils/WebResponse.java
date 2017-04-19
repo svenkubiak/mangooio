@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ContentType;
+import io.mangoo.enums.Default;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -254,7 +255,7 @@ public class WebResponse {
                 } else if (StringUtils.isNotBlank(this.responseRequestBody)) {
                     httpPost.setEntity(new StringEntity(this.responseRequestBody));
                 } else {
-                    httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
+                    httpPost.setEntity(new UrlEncodedFormEntity(this.postParameter, Default.ENCODING.toString()));
                 }
             } catch (final UnsupportedEncodingException e) {
                 LOG.error("Failed to create HttpPost request", e);
@@ -268,7 +269,7 @@ public class WebResponse {
                 if (StringUtils.isNotBlank(this.responseRequestBody)) {
                     httpPut.setEntity(new StringEntity(this.responseRequestBody));
                 } else {
-                    httpPut.setEntity(new UrlEncodedFormEntity(this.postParameter, "UTF-8"));
+                    httpPut.setEntity(new UrlEncodedFormEntity(this.postParameter, Default.ENCODING.toString()));
                 }
             } catch (final UnsupportedEncodingException e) {
                 LOG.error("Failed to create HttpPut request", e);
@@ -290,6 +291,16 @@ public class WebResponse {
         } else if ((Methods.PATCH).equals(this.responseMethod)) {
             final HttpPatch httpPatch = new HttpPatch(this.responseUrl + this.responseUri);
 
+            try {
+                if (StringUtils.isNotBlank(this.responseRequestBody)) {
+                    httpPatch.setEntity(new StringEntity(this.responseRequestBody));
+                } else {
+                    httpPatch.setEntity(new UrlEncodedFormEntity(this.postParameter, Default.ENCODING.toString()));
+                }
+            } catch (final UnsupportedEncodingException e) {
+                LOG.error("Failed to create HttpPut request", e);
+            }
+            
             return doRequest(httpPatch);
         }
 

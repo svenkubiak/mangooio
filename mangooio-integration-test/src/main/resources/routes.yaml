@@ -186,13 +186,21 @@ routes:
   url: /parse
   mapping: JsonController.parse
 
+- method: PUT
+  url: /parse
+  mapping: JsonController.parse
+  
+- method: PATCH
+  url: /parse
+  mapping: JsonController.parse  
+
 - method: POST
   url: /body
   mapping: JsonController.body
 
 - method: POST
   url: /requestAndJson
-  mapping: JsonController.requestAndJson
+  mapping: JsonController.requestAndJson  
 
 # JWTSController
 - method: GET

@@ -20,6 +20,7 @@ import io.undertow.util.StatusCodes;
 public class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
+    private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
     private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
@@ -39,6 +40,32 @@ public class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(PROPERTIES));
+    }
+    
+    @Test
+    public void testLoggerUnAuthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/logger").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(LOGGER)));
+    }
+    
+    @Test
+    public void testLoggerAuthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/logger")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(LOGGER));
     }
     
     @Test

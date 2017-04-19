@@ -32,9 +32,37 @@ public class JsonControllerTest {
     }
 
     @Test
-    public void testJsonParsing() {
+    public void testJsonParsingPost() {
         //given
         WebResponse response = WebRequest.post("/parse")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(json)
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Peter;Parker;24"));
+    }
+    
+    @Test
+    public void testJsonParsingPut() {
+        //given
+        WebResponse response = WebRequest.put("/parse")
+                .withContentType(ContentType.APPLICATION_JSON)
+                .withRequestBody(json)
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("Peter;Parker;24"));
+    }
+    
+    @Test
+    public void testJsonParsingPatch() {
+        //given
+        WebResponse response = WebRequest.patch("/parse")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(json)
                 .execute();
@@ -88,14 +116,13 @@ public class JsonControllerTest {
     }
 
     @Test
-    public void testJsonRequestBody() {
+    public void testJsonRequestBodyPost() {
         //given
         WebResponse response = WebRequest.post("/requestAndJson")
                 .withContentType(ContentType.APPLICATION_JSON)
                 .withRequestBody(json)
                 .execute();
 
-        //then
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
