@@ -23,7 +23,7 @@ import io.undertow.util.StatusCodes;
 public class ConcurrentControllerTest {
 
     @Test
-    public void testConcurrentJsonParsing() {
+    public void testConcurrentJsonParsing() throws InterruptedException {
         Runnable runnable = () -> {
             for (int j=0; j < 50; j++) {
                 //given
