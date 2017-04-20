@@ -1,7 +1,5 @@
 package io.mangoo.test.utils;
 
-import java.util.stream.IntStream;
-
 /**
  * 
  * @author svenkubiak
@@ -10,6 +8,8 @@ import java.util.stream.IntStream;
 public class ConcurrentRunner {
     private Runnable runnable;
     private int threads = 10;
+    private volatile Error error;
+    private volatile RuntimeException runtimeException;
     
     public static ConcurrentRunner create() {
         return new ConcurrentRunner();
@@ -40,11 +40,31 @@ public class ConcurrentRunner {
     /**
      * Starts instances of the given runnable depending on the
      * number of threads to execute
+     * 
+     * @throws InterruptedException if the runnable throws an error
      */
-    public void run() {
-        IntStream.range(0, threads).parallel().forEach(i -> {
-            Thread thread = new Thread(this.runnable);
-            thread.start();
-        });
+    public void run() throws InterruptedException {
+        for (int i=0; i < threads; i++) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        runnable.run();
+                    } catch (Error e) {
+                        error = e;
+                    } catch (RuntimeException e) {
+                        runtimeException = e;
+                    }
+                }
+            });
+            thread.run();
+            
+            if (error != null) {
+                throw error;                
+            }
+            if (runtimeException != null) {
+                throw runtimeException;                
+            }
+        }
     }
 }
