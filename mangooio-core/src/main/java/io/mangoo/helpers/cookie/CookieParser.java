@@ -1,4 +1,4 @@
-package io.mangoo.utils.cookie;
+package io.mangoo.helpers.cookie;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

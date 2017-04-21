@@ -13,8 +13,8 @@ import io.mangoo.cache.Cache;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 
@@ -26,12 +26,15 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 @Singleton
 public class ServerEventManager {
     private final Cache cache;
+    private final RequestHelper requestHelper;
     
     @Inject
-    private ServerEventManager(CacheProvider cacheProvider) {
+    private ServerEventManager(CacheProvider cacheProvider, RequestHelper requestHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
+        Objects.requireNonNull(cacheProvider, Required.REQUEST_HELPER.toString());
         
         this.cache = cacheProvider.getCache(CacheName.SSE);
+        this.requestHelper = requestHelper;
     }
 
     /**
@@ -43,7 +46,7 @@ public class ServerEventManager {
     public void addConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, Required.CONNECTION.toString());
 
-        final String url = RequestUtils.getServerSentEventURL(connection);
+        final String url = this.requestHelper.getServerSentEventURL(connection);
         Set<ServerSentEventConnection> uriConnections = getConnections(url);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();

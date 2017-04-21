@@ -19,12 +19,12 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.templating.TemplateEngine;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -64,10 +64,12 @@ public class DispatcherHandler implements HttpHandler {
     private int methodParametersCount;
     private boolean blocking;
     private boolean timer;
+    private final RequestHelper requestHelper;
 
     @Inject
-    public DispatcherHandler(Config config) {
+    public DispatcherHandler(Config config, RequestHelper requestHelper) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
     }
     
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
@@ -138,7 +140,7 @@ public class DispatcherHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
+        if ( (this.requestHelper.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }
@@ -158,7 +160,7 @@ public class DispatcherHandler implements HttpHandler {
             .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
-            .withRequestParameter(RequestUtils.getRequestParameters(exchange))
+            .withRequestParameter(this.requestHelper.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withTimer(this.timer)
             .withLimit(this.limit)
@@ -167,7 +169,7 @@ public class DispatcherHandler implements HttpHandler {
             .withTemplateEngine(this.templateEngine)
             .withCrypto(this.crypto);
 
-        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
+        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 

@@ -12,10 +12,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
+import io.mangoo.core.Application;
+import io.mangoo.helpers.TwoFactorHelper;
 import io.mangoo.test.utils.WebBrowser;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
-import io.mangoo.utils.TwoFactorUtils;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -99,7 +100,7 @@ public class AuthenticationControllerTest {
         
         //given
         List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-        parameter.add(new BasicNameValuePair("twofactor", TwoFactorUtils.generateCurrentNumber(SECRET)));
+        parameter.add(new BasicNameValuePair("twofactor", Application.getInstance(TwoFactorHelper.class).generateCurrentNumber(SECRET)));
         
         //when
         response = instance.withUri("/factorize")

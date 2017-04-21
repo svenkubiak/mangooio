@@ -1,8 +1,8 @@
 package controllers;
 
 import io.mangoo.enums.Default;
+import io.mangoo.helpers.cookie.CookieBuilder;
 import io.mangoo.routing.Response;
-import io.mangoo.utils.cookie.CookieBuilder;
 import io.undertow.server.handlers.Cookie;
 
 public class I18nController {

@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.helpers;
 
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -32,16 +32,13 @@ import io.mangoo.enums.Required;
  * @author graywatson, svenkubiak, WilliamDunne
  */
 @SuppressWarnings("all")
-public final class TwoFactorUtils {
-    private static final Logger LOG = LogManager.getLogger(TwoFactorUtils.class);
-    private static final Base32 base32 = new Base32();
-    private static final String HMAC_SHA1 = "HmacSHA1";
-    private static final String BLOCK_OF_ZEROS = "000000";
-    private static final int TIME_STEP_SECONDS = 30;
-    private static final boolean USE_SHA1_THREAD_LOCAL = true;
-
-    private TwoFactorUtils() {
-    }
+public class TwoFactorHelper {
+    private final Logger LOG = LogManager.getLogger(TwoFactorHelper.class);
+    private final Base32 base32 = new Base32();
+    private final String HMAC_SHA1 = "HmacSHA1";
+    private final String BLOCK_OF_ZEROS = "000000";
+    private final int TIME_STEP_SECONDS = 30;
+    private final boolean USE_SHA1_THREAD_LOCAL = true;
 
     /**
      * Validate a given code using the secret, defaults to window of 3 either side,
@@ -55,7 +52,7 @@ public final class TwoFactorUtils {
      * 
      * @return boolean if the code is valid
      */
-    public static boolean validateCurrentNumber(int number, String secret) {
+    public boolean validateCurrentNumber(int number, String secret) {
         return validateCurrentNumber(number, secret, 3);
     }
     
@@ -69,7 +66,7 @@ public final class TwoFactorUtils {
      * 
      * @return True if the code is valid within the timeframe, false otherwise
      */
-    public static boolean validateCurrentNumber(int number, String secret, int window, long time) {
+    public boolean validateCurrentNumber(int number, String secret, int window, long time) {
         try {
             int current = Integer.parseInt(generateCurrentNumber(secret, time));
             if (number == current) {
@@ -97,13 +94,13 @@ public final class TwoFactorUtils {
      * 
      * @return True if the code is correct, false otherwise
      */
-    public static boolean validateCurrentNumber(int number, String secret, int window) {
+    public boolean validateCurrentNumber(int number, String secret, int window) {
         long time = System.currentTimeMillis();
 
         return validateCurrentNumber(number, secret, window, time);
     }
 
-    private static boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
+    private boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
         int current = Integer.parseInt(generateCurrentNumber(secret, time));
         if (current == number) {
             return true;
@@ -116,7 +113,7 @@ public final class TwoFactorUtils {
         return false;
     }
 
-    private static boolean validateCurrentNumberHigh(int number, String secret, int window, long time) throws GeneralSecurityException {
+    private boolean validateCurrentNumberHigh(int number, String secret, int window, long time) throws GeneralSecurityException {
         int current = Integer.parseInt(generateCurrentNumber(secret, time));
         if (current == number) {
             return true;
@@ -142,7 +139,7 @@ public final class TwoFactorUtils {
      * 
      * @return The current number to be checked
      */
-    public static String generateCurrentNumber(String secret) {
+    public String generateCurrentNumber(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
         return generateCurrentNumber(secret, System.currentTimeMillis());
@@ -156,7 +153,7 @@ public final class TwoFactorUtils {
      * 
      * @return The current number to be checked
      */
-    public static String generateCurrentNumber(String secret, long currentTimeMillis) {
+    public String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, Required.GROUP_NAME.toString());
 
         final byte[] key = secret.getBytes();
@@ -203,7 +200,7 @@ public final class TwoFactorUtils {
      * 
      * @return A URL to the Google charts API
      */
-    public static String generateQRCode(String accountName, String secret) {
+    public String generateQRCode(String accountName, String secret) {
         Objects.requireNonNull(accountName, Required.ACCOUNT_NAME.toString());
         Objects.requireNonNull(secret, Required.SECRET.toString());
         

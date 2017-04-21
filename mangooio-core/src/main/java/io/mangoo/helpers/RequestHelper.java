@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.helpers;
 
 import java.net.URI;
 import java.security.SecureRandom;
@@ -54,7 +54,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  * @author svenkubiak
  *
  */
-public final class RequestUtils {
+public class RequestHelper {
     public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
@@ -63,16 +63,13 @@ public final class RequestUtils {
     private static final int INDEX_1 = 1;
     private static final int INDEX_2 = 2;
 
-    private RequestUtils() {
-    }
-
     /**
      * Converts request and query parameter into a single map
      *
      * @param exchange The Undertow HttpServerExchange
      * @return A single map contain both request and query parameter
      */
-    public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
+    public Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final Map<String, String> requestParamater = new HashMap<>();
@@ -92,7 +89,7 @@ public final class RequestUtils {
      * @return True if the request is a POST or a PUT request, false otherwise
      */
     @Deprecated
-    public static boolean isPostOrPut(HttpServerExchange exchange) {
+    public boolean isPostOrPut(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod());
@@ -104,7 +101,7 @@ public final class RequestUtils {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request is a POST, PUT or PATCH request, false otherwise
      */
-    public static boolean isPostPutPatch(HttpServerExchange exchange) {
+    public boolean isPostPutPatch(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
@@ -116,7 +113,7 @@ public final class RequestUtils {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request content-type contains application/json, false otherwise
      */
-    public static boolean isJsonRequest(HttpServerExchange exchange) {
+    public boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
@@ -131,7 +128,7 @@ public final class RequestUtils {
      * @return An OAuthService object or null if creating failed
      */
     @SuppressWarnings("rawtypes")
-    public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
+    public Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 
         Config config = Application.getInstance(Config.class);
@@ -174,7 +171,7 @@ public final class RequestUtils {
      * @param oauth The string to lookup the OAuthProvider Enum
      * @return OAuthProvider Enum
      */
-    public static Optional<OAuthProvider> getOAuthProvider(String oauth) {
+    public Optional<OAuthProvider> getOAuthProvider(String oauth) {
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
@@ -193,7 +190,7 @@ public final class RequestUtils {
      * @param cookieHeader The header to parse
      * @return True if the cookie contains a valid authentication, false otherwise
      */
-    public static boolean hasValidAuthentication(String cookieHeader) {
+    public boolean hasValidAuthentication(String cookieHeader) {
         boolean validAuthentication = false;
         if (StringUtils.isNotBlank(cookieHeader)) {
             final Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
@@ -240,7 +237,7 @@ public final class RequestUtils {
      *
      * @return The URL of the Server-Sent Event Connection
      */
-    public static String getServerSentEventURL(ServerSentEventConnection connection) {
+    public String getServerSentEventURL(ServerSentEventConnection connection) {
         return getURL(URI.create(connection.getRequestURI()));
     }
 
@@ -251,7 +248,7 @@ public final class RequestUtils {
      *
      * @return The URL of the WebSocket Channel
      */
-    public static String getWebSocketURL(WebSocketChannel channel) {
+    public String getWebSocketURL(WebSocketChannel channel) {
         return getURL(URI.create(channel.getUrl()));
     }
 
@@ -262,7 +259,7 @@ public final class RequestUtils {
      * @param uri The URI to generate from
      * @return The generated URL
      */
-    private static String getURL(URI uri) {
+    private String getURL(URI uri) {
         final StringBuilder buffer = new StringBuilder();
         buffer.append(uri.getPath());
         
@@ -288,7 +285,7 @@ public final class RequestUtils {
      * @param password The password to use
      * @return An HttpHandler wrapped through BasicAuthentication
      */
-    public static HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
+    public HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
         Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());

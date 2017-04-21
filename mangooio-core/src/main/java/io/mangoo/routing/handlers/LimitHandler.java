@@ -8,9 +8,9 @@ import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Attachment;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
@@ -25,16 +25,18 @@ import io.undertow.util.StatusCodes;
 public class LimitHandler implements HttpHandler {
     private Attachment attachment;
     private Cache cache;
+    private final RequestHelper requestHelper;
     
     @Inject
-    public LimitHandler(CacheProvider cacheProvider) {
+    public LimitHandler(CacheProvider cacheProvider, RequestHelper requestHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         this.cache = cacheProvider.getCache(CacheName.REQUEST);
+        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
     }
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        this.attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
         
         if (this.attachment.hasLimit()) {
             String key = getCacheKey(exchange);
@@ -85,7 +87,7 @@ public class LimitHandler implements HttpHandler {
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         if (this.attachment.hasAuthentication()) {
-            HttpHandler httpHandler = RequestUtils.wrapSecurity(
+            HttpHandler httpHandler = this.requestHelper.wrapSecurity(
                     Application.getInstance(LocaleHandler.class),
                     this.attachment.getUsername(),
                     this.attachment.getPassword());

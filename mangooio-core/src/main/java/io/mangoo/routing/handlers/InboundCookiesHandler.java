@@ -19,6 +19,8 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
+import io.mangoo.helpers.cookie.CookieParser;
 import io.mangoo.models.Subject;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
@@ -26,11 +28,9 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.cookie.CookieParser;
-import io.mangoo.utils.cookie.CookieUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
 
 /**
  *
@@ -51,14 +51,14 @@ public class InboundCookiesHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Attachment attachment = exchange.getAttachment(RequestUtils.ATTACHMENT_KEY);
+        Attachment attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
         attachment.setSession(getSessionCookie(exchange));
         attachment.setAuthentication(getAuthenticationCookie(exchange));
         attachment.setSubject(this.subject);
         attachment.setFlash(getFlashCookie(exchange));
         attachment.setForm(this.form);
 
-        exchange.putAttachment(RequestUtils.ATTACHMENT_KEY, attachment);
+        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);
     }
 
@@ -71,7 +71,7 @@ public class InboundCookiesHandler implements HttpHandler {
         Session session;
 
         CookieParser cookieParser = CookieParser.build()
-                .withContent(CookieUtils.getCookieValue(exchange, this.config.getSessionCookieName()))
+                .withContent(getCookieValue(exchange, this.config.getSessionCookieName()))
                 .withSecret(this.config.getApplicationSecret())
                 .isEncrypted(this.config.isSessionCookieEncrypt());
 
@@ -99,7 +99,7 @@ public class InboundCookiesHandler implements HttpHandler {
         Authentication authentication;
 
         final CookieParser cookieParser = CookieParser.build()
-                .withContent(CookieUtils.getCookieValue(exchange, this.config.getAuthenticationCookieName()))
+                .withContent(getCookieValue(exchange, this.config.getAuthenticationCookieName()))
                 .withSecret(this.config.getApplicationSecret())
                 .isEncrypted(this.config.isAuthenticationCookieEncrypt());
         
@@ -129,7 +129,7 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final String cookieValue = CookieUtils.getCookieValue(exchange, this.config.getFlashCookieName());
+        final String cookieValue = getCookieValue(exchange, this.config.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
@@ -163,5 +163,23 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(FormHandler.class).handleRequest(exchange);
+    }
+    
+    /**
+     * Retrieves the value of a cookie with a given name from a HttpServerExchange
+     * 
+     * @param exchange The exchange containing the cookie
+     * @param cookieName The name of the cookie
+     * 
+     * @return The value of the cookie or null if none found
+     */
+    private String getCookieValue(HttpServerExchange exchange, String cookieName) {
+        String value = null;
+        final Cookie cookie = exchange.getRequestCookies().get(cookieName);
+        if (cookie != null) {
+            value = cookie.getValue();
+        }
+
+        return value;
     }
 }

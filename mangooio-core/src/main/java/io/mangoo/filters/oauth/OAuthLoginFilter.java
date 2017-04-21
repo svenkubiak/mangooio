@@ -2,6 +2,7 @@ package io.mangoo.filters.oauth;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -13,13 +14,15 @@ import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.oauth.OAuthService;
+import com.google.inject.Inject;
 
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.oauth.OAuthProvider;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.RequestUtils;
 
 /**
  * OAuth Login filter for redirecting to the OAuth provider
@@ -28,14 +31,20 @@ import io.mangoo.utils.RequestUtils;
  *
  */
 public class OAuthLoginFilter implements MangooFilter {
-    private static final Logger LOG = LogManager.getLogger(OAuthCallbackFilter.class);
+    private static final Logger LOG = LogManager.getLogger(OAuthLoginFilter.class);
+    private final RequestHelper requestHelper;
+    
+    @Inject
+    public OAuthLoginFilter(RequestHelper requestHelper) {
+        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
+    }
     
     @Override
     @SuppressWarnings("rawtypes")
     public Response execute(Request request, Response response) {
-        Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
+        Optional<OAuthProvider> oAuthProvider = this.requestHelper.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
         if (oAuthProvider.isPresent()) {
-            Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(oAuthProvider.get());
+            Optional<OAuthService> oAuthService = this.requestHelper.createOAuthService(oAuthProvider.get());
             if (oAuthService.isPresent()) {
                 String url = null;
                 switch (oAuthProvider.get()) {

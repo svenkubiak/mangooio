@@ -12,10 +12,10 @@ import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.TwoFactorHelper;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.TwoFactorUtils;
 
 /**
  * Convenient class for handling authentication
@@ -29,16 +29,20 @@ public class Authentication {
     private OAuthUser oAuthUser;
     private String authenticatedUser;
     private Cache cache;
+    private TwoFactorHelper twoFactorHelper;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
 
     @Inject
-    public Authentication(CacheProvider cacheProvider, Config config) {
+    public Authentication(CacheProvider cacheProvider, Config config, TwoFactorHelper twoFactorHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         Objects.requireNonNull(config, Required.CONFIG.toString());
+        Objects.requireNonNull(twoFactorHelper, Required.TWO_FACTOR_HELPER.toString());
+        
         this.cache = cacheProvider.getCache(CacheName.AUTH);
         this.config = config;
+        this.twoFactorHelper = twoFactorHelper;
     }
     
     public Authentication withExpires(LocalDateTime expires) {
@@ -241,7 +245,7 @@ public class Authentication {
     public boolean validSecondFactor(String secret, int number) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
-        boolean valid = TwoFactorUtils.validateCurrentNumber(number, secret);
+        boolean valid = this.twoFactorHelper.validateCurrentNumber(number, secret);
         if (valid) {
             this.twoFactor = false;
         }

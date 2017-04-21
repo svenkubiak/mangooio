@@ -1,11 +1,16 @@
 package io.mangoo.routing.handlers;
 
+import java.util.Objects;
+
 import org.apache.commons.io.IOUtils;
 
+import com.google.inject.Inject;
+
 import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.managers.ServerEventManager;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.HeaderValues;
@@ -17,10 +22,17 @@ import io.undertow.util.Headers;
  *
  */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
-    private final boolean hasAuthentication;
-
-    public ServerSentEventHandler(boolean hasAuthentication) {
+    private final RequestHelper requestHelper;
+    private boolean hasAuthentication;
+    
+    @Inject
+    public ServerSentEventHandler(RequestHelper requestHelper) {
+        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
+    }
+    
+    public ServerSentEventHandler withAuthentication(boolean hasAuthentication) {
         this.hasAuthentication = hasAuthentication;
+        return this;
     }
 
     @Override
@@ -32,7 +44,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
                 header = headerValues.element();
             }
 
-            if (RequestUtils.hasValidAuthentication(header)) {
+            if (this.requestHelper.hasValidAuthentication(header)) {
                 Application.getInstance(ServerEventManager.class).addConnection(connection);
                 connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
             } else {

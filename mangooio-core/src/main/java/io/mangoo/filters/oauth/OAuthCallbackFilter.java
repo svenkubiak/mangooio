@@ -1,6 +1,7 @@
 package io.mangoo.filters.oauth;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -16,17 +17,19 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.github.scribejava.core.oauth.OAuthService;
+import com.google.inject.Inject;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.mangoo.enums.oauth.OAuthResource;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.RequestUtils;
 
 /**
  * Callback filter when returning from an OAuth authentication
@@ -45,10 +48,16 @@ public class OAuthCallbackFilter implements MangooFilter {
     private static final String OAUTH_VERIFIER = "oauth_verifier";
     private static final String OAUTH_TOKEN = "oauth_token";
     private static final String CODE = "code";
+    private final RequestHelper requestHelper;
+    
+    @Inject
+    public OAuthCallbackFilter(RequestHelper requestHelper) {
+        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
+    }
 
     @Override
     public Response execute(Request request, Response response) {
-        final Optional<OAuthProvider> oAuthProvider = RequestUtils.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
+        final Optional<OAuthProvider> oAuthProvider = this.requestHelper.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
         if (oAuthProvider.isPresent()) {
             switch (oAuthProvider.get()) {
             case TWITTER:
@@ -76,7 +85,7 @@ public class OAuthCallbackFilter implements MangooFilter {
     @SuppressWarnings("rawtypes")
     private void facebookOAuth(Request request) {
         final String code = request.getParameter(CODE);
-        final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.FACEBOOK);
+        final Optional<OAuthService> oAuthService = this.requestHelper.createOAuthService(OAuthProvider.FACEBOOK);
 
         if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             final OAuth20Service oAuth20Service = (OAuth20Service ) oAuthService.get();
@@ -113,7 +122,7 @@ public class OAuthCallbackFilter implements MangooFilter {
     @SuppressWarnings("rawtypes")
     private void googleOAuth(Request request) {
         final String code = request.getParameter(CODE);
-        final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.GOOGLE);
+        final Optional<OAuthService> oAuthService = this.requestHelper.createOAuthService(OAuthProvider.GOOGLE);
 
         if (StringUtils.isNotBlank(code) && oAuthService.isPresent()) {
             final OAuth20Service oAuth20Service = (OAuth20Service) oAuthService.get();
@@ -151,7 +160,7 @@ public class OAuthCallbackFilter implements MangooFilter {
     private void twitterOAuth(Request request) {
         final String oauthToken = request.getParameter(OAUTH_TOKEN);
         final String oauthVerifier = request.getParameter(OAUTH_VERIFIER);
-        final Optional<OAuthService> oAuthService = RequestUtils.createOAuthService(OAuthProvider.TWITTER);
+        final Optional<OAuthService> oAuthService = this.requestHelper.createOAuthService(OAuthProvider.TWITTER);
 
         if (StringUtils.isNotBlank(oauthToken) && StringUtils.isNotBlank(oauthVerifier) && oAuthService.isPresent()) {
             final OAuth1RequestToken requestToken = new OAuth1RequestToken(oauthToken, oauthVerifier);

@@ -65,6 +65,7 @@ public enum Required {
     PLAIN_TEXT("plan text can not be null"),
     RECIPIENT("recipient can not be null"),
     REDIRECT_TO("redirect to can not be null"),
+    REQUEST_HELPER("requesthelper can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),
     RESPONSE("response can not be null"),
     ROUTE("route can not be null"),
@@ -87,7 +88,8 @@ public enum Required {
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null");
+    VALUES("values can not be null"),
+    TWO_FACTOR_HELPER("twofactorhelper can not be null");
 
     private final String value;
 

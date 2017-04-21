@@ -13,8 +13,8 @@ import io.mangoo.cache.Cache;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
+import io.mangoo.helpers.RequestHelper;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
 /**
@@ -25,11 +25,14 @@ import io.undertow.websockets.core.WebSocketChannel;
 @Singleton
 public class WebSocketManager {
     private final Cache cache;
+    private final RequestHelper requestHelper;
     
     @Inject
-    private WebSocketManager(CacheProvider cacheProvider) {
+    private WebSocketManager(CacheProvider cacheProvider,  RequestHelper requestHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
+        
         this.cache = cacheProvider.getCache(CacheName.WSS);
+        this.requestHelper = requestHelper;
     }
 
     /**
@@ -41,7 +44,7 @@ public class WebSocketManager {
     public void addChannel(WebSocketChannel channel) {
         Objects.requireNonNull(channel, Required.CHANNEL.toString());
 
-        final String url = RequestUtils.getWebSocketURL(channel);
+        final String url = this.requestHelper.getWebSocketURL(channel);
         Set<WebSocketChannel> channels = getChannels(url);
         if (channels == null) {
             channels = new HashSet<>();
