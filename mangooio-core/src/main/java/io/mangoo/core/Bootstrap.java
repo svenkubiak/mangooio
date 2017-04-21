@@ -244,7 +244,7 @@ public class Bootstrap {
         this.pathHandler = new PathHandler(getRoutingHandler());
         for (final Route route : Router.getRoutes()) {
             if (RouteType.WEBSOCKET == route.getRouteType()) {
-                this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(this.injector.getInstance(WebSocketHandler.class).withControllerClass((route.getControllerClass())).withAuthentication(route.isAuthenticationRequired())));
+                this.pathHandler.addExactPath(route.getUrl(), Handlers.websocket(this.injector.getInstance(WebSocketHandler.class).withControllerClass(route.getControllerClass()).withAuthentication(route.isAuthenticationRequired())));
             } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
                 this.pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(this.injector.getInstance(ServerSentEventHandler.class).withAuthentication(route.isAuthenticationRequired())));
             } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
