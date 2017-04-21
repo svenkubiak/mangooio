@@ -18,7 +18,6 @@ import io.advantageous.boon.json.ObjectMapper;
  */
 public final class JsonUtils {
     private static final String JSON_CAN_NOT_BE_NULL = "json can not be null";
-    private static volatile JsonSerializer jsonSerializer = createJsonSerializer();
     private static ObjectMapper objectMapper = JsonFactory.create();
     
     private JsonUtils(){
@@ -31,15 +30,6 @@ public final class JsonUtils {
     }
     
     /**
-     * Sets a new custom JsonSerializer
-     * 
-     * @param serializer The JsonSerializer to set
-     */
-    public static void withJsonSerializer(JsonSerializer serializer) {
-        jsonSerializer = serializer;
-    }
-    
-    /**
      * Converts a given object to a Json string
      * 
      * @param object The object to convert
@@ -48,7 +38,7 @@ public final class JsonUtils {
     public static String toJson(Object object) {
         Objects.requireNonNull(object, "object can not be null");
         
-        return jsonSerializer.serialize(object).toString();
+        return createJsonSerializer().serialize(object).toString();
     }
     
     /**
