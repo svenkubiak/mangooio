@@ -1,5 +1,8 @@
 package io.mangoo.test.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 
  * @author svenkubiak
@@ -44,6 +47,7 @@ public class ConcurrentRunner {
      * @throws InterruptedException if the runnable throws an error
      */
     public void run() throws InterruptedException {
+        List<Thread> runnableThreads = new ArrayList<>();
         for (int i=0; i < threads; i++) {
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -57,14 +61,17 @@ public class ConcurrentRunner {
                     }
                 }
             });
+            runnableThreads.add(thread);
+        }
+        
+        runnableThreads.parallelStream().forEach(thread -> {
             thread.run();
-            
             if (error != null) {
                 throw error;                
             }
             if (runtimeException != null) {
                 throw runtimeException;                
             }
-        }
+        });
     }
 }

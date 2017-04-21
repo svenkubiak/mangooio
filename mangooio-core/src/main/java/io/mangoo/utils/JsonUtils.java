@@ -18,25 +18,15 @@ import io.mangoo.enums.Required;
  *
  */
 public final class JsonUtils {
-    private static volatile JsonSerializer jsonSerializer = createJsonSerializer();
     private static ObjectMapper objectMapper = JsonFactory.create();
     
     private JsonUtils(){
     }
     
-    private static JsonSerializer createJsonSerializer() {
+    private static JsonSerializer getJsonSerializer() {
         JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
         jsonSerializerFactory.useAnnotations();
         return jsonSerializerFactory.create();
-    }
-    
-    /**
-     * Sets a new custom JsonSerializer
-     * 
-     * @param serializer The JsonSerializer to set
-     */
-    public static void withJsonSerializer(JsonSerializer serializer) {
-        jsonSerializer = serializer;
     }
     
     /**
@@ -48,7 +38,7 @@ public final class JsonUtils {
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        return jsonSerializer.serialize(object).toString();
+        return getJsonSerializer().serialize(object).toString();
     }
     
     /**

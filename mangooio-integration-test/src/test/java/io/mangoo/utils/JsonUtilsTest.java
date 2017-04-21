@@ -5,13 +5,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 
 import com.jayway.jsonpath.ReadContext;
 
-import io.advantageous.boon.json.JsonSerializer;
-import io.advantageous.boon.json.JsonSerializerFactory;
 import io.mangoo.models.Car;
+import io.mangoo.test.utils.ConcurrentRunner;
 
 /**
  * 
@@ -32,6 +33,29 @@ public class JsonUtilsTest {
         //then
         assertThat(json, not(nullValue()));
         assertThat(json, equalTo(expectedJson));
+    }
+    
+    @Test
+    public void testConcurrentToJson() throws InterruptedException {
+        Runnable runnable = () -> {
+            for (int j=0; j < 50; j++) {
+                //given
+                String uuid = UUID.randomUUID().toString();
+                Car car = new Car(uuid);
+                
+                //when
+                String json = JsonUtils.toJson(car);
+                
+                //then
+                assertThat(json, not(nullValue()));
+                assertThat(json, equalTo("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}"));   
+            }
+        };
+        
+        ConcurrentRunner.create()
+            .withRunnable(runnable)
+            .withThreads(50)
+            .run();
     }
     
     @Test
@@ -59,16 +83,5 @@ public class JsonUtilsTest {
         assertThat(car.brand, equalTo(null));
         assertThat(car.doors, equalTo(0));
         assertThat(car.foo, equalTo("blablabla"));
-    }
-    
-    @Test
-    public void testCustomSerializer(){
-        //given
-        JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
-        jsonSerializerFactory.useAnnotations();
-        JsonSerializer serializer = jsonSerializerFactory.create();
-        
-        //then
-        JsonUtils.withJsonSerializer(serializer);
     }
 }
