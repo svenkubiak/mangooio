@@ -46,6 +46,7 @@ public class ConcurrentRunner {
      * 
      * @throws InterruptedException if the runnable throws an error
      */
+    @SuppressWarnings("all")
     public void run() throws InterruptedException {
         List<Thread> runnableThreads = new ArrayList<>();
         for (int i=0; i < threads; i++) {
