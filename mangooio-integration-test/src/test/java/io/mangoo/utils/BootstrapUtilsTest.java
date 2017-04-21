@@ -60,5 +60,17 @@ public class BootstrapUtilsTest {
     public void testGetBaseDirectory() {
         //then
         assertThat(BootstrapUtils.getBaseDirectory(), not(nullValue()));
+    }
+    
+    @Test
+    public void testGetVersion() throws InterruptedException {
+        //then
+        assertThat(BootstrapUtils.getVersion(), not(nullValue()));
     } 
+    
+    @Test
+    public void testGetLogo() throws InterruptedException {
+        //then
+        assertThat(BootstrapUtils.getLogo(), not(nullValue()));
+    }
 }

@@ -1,9 +1,12 @@
 package io.mangoo.templating.freemarker;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -39,8 +43,6 @@ import io.mangoo.templating.freemarker.methods.I18nMethod;
 import io.mangoo.templating.freemarker.methods.LocationMethod;
 import io.mangoo.templating.freemarker.methods.PrettyTimeMethod;
 import io.mangoo.templating.freemarker.methods.RouteMethod;
-import io.mangoo.utils.TemplateUtils;
-import io.mangoo.utils.ThrowableUtils;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 
@@ -56,7 +58,10 @@ public class TemplateEngineFreemarker implements TemplateEngine {
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 25);
-
+    private static final List<String> blacklist = Arrays.asList(
+            "form", "flash", "session", "subject", "i18n", "route", "location", "prettytime", "authenticity", "authenticityForm"
+            );
+    
     public TemplateEngineFreemarker() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
         this.configuration.setDefaultEncoding(Charsets.UTF_8.name());
@@ -86,7 +91,7 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         }
         
         if (!Application.inProdMode()) { 
-            Optional<String> key = TemplateUtils.containsInvalidKey(content);
+            Optional<String> key = containsInvalidKey(content);
             if (key.isPresent()) {
                 throw new MangooTemplateEngineException(templatePath + " contains the following restricted key: " + key.get());
             }
@@ -130,11 +135,11 @@ public class TemplateEngineFreemarker implements TemplateEngine {
             content.put("exceptions", cause.getMessage().split("\n"));
         } else {
             StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
-            String sourceCodePath = ThrowableUtils.getSourceCodePath(stackTraceElement);
+            String sourceCodePath = getSourceCodePath(stackTraceElement);
 
             List<Source> sources;
             try {
-                sources = ThrowableUtils.getSources(stackTraceElement.getLineNumber(), sourceCodePath);
+                sources = getSources(stackTraceElement.getLineNumber(), sourceCodePath);
             } catch (IOException e) {
                 throw new MangooTemplateEngineException("Failed to get source lines of exception", e);
             }
@@ -191,5 +196,78 @@ public class TemplateEngineFreemarker implements TemplateEngine {
         Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
 
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
+    }
+    
+    private Optional<String> containsInvalidKey(Map<String, Object> content) {
+        String found = null;
+        for (String key : blacklist) {
+            if (content.containsKey(key)) {
+                found = key;
+                break;
+            }
+        }
+        
+        return Optional.ofNullable(found);
+    }
+    
+
+    /**
+     * Retrieves the lines of code where an exception occurred
+     *
+     * @param errorLine The line number of the exception
+     * @param sourcePath The path to the source code file
+     * @return A list of source code with the exception and surrounding lines
+     *
+     * @throws FileNotFoundException If the file is not found
+     * @throws IOException If an IO exception occurs
+     */
+    @SuppressWarnings("all")
+    private List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
+        Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(System.getProperty("user.dir"))
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
+
+        List<Source> sources = new ArrayList<Source>();
+        File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
+        
+        if (templateFile.exists()) {
+            List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
+
+            int index = 0;
+            for (String line : lines) {
+                if ( (index + 8 > errorLine) && (index - 6 < errorLine) ) {
+                    sources.add(new Source((index + 1) == errorLine, index + 1, line));
+                }
+                index++;
+            }
+        }
+
+        return sources;
+    }
+
+    /**
+     * Retrieves the source code file name from an StrackTraceElement
+     *
+     * @param stackTraceElement The StrackTraceElement to check
+     * @return Source code filename
+     */
+    private String getSourceCodePath(StackTraceElement stackTraceElement) {
+        Objects.requireNonNull(stackTraceElement, Required.STACK_TRACE_ELEMENT.toString());
+
+        String packageName = stackTraceElement.getClassName();
+        int position = packageName.lastIndexOf('.');
+        if (position > 0) {
+            packageName = packageName.substring(0, position);
+            return packageName.replace(".", File.separator) + File.separator + stackTraceElement.getFileName();
+        }
+
+        return stackTraceElement.getFileName();
     }
 }

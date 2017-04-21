@@ -68,6 +68,30 @@ public class JsonUtilsTest {
         
         //then
         assertThat(readContext, not(nullValue()));
+        assertThat(readContext.read("$.foo"), equalTo("blablabla"));
+    }
+    
+    @Test
+    public void testConcurrentFromJson() throws InterruptedException {
+        Runnable runnable = () -> {
+            for (int j=0; j < 50; j++) {
+                //given
+                String uuid = UUID.randomUUID().toString(); 
+                String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
+                
+                //when
+                ReadContext readContext = JsonUtils.fromJson(json);
+                
+                //then
+                assertThat(readContext, not(nullValue()));
+                assertThat(readContext.read("$.foo"), equalTo(uuid));
+            }
+        };
+        
+        ConcurrentRunner.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
     }
     
     @Test
@@ -83,5 +107,30 @@ public class JsonUtilsTest {
         assertThat(car.brand, equalTo(null));
         assertThat(car.doors, equalTo(0));
         assertThat(car.foo, equalTo("blablabla"));
+    }
+    
+    @Test
+    public void testConcurrentFromJsonToClass() throws InterruptedException {
+        Runnable runnable = () -> {
+            for (int j=0; j < 50; j++) {
+                //given
+                String uuid = UUID.randomUUID().toString(); 
+                String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
+                
+                //when
+                Car car = JsonUtils.fromJson(json, Car.class);
+                
+                //then
+                assertThat(car, not(nullValue()));
+                assertThat(car.brand, equalTo(null));
+                assertThat(car.doors, equalTo(0));
+                assertThat(car.foo, equalTo(uuid));
+            }
+        };
+        
+        ConcurrentRunner.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
     }
 }

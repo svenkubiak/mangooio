@@ -80,9 +80,14 @@ public final class CodecUtils {
     /**
      * Encodes a given byte array of data to Base64
      * 
+     * @deprecated As of version 4.4.0, will be removed in 5.0.0
+     * 
+     * This method is not thread-safe!
+     * 
      * @param data The String to convert
      * @return Base64 encoded String
      */
+    @Deprecated
     public static String encodeBase64(byte[] data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
@@ -92,9 +97,14 @@ public final class CodecUtils {
     /**
      * Decodes a given byte array of data to Base64
      * 
+     * @deprecated As of version 4.4.0, will be removed in 5.0.0
+     * 
+     * This method is not thread-safe!
+     *
      * @param data The String to convert
      * @return Base64 encoded String
      */
+    @Deprecated
     public static String decodeBase64(byte[] data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
@@ -103,7 +113,7 @@ public final class CodecUtils {
     
     /**
      * Serializes an object into an Base64 encoded data string
-     * 
+     *
      * @param object The object to serialize
      * @return The base64 encoded data string
      */

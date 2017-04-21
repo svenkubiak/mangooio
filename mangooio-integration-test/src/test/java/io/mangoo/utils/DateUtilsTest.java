@@ -7,9 +7,10 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.junit.Test;
+
+import io.mangoo.test.utils.ConcurrentRunner;
 
 /**
  * 
@@ -17,33 +18,6 @@ import org.junit.Test;
  *
  */
 public class DateUtilsTest {
-
-    @Test
-    public void testDateToLocalDateTime() {
-        //given
-        Date date = new Date();
-        
-        //then
-        assertThat(DateUtils.dateToLocalDateTime(date), not(equalTo(nullValue())));
-    }
-    
-    @Test
-    public void testDateToLocalDate() {
-        //given
-        Date date = new Date();
-        
-        //then
-        assertThat(DateUtils.dateToLocalDate(date), not(equalTo(nullValue())));
-    }
-    
-    @Test
-    public void testDateToLocalTime() {
-        //given
-        Date date = new Date();
-        
-        //then
-        assertThat(DateUtils.dateToLocalTime(date), not(equalTo(nullValue())));
-    }
     
     @Test
     public void testLocalDateTimeToDate() {
@@ -55,11 +29,47 @@ public class DateUtilsTest {
     }
     
     @Test
+    public void testConcurrentLocalDateTimeToDate() throws InterruptedException {
+        Runnable runnable = () -> {
+            for (int j=0; j < 10; j++) {
+                //given
+                LocalDateTime localDateTime = LocalDateTime.now();
+                
+                //then
+                assertThat(DateUtils.localDateTimeToDate(localDateTime), not(equalTo(nullValue())));
+            }
+        };
+        
+        ConcurrentRunner.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
+    }
+    
+    @Test
     public void testLocalDateToDate() {
         //given
         LocalDate localDate = LocalDate.now();
         
         //then
         assertThat(DateUtils.localDateToDate(localDate), not(equalTo(nullValue())));
+    }
+    
+    @Test
+    public void testConcurrentLocalDateToDate() throws InterruptedException {
+        Runnable runnable = () -> {
+            for (int j=0; j < 10; j++) {
+                //given
+                LocalDate localDate = LocalDate.now();
+                
+                //then
+                assertThat(DateUtils.localDateToDate(localDate), not(equalTo(nullValue())));
+            }
+        };
+        
+        ConcurrentRunner.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
     }
 }

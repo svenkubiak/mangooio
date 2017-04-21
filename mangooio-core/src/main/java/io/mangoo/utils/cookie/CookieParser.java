@@ -1,6 +1,8 @@
 package io.mangoo.utils.cookie;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +20,6 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.handlers.DispatcherHandler;
-import io.mangoo.utils.DateUtils;
 
 /**
  *
@@ -77,7 +78,7 @@ public class CookieParser {
                 if (expiration != null) {
                     this.sessionValues = claims.get(ClaimKey.DATA.toString(), Map.class);
                     this.authenticityToken = claims.get(ClaimKey.AUTHENTICITY.toString(), String.class); 
-                    this.expiresDate = DateUtils.dateToLocalDateTime(expiration);  
+                    this.expiresDate = dateToLocalDateTime(expiration); 
                     valid = true;
                 } 
             } catch (Exception e) { //NOSONAR
@@ -103,7 +104,7 @@ public class CookieParser {
                 if (expiration != null) {
                     this.authenticatedUser = claims.getSubject();
                     this.twoFactor = claims.get(ClaimKey.TWO_FACTOR.toString(), Boolean.class);
-                    this.expiresDate = DateUtils.dateToLocalDateTime(expiration);
+                    this.expiresDate = dateToLocalDateTime(expiration);
                     valid = true;                        
                 }  
             } catch (Exception e) { //NOSONAR
@@ -134,5 +135,12 @@ public class CookieParser {
         if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
             this.value = Application.getInstance(Crypto.class).decrypt(this.value);
         }
+    }
+    
+    private LocalDateTime dateToLocalDateTime(Date date) {
+        Objects.requireNonNull(date, Required.DATE.toString());
+        
+        Instant instant = Instant.ofEpochMilli(date.getTime());
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
     }
 }

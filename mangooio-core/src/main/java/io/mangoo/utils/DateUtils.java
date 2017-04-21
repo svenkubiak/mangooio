@@ -24,9 +24,14 @@ public final class DateUtils {
     /**
      * Converts a Date to LocalDateTime
      * 
+     * @deprecated As of version 4.4.0, will be removed in 5.0.0
+     * 
+     * This method is not thread-safe!
+     * 
      * @param date The Date to convert
      * @return The converted LocalDateTime
      */
+    @Deprecated
     public static LocalDateTime dateToLocalDateTime(Date date) {
         Objects.requireNonNull(date, Required.DATE.toString());
         
@@ -37,9 +42,14 @@ public final class DateUtils {
     /**
      * Converts a Date to LocalDate
      * 
+     * @deprecated As of version 4.4.0, will be removed in 5.0.0
+     * 
+     * This method is not thread-safe!
+     * 
      * @param date The Date to convert
      * @return The converted LocalDate
      */
+    @Deprecated
     public static LocalDate dateToLocalDate(Date date) {
         Objects.requireNonNull(date, Required.DATE.toString());
         
@@ -50,9 +60,14 @@ public final class DateUtils {
     /**
      * Converts a Date to LocalTime
      * 
+     * @deprecated As of version 4.4.0, will be removed in 5.0.0
+     * 
+     * This method is not thread-safe!
+     * 
      * @param date The Date to convert
      * @return The converted LocalTime
      */
+    @Deprecated
     public static LocalTime dateToLocalTime(Date date) {
         Objects.requireNonNull(date, Required.DATE.toString());
         

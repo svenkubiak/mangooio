@@ -2,13 +2,14 @@ package io.mangoo.i18n;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.utils.ValidationUtils;
+import io.mangoo.enums.Validation;
 
 /**
  * Convenient class for handling translations
@@ -18,11 +19,25 @@ import io.mangoo.utils.ValidationUtils;
  */
 public class Messages implements Serializable {
     private static final long serialVersionUID = 7560110796880143546L;
-    private final Map<String, String> defaults = ValidationUtils.getDefaults();
+    private Map<String, String> defaults = new HashMap<>();
     private transient ResourceBundle bundle;
 
     public Messages() {
         this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
+        defaults.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
+        defaults.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
+        defaults.put(Validation.MAX_KEY.name(), Validation.MAX.toString());
+        defaults.put(Validation.EXACT_MATCH_KEY.name(), Validation.EXACT_MATCH.toString());
+        defaults.put(Validation.MATCH_KEY.name(), Validation.MATCH.toString());
+        defaults.put(Validation.EMAIL_KEY.name(), Validation.EMAIL.toString());
+        defaults.put(Validation.IPV4_KEY.name(), Validation.IPV4.toString());
+        defaults.put(Validation.IPV6_KEY.name(), Validation.IPV6.toString());
+        defaults.put(Validation.RANGE_KEY.name(), Validation.RANGE.toString());
+        defaults.put(Validation.URL_KEY.name(), Validation.URL.toString());
+        defaults.put(Validation.MATCH_VALUES_KEY.name(), Validation.MATCH_VALUES.toString());
+        defaults.put(Validation.REGEX_KEY.name(), Validation.REGEX.toString());
+        defaults.put(Validation.NUMERIC_KEY.name(), Validation.NUMERIC.toString());
+        defaults.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
     }
 
     /**
