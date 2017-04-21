@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ConcurrentRunner {
     private Runnable runnable;
-    private int threads = 10;
+    private int threads = 10; //NOSONAR
     private volatile Error error;
     private volatile RuntimeException runtimeException;
     
