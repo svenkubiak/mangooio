@@ -19,6 +19,10 @@ public class Car {
     public String comment = "blablabla";
     
     public String foo = "blablabla";
+    public String id;
 
     public Car() {}
+    public Car(String id) {
+        this.id = id;
+    }
 }
