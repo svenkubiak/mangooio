@@ -60,15 +60,4 @@ public class JsonUtilsTest {
         assertThat(car.doors, equalTo(0));
         assertThat(car.foo, equalTo("blablabla"));
     }
-    
-    @Test
-    public void testCustomSerializer(){
-        //given
-        JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
-        jsonSerializerFactory.useAnnotations();
-        JsonSerializer serializer = jsonSerializerFactory.create();
-        
-        //then
-        JsonUtils.withJsonSerializer(serializer);
-    }
 }
