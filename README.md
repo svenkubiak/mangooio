@@ -25,9 +25,6 @@ performant [Undertow](http://undertow.io) web server from JBoss. On top of that,
 
 The main reason for using Undertow was that it is based on non-blocking I/O in the form of XNIO. And although Undertow does support the servlet API, one is not bound to use it in any way, giving a Java developer the opportunity to work fully stateless and being independent to the servlet API.
 
-As I did some contributions to the Ninja Web Framework, mangoo I/O is in some parts inspired by the [Ninja
-Web Framework](http://www.ninjaframework.org). If you have worked with Ninja you probably feel comfortable from the start.
-
 Here are some key features of mangoo I/O in a nutshell:
 
 * Intuitive convention-over-configuration
