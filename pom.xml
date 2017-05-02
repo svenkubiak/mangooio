@@ -31,9 +31,6 @@
 		<jackson.version>2.9.0.pr3</jackson.version>
 		<fluentlenium.version>3.2.0</fluentlenium.version>
 	</properties>
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
 	<modules>
 		<module>mangooio-core</module>
 		<module>mangooio-benchmarks</module>
