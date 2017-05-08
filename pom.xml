@@ -173,7 +173,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>1.4.13.Final</version>
+				<version>1.4.14.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
@@ -351,7 +351,7 @@
 			<dependency>
 				<groupId>io.bit3</groupId>
 				<artifactId>jsass</artifactId>
-				<version>5.5.0</version>
+				<version>5.5.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>

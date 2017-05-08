@@ -1,9 +1,6 @@
 package io.mangoo.enums;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import com.google.common.base.Enums;;
 
 /**
  *
@@ -32,21 +29,13 @@ public enum Binding {
     UNDEFINED("undefined");
 
     private final String value;
-    private static Map<String, Binding> values = new ConcurrentHashMap<>();
 
     Binding (String value) {
         this.value = value;
     }
     
     public static Binding fromString(String value) {
-        Objects.requireNonNull(value, Required.BINDING.toString());
-        if (values.isEmpty()) {
-            for (Binding binding : Binding.values()) {
-                values.put(binding.toString().toLowerCase(Locale.ENGLISH), binding);
-            }  
-        }
-
-        return values.get(value.toLowerCase(Locale.ENGLISH));
+        return Enums.getIfPresent(Binding.class, value).orNull();
     }
     
     @Override
