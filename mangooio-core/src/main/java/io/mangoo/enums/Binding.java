@@ -1,6 +1,9 @@
 package io.mangoo.enums;
 
-import com.google.common.base.Enums;;
+import java.util.Locale;
+import java.util.Map;
+
+import com.google.common.collect.Maps;;
 
 /**
  *
@@ -29,13 +32,19 @@ public enum Binding {
     UNDEFINED("undefined");
 
     private final String value;
-
+    private static final Map<String, Binding> values = Maps.newHashMapWithExpectedSize(Binding.values().length);
+    static {
+        for (Binding binding : Binding.values()) {
+            values.put(binding.toString().toLowerCase(Locale.ENGLISH), binding);
+        }
+    }
+    
     Binding (String value) {
         this.value = value;
     }
     
     public static Binding fromString(String value) {
-        return Enums.getIfPresent(Binding.class, value).orNull();
+        return values.get(value.toLowerCase(Locale.ENGLISH));
     }
     
     @Override
