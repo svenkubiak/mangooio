@@ -3,7 +3,7 @@ package io.mangoo.enums;
 import java.util.Locale;
 import java.util.Map;
 
-import com.google.common.collect.Maps;;
+import com.google.common.collect.Maps;
 
 /**
  *
