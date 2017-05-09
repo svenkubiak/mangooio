@@ -30,21 +30,15 @@ public class AuthenticationFilter implements MangooFilter {
     
     @Override
     public Response execute(Request request, Response response) {
-        if (!request.getAuthentication().hasAuthenticatedUser()) {
-            return login();
-        } else if (request.getAuthentication().hasAuthenticatedUser() && request.getAuthentication().isTwoFactor()) {
-            return login();
-        }
+        if (!request.getAuthentication().hasAuthenticatedUser() || ( request.getAuthentication().hasAuthenticatedUser() && request.getAuthentication().isTwoFactor() )) {
+            String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
+            if (StringUtils.isNotBlank(redirect)) {
+                return Response.withRedirect(redirect).end();
+            } else {
+                return Response.withUnauthorized().andBody(Template.DEFAULT.forbidden()).end();
+            }
+        } 
 
         return response;
-    }
-
-    private Response login() {
-        String redirect = this.config.getString(Key.AUTH_REDIRECT.toString());
-        if (StringUtils.isNotBlank(redirect)) {
-            return Response.withRedirect(redirect).end();
-        } else {
-            return Response.withUnauthorized().andBody(Template.DEFAULT.forbidden()).end();
-        }
     }
 }

@@ -213,11 +213,9 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
         String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
 
-        if (StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue)) {
+        if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue)  )) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_KEY.name(), name, anotherName)));
-        } else if (StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue)) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_KEY.name(), name, anotherName)));
-        }
+        } 
     }
     
     /**
