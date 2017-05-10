@@ -4,7 +4,7 @@
 </section>
 <section class="content">
 <div class="row">
-	<div class="col-xs-12">
+	<div class="col-md-12">
     	<div class="box">
 	    	<div class="box-header">
 				<div class="form-group">
@@ -22,8 +22,9 @@
 					<tbody class="searchable">
   				    	<#list loggers as logger>
 							<tr>
-								<td class="col-md-8">${logger.name}</td>
-								<td class="col-md-4">
+								<td class="col-md-9">${logger.name}</td>
+								<td class="col-md-3">
+									<div class="form-group">
 									<select name="level" class="form-control loglevel" data-class="${logger.name}">
 										<option value="ALL"<#if logger.level == "ALL"> selected</#if>>ALL</option>
 										<option value="TRACE"<#if logger.level == "TRACE"> selected</#if>>TRACE</option>
@@ -34,6 +35,7 @@
 										<option value="FATAL"<#if logger.level == "FATAL"> selected</#if>>FATAL</option>
 										<option value="OFF"<#if logger.level == "OFF"> selected</#if>>OFF</option>
 									</select>
+									</div>
 									<span class="help-block has-success" style="display:none;">Updated!</span>
 								</td>
 							</tr>
