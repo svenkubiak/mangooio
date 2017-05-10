@@ -34,7 +34,7 @@ public class FormController {
         if (formFile.isPresent()) {
             File file = formFile.get();
             try {
-                content = Files.readFirstLine(file, Charset.defaultCharset());
+                content = Files.asCharSource(file, Charset.defaultCharset()).readFirstLine();
             } catch (IOException e) {
                 LOG.error("Failed to read single file", e);
             }
