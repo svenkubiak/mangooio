@@ -148,6 +148,7 @@ public class Bootstrap {
     public Injector prepareInjector() {
         this.injector = LifecycleInjector.builder()
                 .withModules(getModules())
+                .usingBasePackages(".")
                 .build()
                 .createInjector();
         
