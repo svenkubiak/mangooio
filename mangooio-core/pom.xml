@@ -74,6 +74,10 @@
 			<artifactId>boon-json</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.netflix.governator</groupId>
+			<artifactId>governator</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.github.scribejava</groupId>
 			<artifactId>scribejava-apis</artifactId>
 		</dependency>

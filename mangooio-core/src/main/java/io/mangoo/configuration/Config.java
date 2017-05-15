@@ -45,7 +45,7 @@ public class Config {
         prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
         decrypt();
     }
-
+    
     public Config(String configFile, Mode mode) {
         Objects.requireNonNull(configFile, Required.CONFIG_FILE.toString());
         Objects.requireNonNull(mode, Required.MODE.toString());

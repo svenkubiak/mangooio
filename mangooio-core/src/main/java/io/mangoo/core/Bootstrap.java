@@ -25,10 +25,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Stage;
+import com.netflix.governator.guice.LifecycleInjector;
+import com.netflix.governator.lifecycle.LifecycleManager;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
@@ -146,7 +146,18 @@ public class Bootstrap {
     }
 
     public Injector prepareInjector() {
-        this.injector = Guice.createInjector(Stage.PRODUCTION, getModules());
+        this.injector = LifecycleInjector.builder()
+                .withModules(getModules())
+                .build()
+                .createInjector();
+        
+        try {
+            this.injector.getInstance(LifecycleManager.class).start();
+        } catch (Exception e) {
+            LOG.error("Failed to start Governator LifecycleManager", e);
+            this.error = true;
+        }
+        
         return this.injector;
     }
 
