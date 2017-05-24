@@ -41,7 +41,6 @@ import org.apache.logging.log4j.Logger;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -61,9 +60,9 @@ public class WebResponse {
     private String responseUri;
     private String responseRequestBody;
     private String responseContent = "";
+    private String responseContentType;
     private HttpString responseMethod;
     private HttpResponse httpResponse;
-    private ContentType responseContentType;
     private HttpClientBuilder httpClientBuilder;
     private List<NameValuePair> postParameter = new ArrayList<>();
     private boolean responseDisbaleRedirects;
@@ -97,7 +96,7 @@ public class WebResponse {
      * @param contentType The content type to use
      * @return Response
      */
-    public WebResponse withContentType(ContentType contentType) {
+    public WebResponse withContentType(String contentType) {
         Objects.requireNonNull(contentType, "contentType can not be null");
 
         this.responseContentType = contentType;

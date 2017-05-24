@@ -16,7 +16,8 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import io.mangoo.enums.ContentType;
+import com.google.common.net.MediaType;
+
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
@@ -188,7 +189,7 @@ public class ResponseTest {
         response.andJsonBody(Arrays.asList("foo", "bar"));
         
         //then
-        assertThat(response.getContentType(), equalTo(ContentType.APPLICATION_JSON.toString()));
+        assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBody(), equalTo("[\"foo\",\"bar\"]"));
     }
@@ -243,7 +244,7 @@ public class ResponseTest {
         //then
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBody(), equalTo("This is a text body!"));
-        assertThat(response.getContentType(), equalTo(ContentType.TEXT_PLAIN.toString()));
+        assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
     }
     
     @Test
@@ -257,7 +258,7 @@ public class ResponseTest {
         //then
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBody(), equalTo(""));
-        assertThat(response.getContentType(), equalTo(ContentType.TEXT_PLAIN.toString()));
+        assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
     }
     
     @Test

@@ -5,11 +5,11 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.net.MediaType;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
@@ -41,7 +41,7 @@ public class ExceptionHandler implements HttpHandler {
         }
         
         try {
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.TEXT_HTML.toString());
+            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, MediaType.HTML_UTF_8.withoutParameters().toString());
             exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getXssProectionHeader());
             exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getXContentTypeOptionsHeader());
             exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getXFrameOptionsHeader());

@@ -9,7 +9,8 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import io.mangoo.enums.ContentType;
+import com.google.common.net.MediaType;
+
 import io.mangoo.test.utils.ConcurrentRunner;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
@@ -32,7 +33,7 @@ public class ConcurrentControllerTest {
                 json = json.replace("$$", uuid);
                 
                 WebResponse response = WebRequest.post("/parse")
-                        .withContentType(ContentType.APPLICATION_JSON)
+                        .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                         .withRequestBody(json)
                         .execute();
 

@@ -2,10 +2,10 @@ package io.mangoo.routing.handlers;
 
 import java.util.Objects;
 
+import com.google.common.net.MediaType;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
@@ -38,7 +38,7 @@ public class BinaryHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
         exchange.setStatusCode(this.response.getStatusCode());
-        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, ContentType.APPLICATION_OCTET_STREAM.toString());
+        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, MediaType.OCTET_STREAM.withoutParameters().toString());
         exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
         exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); // NOSONAR

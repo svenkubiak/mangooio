@@ -20,11 +20,11 @@ import com.github.scribejava.apis.GoogleApi20;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuthService;
+import com.google.common.net.MediaType;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
@@ -118,7 +118,7 @@ public class RequestHelper {
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
-                headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(ContentType.APPLICATION_JSON.toString().toLowerCase(Locale.ENGLISH));
+                headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 
     /**

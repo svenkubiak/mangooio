@@ -19,8 +19,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
 import com.google.common.io.Resources;
+import com.google.common.net.MediaType;
 
-import io.mangoo.enums.ContentType;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -41,7 +41,7 @@ public class FormControllerTest {
 
 		// when
 		WebResponse response = WebRequest.post("/form")
-				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
 
@@ -61,7 +61,7 @@ public class FormControllerTest {
 
         // when
         WebResponse response = WebRequest.post("/multivalued")
-                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withPostParameters(parameter)
                 .execute();
 
@@ -123,7 +123,7 @@ public class FormControllerTest {
 
 		// when
 		WebResponse response = WebRequest.post("/form")
-				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
 
@@ -142,7 +142,7 @@ public class FormControllerTest {
 
 		// when
 		WebResponse response = WebRequest.post("/validateform")
-				.withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
 
@@ -180,7 +180,7 @@ public class FormControllerTest {
 
 		// when
 		WebResponse response = WebRequest.post("/validateform")
-		        .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
 
@@ -201,7 +201,7 @@ public class FormControllerTest {
         // when
         WebResponse response = WebRequest.post("/submit")
                 .withLaxRedirectStrategy()
-                .withContentType(ContentType.APPLICATION_X_WWW_FORM_URLENCODED)
+                .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withPostParameters(parameter).execute();
 
         // then

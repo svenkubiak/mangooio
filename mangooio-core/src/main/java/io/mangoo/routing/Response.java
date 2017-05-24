@@ -14,8 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Charsets;
+import com.google.common.net.MediaType;
 
-import io.mangoo.enums.ContentType;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
@@ -34,7 +34,7 @@ public final class Response {
     private final Map<String, Object> content = new HashMap<>();
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
-    private String contentType = ContentType.TEXT_PLAIN.toString();
+    private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
     private String charset = Charsets.UTF_8.name();
     private String body = "";
     private String template;
@@ -276,7 +276,7 @@ public final class Response {
     public Response andBody(String body) {
         this.body = body;
         this.rendered = true;
-        this.contentType = ContentType.TEXT_HTML.toString();
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
 
         return this;
     }
@@ -305,7 +305,7 @@ public final class Response {
     public Response andJsonBody(Object jsonObject) {
         Objects.requireNonNull(jsonObject, Required.JSON_OBJECT.toString());
 
-        this.contentType = ContentType.APPLICATION_JSON.toString();
+        this.contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         this.body = JsonUtils.toJson(jsonObject);
         this.rendered = true;
 
@@ -358,7 +358,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andTextBody(String text) {
-        this.contentType = ContentType.TEXT_PLAIN.toString();
+        this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         this.body = text;
         this.rendered = true;
 
@@ -371,7 +371,7 @@ public final class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andEmptyBody() {
-        this.contentType = ContentType.TEXT_PLAIN.toString();
+        this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         this.rendered = true;
 
         return this;

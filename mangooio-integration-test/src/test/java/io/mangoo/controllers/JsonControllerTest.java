@@ -7,7 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
-import io.mangoo.enums.ContentType;
+import com.google.common.net.MediaType;
+
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -35,7 +36,7 @@ public class JsonControllerTest {
     public void testJsonParsingPost() {
         //given
         WebResponse response = WebRequest.post("/parse")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(json)
                 .execute();
 
@@ -49,7 +50,7 @@ public class JsonControllerTest {
     public void testJsonParsingPut() {
         //given
         WebResponse response = WebRequest.put("/parse")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(json)
                 .execute();
 
@@ -63,7 +64,7 @@ public class JsonControllerTest {
     public void testJsonParsingPatch() {
         //given
         WebResponse response = WebRequest.patch("/parse")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(json)
                 .execute();
 
@@ -77,7 +78,7 @@ public class JsonControllerTest {
     public void testJsonEmptyResponseBody() {
         //given
         WebResponse response = WebRequest.post("/body")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody("")
                 .execute();
 
@@ -91,7 +92,7 @@ public class JsonControllerTest {
     public void testJsonNullResponseBody() {
         //given
         WebResponse response = WebRequest.post("/body")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(null)
                 .execute();
 
@@ -105,7 +106,7 @@ public class JsonControllerTest {
     public void testJsonResponseBody() {
         //given
         WebResponse response = WebRequest.post("/body")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(json)
                 .execute();
 
@@ -119,7 +120,7 @@ public class JsonControllerTest {
     public void testJsonRequestBodyPost() {
         //given
         WebResponse response = WebRequest.post("/requestAndJson")
-                .withContentType(ContentType.APPLICATION_JSON)
+                .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withRequestBody(json)
                 .execute();
 
