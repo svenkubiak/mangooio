@@ -1,7 +1,7 @@
 package io.mangoo.enums.oauth;
 
 /**
- * List of OAuthProvider
+ * List of OAuthProviders
  *
  * @author svenkubiak
  *
