@@ -9,21 +9,34 @@ import io.undertow.util.HttpString;
  *
  */
 public enum Header {
-    CONTENT_SECURITY_POLICY("Content-Security-Policy"),
-    REFERER_POLICY("Referrer-Policy"),
-    X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options"),
-    X_FRAME_OPTIONS("X-Frame-Options"),
-    X_RESPONSE_TIME("X-Response-Time"),
-    X_XSS_PPROTECTION("X-XSS-Protection");
+    ACCEPT_LANGUAGE("Accept-Language", new HttpString("Accept-Language")),
+    AUTHORIZATION("Authorization", new HttpString("Authorization")),
+    CONTENT_DISPOSITION("Content-Disposition", new HttpString("Content-Disposition")),
+    CONTENT_SECURITY_POLICY("Content-Security-Policy", new HttpString("Content-Security-Policy")),
+    CONTENT_TYPE("Content-Type", new HttpString("Content-Type")),
+    COOKIE("Cookie", new HttpString("Cookie")),
+    ETAG("ETag", new HttpString("ETag")),
+    IF_NONE_MATCH("If-None-Match", new HttpString("If-None-Match")),
+    LOCATION("Location", new HttpString("Location")),
+    REFERER_POLICY("Referrer-Policy", new HttpString("Referrer-Policy")),
+    SERVER("Server", new HttpString("Server")),
+    WWW_AUTHENTICATE("WWW-Authenticate", new HttpString("WWW-Authenticate")),
+    X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options", new HttpString("X-Content-Type-Options")),
+    X_FORWARDED_FOR("X-Forwarded-For", new HttpString("X-Forwarded-For")),
+    X_FRAME_OPTIONS("X-Frame-Options", new HttpString("X-Frame-Options")),
+    X_RESPONSE_TIME("X-Response-Time", new HttpString("X-Response-Time")),
+    X_XSS_PPROTECTION("X-XSS-Protection", new HttpString("X-XSS-Protection"));
 
+    private final HttpString httpString;
     private final String value;
 
-    Header (String value) {
+    private Header (String value, HttpString httpString) {
         this.value = value;
+        this.httpString = httpString;
     }
 
     public HttpString toHttpString() {
-        return new HttpString(this.value);
+        return this.httpString;
     }
 
     @Override

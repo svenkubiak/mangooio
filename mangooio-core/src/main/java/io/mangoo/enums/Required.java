@@ -93,7 +93,7 @@ public enum Required {
 
     private final String value;
 
-    Required (String value) {
+    private Required (String value) {
         this.value = value;
     }
 

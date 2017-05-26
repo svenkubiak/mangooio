@@ -6,11 +6,11 @@ import com.google.common.net.MediaType;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
 
 /**
  *
@@ -38,9 +38,9 @@ public class BinaryHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
         exchange.setStatusCode(this.response.getStatusCode());
-        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, MediaType.OCTET_STREAM.withoutParameters().toString());
-        exchange.getResponseHeaders().put(Headers.CONTENT_DISPOSITION, "inline; filename=" + this.response.getBinaryFileName());
-        exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
+        exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), MediaType.OCTET_STREAM.withoutParameters().toString());
+        exchange.getResponseHeaders().put(Header.CONTENT_DISPOSITION.toHttpString(), "inline; filename=" + this.response.getBinaryFileName());
+        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getServerHeader());
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); // NOSONAR
         exchange.getOutputStream().write(this.response.getBinaryContent());
     }

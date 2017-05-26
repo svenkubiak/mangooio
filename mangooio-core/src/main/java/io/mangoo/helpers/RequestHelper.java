@@ -26,6 +26,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.oauth.OAuthProvider;
@@ -45,7 +46,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Cookies;
 import io.undertow.util.HeaderMap;
-import io.undertow.util.Headers;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -117,8 +117,8 @@ public class RequestHelper {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
-        return headerMap != null && headerMap.get(Headers.CONTENT_TYPE) != null &&
-                headerMap.get(Headers.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
+        return headerMap != null && headerMap.get(Header.CONTENT_TYPE.toHttpString()) != null &&
+                headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 
     /**

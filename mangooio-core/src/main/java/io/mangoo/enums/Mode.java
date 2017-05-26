@@ -13,7 +13,7 @@ public enum Mode {
 
     private final String value;
 
-    Mode (String value) {
+    private Mode (String value) {
         this.value = value;
     }
 

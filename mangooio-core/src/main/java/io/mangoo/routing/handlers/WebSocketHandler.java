@@ -8,11 +8,11 @@ import org.xnio.ChannelListener;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.managers.WebSocketManager;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
-import io.undertow.util.Headers;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
@@ -49,8 +49,8 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
         if (this.hasAuthentication) {
             String header = null;
-            if (exchange.getRequestHeader(Headers.COOKIE_STRING) != null) {
-                header = exchange.getRequestHeader(Headers.COOKIE_STRING);
+            if (exchange.getRequestHeader(Header.COOKIE.toString()) != null) {
+                header = exchange.getRequestHeader(Header.COOKIE.toString());
             }
 
             if (this.requestHelper.hasValidAuthentication(header)) {

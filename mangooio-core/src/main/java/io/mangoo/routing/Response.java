@@ -16,10 +16,10 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
-import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
@@ -234,7 +234,7 @@ public final class Response {
     public Response andContentType(String contentType) {
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
         this.contentType = contentType;
-        this.headers.put(Headers.CONTENT_TYPE, contentType);
+        this.headers.put(Header.CONTENT_TYPE.toHttpString(), contentType);
 
         return this;
     }
@@ -381,7 +381,7 @@ public final class Response {
      * Adds an additional header to the request response. If an header
      * key already exists, it will we overwritten with the latest value.
      *
-     * @param key The header constant from Headers class (e.g. Headers.CONTENT_TYPE)
+     * @param key The header constant from Headers class (e.g. Header.CONTENT_TYPE.toString())
      * @param value The header value
      *
      * @return A response object {@link io.mangoo.routing.Response}

@@ -36,7 +36,7 @@ public enum Template {
     private static final String ADMIN_TEMPLATE_PATH = "admin/index.ftl";
     private static final String LOGGER_TEMPLATE_PATH = "admin/logger.ftl";
     
-    Template () {
+    private Template () {
         try {
             this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), Charsets.UTF_8);
             this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH), Charsets.UTF_8);

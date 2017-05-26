@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.managers.ServerEventManager;
@@ -14,7 +15,6 @@ import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
 
 /**
  *
@@ -39,7 +39,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
     public void connected(ServerSentEventConnection connection, String lastEventId) {
         if (this.hasAuthentication) {
             String header = null;
-            HeaderValues headerValues = connection.getRequestHeaders().get(Headers.COOKIE);
+            HeaderValues headerValues = connection.getRequestHeaders().get(Header.COOKIE.toHttpString());
             if (headerValues != null) {
                 header = headerValues.element();
             }

@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
-import io.undertow.util.Headers;
+import io.mangoo.enums.Header;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
@@ -314,7 +314,7 @@ public class WebResponse {
      */
     private WebResponse doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
-            request.setHeader(Headers.CONTENT_TYPE_STRING, responseContentType.toString());
+            request.setHeader(Header.CONTENT_TYPE.toString(), responseContentType);
         }
 
         this.headers.entrySet().forEach(entry -> request.setHeader(entry.getKey(), entry.getValue())); //NOSONAR

@@ -17,7 +17,6 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -69,8 +68,8 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
-        exchange.getResponseHeaders().put(Headers.LOCATION, response.getRedirectTo());
-        exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
+        exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), response.getRedirectTo());
+        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getServerHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
         exchange.endExchange();
     }
@@ -85,13 +84,13 @@ public class ResponseHandler implements HttpHandler {
     protected String getResponseBody(HttpServerExchange exchange, Response response) {
         String responseBody = response.getBody();
         if (response.isETag()) {
-            final String noneMatch = exchange.getRequestHeaders().getFirst(Headers.IF_NONE_MATCH_STRING);
+            final String noneMatch = exchange.getRequestHeaders().getFirst(Header.IF_NONE_MATCH.toString());
             final String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
                 responseBody = "";
             } else {
-                exchange.getResponseHeaders().put(Headers.ETAG, etag);
+                exchange.getResponseHeaders().put(Header.ETAG.toHttpString(), etag);
             }
         }
 
@@ -110,8 +109,8 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getXContentTypeOptionsHeader());
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getXFrameOptionsHeader());
         exchange.getResponseHeaders().put(Header.REFERER_POLICY.toHttpString(), this.config.getRefererPolicy());
-        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
-        exchange.getResponseHeaders().put(Headers.SERVER, this.config.getServerHeader());
+        exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
+        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getServerHeader());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getContentSecurityPolicyHeader());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
 

@@ -14,13 +14,13 @@ import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
-import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 
 /**
@@ -164,7 +164,7 @@ public class Request extends Validator {
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
-        return this.getHeader(Headers.ACCEPT_LANGUAGE);
+        return this.getHeader(Header.ACCEPT_LANGUAGE.toHttpString());
     }
     /**
      * Retrieves a specific header value by its name

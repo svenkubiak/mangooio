@@ -43,7 +43,7 @@ public enum Binding {
         VALUES = Collections.unmodifiableMap(values);
     }
     
-    Binding (String value) {
+    private Binding (String value) {
         this.value = value;
     }
     

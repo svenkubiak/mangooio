@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.Attachment;
@@ -16,7 +17,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
 import io.undertow.util.LocaleUtils;
 
 /**
@@ -40,7 +40,7 @@ public class LocaleHandler implements HttpHandler {
 
         Cookie i18nCookie = exchange.getRequestCookies().get(this.config.getI18nCookieName());
         if (i18nCookie == null) {
-            final HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.ACCEPT_LANGUAGE_STRING);
+            final HeaderValues headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {

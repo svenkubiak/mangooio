@@ -15,7 +15,7 @@ public enum CacheName {
 
     private final String value;
 
-    CacheName (String value) {
+    private CacheName (String value) {
         this.value = value;
     }
 

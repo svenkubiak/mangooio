@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.providers.CacheProvider;
@@ -14,7 +15,6 @@ import io.mangoo.routing.Attachment;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
-import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -59,7 +59,7 @@ public class LimitHandler implements HttpHandler {
      */
     private String getCacheKey(HttpServerExchange exchange) {
         String host;
-        HeaderValues headerValues = exchange.getRequestHeaders().get(Headers.X_FORWARDED_FOR);
+        HeaderValues headerValues = exchange.getRequestHeaders().get(Header.X_FORWARDED_FOR.toHttpString());
         if (headerValues != null) {
             host = headerValues.element();
         } else {

@@ -78,7 +78,7 @@ public enum Default {
 
     private final String value;
 
-    Default (String value) {
+    private Default (String value) {
         this.value = value;
     }
 

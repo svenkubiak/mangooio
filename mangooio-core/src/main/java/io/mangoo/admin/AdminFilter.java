@@ -10,13 +10,13 @@ import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.CodecUtils;
-import io.undertow.util.Headers;
 
 /**
  * Authentication filter for administrative URLs
@@ -43,7 +43,7 @@ public class AdminFilter implements MangooFilter {
         
         if (!isAuthenticated(request)) {
             return Response.withUnauthorized()
-                    .andHeader(Headers.WWW_AUTHENTICATE, "Basic realm=Administration authentication")
+                    .andHeader(Header.WWW_AUTHENTICATE.toHttpString(), "Basic realm=Administration authentication")
                     .andEmptyBody()
                     .end();
         }
@@ -60,7 +60,7 @@ public class AdminFilter implements MangooFilter {
     private boolean isAuthenticated(Request request) {
         String username = null;
         String password = null;
-        String authInfo = request.getHeader(Headers.AUTHORIZATION);
+        String authInfo = request.getHeader(Header.AUTHORIZATION.toHttpString());
         if (StringUtils.isNotBlank(authInfo)) {
             authInfo = authInfo.replace("Basic", "");
             authInfo = authInfo.trim();

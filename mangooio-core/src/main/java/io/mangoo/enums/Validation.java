@@ -38,7 +38,7 @@ public enum Validation {
 
     private final String value;
 
-    Validation (String value) {
+    private Validation (String value) {
         this.value = value;
     }
 

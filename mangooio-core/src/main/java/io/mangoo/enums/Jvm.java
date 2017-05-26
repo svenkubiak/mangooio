@@ -18,7 +18,7 @@ public enum Jvm {
 
     private final String value;
 
-    Jvm (String value) {
+    private Jvm (String value) {
         this.value = value;
     }
 
