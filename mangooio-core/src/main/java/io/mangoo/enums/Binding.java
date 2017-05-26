@@ -34,6 +34,11 @@ public enum Binding {
 
     private final String value;
     private static Map<String, Binding> values;
+    
+    public static Binding fromString(String value) {
+        return values.get(value.toLowerCase(Locale.ENGLISH));
+    }
+    
     static {
         Map<String, Binding> bindings = Maps.newHashMapWithExpectedSize(Binding.values().length);
         for (Binding binding : Binding.values()) {
@@ -41,10 +46,6 @@ public enum Binding {
         }
         
         values = Collections.unmodifiableMap(bindings);
-    }
-    
-    public static Binding fromString(String value) {
-        return values.get(value.toLowerCase(Locale.ENGLISH));
     }
     
     Binding (String value) {
