@@ -33,22 +33,22 @@ public enum Binding {
     UNDEFINED("undefined");
 
     private final String value;
-    private static Map<String, Binding> VALUES;
+    private static Map<String, Binding> values;
     static {
         Map<String, Binding> values = Maps.newHashMapWithExpectedSize(Binding.values().length);
         for (Binding binding : Binding.values()) {
             values.put(binding.toString().toLowerCase(Locale.ENGLISH), binding);
         }
         
-        VALUES = Collections.unmodifiableMap(values);
-    }
-    
-    private Binding (String value) {
-        this.value = value;
+        values = Collections.unmodifiableMap(values);
     }
     
     public static Binding fromString(String value) {
-        return VALUES.get(value.toLowerCase(Locale.ENGLISH));
+        return values.get(value.toLowerCase(Locale.ENGLISH));
+    }
+    
+    Binding (String value) {
+        this.value = value;
     }
     
     @Override

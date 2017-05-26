@@ -30,7 +30,7 @@ public enum Header {
     private final HttpString httpString;
     private final String value;
 
-    private Header (String value, HttpString httpString) {
+    Header (String value, HttpString httpString) {
         this.value = value;
         this.httpString = httpString;
     }

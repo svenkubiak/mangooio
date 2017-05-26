@@ -82,18 +82,18 @@ public enum Required {
     TEMPLATE_NAME("template name can not be null"),
     TRIGGER("trigger can not be null"),
     TRIGGER_FIRE_BUNDLE("trigger fire bundle can not be null"),
+    TWO_FACTOR_HELPER("twofactorhelper can not be null"),
     URI("uri can not be null"),
     URI_CONNECTIONS("uri connections can not be null"),
     URL("url can not be null"),
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null"),
-    TWO_FACTOR_HELPER("twofactorhelper can not be null");
+    VALUES("values can not be null");
 
     private final String value;
 
-    private Required (String value) {
+    Required (String value) {
         this.value = value;
     }
 

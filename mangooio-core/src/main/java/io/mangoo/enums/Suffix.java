@@ -16,7 +16,7 @@ public enum Suffix {
 
     private final String value;
 
-    private Suffix (String value) {
+    Suffix (String value) {
         this.value = value;
     }
 

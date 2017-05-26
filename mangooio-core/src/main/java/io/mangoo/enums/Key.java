@@ -87,7 +87,7 @@ public enum Key {
 
     private final String value;
 
-    private Key (String value) {
+    Key (String value) {
         this.value = value;
     }
 

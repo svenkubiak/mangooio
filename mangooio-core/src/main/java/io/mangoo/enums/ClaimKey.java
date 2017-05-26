@@ -15,7 +15,7 @@ public enum ClaimKey {
     
     private final String value;
 
-    private ClaimKey (String value) {
+    ClaimKey (String value) {
         this.value = value;
     }
 
