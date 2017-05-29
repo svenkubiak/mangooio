@@ -35,6 +35,10 @@ public enum Binding {
     private final String value;
     private static Map<String, Binding> values;
     
+    Binding (String value) {
+        this.value = value;
+    }
+    
     public static Binding fromString(String value) {
         return values.get(value.toLowerCase(Locale.ENGLISH));
     }
@@ -46,10 +50,6 @@ public enum Binding {
         }
         
         values = Collections.unmodifiableMap(bindings);
-    }
-    
-    Binding (String value) {
-        this.value = value;
     }
     
     @Override
