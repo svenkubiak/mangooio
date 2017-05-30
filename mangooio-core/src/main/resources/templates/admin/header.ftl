@@ -11,8 +11,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">	
     <style><#include "css/AdminLTE.min.css"></style>
     <style><#include "css/skin-blue.min.css"></style>
-    <style><#include "css/jquery-jvectormap.min.css"></style>
-    <style>.simpletooltip{position:relative;display:inline-block}.simpletooltip .simpletooltiptext{visibility:hidden;width:100px;background-color:#000;color:#fff;text-align:center;padding:5px 0;border-radius:6px;position:absolute;z-index:1;bottom:100%;left:50%;margin-left:-60px}.simpletooltip:hover .simpletooltiptext{visibility:visible}</style>
   </head>
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">

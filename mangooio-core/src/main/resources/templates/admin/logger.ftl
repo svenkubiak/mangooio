@@ -36,7 +36,6 @@
 										<option value="OFF"<#if logger.level == "OFF"> selected</#if>>OFF</option>
 									</select>
 									</div>
-									<span class="help-block has-success" style="display:none;">Updated!</span>
 								</td>
 							</tr>
 						</#list>
