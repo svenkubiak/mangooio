@@ -26,7 +26,7 @@ public class AdminControllerTest {
     private static final String ROUTES = "routes";
     private static final String TOOLS = "tools";
     private static final String ADMIN = "admin";
-    private static final String PROPERTIES = "properties";
+    private static final String CONTROL_PANEL = "mangoo I/O | Control Panel";
     
     @Test
     public void testDashboardAuthorized() {
@@ -39,7 +39,7 @@ public class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(PROPERTIES));
+        assertThat(response.getContent(), containsString(CONTROL_PANEL));
     }
     
     @Test
@@ -77,7 +77,7 @@ public class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), not(containsString(PROPERTIES)));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
     }
 
     @Test
