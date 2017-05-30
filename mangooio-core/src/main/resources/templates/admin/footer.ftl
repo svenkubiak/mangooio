@@ -12,7 +12,6 @@
 	<script><#include "js/jquery-ui.min.js"></script>
     <script>$.widget.bridge('uibutton', $.ui.button);</script>
     <script><#include "js/bootstrap.min.js"></script>
-    <script><#include "js/raphael-min.js"></script>
     <script><#include "js/jquery-jvectormap-1.2.2.min.js"></script>
     <script><#include "js/jquery-jvectormap-world-mill-en.js"></script>
     <script><#include "js/jquery.knob.js"></script>
