@@ -34,7 +34,9 @@ public enum Required {
     DATE("date can not be null"),
     EHCACHE("ehCache can not be null"),
     ENCRYPTED_TEXT("encrypted text can not be null"),
+    EVENT("event can not be null"),
     EVENT_CALLBACK("event callback can not be null"),
+    EVENT_LISTENER("eventListener can not be null"),
     EXPIRES("expires can not be null"),
     FILE("file can not be null"),
     FROM("from can not be null"),
@@ -90,7 +92,7 @@ public enum Required {
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
     VALUES("values can not be null");
-
+    
     private final String value;
 
     Required (String value) {
