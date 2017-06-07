@@ -1,6 +1,7 @@
 package io.mangoo.managers;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Singleton;
@@ -15,6 +16,8 @@ import io.mangoo.enums.Required;
 @Singleton
 public class BusManager {
     private EventBus eventBus;
+    private AtomicLong listeners = new AtomicLong();
+    private AtomicLong events = new AtomicLong();
     
     public BusManager() {
         this.eventBus = new EventBus();
@@ -27,7 +30,9 @@ public class BusManager {
      */
     public void register(Object eventListener) {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
+        
         this.eventBus.register(eventListener);
+        this.listeners.getAndIncrement();
     }
     
     /**
@@ -37,7 +42,9 @@ public class BusManager {
      */
     public void unregister(Object eventListener) {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
+        
         this.eventBus.unregister(eventListener);
+        this.listeners.getAndDecrement();
     }
     
     /**
@@ -47,6 +54,22 @@ public class BusManager {
      */
     public void publish(Object event) {
         Objects.requireNonNull(event, Required.EVENT.toString());
+        
         this.eventBus.post(event);
+        this.events.getAndIncrement();
+    }
+    
+    /**
+     * @return The number of registered listeners
+     */
+    public long getNumListeners() {
+        return this.listeners.get();
+    }
+    
+    /**
+     * @return The number of published events to the event bus
+     */
+    public long getNumEvents() {
+        return this.events.get();
     }
 }
