@@ -35,6 +35,13 @@ public class BusManagerTest {
         assertThat(testListener.getCount(), equalTo(3));
         assertThat(busManager.getNumListeners(), equalTo(1L));
         assertThat(busManager.getNumEvents(), equalTo(3L));
+        
+        //when
+        busManager.unregister(testListener);
+        busManager.unregister(testListener);
+        
+        //then
+        assertThat(busManager.getNumListeners(), equalTo(0L));
     }
     
     @Test

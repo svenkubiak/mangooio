@@ -3,6 +3,9 @@ package io.mangoo.managers;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Singleton;
 
@@ -15,6 +18,7 @@ import io.mangoo.enums.Required;
 */
 @Singleton
 public class BusManager {
+    private static final Logger LOG = LogManager.getLogger(BusManager.class);
     private EventBus eventBus;
     private AtomicLong listeners = new AtomicLong();
     private AtomicLong events = new AtomicLong();
@@ -43,7 +47,12 @@ public class BusManager {
     public void unregister(Object eventListener) {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
-        this.eventBus.unregister(eventListener);
+        try {
+            this.eventBus.unregister(eventListener);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Failed to unregister event listener", e);
+        }
+
         if (this.listeners.get() > 0) {
             this.listeners.getAndDecrement();            
         }
