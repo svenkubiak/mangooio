@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
+import io.mangoo.exceptions.MangooBusException;
 import io.mangoo.test.utils.ConcurrentRunner;
 
 /**
@@ -19,8 +20,8 @@ import io.mangoo.test.utils.ConcurrentRunner;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BusManagerTest {
 
-    @Test
-    public void testAEventBus() {
+    @Test(expected = MangooBusException.class)
+    public void testAEventBus() throws MangooBusException {
         //given
         TestListener testListener = new TestListener();
         BusManager busManager = Application.getInstance(BusManager.class);
