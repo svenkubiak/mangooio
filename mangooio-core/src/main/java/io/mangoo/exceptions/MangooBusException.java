@@ -6,7 +6,7 @@ package io.mangoo.exceptions;
  *
  */
 public class MangooBusException extends Exception {
-    private static final long serialVersionUID = 8991735383215886040L;
+    private static final long serialVersionUID = 1928378985326453406L;
 
     public MangooBusException(Exception e) {
         super(e);

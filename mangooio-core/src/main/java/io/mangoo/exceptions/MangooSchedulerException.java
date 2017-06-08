@@ -6,7 +6,7 @@ package io.mangoo.exceptions;
  *
  */
 public class MangooSchedulerException extends Exception {
-    private static final long serialVersionUID = 8991735383215886040L;
+    private static final long serialVersionUID = 1779894804567372681L;
 
     public MangooSchedulerException(Exception e) {
         super(e);
