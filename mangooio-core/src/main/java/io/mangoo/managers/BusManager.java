@@ -44,7 +44,9 @@ public class BusManager {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
         this.eventBus.unregister(eventListener);
-        this.listeners.getAndDecrement();
+        if (this.listeners.get() > 0) {
+            this.listeners.getAndDecrement();            
+        }
     }
     
     /**
