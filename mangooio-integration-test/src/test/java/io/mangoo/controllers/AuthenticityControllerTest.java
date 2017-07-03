@@ -22,6 +22,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class AuthenticityControllerTest {
+	private static final int AUTHENTICITY_LENGTH = 36;
     
     @Test
     public void testAuthenticityForm() {
@@ -43,7 +44,7 @@ public class AuthenticityControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent().length(), equalTo(16));
+        assertThat(response.getContent().length(), equalTo(AUTHENTICITY_LENGTH));
     }
     
     @Test
@@ -60,7 +61,7 @@ public class AuthenticityControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent().length(), equalTo(16));
+        assertThat(response.getContent().length(), equalTo(AUTHENTICITY_LENGTH));
         
         //when
         response = instance.withUri("/valid?authenticity=" + token)

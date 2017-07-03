@@ -1,11 +1,10 @@
 package io.mangoo.routing.handlers;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +39,6 @@ import io.undertow.server.handlers.Cookie;
  */
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
-    private final SecureRandom secureRandom = new SecureRandom();
     private Config config;
     private Subject subject;
     private Form form;
@@ -84,7 +82,7 @@ public class InboundCookiesHandler implements HttpHandler {
         } else {
             session = Session.build()
                     .withContent(new HashMap<>())
-                    .withAuthenticity(new BigInteger(80, this.secureRandom).toString(32))
+                    .withAuthenticity(UUID.randomUUID().toString())
                     .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
         }
 
