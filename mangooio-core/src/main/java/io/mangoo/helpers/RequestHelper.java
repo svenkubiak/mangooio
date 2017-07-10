@@ -135,25 +135,22 @@ public class RequestHelper {
         OAuthService oAuthService = null;
         switch (oAuthProvider) {
         case TWITTER:
-            oAuthService = new ServiceBuilder()
+            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_TWITTER_KEY))
             .callback(config.getString(Key.OAUTH_TWITTER_CALLBACK))
-            .apiKey(config.getString(Key.OAUTH_TWITTER_KEY))
             .apiSecret(config.getString(Key.OAUTH_TWITTER_SECRET))
             .build(TwitterApi.instance());
             break;
         case GOOGLE:
-            oAuthService = new ServiceBuilder()
+            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_GOOGLE_KEY))
             .scope(SCOPE)
             .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
-            .apiKey(config.getString(Key.OAUTH_GOOGLE_KEY))
             .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET))
             .state("secret" + new SecureRandom().nextInt(MAX_RANDOM))
             .build(GoogleApi20.instance());
             break;
         case FACEBOOK:
-            oAuthService = new ServiceBuilder()
+            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_FACEBOOK_KEY))
             .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
-            .apiKey(config.getString(Key.OAUTH_FACEBOOK_KEY))
             .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET))
             .build(FacebookApi.instance());
             break;
