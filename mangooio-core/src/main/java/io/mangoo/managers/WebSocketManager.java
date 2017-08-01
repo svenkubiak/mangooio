@@ -104,7 +104,7 @@ public class WebSocketManager {
 
         final Set<WebSocketChannel> channels = getChannels(uri);
         if (channels != null) {
-            channels.forEach(channel -> {
+            channels.forEach((WebSocketChannel channel) -> {
                 if (channel.isOpen()) {
                     IOUtils.closeQuietly(channel);
                 }

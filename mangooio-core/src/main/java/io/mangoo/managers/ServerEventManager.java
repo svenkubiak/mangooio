@@ -68,7 +68,7 @@ public class ServerEventManager {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach(connection -> {
+            uriConnections.forEach((ServerSentEventConnection connection) -> {
                 if (connection.isOpen()) {
                     connection.send(data);
                 }
@@ -90,7 +90,7 @@ public class ServerEventManager {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach(connection -> {
+            uriConnections.forEach((ServerSentEventConnection connection) -> {
                 if (connection.isOpen()) {
                     connection.send(data, eventCallback);
                 }
@@ -108,7 +108,7 @@ public class ServerEventManager {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach(connection -> {
+            uriConnections.forEach((ServerSentEventConnection connection) -> {
                 if (connection.isOpen()){
                     IOUtils.closeQuietly(connection);
                 }

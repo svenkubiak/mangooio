@@ -106,7 +106,7 @@ public class AdminController {
     public Response routes() {
         Set<Route> routes = Router.getRoutes()
             .stream()
-            .filter(route -> !route.getUrl().contains("@admin"))
+            .filter((Route route) -> !route.getUrl().contains("@admin"))
             .collect(Collectors.toSet());
         
         return Response.withOk()

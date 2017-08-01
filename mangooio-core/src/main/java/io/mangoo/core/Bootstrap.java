@@ -282,7 +282,7 @@ public class Bootstrap {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/state/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("state").useInternalTemplateEngine());
         }
 
-        Router.getRoutes().parallelStream().forEach(route -> {
+        Router.getRoutes().parallelStream().forEach((Route route) -> {
             if (RouteType.REQUEST == route.getRouteType()) {
                 DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class).dispatch(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
