@@ -48,7 +48,7 @@ public class ApplicationController {
         return Response.withOk()
                 .andContent("localDateTime", localDateTime)
                 .andContent("localDate", localDate)
-                .andContent("date", date);
+                .andContent("date", date); //NOSONAR
     }
 
     public Response forbidden() {
