@@ -39,7 +39,7 @@ public class Metrics {
     }
     
     public void inc(int responseCode) {
-        this.metricsCount.computeIfAbsent(responseCode, t -> new LongAdder()).increment();
+        this.metricsCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
     }
     
     public void update(final int requestTime) {
