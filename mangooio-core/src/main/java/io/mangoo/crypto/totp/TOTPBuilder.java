@@ -2,6 +2,7 @@ package io.mangoo.crypto.totp;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
@@ -55,7 +56,6 @@ import io.mangoo.enums.HmacShaAlgorithm;
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC 6238</a>
  */
 public final class TOTPBuilder {
-
     /** The default time step size in milliseconds (30000 milliseconds == 30 seconds). */
     public static final long DEFAULT_TIME_STEP = TimeUnit.SECONDS.toMillis(30);
 
@@ -269,7 +269,7 @@ public final class TOTPBuilder {
         // Using the counter
         // First 8 bytes are for the movingFactor
         // Compliant with base RFC 4226 (HOTP)
-        String timeInHex = Strings.padStart(Long.toHexString(tc).toUpperCase(), 16, '0');
+        String timeInHex = Strings.padStart(Long.toHexString(tc).toUpperCase(Locale.ENGLISH), 16, '0');
 
         // Step 1: Generate the HMAC-SHA hash.
         byte[] msg = BaseEncoding.base16().decode(timeInHex);
@@ -289,5 +289,4 @@ public final class TOTPBuilder {
         // Ensure the TOTP value contains the specified number of digits.
         return Strings.padStart(Integer.toString(otp), digits, '0');
     }
-
 }

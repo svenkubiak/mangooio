@@ -193,7 +193,7 @@ public class RequestHandler implements HttpHandler {
 
             switch (binding) {
             case FORM:
-                convertedParameters[index] = this.attachment.getForm();
+                convertedParameters[index] = this.attachment.getForm(); //NOSONAR
                 break;
             case AUTHENTICATION:
                 convertedParameters[index] = this.attachment.getAuthentication();
