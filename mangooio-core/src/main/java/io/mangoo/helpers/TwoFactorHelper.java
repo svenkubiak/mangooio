@@ -28,15 +28,17 @@ import io.mangoo.enums.Required;
  * OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
  * SOFTWARE.
- *
+ * 
+ * @deprecated As of release 4.6.0, replaced by TotpUtils
+ * 
  * @author graywatson, svenkubiak, WilliamDunne
  */
+@Deprecated
 @SuppressWarnings("all")
 public class TwoFactorHelper {
     private final Logger LOG = LogManager.getLogger(TwoFactorHelper.class);
     private final Base32 base32 = new Base32();
     private final String HMAC_SHA1 = "HmacSHA1";
-    private final String BLOCK_OF_ZEROS = "000000";
     private final int TIME_STEP_SECONDS = 30;
     private final boolean USE_SHA1_THREAD_LOCAL = true;
 
@@ -52,6 +54,7 @@ public class TwoFactorHelper {
      * 
      * @return boolean if the code is valid
      */
+    @Deprecated
     public boolean validateCurrentNumber(int number, String secret) {
         return validateCurrentNumber(number, secret, 3);
     }
@@ -66,6 +69,7 @@ public class TwoFactorHelper {
      * 
      * @return True if the code is valid within the timeframe, false otherwise
      */
+    @Deprecated
     public boolean validateCurrentNumber(int number, String secret, int window, long time) {
         try {
             int current = Integer.parseInt(generateCurrentNumber(secret, time));
@@ -94,12 +98,14 @@ public class TwoFactorHelper {
      * 
      * @return True if the code is correct, false otherwise
      */
+    @Deprecated
     public boolean validateCurrentNumber(int number, String secret, int window) {
         long time = System.currentTimeMillis();
 
         return validateCurrentNumber(number, secret, window, time);
     }
 
+    @Deprecated
     private boolean validateCurrentNumberLow(int number, String secret, int window, Long time) throws GeneralSecurityException {
         int current = Integer.parseInt(generateCurrentNumber(secret, time));
         if (current == number) {
@@ -113,6 +119,7 @@ public class TwoFactorHelper {
         return false;
     }
 
+    @Deprecated
     private boolean validateCurrentNumberHigh(int number, String secret, int window, long time) throws GeneralSecurityException {
         int current = Integer.parseInt(generateCurrentNumber(secret, time));
         if (current == number) {
@@ -139,6 +146,7 @@ public class TwoFactorHelper {
      * 
      * @return The current number to be checked
      */
+    @Deprecated
     public String generateCurrentNumber(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
@@ -153,6 +161,7 @@ public class TwoFactorHelper {
      * 
      * @return The current number to be checked
      */
+    @Deprecated
     public String generateCurrentNumber(String secret, long currentTimeMillis) {
         Objects.requireNonNull(secret, Required.GROUP_NAME.toString());
 
@@ -200,6 +209,7 @@ public class TwoFactorHelper {
      * 
      * @return A URL to the Google charts API
      */
+    @Deprecated
     public String generateQRCode(String accountName, String secret) {
         Objects.requireNonNull(accountName, Required.ACCOUNT_NAME.toString());
         Objects.requireNonNull(secret, Required.SECRET.toString());

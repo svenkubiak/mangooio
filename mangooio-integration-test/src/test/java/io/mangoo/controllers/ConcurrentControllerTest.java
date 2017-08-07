@@ -26,22 +26,20 @@ public class ConcurrentControllerTest {
     @Test
     public void testConcurrentJsonParsing() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 50; j++) {
-                //given
-                String uuid = UUID.randomUUID().toString();
-                String json = "{\"firstname\":\"$$\",\"lastname\":\"Parker\",\"age\":24}";
-                json = json.replace("$$", uuid);
-                
-                WebResponse response = WebRequest.post("/parse")
-                        .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
-                        .withRequestBody(json)
-                        .execute();
+            //given
+            String uuid = UUID.randomUUID().toString();
+            String json = "{\"firstname\":\"$$\",\"lastname\":\"Parker\",\"age\":24}";
+            json = json.replace("$$", uuid);
+            
+            WebResponse response = WebRequest.post("/parse")
+                    .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
+                    .withRequestBody(json)
+                    .execute();
 
-                //then
-                assertThat(response, not(nullValue()));
-                assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-                assertThat(response.getContent(), equalTo(uuid + ";Parker;24"));    
-            }
+            //then
+            assertThat(response, not(nullValue()));
+            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+            assertThat(response.getContent(), equalTo(uuid + ";Parker;24"));    
         };
         
         ConcurrentRunner.create()

@@ -10,12 +10,13 @@ import com.google.inject.Inject;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
+import io.mangoo.crypto.totp.HmacShaAlgorithm;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
-import io.mangoo.helpers.TwoFactorHelper;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.TotpUtils;
 
 /**
  * Convenient class for handling authentication
@@ -29,20 +30,17 @@ public class Authentication {
     private OAuthUser oAuthUser;
     private String authenticatedUser;
     private Cache cache;
-    private TwoFactorHelper twoFactorHelper;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
 
     @Inject
-    public Authentication(CacheProvider cacheProvider, Config config, TwoFactorHelper twoFactorHelper) {
+    public Authentication(CacheProvider cacheProvider, Config config) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         Objects.requireNonNull(config, Required.CONFIG.toString());
-        Objects.requireNonNull(twoFactorHelper, Required.TWO_FACTOR_HELPER.toString());
         
         this.cache = cacheProvider.getCache(CacheName.AUTH);
         this.config = config;
-        this.twoFactorHelper = twoFactorHelper;
     }
     
     public Authentication withExpires(LocalDateTime expires) {
@@ -242,15 +240,11 @@ public class Authentication {
      * @param number The number entered by the user
      * @return True if number is valid, false otherwise
      */
-    public boolean validSecondFactor(String secret, int number) {
+    public boolean validSecondFactor(String secret, String number) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(number, Required.TOTP.toString());
         
-        boolean valid = this.twoFactorHelper.validateCurrentNumber(number, secret);
-        if (valid) {
-            this.twoFactor = false;
-        }
-        
-        return valid;
+        return TotpUtils.verifiedTotp(secret, number, HmacShaAlgorithm.HMAC_SHA_512);
     }
 
     /**

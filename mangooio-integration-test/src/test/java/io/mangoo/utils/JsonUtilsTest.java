@@ -38,18 +38,16 @@ public class JsonUtilsTest {
     @Test
     public void testConcurrentToJson() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 50; j++) {
-                //given
-                String uuid = UUID.randomUUID().toString();
-                Car car = new Car(uuid);
-                
-                //when
-                String json = JsonUtils.toJson(car);
-                
-                //then
-                assertThat(json, not(nullValue()));
-                assertThat(json, equalTo("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}"));   
-            }
+            //given
+            String uuid = UUID.randomUUID().toString();
+            Car car = new Car(uuid);
+            
+            //when
+            String json = JsonUtils.toJson(car);
+            
+            //then
+            assertThat(json, not(nullValue()));
+            assertThat(json, equalTo("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}"));   
         };
         
         ConcurrentRunner.create()
@@ -74,18 +72,16 @@ public class JsonUtilsTest {
     @Test
     public void testConcurrentFromJson() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 50; j++) {
-                //given
-                String uuid = UUID.randomUUID().toString(); 
-                String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
-                
-                //when
-                ReadContext readContext = JsonUtils.fromJson(json);
-                
-                //then
-                assertThat(readContext, not(nullValue()));
-                assertThat(readContext.read("$.foo"), equalTo(uuid));
-            }
+            //given
+            String uuid = UUID.randomUUID().toString(); 
+            String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
+            
+            //when
+            ReadContext readContext = JsonUtils.fromJson(json);
+            
+            //then
+            assertThat(readContext, not(nullValue()));
+            assertThat(readContext.read("$.foo"), equalTo(uuid));
         };
         
         ConcurrentRunner.create()
@@ -112,20 +108,18 @@ public class JsonUtilsTest {
     @Test
     public void testConcurrentFromJsonToClass() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 50; j++) {
-                //given
-                String uuid = UUID.randomUUID().toString(); 
-                String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
-                
-                //when
-                Car car = JsonUtils.fromJson(json, Car.class);
-                
-                //then
-                assertThat(car, not(nullValue()));
-                assertThat(car.brand, equalTo(null));
-                assertThat(car.doors, equalTo(0));
-                assertThat(car.foo, equalTo(uuid));
-            }
+            //given
+            String uuid = UUID.randomUUID().toString(); 
+            String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
+            
+            //when
+            Car car = JsonUtils.fromJson(json, Car.class);
+            
+            //then
+            assertThat(car, not(nullValue()));
+            assertThat(car.brand, equalTo(null));
+            assertThat(car.doors, equalTo(0));
+            assertThat(car.foo, equalTo(uuid));
         };
         
         ConcurrentRunner.create()

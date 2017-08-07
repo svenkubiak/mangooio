@@ -31,13 +31,11 @@ public class DateUtilsTest {
     @Test
     public void testConcurrentLocalDateTimeToDate() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 10; j++) {
-                //given
-                LocalDateTime localDateTime = LocalDateTime.now();
-                
-                //then
-                assertThat(DateUtils.localDateTimeToDate(localDateTime), not(equalTo(nullValue())));
-            }
+            //given
+            LocalDateTime localDateTime = LocalDateTime.now();
+            
+            //then
+            assertThat(DateUtils.localDateTimeToDate(localDateTime), not(equalTo(nullValue())));
         };
         
         ConcurrentRunner.create()
@@ -58,13 +56,11 @@ public class DateUtilsTest {
     @Test
     public void testConcurrentLocalDateToDate() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 10; j++) {
-                //given
-                LocalDate localDate = LocalDate.now();
-                
-                //then
-                assertThat(DateUtils.localDateToDate(localDate), not(equalTo(nullValue())));
-            }
+            //given
+            LocalDate localDate = LocalDate.now();
+            
+            //then
+            assertThat(DateUtils.localDateToDate(localDate), not(equalTo(nullValue())));
         };
         
         ConcurrentRunner.create()

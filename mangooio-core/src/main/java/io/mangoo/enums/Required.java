@@ -82,6 +82,7 @@ public enum Required {
     TEMPLATE("template can not be null"),
     TEMPLATE_ENGINE("tempalte engine can not be null"),
     TEMPLATE_NAME("template name can not be null"),
+    TOTP("totp can not be null"),
     TRIGGER("trigger can not be null"),
     TRIGGER_FIRE_BUNDLE("trigger fire bundle can not be null"),
     TWO_FACTOR_HELPER("twofactorhelper can not be null"),
@@ -91,7 +92,9 @@ public enum Required {
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null");
+    VALUES("values can not be null"),
+    ISSUER("issuer can not be null"),
+    ALGORITHM("algorithm can not be null");
     
     private final String value;
 

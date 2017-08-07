@@ -47,7 +47,7 @@ public class AuthenticationController {
     }
     
     public Response factorize(Form form, Authentication authentication) {
-        if (authentication.hasAuthenticatedUser() && authentication.validSecondFactor(SECRET, form.getInteger("twofactor").orElse(0))) {
+        if (authentication.hasAuthenticatedUser() && authentication.validSecondFactor(SECRET, form.getString("twofactor").orElse(""))) {
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
         

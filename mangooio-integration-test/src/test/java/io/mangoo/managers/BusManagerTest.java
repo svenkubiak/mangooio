@@ -48,18 +48,16 @@ public class BusManagerTest {
     @Test
     public void testBConcurrentEventBus() throws InterruptedException {
         Runnable runnable = () -> {
-            for (int j=0; j < 50; j++) {
-                //given
-                TestListener testListener = new TestListener();
-                BusManager busManager = Application.getInstance(BusManager.class);
-                busManager.register(testListener);
-                
-                //when
-                busManager.publish("This is a test");
-                
-                //then
-                assertThat(testListener.getCount(), greaterThan(0));
-            }
+            //given
+            TestListener testListener = new TestListener();
+            BusManager busManager = Application.getInstance(BusManager.class);
+            busManager.register(testListener);
+            
+            //when
+            busManager.publish("This is a test");
+            
+            //then
+            assertThat(testListener.getCount(), greaterThan(0));
         };
         
         ConcurrentRunner.create()

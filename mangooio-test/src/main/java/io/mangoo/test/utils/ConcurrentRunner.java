@@ -65,9 +65,10 @@ public class ConcurrentRunner {
             runnableThreads.add(thread);
         }
         
-        runnableThreads.parallelStream().forEach(thread -> {
-            thread.start();
-            
+        runnableThreads.forEach(thread -> {
+        		thread.start();
+        		thread.run();
+        		
             if (error != null) {
                 throw error;                
             }
