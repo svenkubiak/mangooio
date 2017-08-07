@@ -11,6 +11,8 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Charsets;
+
 import io.mangoo.crypto.totp.HmacShaAlgorithm;
 import io.mangoo.crypto.totp.TOTP;
 import io.mangoo.enums.Required;
@@ -54,18 +56,20 @@ public class TotpUtils {
 	public static Optional<String> getTotp(String secret, HmacShaAlgorithm hmacShaAlgorithm) {
 		Objects.requireNonNull(secret, Required.SECRET.toString());
 		
-		TOTP builder = null;
+		String value = null;
 		try {
-			builder = TOTP.key(secret.getBytes("US-ASCII"))
+			TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
 					.timeStep(TimeUnit.SECONDS.toMillis(30))
 					.digits(6)
 					.hmacSha(hmacShaAlgorithm)
 					.build();
+			
+			value = builder.value();
 		} catch (UnsupportedEncodingException e) {
 			LOG.error("Failed to create TOTP",  e);
 		}
 		
-		return Optional.ofNullable(builder.value());
+		return Optional.ofNullable(value);
 	}
 	
 	/**
@@ -81,18 +85,20 @@ public class TotpUtils {
 		Objects.requireNonNull(secret, Required.SECRET.toString());
 		Objects.requireNonNull(totp, Required.TOTP.toString());
 		
-		TOTP builder = null;
+		String value = null;
 		try {
-			builder = TOTP.key(secret.getBytes("US-ASCII"))
+			TOTP builder = TOTP.key(secret.getBytes("US-ASCII"))
 				.timeStep(TimeUnit.SECONDS.toMillis(30))
 				.digits(6)
 				.hmacSha(hmacShaAlgorithm)
 				.build();
+			
+			value = builder.value();
 		} catch (UnsupportedEncodingException e) {
 			LOG.error("Failed to verify TOTP",  e);
 		}
 		
-		return builder.value().equals(totp);
+		return totp.equals(value);
 	}
 	
 	/**
@@ -134,7 +140,7 @@ public class TotpUtils {
         buffer.append("otpauth://totp/")
             .append(name)
             .append("?secret=")
-            .append(base32.encodeAsString(secret.getBytes()).replaceAll("=", ""))
+            .append(base32.encodeAsString(secret.getBytes(Charsets.UTF_8)).replaceAll("=", ""))
         		.append("&algorithm=")
         		.append(hmacShaAlgorithm.getAlgorithm())
         		.append("&issuer=")
