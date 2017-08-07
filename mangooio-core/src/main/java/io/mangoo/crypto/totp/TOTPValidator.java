@@ -154,5 +154,4 @@ public final class TOTPValidator {
         }
         return result;
     }
-
 }
