@@ -87,7 +87,7 @@ public class TotpUtils {
 		
 		String value = null;
 		try {
-			TOTP builder = TOTP.key(secret.getBytes("US-ASCII"))
+			TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
 				.timeStep(TimeUnit.SECONDS.toMillis(30))
 				.digits(6)
 				.hmacSha(hmacShaAlgorithm)
