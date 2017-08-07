@@ -26,7 +26,7 @@ routes:
 - method: GET
   url: /headerfilter
   mapping: FilterController.headerfilter
-  
+
 - method: GET
   url: /filters
   mapping: FilterController.filters
@@ -35,7 +35,7 @@ routes:
 - method: GET
   url: /translation
   mapping: I18nController.translation
-  
+
 - method: GET
   url: /special
   mapping: I18nController.special
@@ -72,15 +72,7 @@ routes:
 
 - method: GET
   url: /subject
-  mapping: AuthenticationController.subject  
-  
-- method: GET
-  url: /twofactorlogin
-  mapping: AuthenticationController.doLoginTwoFactor
-
-- method: POST
-  url: /factorize
-  mapping: AuthenticationController.factorize
+  mapping: AuthenticationController.subject
 
 - method: GET
   url: /authenticationrequired
@@ -103,11 +95,11 @@ routes:
 - method: GET
   url: /string/{foo}
   mapping: ParameterController.stringParam
-  
+
 - method: GET
   url: /optional/{foo}
-  mapping: ParameterController.optionalParam  
-  
+  mapping: ParameterController.optionalParam
+
 - method: GET
   url: /string
   mapping: ParameterController.stringParam
@@ -189,10 +181,10 @@ routes:
 - method: PUT
   url: /parse
   mapping: JsonController.parse
-  
+
 - method: PATCH
   url: /parse
-  mapping: JsonController.parse  
+  mapping: JsonController.parse
 
 - method: POST
   url: /body
@@ -200,7 +192,7 @@ routes:
 
 - method: POST
   url: /requestAndJson
-  mapping: JsonController.requestAndJson  
+  mapping: JsonController.requestAndJson
 
 # JWTSController
 - method: GET
@@ -223,10 +215,10 @@ routes:
 - method: POST
   url: /submit
   mapping: FormController.submit
-  
+
 - method: GET
   url: /flashify
-  mapping: FormController.flashify  
+  mapping: FormController.flashify
 
 - method: POST
   url: /singlefile
@@ -246,11 +238,11 @@ routes:
   mapping: ApplicationController.index
   blocking: true
   timer: true
-  
+
 - method: GET
   url: /route
-  mapping: ApplicationController.route  
-  
+  mapping: ApplicationController.route
+
 - method: POST
   url: /
   mapping: ApplicationController.index
@@ -258,10 +250,10 @@ routes:
 - method: PUT
   url: /
   mapping: ApplicationController.index
-  
+
 - method: PATCH
   url: /
-  mapping: ApplicationController.index  
+  mapping: ApplicationController.index
 
 - method: HEAD
   url: /
@@ -270,7 +262,7 @@ routes:
 - method: DELETE
   url: /
   mapping: ApplicationController.index
-  
+
 - method: OPTIONS
   url: /
   mapping: ApplicationController.index
@@ -289,8 +281,8 @@ routes:
 
 - method: GET
   url: /prettytime
-  mapping: ApplicationController.prettytime 
-  
+  mapping: ApplicationController.prettytime
+
 - method: GET
   url: /location/{myloca}
   mapping: ApplicationController.location

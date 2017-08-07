@@ -5,18 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
-import io.mangoo.crypto.totp.HmacShaAlgorithm;
 import io.mangoo.test.utils.WebBrowser;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
-import io.mangoo.utils.TotpUtils;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -27,7 +20,6 @@ import io.undertow.util.StatusCodes;
  */
 public class AuthenticationControllerTest {
     private static final String USERNAME = "foo";
-    private static final String SECRET = "MyVoiceIsMySecret";
 
     @Test
     public void testNotAuthenticated() {
@@ -73,54 +65,6 @@ public class AuthenticationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("\tHello foo!\n\t//Display navigation for authenticated user\n"));
-    }
-    
-    @Test
-    public void testTwoFactorAuthentication() {
-        //given
-        WebBrowser instance = WebBrowser.open();
-        WebResponse response = instance.withUri("/authenticationrequired")
-                .withMethod(Methods.GET)
-                .withDisableRedirects(true)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getContent(), not(equalTo(USERNAME)));
-        
-        //when
-        response = instance.withUri("/twofactorlogin")
-                .withMethod(Methods.GET)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        
-        //given
-        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-        parameter.add(new BasicNameValuePair("twofactor", TotpUtils.getTotp(SECRET, HmacShaAlgorithm.HMAC_SHA_512).orElse("")));
-        
-        //when
-        response = instance.withUri("/factorize")
-                .withMethod(Methods.POST)
-                .withPostParameters(parameter)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        
-        //given
-        response = instance.withUri("/authenticationrequired")
-                .withMethod(Methods.GET)
-                .execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo(USERNAME));
     }
 
     @Test
