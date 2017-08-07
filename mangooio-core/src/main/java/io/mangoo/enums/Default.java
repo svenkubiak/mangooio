@@ -50,7 +50,7 @@ public enum Default {
     FILTER_METHOD("execute"),
     FLASH_COOKIE_NAME("MANGOOIO-FLASH"),
     JAVASCRIPT_FOLDER("javascript"),
-    JBCRYPT_ROUNDS("12"),
+    JBCRYPT_ROUNDS("13"),
     LANGUAGE("en"),
     LOGO_FILE("logo.txt"),
     MODULE_CLASS("conf.Module"),
