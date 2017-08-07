@@ -25,10 +25,14 @@ import io.mangoo.enums.Required;
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
 	private static final Base32 base32 = new Base32();
-    private static final int SIX = 6;
+    private static final int DIGITS = 6;
+    private static final int MAX_CHARACTERS = 32;
     private static final int THIRTY_SECONDS = 30;
 	private static final int ITERATIONS = 26;
     private static final int BYTES_SECRET = 64;
+    
+    private TotpUtils() {
+    }
 	
     /**
      * Generates a 64 byte (512 bit) secret, best used with HMAC_SHA512
@@ -39,7 +43,7 @@ public class TotpUtils {
 		StringBuilder stringBuilder = new StringBuilder(BYTES_SECRET);
 		Random random = new SecureRandom();
 		for (int i = 0; i < BYTES_SECRET; i++) {
-			int value = random.nextInt(32);
+			int value = random.nextInt(MAX_CHARACTERS);
 			if (value < ITERATIONS) {
 				stringBuilder.append((char) ('A' + value));
 			} else {
@@ -64,7 +68,7 @@ public class TotpUtils {
 		try {
 			TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
 					.timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
-					.digits(6)
+					.digits(DIGITS)
 					.hmacSha(hmacShaAlgorithm)
 					.build();
 			
@@ -93,7 +97,7 @@ public class TotpUtils {
 		try {
 			TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
 				.timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
-				.digits(SIX)
+				.digits(DIGITS)
 				.hmacSha(hmacShaAlgorithm)
 				.build();
 			

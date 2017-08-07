@@ -55,6 +55,7 @@ import io.mangoo.enums.HmacShaAlgorithm;
  * 
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC 6238</a>
  */
+@SuppressWarnings("all")
 public final class TOTPBuilder {
     /** The default time step size in milliseconds (30000 milliseconds == 30 seconds). */
     public static final long DEFAULT_TIME_STEP = TimeUnit.SECONDS.toMillis(30);

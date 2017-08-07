@@ -276,7 +276,7 @@ public class RequestHandler implements HttpHandler {
                     return response;
                 } else {
                     final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response);
+                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response); //NOSONAR
                 }
             }
         }
