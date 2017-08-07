@@ -1,5 +1,5 @@
 package io.mangoo.test.utils;
-
+    
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,9 +66,9 @@ public class ConcurrentRunner {
         }
         
         runnableThreads.forEach(thread -> {
-        		thread.start();
-        		thread.run();
-        		
+                thread.start();
+                thread.run();
+                
             if (error != null) {
                 throw error;                
             }

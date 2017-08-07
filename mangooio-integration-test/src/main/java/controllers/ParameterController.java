@@ -14,7 +14,7 @@ public class ParameterController {
 
     public Response stringParam(String foo) {
         if (foo == null) {
-            foo = "isNull";
+            foo = "isNull"; //NOSONAR
         }
 
         return Response.withOk().andTemplate(PARAM_TEMPLATE).andContent(FOO, foo);

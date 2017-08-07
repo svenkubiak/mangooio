@@ -49,16 +49,12 @@ public final class OTPKey {
      * Type of One Time Password. Valid types are either HOTP or TOTP.
      */
     public enum OTPType {
-
-        /** {@code HOTP} */
         HOTP("HOTP"),
-
-        /** {@code TOTP} */
         TOTP("TOTP");
 
         private final String name;
 
-        private OTPType(String name) {
+        OTPType(String name) {
             this.name = name;
         }
 
@@ -75,12 +71,9 @@ public final class OTPKey {
             throw new IllegalArgumentException("No matching OTPType constant for [" + name + "]");
         }
 
-        /** Return a string representation of this {@code OTPType}. */
         @Override
         public String toString() {
             return name;
         }
-
     }
-
 }
