@@ -23,13 +23,13 @@ import io.mangoo.enums.Required;
  *
  */
 public class TotpUtils {
-	private static final Base32 base32 = new Base32();
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
+	private static final Base32 base32 = new Base32();
     
     /**
      * Generates a 64 byte (512 bit) secret, best used with HMAC_SHA512
      * 
-     * @return A 64 characters random string
+     * @return A 64 characters random string based on SecureRandom
      */
 	public static Optional<String> createSecret() {
 		StringBuilder stringBuilder = new StringBuilder(64);

@@ -258,11 +258,11 @@ public final class TOTPBuilder {
      *
      * @return the Time-based One-time Password value as numeric String in base
      *         10 that includes {@link #digits(int)} digits.
-     */
+     */ 
     private String generateTOTP(long time) {
         // Calculate the number of time steps between the initial counter time
         // (i.e. T0 = 0 = Unix epoch) and the specified 'time'.
-        final long tc = (long) Math.floor(time / timeStep);
+        final long tc = (long) Math.floor(time / timeStep); //NOSONAR
 
         // Using the counter
         // First 8 bytes are for the movingFactor

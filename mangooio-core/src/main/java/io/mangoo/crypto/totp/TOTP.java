@@ -9,7 +9,6 @@ package io.mangoo.crypto.totp;
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC 6238</a>
  */
 public final class TOTP {
-
     private final String value;
     private final long time;
     private final HmacShaAlgorithm hmacShaAlgorithm;
@@ -105,31 +104,24 @@ public final class TOTP {
         return timeStep;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return value.hashCode();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (this == obj) {
+        	 return true;
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TOTP other = (TOTP) obj;
+        
         return value.equals(other.value);
     }
-
 }
