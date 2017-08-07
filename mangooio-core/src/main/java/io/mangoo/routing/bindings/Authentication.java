@@ -10,8 +10,8 @@ import com.google.inject.Inject;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
-import io.mangoo.crypto.totp.HmacShaAlgorithm;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;

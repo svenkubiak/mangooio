@@ -12,6 +12,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.google.common.io.BaseEncoding;
 
+import io.mangoo.enums.HmacShaAlgorithm;
+
 /**
  * A Time-based One-time Password (TOTP) builder.
  * <p>

@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
  * </ul>
  */
 public final class OTPKey {
-
     private final String key;
     private final OTPType type;
 
@@ -49,7 +48,7 @@ public final class OTPKey {
     /**
      * Type of One Time Password. Valid types are either HOTP or TOTP.
      */
-    public static enum OTPType {
+    public enum OTPType {
 
         /** {@code HOTP} */
         HOTP("HOTP"),
@@ -67,7 +66,7 @@ public final class OTPKey {
             return name;
         }
 
-        public static OTPType from(String name) {
+        public OTPType from(String name) {
             for (OTPType type : values()) {
                 if (type.name.equals(name)) {
                     return type;

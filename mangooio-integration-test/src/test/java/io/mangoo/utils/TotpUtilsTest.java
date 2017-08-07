@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 import org.junit.Test;
 
-import io.mangoo.crypto.totp.HmacShaAlgorithm;
+import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.test.utils.ConcurrentRunner;
 
 /**

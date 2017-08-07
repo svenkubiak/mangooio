@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Charsets;
 
-import io.mangoo.crypto.totp.HmacShaAlgorithm;
 import io.mangoo.crypto.totp.TOTP;
+import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 
 /**

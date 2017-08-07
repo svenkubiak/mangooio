@@ -43,7 +43,7 @@ public class ApplicationController {
     public Response prettytime() {
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDate localDate = LocalDate.now();
-        Date date = new Date();
+        Date date = new Date(); //NOSONAR
         
         return Response.withOk()
                 .andContent("localDateTime", localDateTime)

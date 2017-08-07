@@ -2,6 +2,8 @@ package io.mangoo.crypto.totp;
 
 import com.google.common.base.Preconditions;
 
+import io.mangoo.enums.HmacShaAlgorithm;
+
 /**
  * A Time-based One-time Password (TOTP) validator.
  * 

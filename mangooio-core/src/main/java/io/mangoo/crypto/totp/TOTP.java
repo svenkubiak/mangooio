@@ -1,5 +1,7 @@
 package io.mangoo.crypto.totp;
 
+import io.mangoo.enums.HmacShaAlgorithm;
+
 /**
  * Class which represents a Time-based One-time Password as per RFC 6238.
  * <p>
@@ -112,7 +114,7 @@ public final class TOTP {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-        	 return true;
+             return true;
         }
         if (obj == null) {
             return false;

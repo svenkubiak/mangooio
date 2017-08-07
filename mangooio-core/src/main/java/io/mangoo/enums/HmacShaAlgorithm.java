@@ -1,4 +1,4 @@
-package io.mangoo.crypto.totp;
+package io.mangoo.enums;
 
 /**
  * Enumeration of HMAC-SHA algorithm types.
@@ -16,7 +16,7 @@ public enum HmacShaAlgorithm {
 
     private final String algorithm;
 
-    private HmacShaAlgorithm(String algorithm) {
+    HmacShaAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
 
