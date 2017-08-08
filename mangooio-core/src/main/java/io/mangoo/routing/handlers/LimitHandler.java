@@ -1,6 +1,10 @@
 package io.mangoo.routing.handlers;
 
+import java.net.InetSocketAddress;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 
@@ -14,6 +18,7 @@ import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Attachment;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HeaderMap;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.StatusCodes;
 
@@ -37,19 +42,38 @@ public class LimitHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         this.attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
-        
         if (this.attachment.hasLimit()) {
             String key = getCacheKey(exchange);
-            if (this.cache.increment(key).get() > this.attachment.getLimit()) {
-                endRequest(exchange); 
+            if (StringUtils.isNotBlank(key)) {
+                if (this.cache.increment(key).get() > this.attachment.getLimit()) {
+                    addRateLimitHeaders(exchange, ((AtomicInteger) this.cache.get(key)).get(), this.attachment.getLimit());
+                    endRequest(exchange); 
+                } else {
+                    addRateLimitHeaders(exchange, ((AtomicInteger) this.cache.get(key)).get(), this.attachment.getLimit());
+                    nextHandler(exchange);
+                } 
             } else {
-                nextHandler(exchange);
+                addRateLimitHeaders(exchange, this.cache.get(key), this.attachment.getLimit());
+                endRequest(exchange);                 
             }
         } else {
             nextHandler(exchange);
         }
     }
     
+    /**
+     * Adds an X-RateLimit and X-RateLimit-Remaining header to the response
+     * 
+     * @param exchange The HttpServerExchange
+     * @param used The already used requests per minute
+     * @param rateLimit The total request limit per minute
+     */
+    private void addRateLimitHeaders(HttpServerExchange exchange, int used, int rateLimit) {
+        int remaining = rateLimit - used;
+        exchange.getResponseHeaders().add(Header.X_RATELIMIT.toHttpString(), rateLimit);
+        exchange.getResponseHeaders().add(Header.X_RATELIMIT_REMAINING.toHttpString(), (remaining >= 0) ? remaining : 0);
+    }
+
     /**
      * Creates a key for used for limit an request containing the
      * requested url and the source host
@@ -58,15 +82,33 @@ public class LimitHandler implements HttpHandler {
      * @return The key url + host
      */
     private String getCacheKey(HttpServerExchange exchange) {
-        String host;
-        HeaderValues headerValues = exchange.getRequestHeaders().get(Header.X_FORWARDED_FOR.toHttpString());
-        if (headerValues != null) {
-            host = headerValues.element();
-        } else {
-            host = exchange.getSourceAddress().getHostString();
+        String host = null;
+
+        HeaderMap headerMap = exchange.getRequestHeaders();
+        if (headerMap != null) {
+            HeaderValues headerValues = headerMap.get(Header.X_FORWARDED_FOR.toHttpString());
+            if (headerValues != null) {
+                host = headerValues.element();
+            }
         }
         
-        return exchange.getRequestURL() + host;
+        if (StringUtils.isBlank(host)) {
+            InetSocketAddress inetSocketAddress = exchange.getSourceAddress();
+            if (inetSocketAddress != null) {
+                host = inetSocketAddress.getHostString();
+            }
+        }
+        
+        if (StringUtils.isNotBlank(host)) {
+            host = host.toLowerCase();
+        }
+        
+        String url = exchange.getRequestURL();
+        if (StringUtils.isNotBlank(url)) {
+            url = url.toLowerCase();
+        }
+        
+        return url + host;
     }
 
     /**

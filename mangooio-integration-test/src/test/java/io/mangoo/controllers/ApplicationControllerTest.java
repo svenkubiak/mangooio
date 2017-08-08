@@ -146,10 +146,14 @@ public class ApplicationControllerTest {
             response = WebRequest.get("/limit").execute();   
             assertThat(response, not(nullValue()));
             assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+            assertThat(response.getHeader("X-RateLimit"), equalTo("10"));
+            assertThat(response.getHeader("X-RateLimit-Remaining"), equalTo(String.valueOf(10 - i)));
         }
         response = WebRequest.get("/limit").execute();   
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
+        assertThat(response.getHeader("X-RateLimit"), equalTo("10"));
+        assertThat(response.getHeader("X-RateLimit-Remaining"), equalTo("0"));
     }
 
     @Test
