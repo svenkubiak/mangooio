@@ -1,4 +1,4 @@
-package io.mangoo.templating;
+package io.mangoo.interfaces;
 
 import java.util.Locale;
 import java.util.Map;
@@ -16,7 +16,7 @@ import io.undertow.server.HttpServerExchange;
  * @author svenkubiak
  *
  */
-public interface TemplateEngine {
+public interface MangooTemplateEngine {
     /**
      * Renders a template for a specific controller class and method
      *

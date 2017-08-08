@@ -9,7 +9,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import io.mangoo.configuration.Config;
-import io.mangoo.templating.TemplateEngine;
+import io.mangoo.interfaces.MangooTemplateEngine;
 
 /**
  * 
@@ -17,17 +17,17 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 @Singleton
-public class TemplateEngineProvider implements Provider<TemplateEngine> {
+public class TemplateEngineProvider implements Provider<MangooTemplateEngine> {
     private static final Logger LOG = LogManager.getLogger(TemplateEngineProvider.class);
-    private TemplateEngine templateEngine;
+    private MangooTemplateEngine templateEngine;
 
     @Inject
     public TemplateEngineProvider(Injector injector, Config config) {
-        Class<? extends TemplateEngine> templateEngineClass = null; 
+        Class<? extends MangooTemplateEngine> templateEngineClass = null; 
         try {
-            templateEngineClass = Class.forName(config.getTemplateEngineClass()).asSubclass(TemplateEngine.class);
+            templateEngineClass = Class.forName(config.getTemplateEngineClass()).asSubclass(MangooTemplateEngine.class);
         } catch (ClassNotFoundException e) {
-            LOG.error("Can not find Template Engine class: " + config.getTemplateEngineClass(), e);
+            LOG.error("Could not find Template Engine class: " + config.getTemplateEngineClass(), e);
         }
         
         if (templateEngineClass != null) {
@@ -37,7 +37,7 @@ public class TemplateEngineProvider implements Provider<TemplateEngine> {
     }
     
     @Override
-    public TemplateEngine get() {
+    public MangooTemplateEngine get() {
         return this.templateEngine;
     }
 }

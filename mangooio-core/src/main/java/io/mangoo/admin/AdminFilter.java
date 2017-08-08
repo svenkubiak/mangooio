@@ -25,7 +25,7 @@ import io.mangoo.utils.CodecUtils;
  *
  */
 public class AdminFilter implements MangooFilter {
-    private static final Base64.Decoder base64Decoder = Base64.getDecoder();
+    private static final Base64.Decoder decoder = Base64.getDecoder();
     private Config config;
     
     @Inject
@@ -64,7 +64,7 @@ public class AdminFilter implements MangooFilter {
         if (StringUtils.isNotBlank(authInfo)) {
             authInfo = authInfo.replace("Basic", "");
             authInfo = authInfo.trim();
-            authInfo = new String(base64Decoder.decode(authInfo), Charsets.UTF_8);
+            authInfo = new String(decoder.decode(authInfo), Charsets.UTF_8);
 
             final String [] credentials = authInfo.split(":");
             if (credentials != null && credentials.length == Default.BASICAUTH_CREDENTIALS_LENGTH.toInt()) {

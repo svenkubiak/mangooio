@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
+import io.mangoo.interfaces.MangooTemplateEngine;
 
 /**
  * 
@@ -17,7 +18,7 @@ public class TemplateEngineFreemarkerTest {
     @Test
     public void testGetTemplateName() {
         //given
-        TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
+        MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
         
         //when
         String templateWithSuffix = templateEngine.getTemplateName("template.ftl");

@@ -1,4 +1,4 @@
-package io.mangoo.templating.freemarker;
+package io.mangoo.templating;
 
 import java.io.IOException;
 import java.io.Reader;

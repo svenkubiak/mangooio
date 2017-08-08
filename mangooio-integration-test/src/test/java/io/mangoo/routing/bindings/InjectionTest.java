@@ -14,6 +14,7 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.managers.ExecutionManager;
 import io.mangoo.managers.ServerEventManager;
 import io.mangoo.managers.WebSocketManager;
@@ -33,7 +34,6 @@ import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.SchedulerFactory;
-import io.mangoo.templating.TemplateEngine;
 
 /**
  * 
@@ -234,7 +234,7 @@ public class InjectionTest {
     @Test
     public void testTemplateEngine() {
         //given
-        TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
+        MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
         
         //then
         assertThat(templateEngine, not(nullValue()));

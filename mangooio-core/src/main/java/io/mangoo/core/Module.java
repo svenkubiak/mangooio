@@ -6,10 +6,10 @@ import com.google.inject.AbstractModule;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
+import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.providers.TemplateEngineProvider;
 import io.mangoo.scheduler.SchedulerFactory;
-import io.mangoo.templating.TemplateEngine;
 
 /**
  * 
@@ -22,6 +22,6 @@ public class Module extends AbstractModule {
         bind(Config.class).toInstance(new Config());
         bind(JobFactory.class).to(SchedulerFactory.class);
         bind(Cache.class).toProvider(CacheProvider.class);
-        bind(TemplateEngine.class).toProvider(TemplateEngineProvider.class);
+        bind(MangooTemplateEngine.class).toProvider(TemplateEngineProvider.class);
     }
 }

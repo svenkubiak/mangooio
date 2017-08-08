@@ -21,7 +21,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.templating.TemplateEngine;
+import io.mangoo.interfaces.MangooTemplateEngine;
 
 /**
  * 
@@ -333,6 +333,6 @@ public class Mail {
     }
 
     private String render() throws MangooTemplateEngineException {
-        return StringUtils.isNotBlank(this.body) ? this.body : Application.getInstance(TemplateEngine.class).render("", this.template, this.content);
+        return StringUtils.isNotBlank(this.body) ? this.body : Application.getInstance(MangooTemplateEngine.class).render("", this.template, this.content);
     }
 }

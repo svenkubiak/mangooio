@@ -46,21 +46,31 @@ import io.mangoo.utils.CodecUtils;
 @FilterWith(AdminFilter.class)
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
-    private static final String SCHEDULER = "scheduler";
+    private static final String JOBS = "jobs";
+    private static final String LOGGER = "logger";
     private static final String METRICS = "metrics"; //NOSONAR
     private static final String ROUTES = "routes"; //NOSONAR
-    private static final String JOBS = "jobs";
-    private static final String LOGGER = "logger";    
-    private static final String TOOLS = "tools";
+    private static final String SCHEDULER = "scheduler";    
     private static final String SPACE = "space";
+    private static final String TOOLS = "tools";
     private static final String VERSION = "version";
-    private final Scheduler scheduler; //NOSONAR
     private final Crypto crypto; //NOSONAR
+    private final Scheduler scheduler; //NOSONAR
     
     @Inject
     public AdminController(Scheduler scheduler, Crypto crypto) {
         this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
+    }
+    
+    public Response execute(String name) {
+        try {
+            this.scheduler.executeJob(name);
+        } catch (MangooSchedulerException e) {
+            LOG.error("Failed to execute job with name: " + name, e);
+        }
+        
+        return Response.withRedirect("/@admin/scheduler");
     }
     
     public Response index() {
@@ -81,46 +91,6 @@ public class AdminController {
                 .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
                 .andContent("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)))
                 .andTemplate(Template.DEFAULT.adminPath());
-    }
-    
-    public Response execute(String name) {
-        try {
-            this.scheduler.executeJob(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to execute job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
-    }
-    
-    public Response state(String name) {
-        try {
-            this.scheduler.changeState(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to change the state of job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
-    }
-    
-    public Response routes() {
-        Set<Route> routes = Router.getRoutes()
-            .stream()
-            .filter((Route route) -> !route.getUrl().contains("@admin"))
-            .collect(Collectors.toSet());
-        
-        return Response.withOk()
-                .andContent(SPACE, ROUTES)
-                .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(ROUTES, routes)
-                .andTemplate(Template.DEFAULT.routesPath());
-    }
-    
-    public Response tools() {
-        return Response.withOk()
-                .andContent(SPACE, TOOLS)
-                .andContent(VERSION, BootstrapUtils.getVersion())
-                .andTemplate(Template.DEFAULT.toolsPath());
     }
     
     public Response logger() {
@@ -153,30 +123,6 @@ public class AdminController {
         return Response.withOk().andEmptyBody();
     }
     
-    public Response toolsajax(Request request) {
-        Map<String, Object> body = request.getBodyAsJsonMap();
-        String value = "";
-        
-        if (body != null && body.size() > 0) {
-            String function = body.get("function").toString();
-            String cleartext = body.get("cleartext").toString();
-            String key = body.get("key").toString();
-
-            if (("hash").equalsIgnoreCase(function)) {
-                value = CodecUtils.hexJBcrypt(cleartext);
-            } else if (("encrypt").equalsIgnoreCase(function)) {
-                if (StringUtils.isNotBlank(key)) {
-                    value = this.crypto.encrypt(cleartext, key);
-                } else {
-                    value = this.crypto.encrypt(cleartext);
-                }
-            }  
-        }
-        
-        return Response.withOk()
-               .andJsonBody(value);
-    }
-
     public Response metrics() {
         Metrics metrics = Application.getInstance(Metrics.class);
         long totalRequests = 0;
@@ -205,7 +151,20 @@ public class AdminController {
                 .andContent("errorRate", errorRate)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
-
+    
+    public Response routes() {
+        Set<Route> routes = Router.getRoutes()
+            .stream()
+            .filter((Route route) -> !route.getUrl().contains("@admin"))
+            .collect(Collectors.toSet());
+        
+        return Response.withOk()
+                .andContent(SPACE, ROUTES)
+                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(ROUTES, routes)
+                .andTemplate(Template.DEFAULT.routesPath());
+    }
+    
     public Response scheduler()  {
         List<Job> jobs = new ArrayList<>();
         if (this.scheduler.isInitialize()) {
@@ -221,5 +180,46 @@ public class AdminController {
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(JOBS, jobs)
                 .andTemplate(Template.DEFAULT.schedulerPath());
+    }
+    
+    public Response state(String name) {
+        try {
+            this.scheduler.changeState(name);
+        } catch (MangooSchedulerException e) {
+            LOG.error("Failed to change the state of job with name: " + name, e);
+        }
+        
+        return Response.withRedirect("/@admin/scheduler");
+    }
+
+    public Response tools() {
+        return Response.withOk()
+                .andContent(SPACE, TOOLS)
+                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andTemplate(Template.DEFAULT.toolsPath());
+    }
+
+    public Response toolsajax(Request request) {
+        Map<String, Object> body = request.getBodyAsJsonMap();
+        String value = "";
+        
+        if (body != null && body.size() > 0) {
+            String function = body.get("function").toString();
+            String cleartext = body.get("cleartext").toString();
+            String key = body.get("key").toString();
+
+            if (("hash").equalsIgnoreCase(function)) {
+                value = CodecUtils.hexJBcrypt(cleartext);
+            } else if (("encrypt").equalsIgnoreCase(function)) {
+                if (StringUtils.isNotBlank(key)) {
+                    value = this.crypto.encrypt(cleartext, key);
+                } else {
+                    value = this.crypto.encrypt(cleartext);
+                }
+            }  
+        }
+        
+        return Response.withOk()
+               .andJsonBody(value);
     }
 }

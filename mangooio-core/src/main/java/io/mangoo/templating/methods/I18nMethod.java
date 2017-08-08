@@ -1,4 +1,4 @@
-package io.mangoo.templating.freemarker.methods;
+package io.mangoo.templating.methods;
 
 import java.util.ArrayList;
 import java.util.List;

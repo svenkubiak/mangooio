@@ -1,4 +1,4 @@
-package io.mangoo.templating.freemarker.methods;
+package io.mangoo.templating.methods;
 
 import java.util.List;
 import java.util.Locale;

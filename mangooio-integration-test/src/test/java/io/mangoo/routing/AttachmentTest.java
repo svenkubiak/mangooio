@@ -14,7 +14,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Bootstrap;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
-import io.mangoo.templating.TemplateEngine;
+import io.mangoo.interfaces.MangooTemplateEngine;
 
 /**
  * 
@@ -43,7 +43,7 @@ public class AttachmentTest {
         attachment.withPassword("foobar");
         attachment.withRequestFilter(true);
         attachment.withRequestParameter(new HashMap<>());
-        attachment.withTemplateEngine(Application.getInstance(TemplateEngine.class));
+        attachment.withTemplateEngine(Application.getInstance(MangooTemplateEngine.class));
         attachment.withTimer(true);
         attachment.withUsername("peter");
         
@@ -62,7 +62,7 @@ public class AttachmentTest {
         assertThat(attachment.getPassword(), equalTo("foobar"));
         assertThat(attachment.hasRequestFilter(), equalTo(true));
         assertThat(attachment.getRequestParameter(), instanceOf(HashMap.class));
-        assertThat(attachment.getTemplateEngine(), instanceOf(TemplateEngine.class));
+        assertThat(attachment.getTemplateEngine(), instanceOf(MangooTemplateEngine.class));
         assertThat(attachment.hasTimer(), equalTo(true));
         assertThat(attachment.getUsername(), equalTo("peter"));
         assertThat(attachment.hasAuthentication(), equalTo(true));

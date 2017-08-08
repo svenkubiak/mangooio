@@ -7,6 +7,7 @@ package io.mangoo.enums;
  */
 public enum Required {
     ACCOUNT_NAME("account name can not be null"),
+    ALGORITHM("algorithm can not be null"),
     APPLICATION_SECRET("application secret can not be null"),
     AUTHENTICITY("authenticity can not be null"),
     BCC_RECIPIENT("bcc recipient can not be null"),
@@ -46,6 +47,7 @@ public enum Required {
     HTTP_HANDLER("httpHandler can not be null"),
     HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),
     IDENTITY("identity can not be null"),
+    ISSUER("issuer can not be null"),
     JOB_DETAIL("job detail can not be null"),
     JSON("json can not be null"),
     JSON_OBJECT("json object can not be null"),
@@ -92,9 +94,7 @@ public enum Required {
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null"),
-    ISSUER("issuer can not be null"),
-    ALGORITHM("algorithm can not be null");
+    VALUES("values can not be null");
     
     private final String value;
 

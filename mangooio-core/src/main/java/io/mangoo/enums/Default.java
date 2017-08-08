@@ -77,6 +77,13 @@ public enum Default {
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
     private final String value;
+    
+    private static class Constants {
+        public static final String FALSE = "false";
+        
+        private Constants() {
+        }
+    }
 
     Default (String value) {
         this.value = value;
@@ -93,16 +100,9 @@ public enum Default {
     public long toLong() {
         return Long.parseLong(this.value);
     }
-
+    
     @Override
     public String toString() {
         return this.value;
-    }
-    
-    private static class Constants {
-        public static final String FALSE = "false";
-        
-        private Constants() {
-        }
     }
 }

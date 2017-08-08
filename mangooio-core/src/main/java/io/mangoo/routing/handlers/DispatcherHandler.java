@@ -22,9 +22,9 @@ import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.listeners.MetricsListener;
-import io.mangoo.templating.TemplateEngine;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -57,7 +57,7 @@ public class DispatcherHandler implements HttpHandler {
     private String controllerClassName;
     private String controllerMethodName;
     private boolean hasRequestFilter;
-    private TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
+    private MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
     private String username;
     private String password;    
     private int limit;

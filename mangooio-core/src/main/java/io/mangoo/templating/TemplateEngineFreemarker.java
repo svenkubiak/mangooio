@@ -1,4 +1,4 @@
-package io.mangoo.templating.freemarker;
+package io.mangoo.templating;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,18 +31,18 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
+import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.models.Source;
 import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.templating.TemplateEngine;
-import io.mangoo.templating.freemarker.directives.FormDirective;
-import io.mangoo.templating.freemarker.directives.TokenDirective;
-import io.mangoo.templating.freemarker.methods.I18nMethod;
-import io.mangoo.templating.freemarker.methods.LocationMethod;
-import io.mangoo.templating.freemarker.methods.PrettyTimeMethod;
-import io.mangoo.templating.freemarker.methods.RouteMethod;
+import io.mangoo.templating.directives.FormDirective;
+import io.mangoo.templating.directives.TokenDirective;
+import io.mangoo.templating.methods.I18nMethod;
+import io.mangoo.templating.methods.LocationMethod;
+import io.mangoo.templating.methods.PrettyTimeMethod;
+import io.mangoo.templating.methods.RouteMethod;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 
@@ -51,7 +51,7 @@ import no.api.freemarker.java8.Java8ObjectWrapper;
  * @author svenkubiak
  *
  */
-public class TemplateEngineFreemarker implements TemplateEngine {
+public class TemplateEngineFreemarker implements MangooTemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
     private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final int MAX_CHARS = 65_536;
