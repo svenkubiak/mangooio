@@ -69,7 +69,7 @@ public enum Default {
     SMTP_SSL(Constants.FALSE),
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
     STYLESHEET_FOLDER("stylesheet"),
-    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.freemarker.TemplateEngineFreemarker"),
+    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.TemplateEngineFreemarker"),
     TEMPLATES_FOLDER("/templates/"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
     VERSION("unknown"),
