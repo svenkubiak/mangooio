@@ -1,16 +1,19 @@
 package io.mangoo.utils;
 
-import java.util.Collection;
+import java.io.IOException;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
-import io.advantageous.boon.json.JsonFactory;
-import io.advantageous.boon.json.JsonSerializer;
-import io.advantageous.boon.json.JsonSerializerFactory;
-import io.advantageous.boon.json.ObjectMapper;
 import io.mangoo.enums.Required;
+import io.mangoo.routing.handlers.DispatcherHandler;
 
 /**
  * 
@@ -18,27 +21,58 @@ import io.mangoo.enums.Required;
  *
  */
 public final class JsonUtils {
-    private static ObjectMapper objectMapper = JsonFactory.create();
+    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static ObjectMapper mapper = new ObjectMapper();
+    static {
+        mapper.setSerializationInclusion(Include.NON_NULL);
+    }
     
     private JsonUtils(){
     }
     
-    private static JsonSerializer getJsonSerializer() {
-        JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
-        jsonSerializerFactory.useAnnotations();
-        return jsonSerializerFactory.create();
+    /**
+     * @return Default object mapper
+     */
+    public static ObjectMapper getObjectMapper() {
+        return mapper;
     }
     
     /**
      * Converts a given object to a Json string
      * 
      * @param object The object to convert
-     * @return json string
+     * @return json string or null if conversion fails
      */
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        return getJsonSerializer().serialize(object).toString();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            LOG.error("Failed to convert object to json",  e);
+        }
+        
+        return json;
+    }
+    
+    /**
+     * Converts a given object to a Json string
+     * 
+     * @param object The object to convert
+     * @return json string or null if conversion fails
+     */
+    public static String toPrettyJson(Object object) {
+        Objects.requireNonNull(object, Required.OBJECT.toString());
+        
+        String json = null;
+        try {
+            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            LOG.error("Failed to convert object to json",  e);
+        }
+        
+        return json;
     }
     
     /**
@@ -60,31 +94,19 @@ public final class JsonUtils {
      * @param clazz The Class to convert to
      * @param <T> JavaDoc wants this, just ignore it
      * 
-     * @return The converted class
+     * @return The converted class or null if conversion fails
      */
     public static <T> T fromJson(String json, Class<T> clazz) {
         Objects.requireNonNull(json, Required.JSON.toString());
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        return objectMapper.fromJson(json, clazz);
-    }
-
-    /**
-     * Converts a given Json string to a collection of a given Class
-     * 
-     * @param json The json string to convert
-     * @param componentType The collection type to convert to
-     * @param clazz The Class to convert to
-     * @param <T> JavaDoc wants this, just ignore it
-     * @param <C> JavaDoc wants this, just ignore it
-     * 
-     * @return A collection of converted classes
-     */
-    public static <T extends Collection<C>, C> T fromJson(String json, Class<C> componentType, Class<T> clazz) {
-        Objects.requireNonNull(json, Required.JSON.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
-        Objects.requireNonNull(componentType, Required.COMPONENT_TYPE.toString());
-        
-        return objectMapper.readValue(json, clazz, componentType);
+        T object = null;
+        try {
+            object = mapper.readValue(json, clazz);
+        } catch (IOException e) {
+            LOG.error("Failed to convert json to object class",  e);
+        }
+    
+        return object;
     }
 }

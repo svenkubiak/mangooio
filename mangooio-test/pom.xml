@@ -23,14 +23,6 @@
 			<artifactId>junit-toolbox</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.doctester</groupId>
-			<artifactId>doctester-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.fluentlenium</groupId>
 			<artifactId>fluentlenium-junit</artifactId>
 		</dependency>

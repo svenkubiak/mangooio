@@ -1,7 +1,7 @@
 package io.mangoo.models;
 
-import io.advantageous.boon.json.annotations.JsonIgnore;
-import io.advantageous.boon.json.annotations.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 
