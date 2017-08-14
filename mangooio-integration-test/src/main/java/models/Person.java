@@ -13,7 +13,7 @@ public class Person {
     private final String lastname;
     private final int age;
 
-	@JsonCreator
+    @JsonCreator
     public Person(@JsonProperty("firstname") String firstname, @JsonProperty("lastname") String lastname, @JsonProperty("age") int age) {
         this.firstname = firstname;
         this.lastname = lastname;
