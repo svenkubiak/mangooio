@@ -13,6 +13,7 @@ import io.mangoo.interfaces.MangooLifecycle;
 public class Lifecycle implements MangooLifecycle {
     @Override
     public void applicationInitialized() {
+        //do nothing for now
     }
 
     @Override
