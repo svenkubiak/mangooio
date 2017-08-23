@@ -20,8 +20,8 @@ import com.icegreen.greenmail.util.GreenMail;
 
 import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
-import io.mangoo.email.Smtp;
 import io.mangoo.exceptions.MangooMailerException;
+import io.mangoo.test.email.SmtpMock;
 
 /**
  * 
@@ -30,11 +30,11 @@ import io.mangoo.exceptions.MangooMailerException;
  */
 public class MailTest {
     private static GreenMail greenMail;
-    private static Smtp smtp;
+    private static SmtpMock smtp;
 
     @BeforeClass
     public static void init() throws FolderException {
-        smtp = Application.getInstance(Smtp.class);
+        smtp = Application.getInstance(SmtpMock.class);
         smtp.start();
         greenMail = smtp.getGreenMail();
     }

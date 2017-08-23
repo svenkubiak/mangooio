@@ -1,4 +1,4 @@
-package io.mangoo.email;
+package io.mangoo.test.email;
 
 import java.util.Objects;
 
@@ -18,12 +18,12 @@ import io.mangoo.enums.Required;
  *
  */
 @Singleton
-public class Smtp {
+public class SmtpMock {
     private GreenMail greenMail;
     private final Config config;
 
     @Inject
-    public Smtp(Config config) {
+    public SmtpMock(Config config) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
     }
 
