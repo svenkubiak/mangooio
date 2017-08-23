@@ -368,7 +368,7 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
-				<version>1.57</version>
+				<version>1.58</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
