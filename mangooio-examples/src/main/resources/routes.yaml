@@ -15,3 +15,19 @@ routes:
 - method: GET
   url: /
   mapping: ApplicationController.index
+
+# ApplicationController
+- method: POST
+  url: /authenticate
+  mapping: AuthenticationController.authenticate
+
+- method: POST
+  url: /logout
+  mapping: AuthenticationController.logout
+
+# Resource path and resource files
+- method: PATH
+  url: /assets/
+
+- method: FILE
+  url: /robots.txt
