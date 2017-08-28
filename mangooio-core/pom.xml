@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.mangoo</groupId>
@@ -163,11 +164,6 @@
 							<uniqueVersions>false</uniqueVersions>
 						</DependencyConvergence>
 					</rules>
-					<rules>
-						<requireMavenVersion>
-							<version>3.2.5</version>
-						</requireMavenVersion>
-					</rules>
 				</configuration>
 				<executions>
 					<execution>
@@ -176,6 +172,19 @@
 							<goal>enforce</goal>
 						</goals>
 						<phase>validate</phase>
+					</execution>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>3.0</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
 					</execution>
 					<execution>
 						<id>enforce-ban-circular-dependencies</id>
