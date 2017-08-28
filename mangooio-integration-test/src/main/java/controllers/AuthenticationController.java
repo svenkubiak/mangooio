@@ -7,7 +7,6 @@ import io.mangoo.filters.oauth.OAuthLoginFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.utils.CodecUtils;
 
 public class AuthenticationController {
     private static final String SECRET = "MyVoiceIsMySecret";
@@ -27,7 +26,7 @@ public class AuthenticationController {
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
         if (authentication.hasAuthenticatedUser()) {
-            authentication.validLogin(authentication.getAuthenticatedUser(), "bar", CodecUtils.hexJBcrypt("bar"));
+            authentication.login(authentication.getAuthenticatedUser());
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
 
@@ -35,13 +34,12 @@ public class AuthenticationController {
     }
 
     public Response doLogin(Authentication authentication) {
-        authentication.validLogin("foo", "bar", CodecUtils.hexJBcrypt("bar"));
+        authentication.login("foo");
         return Response.withRedirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
-        authentication.validLogin("foo", "bar", CodecUtils.hexJBcrypt("bar"));
-        authentication.twoFactorAuthentication(true);
+        authentication.login("foo").twoFactorAuthentication(true);
         
         return Response.withRedirect("/");
     }

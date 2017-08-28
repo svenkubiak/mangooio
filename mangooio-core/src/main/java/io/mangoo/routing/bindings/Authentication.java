@@ -155,25 +155,36 @@ public class Authentication {
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
      *
-     * @param username The username to authenticate
+     * @param subject The subject to authenticate
      * @param password The clear text password
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String username, String password, String hash) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
+    public boolean validLogin(String subject, String password, String hash) {
+        Objects.requireNonNull(subject, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
         boolean authenticated = false;
-        if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
-            this.authenticatedUser = username;
+        if (!userHasLock(subject) && CodecUtils.checkJBCrypt(password, hash)) {
             authenticated = true;
         } else {
-            this.cache.increment(username);
+            this.cache.increment(subject);
         }
 
         return authenticated;
+    }
+    
+    /**
+     * Performs a login by setting the authenticated user to the given subject
+     * Please note, that calling validLogin is mandatory before this call!
+     * 
+     * @param subject The subject to login
+     * @return Authentication object
+     */
+    public Authentication login(String subject) {
+        this.authenticatedUser = subject;
+        return this;
     }
     
     /**
@@ -189,20 +200,23 @@ public class Authentication {
     
     /**
      * Sets the remember me functionality, default is false
-     */
-    
-    /**
-     * Sets the remember me functionality, default is false
      * 
-     * @param rememmber True for activatin remember me, false otherwise
+     * @param rememmber The state of remember to set
+     * @return Authentication object
      */
-    public void rememberMe(boolean rememmber) {
+    public Authentication rememberMe(boolean rememmber) {
         this.remember = rememmber;
+        return this;
     }
     
     /**
-     * Sets the requirement of the two factor authentication, default is false
+     * Sets the remember me functionality to true, default is false
+     * @return Authentication object
      */
+    public Authentication rememberMe() {
+        this.remember = true;
+        return this;
+    }
     
     /**
      * Sets the requirement of the two factor authentication, default is false

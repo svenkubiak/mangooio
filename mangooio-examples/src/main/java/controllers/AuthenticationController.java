@@ -27,7 +27,7 @@ public class AuthenticationController {
 		if (form.isValid()) {
 			User user = this.dataService.getUser("foo");
 			if (user != null && authentication.validLogin(form.get("username"), form.get("password"), user.getPassword())) {
-				flash.setSuccess("authentication");
+				authentication.login(form.get("username")).rememberMe();
 			} 
 		}
 		
