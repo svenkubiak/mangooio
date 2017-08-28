@@ -12,31 +12,33 @@ import models.User;
 import services.DataService;
 
 public class AuthenticationController {
+    private static final String PASSWORD = "password";
+	private static final String USERNAME = "username";
 	private DataService dataService;
 
-	@Inject
-	public AuthenticationController(DataService dataService) {
-		this.dataService = dataService;
-	}
-	
-	@FilterWith(AuthenticityFilter.class)
-	public Response authenticate(Form form, Flash flash, Authentication authentication) {
-		form.expectValue("username");
-		form.expectValue("password");
-		
-		if (form.isValid()) {
-			User user = this.dataService.getUser("foo");
-			if (user != null && authentication.validLogin(form.get("username"), form.get("password"), user.getPassword())) {
-				authentication.login(form.get("username")).rememberMe();
-			} 
-		}
-		
-		return Response.withRedirect("/");
-	}
-	
-	@FilterWith(AuthenticityFilter.class)
-	public Response logout(Authentication authentication) {
-		authentication.logout();
-		return Response.withRedirect("/");
-	}
+    @Inject
+    public AuthenticationController(DataService dataService) {
+        this.dataService = dataService;
+    }
+    
+    @FilterWith(AuthenticityFilter.class)
+    public Response authenticate(Form form, Flash flash, Authentication authentication) {
+        form.expectValue(USERNAME);
+        form.expectValue(PASSWORD);
+        
+        if (form.isValid()) {
+            User user = this.dataService.getUser();
+            if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
+                authentication.login(form.get(USERNAME)).rememberMe();
+            } 
+        }
+        
+        return Response.withRedirect("/");
+    }
+    
+    @FilterWith(AuthenticityFilter.class)
+    public Response logout(Authentication authentication) {
+        authentication.logout();
+        return Response.withRedirect("/");
+    }
 }
