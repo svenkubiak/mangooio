@@ -12,7 +12,7 @@ import models.User;
 import services.DataService;
 
 public class AuthenticationController {
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "password"; //NOSONAR
 	private static final String USERNAME = "username";
 	private DataService dataService;
 
