@@ -19,7 +19,7 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.CodecUtils;
 
 /**
- * Authentication filter for administrative URLs
+ * Authentication filter for administrative area
  *
  * @author svenkubiak
  *

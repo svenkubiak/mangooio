@@ -38,7 +38,7 @@ import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.CodecUtils;
 
 /**
- * Controller class for administrative URLs
+ * Controller class for administrative area
  *
  * @author svenkubiak
  *

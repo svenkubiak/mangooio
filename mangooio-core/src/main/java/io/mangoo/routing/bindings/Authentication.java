@@ -127,7 +127,7 @@ public class Authentication {
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
      * 
-     * @deprecated  As of release 4.3.0, replaced by {@link #validLogin(String, String, String)}
+     * @deprecated  As of release 4.3.0, replaced by {@link #validLogin(String, String, String)}, will be removed in 5.0.0
      *
      * @param username The username to authenticate
      * @param password The clear text password
@@ -189,7 +189,7 @@ public class Authentication {
     
     /**
      * Sets the remember me functionality
-     * @deprecated  As of release 4.3.0, replaced by {@link #rememberMe(boolean)}
+     * @deprecated As of release 4.3.0, replaced by {@link #rememberMe(boolean)}, will be removed in 5.0.0
      * 
      * @param remember true or false
      */
