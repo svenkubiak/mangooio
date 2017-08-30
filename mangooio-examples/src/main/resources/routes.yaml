@@ -16,7 +16,11 @@ routes:
   url: /
   mapping: ApplicationController.index
 
-# ApplicationController
+# AuthenticationController
+- method: GET
+  url: /login
+  mapping: AuthenticationController.login
+
 - method: POST
   url: /authenticate
   mapping: AuthenticationController.authenticate

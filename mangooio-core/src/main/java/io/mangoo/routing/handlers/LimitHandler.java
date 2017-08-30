@@ -2,7 +2,6 @@ package io.mangoo.routing.handlers;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,32 +45,16 @@ public class LimitHandler implements HttpHandler {
             String key = getCacheKey(exchange);
             if (StringUtils.isNotBlank(key)) {
                 if (this.cache.increment(key).get() > this.attachment.getLimit()) {
-                    addRateLimitHeaders(exchange, ((AtomicInteger) this.cache.get(key)).get(), this.attachment.getLimit());
                     endRequest(exchange); 
                 } else {
-                    addRateLimitHeaders(exchange, ((AtomicInteger) this.cache.get(key)).get(), this.attachment.getLimit());
                     nextHandler(exchange);
                 } 
             } else {
-                addRateLimitHeaders(exchange, this.cache.get(key), this.attachment.getLimit());
                 endRequest(exchange);                 
             }
         } else {
             nextHandler(exchange);
         }
-    }
-    
-    /**
-     * Adds an X-RateLimit and X-RateLimit-Remaining header to the response
-     * 
-     * @param exchange The HttpServerExchange
-     * @param used The already used requests per minute
-     * @param rateLimit The total request limit per minute
-     */
-    private void addRateLimitHeaders(HttpServerExchange exchange, int used, int rateLimit) {
-        int remaining = rateLimit - used;
-        exchange.getResponseHeaders().add(Header.X_RATELIMIT.toHttpString(), rateLimit);
-        exchange.getResponseHeaders().add(Header.X_RATELIMIT_REMAINING.toHttpString(), (remaining >= 0) ? remaining : 0);
     }
 
     /**

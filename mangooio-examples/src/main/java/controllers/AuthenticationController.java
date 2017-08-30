@@ -21,6 +21,10 @@ public class AuthenticationController {
         this.dataService = dataService;
     }
     
+    public Response login() {
+        return Response.withOk();
+    }
+    
     @FilterWith(AuthenticityFilter.class)
     public Response authenticate(Form form, Flash flash, Authentication authentication) {
         form.expectValue(USERNAME);
@@ -29,11 +33,15 @@ public class AuthenticationController {
         if (form.isValid()) {
             User user = this.dataService.getUser();
             if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
-                authentication.login(form.get(USERNAME)).rememberMe();
+                authentication
+                		.login(form.get(USERNAME))
+                		.rememberMe(form.getBoolean("remember").orElse(false));
+
+                return Response.withRedirect("/");
             } 
         }
         
-        return Response.withRedirect("/");
+        return Response.withRedirect("/login");
     }
     
     @FilterWith(AuthenticityFilter.class)
