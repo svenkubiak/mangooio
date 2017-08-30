@@ -35,7 +35,7 @@ public class AuthenticationController {
             if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
                 authentication
                 		.login(form.get(USERNAME))
-                		.rememberMe(form.getBoolean("remember").orElse(Boolean.TRUE));
+                		.rememberMe(form.getBoolean("remember").orElse(Boolean.FALSE));
 
                 return Response.withRedirect("/");
             } 
