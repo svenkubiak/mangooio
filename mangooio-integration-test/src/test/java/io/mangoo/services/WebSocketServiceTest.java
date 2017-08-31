@@ -1,5 +1,6 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -27,7 +28,7 @@ import io.undertow.websockets.core.WebSockets;
  * @author svenkubiak
  *
  */
-public class WebSocketManagerTest {
+public class WebSocketServiceTest {
     private static String eventData;
     private static final String COOKIE_NAME = "TEST-AUTH";
     private static final String VALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooio";
@@ -36,41 +37,41 @@ public class WebSocketManagerTest {
     @Test
     public void testAddChannel() {
         //given
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
         when(channel.getUrl()).thenReturn("/websocket");
 
         //when
-        webSocketManager.removeChannels("/websocket");
-        webSocketManager.addChannel(channel);
+        webSocketService.removeChannels("/websocket");
+        webSocketService.addChannel(channel);
 
         //then
-        assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
-        assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(1));
+        assertThat(webSocketService.getChannels("/websocket"), not(nullValue()));
+        assertThat(webSocketService.getChannels("/websocket").size(), equalTo(1));
     }
 
     @Test
     public void testRemoveChannel() {
         //given
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
         when(channel.getUrl()).thenReturn("/websocket");
 
         //when
-        webSocketManager.addChannel(channel);
-        webSocketManager.removeChannels("/websocket");
+        webSocketService.addChannel(channel);
+        webSocketService.removeChannels("/websocket");
 
         //then
-        assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
-        assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(0));
+        assertThat(webSocketService.getChannels("/websocket"), not(nullValue()));
+        assertThat(webSocketService.getChannels("/websocket").size(), equalTo(0));
     }
 
     @Test
     public void testCloseChannel() throws Exception {
         //given
         final Config config = Application.getInstance(Config.class);
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
-        webSocketManager.removeChannels("/websocket");
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
+        webSocketService.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
@@ -94,19 +95,19 @@ public class WebSocketManagerTest {
             }
         }).get(5, TimeUnit.SECONDS);
 
-        webSocketManager.close("/websocket");
+        webSocketService.close("/websocket");
 
         //then
-        assertThat(webSocketManager.getChannels("/websocket"), not(nullValue()));
-        assertThat(webSocketManager.getChannels("/websocket").size(), equalTo(0));
+        assertThat(webSocketService.getChannels("/websocket"), not(nullValue()));
+        assertThat(webSocketService.getChannels("/websocket").size(), equalTo(0));
     }
 
     @Test
     public void testSendData() throws Exception {
         //given
         final Config config = Application.getInstance(Config.class);
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
-        webSocketManager.removeChannels("/websocket");
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
+        webSocketService.removeChannels("/websocket");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
@@ -130,8 +131,8 @@ public class WebSocketManagerTest {
                 eventData = data;
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);
-        webSocketManager.getChannels("/websocket").forEach(channel -> {
+
+        webSocketService.getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -140,19 +141,17 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(500);
 
         //then
-        assertThat(eventData, not(nullValue()));
-        assertThat(eventData, equalTo(data));
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
     @Test
     public void testSendDataWithValidAuthentication() throws Exception {
         //given
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final Config config = Application.getInstance(Config.class);
-        webSocketManager.removeChannels("/websocketauth");
+        webSocketService.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
@@ -180,8 +179,8 @@ public class WebSocketManagerTest {
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);
-        webSocketManager.getChannels("/websocketauth").forEach(channel -> {
+
+        webSocketService.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -190,19 +189,17 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(500);
 
         //then
-        assertThat(eventData, not(nullValue()));
-        assertThat(eventData, equalTo(data));
+        await().atMost(4,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
     @Test
     public void testSendDataWithInvalidAuthentication() throws Exception {
         //given
-        final WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final Config config = Application.getInstance(Config.class);
-        webSocketManager.removeChannels("/websocketauth");
+        webSocketService.removeChannels("/websocketauth");
         final WebSocketClientFactory factory = new WebSocketClientFactory();
         factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
@@ -230,8 +227,8 @@ public class WebSocketManagerTest {
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);
-        webSocketManager.getChannels(url).forEach(channel -> {
+
+        webSocketService.getChannels(url).forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -240,10 +237,8 @@ public class WebSocketManagerTest {
                 e.printStackTrace();
             }
          });
-        Thread.sleep(500);
 
         //then
-        assertThat(eventData, nullValue());
-        assertThat(eventData, not(equalTo(data)));
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
     }
 }

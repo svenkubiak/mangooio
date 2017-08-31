@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -9,7 +9,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
-import io.mangoo.exceptions.MangooBusException;
+import io.mangoo.exceptions.MangooEventBusException;
+import io.mangoo.services.EventBusService;
 import io.mangoo.test.utils.ConcurrentRunner;
 
 /**
@@ -18,13 +19,13 @@ import io.mangoo.test.utils.ConcurrentRunner;
  *
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class BusManagerTest {
+public class EventBusServiceTest {
 
-    @Test(expected = MangooBusException.class)
-    public void testAEventBus() throws MangooBusException {
+    @Test(expected = MangooEventBusException.class)
+    public void testAEventBus() throws MangooEventBusException {
         //given
         TestListener testListener = new TestListener();
-        BusManager busManager = Application.getInstance(BusManager.class);
+        EventBusService busManager = Application.getInstance(EventBusService.class);
         busManager.register(testListener);
         
         //when
@@ -50,7 +51,7 @@ public class BusManagerTest {
         Runnable runnable = () -> {
             //given
             TestListener testListener = new TestListener();
-            BusManager busManager = Application.getInstance(BusManager.class);
+            EventBusService busManager = Application.getInstance(EventBusService.class);
             busManager.register(testListener);
             
             //when

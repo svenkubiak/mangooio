@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -21,16 +21,15 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
 /**
  *
  * @author svenkubiak
- * @deprecated  As of release 4.6.0, replaced by io.mangoo.services.ServerSentEventService
- *              Will be removed in 5.0.0
+ *
  */
 @Singleton
-public class ServerEventManager {
+public class ServerSentEventService {
     private final Cache cache;
     private final RequestHelper requestHelper;
     
     @Inject
-    private ServerEventManager(CacheProvider cacheProvider, RequestHelper requestHelper) {
+    private ServerSentEventService(CacheProvider cacheProvider, RequestHelper requestHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         Objects.requireNonNull(cacheProvider, Required.REQUEST_HELPER.toString());
         

@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import com.google.common.eventbus.Subscribe;
 

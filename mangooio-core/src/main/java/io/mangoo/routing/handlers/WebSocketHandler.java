@@ -11,8 +11,8 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
-import io.mangoo.managers.WebSocketManager;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
+import io.mangoo.services.WebSocketService;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
@@ -57,7 +57,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
                 channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
-                Application.getInstance(WebSocketManager.class).addChannel(channel);
+                Application.getInstance(WebSocketService.class).addChannel(channel);
             } else {
                 IOUtils.closeQuietly(channel);
             }
@@ -65,7 +65,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
             channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
             channel.resumeReceives();
             channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
-            Application.getInstance(WebSocketManager.class).addChannel(channel);
+            Application.getInstance(WebSocketService.class).addChannel(channel);
         }
     }
 }

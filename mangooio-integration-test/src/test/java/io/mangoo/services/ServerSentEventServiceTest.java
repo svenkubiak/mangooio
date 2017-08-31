@@ -1,10 +1,13 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -20,6 +23,7 @@ import org.mockito.Mockito;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.services.ServerSentEventService;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
 /**
@@ -27,7 +31,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  * @author svenkubiak
  *
  */
-public class ServerEventManagerTest {
+public class ServerSentEventServiceTest {
     private static String eventData;
     private static final String COOKIE_NAME = "TEST-AUTH";
     private static final String VALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooio";
@@ -36,40 +40,40 @@ public class ServerEventManagerTest {
     @Test
     public void testAddConnection() {
         //given
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
         when(serverSentEventConnection.getQueryString()).thenReturn(null);
 
         //when
-        serverEventManager.addConnection(serverSentEventConnection);
+        serverSentEventService.addConnection(serverSentEventConnection);
 
         //then
-        assertThat(serverEventManager.getConnections("/foo"), not(nullValue()));
-        assertThat(serverEventManager.getConnections("/foo").size(), equalTo(1));
+        assertThat(serverSentEventService.getConnections("/foo"), not(nullValue()));
+        assertThat(serverSentEventService.getConnections("/foo").size(), equalTo(1));
     }
 
     @Test
     public void testRemoveConnection() {
         //given
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
         when(serverSentEventConnection.getRequestURI()).thenReturn("/foo");
-        serverEventManager.addConnection(serverSentEventConnection);
+        ServerSentEventService.addConnection(serverSentEventConnection);
 
         //when
-        serverEventManager.removeConnections("/foo");
+        ServerSentEventService.removeConnections("/foo");
 
         //then
-        assertThat(serverEventManager.getConnections("/foo"), not(nullValue()));
-        assertThat(serverEventManager.getConnections("/foo").size(), equalTo(0));
+        assertThat(ServerSentEventService.getConnections("/foo"), not(nullValue()));
+        assertThat(ServerSentEventService.getConnections("/foo").size(), equalTo(0));
     }
 
     @Test
     public void testCloseConnection() throws InterruptedException {
         //given
         final Config config = Application.getInstance(Config.class);
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
 
         //when
         final WebTarget target = ClientBuilder.newBuilder()
@@ -78,20 +82,18 @@ public class ServerEventManagerTest {
                 .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         final EventSource eventSource = EventSource.target(target).build();
         eventSource.open();
-        Thread.sleep(500);
-        serverEventManager.close("/sse");
+        ServerSentEventService.close("/sse");
         eventSource.close();
-        Thread.sleep(500);
 
         //then
-        assertThat(serverEventManager.getConnections("/sse"), not(nullValue()));
-        assertThat(serverEventManager.getConnections("/sse").size(), equalTo(0));
+        assertThat(ServerSentEventService.getConnections("/sse"), not(nullValue()));
+        assertThat(ServerSentEventService.getConnections("/sse").size(), equalTo(0));
     }
 
     @Test
     public void testSendData() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data FTW!";
         eventData = null;
@@ -110,20 +112,17 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(500);
-        serverEventManager.send("/sse", data);
-        Thread.sleep(500);
+        ServerSentEventService.send("/sse", data);
 
         //then
-        assertThat(eventData, not(nullValue()));
-        assertThat(eventData, equalTo(data));
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
         eventSource.close();
     }
 
     @Test
     public void testSendDataWithValidAuthentication() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
@@ -144,20 +143,17 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(500);
-        serverEventManager.send("/sseauth", data);
-        Thread.sleep(500);
+        serverSentEventService.send("/sseauth", data);
 
         //then
-        assertThat(eventData, not(nullValue()));
-        assertThat(eventData, equalTo(data));
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
         eventSource.close();
     }
 
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException {
         //given
-        final ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
 
@@ -179,13 +175,10 @@ public class ServerEventManagerTest {
         };
         eventSource.register(listener);
         eventSource.open();
-        Thread.sleep(500);
-        serverEventManager.send("/sseauth", data);
-        Thread.sleep(500);
+        serverSentEventService.send("/sseauth", data);
 
         //then
-        assertThat(eventData, nullValue());
-        assertThat(eventData, not(equalTo(data)));
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
         eventSource.close();
     }
 }

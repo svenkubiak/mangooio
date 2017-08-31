@@ -10,8 +10,8 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
-import io.mangoo.managers.ServerEventManager;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
+import io.mangoo.services.ServerSentEventService;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.HeaderValues;
@@ -45,13 +45,13 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             }
 
             if (this.requestHelper.hasValidAuthentication(header)) {
-                Application.getInstance(ServerEventManager.class).addConnection(connection);
+                Application.getInstance(ServerSentEventService.class).addConnection(connection);
                 connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
             } else {
                 IOUtils.closeQuietly(connection);
             }
         } else {
-            Application.getInstance(ServerEventManager.class).addConnection(connection);
+            Application.getInstance(ServerSentEventService.class).addConnection(connection);
             connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
         }
     }

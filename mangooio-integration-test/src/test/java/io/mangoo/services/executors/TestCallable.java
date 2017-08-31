@@ -1,4 +1,4 @@
-package io.mangoo.managers.executors;
+package io.mangoo.services.executors;
 
 import java.util.concurrent.Callable;
 

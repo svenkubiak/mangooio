@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
@@ -12,17 +12,15 @@ import io.mangoo.exceptions.MangooEventBusException;
 /**
 *
 * @author svenkubiak
-* @deprecated  As of release 4.6.0, replaced by io.mangoo.services.EventBusService
-*              Will be removed in 5.0.0
 *
 */
 @Singleton
-public class BusManager {
+public class EventBusService {
     private EventBus eventBus;
     private AtomicLong listeners = new AtomicLong();
     private AtomicLong events = new AtomicLong();
     
-    public BusManager() {
+    public EventBusService() {
         this.eventBus = new EventBus();
     }
     

@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -9,23 +9,24 @@ import java.util.concurrent.Future;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.managers.executors.TestCallable;
-import io.mangoo.managers.executors.TestRunnable;
+import io.mangoo.services.ConcurrentService;
+import io.mangoo.services.executors.TestCallable;
+import io.mangoo.services.executors.TestRunnable;
 
 /**
  * 
  * @author Kubiak
  *
  */
-public class ExecutionManagerTest {
+public class ConcurrentServicesTest {
 
     @Test
     public void testCallableWithFuture() throws InterruptedException, ExecutionException {
         //given
-        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
+        ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
         
         //when
-        Future<String> future = executionManager.submit(new TestCallable());
+        Future<String> future = concurrentService.submit(new TestCallable());
         
         //then
         assertThat(future.get(), equalTo("from callable"));
@@ -34,11 +35,11 @@ public class ExecutionManagerTest {
     @Test
     public void testRunnableWithResult() throws InterruptedException, ExecutionException {
         //given
-        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
+    		ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
         
         //when
         String success = "SUCCESS";
-        Future<String> future = executionManager.submit(new TestRunnable(), success);
+        Future<String> future = concurrentService.submit(new TestRunnable(), success);
         
         //then
         assertThat(future.get(), equalTo("SUCCESS"));
@@ -47,9 +48,9 @@ public class ExecutionManagerTest {
     @Test
     public void testRunnableExecute() {
         //given
-        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
+    		ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
         
         //then
-        executionManager.execute(new TestRunnable());
+    		concurrentService.execute(new TestRunnable());
     }
 }

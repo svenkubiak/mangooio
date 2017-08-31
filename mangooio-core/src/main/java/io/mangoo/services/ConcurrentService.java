@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -15,16 +15,14 @@ import io.mangoo.enums.Required;
 /**
  *
  * @author svenkubiak
- * @deprecated  As of release 4.6.0, replaced by io.mangoo.services.ConcurrentService
- *              Will be removed in 5.0.0
  *
  */
 @Singleton
-public class ExecutionManager {
+public class ConcurrentService {
     private final ExecutorService executorService;
 
     @Inject
-    public ExecutionManager(Config config) {
+    public ConcurrentService(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         this.executorService = Executors.newFixedThreadPool(config.getExecutionPool());
     }

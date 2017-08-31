@@ -8,9 +8,9 @@ import com.netflix.governator.lifecycle.LifecycleManager;
 
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
-import io.mangoo.managers.ExecutionManager;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.services.ConcurrentService;
 
 /**
  * 
@@ -40,7 +40,7 @@ public class Shutdown extends Thread {
     }
 
     private static void stopExecutionManager() {
-        Application.getInstance(ExecutionManager.class).shutdown();
+        Application.getInstance(ConcurrentService.class).shutdown();
     }
 
     private static void stopScheduler() {

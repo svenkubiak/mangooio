@@ -15,9 +15,6 @@ import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.interfaces.MangooTemplateEngine;
-import io.mangoo.managers.ExecutionManager;
-import io.mangoo.managers.ServerEventManager;
-import io.mangoo.managers.WebSocketManager;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.providers.TemplateEngineProvider;
@@ -34,6 +31,9 @@ import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.SchedulerFactory;
+import io.mangoo.services.ConcurrentService;
+import io.mangoo.services.ServerSentEventService;
+import io.mangoo.services.WebSocketService;
 
 /**
  * 
@@ -144,28 +144,28 @@ public class InjectionTest {
     @Test
     public void testExecutionManager() {
         //given
-        ExecutionManager executionManager = Application.getInstance(ExecutionManager.class);
+        ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
         
         //then
-        assertThat(executionManager, not(nullValue()));
+        assertThat(concurrentService, not(nullValue()));
     }
     
     @Test
     public void testWebSocketManager() {
         //given
-        WebSocketManager webSocketManager = Application.getInstance(WebSocketManager.class);
+        WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         
         //then
-        assertThat(webSocketManager, not(nullValue()));
+        assertThat(webSocketService, not(nullValue()));
     }
     
     @Test
     public void testServerEventManager() {
         //given
-        ServerEventManager serverEventManager = Application.getInstance(ServerEventManager.class);
+        ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         
         //then
-        assertThat(serverEventManager, not(nullValue()));
+        assertThat(serverSentEventService, not(nullValue()));
     }
     
     @Test

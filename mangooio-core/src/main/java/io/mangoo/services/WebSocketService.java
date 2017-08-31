@@ -1,4 +1,4 @@
-package io.mangoo.managers;
+package io.mangoo.services;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -20,16 +20,15 @@ import io.undertow.websockets.core.WebSocketChannel;
 /**
  *
  * @author svenkubiak
- * @deprecated  As of release 4.6.0, replaced by io.mangoo.services.WebSocketService
- *              Will be removed in 5.0.0
+ *
  */
 @Singleton
-public class WebSocketManager {
+public class WebSocketService {
     private final Cache cache;
     private final RequestHelper requestHelper;
     
     @Inject
-    private WebSocketManager(CacheProvider cacheProvider,  RequestHelper requestHelper) {
+    private WebSocketService(CacheProvider cacheProvider,  RequestHelper requestHelper) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         
         this.cache = cacheProvider.getCache(CacheName.WSS);
