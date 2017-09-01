@@ -62,8 +62,8 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Ehcache](http://www.ehcache.org/) - Cacheing
 * [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
-* [Boon JSON](https://github.com/boonproject/boon), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
-* [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [Mockito](http://mockito.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
+* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
+* [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong hashing
 * [Bouncy Castle](https://www.bouncycastle.org/) - Strong cryptography
 * And many more ...
