@@ -191,7 +191,7 @@ public class WebSocketServiceTest {
          });
 
         //then
-        await().atMost(4,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
+        await().atMost(5,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
     @Test

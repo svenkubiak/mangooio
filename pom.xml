@@ -24,7 +24,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.8.2</log4j.version>
+		<log4j.version>2.9.0</log4j.version>
 		<maven.version>3.5.0</maven.version>
 		<httpcomponents.version>4.5.3</httpcomponents.version>
 		<scribejava.version>4.2.0</scribejava.version>
@@ -174,7 +174,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>1.4.19.Final</version>
+				<version>1.4.20.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
