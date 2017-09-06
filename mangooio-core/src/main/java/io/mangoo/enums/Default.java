@@ -52,6 +52,7 @@ public enum Default {
     JAVASCRIPT_FOLDER("javascript"),
     JBCRYPT_ROUNDS("12"),
     LANGUAGE("en"),
+    LIFECYCLE_CLASS("conf.Lifecycle"),
     LOGO_FILE("logo.txt"),
     MODULE_CLASS("conf.Module"),
     NUMBER_FORMAT("0.######"),
@@ -76,14 +77,14 @@ public enum Default {
     VERSION_PROPERTIES("version.properties"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
-    private final String value;
-    
     private static class Constants {
         public static final String FALSE = "false";
         
         private Constants() {
         }
     }
+    
+    private final String value;
 
     Default (String value) {
         this.value = value;

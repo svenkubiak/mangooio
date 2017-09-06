@@ -22,12 +22,15 @@ import utils.RandomUtils;
 public class Lifecycle implements MangooLifecycle {
     private static final int MONGODB_PORT = 29019;
 
-    @Override
-    public void applicationInitialized() {
+	@Override
+	public void applicationInvoked() {
         if (!Application.inProdMode()) {
             EmbeddedMongo.DB.port(MONGODB_PORT).start();
         }
-        
+	}
+    
+    @Override
+    public void applicationInitialized() {
         final DataService dataService = Application.getInstance(DataService.class);
         dataService.dropDatabase();
         for (int i=1; i <= Constants.WORLDS; i++) {

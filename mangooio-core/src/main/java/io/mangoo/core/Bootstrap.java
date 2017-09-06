@@ -349,7 +349,7 @@ public class Bootstrap {
                 this.error = true;
             }
         }
-
+        
         return modules;
     }
 
@@ -416,6 +416,16 @@ public class Bootstrap {
                     }
                 }
             }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void applicationInvoked() {
+        try {
+            Class<MangooLifecycle> lifecycle = (Class<MangooLifecycle>) Class.forName(Default.LIFECYCLE_CLASS.toString());
+            lifecycle.newInstance().applicationInvoked();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

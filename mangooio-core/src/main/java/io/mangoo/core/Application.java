@@ -35,6 +35,7 @@ public final class Application {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
+        bootstrap.applicationInvoked();
         injector = bootstrap.prepareInjector();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();

@@ -7,8 +7,12 @@ package io.mangoo.interfaces;
  */
 public interface MangooLifecycle {
     /**
-     * Executed after config is loaded and injector is initialized
-     *
+     * Executed before Bootstrapping starts, right after Framework main method is invoked
+     * Neither Google Guice injector or any other Framework helpers are available at this time!
+     */
+    void applicationInvoked();
+    /**
+     * Executed after config is loaded and Google Guice injector is initialized
      */
     void applicationInitialized();
 
