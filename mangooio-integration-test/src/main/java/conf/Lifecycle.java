@@ -6,24 +6,34 @@ import io.mangoo.interfaces.MangooLifecycle;
 
 @Singleton
 public class Lifecycle implements MangooLifecycle {
+	private int initialize;
+	private int started;
 
     @Override
     public void applicationInitialized() {
-        // Do nothing for now
+    		this.initialize++;
     }
 
     @Override
     public void applicationStarted() {
-        // Do nothing for now
+    		this.started++;
     }
 
     @Override
     public void applicationStopped() {
-        // Do nothing for now
+    		// do nothing for now
     }
 
 	@Override
 	public void applicationInvoked() {
-		// Do nothing for now
+		// do nothing for now
+	}
+
+	public int getInitialize() {
+		return initialize;
+	}
+
+	public int getStarted() {
+		return started;
 	}
 }
