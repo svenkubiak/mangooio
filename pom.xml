@@ -454,7 +454,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>mangooio-mongodb-extension</artifactId>
-				<version>3.2.0</version>
+				<version>3.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
