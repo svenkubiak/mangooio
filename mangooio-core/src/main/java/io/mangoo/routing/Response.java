@@ -28,7 +28,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
-public final class Response {
+public class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
     private final Map<HttpString, String> headers = new HashMap<>();
     private final Map<String, Object> content = new HashMap<>();

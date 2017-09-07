@@ -170,11 +170,11 @@ public class RequestHelper {
      */
     public Optional<OAuthProvider> getOAuthProvider(String oauth) {
         OAuthProvider oAuthProvider = null;
-        if (OAuthProvider.FACEBOOK.toString().equals(oauth)) {
+        if (OAuthProvider.FACEBOOK.toString().equalsIgnoreCase(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
-        } else if (OAuthProvider.TWITTER.toString().equals(oauth)) {
+        } else if (OAuthProvider.TWITTER.toString().equalsIgnoreCase(oauth)) {
             oAuthProvider = OAuthProvider.TWITTER;
-        } else if (OAuthProvider.GOOGLE.toString().equals(oauth)) {
+        } else if (OAuthProvider.GOOGLE.toString().equalsIgnoreCase(oauth)) {
             oAuthProvider = OAuthProvider.GOOGLE;
         }
 
