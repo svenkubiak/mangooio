@@ -10,7 +10,6 @@ import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooEventBusException;
-import io.mangoo.services.EventBusService;
 import io.mangoo.test.utils.ConcurrentRunner;
 
 /**

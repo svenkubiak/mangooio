@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -291,6 +292,12 @@
 				<groupId>com.googlecode.junit-toolbox</groupId>
 				<artifactId>junit-toolbox</artifactId>
 				<version>2.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.mockito</groupId>
+						<artifactId>mockito-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -322,6 +329,11 @@
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-sse</artifactId>
 				<version>2.25.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>2.9.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>

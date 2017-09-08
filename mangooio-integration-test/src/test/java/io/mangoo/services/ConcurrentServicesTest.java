@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
-import io.mangoo.services.ConcurrentService;
 import io.mangoo.services.executors.TestCallable;
 import io.mangoo.services.executors.TestRunnable;
 

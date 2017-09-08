@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.services.ServerSentEventService;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
 /**
