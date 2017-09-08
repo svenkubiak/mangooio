@@ -27,7 +27,7 @@
 		<maven.version>3.5.0</maven.version>
 		<httpcomponents.version>4.5.3</httpcomponents.version>
 		<scribejava.version>4.2.0</scribejava.version>
-		<jackson.version>2.9.0.pr4</jackson.version>
+		<jackson.version>2.9.1</jackson.version>
 		<fluentlenium.version>3.3.0</fluentlenium.version>
 	</properties>
 	<modules>
