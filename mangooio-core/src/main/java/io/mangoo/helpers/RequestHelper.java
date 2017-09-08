@@ -125,7 +125,7 @@ public class RequestHelper {
      * Creates an OAuthService for authentication a user with OAuth
      *
      * @param oAuthProvider The OAuth provider Enum
-     * @return An OAuthService object or null if creating failed
+     * @return An Optional OAuthService
      */
     @SuppressWarnings("rawtypes")
     public Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
@@ -256,7 +256,7 @@ public class RequestHelper {
      * @param uri The URI to generate from
      * @return The generated URL
      */
-    private String getURL(URI uri) {
+    public String getURL(URI uri) {
         final StringBuilder buffer = new StringBuilder();
         buffer.append(uri.getPath());
         

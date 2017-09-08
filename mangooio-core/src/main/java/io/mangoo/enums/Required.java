@@ -43,6 +43,7 @@ public enum Required {
     FROM("from can not be null"),
     GROUP_NAME("group name can not be null"),
     HASH("hash can not be null"),
+    HEADER("header can not be null"),
     HEADERS("headers can not be null"),
     HTTP_HANDLER("httpHandler can not be null"),
     HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),

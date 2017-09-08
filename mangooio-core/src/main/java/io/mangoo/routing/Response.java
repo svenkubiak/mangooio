@@ -126,6 +126,11 @@ public class Response {
     public Map<HttpString, String> getHeaders() {
         return headers;
     }
+    
+    public String getHeader(HttpString header) {
+        Objects.requireNonNull(header, Required.HEADER.toString());
+        return headers.get(header);
+    }
 
     /**
      * Creates a response object with HTTP status code 200
