@@ -131,7 +131,7 @@ public class WebSocketServiceTest {
                 eventData = data;
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);
+
         webSocketService.getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -179,7 +179,9 @@ public class WebSocketServiceTest {
                 }
             }
         }).get(5, TimeUnit.SECONDS);
-        Thread.sleep(500);
+
+        //then
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(client, not(equalTo(null))));
         webSocketService.getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -189,8 +191,6 @@ public class WebSocketServiceTest {
                 e.printStackTrace();
             }
          });
-
-        //then
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
