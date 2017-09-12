@@ -419,7 +419,7 @@ public class Bootstrap {
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     public void applicationInvoked() {
         try {
             Class<MangooLifecycle> lifecycle = (Class<MangooLifecycle>) Class.forName(Default.LIFECYCLE_CLASS.toString());

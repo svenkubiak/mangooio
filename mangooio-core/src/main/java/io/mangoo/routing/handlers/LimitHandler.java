@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import java.net.InetSocketAddress;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -83,12 +84,12 @@ public class LimitHandler implements HttpHandler {
         }
         
         if (StringUtils.isNotBlank(host)) {
-            host = host.toLowerCase();
+            host = host.toLowerCase(Locale.ENGLISH);
         }
         
         String url = exchange.getRequestURL();
         if (StringUtils.isNotBlank(url)) {
-            url = url.toLowerCase();
+            url = url.toLowerCase(Locale.ENGLISH);
         }
         
         return url + host;

@@ -20,37 +20,37 @@ import utils.RandomUtils;
  */
 @Singleton
 public class Lifecycle implements MangooLifecycle {
-	private static final int MONGODB_PORT = 29019;
+    private static final int MONGODB_PORT = 29019;
 
-	@Override
-	public void applicationInvoked() {
-		if (!Application.inProdMode()) {
-			EmbeddedMongo.DB.port(MONGODB_PORT).start();
-		}
-	}
+    @Override
+    public void applicationInvoked() {
+        if (!Application.inProdMode()) {
+            EmbeddedMongo.DB.port(MONGODB_PORT).start();
+        }
+    }
 
-	@Override
-	public void applicationInitialized() {
-		final DataService dataService = Application.getInstance(DataService.class);
-		dataService.dropDatabase();
-		for (int i = 1; i <= Constants.WORLDS; i++) {
-			final World world = new World(i, RandomUtils.getRandomId());
-			dataService.save(world);
-		}
+    @Override
+    public void applicationInitialized() {
+        final DataService dataService = Application.getInstance(DataService.class);
+        dataService.dropDatabase();
+        for (int i = 1; i <= Constants.WORLDS; i++) {
+            final World world = new World(i, RandomUtils.getRandomId());
+            dataService.save(world);
+        }
 
-		for (int i = 1; i <= Constants.FORTUNES; i++) {
-			final Fortune fortune = new Fortune(i, UUID.randomUUID().toString());
-			dataService.save(fortune);
-		}
-	}
+        for (int i = 1; i <= Constants.FORTUNES; i++) {
+            final Fortune fortune = new Fortune(i, UUID.randomUUID().toString());
+            dataService.save(fortune);
+        }
+    }
 
-	@Override
-	public void applicationStarted() {
-		// do nothing for now
-	}
+    @Override
+    public void applicationStarted() {
+        // do nothing for now
+    }
 
-	@Override
-	public void applicationStopped() {
-		// do nothing for now
-	}
+    @Override
+    public void applicationStopped() {
+        // do nothing for now
+    }
 }
