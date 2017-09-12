@@ -16,6 +16,7 @@ import io.mangoo.exceptions.MangooEventBusException;
 *              Will be removed in 5.0.0
 *
 */
+@Deprecated
 @Singleton
 public class BusManager {
     private EventBus eventBus;

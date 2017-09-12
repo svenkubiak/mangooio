@@ -13,8 +13,8 @@ import services.DataService;
 
 public class AuthenticationController {
     private static final String PASSWORD = "password"; //NOSONAR
-	private static final String USERNAME = "username";
-	private DataService dataService;
+    private static final String USERNAME = "username";
+    private DataService dataService;
 
     @Inject
     public AuthenticationController(DataService dataService) {
@@ -34,8 +34,8 @@ public class AuthenticationController {
             User user = this.dataService.getUser();
             if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
                 authentication
-                		.login(form.get(USERNAME))
-                		.rememberMe(form.getBoolean("remember").orElse(Boolean.FALSE));
+                        .login(form.get(USERNAME))
+                        .rememberMe(form.getBoolean("remember").orElse(Boolean.FALSE));
 
                 return Response.withRedirect("/");
             } 

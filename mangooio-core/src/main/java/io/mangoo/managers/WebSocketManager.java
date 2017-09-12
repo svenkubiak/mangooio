@@ -23,6 +23,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  * @deprecated  As of release 4.6.0, replaced by io.mangoo.services.WebSocketService
  *              Will be removed in 5.0.0
  */
+@Deprecated
 @Singleton
 public class WebSocketManager {
     private final Cache cache;

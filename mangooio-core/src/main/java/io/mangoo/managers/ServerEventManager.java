@@ -24,6 +24,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  * @deprecated  As of release 4.6.0, replaced by io.mangoo.services.ServerSentEventService
  *              Will be removed in 5.0.0
  */
+@Deprecated
 @Singleton
 public class ServerEventManager {
     private final Cache cache;

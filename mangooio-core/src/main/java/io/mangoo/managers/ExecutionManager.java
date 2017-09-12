@@ -19,6 +19,7 @@ import io.mangoo.enums.Required;
  *              Will be removed in 5.0.0
  *
  */
+@Deprecated
 @Singleton
 public class ExecutionManager {
     private final ExecutorService executorService;
