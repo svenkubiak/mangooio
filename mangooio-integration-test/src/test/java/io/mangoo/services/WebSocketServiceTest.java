@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.WebSocket.Connection;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.junit.Test;
@@ -115,7 +116,7 @@ public class WebSocketServiceTest {
         eventData = null;
 
         //when
-        new WebSocketClient(factory).open(new URI(url), new WebSocket.OnTextMessage() {
+        Connection connection = new WebSocketClient(factory).open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
                 // intentionally left blank
@@ -132,6 +133,8 @@ public class WebSocketServiceTest {
             }
         }).get(5, TimeUnit.SECONDS);
 
+        //then
+        await().atMost(1,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(connection, not(equalTo(null))));
         webSocketService.getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
@@ -141,8 +144,6 @@ public class WebSocketServiceTest {
                 e.printStackTrace();
             }
          });
-
-        //then
         await().atMost(4,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
