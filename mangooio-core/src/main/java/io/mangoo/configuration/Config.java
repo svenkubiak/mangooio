@@ -60,10 +60,8 @@ public class Config {
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
             map = (Map) loadConfiguration(configPath, false);
-            LOG.info("Loading application configuration from: classpath");
         } else {
             map = (Map) loadConfiguration(configFile, true);
-            LOG.info("Loading application configuration from: " + configFile);
         }
 
         if (map != null) {
@@ -82,8 +80,10 @@ public class Config {
         try {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
+                LOG.info("Loading application configuration from " + path + " in classpath");
             } else {
                 inputStream = new FileInputStream(new File(path)); //NOSONAR
+                LOG.info("Loading application configuration from: " + path);
             }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
