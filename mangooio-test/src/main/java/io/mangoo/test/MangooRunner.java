@@ -14,13 +14,13 @@ import io.mangoo.enums.Mode;
  *
  * @author svenkubiak
  *
- */
+ */ 
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")
 public class MangooRunner {
     @BeforeClass
-    public static final void mangooStart() {
+    public static final void start() {
         System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
     }

@@ -25,9 +25,4 @@ public class Lifecycle implements MangooLifecycle {
     public void applicationStopped() {
         // do nothing for now
     }
-
-    @Override
-    public void applicationInvoked() {
-        // do nothing for now
-    }
 }

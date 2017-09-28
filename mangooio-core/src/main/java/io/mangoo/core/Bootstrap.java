@@ -119,7 +119,7 @@ public class Bootstrap {
                 this.error = true;
             }
             
-            if (!bootstrapError()) {
+            if (!error()) {
                 LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
                 LOG.info("Found specific Log4j2 configuration. Using configuration file: " + configurationFile);
             }
@@ -137,7 +137,7 @@ public class Bootstrap {
                     this.error = true;
                 }
 
-                if (!bootstrapError()) {
+                if (!error()) {
                     LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
                     LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
                 }
@@ -181,7 +181,7 @@ public class Bootstrap {
 
     @SuppressWarnings("all")
     public void parseRoutes() {
-        if (!bootstrapError()) {
+        if (!error()) {
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
             YamlRouter yamlRouter = null;
             try {
@@ -191,7 +191,7 @@ public class Bootstrap {
                 this.error = true;
             }
             
-            if (!bootstrapError() && yamlRouter != null) {
+            if (!error() && yamlRouter != null) {
                 for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
                     RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
                     final Route route = new Route(routeType)
@@ -229,7 +229,7 @@ public class Bootstrap {
                 }
             }
             
-            if (!bootstrapError()) {
+            if (!error()) {
                 createRoutes();
             }
         }
@@ -305,7 +305,7 @@ public class Bootstrap {
     }
 
     public void startUndertow() {
-        if (!bootstrapError()) {
+        if (!error()) {
             Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
                     .setHandler(Handlers.exceptionHandler(this.pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
@@ -338,7 +338,7 @@ public class Bootstrap {
 
     private List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
-        if (!bootstrapError()) {
+        if (!error()) {
             try {
                 final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
                 modules.add(new io.mangoo.core.Module());
@@ -354,7 +354,7 @@ public class Bootstrap {
     }
 
     public void showLogo() {
-        if (!bootstrapError()) {
+        if (!error()) {
             final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
@@ -381,7 +381,7 @@ public class Bootstrap {
     }
 
     public void startQuartzScheduler() {
-        if (!bootstrapError()) {
+        if (!error()) {
             List<Class<?>> jobs = new ArrayList<>();
             new FastClasspathScanner(this.config.getSchedulerPackage())
                 .matchClassesWithAnnotation(Schedule.class, jobs::add)
@@ -408,7 +408,7 @@ public class Bootstrap {
                     }
                 }
 
-                if (!bootstrapError()) {
+                if (!error()) {
                     try {
                         mangooScheduler.start();
                     } catch (MangooSchedulerException e) {
@@ -418,22 +418,12 @@ public class Bootstrap {
             }
         }
     }
-    
-    @SuppressWarnings("all")
-    public void applicationInvoked() {
-        try {
-            Class<MangooLifecycle> lifecycle = (Class<MangooLifecycle>) Class.forName(Default.LIFECYCLE_CLASS.toString());
-            lifecycle.newInstance().applicationInvoked();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace(); //NOSONAR
-        }
-    }
 
-    public boolean bootstrapSuccess() {
+    public boolean success() {
         return !this.error;
     }
 
-    private boolean bootstrapError() {
+    private boolean error() {
         return this.error;
     }
 

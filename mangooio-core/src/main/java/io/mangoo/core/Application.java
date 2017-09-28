@@ -35,7 +35,6 @@ public final class Application {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
-        bootstrap.applicationInvoked();
         injector = bootstrap.prepareInjector();
         bootstrap.prepareLogger();
         bootstrap.applicationInitialized();
@@ -45,7 +44,7 @@ public final class Application {
         bootstrap.startUndertow();
         undertow = bootstrap.getUndertow();
 
-        if (bootstrap.bootstrapSuccess()) {
+        if (bootstrap.success()) {
             bootstrap.showLogo();
             bootstrap.applicationStarted();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));

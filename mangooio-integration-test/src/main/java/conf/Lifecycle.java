@@ -24,11 +24,6 @@ public class Lifecycle implements MangooLifecycle {
         // do nothing for now
     }
 
-    @Override
-    public void applicationInvoked() {
-        // do nothing for now
-    }
-
     public int getInitialize() {
         return initialize;
     }
