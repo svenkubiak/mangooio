@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.mail.Authenticator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
@@ -29,43 +31,37 @@ import io.mangoo.interfaces.MangooTemplateEngine;
  *
  */
 public class Mail {
-    private static volatile DefaultAuthenticator defaultAuthenticator;
-    private final Map<String, Object> content = new HashMap<>();
-    private final List<File> files = new ArrayList<>();
-    private final List<String> recipients = new ArrayList<>();
-    private final List<String> ccRecipients = new ArrayList<>();
-    private final List<String> bccRecipients = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
+    private List<String> recipients = new ArrayList<>();
+    private List<String> ccRecipients = new ArrayList<>();
+    private List<String> bccRecipients = new ArrayList<>();
+    private Map<String, Object> content = new HashMap<>();
     private String template;
     private String subject;
     private String from;
     private String body;
-    private static volatile String host;
-    private static int port;
     private boolean html;
     private boolean attachment;
-    private static boolean ssl;
 
+    /**
+     * Creates a new simple mail instance
+     * 
+     * @return Simple mail instance
+     */
     public static Mail newMail(){
-        init();
         return new Mail();
     }
     
+    /**
+     * Creates a new HTML mail instance
+     * 
+     * @return HTML mail instance
+     */
     public static Mail newHtmlMail() {
-        init();
-        return new Mail().isHtml();
-    }
-    
-    private static void init() {
-        Config config = Application.getInstance(Config.class);
-        host = config.getSmtpHost();
-        port = config.getSmtpPort();
-        ssl = config.isSmtpSSL();
-
-        final String username = config.getSmtpUsername();
-        final String password = config.getSmtpPassword();
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            defaultAuthenticator = new DefaultAuthenticator(username, password);
-        }
+        Mail mail = new Mail();
+        mail.html = true;
+        
+        return mail;
     }
     
     /**
@@ -235,13 +231,14 @@ public class Mail {
     }
 
     private void sendSimpleEmail() throws MangooMailerException {
+        Config config = Application.getInstance(Config.class);
         try {
             Email email = new SimpleEmail();
             email.setCharset(Default.ENCODING.toString());
-            email.setHostName(host);
-            email.setSmtpPort(port);
-            email.setAuthenticator(defaultAuthenticator);
-            email.setSSLOnConnect(ssl);
+            email.setHostName(config.getSmtpHost());
+            email.setSmtpPort(config.getSmtpPort());
+            email.setAuthenticator(getDefaultAuthenticator());
+            email.setSSLOnConnect(config.isSmtpSSL());
             email.setFrom(this.from);
             email.setSubject(this.subject);
             email.setMsg(render());
@@ -265,13 +262,14 @@ public class Mail {
     }
 
     private void sendMultipartEmail() throws MangooMailerException {
+        Config config = Application.getInstance(Config.class);
         try {
             MultiPartEmail multiPartEmail = new MultiPartEmail();
             multiPartEmail.setCharset(Default.ENCODING.toString());
-            multiPartEmail.setHostName(host);
-            multiPartEmail.setSmtpPort(port);
-            multiPartEmail.setAuthenticator(defaultAuthenticator);
-            multiPartEmail.setSSLOnConnect(ssl);
+            multiPartEmail.setHostName(config.getSmtpHost());
+            multiPartEmail.setSmtpPort(config.getSmtpPort());
+            multiPartEmail.setAuthenticator(getDefaultAuthenticator());
+            multiPartEmail.setSSLOnConnect(config.isSmtpSSL());
             multiPartEmail.setFrom(this.from);
             multiPartEmail.setSubject(this.subject);
             multiPartEmail.setMsg(render());
@@ -299,13 +297,14 @@ public class Mail {
     }
 
     private void sendHtmlEmail() throws MangooMailerException {
+        Config config = Application.getInstance(Config.class);
         try {
             HtmlEmail htmlEmail = new HtmlEmail();
             htmlEmail.setCharset(Default.ENCODING.toString());
-            htmlEmail.setHostName(host);
-            htmlEmail.setSmtpPort(port);
-            htmlEmail.setAuthenticator(defaultAuthenticator);
-            htmlEmail.setSSLOnConnect(ssl);
+            htmlEmail.setHostName(config.getSmtpHost());
+            htmlEmail.setSmtpPort(config.getSmtpPort());
+            htmlEmail.setAuthenticator(getDefaultAuthenticator());
+            htmlEmail.setSSLOnConnect(config.isSmtpSSL());
             htmlEmail.setFrom(this.from);
             htmlEmail.setSubject(this.subject);
             htmlEmail.setHtmlMsg(render());
@@ -330,6 +329,19 @@ public class Mail {
         } catch (EmailException | MangooTemplateEngineException e) {
             throw new MangooMailerException(e);
         } 
+    }
+    
+    private Authenticator getDefaultAuthenticator() {
+        Config config = Application.getInstance(Config.class);
+        
+        DefaultAuthenticator defaultAuthenticator = null;
+        final String username = config.getSmtpUsername();
+        final String password = config.getSmtpPassword();
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            defaultAuthenticator = new DefaultAuthenticator(username, password);
+        }
+        
+        return defaultAuthenticator;
     }
 
     private String render() throws MangooTemplateEngineException {

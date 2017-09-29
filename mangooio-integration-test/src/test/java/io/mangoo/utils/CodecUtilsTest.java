@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.test.utils.ConcurrentRunner;
+import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -53,7 +53,7 @@ public class CodecUtilsTest {
             assertThat(hex, equalTo("39e668e353a0b4caf7e8e3c7093e30be8c0a29db739bf86bd5243d11d1bfe040ad2a712be1a96b405233ce13cbd7c3db9bcc40f2f2e70c6a344a0898208347e4"));  
         };
         
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
             .withRunnable(runnable)
             .withThreads(THREADS)
             .run();
@@ -82,7 +82,7 @@ public class CodecUtilsTest {
             assertThat(hex, equalTo("e3558a2c97cecf01e7dbe39e5ec3156bf55b38dee69de17f2ef2fac60e1fc4e67b85413849c6b1d5b67adc94d10684f066127c444ac17830267fd816dd49bc8e"));
         };
     
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
         .withRunnable(runnable)
         .withThreads(THREADS)
         .run();
@@ -107,7 +107,7 @@ public class CodecUtilsTest {
             assertThat(valid, equalTo(true));
         };
         
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
         .withRunnable(runnable)
         .withThreads(THREADS)
         .run();
@@ -138,7 +138,7 @@ public class CodecUtilsTest {
             assertThat(serialized, equalTo(SERIALIZED));
         };
         
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
         .withRunnable(runnable)
         .withThreads(THREADS)
         .run();
@@ -167,7 +167,7 @@ public class CodecUtilsTest {
             assertThat(form.get("foo"), equalTo("bar"));
         };
         
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
         .withRunnable(runnable)
         .withThreads(THREADS)
         .run();

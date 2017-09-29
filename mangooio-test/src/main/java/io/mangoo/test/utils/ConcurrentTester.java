@@ -6,17 +6,16 @@ import java.util.List;
 /**
  * 
  * @author svenkubiak
- * @deprecated As of 4.7.0, replaced by ConcurrentTester
+ *
  */
-@Deprecated
-public class ConcurrentRunner {
+public class ConcurrentTester {
     private Runnable runnable;
     private int threads = 10; //NOSONAR
     private volatile Error error;
     private volatile RuntimeException runtimeException;
     
-    public static ConcurrentRunner create() {
-        return new ConcurrentRunner();
+    public static ConcurrentTester create() {
+        return new ConcurrentTester();
     }
 
     /**
@@ -25,7 +24,7 @@ public class ConcurrentRunner {
      * @param runnable The runnable to execute
      * @return ThreadRunner instance
      */
-    public ConcurrentRunner withRunnable(Runnable runnable) {
+    public ConcurrentTester withRunnable(Runnable runnable) {
         this.runnable = runnable;
         return this;
     }
@@ -36,7 +35,7 @@ public class ConcurrentRunner {
      * @param threads The number of threads
      * @return ThreadRunner instance
      */
-    public ConcurrentRunner withThreads(int threads) {
+    public ConcurrentTester withThreads(int threads) {
         this.threads = threads;
         return this;
     }

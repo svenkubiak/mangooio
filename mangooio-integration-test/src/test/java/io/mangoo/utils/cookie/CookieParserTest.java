@@ -10,6 +10,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.helpers.cookie.CookieParser;
+import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  *
@@ -41,6 +42,25 @@ public class CookieParserTest {
         //then
         assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
     }
+    
+    @Test
+    public void testValidSessionConcurrent() throws InterruptedException {
+        Runnable runnable = () -> {
+            //given
+            final CookieParser cookieParser = CookieParser.build()
+                    .withContent(sessionCookie)
+                    .withSecret(this.secret)
+                    .isEncrypted(false);
+
+            //then
+            assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
+        };
+        
+        ConcurrentTester.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
+    }
 
     @Test
     public void testValidSessionWithEncryption() {
@@ -52,6 +72,25 @@ public class CookieParserTest {
 
         //then
         assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
+    }
+    
+    @Test
+    public void testValidSessionWithEncryptionConcurrent() throws InterruptedException {
+        Runnable runnable = () -> {
+            //given
+            final CookieParser cookieParser = CookieParser.build()
+                    .withContent(sessionCookieEncrypted)
+                    .withSecret(this.secret)
+                    .isEncrypted(true);
+
+            //then
+            assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
+        };
+        
+        ConcurrentTester.create()
+        .withRunnable(runnable)
+        .withThreads(50)
+        .run();
     }
     
     @Test

@@ -10,7 +10,7 @@ import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooEventBusException;
-import io.mangoo.test.utils.ConcurrentRunner;
+import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class EventBusServiceTest {
             assertThat(testListener.getCount(), greaterThan(0));
         };
         
-        ConcurrentRunner.create()
+        ConcurrentTester.create()
             .withRunnable(runnable)
             .withThreads(50)
             .run();

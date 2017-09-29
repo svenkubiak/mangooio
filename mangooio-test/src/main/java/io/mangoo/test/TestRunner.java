@@ -13,13 +13,12 @@ import io.mangoo.enums.Mode;
 /**
  *
  * @author svenkubiak
- * @deprecated As of 4.7.0, replaced by TestRunner
+ *
  */ 
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")
-@Deprecated
-public class MangooRunner {
+public class TestRunner {
     @BeforeClass
     public static final void start() {
         System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.TEST.toString());
