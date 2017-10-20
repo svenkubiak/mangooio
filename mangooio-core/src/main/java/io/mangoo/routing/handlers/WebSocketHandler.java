@@ -2,7 +2,6 @@ package io.mangoo.routing.handlers;
 
 import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
 import org.xnio.ChannelListener;
 
 import com.google.inject.Inject;
@@ -13,6 +12,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.services.WebSocketService;
+import io.mangoo.utils.IOUtils;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;

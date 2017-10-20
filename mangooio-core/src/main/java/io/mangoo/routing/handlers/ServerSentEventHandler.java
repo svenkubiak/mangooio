@@ -2,8 +2,6 @@ package io.mangoo.routing.handlers;
 
 import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
-
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
@@ -12,6 +10,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.services.ServerSentEventService;
+import io.mangoo.utils.IOUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.HeaderValues;

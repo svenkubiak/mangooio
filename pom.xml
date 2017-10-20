@@ -29,7 +29,7 @@
 		<httpcomponents.version>4.5.3</httpcomponents.version>
 		<scribejava.version>4.2.0</scribejava.version>
 		<jackson.version>2.9.2</jackson.version>
-		<fluentlenium.version>3.4.0</fluentlenium.version>
+		<fluentlenium.version>3.4.1</fluentlenium.version>
 		<jersey.version>2.26</jersey.version>
 	</properties>
 	<modules>
@@ -365,7 +365,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.5</version>
+				<version>2.6</version>
 			</dependency>
 			<dependency>
 				<groupId>io.bit3</groupId>

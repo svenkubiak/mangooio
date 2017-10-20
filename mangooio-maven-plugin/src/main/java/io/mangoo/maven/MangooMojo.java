@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -43,6 +42,7 @@ import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
 import io.mangoo.core.Application;
+import io.mangoo.utils.IOUtils;
 import io.mangoo.utils.MinificationUtils;
 
 /**

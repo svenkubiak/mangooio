@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -15,6 +13,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.providers.CacheProvider;
+import io.mangoo.utils.IOUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
 /**

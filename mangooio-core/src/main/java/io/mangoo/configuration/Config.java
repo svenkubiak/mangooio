@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,8 +75,9 @@ public class Config {
     }
 
     private Object loadConfiguration(String path, boolean resource) {
-        InputStream inputStream = null;
+        Object object = null;
         try {
+            InputStream inputStream = null;
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
                 LOG.info("Loading application configuration from " + path + " in classpath");
@@ -85,16 +85,14 @@ public class Config {
                 inputStream = new FileInputStream(new File(path)); //NOSONAR
                 LOG.info("Loading application configuration from: " + path);
             }
+            
+            if (inputStream != null) {
+                final Yaml yaml = new Yaml();
+                object = yaml.load(inputStream);
+                inputStream.close();
+            }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
-        }
-
-        Object object = null;
-        if (inputStream != null) {
-            final Yaml yaml = new Yaml();
-            object = yaml.load(inputStream);
-
-            IOUtils.closeQuietly(inputStream);
         }
 
         return object;

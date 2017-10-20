@@ -210,7 +210,7 @@ public class ResponseTest {
         assertThat(response.isBinary(), equalTo(true));
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInpuStream)));
-        IOUtils.closeQuietly(fileInpuStream);
+        fileInpuStream.close();
         assertThat(file.delete(), equalTo(true));
     }
     
@@ -229,7 +229,7 @@ public class ResponseTest {
         assertThat(response.isBinary(), equalTo(true));
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInputStream)));
-        IOUtils.closeQuietly(fileInputStream);
+        fileInputStream.close();
         assertThat(file.delete(), equalTo(true));
     }
     
