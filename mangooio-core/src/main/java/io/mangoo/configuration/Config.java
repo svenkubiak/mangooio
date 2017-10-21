@@ -25,6 +25,7 @@ import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
+import io.mangoo.utils.IOUtils;
 
 /**
  * Main configuration class for all properties configured in application.yaml
@@ -75,9 +76,8 @@ public class Config {
     }
 
     private Object loadConfiguration(String path, boolean resource) {
-        Object object = null;
+        InputStream inputStream = null;
         try {
-            InputStream inputStream = null;
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
                 LOG.info("Loading application configuration from " + path + " in classpath");
@@ -85,14 +85,15 @@ public class Config {
                 inputStream = new FileInputStream(new File(path)); //NOSONAR
                 LOG.info("Loading application configuration from: " + path);
             }
-            
-            if (inputStream != null) {
-                final Yaml yaml = new Yaml();
-                object = yaml.load(inputStream);
-                inputStream.close();
-            }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
+        }
+        
+        Object object = null;
+        if (inputStream != null) {
+            final Yaml yaml = new Yaml();
+            object = yaml.load(inputStream);
+            IOUtils.closeQuietly(inputStream);
         }
 
         return object;
