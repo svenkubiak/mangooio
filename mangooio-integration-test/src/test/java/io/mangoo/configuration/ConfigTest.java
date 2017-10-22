@@ -150,4 +150,22 @@ public class ConfigTest {
         //then
         assertThat(config.getMasterKey(), equalTo("thisismymasterkey"));
     }
+    
+    @Test
+    public void testApplicationName() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getApplicationName(), equalTo("TEST"));
+    }
+    
+    @Test
+    public void testGetFlashCookieName() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getFlashCookieName(), equalTo(Default.FLASH_COOKIE_NAME.toString()));
+    }
 }
