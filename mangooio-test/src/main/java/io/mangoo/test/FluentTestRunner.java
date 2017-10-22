@@ -9,5 +9,5 @@ import org.fluentlenium.configuration.FluentConfiguration;
  *
  */
 @FluentConfiguration(webDriver="htmlunit")
-public class FluenTestRunner extends FluentTest {
+public class FluentTestRunner extends FluentTest {
 }

@@ -6,7 +6,7 @@ import org.fluentlenium.configuration.FluentConfiguration;
 /**
  *
  * @author svenkubiak
- * @deprecated As of 4.7.0, replace by FluenTestRunner
+ * @deprecated As of 4.7.0, replace by FluentTestRunner
  */
 @FluentConfiguration(webDriver="htmlunit")
 @Deprecated
