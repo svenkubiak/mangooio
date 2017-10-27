@@ -36,7 +36,6 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
 * Easy handling of JSON in- and output
-* Simple form handling and validation
 * Strong cryptography and enforced security
 * Build-in asset minification in development mode
 * Flexible testing tools
