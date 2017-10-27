@@ -9,7 +9,7 @@ mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Fr
 
 Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
-full stack Java web framework in from scratch. After I had a fresh new breeze of
+full stack Java web framework from scratch. After I had a fresh new breeze of
 Java development for the web with the [Play
 Framwork - Version 1](https://www.playframework.com), contributions to the
 [Ninja Framework](http://www.ninjaframework.org), and having seen a lot of
