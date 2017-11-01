@@ -3,19 +3,14 @@ package io.mangoo.core;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.quartz.CronExpression;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -37,7 +32,6 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
@@ -72,7 +66,7 @@ import io.undertow.util.Methods;
  *
  */
 public class Bootstrap {
-    private static volatile Logger LOG; //NOSONAR
+    private static final Logger LOG = LogManager.getLogger(Bootstrap.class);
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
     private final ResourceHandler resourceHandler;
@@ -92,59 +86,16 @@ public class Bootstrap {
     }
 
     public Mode prepareMode() {
-        final String applicationMode = System.getProperty(Jvm.APPLICATION_MODE.toString());
-        if (StringUtils.isNotBlank(applicationMode)) {
-            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
-                case "dev"  : this.mode = Mode.DEV;
-                break;
-                case "test" : this.mode = Mode.TEST;
-                break;
-                default     : this.mode = Mode.PROD;
-                break;
-            }
-        } else {
-            this.mode = Mode.PROD;
-        }
-
+        this.mode = BootstrapUtils.getMode();
         return this.mode;
     }
 
-    @SuppressWarnings("all")
     public void prepareLogger() {
-        String configurationFile = System.getProperty(Jvm.APPLICATION_LOG.toString());
-        if (StringUtils.isNotBlank(configurationFile)) {
-            final LoggerContext context = (LoggerContext) LogManager.getContext(false);
-            context.setConfigLocation(URI.create(configurationFile));
-            if (!context.isInitialized()) {
-                this.error = true;
-            }
-            
-            if (!error()) {
-                LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-                LOG.info("Found specific Log4j2 configuration. Using configuration file: " + configurationFile);
-            }
-        } else {
-            configurationFile = "log4j2." + this.mode.toString() + ".yaml";
-            if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) == null) {
-                LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-            } else {
-                try {
-                    final URL resource = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
-                    final LoggerContext context = (LoggerContext) LogManager.getContext(false);
-                    context.setConfigLocation(resource.toURI());
-                } catch (final URISyntaxException e) {
-                    e.printStackTrace(); //NOSONAR
-                    this.error = true;
-                }
-
-                if (!error()) {
-                    LOG = LogManager.getLogger(Bootstrap.class); //NOSONAR
-                    LOG.info("Found environment specific Log4j2 configuration. Using configuration file: " + configurationFile);
-                }
-            }  
+        if (StringUtils.isNotBlank(BootstrapUtils.loggerConfig)) {
+            LOG.info(BootstrapUtils.loggerConfig);
         }
     }
-
+    
     public Injector prepareInjector() {
         this.injector = LifecycleInjector.builder()
                 .withModules(getModules())
@@ -290,10 +241,6 @@ public class Bootstrap {
                         .withUsername(route.getUsername())
                         .withPassword(route.getPassword())
                         .withLimit(route.getLimit());
-
-                if (route.isInternalTemplateEngine()) {
-                    dispatcherHandler.withInternalTemplateEngine();    
-                }
                 
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {

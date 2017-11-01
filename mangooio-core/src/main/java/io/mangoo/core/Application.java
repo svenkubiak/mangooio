@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.google.inject.Injector;
 
+import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooTemplateEngine;
@@ -29,14 +30,15 @@ public final class Application {
     private static volatile String baseDirectory;
 
     private Application() {
+        System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
     }
 
     public static void main(String... args) {
         final Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
-        injector = bootstrap.prepareInjector();
         bootstrap.prepareLogger();
+        injector = bootstrap.prepareInjector();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
         bootstrap.parseRoutes();
@@ -116,8 +118,10 @@ public final class Application {
     }
 
     /**
+     * @deprecated As of 4.8.0 without replacedment, will be removed in 5.0.0
      * @return An instance of the internal template engine freemarker
      */
+    @Deprecated
     public static MangooTemplateEngine getInternalTemplateEngine() {
         if (templateEngine == null) {
             templateEngine = new TemplateEngineFreemarker();

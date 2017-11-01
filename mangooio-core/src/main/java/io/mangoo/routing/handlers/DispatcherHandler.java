@@ -112,11 +112,6 @@ public class DispatcherHandler implements HttpHandler {
         this.blocking = blocking;
         return this;
     }
-
-    public DispatcherHandler withInternalTemplateEngine() {
-        this.templateEngine = Application.getInternalTemplateEngine();
-        return this;
-    }
     
     public DispatcherHandler withTimer(boolean timer) {
         this.timer = timer;

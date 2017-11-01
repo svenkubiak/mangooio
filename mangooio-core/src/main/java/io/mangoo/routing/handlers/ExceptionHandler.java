@@ -14,6 +14,7 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooTemplateEngine;
+import io.mangoo.templating.TemplateEngineFreemarker;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
@@ -49,7 +50,7 @@ public class ExceptionHandler implements HttpHandler {
             exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
             if (Application.inDevMode()) {
-                MangooTemplateEngine templateEngine = Application.getInternalTemplateEngine();
+                MangooTemplateEngine templateEngine = new TemplateEngineFreemarker();
                 if (throwable == null) {
                     exchange.getResponseSender().send(Template.DEFAULT.serverError());
                 } else if (throwable.getCause() == null) {
