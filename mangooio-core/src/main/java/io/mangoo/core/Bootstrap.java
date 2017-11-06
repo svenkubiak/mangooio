@@ -133,7 +133,7 @@ public class Bootstrap {
     public void sanityChecks() {
         if (mode.equals(Mode.PROD)) {
             if (!config.isAuthenticationCookieSecure()) {
-                LOG.warn("Authentication cookie has secure flag set to false. It is highlgy recommended to set cookie.secure to true.");
+                LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
             }
             
             if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
@@ -141,7 +141,7 @@ public class Bootstrap {
             }
             
             if (!config.isSessionCookieSecure()) {
-                LOG.warn("Session cookie has secure flag set to false. It is highlgy recommended to set auth.cookie.secure to true.");
+                LOG.warn("Session cookie has secure flag set to false. It is highlgy recommended to set cookie.secure to true.");
             }
             
             if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
