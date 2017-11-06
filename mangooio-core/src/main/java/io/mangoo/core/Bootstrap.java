@@ -137,15 +137,15 @@ public class Bootstrap {
             }
             
             if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                LOG.warn("Authentication cookie name has still default value. Consider changeing auth.cookie.name to an application specific value.");
+                LOG.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
             }
             
             if (!config.isSessionCookieSecure()) {
-                LOG.warn("Session cookie has secure flag set to false. It is highlgy recommended to set cookie.secure to true.");
+                LOG.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
             }
             
             if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                LOG.warn("Session cookie name has still default value. Consider changeing cookie.name to an application specific value.");
+                LOG.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
             }
         }
     }
