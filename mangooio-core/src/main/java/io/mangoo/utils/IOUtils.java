@@ -3,7 +3,15 @@ package io.mangoo.utils;
 import java.io.Closeable;
 import java.io.IOException;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public final class IOUtils {
+    
+    private IOUtils() {
+    }
 
     public static void closeQuietly(final Closeable closeable) {
         try {
@@ -11,6 +19,7 @@ public final class IOUtils {
                 closeable.close();
             }
         } catch (final IOException e) {
+            //NOSONAR
             //intentionally left blank
         }
     }

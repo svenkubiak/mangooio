@@ -216,7 +216,7 @@ public class AdminController {
             errorRate = totalRequests / (double) errorRequests;
         }
         
-        Map<String, Object> json = new HashMap<String, Object>();
+        Map<String, Object> json = new HashMap<>();
         json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         json.put("uptime in seconds", Application.getUptime().getSeconds());
         json.put("version", BootstrapUtils.getVersion());
