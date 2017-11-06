@@ -219,12 +219,12 @@ public class AdminController {
         Map<String, Object> json = new HashMap<>();
         json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         json.put("uptime in seconds", Application.getUptime().getSeconds());
-        json.put("version", BootstrapUtils.getVersion());
+        json.put(VERSION, BootstrapUtils.getVersion());
         json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
         json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
         json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
         json.put("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)));
-        json.put("metrics", metrics);
+        json.put(METRICS, metrics);
         json.put("totalRequests", totalRequests);
         json.put("errorRate", errorRate);
         
