@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import io.mangoo.enums.Jvm;
+import io.mangoo.enums.Mode;
 import io.mangoo.enums.RouteType;
 
 /**
@@ -72,5 +74,26 @@ public class BootstrapUtilsTest {
     public void testGetLogo() throws InterruptedException {
         //then
         assertThat(BootstrapUtils.getLogo(), not(nullValue()));
+    }
+    
+    @Test
+    public void testMode() throws InterruptedException {
+        //when
+        System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.PROD.toString());
+        
+        //then
+        assertThat(BootstrapUtils.getMode(), equalTo(Mode.PROD));
+        
+        //when
+        System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.DEV.toString());
+        
+        //then
+        assertThat(BootstrapUtils.getMode(), equalTo(Mode.DEV));
+        
+        //when
+        System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        //then
+        assertThat(BootstrapUtils.getMode(), equalTo(Mode.TEST));
     }
 }
