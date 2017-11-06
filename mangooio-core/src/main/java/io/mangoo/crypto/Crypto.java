@@ -3,6 +3,7 @@ package io.mangoo.crypto;
 import java.util.Base64;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
@@ -137,7 +138,7 @@ public class Crypto {
      */
     private String getSizedKey(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
-        String key = secret.replaceAll("[^\\x00-\\x7F]", "");
+        String key = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
 
         Preconditions.checkArgument(key.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
         

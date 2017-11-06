@@ -62,7 +62,7 @@ public class AdminFilter implements MangooFilter {
         String password = null;
         String authInfo = request.getHeader(Header.AUTHORIZATION.toHttpString());
         if (StringUtils.isNotBlank(authInfo)) {
-            authInfo = authInfo.replace("Basic", "");
+            authInfo = StringUtils.replace(authInfo, "Basic", "");
             authInfo = authInfo.trim();
             authInfo = new String(decoder.decode(authInfo), Charsets.UTF_8);
 

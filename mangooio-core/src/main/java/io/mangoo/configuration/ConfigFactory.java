@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -33,7 +34,7 @@ public class ConfigFactory extends ConfigurationFactory {
         URL url = null;
         if (StringUtils.isNotBlank(configurationFile)) {
             try {
-                url = Paths.get(configurationFile).toUri().toURL();
+                url = Paths.get(configurationFile).toUri().toURL(); //NOSONAR
                 BootstrapUtils.loggerConfig = "Found path to Log4j2 configuration as JVM argument. Using configuration file: " + configurationFile;
             } catch (MalformedURLException e) {
                 e.printStackTrace(); //NOSONAR
@@ -60,6 +61,6 @@ public class ConfigFactory extends ConfigurationFactory {
 
     @Override
     protected String[] getSupportedTypes() {
-        return SUFFIXES;
+        return Arrays.copyOf(SUFFIXES, SUFFIXES.length);
     }
 }

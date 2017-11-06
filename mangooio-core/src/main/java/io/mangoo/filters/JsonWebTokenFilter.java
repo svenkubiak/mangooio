@@ -36,7 +36,7 @@ public class JsonWebTokenFilter implements MangooFilter {
         String signKey = this.config.getJwtsSignKey();
 
         if (StringUtils.isNotBlank(signKey) && StringUtils.isNotBlank(bearer)) {
-            bearer = bearer.replace("Bearer", "");
+            bearer = StringUtils.replace(bearer, "Bearer", "");
             bearer = bearer.trim();
 
             try {

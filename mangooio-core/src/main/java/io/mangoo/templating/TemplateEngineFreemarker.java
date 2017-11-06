@@ -265,7 +265,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         int position = packageName.lastIndexOf('.');
         if (position > 0) {
             packageName = packageName.substring(0, position);
-            return packageName.replace(".", File.separator) + File.separator + stackTraceElement.getFileName();
+            return StringUtils.replace(packageName, ".", File.separator) + File.separator + stackTraceElement.getFileName();
         }
 
         return stackTraceElement.getFileName();

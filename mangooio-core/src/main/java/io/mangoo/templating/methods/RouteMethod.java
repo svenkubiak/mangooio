@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
@@ -33,7 +35,7 @@ public class RouteMethod implements TemplateMethodModelEx {
                 int i = 1;
                 while (matcher.find()) {
                     String argument = ((SimpleScalar) arguments.get(i)).getAsString();
-                    url = url.replace("{" + matcher.group(1) + "}", argument); 
+                    url = StringUtils.replace(url, "{" + matcher.group(1) + "}", argument);
                     i++;
                 }
             } else {

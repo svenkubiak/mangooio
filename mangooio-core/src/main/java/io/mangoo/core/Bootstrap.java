@@ -131,7 +131,7 @@ public class Bootstrap {
     }
     
     public void sanityChecks() {
-        if (mode.equals(Mode.PROD)) {
+        if (Mode.PROD == mode) {
             if (!config.isAuthenticationCookieSecure()) {
                 LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
             }

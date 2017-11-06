@@ -119,7 +119,7 @@ public class MangooMojo extends AbstractMojo {
         classpathItems.add(buildOutputDirectory);
 
         for (Artifact artifact: project.getArtifacts()) {
-            classpathItems.add(artifact.getFile().toString());
+            classpathItems.add(artifact.getFile().toString()); //NOSONAR
         }
 
         Set<String> includesSet = new LinkedHashSet<>(includes);

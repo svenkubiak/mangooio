@@ -5,6 +5,8 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
@@ -73,7 +75,7 @@ public class FormHandler implements HttpHandler {
                                 form.addFile(formValue.getPath().toFile());
                             } else {
                                 if (data.contains("[]")) {
-                                    String key = data.replace("[]", "");
+                                    String key = StringUtils.replace(data, "[]", "");
                                     for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
                                         form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
                                     }
