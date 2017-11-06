@@ -12,7 +12,7 @@ public class I18nController {
     
     public Response localize() {
         Cookie cookie = CookieBuilder.create()
-                .name(Default.COOKIE_I18N_NAME.toString())
+                .name(Default.I18N_COOKIE_NAME.toString())
                 .value("en")
                 .build();
         

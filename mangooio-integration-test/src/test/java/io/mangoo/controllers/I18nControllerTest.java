@@ -93,7 +93,7 @@ public class I18nControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getCookie(Default.COOKIE_I18N_NAME.toString()), not(nullValue()));
+        assertThat(response.getCookie(Default.I18N_COOKIE_NAME.toString()), not(nullValue()));
         
         //given
         response = browser.withUri("/translation").execute();

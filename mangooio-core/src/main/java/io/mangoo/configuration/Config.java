@@ -427,7 +427,7 @@ public class Config {
      * @return cookie.name from application.yaml or default value if undefined
      */
     public String getSessionCookieName() {
-        return getString(Key.COOKIE_NAME, Default.COOKIE_NAME.toString());
+        return getString(Key.SESSION_COOKIE_NAME, Default.SESSION_COOKIE_NAME.toString());
     }
 
     /**
@@ -441,35 +441,35 @@ public class Config {
      * @return auth.cookie.name from application.yaml or default value if undefined
      */
     public String getAuthenticationCookieName() {
-        return getString(Key.AUTH_COOKIE_NAME, Default.AUTH_COOKIE_NAME.toString());
+        return getString(Key.AUTHENTICATION_COOKIE_NAME, Default.AUTHENTICATION_COOKIE_NAME.toString());
     }
 
     /**
      * @return auth.cookie.expires from application.yaml or default value if undefined
      */
     public long getAuthenticationExpires() {
-        return getLong(Key.AUTH_COOKIE_EXPIRES, Default.AUTH_COOKIE_EXPIRES.toLong());
+        return getLong(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toLong());
     }
 
     /**
      * @return cookie.expires from application.yaml or default value if undefined
      */
     public long getSessionExpires() {
-        return getLong(Key.COOKIE_EXPIRES, Default.COOKIE_EXPIRES.toLong());
+        return getLong(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toLong());
     }
 
     /**
      * @return cookie.secure from application.yaml or default value if undefined
      */
     public boolean isSessionCookieSecure() {
-        return getBoolean(Key.COOKIE_SECURE, Default.COOKIE_SECURE.toBoolean());
+        return getBoolean(Key.SESSION_COOKIE_SECURE, Default.SESSION_COOKIE_SECURE.toBoolean());
     }
 
     /**
      * @return auth.cookie.secure from application.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieSecure() {
-        return getBoolean(Key.AUTH_COOKIE_SECURE, Default.AUTH_COOKIE_SECURE.toBoolean());
+        return getBoolean(Key.AUTHENTICATION_COOKIE_SECURE, Default.AUTHENTICATION_COOKIE_SECURE.toBoolean());
     }
 
     /**
@@ -477,7 +477,7 @@ public class Config {
      * @return cookie.i18n.name from application.yaml or default value if undefined
      */
     public String getI18nCookieName() {
-        return getString(Key.COOKIE_I18N_NAME, Default.COOKIE_I18N_NAME.toString());
+        return getString(Key.I18N_COOKIE_NAME, Default.I18N_COOKIE_NAME.toString());
     }
 
     /**
@@ -497,21 +497,39 @@ public class Config {
      * @return auth.cookie.encrypt from application.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieEncrypt() {
-        return getBoolean(Key.AUTH_COOKIE_ENCRYPT, Default.AUTH_COOKIE_ENCRYPT.toBoolean());
+        return getBoolean(Key.AUTHENTICATION_COOKIE_ENCRYPT, Default.AUTHENTICATION_COOKIE_ENCRYPT.toBoolean());
     }
 
+    /**
+     * @deprecated As of 4.8.0, replace by getAuthenticationCookieVersion
+     * @return auth.cookie.version from application.yaml or default value if undefined
+     */
+    @Deprecated
+    public String getAuthCookieVersion() {
+        return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
+    }
+    
     /**
      * @return auth.cookie.version from application.yaml or default value if undefined
      */
-    public String getAuthCookieVersion() {
-        return getString(Key.AUTH_COOKIE_VERSION, Default.AUTH_COOKIE_VERSION.toString());
+    public String getAuthenticationCookieVersion() {
+        return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
     }
 
     /**
+     * @deprecated As of 4.8.0, replace by getSessionCookieVersion
      * @return cookie.version from application.yaml or default value if undefined
      */
+    @Deprecated
     public String getCookieVersion() {
-        return getString(Key.COOKIE_VERSION, Default.COOKIE_VERSION.toString());
+        return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
+    }
+    
+    /**
+     * @return cookie.version from application.yaml or default value if undefined
+     */
+    public String getSessionCookieVersion() {
+        return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
     }
 
     /**
@@ -546,14 +564,14 @@ public class Config {
      * @return cookie.encryption from application.yaml or default value if undefined
      */
     public boolean isSessionCookieEncrypt() {
-        return getBoolean(Key.COOKIE_ENCRYPTION, Default.COOKIE_ENCRYPTION.toBoolean());
+        return getBoolean(Key.SESSION_COOKIE_ENCRYPTION, Default.SESSION_COOKIE_ENCRYPTION.toBoolean());
     }
 
     /**
      * @return auth.cookie.remember.expires from application.yaml or default value if undefined
      */
     public long getAuthenticationRememberExpires() {
-        return getLong(Key.AUTH_COOKIE_REMEMBER_EXPIRES, Default.AUTH_COOKIE_REMEMBER_EXPIRES.toLong());
+        return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong());
     }
 
     /**
@@ -778,7 +796,7 @@ public class Config {
      * @return authentication.lock or default value if undefined
      */
     public int getAuthenticationLock() {
-        return getInt(Key.AUTH_LOCK, Default.AUTH_LOCK.toInt());
+        return getInt(Key.AUTHENTICATION_LOCK, Default.AUTHENTICATION_LOCK.toInt());
     }
 
     /**

@@ -47,6 +47,7 @@ public final class Application {
         undertow = bootstrap.getUndertow();
 
         if (bootstrap.success()) {
+            bootstrap.sanityChecks();
             bootstrap.showLogo();
             bootstrap.applicationStarted();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));

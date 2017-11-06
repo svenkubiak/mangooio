@@ -62,7 +62,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         if (session != null && session.hasChanges()) {
             Map<String, Object> claims = new HashMap<>();
             claims.put(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
-            claims.put(ClaimKey.VERSION.toString(), this.config.getCookieVersion());
+            claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
             claims.put(ClaimKey.DATA.toString(), session.getValues());
             
             final LocalDateTime expires = session.getExpires();
@@ -108,7 +108,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 cookie.setDiscard(true);
             } else {
                 Map<String, Object> claims = new HashMap<>();
-                claims.put(ClaimKey.VERSION.toString(), this.config.getAuthCookieVersion());
+                claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
                 claims.put(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
                 
                 final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(this.config.getAuthenticationRememberExpires()) : authentication.getExpires();

@@ -36,7 +36,7 @@ public class AuthenticitiyFilterTest {
     		//when
     		when(mockedRequest.getAuthentication()).thenReturn(mockedAuthentication);
     		when(mockedAuthentication.hasAuthenticatedUser()).thenReturn(false);
-    		when(mockedConfig.getString(Key.AUTH_REDIRECT.toString())).thenReturn(null);
+    		when(mockedConfig.getString(Key.AUTHENTICATION_REDIRECT.toString())).thenReturn(null);
     		Response response = filter.execute(mockedRequest, mockedResponse);
     	
         //then
@@ -58,7 +58,7 @@ public class AuthenticitiyFilterTest {
     		//when
     		when(mockedRequest.getAuthentication()).thenReturn(mockedAuthentication);
     		when(mockedAuthentication.hasAuthenticatedUser()).thenReturn(false);
-    		when(mockedConfig.getString(Key.AUTH_REDIRECT.toString())).thenReturn("/login");
+    		when(mockedConfig.getString(Key.AUTHENTICATION_REDIRECT.toString())).thenReturn("/login");
     		Response response = filter.execute(mockedRequest, mockedResponse);
     	
         //then
@@ -100,7 +100,7 @@ public class AuthenticitiyFilterTest {
     		when(mockedRequest.getAuthentication()).thenReturn(mockedAuthentication);
     		when(mockedAuthentication.hasAuthenticatedUser()).thenReturn(true);
     		when(mockedAuthentication.isTwoFactor()).thenReturn(true);
-    		when(mockedConfig.getString(Key.AUTH_REDIRECT.toString())).thenReturn("/login");
+    		when(mockedConfig.getString(Key.AUTHENTICATION_REDIRECT.toString())).thenReturn("/login");
     		Response response = filter.execute(mockedRequest, mockedResponse);
     	
         //then

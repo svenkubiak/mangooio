@@ -129,6 +129,26 @@ public class Bootstrap {
             this.error = true;
         }
     }
+    
+    public void sanityChecks() {
+        if (mode.equals(Mode.PROD)) {
+            if (!config.isAuthenticationCookieSecure()) {
+                LOG.warn("Authentication cookie has secure flag set to false. It is highlgy recommended to set cookie.secure to true.");
+            }
+            
+            if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
+                LOG.warn("Authentication cookie name has still default value. Consider changeing auth.cookie.name to an application specific value.");
+            }
+            
+            if (!config.isSessionCookieSecure()) {
+                LOG.warn("Session cookie has secure flag set to false. It is highlgy recommended to set auth.cookie.secure to true.");
+            }
+            
+            if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
+                LOG.warn("Session cookie name has still default value. Consider changeing cookie.name to an application specific value.");
+            }
+        }
+    }
 
     @SuppressWarnings("all")
     public void parseRoutes() {
