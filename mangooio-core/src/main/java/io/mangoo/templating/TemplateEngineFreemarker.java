@@ -194,7 +194,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
     @Override
     public String getTemplateName(String templateName) {
         Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
-
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
     
@@ -236,7 +235,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
 
         List<Source> sources = new ArrayList<Source>();
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
-        
         if (templateFile.exists()) {
             List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 

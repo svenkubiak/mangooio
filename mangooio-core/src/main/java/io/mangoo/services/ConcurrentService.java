@@ -67,9 +67,6 @@ public class ConcurrentService {
         this.executorService.execute(runnable);
     }
     
-    /**
-     * Shuts down the executor service
-     */
     public void shutdown() {
         this.executorService.shutdown();
     }

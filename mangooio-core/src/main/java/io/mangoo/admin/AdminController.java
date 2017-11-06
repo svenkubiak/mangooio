@@ -97,7 +97,6 @@ public class AdminController {
     
     public Response logger() {
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-        
         return Response.withOk()
                 .andContent(SPACE, LOGGER)
                 .andContent(VERSION, BootstrapUtils.getVersion())
@@ -107,7 +106,6 @@ public class AdminController {
     
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        
         if (body != null && body.size() > 0) {
             String clazz = body.get("class").toString();
             String level = body.get("level").toString();

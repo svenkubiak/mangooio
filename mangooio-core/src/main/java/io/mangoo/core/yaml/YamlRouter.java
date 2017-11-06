@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 
- * @author sven.kubiak
+ * @author svenkubiak
  *
  */
 public class YamlRouter {

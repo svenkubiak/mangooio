@@ -2,7 +2,7 @@ package io.mangoo.core.yaml;
 
 /**
  * 
- * @author sven.kubiak
+ * @author svenkubiak
  *
  */
 public class YamlRoute {
