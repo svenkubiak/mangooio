@@ -233,4 +233,30 @@ public class AdminControllerTest {
         assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
+    
+    @Test
+    public void testJsonAuthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/json")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo("application/json; charset=UTF-8"));
+        assertThat(response.getContent(), containsString("uptime"));
+    }
+    
+    @Test
+    public void testJsonUnauthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/json").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
+        assertThat(response.getContent(), not(containsString("uptime")));
+    }
 }

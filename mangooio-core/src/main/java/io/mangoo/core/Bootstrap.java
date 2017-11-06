@@ -242,6 +242,7 @@ public class Bootstrap {
         
         if (this.config.isAdminEnabled()) {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/json").withRequest(Methods.GET).withClass(AdminController.class).withMethod("json").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger").withRequest(Methods.GET).withClass(AdminController.class).withMethod("logger").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger/ajax").withRequest(Methods.POST).withClass(AdminController.class).withMethod("loggerajax").useInternalTemplateEngine());
