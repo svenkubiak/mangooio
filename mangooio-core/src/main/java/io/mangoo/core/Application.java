@@ -30,11 +30,12 @@ public final class Application {
     private static volatile String baseDirectory;
 
     private Application() {
-        System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
     }
 
     public static void main(String... args) {
-        final Bootstrap bootstrap = new Bootstrap();
+        System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
+        
+        Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
         bootstrap.prepareLogger();
