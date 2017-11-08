@@ -91,8 +91,8 @@ public class Bootstrap {
     }
 
     public void prepareLogger() {
-        if (StringUtils.isNotBlank(BootstrapUtils.loggerConfig)) {
-            LOG.info(BootstrapUtils.loggerConfig);
+        if (StringUtils.isNotBlank(BootstrapUtils.getLoggerConfig())) {
+            LOG.info(BootstrapUtils.getLoggerConfig());
         }
     }
     
