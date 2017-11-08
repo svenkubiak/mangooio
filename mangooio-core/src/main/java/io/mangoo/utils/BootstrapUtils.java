@@ -28,7 +28,6 @@ import io.mangoo.enums.RouteType;
  */
 public final class BootstrapUtils {
     private static final Logger LOG = LogManager.getLogger(BootstrapUtils.class);
-    private static String loggerConfig;
 
     private BootstrapUtils() {
     }
@@ -154,15 +153,5 @@ public final class BootstrapUtils {
         }
 
         return mode;
-    }
-    
-    public static void setLoggerConfig(String message) {
-        if (StringUtils.isBlank(loggerConfig)) {
-            loggerConfig = message; 
-        }
-    }
-    
-    public static String getLoggerConfig() {
-        return loggerConfig;
     }
 }

@@ -32,7 +32,6 @@ public class ConfigFactory extends ConfigurationFactory {
         if (StringUtils.isNotBlank(configurationFile)) {
             try {
                 url = Paths.get(configurationFile).toUri().toURL(); //NOSONAR
-                BootstrapUtils.setLoggerConfig("Found path to Log4j2 configuration as JVM argument. Using configuration file: " + configurationFile);
             } catch (MalformedURLException e) {
                 e.printStackTrace(); //NOSONAR
             }
@@ -40,7 +39,6 @@ public class ConfigFactory extends ConfigurationFactory {
             configurationFile = "log4j2." + BootstrapUtils.getMode() + ".yaml";
             if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
                 url = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
-                BootstrapUtils.setLoggerConfig("Found mode specific Log4j2 configuration in classpath. Using configuration file: " + configurationFile);
             }
         }
 

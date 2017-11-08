@@ -38,7 +38,6 @@ public final class Application {
         Bootstrap bootstrap = new Bootstrap();
         start = bootstrap.getStart();
         mode = bootstrap.prepareMode();
-        bootstrap.prepareLogger();
         injector = bootstrap.prepareInjector();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();

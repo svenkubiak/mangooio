@@ -89,12 +89,6 @@ public class Bootstrap {
         this.mode = BootstrapUtils.getMode();
         return this.mode;
     }
-
-    public void prepareLogger() {
-        if (StringUtils.isNotBlank(BootstrapUtils.getLoggerConfig())) {
-            LOG.info(BootstrapUtils.getLoggerConfig());
-        }
-    }
     
     public Injector prepareInjector() {
         this.injector = LifecycleInjector.builder()
