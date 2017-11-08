@@ -24,9 +24,6 @@ import io.mangoo.utils.BootstrapUtils;
 public class ConfigFactory extends ConfigurationFactory {
     private static final String[] SUFFIXES = new String[] { ".yaml", ".yml" };
 
-    public ConfigFactory() {
-    }
-
     @Override
     public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) {
         String configurationFile = System.getProperty(Jvm.APPLICATION_LOG.toString());
