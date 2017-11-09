@@ -69,7 +69,6 @@ public class Bootstrap {
     private static final Logger LOG = LogManager.getLogger(Bootstrap.class);
     private static final int INITIAL_SIZE = 255;
     private final LocalDateTime start = LocalDateTime.now();
-    private final ResourceHandler resourceHandler;
     private Undertow undertow;
     private PathHandler pathHandler;
     private Config config;
@@ -80,17 +79,14 @@ public class Bootstrap {
     private boolean error;
     private int httpPort;
     private int ajpPort;
+    private final ResourceHandler resourceHandler = Handlers.
+            resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
     
-    public Bootstrap() {
-        this.resourceHandler = Handlers.resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
-    }
-
-    public Mode prepareMode() {
+    public void prepareMode() {
         this.mode = BootstrapUtils.getMode();
-        return this.mode;
     }
     
-    public Injector prepareInjector() {
+    public void prepareInjector() {
         this.injector = LifecycleInjector.builder()
                 .withModules(getModules())
                 .usingBasePackages(".")
@@ -103,8 +99,6 @@ public class Bootstrap {
             LOG.error("Failed to start Governator LifecycleManager", e);
             this.error = true;
         }
-        
-        return this.injector;
     }
 
     public void applicationInitialized() {
@@ -145,7 +139,7 @@ public class Bootstrap {
     }
 
     @SuppressWarnings("all")
-    public void parseRoutes() {
+    public void prepareRoutes() {
         if (!error()) {
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
             YamlRouter yamlRouter = null;
@@ -266,7 +260,7 @@ public class Bootstrap {
         return routingHandler;
     }
 
-    public void startUndertow() {
+    public void prepareUndertow() {
         if (!error()) {
             Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, this.config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
@@ -342,7 +336,7 @@ public class Bootstrap {
         this.injector.getInstance(MangooLifecycle.class).applicationStarted();
     }
 
-    public void startQuartzScheduler() {
+    public void prepareScheduler() {
         if (!error()) {
             List<Class<?>> jobs = new ArrayList<>();
             new FastClasspathScanner(this.config.getSchedulerPackage())
@@ -395,5 +389,13 @@ public class Bootstrap {
     
     public Undertow getUndertow() {
         return this.undertow;
+    }
+
+    public Mode getMode() {
+        return this.mode;
+    }
+
+    public Injector getInjector() {
+        return this.injector;
     }
 }

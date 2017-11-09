@@ -36,15 +36,15 @@ public final class Application {
         System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
         
         Bootstrap bootstrap = new Bootstrap();
-        start = bootstrap.getStart();
-        mode = bootstrap.prepareMode();
-        injector = bootstrap.prepareInjector();
+        bootstrap.prepareMode();
+        mode = bootstrap.getMode();
+        bootstrap.prepareInjector();
+        injector = bootstrap.getInjector();
         bootstrap.applicationInitialized();
         bootstrap.prepareConfig();
-        bootstrap.parseRoutes();
-        bootstrap.startQuartzScheduler();
-        bootstrap.startUndertow();
-        undertow = bootstrap.getUndertow();
+        bootstrap.prepareRoutes();
+        bootstrap.prepareScheduler();
+        bootstrap.prepareUndertow();
 
         if (bootstrap.success()) {
             bootstrap.sanityChecks();
@@ -52,6 +52,8 @@ public final class Application {
             bootstrap.applicationStarted();
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             baseDirectory = BootstrapUtils.getBaseDirectory();
+            undertow = bootstrap.getUndertow();
+            start = bootstrap.getStart();
             started = true;
         } else {
             System.out.print("Failed to start mangoo I/O application"); //NOSONAR
