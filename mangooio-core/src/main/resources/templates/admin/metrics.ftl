@@ -78,5 +78,10 @@
 	</div>
 </div>
 </#if>
+<div class="row">
+	<div class="col-xs-12">
+		<a href="/@admin/metrics/reset" class="btn btn-primary btn-block" onclick="return confirm('Are you sure you want to reset the metrics?')">Reset metrics</a>
+	</div>
+</div>
 </section>
 <#include "footer.ftl">

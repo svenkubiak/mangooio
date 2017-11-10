@@ -165,6 +165,11 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.routesPath());
     }
     
+    public Response resetMetrics() {
+        Application.getInstance(Metrics.class).reset();
+        return Response.withRedirect("/@admin/metrics");
+    }
+    
     public Response scheduler()  {
         List<Job> jobs = new ArrayList<>();
         if (this.scheduler.isInitialize()) {

@@ -16,11 +16,11 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class Metrics {
-    private final AtomicIntegerFieldUpdater<Metrics> maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
-    private final AtomicIntegerFieldUpdater<Metrics> minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
-    private final AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
-    private final AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-    private final Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
+    private AtomicIntegerFieldUpdater<Metrics> maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
+    private AtomicIntegerFieldUpdater<Metrics> minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
+    private AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
+    private AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
+    private Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;
@@ -79,5 +79,18 @@ public class Metrics {
     
     public long getAvgRequestTime() {
         return avgRequestTime;
+    }
+
+    public void reset() {
+        this.maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
+        this.minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
+        this.totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
+        this.totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
+        this.metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
+        this.avgRequestTime = 0;
+        this.totalRequestTime = 0;
+        this.totalRequests = 0;
+        this.maxRequestTime = 0;
+        this.minRequestTime = 0;
     }
 }

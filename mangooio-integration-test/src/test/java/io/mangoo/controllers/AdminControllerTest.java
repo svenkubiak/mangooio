@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
 
+import io.mangoo.core.Application;
+import io.mangoo.models.Metrics;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -118,6 +120,33 @@ public class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(METRICS));
+    }
+    
+    @Test
+    public void testResetMetrics() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/metrics/reset")
+                .withBasicauthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(METRICS));
+        
+        //given
+        WebRequest.get("/").execute();
+        WebRequest.get("/").execute();
+        WebRequest.get("/").execute();
+        Metrics metrics = Application.getInstance(Metrics.class);
+        metrics.reset();
+        
+        //then
+        assertThat(metrics.getAvgRequestTime(), equalTo(0L));
+        assertThat(metrics.getMaxRequestTime(), equalTo(0));
+        assertThat(metrics.getMinRequestTime(), equalTo(0));
+        assertThat(metrics.getMetrics().size(), equalTo(0));
     }
     
     @Test
