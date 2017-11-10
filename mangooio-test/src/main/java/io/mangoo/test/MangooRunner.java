@@ -7,7 +7,6 @@ import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 import io.mangoo.core.Application;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Mode;
 
 /**
@@ -22,7 +21,6 @@ import io.mangoo.enums.Mode;
 public class MangooRunner {
     @BeforeClass
     public static final void start() {
-        System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        Application.main(null);
+        Application.start(Mode.TEST);
     }
 }

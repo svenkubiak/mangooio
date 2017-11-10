@@ -14,7 +14,6 @@ public final class Main {
     }
 
     public static void main(String... args) {
-        System.setProperty("application.mode", Mode.DEV.toString());
-        Application.main("");
+        Application.start(Mode.DEV);
     }
 }

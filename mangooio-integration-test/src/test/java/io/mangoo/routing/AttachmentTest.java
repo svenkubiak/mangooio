@@ -10,8 +10,8 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import io.mangoo.admin.AdminController;
 import io.mangoo.core.Application;
-import io.mangoo.core.Bootstrap;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooTemplateEngine;
@@ -30,7 +30,7 @@ public class AttachmentTest {
         
         //when
         attachment.withClassAnnotations(new ArrayList<Annotation>());
-        attachment.withControllerClass(Bootstrap.class);
+        attachment.withControllerClass(AdminController.class);
         attachment.withControllerClassName("foo");
         attachment.withControllerInstance(new String());
         attachment.withControllerMethodName("bar");
