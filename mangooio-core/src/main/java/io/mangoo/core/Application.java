@@ -66,7 +66,7 @@ import io.undertow.util.Methods;
  */
 public final class Application {
     private static Logger LOG;
-    private static volatile int INITIAL_SIZE = 255;
+    private static int INITIAL_SIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
     private static volatile int httpPort;
@@ -83,7 +83,7 @@ public final class Application {
     private Application() {
     }
 
-    public static final void main(String... args) {
+    public static void main(String... args) {
         start(null);
     }
 
@@ -116,7 +116,7 @@ public final class Application {
         }
     }
     
-    private static final void prepareLogger() {
+    private static void prepareLogger() {
         LOG = LogManager.getLogger(Application.class);
         LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
     }
@@ -126,7 +126,7 @@ public final class Application {
      *
      * @return True if the application is running in dev mode, false otherwise
      */
-    public static boolean inDevMode() {
+    public static final boolean inDevMode() {
         return Mode.DEV == mode;
     }
 
@@ -135,7 +135,7 @@ public final class Application {
      *
      * @return True if the application is running in prod mode, false otherwise
      */
-    public static boolean inProdMode() {
+    public static final boolean inProdMode() {
         return Mode.PROD == mode;
     }
 
@@ -144,7 +144,7 @@ public final class Application {
      *
      * @return True if the application is running in test mode, false otherwise
      */
-    public static boolean inTestMode() {
+    public static final boolean inTestMode() {
         return Mode.TEST == mode;
     }
 
@@ -153,7 +153,7 @@ public final class Application {
      *
      * @return Enum Mode
      */
-    public static Mode getMode() {
+    public static final Mode getMode() {
         return mode;
     }
 
@@ -162,28 +162,28 @@ public final class Application {
      *
      * @return Google Guice injector instance
      */
-    public static Injector getInjector() {
+    public static final Injector getInjector() {
         return injector;
     }
 
     /**
      * @return True if the application started successfully, false otherwise
      */
-    public static boolean isStarted() {
+    public static final boolean isStarted() {
         return started;
     }
 
     /**
      * @return The LocalDateTime of the application start
      */
-    public static LocalDateTime getStart() {
+    public static final LocalDateTime getStart() {
         return start;
     }
 
     /**
      * @return The duration of the application uptime
      */
-    public static Duration getUptime() {
+    public static final Duration getUptime() {
         Objects.requireNonNull(start, Required.START.toString());
 
         return Duration.between(start, LocalDateTime.now());
@@ -198,7 +198,7 @@ public final class Application {
      *
      * @return An instance of the requested class
      */
-    public static <T> T getInstance(Class<T> clazz) {
+    public static final <T> T getInstance(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return injector.getInstance(clazz);
@@ -207,7 +207,7 @@ public final class Application {
     /**
      * Stops the underlying undertow server
      */
-    public static void stopUndertow() {
+    public static final void stopUndertow() {
         undertow.stop();
     }
     
@@ -216,7 +216,7 @@ public final class Application {
      * 
      * @param providedMode A given mode or null
      */
-    private static final void prepareMode(Mode providedMode) {
+    private static void prepareMode(Mode providedMode) {
         if (providedMode == null) {
             mode = BootstrapUtils.getMode();            
         } else {
@@ -227,7 +227,7 @@ public final class Application {
     /**
      * Sets the injector wrapped through netflix Governator
      */
-    private static final void prepareInjector() {
+    private static void prepareInjector() {
         injector = LifecycleInjector.builder()
                 .withModules(BootstrapUtils.getModules())
                 .usingBasePackages(".")
@@ -270,7 +270,7 @@ public final class Application {
      * 
      * Do sanity checks on the configuration an warn about it in the log
      */
-    private static final void sanityChecks() {
+    private static void sanityChecks() {
         Config config = injector.getInstance(Config.class);
         if (Mode.PROD == mode) {
             if (!config.isAuthenticationCookieSecure()) {
@@ -355,7 +355,7 @@ public final class Application {
     /**
      * Create routes for WebSockets ServerSentEvent and Resource files
      */
-    private static final void createRoutes() {
+    private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
         for (final Route route : Router.getRoutes()) {
             if (RouteType.WEBSOCKET == route.getRouteType()) {
@@ -368,7 +368,7 @@ public final class Application {
         }
     }
 
-    private static final RoutingHandler getRoutingHandler() {
+    private static RoutingHandler getRoutingHandler() {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
@@ -405,7 +405,7 @@ public final class Application {
         return routingHandler;
     }
 
-    private static final void prepareUndertow() {
+    private static void prepareUndertow() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
             
@@ -439,7 +439,7 @@ public final class Application {
         }
     }
 
-    private static final void showLogo() {
+    private static void showLogo() {
         if (!error) {
             final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
             buffer.append('\n')
@@ -462,11 +462,11 @@ public final class Application {
         }
     }
 
-    private static final void applicationStarted() {
+    private static void applicationStarted() {
         injector.getInstance(MangooLifecycle.class).applicationStarted();
     }
 
-    private static final void prepareScheduler() {
+    private static void prepareScheduler() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
             
