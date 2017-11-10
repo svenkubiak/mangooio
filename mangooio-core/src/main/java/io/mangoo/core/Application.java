@@ -66,7 +66,7 @@ import io.undertow.util.Methods;
  */
 public final class Application {
     private static Logger LOG;
-    private static int INITIAL_SIZE = 255;
+    private static int BUFFERSIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
     private static volatile int httpPort;
@@ -87,7 +87,7 @@ public final class Application {
         start(null);
     }
 
-    public static final void start(Mode mode) {
+    public static void start(Mode mode) {
         if (!started) {
             prepareMode(mode);
             System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
@@ -115,18 +115,13 @@ public final class Application {
             }   
         }
     }
-    
-    private static void prepareLogger() {
-        LOG = LogManager.getLogger(Application.class);
-        LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
-    }
 
     /**
      * Checks if the application is running in dev mode
      *
      * @return True if the application is running in dev mode, false otherwise
      */
-    public static final boolean inDevMode() {
+    public static boolean inDevMode() {
         return Mode.DEV == mode;
     }
 
@@ -135,7 +130,7 @@ public final class Application {
      *
      * @return True if the application is running in prod mode, false otherwise
      */
-    public static final boolean inProdMode() {
+    public static boolean inProdMode() {
         return Mode.PROD == mode;
     }
 
@@ -144,7 +139,7 @@ public final class Application {
      *
      * @return True if the application is running in test mode, false otherwise
      */
-    public static final boolean inTestMode() {
+    public static boolean inTestMode() {
         return Mode.TEST == mode;
     }
 
@@ -153,7 +148,7 @@ public final class Application {
      *
      * @return Enum Mode
      */
-    public static final Mode getMode() {
+    public static Mode getMode() {
         return mode;
     }
 
@@ -162,28 +157,28 @@ public final class Application {
      *
      * @return Google Guice injector instance
      */
-    public static final Injector getInjector() {
+    public static Injector getInjector() {
         return injector;
     }
 
     /**
      * @return True if the application started successfully, false otherwise
      */
-    public static final boolean isStarted() {
+    public static boolean isStarted() {
         return started;
     }
 
     /**
      * @return The LocalDateTime of the application start
      */
-    public static final LocalDateTime getStart() {
+    public static LocalDateTime getStart() {
         return start;
     }
 
     /**
      * @return The duration of the application uptime
      */
-    public static final Duration getUptime() {
+    public static Duration getUptime() {
         Objects.requireNonNull(start, Required.START.toString());
 
         return Duration.between(start, LocalDateTime.now());
@@ -198,7 +193,7 @@ public final class Application {
      *
      * @return An instance of the requested class
      */
-    public static final <T> T getInstance(Class<T> clazz) {
+    public static <T> T getInstance(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return injector.getInstance(clazz);
@@ -207,7 +202,7 @@ public final class Application {
     /**
      * Stops the underlying undertow server
      */
-    public static final void stopUndertow() {
+    public static void stopUndertow() {
         undertow.stop();
     }
     
@@ -294,7 +289,7 @@ public final class Application {
     /**
      * Parse routes from routes.yaml file and set up dispatcher
      */
-    private static final void prepareRoutes() {
+    private static void prepareRoutes() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
             ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
@@ -404,6 +399,11 @@ public final class Application {
 
         return routingHandler;
     }
+    
+    private static void prepareLogger() {
+        LOG = LogManager.getLogger(Application.class);
+        LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
+    }
 
     private static void prepareUndertow() {
         if (!error) {
@@ -441,7 +441,7 @@ public final class Application {
 
     private static void showLogo() {
         if (!error) {
-            final StringBuilder buffer = new StringBuilder(INITIAL_SIZE);
+            final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
                 .append("\n\nhttps://mangoo.io | @mangoo_io | ")
