@@ -13,6 +13,7 @@ public final class IOUtils {
     private IOUtils() {
     }
 
+    @SuppressWarnings("all")
     public static void closeQuietly(final Closeable closeable) {
         try {
             if (closeable != null) {

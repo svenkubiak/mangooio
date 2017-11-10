@@ -65,7 +65,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class Application {
-    private static Logger logger;
+    private static Logger LOG; //NOSONAR
     private static final int BUFFERSIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
@@ -232,7 +232,7 @@ public final class Application {
         try {
             injector.getInstance(LifecycleManager.class).start();
         } catch (Exception e) {
-            logger.error("Failed to start Governator LifecycleManager", e);
+            LOG.error("Failed to start Governator LifecycleManager", e);
             error = true;
         }
     }
@@ -250,12 +250,12 @@ public final class Application {
     private static void prepareConfig() {
         Config config = injector.getInstance(Config.class);
         if (!config.hasValidSecret()) {
-            logger.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
+            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
             error = true;
         }
         
         if (!config.isDecrypted()) {
-            logger.error("Found encrypted config values in application.yaml but decryption was not successful!");
+            LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
             error = true;
         }
     }
@@ -269,19 +269,19 @@ public final class Application {
         Config config = injector.getInstance(Config.class);
         if (Mode.PROD == mode) {
             if (!config.isAuthenticationCookieSecure()) {
-                logger.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
+                LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
             }
             
             if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                logger.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
+                LOG.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
             }
             
             if (!config.isSessionCookieSecure()) {
-                logger.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
+                LOG.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
             }
             
             if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                logger.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
+                LOG.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
             }
         }
     }
@@ -297,7 +297,7 @@ public final class Application {
             try {
                 yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
             } catch (IOException e) {
-                logger.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
+                LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
                 error = true;
             }
             
@@ -333,9 +333,9 @@ public final class Application {
                             }
                         }
                        Router.addRoute(route);
-                    } catch (final Exception e) {
-                        logger.error("Failed to create routes from routes.yaml");
-                        logger.error("Please verify that your routes.yaml mapping is correct", e);
+                    } catch (final ClassNotFoundException e) {
+                        LOG.error("Failed to create routes from routes.yaml");
+                        LOG.error("Please verify that your routes.yaml mapping is correct", e);
                         error = true;
                     }
                 }
@@ -400,9 +400,10 @@ public final class Application {
         return routingHandler;
     }
     
+    @SuppressWarnings("all")
     private static void prepareLogger() {
-        logger = LogManager.getLogger(Application.class);
-        logger.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
+        LOG = LogManager.getLogger(Application.class);
+        LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
     }
 
     private static void prepareUndertow() {
@@ -433,7 +434,7 @@ public final class Application {
                 undertow = builder.build();
                 undertow.start();
             } else {
-                logger.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
+                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
                 error = true;
             }
         }
@@ -448,17 +449,17 @@ public final class Application {
                 .append(BootstrapUtils.getVersion())
                 .append('\n');
 
-            logger.info(buffer.toString()); //NOSONAR
+            LOG.info(buffer.toString()); //NOSONAR
             
             if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
-                logger.info("HTTP connector listening @{}:{}", httpHost, httpPort);
+                LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
             }
             
             if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-                logger.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
+                LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
             }
             
-            logger.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
+            LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
         }
     }
 
@@ -487,11 +488,11 @@ public final class Application {
                         try {
                             mangooScheduler.schedule(jobDetail, trigger);
                         } catch (MangooSchedulerException e) {
-                            logger.error("Failed to add a job to the scheduler", e);
+                            LOG.error("Failed to add a job to the scheduler", e);
                         }
-                        logger.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
+                        LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
                     } else {
-                        logger.error("Invalid or missing cron expression for job: " + clazz.getName());
+                        LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
                         error = true;
                     }
                 }
@@ -500,7 +501,7 @@ public final class Application {
                     try {
                         mangooScheduler.start();
                     } catch (MangooSchedulerException e) {
-                        logger.error("Failed to start the scheduler", e);
+                        LOG.error("Failed to start the scheduler", e);
                     }
                 }
             }
