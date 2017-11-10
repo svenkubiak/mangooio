@@ -26,6 +26,7 @@ public class ConfigFactory extends ConfigurationFactory {
     private static final String[] SUFFIXES = new String[] { ".yaml", ".yml" };
 
     @Override
+    @SuppressWarnings("all")
     public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) {
         String configurationFile = System.getProperty(Jvm.APPLICATION_LOG.toString());
         

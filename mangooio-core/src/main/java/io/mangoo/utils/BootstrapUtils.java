@@ -168,7 +168,7 @@ public final class BootstrapUtils {
         return exists;
     }
 
-    public static final List<Module> getModules() {
+    public static List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
         try {
             final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
