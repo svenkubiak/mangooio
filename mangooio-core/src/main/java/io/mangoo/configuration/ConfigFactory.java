@@ -13,8 +13,9 @@ import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.yaml.YamlConfiguration;
 
+import io.mangoo.core.Application;
 import io.mangoo.enums.Jvm;
-import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.enums.Key;
 
 /**
  * 
@@ -32,13 +33,15 @@ public class ConfigFactory extends ConfigurationFactory {
         if (StringUtils.isNotBlank(configurationFile)) {
             try {
                 url = Paths.get(configurationFile).toUri().toURL(); //NOSONAR
+                System.setProperty(Key.LOGGER_MESSAGE.toString(), "Found Log4j2 configuration file reference as JVM arugment. Using configuration file: " + configurationFile);
             } catch (MalformedURLException e) {
                 e.printStackTrace(); //NOSONAR
             }
         } else {
-            configurationFile = "log4j2." + BootstrapUtils.getMode() + ".yaml";
+            configurationFile = "log4j2." + Application.getMode() + ".yaml";
             if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
                 url = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
+                System.setProperty(Key.LOGGER_MESSAGE.toString(), "Found mode specific Log4j2 configuration in class path. Using configuration file: " + configurationFile);
             }
         }
 
@@ -49,6 +52,8 @@ public class ConfigFactory extends ConfigurationFactory {
             } catch (IOException e) {
                 e.printStackTrace(); //NOSONAR
             }
+        } else {
+            System.setProperty(Key.LOGGER_MESSAGE.toString(), "Found default Log4j2 configuration in class path. Using configuration file: " + configurationSource.getFile().getName());
         }
 
         return yamlConfiguration;

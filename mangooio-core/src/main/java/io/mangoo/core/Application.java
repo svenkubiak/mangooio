@@ -65,7 +65,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class Application {
-    private static Logger LOG = LogManager.getLogger(Application.class);
+    private static Logger LOG;
     private static volatile int INITIAL_SIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
@@ -78,8 +78,7 @@ public final class Application {
     private static volatile boolean started;
     private static volatile boolean error;
     private static volatile PathHandler pathHandler;
-    private static volatile ResourceHandler resourceHandler = Handlers.
-            resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
+    private static volatile ResourceHandler resourceHandler;
 
     private Application() {
     }
@@ -90,9 +89,13 @@ public final class Application {
 
     public static final void start(Mode mode) {
         if (!started) {
+            prepareMode(mode);
             System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
             
-            prepareMode(mode);
+            resourceHandler = Handlers.
+                    resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
+            
+            prepareLogger();
             prepareInjector();
             applicationInitialized();
             prepareConfig();
@@ -113,6 +116,11 @@ public final class Application {
         }
     }
     
+    private static final void prepareLogger() {
+        LOG = LogManager.getLogger(Application.class);
+        LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
+    }
+
     /**
      * Checks if the application is running in dev mode
      *
@@ -405,12 +413,12 @@ public final class Application {
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
                     .setHandler(Handlers.exceptionHandler(pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
 
-            boolean hasConnector = false;
             httpHost = config.getConnectorHttpHost();
             httpPort = config.getConnectorHttpPort();
             ajpHost = config.getConnectorAjpHost();
             ajpPort = config.getConnectorAjpPort();
-            
+
+            boolean hasConnector = false;
             if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
                 builder.addHttpListener(httpPort, httpHost);
                 hasConnector = true;
@@ -425,8 +433,8 @@ public final class Application {
                 undertow = builder.build();
                 undertow.start();
             } else {
-                error = true;
                 LOG.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
+                error = true;
             }
         }
     }

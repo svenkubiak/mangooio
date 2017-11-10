@@ -122,6 +122,7 @@ public enum Key {
     SMTP_SSL("smtp.ssl"),
     SMTP_USERNAME("smtp.username"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize"),
+    LOGGER_MESSAGE("logger.configuration.message"),
     ERROR("error"),
     SUCCESS("success"),
     VERSION("version"),
