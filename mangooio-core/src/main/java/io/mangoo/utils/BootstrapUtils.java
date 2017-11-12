@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,9 +20,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.RouteType;
 
@@ -133,23 +130,6 @@ public final class BootstrapUtils {
         .append("java");
         
         return buffer.toString();
-    }
-    
-    public static Mode getMode() {
-        Mode mode = Mode.PROD;
-        final String applicationMode = System.getProperty(Jvm.APPLICATION_MODE.toString());
-        if (StringUtils.isNotBlank(applicationMode)) {
-            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
-                case "dev"  : mode = Mode.DEV;
-                break;
-                case "test" : mode = Mode.TEST;
-                break;
-                default     : mode = Mode.PROD;
-                break;
-            }
-        }
-
-        return mode;
     }
     
     public static boolean methodExists(String controllerMethod, Class<?> controllerClass) {

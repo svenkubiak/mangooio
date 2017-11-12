@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,7 @@ import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
@@ -84,10 +86,12 @@ public final class Application {
     }
 
     public static void main(String... args) {
-        start(null);
+        start(Mode.PROD);
     }
 
     public static void start(Mode mode) {
+        Objects.requireNonNull(mode, "Application can not be started without providing a mode");
+        
         if (!started) {
             prepareMode(mode);
             System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
@@ -212,8 +216,16 @@ public final class Application {
      * @param providedMode A given mode or null
      */
     private static void prepareMode(Mode providedMode) {
-        if (providedMode == null) {
-            mode = BootstrapUtils.getMode();            
+        final String applicationMode = System.getProperty(Jvm.APPLICATION_MODE.toString());
+        if (StringUtils.isNotBlank(applicationMode)) {
+            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
+                case "dev"  : mode = Mode.DEV;
+                break;
+                case "test" : mode = Mode.TEST;
+                break;
+                default     : mode = Mode.PROD;
+                break;
+            }
         } else {
             mode = providedMode;
         }
