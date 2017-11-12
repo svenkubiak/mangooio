@@ -123,7 +123,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testResetMetrics() {
+    public void testResetMetricsAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/metrics/reset")
                 .withBasicauthentication(ADMIN, ADMIN)
@@ -147,6 +147,19 @@ public class AdminControllerTest {
         assertThat(metrics.getMaxRequestTime(), equalTo(0));
         assertThat(metrics.getMinRequestTime(), equalTo(0));
         assertThat(metrics.getMetrics().size(), equalTo(0));
+    }
+    
+    @Test
+    public void testResetMetricsUnauthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin/metrics/reset")
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContent(), not(containsString(ROUTES)));
     }
     
     @Test
