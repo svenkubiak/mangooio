@@ -16,11 +16,14 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class Metrics {
+    private static final int CONCURRENCY_LEVEL = 1;
+    private static final float LOAD_FACTOR = 0.9F;
+    private static final int INITIAL_CAPACITY = 16;
     private AtomicIntegerFieldUpdater<Metrics> maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
     private AtomicIntegerFieldUpdater<Metrics> minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-    private Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
+    private Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;
@@ -86,7 +89,7 @@ public class Metrics {
         this.minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
         this.totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
         this.totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-        this.metricsCount = new ConcurrentHashMap<>(16, 0.9F, 1);
+        this.metricsCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
         this.avgRequestTime = 0;
         this.totalRequestTime = 0;
         this.totalRequests = 0;
