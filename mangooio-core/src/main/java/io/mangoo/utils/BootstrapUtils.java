@@ -3,10 +3,7 @@ package io.mangoo.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
@@ -16,8 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Resources;
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -132,6 +127,13 @@ public final class BootstrapUtils {
         return buffer.toString();
     }
     
+    /**
+     * Checks if a given method exists in a given class
+     * @param controllerMethod The method to check
+     * @param controllerClass The class to check 
+     * 
+     * @return True if the method exists, false otherweise
+     */
     public static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
         boolean exists = false;
         for (final Method method : controllerClass.getMethods()) {
@@ -146,19 +148,5 @@ public final class BootstrapUtils {
         }
 
         return exists;
-    }
-
-    public static List<Module> getModules() {
-        final List<Module> modules = new ArrayList<>();
-        try {
-            final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
-            modules.add(new io.mangoo.core.Module());
-            modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
-        }
-        
-        return modules;
     }
 }

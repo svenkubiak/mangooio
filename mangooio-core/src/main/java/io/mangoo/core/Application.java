@@ -1,6 +1,7 @@
 package io.mangoo.core;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -20,7 +21,9 @@ import org.quartz.Trigger;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.netflix.governator.guice.LifecycleInjector;
 import com.netflix.governator.lifecycle.LifecycleManager;
 
@@ -236,7 +239,7 @@ public final class Application {
      */
     private static void prepareInjector() {
         injector = LifecycleInjector.builder()
-                .withModules(BootstrapUtils.getModules())
+                .withModules(getModules())
                 .usingBasePackages(".")
                 .build()
                 .createInjector();
@@ -476,6 +479,20 @@ public final class Application {
         }
     }
 
+    private static List<Module> getModules() {
+        final List<Module> modules = new ArrayList<>();
+        try {
+            final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
+            modules.add(new io.mangoo.core.Module());
+            modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
+        }
+        
+        return modules;
+    }
+    
     private static void applicationStarted() {
         injector.getInstance(MangooLifecycle.class).applicationStarted();
     }
