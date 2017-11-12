@@ -77,7 +77,6 @@ public class AdminController {
     
     public Response index() {
         Runtime runtime = Runtime.getRuntime();
-        long maxMemory = runtime.maxMemory();
         long allocatedMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
 
@@ -88,10 +87,8 @@ public class AdminController {
                 .andContent(SPACE, null)
                 .andContent("uptime", Date.from(instant))
                 .andContent("started", Application.getStart())
-                .andContent("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory))
                 .andContent("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory))
                 .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
-                .andContent("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
