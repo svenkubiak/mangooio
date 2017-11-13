@@ -42,7 +42,7 @@ public class ConfigFactory extends ConfigurationFactory {
             configurationFile = "log4j2." + Application.getMode() + ".yaml";
             if (Thread.currentThread().getContextClassLoader().getResource(configurationFile) != null) {
                 url = Thread.currentThread().getContextClassLoader().getResource(configurationFile);
-                System.setProperty(Key.LOGGER_MESSAGE.toString(), "Found mode specific Log4j2 configuration in class path. Using configuration file: " + configurationFile);
+                System.setProperty(Key.LOGGER_MESSAGE.toString(), "Found mode specific Log4j2 configuration in classpath. Using configuration file: " + configurationFile);
             }
         }
 
