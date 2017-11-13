@@ -812,4 +812,11 @@ public class Config {
     public String getRefererPolicy() {
         return getString(Key.APPLICATION_HEADERS_REFERERPOLICY, Default.APPLICATION_HEADERS_REFERERPOLICY.toString());
     }
+
+    /**
+     * @return undertow.maxentitysize or default value if undefined
+     */
+    public long getUndertowMaxEntitySize() {
+        return getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong());
+    }
 }

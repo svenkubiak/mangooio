@@ -107,6 +107,7 @@ public final class Application {
             applicationInitialized();
             prepareConfig();
             prepareRoutes();
+            createRoutes();
             prepareScheduler();
             prepareUndertow();
 
@@ -238,17 +239,19 @@ public final class Application {
      * Sets the injector wrapped through netflix Governator
      */
     private static void prepareInjector() {
-        injector = LifecycleInjector.builder()
-                .withModules(getModules())
-                .usingBasePackages(".")
-                .build()
-                .createInjector();
-        
-        try {
-            injector.getInstance(LifecycleManager.class).start();
-        } catch (Exception e) {
-            LOG.error("Failed to start Governator LifecycleManager", e);
-            error = true;
+        if (!error) {
+            injector = LifecycleInjector.builder()
+                    .withModules(getModules())
+                    .usingBasePackages(".")
+                    .build()
+                    .createInjector();
+            
+            try {
+                injector.getInstance(LifecycleManager.class).start();
+            } catch (Exception e) {
+                LOG.error("Failed to start Governator LifecycleManager", e);
+                error = true;
+            } 
         }
     }
 
@@ -256,22 +259,26 @@ public final class Application {
      * Callback to MangooLifecycle applicationInitialized
      */
     private static void applicationInitialized() {
-        injector.getInstance(MangooLifecycle.class).applicationInitialized();
+        if (!error) {
+            injector.getInstance(MangooLifecycle.class).applicationInitialized();            
+        }
     }
 
     /**
      * Checks for config failures that pervent the application from starting
      */
     private static void prepareConfig() {
-        Config config = injector.getInstance(Config.class);
-        if (!config.hasValidSecret()) {
-            LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
-            error = true;
-        }
-        
-        if (!config.isDecrypted()) {
-            LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
-            error = true;
+        if (!error) {
+            Config config = injector.getInstance(Config.class);
+            if (!config.hasValidSecret()) {
+                LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
+                error = true;
+            }
+            
+            if (!config.isDecrypted()) {
+                LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
+                error = true;
+            }
         }
     }
     
@@ -281,23 +288,25 @@ public final class Application {
      * Do sanity checks on the configuration an warn about it in the log
      */
     private static void sanityChecks() {
-        Config config = injector.getInstance(Config.class);
-        if (Mode.PROD == mode) {
-            if (!config.isAuthenticationCookieSecure()) {
-                LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
-            }
-            
-            if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                LOG.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
-            }
-            
-            if (!config.isSessionCookieSecure()) {
-                LOG.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
-            }
-            
-            if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                LOG.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
-            }
+        if (!error) {
+            Config config = injector.getInstance(Config.class);
+            if (Mode.PROD == mode) {
+                if (!config.isAuthenticationCookieSecure()) {
+                    LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
+                }
+                
+                if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
+                    LOG.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
+                }
+                
+                if (!config.isSessionCookieSecure()) {
+                    LOG.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
+                }
+                
+                if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
+                    LOG.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
+                }
+            }   
         }
     }
 
@@ -355,10 +364,6 @@ public final class Application {
                     }
                 }
             }
-            
-            if (!error) {
-                createRoutes();
-            }
         }
     }
 
@@ -366,15 +371,23 @@ public final class Application {
      * Create routes for WebSockets ServerSentEvent and Resource files
      */
     private static void createRoutes() {
-        pathHandler = new PathHandler(getRoutingHandler());
-        for (final Route route : Router.getRoutes()) {
-            if (RouteType.WEBSOCKET == route.getRouteType()) {
-                pathHandler.addExactPath(route.getUrl(), Handlers.websocket(injector.getInstance(WebSocketHandler.class).withControllerClass(route.getControllerClass()).withAuthentication(route.isAuthenticationRequired())));
-            } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
-                pathHandler.addExactPath(route.getUrl(), Handlers.serverSentEvents(injector.getInstance(ServerSentEventHandler.class).withAuthentication(route.isAuthenticationRequired())));
-            } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
-                pathHandler.addPrefixPath(route.getUrl(), new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
-            }
+        if (!error) {
+            pathHandler = new PathHandler(getRoutingHandler());
+            for (final Route route : Router.getRoutes()) {
+                if (RouteType.WEBSOCKET == route.getRouteType()) {
+                    pathHandler.addExactPath(route.getUrl(),
+                            Handlers.websocket(injector.getInstance(WebSocketHandler.class)
+                                    .withControllerClass(route.getControllerClass())
+                                    .withAuthentication(route.isAuthenticationRequired())));
+                } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
+                    pathHandler.addExactPath(route.getUrl(),
+                            Handlers.serverSentEvents(injector.getInstance(ServerSentEventHandler.class)
+                                    .withAuthentication(route.isAuthenticationRequired())));
+                } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
+                    pathHandler.addPrefixPath(route.getUrl(),
+                            new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
+                }
+            }            
         }
     }
 
@@ -427,7 +440,7 @@ public final class Application {
             Config config = injector.getInstance(Config.class);
             
             Builder builder = Undertow.builder()
-                    .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()))
+                    .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                     .setHandler(Handlers.exceptionHandler(pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
 
             httpHost = config.getConnectorHttpHost();
@@ -450,7 +463,7 @@ public final class Application {
                 undertow = builder.build();
                 undertow.start();
             } else {
-                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in your application.yaml");
+                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in application.yaml");
                 error = true;
             }
         }
@@ -488,13 +501,16 @@ public final class Application {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
+            error = true;
         }
         
         return modules;
     }
     
     private static void applicationStarted() {
-        injector.getInstance(MangooLifecycle.class).applicationStarted();
+        if (!error) {
+            injector.getInstance(MangooLifecycle.class).applicationStarted();            
+        }
     }
 
     private static void prepareScheduler() {
@@ -532,6 +548,7 @@ public final class Application {
                         mangooScheduler.start();
                     } catch (MangooSchedulerException e) {
                         LOG.error("Failed to start the scheduler", e);
+                        error = true;
                     }
                 }
             }
