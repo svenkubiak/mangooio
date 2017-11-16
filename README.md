@@ -44,7 +44,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
-* Any many more...
+* And many more...
 
 One main focus of mangoo I/O was to have a very good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
@@ -61,8 +61,8 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Ehcache](http://www.ehcache.org/) - Cacheing
 * [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
-* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
-* [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
+* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](http://goessner.net/articles/JsonPath/) - JSON handling
+* [JUnit](http://junit.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong hashing
 * [Bouncy Castle](https://www.bouncycastle.org/) - Strong cryptography
 * And many more ...
