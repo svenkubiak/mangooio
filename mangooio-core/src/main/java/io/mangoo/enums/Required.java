@@ -57,6 +57,7 @@ public enum Required {
     LOCAL_DATE_TIME("localDateTime can not be null"),
     LOCALE("locale can not be null"),
     MAP("map can not be null"),
+    MESSAGE("message can not be null"),
     MESSAGES("messages can not be null"),
     METHOD("method can not be null"),
     METHOD_PARAMETERS("method parameters can not be null"),

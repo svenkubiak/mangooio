@@ -443,8 +443,8 @@ public class Validator implements Serializable {
     }
 
     private void addError(String name, String message) {
-        Objects.requireNonNull(name, "name can not be null");
-        Objects.requireNonNull(message, "message can not be null");
+        Objects.requireNonNull(name, Required.NAME.toString());
+        Objects.requireNonNull(message, Required.MESSAGE.toString());
         
         if (!this.errors.containsKey(name)) {
             this.errors.put(name, message);            

@@ -93,7 +93,7 @@ public final class Application {
     }
 
     public static void start(Mode mode) {
-        Objects.requireNonNull(mode, "Application can not be started without providing a mode");
+        Objects.requireNonNull(mode, Required.MODE.toString());
         
         if (!started) {
             prepareMode(mode);

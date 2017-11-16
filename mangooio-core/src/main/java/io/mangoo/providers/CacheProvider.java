@@ -24,6 +24,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
 
 /**
  * 
@@ -42,7 +43,7 @@ public class CacheProvider implements Provider<Cache> {
 
     @Inject
     public CacheProvider(Config config) {
-        Objects.requireNonNull(config, "config can not be null");
+        Objects.requireNonNull(config, Required.CONFIG.toString());
         
         if (config.isClusteredCached()) {
             CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder() 

@@ -88,7 +88,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         try {
             template = configuration.getTemplate(templatePath);
         } catch (IOException e) {
-            throw new MangooTemplateEngineException("Template was not found on path:" + templatePath, e);
+            throw new MangooTemplateEngineException("Template not found on path: " + templatePath, e);
         }
         
         if (!Application.inProdMode()) { 
