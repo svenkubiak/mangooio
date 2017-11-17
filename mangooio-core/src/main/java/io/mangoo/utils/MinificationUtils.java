@@ -11,11 +11,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.sommeri.less4j.Less4jException;
-import com.github.sommeri.less4j.LessCompiler;
-import com.github.sommeri.less4j.LessCompiler.CompilationResult;
-import com.github.sommeri.less4j.core.DefaultLessCompiler;
-
+import biz.gabrys.lesscss.compiler.CompilerException;
+import biz.gabrys.lesscss.compiler.LessCompiler;
+import biz.gabrys.lesscss.compiler.LessCompilerImpl;
 import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
@@ -109,14 +107,13 @@ public final class MinificationUtils {
     }
 
     private static void lessify(File lessFile) {
-        final LessCompiler compiler = new DefaultLessCompiler();
+        LessCompiler compiler = new LessCompilerImpl();
+        final File outputFile = getOutputFile(lessFile, Suffix.CSS);
         try {
-            final File outputFile = getOutputFile(lessFile, Suffix.CSS);
-
-            final CompilationResult compilationResult = compiler.compile(lessFile);
-            FileUtils.writeStringToFile(outputFile, compilationResult.getCss(), Default.ENCODING.toString());
+            String css = compiler.compile(lessFile);
+            FileUtils.writeStringToFile(outputFile, css, Default.ENCODING.toString());
             logPreprocess(lessFile, outputFile);
-        } catch (Less4jException | IOException e) {
+        } catch (IOException | CompilerException e) {
             LOG.error("Failed to preprocess LESS file", e);
         }
     }
