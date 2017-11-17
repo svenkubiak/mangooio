@@ -9,14 +9,14 @@ mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Fr
 
 Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
-full stack Java web framework from scratch. After I had a fresh new breeze of
+full stack Java web framework from scratch. After a fresh new breeze of
 Java development for the web with the [Play
 Framwork - Version 1](https://www.playframework.com), contributions to the
 [Ninja Framework](http://www.ninjaframework.org), and having seen a lot of
 cumbersome "Enterprise" applications, I thought it was time for yet
 another full stack Java web framework.
 
-For me, developing mangoo I/O will always be about having a developer friendly,
+Developing mangoo I/O will always be about having a developer friendly,
 fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
 This will be the untouchable base line.
 
@@ -44,7 +44,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
-* Any many more...
+* And many more...
 
 One main focus of mangoo I/O was to have a very good and well documented code
 base. Therefore, mangoo I/O is constantly checked against
@@ -61,8 +61,8 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Ehcache](http://www.ehcache.org/) - Cacheing
 * [Freemarker](http://freemarker.org/) - Template engine
 * [Quartz Scheduler](https://quartz-scheduler.org/) - Scheduling
-* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](http://goessner.net/articles/JsonPath/) - Handling JSON
-* [JUnit](http://junit.org/), [DocTester](http://www.doctester.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
+* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](http://goessner.net/articles/JsonPath/) - JSON handling
+* [JUnit](http://junit.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong hashing
 * [Bouncy Castle](https://www.bouncycastle.org/) - Strong cryptography
 * And many more ...
