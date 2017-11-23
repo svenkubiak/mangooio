@@ -23,10 +23,10 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j.version>2.9.1</log4j.version>
+		<log4j.version>2.10.0</log4j.version>
 		<maven.version>3.5.2</maven.version>
 		<httpcomponents.version>4.5.3</httpcomponents.version>
-		<scribejava.version>4.2.0</scribejava.version>
+		<scribejava.version>5.0.0</scribejava.version>
 		<jackson.version>2.9.2</jackson.version>
 		<fluentlenium.version>3.4.1</fluentlenium.version>
 		<jersey.version>2.26</jersey.version>

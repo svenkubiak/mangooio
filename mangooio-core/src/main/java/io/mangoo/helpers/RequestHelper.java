@@ -127,7 +127,6 @@ public class RequestHelper {
      * @param oAuthProvider The OAuth provider Enum
      * @return An Optional OAuthService
      */
-    @SuppressWarnings("rawtypes")
     public Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 

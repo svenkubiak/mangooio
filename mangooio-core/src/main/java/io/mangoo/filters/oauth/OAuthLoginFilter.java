@@ -40,7 +40,6 @@ public class OAuthLoginFilter implements MangooFilter {
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public Response execute(Request request, Response response) {
         Optional<OAuthProvider> oAuthProvider = this.requestHelper.getOAuthProvider(request.getParameter(Default.OAUTH_REQUEST_PARAMETER.toString()));
         if (oAuthProvider.isPresent()) {
@@ -69,7 +68,7 @@ public class OAuthLoginFilter implements MangooFilter {
     }
 
     private String getOAuth2Url(OAuth20Service oAuthService) {
-        return oAuthService.getAuthorizationUrl(null);
+        return oAuthService.getAuthorizationUrl();
     }
 
     private String getTwitterUrl(OAuth10aService oAuthService) {
