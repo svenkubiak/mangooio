@@ -34,8 +34,9 @@ public class MetricsListener implements ExchangeCompletionListener {
             int processTime = (int) (System.currentTimeMillis() - this.start);
             
             Metrics metrics = Application.getInstance(Metrics.class);
+            metrics.increment(uri);
             metrics.update(processTime);
-            metrics.inc(exchange.getStatusCode());
+            metrics.increment(exchange.getStatusCode());
         }
         
         nextListener.proceed();

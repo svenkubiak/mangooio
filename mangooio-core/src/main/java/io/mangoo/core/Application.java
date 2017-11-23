@@ -47,6 +47,7 @@ import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
+import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
@@ -56,6 +57,7 @@ import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
+import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
@@ -439,9 +441,18 @@ public final class Application {
         if (!error) {
             Config config = injector.getInstance(Config.class);
             
+            HttpHandler httpHandler;
+            if (config.isAdminEnabled()) {
+                httpHandler = MetricsHandler.WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
+                        .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
+            } else {
+                httpHandler = Handlers.exceptionHandler(pathHandler)
+                        .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
+            }
+            
             Builder builder = Undertow.builder()
                     .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
-                    .setHandler(Handlers.exceptionHandler(pathHandler).addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
+                    .setHandler(httpHandler);
 
             httpHost = config.getConnectorHttpHost();
             httpPort = config.getConnectorHttpPort();

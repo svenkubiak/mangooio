@@ -126,7 +126,7 @@ public class AdminController {
         long errorRequests = 0;
         double errorRate = 0;
         
-        for (Entry<Integer, LongAdder> entry :  metrics.getMetrics().entrySet()) {
+        for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
             if (String.valueOf(entry.getKey()).charAt(0) == '5') {
                 errorRequests = errorRequests + entry.getValue().longValue();
             }
@@ -140,7 +140,8 @@ public class AdminController {
         return Response.withOk()
                 .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(METRICS, metrics.getMetrics())
+                .andContent(METRICS, metrics.getResponseMetrics())
+                .andContent("uris", metrics.getUriMetrics())
                 .andContent("totalRequests", totalRequests)
                 .andContent("minRequestTime", metrics.getMinRequestTime())
                 .andContent("avgRequestTime", metrics.getAvgRequestTime())
@@ -205,7 +206,7 @@ public class AdminController {
         long errorRequests = 0;
         double errorRate = 0;
         
-        for (Entry<Integer, LongAdder> entry :  metrics.getMetrics().entrySet()) {
+        for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
             if (String.valueOf(entry.getKey()).charAt(0) == '5') {
                 errorRequests = errorRequests + entry.getValue().longValue();
             }

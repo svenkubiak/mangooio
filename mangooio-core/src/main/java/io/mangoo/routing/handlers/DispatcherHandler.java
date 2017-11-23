@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
@@ -24,7 +23,6 @@ import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.routing.Attachment;
-import io.mangoo.routing.listeners.MetricsListener;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -46,7 +44,6 @@ import io.undertow.server.HttpServerExchange;
  */
 public class DispatcherHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
-    private Config config;
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
@@ -67,8 +64,7 @@ public class DispatcherHandler implements HttpHandler {
     private final RequestHelper requestHelper;
 
     @Inject
-    public DispatcherHandler(Config config, RequestHelper requestHelper) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    public DispatcherHandler(RequestHelper requestHelper) {
         this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
     }
     
@@ -138,10 +134,6 @@ public class DispatcherHandler implements HttpHandler {
         if ( (this.requestHelper.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
-        }
-
-        if (this.config.isAdminEnabled()) {
-            exchange.addExchangeCompleteListener(new MetricsListener(System.currentTimeMillis()));
         }
 
         final Attachment attachment = Attachment.build()

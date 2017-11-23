@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.LongAdder;
 import com.google.inject.Singleton;
 
 /**
- * Base class for counting system metrics
+ * Base class for system metrics
  *
  * @author svenkubiak
  *
@@ -23,7 +23,8 @@ public class Metrics {
     private AtomicIntegerFieldUpdater<Metrics> minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-    private Map<Integer, LongAdder> metricsCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    private Map<Integer, LongAdder> responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    private Map<String, LongAdder> uriCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;
@@ -41,8 +42,12 @@ public class Metrics {
         this.totalRequests = copy.totalRequests;
     }
     
-    public void inc(int responseCode) {
-        this.metricsCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
+    public void increment(String uri) {
+        this.uriCount.computeIfAbsent(uri, (String string) -> new LongAdder()).increment();
+    }
+    
+    public void increment(int responseCode) {
+        this.responseCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
     }
     
     public void update(final int requestTime) {
@@ -68,8 +73,12 @@ public class Metrics {
         this.avgRequestTime = this.totalRequestTime / this.totalRequests;
     }
 
-    public Map<Integer, LongAdder> getMetrics() {
-        return this.metricsCount;
+    public Map<Integer, LongAdder> getResponseMetrics() {
+        return this.responseCount;
+    }
+    
+    public Map<String, LongAdder> getUriMetrics() {
+        return this.uriCount;
     }
 
     public int getMaxRequestTime() {
@@ -89,7 +98,8 @@ public class Metrics {
         this.minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
         this.totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
         this.totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-        this.metricsCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        this.responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        this.uriCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
         this.avgRequestTime = 0;
         this.totalRequestTime = 0;
         this.totalRequests = 0;

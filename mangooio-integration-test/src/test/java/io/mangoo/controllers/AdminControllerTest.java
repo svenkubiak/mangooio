@@ -146,7 +146,8 @@ public class AdminControllerTest {
         assertThat(metrics.getAvgRequestTime(), equalTo(0L));
         assertThat(metrics.getMaxRequestTime(), equalTo(0));
         assertThat(metrics.getMinRequestTime(), equalTo(0));
-        assertThat(metrics.getMetrics().size(), equalTo(0));
+        assertThat(metrics.getResponseMetrics().size(), equalTo(0));
+        assertThat(metrics.getUriMetrics().size(), equalTo(0));
     }
     
     @Test

@@ -78,6 +78,37 @@
 	</div>
 </div>
 </#if>
+<#if uris?has_content>
+<div class="row">
+	<div class="col-xs-12">
+    	<div class="box">
+	    	<div class="box-header">
+				<div class="form-group">
+	            	<input type="text" name="table_search" id="additionalfilter" class="form-control" placeholder="Start typing what you are looking for...">
+	            </div>
+	        </div>
+            <div class="box-body table-responsive no-padding">
+            	<table class="table table-hover">
+                	<thead>
+						<tr>
+							<th data-sort="string"><b>URI</b></th>
+							<th data-sort="string"><b>Count</b></th>
+						</tr>
+					</thead>
+					<tbody class="additionalsearchable">
+						<#list uris as key, value>
+							<tr>
+								<td>${key}</td>
+								<td>${value}</td>
+							</tr>
+						</#list>
+                	</tbody>
+                </table>
+        	</div>
+    	</div>
+	</div>
+</div>
+</#if>
 <div class="row">
 	<div class="col-xs-12">
 		<a href="/@admin/metrics/reset" class="btn btn-primary btn-block" onclick="return confirm('Are you sure you want to reset the metrics?')">Reset metrics</a>
