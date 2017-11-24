@@ -443,7 +443,7 @@ public final class Application {
             
             HttpHandler httpHandler;
             if (config.isMetricsEnabled()) {
-                httpHandler = MetricsHandler.WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
+                httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
                         .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
             } else {
                 httpHandler = Handlers.exceptionHandler(pathHandler)

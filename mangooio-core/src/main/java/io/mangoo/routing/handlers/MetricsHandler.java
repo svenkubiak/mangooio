@@ -11,7 +11,7 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class MetricsHandler implements HttpHandler {
-    public static final HandlerWrapper WRAPPER = MetricsHandler::new;
+    public static final HandlerWrapper HANDLER_WRAPPER = MetricsHandler::new;
     private final HttpHandler nextHandler;
 
     public MetricsHandler(HttpHandler next) {
