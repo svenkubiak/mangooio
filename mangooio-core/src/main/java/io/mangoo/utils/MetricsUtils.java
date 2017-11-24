@@ -26,6 +26,6 @@ public final class MetricsUtils {
         }
         
         int index = (int) (Math.log10(size) / Math.log10(CONVERTION));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, index)) + " " + UNITS[index];
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(CONVERTION, index)) + " " + UNITS[index];
     }
 }
