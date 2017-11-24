@@ -442,7 +442,7 @@ public final class Application {
             Config config = injector.getInstance(Config.class);
             
             HttpHandler httpHandler;
-            if (config.isAdminEnabled()) {
+            if (config.isMetricsEnabled()) {
                 httpHandler = MetricsHandler.WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
                         .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
             } else {
@@ -474,7 +474,7 @@ public final class Application {
                 undertow = builder.build();
                 undertow.start();
             } else {
-                LOG.error("No connector found! Please configure either a HTTP or an AJP connector in application.yaml");
+                LOG.error("No connector found! Please configure a HTTP and/or AJP connector in your application.yaml");
                 error = true;
             }
         }

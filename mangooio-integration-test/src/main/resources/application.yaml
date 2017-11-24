@@ -32,7 +32,9 @@ default:
             host      : localhost
             port      : 9899
     cookie:
-       encrypt : true
+       encrypt: true
+    metrics:
+       enable: true
     auth:
         redirect  : /login
         cookie:

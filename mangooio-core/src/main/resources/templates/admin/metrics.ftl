@@ -1,4 +1,5 @@
 <#include "header.ftl">
+<#if enabled>
 <section class="content-header">
 	<h1>Metrics</h1>
 </section>
@@ -92,4 +93,9 @@
 	</div>
 </div>
 </section>
+<#else>
+<section class="content-header">
+	<h1>Metrics are not enabled</h1>
+</section>
+</#if>
 <#include "footer.ftl">

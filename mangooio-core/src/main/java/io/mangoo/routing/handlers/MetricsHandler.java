@@ -11,17 +11,11 @@ import io.undertow.server.HttpServerExchange;
  *
  */
 public class MetricsHandler implements HttpHandler {
-    private final HttpHandler next;
-    
-    public static final HandlerWrapper WRAPPER = new HandlerWrapper() {
-        @Override
-        public HttpHandler wrap(HttpHandler handler) {
-            return new MetricsHandler(handler);
-        }
-    };
+    public static final HandlerWrapper WRAPPER = handler -> new MetricsHandler(handler);
+    private final HttpHandler nextHandler;
 
     public MetricsHandler(HttpHandler next) {
-        this.next = next;
+        this.nextHandler = next;
     }
 
     @Override
@@ -29,6 +23,6 @@ public class MetricsHandler implements HttpHandler {
         if (!exchange.isComplete()) {
             exchange.addExchangeCompleteListener(new MetricsListener(System.currentTimeMillis()));
         }
-        this.next.handleRequest(exchange);
+        this.nextHandler.handleRequest(exchange);
     }
 }

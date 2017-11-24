@@ -24,6 +24,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
@@ -57,11 +58,13 @@ public class AdminController {
     private static final String SPACE = "space";
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
+    private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
     private final Scheduler scheduler; //NOSONAR
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto) {
+    public AdminController(Scheduler scheduler, Crypto crypto, Config config) {
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
     }
@@ -122,32 +125,41 @@ public class AdminController {
     }
     
     public Response metrics() {
-        Metrics metrics = Application.getInstance(Metrics.class);
-        long totalRequests = 0;
-        long errorRequests = 0;
-        double errorRate = 0;
-        
-        for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
-            if (String.valueOf(entry.getKey()).charAt(0) == '5') {
-                errorRequests = errorRequests + entry.getValue().longValue();
+        if (this.config.isMetricsEnabled()) {
+            Metrics metrics = Application.getInstance(Metrics.class);
+            long totalRequests = 0;
+            long errorRequests = 0;
+            double errorRate = 0;
+            
+            for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
+                if (String.valueOf(entry.getKey()).charAt(0) == '5') {
+                    errorRequests = errorRequests + entry.getValue().longValue();
+                }
+                totalRequests = totalRequests + entry.getValue().longValue();
             }
-            totalRequests = totalRequests + entry.getValue().longValue();
+            
+            if (errorRequests > 0) {
+                errorRate = totalRequests / (double) errorRequests;
+            }
+
+            return Response.withOk()
+                    .andContent(SPACE, METRICS)
+                    .andContent(VERSION, BootstrapUtils.getVersion())
+                    .andContent(METRICS, metrics.getResponseMetrics())
+                    .andContent("dataSend", MetricsUtils.readableFileSize(metrics.getDataSend()))
+                    .andContent("totalRequests", totalRequests)
+                    .andContent("minRequestTime", metrics.getMinRequestTime())
+                    .andContent("avgRequestTime", metrics.getAvgRequestTime())
+                    .andContent("maxRequestTime", metrics.getMaxRequestTime())
+                    .andContent("errorRate", errorRate)
+                    .andContent("enabled", true)
+                    .andTemplate(Template.DEFAULT.metricsPath());
         }
         
-        if (errorRequests > 0) {
-            errorRate = totalRequests / (double) errorRequests;
-        }
-
         return Response.withOk()
                 .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent(METRICS, metrics.getResponseMetrics())
-                .andContent("dataSend", MetricsUtils.readableFileSize(metrics.getDataSend()))
-                .andContent("totalRequests", totalRequests)
-                .andContent("minRequestTime", metrics.getMinRequestTime())
-                .andContent("avgRequestTime", metrics.getAvgRequestTime())
-                .andContent("maxRequestTime", metrics.getMaxRequestTime())
-                .andContent("errorRate", errorRate)
+                .andContent("enabled", false)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
     
@@ -197,40 +209,44 @@ public class AdminController {
     }
 
     public Response json() {
-        Runtime runtime = Runtime.getRuntime();
-        long maxMemory = runtime.maxMemory();
-        long allocatedMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-        
-        Metrics metrics = Application.getInstance(Metrics.class);
-        long totalRequests = 0;
-        long errorRequests = 0;
-        double errorRate = 0;
-        
-        for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
-            if (String.valueOf(entry.getKey()).charAt(0) == '5') {
-                errorRequests = errorRequests + entry.getValue().longValue();
+        if (this.config.isMetricsEnabled()) {
+            Runtime runtime = Runtime.getRuntime();
+            long maxMemory = runtime.maxMemory();
+            long allocatedMemory = runtime.totalMemory();
+            long freeMemory = runtime.freeMemory();
+            
+            Metrics metrics = Application.getInstance(Metrics.class);
+            long totalRequests = 0;
+            long errorRequests = 0;
+            double errorRate = 0;
+            
+            for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
+                if (String.valueOf(entry.getKey()).charAt(0) == '5') {
+                    errorRequests = errorRequests + entry.getValue().longValue();
+                }
+                totalRequests = totalRequests + entry.getValue().longValue();
             }
-            totalRequests = totalRequests + entry.getValue().longValue();
+            
+            if (errorRequests > 0) {
+                errorRate = totalRequests / (double) errorRequests;
+            }
+            
+            Map<String, Object> json = new HashMap<>();
+            json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            json.put("uptime in seconds", Application.getUptime().getSeconds());
+            json.put(VERSION, BootstrapUtils.getVersion());
+            json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
+            json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
+            json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
+            json.put("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)));
+            json.put(METRICS, metrics);
+            json.put("totalRequests", totalRequests);
+            json.put("errorRate", errorRate);
+            
+            return Response.withOk().andJsonBody(json);
         }
         
-        if (errorRequests > 0) {
-            errorRate = totalRequests / (double) errorRequests;
-        }
-        
-        Map<String, Object> json = new HashMap<>();
-        json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        json.put("uptime in seconds", Application.getUptime().getSeconds());
-        json.put(VERSION, BootstrapUtils.getVersion());
-        json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
-        json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
-        json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
-        json.put("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)));
-        json.put(METRICS, metrics);
-        json.put("totalRequests", totalRequests);
-        json.put("errorRate", errorRate);
-        
-        return Response.withOk().andJsonBody(json);
+        return Response.withNotFound();
     }
     
     public Response tools() {

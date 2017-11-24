@@ -92,6 +92,7 @@ public enum Default {
     LANGUAGE("en"),
     LIFECYCLE_CLASS("conf.Lifecycle"),
     LOGO_FILE("logo.txt"),
+    METRICS_ENABLE(Constants.FALSE),
     MODULE_CLASS("conf.Module"),
     NUMBER_FORMAT("0.######"),
     OAUTH_REQUEST_PARAMETER("oauth"),

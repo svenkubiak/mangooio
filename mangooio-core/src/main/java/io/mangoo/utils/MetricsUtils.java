@@ -8,11 +8,16 @@ import java.text.DecimalFormat;
  *
  */
 public final class MetricsUtils {
+    private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
+    private static final int CONVERTION = 1024;
+    
+    private MetricsUtils() {
+    }
     
     /**
-     * COnverts a given file size into a readable file size including unit
+     * Converts a given file size into a readable file size including unit
      * 
-     * @param size the size in byte to convert
+     * @param size The size in bytes to convert
      * @return Readable files size, e.g. 24 MB
      */
     public static String readableFileSize(long size) {
@@ -20,9 +25,7 @@ public final class MetricsUtils {
             return "0";
         }
         
-        String [] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
- 
-        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        int index = (int) (Math.log10(size) / Math.log10(CONVERTION));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, index)) + " " + UNITS[index];
     }
 }

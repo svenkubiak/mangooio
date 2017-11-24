@@ -786,10 +786,17 @@ public class Config {
     }
 
     /**
-     * @return cache.cluster.enabled or default value if undefined
+     * @return cache.cluster.enable or default value if undefined
      */
     public boolean isClusteredCached() {
         return getBoolean(Key.CACHE_CLUSTER_ENABLE, Default.CACHE_CLUSTER_ENABLE.toBoolean());
+    }
+    
+    /**
+     * @return metrics.enable or default value if undefined
+     */
+    public boolean isMetricsEnabled() {
+        return getBoolean(Key.METRICS_ENABLE, Default.METRICS_ENABLE.toBoolean());
     }
 
     /**
