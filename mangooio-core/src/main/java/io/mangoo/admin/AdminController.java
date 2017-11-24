@@ -58,6 +58,7 @@ public class AdminController {
     private static final String SPACE = "space";
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
+    private static final String VERSION_TAG = BootstrapUtils.getVersion();
     private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
     private final Scheduler scheduler; //NOSONAR
@@ -100,7 +101,7 @@ public class AdminController {
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         return Response.withOk()
                 .andContent(SPACE, LOGGER)
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, VERSION_TAG)
                 .andContent("loggers", loggerContext.getLoggers())
                 .andTemplate(Template.DEFAULT.loggerPath());
     }
@@ -145,7 +146,7 @@ public class AdminController {
 
             return Response.withOk()
                     .andContent(SPACE, METRICS)
-                    .andContent(VERSION, BootstrapUtils.getVersion())
+                    .andContent(VERSION, VERSION_TAG)
                     .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("dataSend", MetricsUtils.readableFileSize(metrics.getDataSend()))
                     .andContent("totalRequests", totalRequests)
@@ -159,7 +160,7 @@ public class AdminController {
         
         return Response.withOk()
                 .andContent(SPACE, METRICS)
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, VERSION_TAG)
                 .andContent("enabled", enabled)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
@@ -172,7 +173,7 @@ public class AdminController {
         
         return Response.withOk()
                 .andContent(SPACE, ROUTES)
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, VERSION_TAG)
                 .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
     }
@@ -194,7 +195,7 @@ public class AdminController {
 
         return Response.withOk()
                 .andContent(SPACE, SCHEDULER)
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, VERSION_TAG)
                 .andContent(JOBS, jobs)
                 .andTemplate(Template.DEFAULT.schedulerPath());
     }
@@ -235,7 +236,7 @@ public class AdminController {
             Map<String, Object> json = new HashMap<>();
             json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             json.put("uptime in seconds", Application.getUptime().getSeconds());
-            json.put(VERSION, BootstrapUtils.getVersion());
+            json.put(VERSION, VERSION_TAG);
             json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
             json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
             json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
@@ -253,7 +254,7 @@ public class AdminController {
     public Response tools() {
         return Response.withOk()
                 .andContent(SPACE, TOOLS)
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, VERSION_TAG)
                 .andTemplate(Template.DEFAULT.toolsPath());
     }
 
