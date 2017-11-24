@@ -15,7 +15,7 @@
     <div class="col-lg-3 col-xs-6">
     	<div class="small-box bg-aqua">
         	<div class="inner">
-            	<h3>${length}</h3>
+            	<h3>${dataSend}</h3>
             	<p>Data send</p>
             </div>
         </div>

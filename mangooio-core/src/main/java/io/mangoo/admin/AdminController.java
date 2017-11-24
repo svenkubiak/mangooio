@@ -142,7 +142,7 @@ public class AdminController {
                 .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(METRICS, metrics.getResponseMetrics())
-                .andContent("length", MetricsUtils.readableFileSize(metrics.getDataSend()))
+                .andContent("dataSend", MetricsUtils.readableFileSize(metrics.getDataSend()))
                 .andContent("totalRequests", totalRequests)
                 .andContent("minRequestTime", metrics.getMinRequestTime())
                 .andContent("avgRequestTime", metrics.getAvgRequestTime())
