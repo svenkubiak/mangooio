@@ -38,6 +38,7 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.MetricsUtils;
 
 /**
  * Controller class for administrative area
@@ -141,7 +142,7 @@ public class AdminController {
                 .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
                 .andContent(METRICS, metrics.getResponseMetrics())
-                .andContent("uris", metrics.getUriMetrics())
+                .andContent("length", MetricsUtils.readableFileSize(metrics.getDataSend()))
                 .andContent("totalRequests", totalRequests)
                 .andContent("minRequestTime", metrics.getMinRequestTime())
                 .andContent("avgRequestTime", metrics.getAvgRequestTime())

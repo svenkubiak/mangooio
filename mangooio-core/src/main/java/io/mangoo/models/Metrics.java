@@ -3,6 +3,7 @@ package io.mangoo.models;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -24,7 +25,7 @@ public class Metrics {
     private AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
     private Map<Integer, LongAdder> responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-    private Map<String, LongAdder> uriCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+    private volatile AtomicLong dataSend = new AtomicLong();
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;
@@ -42,11 +43,7 @@ public class Metrics {
         this.totalRequests = copy.totalRequests;
     }
     
-    public void increment(String uri) {
-        this.uriCount.computeIfAbsent(uri, (String string) -> new LongAdder()).increment();
-    }
-    
-    public void increment(int responseCode) {
+    public void addStatusCode(int responseCode) {
         this.responseCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
     }
     
@@ -76,10 +73,6 @@ public class Metrics {
     public Map<Integer, LongAdder> getResponseMetrics() {
         return this.responseCount;
     }
-    
-    public Map<String, LongAdder> getUriMetrics() {
-        return this.uriCount;
-    }
 
     public int getMaxRequestTime() {
         return maxRequestTime;
@@ -93,13 +86,21 @@ public class Metrics {
         return avgRequestTime;
     }
 
+    public void incrementDataSend(long length) {
+        this.dataSend.addAndGet(length);
+    }
+    
+    public long getDataSend() {
+        return this.dataSend.longValue();
+    }
+
     public void reset() {
         this.maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
         this.minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
         this.totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
         this.totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
         this.responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-        this.uriCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        this.dataSend = new AtomicLong();
         this.avgRequestTime = 0;
         this.totalRequestTime = 0;
         this.totalRequests = 0;

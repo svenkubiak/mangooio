@@ -5,10 +5,18 @@
 <section class="content">
 <div class="row">
     <div class="col-lg-3 col-xs-6">
-    	<div class="small-box bg-green">
+    	<div class="small-box bg-aqua">
         	<div class="inner">
             	<h3>${totalRequests}</h3>
-            	<p>Total requests </p>
+            	<p>Total requests</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-xs-6">
+    	<div class="small-box bg-aqua">
+        	<div class="inner">
+            	<h3>${length}</h3>
+            	<p>Data send</p>
             </div>
         </div>
     </div>
@@ -66,37 +74,6 @@
 					</thead>
 					<tbody class="searchable">
 						<#list metrics as key, value>
-							<tr>
-								<td>${key}</td>
-								<td>${value}</td>
-							</tr>
-						</#list>
-                	</tbody>
-                </table>
-        	</div>
-    	</div>
-	</div>
-</div>
-</#if>
-<#if uris?has_content>
-<div class="row">
-	<div class="col-xs-12">
-    	<div class="box">
-	    	<div class="box-header">
-				<div class="form-group">
-	            	<input type="text" name="table_search" id="additionalfilter" class="form-control" placeholder="Start typing what you are looking for...">
-	            </div>
-	        </div>
-            <div class="box-body table-responsive no-padding">
-            	<table class="table table-hover">
-                	<thead>
-						<tr>
-							<th data-sort="string"><b>URI</b></th>
-							<th data-sort="string"><b>Count</b></th>
-						</tr>
-					</thead>
-					<tbody class="additionalsearchable">
-						<#list uris as key, value>
 							<tr>
 								<td>${key}</td>
 								<td>${value}</td>

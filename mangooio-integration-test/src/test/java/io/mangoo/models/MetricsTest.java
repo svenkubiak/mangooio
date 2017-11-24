@@ -22,31 +22,14 @@ public class MetricsTest {
         metrics.reset();
         
         //when
-        metrics.increment(418);
-        metrics.increment(418);
-        metrics.increment(420);
+        metrics.addStatusCode(418);
+        metrics.addStatusCode(418);
+        metrics.addStatusCode(420);
         
         //then
         assertThat(metrics.getResponseMetrics().get(301), equalTo(null));
         assertThat(metrics.getResponseMetrics().get(418).intValue(), equalTo(2));
         assertThat(metrics.getResponseMetrics().get(420).intValue(), equalTo(1));
-    }
-    
-    @Test
-    public void testUriIncrement() {
-        //given
-        Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.reset();
-        
-        //when
-        metrics.increment("/bar");
-        metrics.increment("/foo");
-        metrics.increment("/foo");
-        
-        //then
-        assertThat(metrics.getUriMetrics().get("/"), equalTo(null));
-        assertThat(metrics.getUriMetrics().get("/bar").intValue(), equalTo(1));
-        assertThat(metrics.getUriMetrics().get("/foo").intValue(), equalTo(2));
     }
     
     @Test
