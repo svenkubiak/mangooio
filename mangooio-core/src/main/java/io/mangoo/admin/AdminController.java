@@ -125,7 +125,8 @@ public class AdminController {
     }
     
     public Response metrics() {
-        if (this.config.isMetricsEnabled()) {
+        boolean enabled = this.config.isMetricsEnabled();
+        if (enabled) {
             Metrics metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
             long errorRequests = 0;
@@ -152,14 +153,14 @@ public class AdminController {
                     .andContent("avgRequestTime", metrics.getAvgRequestTime())
                     .andContent("maxRequestTime", metrics.getMaxRequestTime())
                     .andContent("errorRate", errorRate)
-                    .andContent("enabled", true)
+                    .andContent("enabled", enabled)
                     .andTemplate(Template.DEFAULT.metricsPath());
         }
         
         return Response.withOk()
                 .andContent(SPACE, METRICS)
                 .andContent(VERSION, BootstrapUtils.getVersion())
-                .andContent("enabled", false)
+                .andContent("enabled", enabled)
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
     
