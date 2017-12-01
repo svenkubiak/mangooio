@@ -214,7 +214,7 @@ public class TwoFactorHelper {
         Objects.requireNonNull(accountName, Required.ACCOUNT_NAME.toString());
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
-        final StringBuilder buffer = new StringBuilder(128);
+        final StringBuffer buffer = new StringBuffer(128);
         buffer.append("https://chart.googleapis.com/chart")
             .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
             .append("otpauth://totp/")

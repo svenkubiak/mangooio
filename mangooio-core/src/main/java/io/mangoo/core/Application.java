@@ -482,7 +482,7 @@ public final class Application {
 
     private static void showLogo() {
         if (!error) {
-            final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
+            final StringBuffer buffer = new StringBuffer(BUFFERSIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
                 .append("\n\nhttps://mangoo.io | @mangoo_io | ")

@@ -256,7 +256,7 @@ public class RequestHelper {
      * @return The generated URL
      */
     public String getURL(URI uri) {
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuffer buffer = new StringBuffer();
         buffer.append(uri.getPath());
         
         String query = uri.getQuery();

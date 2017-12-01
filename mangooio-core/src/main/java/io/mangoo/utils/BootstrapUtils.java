@@ -115,7 +115,7 @@ public final class BootstrapUtils {
      * @return The OS specific path to src/main/java
      */
     public static String getBaseDirectory() {
-        StringBuilder buffer = new StringBuilder();
+        StringBuffer buffer = new StringBuffer();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)
         .append("src")

@@ -225,7 +225,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
     private List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
-        StringBuilder buffer = new StringBuilder();
+        StringBuffer buffer = new StringBuffer();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)
         .append("src")
