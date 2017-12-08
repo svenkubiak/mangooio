@@ -58,7 +58,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 25);
+    private static final Version VERSION = new Version(2, 3, 27);
     private static final List<String> blacklist = Arrays.asList(
             "form", "flash", "session", "subject", "i18n", "route", "location", "prettytime", "authenticity", "authenticityForm"
             );
