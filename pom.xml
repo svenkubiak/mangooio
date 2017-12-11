@@ -27,7 +27,7 @@
 		<maven.version>3.5.2</maven.version>
 		<httpcomponents.version>4.5.4</httpcomponents.version>
 		<scribejava.version>5.0.0</scribejava.version>
-		<jackson.version>2.9.2</jackson.version>
+		<jackson.version>2.9.3</jackson.version>
 		<fluentlenium.version>3.4.1</fluentlenium.version>
 		<jersey.version>2.26</jersey.version>
 	</properties>
@@ -115,7 +115,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.3.0.603</version>
+					<version>3.4.0.905</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -491,7 +491,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>mangooio-mongodb-extension</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
