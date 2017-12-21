@@ -133,7 +133,7 @@ public class Form extends Validator {
      * @return List of files or an empty list
      */
     public List<File> getFiles() {
-        return new ArrayList<File>(this.files);
+        return new ArrayList<>(this.files);
     }
 
     /**
