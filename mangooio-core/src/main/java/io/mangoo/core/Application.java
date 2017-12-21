@@ -30,10 +30,12 @@ import com.netflix.governator.lifecycle.LifecycleManager;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
+import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
+import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
@@ -42,6 +44,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.enums.RouteType;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Route;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
@@ -293,21 +296,32 @@ public final class Application {
         if (!error) {
             Config config = injector.getInstance(Config.class);
             if (Mode.PROD == mode) {
+                Cache cache = injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION);
+                List<String> warnings = new ArrayList<>();
                 if (!config.isAuthenticationCookieSecure()) {
-                    LOG.warn("Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.");
+                    String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
                 }
                 
                 if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                    LOG.warn("Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.");
+                    String warning = "Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
                 }
                 
                 if (!config.isSessionCookieSecure()) {
-                    LOG.warn("Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.");
+                    String warning = "Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
                 }
                 
                 if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                    LOG.warn("Session cookie name has default value. Consider changeing cookie.name to an application specific value.");
+                    String warning = "Session cookie name has default value. Consider changeing cookie.name to an application specific value.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
                 }
+                cache.put(Key.MANGOOIO_WARNINGS.toString(), warnings);
             }   
         }
     }

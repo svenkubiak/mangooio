@@ -104,6 +104,7 @@ public enum Key {
     SESSION_COOKIE_NAME("cookie.name"),
     SESSION_COOKIE_SECURE("cookie.secure"),
     SESSION_COOKIE_VERSION("cookie.version"),
+    MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
     OAUTH_FACEBOOK_KEY("oauth.facebook.key"),

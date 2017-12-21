@@ -24,14 +24,18 @@ import org.apache.logging.log4j.core.LoggerContext;
 import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
+import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Route;
 import io.mangoo.routing.Router;
@@ -59,15 +63,17 @@ public class AdminController {
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
     private static final String VERSION_TAG = BootstrapUtils.getVersion();
+    private final Cache cache; //NOSONAR
     private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
     private final Scheduler scheduler; //NOSONAR
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto, Config config) {
+    public AdminController(Scheduler scheduler, Crypto crypto, Config config, CacheProvider cacheProvider) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
+        this.cache = cacheProvider.getCache(CacheName.APPLICATION);
     }
     
     public Response execute(String name) {
@@ -94,6 +100,7 @@ public class AdminController {
                 .andContent("started", Application.getStart())
                 .andContent("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory))
                 .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
+                .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
