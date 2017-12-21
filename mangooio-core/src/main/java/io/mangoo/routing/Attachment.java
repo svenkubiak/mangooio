@@ -70,7 +70,7 @@ public class Attachment {
     }
 
     public List<Annotation> getClassAnnotations() {
-        return this.classAnnotations;
+        return new ArrayList<Annotation>(this.classAnnotations);
     }
 
     public String getControllerAndMethod() {
@@ -122,7 +122,7 @@ public class Attachment {
     }
     
     public List<Annotation> getMethodAnnotations() {
-        return this.methodAnnotations;
+        return new ArrayList<Annotation>(this.methodAnnotations);
     }
 
     public Map<String, Class<?>> getMethodParameters() {

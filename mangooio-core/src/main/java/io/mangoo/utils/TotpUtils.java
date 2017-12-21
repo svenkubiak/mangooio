@@ -42,7 +42,7 @@ public class TotpUtils {
      * @return A 64 characters random string based on SecureRandom
      */
     public static Optional<String> createSecret() {
-        StringBuffer buffer = new StringBuffer(BYTES_SECRET);
+        StringBuilder buffer = new StringBuilder(BYTES_SECRET);
         for (int i = 0; i < BYTES_SECRET; i++) {
             int value = random.nextInt(MAX_CHARACTERS);
             if (value < ITERATIONS) {
@@ -127,7 +127,7 @@ public class TotpUtils {
         Objects.requireNonNull(issuer, Required.ISSUER.toString());
         Objects.requireNonNull(hmacShaAlgorithm, Required.ALGORITHM.toString());
         
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("https://chart.googleapis.com/chart")
             .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
             .append(getOtpauthURL(name, issuer, secret, hmacShaAlgorithm));
@@ -146,7 +146,7 @@ public class TotpUtils {
      * @return An otpauth url
      */
     public static String getOtpauthURL(String name, String issuer, String secret, HmacShaAlgorithm hmacShaAlgorithm) {
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("otpauth://totp/")
             .append(name)
             .append("?secret=")

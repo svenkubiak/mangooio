@@ -496,7 +496,7 @@ public final class Application {
 
     private static void showLogo() {
         if (!error) {
-            final StringBuffer buffer = new StringBuffer(BUFFERSIZE);
+            final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
             buffer.append('\n')
                 .append(BootstrapUtils.getLogo())
                 .append("\n\nhttps://mangoo.io | @mangoo_io | ")
