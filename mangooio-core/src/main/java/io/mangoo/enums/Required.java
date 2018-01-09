@@ -50,6 +50,7 @@ public enum Required {
     IDENTITY("identity can not be null"),
     ISSUER("issuer can not be null"),
     JOB_DETAIL("job detail can not be null"),
+    JOB_NAME("job name can not be null"),
     JSON("json can not be null"),
     JSON_OBJECT("json object can not be null"),
     KEY("key can not be null"),

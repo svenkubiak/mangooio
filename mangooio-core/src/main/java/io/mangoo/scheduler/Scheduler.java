@@ -263,6 +263,7 @@ public class Scheduler {
      */
     public void executeJob(String jobName) throws MangooSchedulerException {
         Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
+        Objects.requireNonNull(jobName, Required.JOB_NAME.toString());
         
         try {
             for (JobKey jobKey : getAllJobKeys()) {
