@@ -18,10 +18,11 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 
 /**
- * 
+ * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
  * @author svenkubiak
  *
  */
+@Deprecated
 public class JsonWebTokenFilter implements MangooFilter {
     private Config config;
     
