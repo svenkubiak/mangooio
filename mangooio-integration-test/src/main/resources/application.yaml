@@ -14,7 +14,7 @@ default:
         secret     : myvoiceismypasswordmyvoiceismypassword
         language   : en
         jwt        :
-            signkey       : myvoiceismypassword
+            signkey       : myvoiceismypasswordmyvoiceismypassword
             encrypt       : true
             encryptionkey : myvoiceismypasswordmyvoiceismypa
         timer      : true

@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
@@ -29,7 +30,6 @@ import io.mangoo.routing.handlers.DispatcherHandler;
 public class CookieParser {
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
     private Map<String, String> sessionValues = new HashMap<>();
-    private String secret;
     private String value;
     private String authenticityToken;
     private String authenticatedUser;
@@ -43,13 +43,6 @@ public class CookieParser {
 
     public CookieParser withContent(String value) {
         this.value = value;
-        return this;
-    }
-    
-    public CookieParser withSecret(String secret) {
-        Objects.requireNonNull(secret, Required.APPLICATION_SECRET.toString());
-        
-        this.secret = secret;
         return this;
     }
     
@@ -70,7 +63,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(this.secret)
+                        .setSigningKey(Application.getInstance(Config.class).getJwtsSignKey())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -96,7 +89,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(this.secret)
+                        .setSigningKey(Application.getInstance(Config.class).getJwtsSignKey())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -133,7 +126,7 @@ public class CookieParser {
 
     private void decrypt() {
         if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
-            this.value = Application.getInstance(Crypto.class).decrypt(this.value);
+            this.value = Application.getInstance(Crypto.class).decrypt(this.value, Application.getInstance(Config.class).getJwtsEncryptionKey());
         }
     }
     
