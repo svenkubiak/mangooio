@@ -55,6 +55,7 @@ import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
+import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -275,7 +276,7 @@ public final class Application {
     private static void prepareConfig() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
-            if (!config.hasValidSecret()) {
+            if (!CryptoUtils.isValidSecret(config.getApplicationSecret())) {
                 LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
                 error = true;
             }
@@ -331,14 +332,26 @@ public final class Application {
                 LOG.warn(warning);
             }
             
-            if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
-                String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to auth.cookie.signkey.";
+            if (!CryptoUtils.isValidSecret(config.getSessionCookieSignKey())) {
+                String warning = "Session cookie sign key is not a valid key. A valid sign key has to be at least 32 characters.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            if (config.isAuthenticationCookieEncrypt() && config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Authentication cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+            if (config.isSessionCookieEncrypt() && !CryptoUtils.isValidSecret(config.getSessionCookieEncryptionKey())) {
+                String warning = "Session cookie encryption is enabled and encryption key is not a valid secret. A valid key has to be at least 32 characters.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (!CryptoUtils.isValidSecret(config.getAuthenticationCookieSignKey())) {
+                String warning = "Authentication cookie sign key is not a valid key. A valid sign key has to be at least 32 characters.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.isAuthenticationCookieEncrypt() && !CryptoUtils.isValidSecret(config.getAuthenticationCookieEncryptionKey())) {
+                String warning = "Authentication cookie encryption is enabled and encryption key is not a valid key. A valid key has to be at least 32 characters.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }

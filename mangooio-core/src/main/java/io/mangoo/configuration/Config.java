@@ -399,17 +399,6 @@ public class Config {
     }
 
     /**
-     * Checks if the application.conf stored in conf/application.conf contains an application
-     * secret property (application.secret) that has at least 32 characters (256-Bit)
-     *
-     * @return True if the configuration contains an application.secret property with at least 32 characters
-     */
-    public boolean hasValidSecret() {
-        final String secret = getApplicationSecret();
-        return StringUtils.isNotBlank(secret) && secret.length() >= Default.APPLICATION_SECRET_MIN_LENGTH.toInt();
-    }
-
-    /**
      * @return application.name from application.yaml
      */
     public String getApplicationName() {

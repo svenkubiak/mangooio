@@ -3,7 +3,6 @@ package io.mangoo.crypto;
 import java.util.Base64;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
@@ -15,11 +14,11 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Required;
+import io.mangoo.utils.CryptoUtils;
 
 /**
  * Convenient class for encryption and decryption
@@ -29,8 +28,6 @@ import io.mangoo.enums.Required;
  */
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
-    private static final int KEYINDEX_START = 0;
-    private static final int KEYLENGTH_32 = 32;
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
@@ -50,7 +47,7 @@ public class Crypto {
     public String decrypt(String encrytedText) {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
 
-        return decrypt(encrytedText, getSizedKey(this.config.getApplicationSecret()));
+        return decrypt(encrytedText, CryptoUtils.getSizedSecret(this.config.getApplicationSecret()));
     }
 
     /**
@@ -64,7 +61,7 @@ public class Crypto {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(CryptoUtils.getSizedSecret(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(false, cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
@@ -81,7 +78,7 @@ public class Crypto {
     public String encrypt(String plainText) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
 
-        return encrypt(plainText, getSizedKey(this.config.getApplicationSecret()));
+        return encrypt(plainText, CryptoUtils.getSizedSecret(this.config.getApplicationSecret()));
     }
 
     /**
@@ -97,7 +94,7 @@ public class Crypto {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedKey(key).getBytes(Charsets.UTF_8)));
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(CryptoUtils.getSizedSecret(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(true, cipherParameters);
 
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
@@ -124,24 +121,5 @@ public class Crypto {
         }
 
         return result;
-    }
-
-    /**
-     * Creates a secret for encrypt or decryption which has a length
-     * of 32 characters, corresponding to 256 Bits
-     * 
-     * If the provided secret has more than 32 characters it will be trimmed
-     * to 32 characters
-     *
-     * @param secret A given secret to trim
-     * @return A secret with at least 32 characters
-     */
-    private String getSizedKey(String secret) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        String key = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
-
-        Preconditions.checkArgument(key.length() >= KEYLENGTH_32, "encryption key must be at least 32 characters");
-        
-        return key.substring(KEYINDEX_START, KEYLENGTH_32);
     }
 }

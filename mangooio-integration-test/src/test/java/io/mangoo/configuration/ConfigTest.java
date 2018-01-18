@@ -95,15 +95,6 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetHasValidSecret() {
-        //given
-        final Config config = Application.getInstance(Config.class);
-
-        //then
-        assertThat(config.hasValidSecret(), equalTo(true));
-    }
-
-    @Test
     public void testGetAllConfigurationValues() {
         //given
         final Config config = Application.getInstance(Config.class);
