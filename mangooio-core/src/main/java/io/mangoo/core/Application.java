@@ -288,66 +288,62 @@ public final class Application {
     }
     
     /**
-     * Only in PROD mode
-     * 
      * Do sanity checks on the configuration an warn about it in the log
      */
     private static void sanityChecks() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
-            if (Mode.PROD == mode) {
-                Cache cache = injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION);
-                List<String> warnings = new ArrayList<>();
-                if (!config.isAuthenticationCookieSecure()) {
-                    String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                    String warning = "Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (!config.isSessionCookieSecure()) {
-                    String warning = "Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                    String warning = "Session cookie name has default value. Consider changeing cookie.name to an application specific value.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
-                    String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.isSessionCookieEncrypt() && config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                    String warning = "Session cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
-                    String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to auth.cookie.signkey.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                if (config.isAuthenticationCookieEncrypt() && config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                    String warning = "Authentication cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
-                    warnings.add(warning);
-                    LOG.warn(warning);
-                }
-                
-                cache.put(Key.MANGOOIO_WARNINGS.toString(), warnings);
-            }   
+            Cache cache = injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION);
+            List<String> warnings = new ArrayList<>();
+            if (!config.isAuthenticationCookieSecure()) {
+                String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set auth.cookie.secure to true.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
+                String warning = "Authentication cookie name has default value. Consider changeing auth.cookie.name to an application specific value.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (!config.isSessionCookieSecure()) {
+                String warning = "Session cookie has secure flag set to false. It is highly recommended to set cookie.secure to true.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
+                String warning = "Session cookie name has default value. Consider changeing cookie.name to an application specific value.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
+                String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.isSessionCookieEncrypt() && config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                String warning = "Session cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
+                String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to auth.cookie.signkey.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.isAuthenticationCookieEncrypt() && config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                String warning = "Authentication cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            cache.put(Key.MANGOOIO_WARNINGS.toString(), warnings);
         }
     }
 
