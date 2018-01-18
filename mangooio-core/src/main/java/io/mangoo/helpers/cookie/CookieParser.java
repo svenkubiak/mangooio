@@ -57,13 +57,15 @@ public class CookieParser {
     
     @SuppressWarnings("unchecked")
     public boolean hasValidSessionCookie() {
-        decrypt();
+        if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
+            this.value = Application.getInstance(Crypto.class).decrypt(this.value, Application.getInstance(Config.class).getSessionCookieEncryptionKey());
+        }
 
         boolean valid = false;
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getJwtsSignKey())
+                        .setSigningKey(Application.getInstance(Config.class).getSessionCookieSignKey())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -83,13 +85,15 @@ public class CookieParser {
     }
 
     public boolean hasValidAuthenticationCookie() {
-        decrypt();
+        if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
+            this.value = Application.getInstance(Crypto.class).decrypt(this.value, Application.getInstance(Config.class).getAuthenticationCookieEncryptionKey());
+        }
 
         boolean valid = false;
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getJwtsSignKey())
+                        .setSigningKey(Application.getInstance(Config.class).getAuthenticationCookieSignKey())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -122,12 +126,6 @@ public class CookieParser {
 
     public String getAuthenticatedUser() {
         return this.authenticatedUser;
-    }
-
-    private void decrypt() {
-        if (this.encrypted && StringUtils.isNotBlank(this.value) && !this.value.contains("\\|")) {
-            this.value = Application.getInstance(Crypto.class).decrypt(this.value, Application.getInstance(Config.class).getJwtsEncryptionKey());
-        }
     }
     
     private LocalDateTime dateToLocalDateTime(Date date) {

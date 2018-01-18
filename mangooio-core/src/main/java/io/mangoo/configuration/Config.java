@@ -729,22 +729,28 @@ public class Config {
     }
     
     /**
+     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
      * @return application.jwt.signkey or application secret if undefined
      */
+    @Deprecated
     public String getJwtsSignKey() {
         return getString(Key.APPLICATION_JWT_SIGNKEY, getApplicationSecret());
     }
 
     /**
+     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
      * @return application.jwt.encrypt or default value if undefined
      */
+    @Deprecated
     public boolean isJwtsEncrypted() {
         return getBoolean(Key.APPLICATION_JWT_ENCRYPT, Default.APPLICATION_JWT_ENCRYPT.toBoolean());
     }
 
     /**
+     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
      * @return application.jwt.encryptionkey or application secret if undefined
      */
+    @Deprecated
     public String getJwtsEncryptionKey() {
         return getString(Key.APPLICATION_JWT_ENCRYPTION_KEY, getApplicationSecret());
     }
@@ -825,5 +831,33 @@ public class Config {
      */
     public long getUndertowMaxEntitySize() {
         return getLong(Key.UNDERTOW_MAX_ENTITY_SIZE, Default.UNDERTOW_MAX_ENTITY_SIZE.toLong());
+    }
+
+    /**
+     * @return session.cookie.signkey or application secret if undefined
+     */
+    public String getSessionCookieSignKey() {
+        return getString(Key.SESSION_COOKIE_SIGNKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return session.cookie.encryptionkey or application secret if undefined
+     */
+    public String getSessionCookieEncryptionKey() {
+        return getString(Key.SESSION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return auth.cookie.signkey or application secret if undefined
+     */
+    public String getAuthenticationCookieSignKey() {
+        return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return auth.cookie.encryptionkey or application secret if undefined
+     */
+    public String getAuthenticationCookieEncryptionKey() {
+        return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
     }
 }

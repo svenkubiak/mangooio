@@ -31,11 +31,12 @@ default:
         ajp:
             host      : localhost
             port      : 9899
-    cookie:
-       encrypt: true
+    session:
+       cookie:
+          encrypt: true
     metrics:
        enable: true
-    auth:
+    authentication:
         redirect  : /login
         cookie:
             name    : TEST-AUTH

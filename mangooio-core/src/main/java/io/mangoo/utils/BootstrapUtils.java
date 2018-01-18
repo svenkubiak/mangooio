@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Resources;
 
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.RouteType;
 
@@ -71,7 +70,7 @@ public final class BootstrapUtils {
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
             final Properties properties = new Properties();
             properties.load(inputStream);
-            version = String.valueOf(properties.get(Key.VERSION.toString()));
+            version = String.valueOf(properties.get("version"));
         } catch (final IOException e) {
             LOG.error("Failed to get application version", e);
         }

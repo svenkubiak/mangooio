@@ -321,6 +321,31 @@ public final class Application {
                     warnings.add(warning);
                     LOG.warn(warning);
                 }
+                
+                if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
+                    String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
+                }
+                
+                if (config.isSessionCookieEncrypt() && config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                    String warning = "Session cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
+                }
+                
+                if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
+                    String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to auth.cookie.signkey.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
+                }
+                
+                if (config.isAuthenticationCookieEncrypt() && config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                    String warning = "Authentication cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+                    warnings.add(warning);
+                    LOG.warn(warning);
+                }
+                
                 cache.put(Key.MANGOOIO_WARNINGS.toString(), warnings);
             }   
         }

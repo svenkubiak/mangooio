@@ -20,9 +20,16 @@ public enum Key {
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("application.headers.xcontenttypeoptions"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("application.headers.xframeoptions"),
     APPLICATION_HEADERS_XSSPROTECTION("application.headers.xssprotection"),
+    
+    @Deprecated /** Will be removed in 5.0.0 without replacement **/
     APPLICATION_JWT_ENCRYPT("application.jwt.encrypt"),
+    
+    @Deprecated /** Will be removed in 5.0.0 without replacement **/
     APPLICATION_JWT_ENCRYPTION_KEY("application.jwt.encryptionkey"),
+    
+    @Deprecated /** Will be removed in 5.0.0 without replacement **/
     APPLICATION_JWT_SIGNKEY("application.jwt.signkey"),
+    
     APPLICATION_LANGUAGE("application.language"),
     
     @Deprecated /** Use Jvm.APPLICATION_LOG instead **/
@@ -67,15 +74,14 @@ public enum Key {
     @Deprecated /** Use AUTHENTICATION_REDIRECT instead **/
     AUTH_REDIRECT("auth.redirect"),
     
-    AUTHENTICATION_COOKIE_ENCRYPT("auth.cookie.encrypt"),
-    AUTHENTICATION_COOKIE_EXPIRES("auth.cookie.expires"),
-    AUTHENTICATION_COOKIE_NAME("auth.cookie.name"),
-    AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("auth.cookie.remember.expires"),
-    AUTHENTICATION_COOKIE_SECURE("auth.cookie.secure"),
-    AUTHENTICATION_COOKIE_VERSION("auth.cookie.version"),
-    AUTHENTICATION_LOCK("auth.lock"),
-    AUTHENTICATION_REDIRECT("auth.redirect"),
-    
+    AUTHENTICATION_COOKIE_ENCRYPT("authentication.cookie.encrypt"),
+    AUTHENTICATION_COOKIE_EXPIRES("authentication.cookie.expires"),
+    AUTHENTICATION_COOKIE_NAME("authentication.cookie.name"),
+    AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("authentication.cookie.remember.expires"),
+    AUTHENTICATION_COOKIE_SECURE("authentication.cookie.secure"),
+    AUTHENTICATION_COOKIE_VERSION("authentication.cookie.version"),
+    AUTHENTICATION_LOCK("authentication.lock"),
+    AUTHENTICATION_REDIRECT("authentication.redirect"),
     CACHE_CLUSTER_ENABLE("cache.cluster.enable"),
     CACHE_CLUSTER_URL("cache.cluster.url"),
     CONNECTOR_AJP_HOST("connector.ajp.host"),
@@ -99,11 +105,11 @@ public enum Key {
     COOKIE_VERSION("cookie.version"),
     
     I18N_COOKIE_NAME("i18n.cookie.name"),
-    SESSION_COOKIE_ENCRYPTION("cookie.encryption"),
-    SESSION_COOKIE_EXPIRES("cookie.expires"),
-    SESSION_COOKIE_NAME("cookie.name"),
-    SESSION_COOKIE_SECURE("cookie.secure"),
-    SESSION_COOKIE_VERSION("cookie.version"),
+    SESSION_COOKIE_ENCRYPTION("session.cookie.encryption"),
+    SESSION_COOKIE_EXPIRES("session.cookie.expires"),
+    SESSION_COOKIE_NAME("session.cookie.name"),
+    SESSION_COOKIE_SECURE("session.cookie.secure"),
+    SESSION_COOKIE_VERSION("session.cookie.version"),
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
@@ -125,10 +131,9 @@ public enum Key {
     SMTP_USERNAME("smtp.username"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize"),
     LOGGER_MESSAGE("logger.configuration.message"),
-    ERROR("error"),
-    SUCCESS("success"),
-    VERSION("version"),
-    WARNING("warning");
+    SESSION_COOKIE_SIGNKEY("session.cookie.signkey"),
+    SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
+    AUTHENTICATION_COOKIE_SIGNKEY("auth.cookie.signkey");
 
     private final String value;
 

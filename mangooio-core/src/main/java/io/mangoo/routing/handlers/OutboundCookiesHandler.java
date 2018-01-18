@@ -69,11 +69,11 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getJwtsSignKey())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey())
                     .compact();
 
             if (this.config.isSessionCookieEncrypt()) {
-                jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getJwtsEncryptionKey());
+                jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getSessionCookieEncryptionKey());
             }
 
             final Cookie cookie = CookieBuilder.create()
@@ -116,11 +116,11 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())
                         .setExpiration(DateUtils.localDateTimeToDate(expires))
-                        .signWith(SignatureAlgorithm.HS512, this.config.getJwtsSignKey())
+                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey())
                         .compact();
                 
                 if (this.config.isAuthenticationCookieEncrypt()) {
-                    jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getJwtsEncryptionKey());
+                    jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getAuthenticationCookieEncryptionKey());
                 }
 
                 cookie = CookieBuilder.create()
@@ -157,7 +157,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getJwtsSignKey())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
                     .compact();
             
             final Cookie cookie = CookieBuilder.create()

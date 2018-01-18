@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Sets;
 
-import io.mangoo.enums.Key;
-
 /**
  *
  * @author svenkubiak
@@ -19,6 +17,9 @@ import io.mangoo.enums.Key;
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
     private static final Set<String> INVALID_CHARACTERS = Sets.newHashSet("|", ":", "&", " ");
+    private static final String ERROR = "error";
+    private static final String WARNING = "warning";
+    private static final String SUCCESS = "success";
     private Map<String, String> values = new HashMap<>();
     private boolean discard;
 
@@ -38,7 +39,7 @@ public class Flash {
      */
     public void setError(String value) {
         if (validCharacters(value)) {
-            this.values.put(Key.ERROR.toString(), value);
+            this.values.put(ERROR, value);
         }
     }
 
@@ -50,7 +51,7 @@ public class Flash {
      */
     public void setWarning(String value) {
         if (validCharacters(value)) {
-            this.values.put(Key.WARNING.toString(), value);
+            this.values.put(WARNING, value);
         }
     }
 
@@ -62,7 +63,7 @@ public class Flash {
      */
     public void setSuccess(String value) {
         if (validCharacters(value)) {
-            this.values.put(Key.SUCCESS.toString(), value);
+            this.values.put(SUCCESS, value);
         }
     }
 

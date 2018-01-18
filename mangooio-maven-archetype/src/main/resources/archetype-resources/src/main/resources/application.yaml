@@ -1,5 +1,5 @@
 # Application configuration
-# 
+#
 # This file defines all configuration values for a mangoo I/O application.
 # The default values are loaded by default and overwritten by environment specific
 # values if they are configured.
@@ -9,42 +9,43 @@
 
 default:
     application:
-        name       : ${application-name} 
+        name       : ${application-name}
         secret     : ${application-secret}
         language   : en
     connector:
         http:
             host      : localhost
-            port      : 8080          
+            port      : 8080
     auth:
         redirect  : /login
         cookie:
-            name    : ${application-name}-AUTH
+            name    : ${application-name}-authentication
             encrypt : false
             expires : 86400
-    cookie:
-        name       : ${application-name}-SESSION
+    session:
+      cookie:
+        name       : ${application-name}-session
         expires    : 86400
         encryption : false
     smtp:
         host       : localhost
         port       : 25
-        username   : 
-        password   : 
+        username   :
+        password   :
         ssl        : false
-        
+
 test:
     connector:
         http:
             host      : localhost
-            port      : 9090 
+            port      : 9090
     smtp:
         port       : 3025
-        
+
 dev:
     connector:
         http:
             host      : localhost
-            port      : 9090 
+            port      : 9090
     smtp:
         port       : 3025

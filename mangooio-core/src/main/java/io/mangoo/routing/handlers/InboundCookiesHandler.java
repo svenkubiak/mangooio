@@ -131,7 +131,7 @@ public class InboundCookiesHandler implements HttpHandler {
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(this.config.getJwtsSignKey())
+                        .setSigningKey(this.config.getApplicationSecret())
                         .parseClaimsJws(cookieValue);
 
                 Claims claims = jwsClaims.getBody();
