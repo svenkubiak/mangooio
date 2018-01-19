@@ -15,6 +15,9 @@ public final class CryptoUtils {
     private static final int KEYINDEX_START = 0;
     private static final int KEYLENGTH = 32;
 
+    private CryptoUtils() {
+    }
+    
     /**
      * Creates a secret for encrypt or decryption which has a length
      * of 32 characters, corresponding to 256 Bits
