@@ -78,13 +78,27 @@ public class Validator implements Serializable {
     
     /**
      * Validates a given field to have a minimum length
-     *
+     * 
+     * @deprecated As of 4.10.0, replace by {@link #expectMin(String, double)}
+     * 
      * @param name The field to check
      * @param minLength The minimum length
      */
+    @Deprecated
     public void min(String name, double minLength) {
         expectMin(name, minLength, messages.get(Validation.MIN_KEY.name(), name, minLength));
     }
+    
+    /**
+     * Validates a given field to have a minimum length
+     * 
+     * @param name The field to check
+     * @param minLength The minimum length
+     */
+    public void expectMin(String name, double minLength) {
+        expectMin(name, minLength, messages.get(Validation.MIN_KEY.name(), name, minLength));
+    }
+
 
     /**
      * Validates a given field to have a minimum length

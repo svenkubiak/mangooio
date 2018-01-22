@@ -123,7 +123,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.min(FOO, 3);
+        form.expectMin(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -136,7 +136,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "ba");
-        form.min(FOO, 4);
+        form.expectMin(FOO, 4);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));

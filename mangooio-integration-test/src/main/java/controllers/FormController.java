@@ -67,7 +67,7 @@ public class FormController {
         form.expectIpv6("ipv6");
         form.expectRegex("regex", Pattern.compile("[a-z]"));
         form.expectMax("phone", MAX_SIZE);
-        form.min("fax", MIN_SIZE);
+        form.expectMin("fax", MIN_SIZE);
 
         if (form.isValid()) {
             return Response.withOk().andTextBody("Fancy that!");

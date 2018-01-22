@@ -95,4 +95,43 @@ public class CryptoUtilsTest {
             .withThreads(THREADS)
             .run();
     }
+    
+    @Test
+    public void testRandomString() {
+        //given
+        String string = CryptoUtils.randomString(32);
+        
+        //then
+        assertThat(string, not(nullValue()));
+        assertThat(string.length(), equalTo(32));
+    }
+    
+    @Test
+    public void testConcurrentRandomString() throws InterruptedException {
+        Runnable runnable = () -> {
+            //given
+            String string = CryptoUtils.randomString(32);
+            
+            //then
+            assertThat(string, not(nullValue()));
+            assertThat(string.length(), equalTo(32));
+        };
+        
+        ConcurrentTester.create()
+            .withRunnable(runnable)
+            .withThreads(THREADS)
+            .run();
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidMinRandomString() {
+        //given
+        CryptoUtils.randomString(0);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidMaxRandomString() {
+        //given
+        CryptoUtils.randomString(257);
+    }
 }

@@ -62,7 +62,7 @@ public class ValidatorTest {
         validator.expectMatch(MATCH, MATCH2);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2);
         validator.expectMax(MAX, 1);
-        validator.min(MIN, 42);
+        validator.expectMin(MIN, 42);
         validator.expectValue(REQUIRED);
         validator.expectUrl(URL);
         validator.expectNumeric(NUMERIC);
@@ -165,7 +165,7 @@ public class ValidatorTest {
         
         //when
         validator.addValue(MIN, "abcdef");
-        validator.min(MIN, 4);
+        validator.expectMin(MIN, 4);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -179,7 +179,7 @@ public class ValidatorTest {
         
         //when
         validator.addValue(MIN, "abcdef");
-        validator.min(MIN, 8);
+        validator.expectMin(MIN, 8);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -193,7 +193,7 @@ public class ValidatorTest {
         
         //when
         validator.addValue(MIN, "6");
-        validator.min(MIN, 4);
+        validator.expectMin(MIN, 4);
 
         //then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -207,7 +207,7 @@ public class ValidatorTest {
         
         //when
         validator.addValue(MIN, "4");
-        validator.min(MIN, 8);
+        validator.expectMin(MIN, 8);
 
         //then
         assertThat(validator.hasErrors(), equalTo(true));
