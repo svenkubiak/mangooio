@@ -166,7 +166,7 @@ public class Config {
     }
 
     /**
-     * @return The master key for encrypted config value, returns a default value if in test mode
+     * @return The master key(s) for encrypted config value
      */
     public List<String> getMasterKeys() {
         String masterkey = System.getProperty(Jvm.APPLICATION_MASTERKEY.toString());
@@ -178,7 +178,7 @@ public class Config {
             String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY_FILE.toString());
             if (StringUtils.isNotBlank(masterkeyFile)) {
                 try {
-                    keys = FileUtils.readLines(new File(masterkeyFile), Default.ENCODING.toString());
+                    keys = FileUtils.readLines(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
                 } catch (IOException e) {
                     LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
                 }
