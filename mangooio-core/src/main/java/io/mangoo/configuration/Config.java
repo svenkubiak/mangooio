@@ -180,7 +180,7 @@ public class Config {
                 try {
                     keys = FileUtils.readLines(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
                 } catch (IOException e) {
-                    LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
+                    LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values", e);
                 }
             } else {
                 LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
