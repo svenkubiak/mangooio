@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -130,25 +132,27 @@ public class Config {
      * Decrypts all encrypted config value
      */
     private void decrypt() {
-        String key = null;
         Crypto crypto = new Crypto(this);
 
         for (final Entry<String, String> entry : this.values.entrySet()) {
             if (isEncrypted(entry.getValue())) {
-                if (StringUtils.isBlank(key)) {
-                    key = getMasterKey();
+                List<String> keys = getMasterKeys();
+                
+                String value = StringUtils.substringBetween(entry.getValue(), "cryptex[", "]");
+                String [] cryptex = value.split(",");
+                
+                String decryptedValue = null;
+                if (cryptex.length == 1) {
+                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(0));
+                } else if (cryptex.length == 2) {
+                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(Integer.valueOf(cryptex[1].trim()) - 1));
                 }
-
-                if (StringUtils.isNotBlank(key)) {
-                    final String decryptedText = crypto.decrypt(StringUtils.substringBetween(entry.getValue(), "cryptex[", "]"), key);
-                    if (StringUtils.isNotBlank(decryptedText)) {
-                        this.values.put(entry.getKey(), decryptedText);
-                    } else {
-                        decrypted = false;
-                    }
+                
+                if (StringUtils.isNotBlank(decryptedValue)) {
+                    this.values.put(entry.getKey(), decryptedValue);
                 } else {
-                    LOG.error("Found encrypted config value '" + entry.getKey() + "' but no masterkey was set.");
-                    decrypted = false;
+                    LOG.error("Failed to decrypt a config value");
+                    this.decrypted = false;
                 }
             }
         }
@@ -164,22 +168,26 @@ public class Config {
     /**
      * @return The master key for encrypted config value, returns a default value if in test mode
      */
-    public String getMasterKey() {
+    public List<String> getMasterKeys() {
         String masterkey = System.getProperty(Jvm.APPLICATION_MASTERKEY.toString());
-        if (StringUtils.isBlank(masterkey)) {
+        List<String> keys = new ArrayList<>();
+        
+        if (StringUtils.isNotBlank(masterkey)) {
+            keys.add(masterkey);
+        } else {
             String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY_FILE.toString());
             if (StringUtils.isNotBlank(masterkeyFile)) {
                 try {
-                    masterkey = FileUtils.readFileToString(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
-                } catch (final IOException e) {
-                    LOG.error("Failed to read master key", e);
+                    keys = FileUtils.readLines(new File(masterkeyFile), Default.ENCODING.toString());
+                } catch (IOException e) {
+                    LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
                 }
             } else {
                 LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
-            }
+            }  
         }
 
-        return masterkey;
+        return keys;
     }
 
     /**

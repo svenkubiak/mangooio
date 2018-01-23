@@ -70,6 +70,8 @@ test:
     application:
         masterkeyfile    : ./key/masterkey.txt
         foo              : cryptex[MloJcu6/zaaNs7gfpfZATg==]
+        bar              : cryptex[NtUQaVGVUAVoTsl2c1HMDw==, 2]  
+        foobar           : cryptex[WqfTFTyaEW2umq5d47Twow==, 3]               
         admin:
               enable     : true
               username   : cryptex[MloJcu6/zaaNs7gfpfZATg==]

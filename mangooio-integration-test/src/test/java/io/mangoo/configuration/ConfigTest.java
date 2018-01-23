@@ -133,13 +133,31 @@ public class ConfigTest {
     }
     
     @Test
+    public void testEncryptedValueMultiKeyLineTwo() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("application.bar"), equalTo("westeros"));
+    }
+    
+    @Test
+    public void testEncryptedValueMultiKeyLineThree() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("application.foobar"), equalTo("essos"));
+    }
+    
+    @Test
     public void testGetMasterKey() {
         //given
         final Config config = Application.getInstance(Config.class);
         System.setProperty(Jvm.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
 
         //then
-        assertThat(config.getMasterKey(), equalTo("thisismymasterkey"));
+        assertThat(config.getMasterKeys().get(0), equalTo("thisismymasterkey"));
     }
     
     @Test
