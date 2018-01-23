@@ -16,7 +16,7 @@ import io.mangoo.enums.Required;
  *
  */
 public final class CryptoUtils {
-    private static final char[] CHARACTERS = (new String("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")).toCharArray();
+    private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int KEYINDEX_START = 0;
     private static final int KEYLENGTH = 32;
 

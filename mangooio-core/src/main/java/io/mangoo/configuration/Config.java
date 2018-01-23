@@ -145,7 +145,7 @@ public class Config {
                 if (cryptex.length == 1) {
                     decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(0));
                 } else if (cryptex.length == 2) {
-                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(Integer.valueOf(cryptex[1].trim()) - 1));
+                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(Integer.parseInt(cryptex[1].trim()) - 1));
                 }
                 
                 if (StringUtils.isNotBlank(decryptedValue)) {
