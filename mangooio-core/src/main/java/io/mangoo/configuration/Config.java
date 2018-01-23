@@ -144,7 +144,7 @@ public class Config {
                 String decryptedValue = null;
                 if (cryptex.length == 1) {
                     decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(0));
-                } else if (cryptex.length == 2) {
+                } else if (cryptex.length == 2) { //NOSONAR
                     decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(Integer.parseInt(cryptex[1].trim()) - 1));
                 }
                 
@@ -162,7 +162,7 @@ public class Config {
      * @return True if decryption of config values was successful, false otherwise
      */
     public boolean isDecrypted() {
-        return decrypted;
+        return this.decrypted;
     }
 
     /**
