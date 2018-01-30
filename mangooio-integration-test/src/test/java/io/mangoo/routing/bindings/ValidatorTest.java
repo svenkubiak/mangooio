@@ -608,4 +608,32 @@ public class ValidatorTest {
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(NUMERIC), equalTo(true));
     }
+    
+    @Test
+    public void testValidBoolean() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+        
+        //when
+        validator.addValue(NUMERIC, "2342");
+        validator.expectBoolean(true, NUMERIC);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(NUMERIC), equalTo(false));
+    }
+    
+    @Test
+    public void testInvalidBoolean() {
+        //given
+        Validator validator = Application.getInstance(Validator.class);
+        
+        //when
+        validator.addValue(NUMERIC, "2342");
+        validator.expectBoolean(false, NUMERIC);
+
+        //then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(NUMERIC), equalTo(true));
+    }
 }

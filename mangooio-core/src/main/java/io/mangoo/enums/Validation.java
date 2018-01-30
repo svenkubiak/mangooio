@@ -7,6 +7,7 @@ package io.mangoo.enums;
  *
  */
 public enum Validation {
+    BOOLEAN_KEY("{0} is not a valid value"),
     DOMAIN_NAME("{0} must be a valid domain name"),
     DOMAIN_NAME_KEY("validation.domainname"),
     EMAIL("{0} must be a valid eMail address"),

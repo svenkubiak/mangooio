@@ -263,6 +263,29 @@ public class Validator implements Serializable {
     public void expectEmail(String name) {
         expectEmail(name, messages.get(Validation.EMAIL_KEY.name(), name));
     }
+    
+    /**
+     * Validates a field to be a valid email address
+     *
+     * @param check The boolean to check
+     * @param name The field to check
+     */
+    public void expectBoolean(boolean check, String name) {
+        expectBoolean(check, name, messages.get(Validation.EMAIL_KEY.name(), name));
+    }
+    
+    /**
+     * Validates a given boolean check for a given field
+     *
+     * @param check The boolean to check
+     * @param name The field to check
+     * @param message A custom error message instead of the default one
+     */
+    public void expectBoolean(boolean check, String name, String message) {
+        if (!check) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.BOOLEAN_KEY.name(), name)));
+        }
+    }
 
     /**
      * Validates a field to be a valid email address
