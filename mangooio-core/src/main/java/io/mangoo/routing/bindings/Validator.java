@@ -126,7 +126,6 @@ public class Validator implements Serializable {
      *
      * @param maxLength The maximum length
      * @param name The field to check
-     *
      */
     public void expectMax(String name, double maxLength) {
         expectMax(name, maxLength, messages.get(Validation.MAX_KEY.name(), name, maxLength));
@@ -147,7 +146,6 @@ public class Validator implements Serializable {
      *
      * @param name The field to check
      * @param message A custom error message instead of the default one
-     *
      */
     public void expectNumeric(String name, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
@@ -182,7 +180,7 @@ public class Validator implements Serializable {
      * Validates to fields to exactly (case-sensitive) match
      *
      * @param name The field to check
-     * @param anotherName The field to check against
+     * @param anotherName The other field to check against
      */
     public void expectExactMatch(String name, String anotherName) {
         expectExactMatch(name, anotherName, messages.get(Validation.EXACT_MATCH_KEY.name(), name, anotherName));
@@ -192,7 +190,7 @@ public class Validator implements Serializable {
      * Validates to fields to exactly (case-sensitive) match
      *
      * @param name The field to check
-     * @param anotherName The field to check against
+     * @param anotherName The other field to check against
      * @param message A custom error message instead of the default one
      */
     public void expectExactMatch(String name, String anotherName, String message) {
@@ -262,29 +260,6 @@ public class Validator implements Serializable {
      */
     public void expectEmail(String name) {
         expectEmail(name, messages.get(Validation.EMAIL_KEY.name(), name));
-    }
-    
-    /**
-     * Validates a field to be a valid email address
-     *
-     * @param check The boolean to check
-     * @param name The field to check
-     */
-    public void expectBoolean(boolean check, String name) {
-        expectBoolean(check, name, messages.get(Validation.EMAIL_KEY.name(), name));
-    }
-    
-    /**
-     * Validates a given boolean check for a given field
-     *
-     * @param check The boolean to check
-     * @param name The field to check
-     * @param message A custom error message instead of the default one
-     */
-    public void expectBoolean(boolean check, String name, String message) {
-        if (!check) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.BOOLEAN_KEY.name(), name)));
-        }
     }
 
     /**
@@ -380,7 +355,7 @@ public class Validator implements Serializable {
     public void expectRange(String name, int minLength, int maxLength) {
         expectRange(name, minLength, maxLength, messages.get(Validation.RANGE_KEY.name(), name, minLength, maxLength));
     }
-
+    
     /**
      * Validates a field to be in a certain range
      *
@@ -456,6 +431,98 @@ public class Validator implements Serializable {
         if (!UrlValidator.getInstance().isValid(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.URL_KEY.name(), name)));
         }
+    }
+    
+    /**
+     * Validates a given value to be true
+     *
+     * @param value The value to check
+     * @param name The name of the field to display the error message
+     * @param message A custom error message instead of the default one
+     */
+    public void validateTrue(boolean value, String name, String message) {
+        if (!value) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.TRUE_KEY.name(), name)));
+        }
+    }
+    
+    /**
+     * Validates a given value to be true
+     *
+     * @param value The value to check
+     * @param name The name of the field to display the error message
+     */
+    public void validateTrue(boolean value, String name) {
+        validateTrue(value, name, messages.get(Validation.TRUE_KEY.name(), name));
+    }
+    
+    /**
+     * Validates a given value to be false
+     *
+     * @param value The value to check
+     * @param name The name of the field to display the error message
+     * @param message A custom error message instead of the default one
+     */
+    public void validateFalse(boolean value, String name, String message) {
+        if (value) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.name(), name)));
+        }
+    }
+    
+    /**
+     * Validates a given value to be false
+     *
+     * @param value The value to check
+     * @param name The name of the field to display the error message
+     */
+    public void validateFalse(boolean value, String name) {
+        validateFalse(value, name, messages.get(Validation.FALSE_KEY.name(), name));
+    }
+    
+    /**
+     * Validates a given object to be not null
+     *
+     * @param object The object to check
+     * @param name The name of the field to display the error message
+     * @param message A custom error message instead of the default one
+     */
+    public void validateNotNull(Object object, String name, String message) {
+        if (object == null) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NOTNULL_KEY.name(), name)));
+        }
+    }
+    
+    /**
+     * Validates a given object to be not null
+     *
+     * @param object The object to check
+     * @param name The name of the field to display the error message
+     */
+    public void validateNotNull(Object object, String name) {
+        validateNotNull(object, name, messages.get(Validation.NOTNULL_KEY.name(), name));
+    }
+    
+    /**
+     * Validates a given object to be null
+     *
+     * @param object The object to check
+     * @param name The name of the field to display the error message
+     * @param message A custom error message instead of the default one 
+     */
+    public void validateNull(Object object, String name, String message) {
+        if (object != null) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NULL_KEY.name(), name)));
+        }
+    }
+    
+    /**
+     * Validates a given object to be null
+     *
+     * @param object The object to check
+     * @param name The name of the field to display the error message
+     */
+    public void validateNull(Object object, String name) {
+        validateNull(object, name, messages.get(Validation.NULL_KEY.name(), name));
     }
 
     /**

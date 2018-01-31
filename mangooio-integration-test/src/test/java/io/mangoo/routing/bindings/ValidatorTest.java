@@ -37,10 +37,10 @@ public class ValidatorTest {
 
     @Test
     public void testDefaultErrorMessages() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(URL, "");
         validator.addValue(REGEX, "");
         validator.addValue(RANGE, "");
@@ -66,8 +66,8 @@ public class ValidatorTest {
         validator.expectValue(REQUIRED);
         validator.expectUrl(URL);
         validator.expectNumeric(NUMERIC);
-        
-        //then
+
+        // then
         assertThat(validator.getError(URL), containsString("must be a valid URL"));
         assertThat(validator.getError(REGEX), containsString("is invalid"));
         assertThat(validator.getError(RANGE), containsString("must have a size between"));
@@ -81,13 +81,13 @@ public class ValidatorTest {
         assertThat(validator.getError(REQUIRED), containsString("is required"));
         assertThat(validator.getError(NUMERIC), containsString("must be a numeric value"));
     }
-    
+
     @Test
     public void testCustomErrorMessages() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(URL, "");
         validator.addValue(REGEX, "");
         validator.addValue(RANGE, "");
@@ -115,8 +115,8 @@ public class ValidatorTest {
         validator.expectValue(REQUIRED, CUSTOM_ERROR_MESSAGE);
         validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
         validator.expectNumeric(NUMERIC, CUSTOM_ERROR_MESSAGE);
-        
-        //then
+
+        // then
         assertThat(validator.getError(URL), equalTo(CUSTOM_ERROR_MESSAGE));
         assertThat(validator.getError(REGEX), equalTo(CUSTOM_ERROR_MESSAGE));
         assertThat(validator.getError(RANGE), equalTo(CUSTOM_ERROR_MESSAGE));
@@ -130,509 +130,596 @@ public class ValidatorTest {
         assertThat(validator.getError(REQUIRED), equalTo(CUSTOM_ERROR_MESSAGE));
         assertThat(validator.getError(NUMERIC), equalTo(CUSTOM_ERROR_MESSAGE));
     }
-    
+
     @Test
     public void testValidRequired() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(REQUIRED, REQUIRED);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(REQUIRED), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidRequired() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(REQUIRED, "");
         validator.expectValue(REQUIRED);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(REQUIRED), equalTo(true));
     }
 
     @Test
     public void testValidMinString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MIN, "abcdef");
         validator.expectMin(MIN, 4);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(MIN), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidMinString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MIN, "abcdef");
         validator.expectMin(MIN, 8);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MIN), equalTo(true));
     }
 
     @Test
     public void testValidMinNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MIN, "6");
         validator.expectMin(MIN, 4);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(MIN), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidMinNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MIN, "4");
         validator.expectMin(MIN, 8);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MIN), equalTo(true));
     }
 
     @Test
     public void testValidMaxString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MAX, "abcdef");
         validator.expectMax(MAX, 10);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(MAX), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidMaxString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MAX, "abcdef");
         validator.expectMax(MAX, 3);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MAX), equalTo(true));
     }
 
     @Test
     public void testValidMaxNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-            
-        //when
+
+        // when
         validator.addValue(MAX, "3");
         validator.expectMax(MAX, 4);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(MAX), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidMaxNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(MAX, "4");
         validator.expectMax(MAX, 2);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MAX), equalTo(true));
     }
-    
+
     @Test
     public void testValidDomainName() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-            
-        //when
+
+        // when
         validator.addValue(DOMAIN_NAME, "www.mangoo.io");
         validator.expectDomainName(DOMAIN_NAME);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(DOMAIN_NAME), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidDomainName() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(DOMAIN_NAME, "mangooio");
         validator.expectDomainName(DOMAIN_NAME);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(DOMAIN_NAME), equalTo(true));
     }
 
-
     @Test
     public void testValidExactMatch() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(EXACT_MATCH, EXACT_MATCH);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(EXACT_MATCH), equalTo(false));
     }
 
     @Test
     public void testInvalidExactMatch() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(MATCH, MATCH);
         validator.addValue(MATCH2, MATCH2);
         validator.expectExactMatch(MATCH, MATCH2);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MATCH), equalTo(true));
     }
 
     @Test
     public void testValidMatch() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MATCH, MATCH);
         validator.addValue(MATCH2, "mAtcH");
         validator.expectMatch(MATCH, MATCH2);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(MATCH), equalTo(false));
     }
 
     @Test
     public void testInvalidMatch() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(MATCH, MATCH);
         validator.expectExactMatch(MATCH, "foo");
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(MATCH), equalTo(true));
     }
-    
+
     @Test
     public void testValidMatchValues() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue("foo", "bar");
         validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bar"));
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError("foo"), equalTo(false));
     }
 
     @Test
     public void testInvalidMatchValues() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue("foo", "bar");
         validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bra"));
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError("foo"), equalTo(true));
     }
 
     @Test
     public void testValidEmail() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(EMAIL, "foo@bar.com");
         validator.expectEmail(EMAIL);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(EMAIL), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidEmail() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(EMAIL, "foo @");
         validator.expectExactMatch(EMAIL, "foo");
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(EMAIL), equalTo(true));
     }
 
     @Test
     public void testValidIpv4Address() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(IPV4, "192.168.2.1");
         validator.expectIpv4(IPV4);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(IPV4), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidIpv4Address() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(IPV4, "192.189.383.122");
         validator.expectIpv4(IPV4);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(IPV4), equalTo(true));
     }
 
     @Test
     public void testValidIpv6Address() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(IPV6, "2001:0db8:85a3:08d3:1319:8a2e:0370:7344");
         validator.expectIpv6(IPV6);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(IPV6), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidIpv6Address() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(IPV6, "1f::::0");
         validator.expectIpv6(IPV6);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(IPV6), equalTo(true));
     }
 
     @Test
     public void testValidRangeString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(RANGE, "abcdefg");
         validator.expectRange(RANGE, 4, 10);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(RANGE), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidRangeString() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(RANGE, "abcdef");
         validator.expectRange(RANGE, 8, 12);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(RANGE), equalTo(true));
     }
-    
+
     @Test
     public void testValidRangeNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(RANGE, "6");
         validator.expectRange(RANGE, 4, 10);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(RANGE), equalTo(false));
     }
 
     @Test
     public void testInvalidRangeNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(RANGE, "4");
         validator.expectRange(RANGE, 8, 12);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(RANGE), equalTo(true));
     }
 
     @Test
     public void testValidRegex() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
 
-        //when
+        // when
         validator.addValue(REGEX, "abc");
         validator.expectRegex(REGEX, PATTERN);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(REGEX), equalTo(false));
     }
 
     @Test
     public void testInvalidRegex() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(REGEX, "abc03");
         validator.expectRegex(REGEX, Pattern.compile("[a-z]"));
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(REGEX), equalTo(true));
     }
 
     @Test
     public void testValidUrl() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(URL, "https://mangoo.io");
         validator.expectUrl(URL);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(URL), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidUrl() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(URL, "https:/mangoo.io");
         validator.expectUrl(URL);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(URL), equalTo(true));
     }
-    
+
     @Test
     public void testValidNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(NUMERIC, "2342");
         validator.expectNumeric(NUMERIC);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(NUMERIC), equalTo(false));
     }
-    
+
     @Test
     public void testInvalidNumeric() {
-        //given
+        // given
         Validator validator = Application.getInstance(Validator.class);
-        
-        //when
+
+        // when
         validator.addValue(NUMERIC, "asjcn");
         validator.expectNumeric(NUMERIC);
 
-        //then
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(NUMERIC), equalTo(true));
     }
-    
-    @Test
-    public void testValidBoolean() {
-        //given
-        Validator validator = Application.getInstance(Validator.class);
-        
-        //when
-        validator.addValue(NUMERIC, "2342");
-        validator.expectBoolean(true, NUMERIC);
 
-        //then
+    @Test
+    public void testValidValidateTrue() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        validator.addValue(NUMERIC, "2342");
+        validator.validateTrue(true, NUMERIC);
+
+        // then
         assertThat(validator.hasErrors(), equalTo(false));
         assertThat(validator.hasError(NUMERIC), equalTo(false));
     }
-    
-    @Test
-    public void testInvalidBoolean() {
-        //given
-        Validator validator = Application.getInstance(Validator.class);
-        
-        //when
-        validator.addValue(NUMERIC, "2342");
-        validator.expectBoolean(false, NUMERIC);
 
-        //then
+    @Test
+    public void testInvalidValidateTrue() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        validator.addValue(NUMERIC, "2342");
+        validator.validateTrue(false, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(NUMERIC), equalTo(true));
+    }
+
+    @Test
+    public void testValidValidateFalse() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        validator.addValue(NUMERIC, "2342");
+        validator.validateFalse(false, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(NUMERIC), equalTo(false));
+    }
+
+    @Test
+    public void testInvalidValidateFalse() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        validator.addValue(NUMERIC, "2342");
+        validator.validateFalse(true, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(NUMERIC), equalTo(true));
+    }
+
+    @Test
+    public void testValidValidateNotNull() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        String foo = "kfkfkf";
+        validator.addValue(NUMERIC, "2342");
+        validator.validateNotNull(foo, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(NUMERIC), equalTo(false));
+    }
+
+    @Test
+    public void testInvalidValidateNotNull() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        String foo = null;
+        validator.addValue(NUMERIC, "2342");
+        validator.validateNotNull(foo, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(true));
+        assertThat(validator.hasError(NUMERIC), equalTo(true));
+    }
+
+    @Test
+    public void testValidValidateNull() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        String foo = null;
+        validator.addValue(NUMERIC, "2342");
+        validator.validateNull(foo, NUMERIC);
+
+        // then
+        assertThat(validator.hasErrors(), equalTo(false));
+        assertThat(validator.hasError(NUMERIC), equalTo(false));
+    }
+
+    @Test
+    public void testInvalidValidateNull() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        String foo = "fdfdsfd";
+        validator.addValue(NUMERIC, "2342");
+        validator.validateNull(foo, NUMERIC);
+
+        // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(NUMERIC), equalTo(true));
     }
