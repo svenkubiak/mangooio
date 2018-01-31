@@ -278,9 +278,9 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testJsonAuthorized() {
+    public void testHealthAuthorized() {
         //given
-        WebResponse response = WebRequest.get("/@admin/json")
+        WebResponse response = WebRequest.get("/@admin/health")
                 .withBasicauthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -292,9 +292,9 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testJsonUnauthorized() {
+    public void testHealthUnauthorized() {
         //given
-        WebResponse response = WebRequest.get("/@admin/json").execute();
+        WebResponse response = WebRequest.get("/@admin/health").execute();
         
         //then
         assertThat(response, not(nullValue()));

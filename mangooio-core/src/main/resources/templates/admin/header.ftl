@@ -34,7 +34,7 @@
             <li <#if space?? && space == 'scheduler'>class="active"</#if>><a href="/@admin/scheduler"><i class="fa fa-calendar"></i><span>Scheduler</span></a></li>
             <li <#if space?? && space == 'metrics'>class="active"</#if>><a href="/@admin/metrics"><i class="fa fa-signal"></i><span>Metrics</span></a></li>
             <li <#if space?? && space == 'tools'>class="active"</#if>><a href="/@admin/tools"><i class="fa fa-wrench"></i><span>Tools</span></a></li>
-            <li><a href="/@admin/json"><i class="fa fa-feed"></i><span>Health</span></a></li>            
+            <li><a href="/@admin/health"><i class="fa fa-feed"></i><span>Health</span></a></li>            
           </ul>
         </section>
       </aside>
