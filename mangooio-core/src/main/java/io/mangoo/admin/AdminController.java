@@ -217,7 +217,7 @@ public class AdminController {
         return Response.withRedirect("/@admin/scheduler");
     }
 
-    public Response json() {
+    public Response health() {
         if (this.config.isMetricsEnabled()) {
             Runtime runtime = Runtime.getRuntime();
             long maxMemory = runtime.maxMemory();

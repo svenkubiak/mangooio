@@ -448,7 +448,7 @@ public final class Application {
         Config config = injector.getInstance(Config.class);
         if (config.isAdminEnabled()) {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/health").withRequest(Methods.GET).withClass(AdminController.class).withMethod("json").useInternalTemplateEngine());
+            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/health").withRequest(Methods.GET).withClass(AdminController.class).withMethod("health").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger").withRequest(Methods.GET).withClass(AdminController.class).withMethod("logger").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger/ajax").withRequest(Methods.POST).withClass(AdminController.class).withMethod("loggerajax").useInternalTemplateEngine());
