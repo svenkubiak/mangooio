@@ -95,7 +95,7 @@
 </section>
 <#else>
 <section class="content-header">
-	<h1>Metrics are not enabled</h1>
+	<h1>Metrics are not enabled. Set <a href="https://docs.mangoo.io/administration.html">metrics to true in your application.yaml file</a> in order to collect metrics.</h1>
 </section>
 </#if>
 <#include "footer.ftl">
