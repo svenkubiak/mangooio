@@ -6,6 +6,7 @@ package io.mangoo.enums;
  * @author svenkubiak
  *
  */
+@SuppressWarnings("all")
 public enum Validation {
     DOMAIN_NAME("{0} must be a valid domain name"),
     DOMAIN_NAME_KEY("validation.domainname"),
