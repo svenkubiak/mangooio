@@ -25,7 +25,6 @@ import io.mangoo.enums.Required;
  */
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
-    private static final Random random = new SecureRandom();
     private static final Base32 base32 = new Base32();
     private static final int DIGITS = 6;
     private static final int MAX_CHARACTERS = 32;
@@ -42,6 +41,7 @@ public class TotpUtils {
      * @return A 64 characters random string based on SecureRandom
      */
     public static Optional<String> createSecret() {
+    	Random random = new SecureRandom();
         StringBuilder buffer = new StringBuilder(BYTES_SECRET);
         for (int i = 0; i < BYTES_SECRET; i++) {
             int value = random.nextInt(MAX_CHARACTERS);
@@ -65,6 +65,7 @@ public class TotpUtils {
      */
     public static Optional<String> getTotp(String secret, HmacShaAlgorithm hmacShaAlgorithm) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(hmacShaAlgorithm, Required.ALGORITHM.toString());
         
         String value = null;
         try {
@@ -94,6 +95,7 @@ public class TotpUtils {
     public static boolean verifiedTotp(String secret, String totp, HmacShaAlgorithm hmacShaAlgorithm) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         Objects.requireNonNull(totp, Required.TOTP.toString());
+        Objects.requireNonNull(hmacShaAlgorithm, Required.ALGORITHM.toString());
         
         String value = null;
         try {
