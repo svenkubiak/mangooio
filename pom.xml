@@ -28,7 +28,7 @@
 		<httpcomponents.version>4.5.5</httpcomponents.version>
 		<scribejava.version>5.2.0-java7again</scribejava.version>
 		<jackson.version>2.9.4</jackson.version>
-		<fluentlenium.version>3.5.1</fluentlenium.version>
+		<fluentlenium.version>3.5.2</fluentlenium.version>
 		<jersey.version>2.26</jersey.version>
 	</properties>
 	<modules>
