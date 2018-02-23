@@ -1,10 +1,11 @@
 package io.mangoo.providers;
 
 import java.net.URI;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import org.ehcache.CacheManager;
 import org.ehcache.PersistentCacheManager;
@@ -12,9 +13,8 @@ import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurati
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Duration;
-import org.ehcache.expiry.Expirations;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -36,10 +36,10 @@ public class CacheProvider implements Provider<Cache> {
     private Map<String, Cache> caches = new HashMap<>();
     private CacheManager cacheManager;
     private Cache cache;
-    private static final int SIXTY = 60;
-    private static final int THIRTY = 30;
-    private static final int FORTY_THOUSAND_ELEMENTS = 40000;
-    private static final int TWENTY_THOUSAND_ELEMENTS = 20000;
+    private static final long SIXTY = 60;
+    private static final long THIRTY = 30;
+    private static final long FORTY_THOUSAND_ELEMENTS = 40000;
+    private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
 
     @Inject
     public CacheProvider(Config config) {
@@ -74,7 +74,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initAuthenticationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(SIXTY, TimeUnit.MINUTES)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.MINUTES)))
                 .build();
 
         registerCacheConfiguration(CacheName.AUTH.toString(), configuration);
@@ -83,7 +83,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initRequestCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(FORTY_THOUSAND_ELEMENTS))
-                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(SIXTY, TimeUnit.SECONDS)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.SECONDS)))
                 .build();
 
         registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
@@ -92,7 +92,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initServerEventCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(Expirations.timeToIdleExpiration(Duration.of(THIRTY, TimeUnit.MINUTES)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
                 .build();
 
         registerCacheConfiguration(CacheName.SSE.toString(), configuration);
@@ -101,7 +101,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initWebSocketCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(Expirations.timeToIdleExpiration(Duration.of(THIRTY, TimeUnit.MINUTES)))
+                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
                 .build();
 
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
