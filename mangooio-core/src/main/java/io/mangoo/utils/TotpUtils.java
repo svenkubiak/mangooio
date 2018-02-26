@@ -1,5 +1,5 @@
 package io.mangoo.utils;
-
+    
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.Objects;
