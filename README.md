@@ -5,7 +5,7 @@
 mangoo I/O
 ================
 
-mangoo I/O is an Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
+mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
 Development of mangoo I/O started in mid 2015 out of the interest on
 how difficult it would be to create an intuitive, developer friendly,
