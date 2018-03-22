@@ -3,7 +3,11 @@ package io.mangoo.helpers.cookie;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
+import io.mangoo.enums.Required;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 
@@ -18,8 +22,10 @@ public class CookieBuilder {
     private String cookieValue = "";
     private String cookiePath = "/";
     private String cookieDomain;
+    private String cookieSameSiteMode;
     private Integer cookieMaxAge;
     private LocalDateTime cookieExpires = LocalDateTime.now().plusDays(1);
+    private boolean cookieSameSite;
     private boolean cookieDiscard;
     private boolean cookieSecure;
     private boolean cookieHttpOnly;
@@ -40,6 +46,8 @@ public class CookieBuilder {
      * @return CookieBuilder instance
      */
     public CookieBuilder name(String name) {
+        Objects.requireNonNull(name, Required.COOKIE_NAME.toString());
+        
         this.cookieName = name;
         return this;
     }
@@ -53,6 +61,8 @@ public class CookieBuilder {
      * @return CookieBuilder instance
      */
     public CookieBuilder value(String value) {
+        Objects.requireNonNull(value, Required.COOKIE_VALUE.toString());
+        
         this.cookieValue = value;
         return this;
     }
@@ -66,6 +76,8 @@ public class CookieBuilder {
      * @return CookieBuilder instance
      */
     public CookieBuilder path(String path) {
+        Objects.requireNonNull(path, Required.PATH.toString());
+        
         this.cookiePath = path;
         return this;
     }
@@ -79,6 +91,8 @@ public class CookieBuilder {
      * @return CookieBuilder instance
      */
     public CookieBuilder expires(LocalDateTime expires) {
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        
         this.cookieExpires = expires;
         return this;
     }
@@ -105,6 +119,8 @@ public class CookieBuilder {
      * @return CookieBuilder instance
      */
     public CookieBuilder domain(String domain) {
+        Objects.requireNonNull(domain, Required.DOMAIN.toString());
+        
         this.cookieDomain = domain;
         return this;
     }
@@ -149,8 +165,23 @@ public class CookieBuilder {
         this.cookieHttpOnly = httpOnly;
         return this;
     }
-
-
+    
+    /**
+     * Sets if the cookie should have the sameSite attribute
+     *
+     * Default is strict
+     *
+     * @param sameSiteMode which is either lax or strict
+     * @return CookieBuilder instance
+     */
+    public CookieBuilder sameSiteMode(String sameSiteMode) {
+        Objects.requireNonNull(sameSiteMode, Required.SAME_SIZE_MODE.toString());
+        Preconditions.checkArgument(("lax").equalsIgnoreCase(sameSiteMode) || ("strict").equalsIgnoreCase(sameSiteMode), "sameSiteMode can either be 'lax' or 'strict'");
+        
+        this.cookieSameSite = true;
+        this.cookieSameSiteMode = sameSiteMode.toLowerCase();
+        return this;
+    }
 
     public Cookie build() {
         Cookie cookie = new CookieImpl(this.cookieName)
@@ -163,6 +194,11 @@ public class CookieBuilder {
                         Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant()) :
                         Date.from(this.cookieExpires.atZone(ZoneId.systemDefault()).toInstant()));
 
+        if (this.cookieSameSite) {
+            cookie.setSameSite(true);
+            cookie.setSameSiteMode(this.cookieSameSiteMode);
+        }
+        
         if (this.cookieDomain != null) {
             cookie.setDomain(this.cookieDomain);
         }

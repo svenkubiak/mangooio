@@ -28,6 +28,7 @@ public class CookieBuilderTest {
     		//when
 		Cookie cookie = builder.discard(false)
 			.domain("http://localhost")
+			.sameSiteMode("lax")
 			.expires(now)
 			.httpOnly(true)
 			.maxAge(24)
@@ -45,5 +46,6 @@ public class CookieBuilderTest {
         assertThat(cookie.getName(), equalTo("foo"));
         assertThat(cookie.isSecure(), equalTo(true));
         assertThat(cookie.getValue(), equalTo("bar"));
+        assertThat(cookie.getSameSiteMode(), equalTo("Lax"));
 	}
 }

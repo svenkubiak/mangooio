@@ -845,16 +845,23 @@ public class Config {
     }
 
     /**
-     * @return auth.cookie.signkey or application secret if undefined
+     * @return authentication.cookie.signkey or application secret if undefined
      */
     public String getAuthenticationCookieSignKey() {
         return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
     }
 
     /**
-     * @return auth.cookie.encryptionkey or application secret if undefined
+     * @return authentication.cookie.encryptionkey or application secret if undefined
      */
     public String getAuthenticationCookieEncryptionKey() {
         return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return authentication.cookie.samesite or default value if undefined
+     */
+    public String getAuthenticationCookieSameSite() {
+        return getString(Key.AUTHENTICATION_COOKIE_SAMESIZE, "Strict");
     }
 }

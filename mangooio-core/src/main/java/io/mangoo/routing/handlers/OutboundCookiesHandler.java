@@ -78,6 +78,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
             final Cookie cookie = CookieBuilder.create()
                 .name(this.config.getSessionCookieName())
+                .sameSiteMode(this.config.getAuthenticationCookieSameSite())
                 .value(jwt)
                 .secure(this.config.isSessionCookieSecure())
                 .httpOnly(true)
@@ -102,6 +103,8 @@ public class OutboundCookiesHandler implements HttpHandler {
             if (authentication.isLogout()) {
                 cookie = exchange.getRequestCookies().get(cookieName);
                 cookie.setSecure(this.config.isAuthenticationCookieSecure());
+                cookie.setSameSite(true);
+                cookie.setSameSiteMode(this.config.getAuthenticationCookieSameSite());
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
@@ -125,6 +128,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
                 cookie = CookieBuilder.create()
                         .name(cookieName)
+                        .sameSiteMode(this.config.getAuthenticationCookieSameSite())
                         .value(jwt)
                         .secure(this.config.isAuthenticationCookieSecure())
                         .httpOnly(true)
@@ -161,6 +165,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .compact();
             
             final Cookie cookie = CookieBuilder.create()
+                    .sameSiteMode(this.config.getAuthenticationCookieSameSite())
                     .name(this.config.getFlashCookieName())
                     .value(jwt)
                     .secure(this.config.isFlashCookieSecure())
@@ -174,6 +179,8 @@ public class OutboundCookiesHandler implements HttpHandler {
             if (cookie != null) {
                 cookie.setHttpOnly(true)
                 .setSecure(this.config.isFlashCookieSecure())
+                .setSameSite(true)
+                .setSameSiteMode(this.config.getAuthenticationCookieSameSite())
                 .setPath("/")
                 .setMaxAge(0);
 

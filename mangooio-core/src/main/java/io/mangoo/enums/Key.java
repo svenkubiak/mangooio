@@ -78,7 +78,9 @@ public enum Key {
     AUTHENTICATION_COOKIE_EXPIRES("authentication.cookie.expires"),
     AUTHENTICATION_COOKIE_NAME("authentication.cookie.name"),
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("authentication.cookie.remember.expires"),
+    AUTHENTICATION_COOKIE_SAMESIZE("authentication.cookie.samesite"),
     AUTHENTICATION_COOKIE_SECURE("authentication.cookie.secure"),
+    AUTHENTICATION_COOKIE_SIGNKEY("authentication.cookie.signkey"),
     AUTHENTICATION_COOKIE_VERSION("authentication.cookie.version"),
     AUTHENTICATION_LOCK("authentication.lock"),
     AUTHENTICATION_REDIRECT("authentication.redirect"),
@@ -87,6 +89,7 @@ public enum Key {
     CONNECTOR_AJP_HOST("connector.ajp.host"),
     CONNECTOR_AJP_PORT("connector.ajp.port"),
     CONNECTOR_HTTP_HOST("connector.http.host"),
+    
     CONNECTOR_HTTP_PORT("connector.http.port"),
     
     @Deprecated /** Use SESSION_COOKIE_ENCRYPTION instead **/
@@ -103,13 +106,8 @@ public enum Key {
     
     @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
     COOKIE_VERSION("cookie.version"),
-    
     I18N_COOKIE_NAME("i18n.cookie.name"),
-    SESSION_COOKIE_ENCRYPTION("session.cookie.encryption"),
-    SESSION_COOKIE_EXPIRES("session.cookie.expires"),
-    SESSION_COOKIE_NAME("session.cookie.name"),
-    SESSION_COOKIE_SECURE("session.cookie.secure"),
-    SESSION_COOKIE_VERSION("session.cookie.version"),
+    LOGGER_MESSAGE("logger.configuration.message"),
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
     OAUTH_FACEBOOK_CALLBACK("oauth.facebook.callback"),
@@ -123,17 +121,20 @@ public enum Key {
     OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
+    SESSION_COOKIE_ENCRYPTION("session.cookie.encryption"),
+    SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
+    SESSION_COOKIE_EXPIRES("session.cookie.expires"),
+    SESSION_COOKIE_NAME("session.cookie.name"),
+    SESSION_COOKIE_SECURE("session.cookie.secure"),
+    SESSION_COOKIE_SIGNKEY("session.cookie.signkey"),
+    SESSION_COOKIE_VERSION("session.cookie.version"),
     SMTP_FROM("smtp.from"),
     SMTP_HOST("smtp.host"),
     SMTP_PASSWORD("smtp.password"),
     SMTP_PORT("smtp.port"),
     SMTP_SSL("smtp.ssl"),
     SMTP_USERNAME("smtp.username"),
-    UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize"),
-    LOGGER_MESSAGE("logger.configuration.message"),
-    SESSION_COOKIE_SIGNKEY("session.cookie.signkey"),
-    SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
-    AUTHENTICATION_COOKIE_SIGNKEY("auth.cookie.signkey");
+    UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 
     private final String value;
 
