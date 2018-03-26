@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Charsets;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -65,7 +67,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getSessionCookieSignKey().getBytes())
+                        .setSigningKey(Application.getInstance(Config.class).getSessionCookieSignKey().getBytes(Charsets.UTF_8))
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -93,7 +95,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getAuthenticationCookieSignKey().getBytes())
+                        .setSigningKey(Application.getInstance(Config.class).getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8))
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();

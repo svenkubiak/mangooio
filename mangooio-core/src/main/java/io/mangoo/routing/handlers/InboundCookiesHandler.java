@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.jsonwebtoken.Claims;
@@ -131,7 +132,7 @@ public class InboundCookiesHandler implements HttpHandler {
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(this.config.getApplicationSecret().getBytes())
+                        .setSigningKey(this.config.getApplicationSecret().getBytes(Charsets.UTF_8))
                         .parseClaimsJws(cookieValue);
 
                 Claims claims = jwsClaims.getBody();

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.jsonwebtoken.Jwts;
@@ -71,7 +72,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey().getBytes())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8))
                     .compact();
 
             if (this.config.isSessionCookieEncrypt()) {
@@ -120,7 +121,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())
                         .setExpiration(DateUtils.localDateTimeToDate(expires))
-                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey().getBytes())
+                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8))
                         .compact();
                 
                 if (this.config.isAuthenticationCookieEncrypt()) {
@@ -161,7 +162,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret().getBytes())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret().getBytes(Charsets.UTF_8))
                     .compact();
             
             final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
