@@ -17,6 +17,7 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.test.utils.ConcurrentTester;
+import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.DateUtils;
 
 /**
@@ -141,5 +142,56 @@ public class CookieParserTest {
         
         //then
         assertThat(cookieParser.hasValidAuthenticationCookie(), equalTo(true));
+    }
+    
+    @Test
+    public void testJwtSigning() {
+        //given
+        Config config = Application.getInstance(Config.class);
+        
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        claims.put(ClaimKey.TWO_FACTOR.toString(), false);
+        
+        String key24 = CryptoUtils.randomString(24);
+        String key48 = CryptoUtils.randomString(48);
+        String key96 = CryptoUtils.randomString(96);
+        String key128 = CryptoUtils.randomString(128);
+        String key256 = CryptoUtils.randomString(256);
+        
+        Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, key24.getBytes())
+                .compact();
+        
+        Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, key48.getBytes())
+                .compact();
+
+        Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, key96.getBytes())
+                .compact();
+
+        Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, key128.getBytes())
+                .compact();
+        
+        Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, key256.getBytes())
+                .compact();
     }
 }
