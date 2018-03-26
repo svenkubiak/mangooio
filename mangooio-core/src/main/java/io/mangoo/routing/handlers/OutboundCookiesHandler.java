@@ -71,7 +71,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey().getBytes())
                     .compact();
 
             if (this.config.isSessionCookieEncrypt()) {
@@ -120,7 +120,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())
                         .setExpiration(DateUtils.localDateTimeToDate(expires))
-                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey())
+                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey().getBytes())
                         .compact();
                 
                 if (this.config.isAuthenticationCookieEncrypt()) {
@@ -161,7 +161,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             String jwt = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
+                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret().getBytes())
                     .compact();
             
             final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())

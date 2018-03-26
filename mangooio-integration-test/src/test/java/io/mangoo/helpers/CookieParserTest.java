@@ -3,12 +3,21 @@ package io.mangoo.helpers;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.ClaimKey;
 import io.mangoo.test.utils.ConcurrentTester;
+import io.mangoo.utils.DateUtils;
 
 /**
  *
@@ -16,15 +25,42 @@ import io.mangoo.test.utils.ConcurrentTester;
  *
  */
 public class CookieParserTest {
-    private final static String sessionCookie = "eyJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7ImZvbyI6InRoaXMgaXMgYSBzZXNzaW9uIHZhbHVlIn0sImV4cCI6MzI0NzIyMjU3MjAsInZlcnNpb24iOiIwIiwiYXV0aGVudGljaXR5VG9rZW4iOiJJckpDc1FYNmRBTFBkUlVkIn0.H829037BVU-NZdT_vVVEUjhX4QCmxkpGJEMLr1-qT_shd-saaaHbDIMSd3ulU1v2ceTqhJqoyNIAP748KC1f9g";
-    private final static String authenticationCookie = "eyJhbGciOiJIUzUxMiJ9.eyJ0d29GYWN0b3IiOmZhbHNlLCJzdWIiOiJmb28iLCJleHAiOjQ2NDUzNjgyMjMsInZlcnNpb24iOiIxIn0.bCVh6yEWwtptlBbQZK_zfcqXKX0wXfO3tlkYGfIZXsy2IwCHnDaIT3bE5w4iA3xaDw5iuTdFqCndvvHdKBdwsQ";
+    private static String sessionCookie = "";
+    private static String authenticationCookie = "";
     private static String sessionCookieEncrypted = "";
     private static String authenticationCookieEncrypted = "";
 
     @Before
     public void init() {
-        sessionCookieEncrypted = Application.getInstance(Crypto.class).encrypt(sessionCookie);
+        Config config = Application.getInstance(Config.class);
+        
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        claims.put(ClaimKey.TWO_FACTOR.toString(), false);
+        
+        authenticationCookie = Jwts.builder()
+                .setClaims(claims)
+                .setSubject("sven")
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, config.getAuthenticationCookieSignKey().getBytes())
+                .compact();
+
         authenticationCookieEncrypted = Application.getInstance(Crypto.class).encrypt(authenticationCookie);
+        
+        Map<String, String> values = new HashMap<>();
+        
+        claims = new HashMap<>();
+        claims.put(ClaimKey.AUTHENTICITY.toString(), "foobar");
+        claims.put(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        claims.put(ClaimKey.DATA.toString(), values);
+        
+        sessionCookie = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(DateUtils.localDateTimeToDate(LocalDateTime.now().plusYears(240)))
+                .signWith(SignatureAlgorithm.HS512, config.getSessionCookieSignKey().getBytes())
+                .compact();
+        
+        sessionCookieEncrypted = Application.getInstance(Crypto.class).encrypt(sessionCookie);
     }
 
     @Test

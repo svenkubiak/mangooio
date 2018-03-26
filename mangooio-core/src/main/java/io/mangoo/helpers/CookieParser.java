@@ -65,7 +65,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getSessionCookieSignKey())
+                        .setSigningKey(Application.getInstance(Config.class).getSessionCookieSignKey().getBytes())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
@@ -93,7 +93,7 @@ public class CookieParser {
         if (StringUtils.isNotBlank(this.value)) {
             try {
                 Jws<Claims> jwsClaims = Jwts.parser()
-                        .setSigningKey(Application.getInstance(Config.class).getAuthenticationCookieSignKey())
+                        .setSigningKey(Application.getInstance(Config.class).getAuthenticationCookieSignKey().getBytes())
                         .parseClaimsJws(this.value);
                     
                 Claims claims = jwsClaims.getBody();
