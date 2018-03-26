@@ -282,7 +282,9 @@ public class AdminController {
                 } else {
                     value = this.crypto.encrypt(cleartext);
                 }
-            }  
+            } else {
+                LOG.warn("Invalid or no function selected for AJAX request. Either choose 'hash' order 'encrypt'.");
+            }
         }
         
         return Response.withOk()

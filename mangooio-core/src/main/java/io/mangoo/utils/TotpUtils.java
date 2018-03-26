@@ -41,7 +41,7 @@ public class TotpUtils {
      * @return A 64 characters random string based on SecureRandom
      */
     public static Optional<String> createSecret() {
-    	Random random = new SecureRandom();
+        Random random = new SecureRandom();
         StringBuilder buffer = new StringBuilder(BYTES_SECRET);
         for (int i = 0; i < BYTES_SECRET; i++) {
             int value = random.nextInt(MAX_CHARACTERS);

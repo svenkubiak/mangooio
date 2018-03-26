@@ -35,6 +35,7 @@ import io.undertow.server.handlers.CookieImpl;
  *
  */
 public class OutboundCookiesHandler implements HttpHandler {
+    private static final String SAME_SITE_MODE = "Strict";
     private Attachment attachment;
     private Config config;
     
@@ -82,7 +83,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
                 .setValue(jwt)
                 .setSameSite(true)
-                .setSameSiteMode("Strict")
+                .setSameSiteMode(SAME_SITE_MODE)
                 .setHttpOnly(true)
                 .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))
                 .setSecure(this.config.isSessionCookieSecure());
@@ -109,7 +110,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setPath("/")
                     .setMaxAge(0)
                     .setSameSite(true)
-                    .setSameSiteMode("Strict")
+                    .setSameSiteMode(SAME_SITE_MODE)
                     .setDiscard(true);
             } else {
                 Map<String, Object> claims = new HashMap<>();
@@ -133,7 +134,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
-                        .setSameSiteMode("Strict")
+                        .setSameSiteMode(SAME_SITE_MODE)
                         .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
             }
 
@@ -170,7 +171,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setSecure(this.config.isFlashCookieSecure())
                     .setHttpOnly(true)
                     .setSameSite(true)
-                    .setSameSiteMode("Strict")
+                    .setSameSiteMode(SAME_SITE_MODE)
                     .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
             
             exchange.setResponseCookie(cookie);
@@ -181,7 +182,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setSecure(this.config.isFlashCookieSecure())
                     .setPath("/")
                     .setSameSite(true)
-                    .setSameSiteMode("Strict")
+                    .setSameSiteMode(SAME_SITE_MODE)
                     .setMaxAge(0);
 
                 exchange.setResponseCookie(cookie);

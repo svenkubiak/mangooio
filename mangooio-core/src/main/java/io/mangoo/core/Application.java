@@ -436,6 +436,8 @@ public final class Application {
                 } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
                     pathHandler.addPrefixPath(route.getUrl(),
                             new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
+                } else {
+                    // Ignoring anything else except WebSocket ServerSentEvent or Resource Path for PathHandler
                 }
             }            
         }
@@ -473,6 +475,8 @@ public final class Application {
                 routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
             } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
                 routingHandler.add(Methods.GET, route.getUrl(), resourceHandler);
+            } else {
+                // Ignoring anything else except Request and RequestFile for DispatcherHandler
             }
         });
 

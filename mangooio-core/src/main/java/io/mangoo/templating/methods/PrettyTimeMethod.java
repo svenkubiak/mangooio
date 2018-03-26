@@ -40,10 +40,12 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
                 Date date = DateUtils.localDateToDate(((LocalDateAdapter) object).getObject());
                 result = this.prettyTime.format(date);              
             } else {
-                throw new TemplateModelException("Invalid object found for pretty time. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
+                throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }
         } else if (arguments != null && arguments.size() > NUM_ARGUMENTS) {
             throw new TemplateModelException("Too many arguments for prettytime function. Allowed arguments: " + NUM_ARGUMENTS);
+        } else {
+            throw new TemplateModelException("Invalid number of arguments passed to prettytime function.");
         }
         
         return result;
