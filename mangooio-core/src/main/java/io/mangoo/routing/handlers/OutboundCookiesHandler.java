@@ -1,6 +1,8 @@
 package io.mangoo.routing.handlers;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +16,6 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
-import io.mangoo.helpers.cookie.CookieBuilder;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -25,6 +26,7 @@ import io.mangoo.utils.DateUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 
 /**
  *
@@ -64,7 +66,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             claims.put(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
             claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
             claims.put(ClaimKey.DATA.toString(), session.getValues());
-            
+
             final LocalDateTime expires = session.getExpires();
             String jwt = Jwts.builder()
                     .setClaims(claims)
@@ -75,14 +77,14 @@ public class OutboundCookiesHandler implements HttpHandler {
             if (this.config.isSessionCookieEncrypt()) {
                 jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getSessionCookieEncryptionKey());
             }
-
-            final Cookie cookie = CookieBuilder.create()
-                .name(this.config.getSessionCookieName())
-                .value(jwt)
-                .secure(this.config.isSessionCookieSecure())
-                .httpOnly(true)
-                .expires(expires)
-                .build();
+            
+            final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
+                .setValue(jwt)
+                .setSameSite(true)
+                .setSameSiteMode("Strict")
+                .setHttpOnly(true)
+                .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))
+                .setSecure(this.config.isSessionCookieSecure());
 
             exchange.setResponseCookie(cookie);
         }
@@ -100,12 +102,14 @@ public class OutboundCookiesHandler implements HttpHandler {
             Cookie cookie;
             final String cookieName = this.config.getAuthenticationCookieName();
             if (authentication.isLogout()) {
-                cookie = exchange.getRequestCookies().get(cookieName);
-                cookie.setSecure(this.config.isAuthenticationCookieSecure());
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                cookie.setDiscard(true);
+                cookie = exchange.getRequestCookies().get(cookieName)
+                    .setSecure(this.config.isAuthenticationCookieSecure())
+                    .setHttpOnly(true)
+                    .setPath("/")
+                    .setMaxAge(0)
+                    .setSameSite(true)
+                    .setSameSiteMode("Strict")
+                    .setDiscard(true);
             } else {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
@@ -123,13 +127,13 @@ public class OutboundCookiesHandler implements HttpHandler {
                     jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getAuthenticationCookieEncryptionKey());
                 }
 
-                cookie = CookieBuilder.create()
-                        .name(cookieName)
-                        .value(jwt)
-                        .secure(this.config.isAuthenticationCookieSecure())
-                        .httpOnly(true)
-                        .expires(expires)
-                        .build();
+                cookie = new CookieImpl(cookieName)
+                        .setValue(jwt)
+                        .setSecure(this.config.isAuthenticationCookieSecure())
+                        .setHttpOnly(true)
+                        .setSameSite(true)
+                        .setSameSiteMode("Strict")
+                        .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
             }
 
             exchange.setResponseCookie(cookie);
@@ -160,22 +164,24 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret())
                     .compact();
             
-            final Cookie cookie = CookieBuilder.create()
-                    .name(this.config.getFlashCookieName())
-                    .value(jwt)
-                    .secure(this.config.isFlashCookieSecure())
-                    .httpOnly(true)
-                    .expires(expires)
-                    .build();
-
+            final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
+                    .setValue(jwt)
+                    .setSecure(this.config.isFlashCookieSecure())
+                    .setHttpOnly(true)
+                    .setSameSite(true)
+                    .setSameSiteMode("Strict")
+                    .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+            
             exchange.setResponseCookie(cookie);
         } else {
             final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {
                 cookie.setHttpOnly(true)
-                .setSecure(this.config.isFlashCookieSecure())
-                .setPath("/")
-                .setMaxAge(0);
+                    .setSecure(this.config.isFlashCookieSecure())
+                    .setPath("/")
+                    .setSameSite(true)
+                    .setSameSiteMode("Strict")
+                    .setMaxAge(0);
 
                 exchange.setResponseCookie(cookie);
             }

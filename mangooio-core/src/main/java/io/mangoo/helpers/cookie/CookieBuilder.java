@@ -12,7 +12,11 @@ import io.undertow.server.handlers.CookieImpl;
  * @author svenkubiak
  * @author WilliamDunne
  *
+ * @deprecated As of 4.12.0 without replacement, will be removed in 5.0.0
+ * Use Cookie cookie = new CookieImpl() from io.undertow.server.handlers instead
+ * 
  */
+@Deprecated
 public class CookieBuilder {
     private String cookieName = "";
     private String cookieValue = "";

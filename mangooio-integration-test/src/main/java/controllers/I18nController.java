@@ -1,9 +1,9 @@
 package controllers;
 
 import io.mangoo.enums.Default;
-import io.mangoo.helpers.cookie.CookieBuilder;
 import io.mangoo.routing.Response;
 import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 
 public class I18nController {
     public Response translation() {
@@ -11,11 +11,7 @@ public class I18nController {
     }
     
     public Response localize() {
-        Cookie cookie = CookieBuilder.create()
-                .name(Default.I18N_COOKIE_NAME.toString())
-                .value("en")
-                .build();
-        
+        Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME.toString(), "en");
         return Response.withOk().andCookie(cookie);
     }
     
