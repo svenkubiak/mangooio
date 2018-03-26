@@ -52,6 +52,8 @@ public class PreprocessMojo extends AbstractMojo {
                     }
                 } else if (file.isDirectory()){
                     preprocessFiles(file.getAbsolutePath());
+                } else {
+                    // Ignore anything else
                 }
             }   
         }

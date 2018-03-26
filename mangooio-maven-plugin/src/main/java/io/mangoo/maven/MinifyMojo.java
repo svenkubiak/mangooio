@@ -52,6 +52,8 @@ public class MinifyMojo extends AbstractMojo {
                     }
                 } else if (file.isDirectory()){
                     minifyFiles(file.getAbsolutePath());
+                } else {
+                    // Ignore anything else
                 }
             }    
         }
