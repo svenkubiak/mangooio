@@ -301,6 +301,8 @@ public class WebResponse {
             }
             
             return doRequest(httpPatch);
+        } else {
+            // Ignore any other HTTP methods
         }
 
         return this;

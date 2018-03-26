@@ -182,9 +182,11 @@ public class MangooMojo extends AbstractMojo {
                 if (!watchDirectories.contains(parentPath)) {
                     excludesSet.add(rulePrefix + "(.*)$");
                 }
-
+                
                 includesSet.add(rulePrefix + file.getName() + "$");
                 watchDirectories.add(parentPath);
+            } else {
+                // Ignore anything else
             }
         }
     }

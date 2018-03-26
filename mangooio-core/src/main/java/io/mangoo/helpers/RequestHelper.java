@@ -175,6 +175,8 @@ public class RequestHelper {
             oAuthProvider = OAuthProvider.TWITTER;
         } else if (OAuthProvider.GOOGLE.toString().equalsIgnoreCase(oauth)) {
             oAuthProvider = OAuthProvider.GOOGLE;
+        } else {
+            // Ignore all other providers
         }
 
         return (oAuthProvider == null) ? Optional.empty() : Optional.of(oAuthProvider);

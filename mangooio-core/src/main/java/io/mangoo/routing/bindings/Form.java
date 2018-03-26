@@ -70,6 +70,8 @@ public class Form extends Validator {
                 return Optional.of(Boolean.FALSE);
             } else if (("0").equals(value)) {
                 return Optional.of(Boolean.FALSE);
+            } else {
+                // Ignore anything else
             }
         }
 
