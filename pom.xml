@@ -27,7 +27,7 @@
 		<maven.version>3.5.3</maven.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
 		<scribejava.version>5.3.0</scribejava.version>
-		<jackson.version>2.9.4</jackson.version>
+		<jackson.version>2.9.5</jackson.version>
 		<fluentlenium.version>3.5.2</fluentlenium.version>
 		<jersey.version>2.26</jersey.version>
 	</properties>
@@ -348,7 +348,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>2.16.0</version>
+				<version>2.17.0</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.ws.rs</groupId>
