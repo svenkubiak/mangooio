@@ -72,6 +72,8 @@ public class Fortune extends MorphiaModel implements Comparable<Fortune> {
             }
         } else if (!message.equals(other.message)) {
             return false;
+        } else {
+            //ignore anything else
         }
         if (objectId == null) {
             if (other.objectId != null) {
@@ -79,6 +81,8 @@ public class Fortune extends MorphiaModel implements Comparable<Fortune> {
             }
         } else if (!objectId.equals(other.objectId)) {
             return false;
+        } else {
+            //ignore anything else
         }
 
         return true;
