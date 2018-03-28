@@ -9,30 +9,39 @@
 
 default:
     application:
-        name       : ${application-name}
-        secret     : ${application-secret}
-        language   : en
+        name          : ${application-name}
+        secret        : ${application-secret}
+        language      : en
+        admin:
+            enable    : false
+        minify:
+            js        : false
+            css       : false
     connector:
         http:
             host      : localhost
             port      : 8080
+    metrics:
+        enable        : false            
     auth:
-        redirect  : /login
+        redirect      : /login
         cookie:
-            name    : ${application-name}-authentication
-            encrypt : false
-            expires : 86400
+            name      : ${application-name}-authentication
+            encrypt   : false
+            expires   : 3600
+            signkey   : 
     session:
       cookie:
-        name       : ${application-name}-session
-        expires    : 86400
-        encryption : false
+        name          :  ${application-name}-session
+        expires       : 86400
+        encryption    : false
+        signkey       : 
     smtp:
-        host       : localhost
-        port       : 25
-        username   :
-        password   :
-        ssl        : false
+        host          : localhost
+        port          : 25
+        username      :
+        password      :
+        ssl           : false
 
 test:
     connector:
@@ -40,7 +49,7 @@ test:
             host      : localhost
             port      : 9090
     smtp:
-        port       : 3025
+        port          : 3025
 
 dev:
     connector:
@@ -48,4 +57,4 @@ dev:
             host      : localhost
             port      : 9090
     smtp:
-        port       : 3025
+        port          : 3025
