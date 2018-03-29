@@ -10,7 +10,7 @@
 default:
     application:
         name          : ${application-name}
-        secret        : ${application-secret}
+        secret        : application.secret
         language      : en
         admin:
             enable    : false
@@ -22,20 +22,22 @@ default:
             host      : localhost
             port      : 8080
     metrics:
-        enable        : false            
-    auth:
+        enable        : false
+    authentication:
         redirect      : /login
         cookie:
-            name      : ${application-name}-authentication
-            encrypt   : false
-            expires   : 3600
-            signkey   : 
+            name          : ${application-name}-authentication
+            encrypt       : false
+            expires       : 3600
+            signkey       : authentication.cookie.signkey
+            encryptionkey : authentication.cookie.encryptionkey
     session:
       cookie:
-        name          :  ${application-name}-session
+        name          : ${application-name}-session
         expires       : 86400
         encryption    : false
-        signkey       : 
+        signkey       : session.cookie.signkey
+        encryptionkey : session.cookie.encryptionkey
     smtp:
         host          : localhost
         port          : 25

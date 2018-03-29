@@ -2,7 +2,6 @@
 <archetype-descriptor name="basic">
 	<requiredProperties>
 		<requiredProperty key="application-name"></requiredProperty>
-		<requiredProperty key="application-secret"></requiredProperty>
 	</requiredProperties>
     <fileSets>
         <fileSet filtered="true">

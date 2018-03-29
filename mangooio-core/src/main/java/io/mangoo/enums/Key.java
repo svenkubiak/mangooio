@@ -80,6 +80,7 @@ public enum Key {
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("authentication.cookie.remember.expires"),
     AUTHENTICATION_COOKIE_SECURE("authentication.cookie.secure"),
     AUTHENTICATION_COOKIE_SIGNKEY("authentication.cookie.signkey"),
+    AUTHENTICATION_COOKIE_ENCRYPTIONKEY("authentication.cookie.encryptionkey"),
     AUTHENTICATION_COOKIE_VERSION("authentication.cookie.version"),
     AUTHENTICATION_LOCK("authentication.lock"),
     AUTHENTICATION_REDIRECT("authentication.redirect"),

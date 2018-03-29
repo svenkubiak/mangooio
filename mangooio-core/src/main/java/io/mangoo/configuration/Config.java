@@ -855,6 +855,6 @@ public class Config {
      * @return auth.cookie.encryptionkey or application secret if undefined
      */
     public String getAuthenticationCookieEncryptionKey() {
-        return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
+        return getString(Key.AUTHENTICATION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
     }
 }
