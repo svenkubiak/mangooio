@@ -421,7 +421,7 @@ public class Config {
     }
 
     /**
-     * @return cookie.name from application.yaml or default value if undefined
+     * @return session.cookie.name from application.yaml or default value if undefined
      */
     public String getSessionCookieName() {
         return getString(Key.SESSION_COOKIE_NAME, Default.SESSION_COOKIE_NAME.toString());
@@ -435,35 +435,35 @@ public class Config {
     }
 
     /**
-     * @return auth.cookie.name from application.yaml or default value if undefined
+     * @return authentication.cookie.name from application.yaml or default value if undefined
      */
     public String getAuthenticationCookieName() {
         return getString(Key.AUTHENTICATION_COOKIE_NAME, Default.AUTHENTICATION_COOKIE_NAME.toString());
     }
 
     /**
-     * @return auth.cookie.expires from application.yaml or default value if undefined
+     * @return authentication.cookie.expires from application.yaml or default value if undefined
      */
     public long getAuthenticationExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toLong());
     }
 
     /**
-     * @return cookie.expires from application.yaml or default value if undefined
+     * @return session.cookie.expires from application.yaml or default value if undefined
      */
     public long getSessionExpires() {
         return getLong(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toLong());
     }
 
     /**
-     * @return cookie.secure from application.yaml or default value if undefined
+     * @return session.cookie.secure from application.yaml or default value if undefined
      */
     public boolean isSessionCookieSecure() {
         return getBoolean(Key.SESSION_COOKIE_SECURE, Default.SESSION_COOKIE_SECURE.toBoolean());
     }
 
     /**
-     * @return auth.cookie.secure from application.yaml or default value if undefined
+     * @return authentication.cookie.secure from application.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTHENTICATION_COOKIE_SECURE, Default.AUTHENTICATION_COOKIE_SECURE.toBoolean());
@@ -471,14 +471,14 @@ public class Config {
 
     /**
      * @author William Dunne
-     * @return cookie.i18n.name from application.yaml or default value if undefined
+     * @return i18n.cookie.name from application.yaml or default value if undefined
      */
     public String getI18nCookieName() {
         return getString(Key.I18N_COOKIE_NAME, Default.I18N_COOKIE_NAME.toString());
     }
 
     /**
-     * @return same value as isSessionCookieSecure()
+     * @return calls isSessionCookieSecure()
      */
     public boolean isFlashCookieSecure() {
         return isSessionCookieSecure();
@@ -491,7 +491,7 @@ public class Config {
         return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
     }
     /**
-     * @return auth.cookie.encrypt from application.yaml or default value if undefined
+     * @return authentication.cookie.encrypt from application.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieEncrypt() {
         return getBoolean(Key.AUTHENTICATION_COOKIE_ENCRYPT, Default.AUTHENTICATION_COOKIE_ENCRYPT.toBoolean());
@@ -507,7 +507,7 @@ public class Config {
     }
     
     /**
-     * @return auth.cookie.version from application.yaml or default value if undefined
+     * @return authentication.cookie.version from application.yaml or default value if undefined
      */
     public String getAuthenticationCookieVersion() {
         return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
@@ -523,7 +523,7 @@ public class Config {
     }
     
     /**
-     * @return cookie.version from application.yaml or default value if undefined
+     * @return session.cookie.version from application.yaml or default value if undefined
      */
     public String getSessionCookieVersion() {
         return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
@@ -558,21 +558,21 @@ public class Config {
     }
 
     /**
-     * @return cookie.encryption from application.yaml or default value if undefined
+     * @return session.cookie.encryption from application.yaml or default value if undefined
      */
     public boolean isSessionCookieEncrypt() {
         return getBoolean(Key.SESSION_COOKIE_ENCRYPTION, Default.SESSION_COOKIE_ENCRYPTION.toBoolean());
     }
 
     /**
-     * @return auth.cookie.remember.expires from application.yaml or default value if undefined
+     * @return authentication.cookie.remember.expires from application.yaml or default value if undefined
      */
     public long getAuthenticationRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong());
     }
 
     /**
-     * @return execution.threadpool from application.yaml or default value if undefined
+     * @return application.threadpool from application.yaml or default value if undefined
      */
     public int getExecutionPool() {
         return getInt(Key.APPLICATION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
@@ -586,7 +586,7 @@ public class Config {
     }
 
     /**
-     * @return templateengine.class from application.yaml
+     * @return application.templateengine from application.yaml or default value if undefined
      */
     public String getTemplateEngineClass() {
         return getString(Key.APPLICATION_TEMPLATEENGINE, Default.TEMPLATE_ENGINE_CLASS.toString());
@@ -622,6 +622,7 @@ public class Config {
 
     /**
      * @return application.assets.path (for testing purposes only)
+     *         Do note use in production!
      */
     public String getAssetsPath() {
         return Default.ASSETS_PATH.toString();
@@ -845,14 +846,14 @@ public class Config {
     }
 
     /**
-     * @return auth.cookie.signkey or application secret if undefined
+     * @return authentication.cookie.signkey or application secret if undefined
      */
     public String getAuthenticationCookieSignKey() {
         return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
     }
 
     /**
-     * @return auth.cookie.encryptionkey or application secret if undefined
+     * @return authentication.cookie.encryptionkey or application secret if undefined
      */
     public String getAuthenticationCookieEncryptionKey() {
         return getString(Key.AUTHENTICATION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
