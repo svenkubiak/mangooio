@@ -39,7 +39,6 @@ public class MinificationUtilsTest {
         when(config.isApplicationMinifyJS()).thenReturn(true);
         when(config.isApplicationPreprocessLess()).thenReturn(true);
         when(config.isApplicationPreprocessSass()).thenReturn(true);
-        when(config.getAssetsPath()).thenReturn(ASSET_PATH);
         MinificationUtils.setConfig(config);
         MinificationUtils.setBasePath(TEMP);
         

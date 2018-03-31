@@ -8,6 +8,7 @@ package io.mangoo.enums;
  *
  */
 public enum Default {
+    APPLICATION_ADMIN_ENABLE(Constants.FALSE),
     APPLICATION_CONTROLLER("controllers."),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
     APPLICATION_HEADERS_REFERERPOLICY("no-referrer"),
@@ -18,6 +19,7 @@ public enum Default {
     APPLICATION_JWT_ENCRYPT(Constants.FALSE),
     APPLICATION_LANGUAGE("en"),
     APPLICATION_MINIFY_CSS(Constants.FALSE),
+    
     APPLICATION_MINIFY_JS(Constants.FALSE),
     
     APPLICATION_PREPROCESS_LESS(Constants.FALSE),
@@ -31,9 +33,8 @@ public enum Default {
     APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
     
     APPLICATION_THREADPOOL("10"),
-    
-    ASSETS_PATH("src/main/resources/files/assets/"),
  
+    ASSETS_PATH("src/main/resources/files/assets/"),
     @Deprecated /** Use AUTHENTICATION_COOKIE_ENCRYPT instead **/
     AUTH_COOKIE_ENCRYPT(Constants.FALSE),
     @Deprecated /** Use AUTHENTICATION_COOKIE_EXPIRES instead **/
@@ -54,6 +55,7 @@ public enum Default {
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("1209600"),
     AUTHENTICATION_COOKIE_SECURE(Constants.FALSE),
     AUTHENTICATION_COOKIE_VERSION("0"),
+    
     AUTHENTICATION_LOCK("10"),
     
     AUTHENTICITY("authenticity"),
@@ -65,7 +67,6 @@ public enum Default {
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
     
     CONFIG_PATH("/src/main/resources/application.yaml"),
-    
     CONFIGURATION_FILE("application.yaml"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
     @Deprecated /** Use SESSION_COOKIE_ENCRYPTION instead **/
@@ -78,9 +79,9 @@ public enum Default {
     COOKIE_SECURE(Constants.FALSE),
     @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
     COOKIE_VERSION("0"),
-    DATA_DELIMITER("#"),
+    DATA_DELIMITER("#"), //NOSONAR
     DEFAULT_CONFIGURATION("default"), //NOSONAR
-    DEFAULT_TEMPLATES_DIR("/templates/defaults/"), //NOSONAR
+    DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     DELIMITER("|"),
     ENCODING("UTF-8"),
     FILES_FOLDER("files"),

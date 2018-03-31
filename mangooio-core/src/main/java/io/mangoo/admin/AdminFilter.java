@@ -35,7 +35,7 @@ public class AdminFilter implements MangooFilter {
     
     @Override
     public Response execute(Request request, Response response) {
-        if (!this.config.isAdminEnabled()) {
+        if (!this.config.isApplicationAdminEnable()) {
             return Response.withNotFound()
                     .andBody(Template.DEFAULT.notFound())
                     .end();

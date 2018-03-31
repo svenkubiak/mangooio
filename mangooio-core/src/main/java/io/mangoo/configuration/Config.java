@@ -588,7 +588,7 @@ public class Config {
     /**
      * @return application.templateengine from application.yaml or default value if undefined
      */
-    public String getApplicationTemplateEnginge() {
+    public String getApplicationTemplateEngine() {
         return getString(Key.APPLICATION_TEMPLATEENGINE, Default.APPLICATION_TEMPLATEENGINE.toString());
     }
 
@@ -621,19 +621,10 @@ public class Config {
     }
 
     /**
-     * @return application.assets.path (for testing purposes only)
-     *         Do note use in production!
-     */
-    public String getAssetsPath() {
-        return Default.ASSETS_PATH.toString();
-    }
-
-    /**
-     *
      * @return application.admin.enable or default value if undefined
      */
-    public boolean isAdminEnabled() {
-        return getBoolean(Key.APPLICATION_ADMIN_ENABLE, false);
+    public boolean isApplicationAdminEnable() {
+        return getBoolean(Key.APPLICATION_ADMIN_ENABLE, Default.APPLICATION_ADMIN_ENABLE.toBoolean());
     }
 
     /**

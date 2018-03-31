@@ -448,7 +448,7 @@ public final class Application {
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
         Config config = injector.getInstance(Config.class);
-        if (config.isAdminEnabled()) {
+        if (config.isApplicationAdminEnable()) {
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/health").withRequest(Methods.GET).withClass(AdminController.class).withMethod("health").useInternalTemplateEngine());
             Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());

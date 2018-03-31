@@ -25,9 +25,9 @@ public class TemplateEngineProvider implements Provider<MangooTemplateEngine> {
     public TemplateEngineProvider(Injector injector, Config config) {
         Class<? extends MangooTemplateEngine> templateEngineClass = null; 
         try {
-            templateEngineClass = Class.forName(config.getTemplateEngineClass()).asSubclass(MangooTemplateEngine.class);
+            templateEngineClass = Class.forName(config.getApplicationTemplateEngine()).asSubclass(MangooTemplateEngine.class);
         } catch (ClassNotFoundException e) {
-            LOG.error("Could not find Template Engine class: " + config.getTemplateEngineClass(), e);
+            LOG.error("Could not find Template Engine class: " + config.getApplicationTemplateEngine(), e);
         }
         
         if (templateEngineClass != null) {

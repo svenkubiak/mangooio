@@ -34,7 +34,7 @@ public class AdminFilterTest {
       	AdminFilter filter = new AdminFilter(mockedConfig);
     		
     		//when
-    		when(mockedConfig.isAdminEnabled()).thenReturn(false);
+    		when(mockedConfig.isApplicationAdminEnable()).thenReturn(false);
     		Response response = filter.execute(mockedRequest, mockedResponse);
     	
         //then
@@ -53,7 +53,7 @@ public class AdminFilterTest {
       	AdminFilter filter = new AdminFilter(mockedConfig);
     		
     		//when
-      	when(mockedConfig.isAdminEnabled()).thenReturn(true);
+      	when(mockedConfig.isApplicationAdminEnable()).thenReturn(true);
     		when(mockedRequest.getHeader(Header.AUTHORIZATION.toHttpString())).thenReturn("");
     		Response response = filter.execute(mockedRequest, mockedResponse);
     	

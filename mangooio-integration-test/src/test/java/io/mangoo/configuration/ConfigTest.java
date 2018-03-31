@@ -568,7 +568,7 @@ public class ConfigTest {
         Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
         
         // then
-        assertThat(config.getApplicationTemplateEnginge(), equalTo(engine));
+        assertThat(config.getApplicationTemplateEngine(), equalTo(engine));
         assertThat(yaml.delete(), equalTo(true));
     }
     
@@ -580,7 +580,7 @@ public class ConfigTest {
         Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
 
         // then
-        assertThat(config.getApplicationTemplateEnginge(), equalTo(Default.APPLICATION_TEMPLATEENGINE.toString()));
+        assertThat(config.getApplicationTemplateEngine(), equalTo(Default.APPLICATION_TEMPLATEENGINE.toString()));
         assertThat(yaml.delete(), equalTo(true));
     } 
     
@@ -690,7 +690,88 @@ public class ConfigTest {
         // then
         assertThat(config.isApplicationPreprocessLess(), equalTo(Default.APPLICATION_PREPROCESS_LESS.toBoolean()));
         assertThat(yaml.delete(), equalTo(true));
-    }     
+    }
+    
+    @Test
+    public void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String enable = "true";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("admin", ImmutableMap.of("enable", enable)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.isApplicationAdminEnable(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsApplicationAdminEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE.toBoolean()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetSmptHost() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String host = "192.168.2.24";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("host", host));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSmtpHost(), equalTo(host));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSmptHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    }  
+    
+    @Test
+    public void testGetSmptPort() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String port = "555";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("port", port));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSmtpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSmptPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT.toInt()));
+        assertThat(yaml.delete(), equalTo(true));
+    }      
     
 //    @Test
 //    public void testGetString() {
