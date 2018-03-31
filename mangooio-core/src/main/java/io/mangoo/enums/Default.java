@@ -108,7 +108,7 @@ public enum Default {
     SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
     SESSION_COOKIE_SECURE(Constants.FALSE),
     SESSION_COOKIE_VERSION("0"),
-    SMTP_FROM("mangoo I/O application <noreply@example.com>"),
+    SMTP_FROM("mangoo I/O <noreply@example.com>"),
     SMTP_HOST("localhost"),
     SMTP_PORT("25"),
     SMTP_SERVER_NAME("smtp"),

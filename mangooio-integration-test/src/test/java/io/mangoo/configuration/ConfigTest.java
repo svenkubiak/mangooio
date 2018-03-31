@@ -2,6 +2,9 @@ package io.mangoo.configuration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.collect.ImmutableMap;
 
+import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
+import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 @FixMethodOrder(MethodSorters.JVM)
@@ -41,14 +46,14 @@ public class ConfigTest {
         assertThat(yaml.delete(), equalTo(true));
     }
     
-//    @Test
-//    public void testFlashCookieName() {
-//        // given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        // then
-//        assertThat(config.getFlashCookieName(), equalTo(Default.FLASH_COOKIE_NAME.toString()));
-//    }
+    @Test
+    public void testFlashCookieName() {
+        // given
+        final Config config = Application.getInstance(Config.class);
+
+        // then
+        assertThat(config.getFlashCookieName(), equalTo(Default.FLASH_COOKIE_NAME.toString()));
+    }
     
     @Test
     public void testGetSessionCookieName() throws JsonGenerationException, JsonMappingException, IOException {
@@ -771,169 +776,776 @@ public class ConfigTest {
         // then
         assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT.toInt()));
         assertThat(yaml.delete(), equalTo(true));
-    }      
+    }
     
-//    @Test
-//    public void testGetString() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
-//        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT.toString()), equalTo("10808"));
-//    }
-//
-//    @Test
-//    public void testGetInt() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
-//        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808));
-//    }
-//
-//    @Test
-//    public void testGetBoolean() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
-//        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE.toString()), equalTo(true));
-//    }
-//
-//    @Test
-//    public void testGetLong() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
-//        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808L));
-//    }
-//
-//    @Test
-//    public void testGetStringDefaultValue() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString("foo", "bar"), equalTo("bar"));
-//    }
-//
-//    @Test
-//    public void testGetIntDefaultValue() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getInt("foo", 42), equalTo(42));
-//    }
-//
-//    @Test
-//    public void testGetBooleanDefaultValue() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getBoolean("foo", true), equalTo(true));
-//        assertThat(config.getBoolean("foo", false), equalTo(false));
-//    }
-//
-//    @Test
-//    public void testGetLongDefaultValue() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getLong("foo", 42), equalTo(42L));
-//    }
-//
-//    @Test
-//    public void testGetAllConfigurationValues() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getAllConfigurations(), not(nullValue()));
-//        assertThat(config.getAllConfigurations().size(), greaterThan(12));
-//    }
-//
-//    @Test
-//    public void testEnvironmentValues() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString("smtp.username"), equalTo(""));
-//        assertThat(config.getString("smtp.port"), equalTo("3055"));
-//    }
-//
-//    @Test
-//    public void testGetLocaleCookieName() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME.toString()));
-//    }
-//    
-//    @Test
-//    public void testEncryptedValue() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString("application.foo"), equalTo("admin"));
-//    }
-//    
-//    @Test
-//    public void testEncryptedValueMultiKeyLineTwo() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString("application.bar"), equalTo("westeros"));
-//    }
-//    
-//    @Test
-//    public void testEncryptedValueMultiKeyLineThree() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getString("application.foobar"), equalTo("essos"));
-//    }
-//    
-//    @Test
-//    public void testGetMasterKey() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//        System.setProperty(Jvm.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
-//
-//        //then
-//        assertThat(config.getMasterKeys().get(0), equalTo("thisismymasterkey"));
-//    }
-//    
-//    @Test
-//    public void testApplicationName() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getApplicationName(), equalTo("TEST"));
-//    }
-//    
-//    @Test
-//    public void testGetFlashCookieName() {
-//        //given
-//        final Config config = Application.getInstance(Config.class);
-//
-//        //then
-//        assertThat(config.getFlashCookieName(), equalTo(Default.FLASH_COOKIE_NAME.toString()));
-//    }
+    @Test
+    public void testIsSmptSSL() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String ssl = "true";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("ssl", ssl));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.isSmtpSSL(), equalTo(Boolean.valueOf(ssl)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
     
+    @Test
+    public void testIsSmptSSLDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.isSmtpSSL(), equalTo(Default.SMTP_SSL.toBoolean()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetSmptUsername() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String username = "smtpuser";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("username", username));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSmtpUsername(), equalTo(username));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSmptUsernameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSmtpUsername(), equalTo(null));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetSmptPassword() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String password = "smtppass";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("password", password));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSmtpPassword(), equalTo(password));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSmptPasswordDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSmtpUsername(), equalTo(null));
+        assertThat(yaml.delete(), equalTo(true));
+    }   
+    
+    @Test
+    public void testGetSmptfrom() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String from = "smtpform";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("from", from));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSmtpFrom(), equalTo(from));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSmptfromDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorAjpHost() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String host = "192.168.3.24";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("ajp", ImmutableMap.of("host", host)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getConnectorAjpHost(), equalTo(host));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorAjpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getConnectorAjpHost(), equalTo(null));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorAjpPort() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String port = "2542";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("ajp", ImmutableMap.of("port", port)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getConnectorAjpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorAjpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getConnectorAjpPort(), equalTo(0));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorHttpHost() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String host = "192.168.2.42";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("http", ImmutableMap.of("host", host)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getConnectorHttpHost(), equalTo(host));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorHttpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getConnectorHttpHost(), equalTo(null));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorHttpPort() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String port = "2442";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("http", ImmutableMap.of("port", port)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetConnectorHttpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getConnectorHttpPort(), equalTo(0));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testApplicationHeaderXssProection() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String xss = "5";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xssprotection", xss)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeaderXssProection(), equalTo(Integer.valueOf(xss)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testApplicationHeaderXssProectionDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeaderXssProection(), equalTo(Default.APPLICATION_HEADERS_XSSPROTECTION.toInt()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetApplicationHeadersXContentTypeOptions() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String type = "mycontenttype";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xcontenttypeoptions", type)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeadersXContentTypeOptions(), equalTo(type));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersXContentTypeOptionsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeadersXContentTypeOptions(), equalTo(Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetApplicationHeadersXFrameOptions() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String frame = "myframe";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xframeoptions", frame)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeadersXFrameOptions(), equalTo(frame));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersXFrameOptionsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeadersXFrameOptions(), equalTo(Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    }     
+    
+    @Test
+    public void testGetApplicationHeadersServer() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String server = "myservername";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("server", server)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeadersServer(), equalTo(server));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersServerDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeadersServer(), equalTo(Default.APPLICATION_HEADERS_SERVER.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    }   
+    
+    @Test
+    public void testGetApplicationHeadersContentSecurityPolicy() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String policy = "mypolicy";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("contentsecuritypolicy", policy)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeadersContentSecurityPolicy(), equalTo(policy));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersContentSecurityPolicyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeadersContentSecurityPolicy(), equalTo(Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testIsCacheClusterEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String enable = "true";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("cache", ImmutableMap.of("cluster", ImmutableMap.of("enable", enable)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.isCacheCluserEnable(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsCacheClusterEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.isCacheCluserEnable(), equalTo(Default.CACHE_CLUSTER_ENABLE.toBoolean()));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testMetricsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String enable = "true";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("metrics", ImmutableMap.of("enable", true));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.isMetricsEnable(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testMetricsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE.toBoolean()));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testAuthenticationLock() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String lock = "24";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("lock", lock));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getAuthenticationLock(), equalTo(Integer.valueOf(lock)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testAuthenticationLockDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK.toInt()));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testCacheClusterUrl() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String url = "myclusterurl";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("cache", ImmutableMap.of("cluster", ImmutableMap.of("url", url)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getCacheClusterUrl(), equalTo(url));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testCacheClusterUrlDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getCacheClusterUrl(), equalTo(null));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersRefererPolicy() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String policy = "myrefererpolicy";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("refererpolicy", policy)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getApplicationHeadersRefererPolicy(), equalTo(policy));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationHeadersRefererPolicyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getApplicationHeadersRefererPolicy(), equalTo(Default.APPLICATION_HEADERS_REFERERPOLICY.toString()));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetUndertowMaxEntitySize() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String size = "4096";
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("undertow", ImmutableMap.of("maxentitysize", size));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getUndertowMaxEntitySize(), equalTo(Long.valueOf(size)));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetUndertowMaxEntitySizeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // when
+        Map<Object, Object> configValues = new HashMap<>();
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSessionCookieSignKey() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String key = UUID.randomUUID().toString();
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("signkey", key)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSessionCookieSignKey(), equalTo(key));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSessionCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSessionCookieSignKey(), equalTo(secret));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+
+    @Test
+    public void testGetSessionCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String key = UUID.randomUUID().toString();
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getSessionCookieEncryptionKey(), equalTo(key));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetSessionCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getSessionCookieEncryptionKey(), equalTo(secret));
+        assertThat(yaml.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetAuthenticationCookieSignKey() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String key = UUID.randomUUID().toString();
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("signkey", key)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getAuthenticationCookieSignKey(), equalTo(key));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetAuthenticationCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getAuthenticationCookieSignKey(), equalTo(secret));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetAuthenticationCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String key = UUID.randomUUID().toString();
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(key));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetAuthenticationCookieEncryptionKeyKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(secret));
+        assertThat(yaml.delete(), equalTo(true));
+    }     
+    
+    
+    @Test
+    public void testGetString() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
+        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT.toString()), equalTo("10808"));
+    }
+
+    @Test
+    public void testGetInt() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
+        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808));
+    }
+
+    @Test
+    public void testGetBoolean() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE.toString()), equalTo(true));
+    }
+
+    @Test
+    public void testGetLong() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
+        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808L));
+    }
+
+    @Test
+    public void testGetStringDefaultValue() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("foo", "bar"), equalTo("bar"));
+    }
+
+    @Test
+    public void testGetIntDefaultValue() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getInt("foo", 42), equalTo(42));
+    }
+
+    @Test
+    public void testGetBooleanDefaultValue() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getBoolean("foo", true), equalTo(true));
+        assertThat(config.getBoolean("foo", false), equalTo(false));
+    }
+
+    @Test
+    public void testGetLongDefaultValue() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getLong("foo", 42), equalTo(42L));
+    }
+
+    @Test
+    public void testGetAllConfigurationValues() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getAllConfigurations(), not(nullValue()));
+        assertThat(config.getAllConfigurations().size(), greaterThan(12));
+    }
+
+    @Test
+    public void testEnvironmentValues() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("smtp.username"), equalTo(""));
+        assertThat(config.getString("smtp.port"), equalTo("3055"));
+    }
+    
+    @Test
+    public void testEncryptedValue() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("application.foo"), equalTo("admin"));
+    }
+    
+    @Test
+    public void testEncryptedValueMultiKeyLineTwo() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("application.bar"), equalTo("westeros"));
+    }
+    
+    @Test
+    public void testEncryptedValueMultiKeyLineThree() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+
+        //then
+        assertThat(config.getString("application.foobar"), equalTo("essos"));
+    }
+    
+    @Test
+    public void testGetMasterKey() {
+        //given
+        final Config config = Application.getInstance(Config.class);
+        System.setProperty(Jvm.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
+
+        //then
+        assertThat(config.getMasterKeys().get(0), equalTo("thisismymasterkey"));
+    }
+
     private File createTempYaml(Map<Object, Object> values) throws JsonGenerationException, JsonMappingException, IOException {
         Map<Object, Object> defaults = new HashMap<>();
         defaults.put("default", values);

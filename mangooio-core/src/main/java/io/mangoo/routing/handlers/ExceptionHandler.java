@@ -42,11 +42,11 @@ public class ExceptionHandler implements HttpHandler {
         
         try {
             exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), MediaType.HTML_UTF_8.withoutParameters().toString());
-            exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getXssProectionHeader());
-            exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getXContentTypeOptionsHeader());
-            exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getXFrameOptionsHeader());
-            exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getContentSecurityPolicyHeader());
-            exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getServerHeader());
+            exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getApplicationHeaderXssProection());
+            exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getApplicationHeadersXContentTypeOptions());
+            exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getApplicationHeadersXFrameOptions());
+            exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
+            exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
             exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
             if (Application.inDevMode()) {

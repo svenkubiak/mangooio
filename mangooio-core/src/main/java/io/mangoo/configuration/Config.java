@@ -673,6 +673,7 @@ public class Config {
      * @return jvm property http.host or connector.http.host or null if undefined
      */
     public String getConnectorHttpHost() {
+        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
         String httpHost = System.getProperty(Jvm.HTTP_HOST.toString());
         if (StringUtils.isNotBlank(httpHost)) {
             return httpHost;
@@ -685,6 +686,7 @@ public class Config {
      * @return jvm property http.port or connector.http.port or 0 if undefined
      */
     public int getConnectorHttpPort() {
+        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
         String httpPort = System.getProperty(Jvm.HTTP_PORT.toString());
         if (StringUtils.isNotBlank(httpPort)) {
             return Integer.parseInt(httpPort);
@@ -697,6 +699,7 @@ public class Config {
      * @return jvm property ajp.host or connector.ajp.host or null if undefined
      */
     public String getConnectorAjpHost() {
+        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
         String ajpHost = System.getProperty(Jvm.AJP_HOST.toString());
         if (StringUtils.isNotBlank(ajpHost)) {
             return ajpHost;
@@ -709,6 +712,7 @@ public class Config {
      * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
      */
     public int getConnectorAjpPort() {
+        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
         String ajpPort = System.getProperty(Jvm.AJP_PORT.toString());
         if (StringUtils.isNotBlank(ajpPort)) {
             return Integer.parseInt(ajpPort);
@@ -748,49 +752,49 @@ public class Config {
      * 
      * @return application.headers.xssprotection or default value if undefined
      */
-    public int getXssProectionHeader() {
+    public int getApplicationHeaderXssProection() {
         return getInt(Key.APPLICATION_HEADERS_XSSPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toInt());
     }
 
     /**
      * @return application.headers.xcontenttypeoptions or default value if undefined
      */
-    public String getXContentTypeOptionsHeader() {
+    public String getApplicationHeadersXContentTypeOptions() {
         return getString(Key.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString());
     }
 
     /**
      * @return application.headers.xframeoptions or default value if undefined
      */
-    public String getXFrameOptionsHeader() {
+    public String getApplicationHeadersXFrameOptions() {
         return getString(Key.APPLICATION_HEADERS_XFRAMEOPTIONS, Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString());
     }
 
     /**
      * @return application.headers.server or default value if undefined
      */
-    public String getServerHeader() {
+    public String getApplicationHeadersServer() {
         return getString(Key.APPLICATION_HEADERS_SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
     }
 
     /**
      * @return application.headers.contentsecuritypolicy or default value if undefined
      */
-    public String getContentSecurityPolicyHeader() {
+    public String getApplicationHeadersContentSecurityPolicy() {
         return getString(Key.APPLICATION_HEADERS_CONTENTSECURITYPOLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString());
     }
 
     /**
      * @return cache.cluster.enable or default value if undefined
      */
-    public boolean isClusteredCached() {
+    public boolean isCacheCluserEnable() {
         return getBoolean(Key.CACHE_CLUSTER_ENABLE, Default.CACHE_CLUSTER_ENABLE.toBoolean());
     }
     
     /**
      * @return metrics.enable or default value if undefined
      */
-    public boolean isMetricsEnabled() {
+    public boolean isMetricsEnable() {
         return getBoolean(Key.METRICS_ENABLE, Default.METRICS_ENABLE.toBoolean());
     }
 
@@ -811,7 +815,7 @@ public class Config {
     /**
      * @return application.headers.refererpolicy or default value if undefined
      */
-    public String getRefererPolicy() {
+    public String getApplicationHeadersRefererPolicy() {
         return getString(Key.APPLICATION_HEADERS_REFERERPOLICY, Default.APPLICATION_HEADERS_REFERERPOLICY.toString());
     }
 

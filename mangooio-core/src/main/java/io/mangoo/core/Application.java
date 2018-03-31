@@ -494,7 +494,7 @@ public final class Application {
             Config config = injector.getInstance(Config.class);
             
             HttpHandler httpHandler;
-            if (config.isMetricsEnabled()) {
+            if (config.isMetricsEnable()) {
                 httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
                         .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
             } else {

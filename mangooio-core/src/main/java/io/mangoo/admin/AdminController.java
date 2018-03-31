@@ -133,7 +133,7 @@ public class AdminController {
     }
     
     public Response metrics() {
-        boolean enabled = this.config.isMetricsEnabled();
+        boolean enabled = this.config.isMetricsEnable();
         if (enabled) {
             Metrics metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
@@ -218,7 +218,7 @@ public class AdminController {
     }
 
     public Response health() {
-        if (this.config.isMetricsEnabled()) {
+        if (this.config.isMetricsEnable()) {
             Runtime runtime = Runtime.getRuntime();
             long maxMemory = runtime.maxMemory();
             long allocatedMemory = runtime.totalMemory();
