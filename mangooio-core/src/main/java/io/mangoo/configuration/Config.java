@@ -444,14 +444,14 @@ public class Config {
     /**
      * @return authentication.cookie.expires from application.yaml or default value if undefined
      */
-    public long getAuthenticationExpires() {
+    public long getAuthenticationCookieExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toLong());
     }
 
     /**
      * @return session.cookie.expires from application.yaml or default value if undefined
      */
-    public long getSessionExpires() {
+    public long getSessionCookieExpires() {
         return getLong(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toLong());
     }
 
@@ -488,7 +488,7 @@ public class Config {
      * @return application.language from application.yaml or default value if undefined
      */
     public String getApplicationLanguage() {
-        return getString(Key.APPLICATION_LANGUAGE, Default.LANGUAGE.toString());
+        return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
     /**
      * @return authentication.cookie.encrypt from application.yaml or default value if undefined
@@ -539,14 +539,14 @@ public class Config {
     /**
      * @return application.admin.username from application.yaml or null if undefined
      */
-    public String getAdminAuthenticationUser() {
+    public String getApplicationAdminUsername() {
         return getString(Key.APPLICATION_ADMIN_USERNAME);
     }
 
     /**
      * @return application.admin.password from application.yaml or null if undefined
      */
-    public String getAdminAuthenticationPassword() {
+    public String getApplicationAdminPassword() {
         return getString(Key.APPLICATION_ADMIN_PASSWORD);
     }
 
@@ -561,63 +561,63 @@ public class Config {
      * @return session.cookie.encryption from application.yaml or default value if undefined
      */
     public boolean isSessionCookieEncrypt() {
-        return getBoolean(Key.SESSION_COOKIE_ENCRYPTION, Default.SESSION_COOKIE_ENCRYPTION.toBoolean());
+        return getBoolean(Key.SESSION_COOKIE_ENCRYPT, Default.SESSION_COOKIE_ENCRYPT.toBoolean());
     }
 
     /**
      * @return authentication.cookie.remember.expires from application.yaml or default value if undefined
      */
-    public long getAuthenticationRememberExpires() {
+    public long getAuthenticationCookieRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong());
     }
 
     /**
      * @return application.threadpool from application.yaml or default value if undefined
      */
-    public int getExecutionPool() {
-        return getInt(Key.APPLICATION_THREADPOOL, Default.EXECUTION_THREADPOOL.toInt());
+    public int getApplicationThreadpool() {
+        return getInt(Key.APPLICATION_THREADPOOL, Default.APPLICATION_THREADPOOL.toInt());
     }
 
     /**
      * @return application.controller from application.yaml or default value if undefined
      */
-    public String getControllerPackage() {
+    public String getApplicationController() {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 
     /**
      * @return application.templateengine from application.yaml or default value if undefined
      */
-    public String getTemplateEngineClass() {
-        return getString(Key.APPLICATION_TEMPLATEENGINE, Default.TEMPLATE_ENGINE_CLASS.toString());
+    public String getApplicationTemplateEnginge() {
+        return getString(Key.APPLICATION_TEMPLATEENGINE, Default.APPLICATION_TEMPLATEENGINE.toString());
     }
 
     /**
      * @return application.minify.js or default value if undefined
      */
-    public boolean isMinifyJS() {
-        return getBoolean(Key.APPLICATION_MINIFY_JS, false);
+    public boolean isApplicationMinifyJS() {
+        return getBoolean(Key.APPLICATION_MINIFY_JS, Default.APPLICATION_MINIFY_JS.toBoolean());
     }
 
     /**
      * @return application.minify.css or default value if undefined
      */
-    public boolean isMinifyCSS() {
-        return getBoolean(Key.APPLICATION_MINIFY_CSS, false);
+    public boolean isApplicationMinifyCSS() {
+        return getBoolean(Key.APPLICATION_MINIFY_CSS, Default.APPLICATION_MINIFY_CSS.toBoolean());
     }
 
     /**
      * @return application.preprocess.sass or default value if undefined
      */
-    public boolean isPreprocessSass() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_SASS, false);
+    public boolean isApplicationPreprocessSass() {
+        return getBoolean(Key.APPLICATION_PREPROCESS_SASS, Default.APPLICATION_PREPROCESS_SASS.toBoolean());
     }
 
     /**
      * @return application.preprocess.less or default value if undefined
      */
-    public boolean isPreprocessLess() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_LESS, false);
+    public boolean isApplicationPreprocessLess() {
+        return getBoolean(Key.APPLICATION_PREPROCESS_LESS, Default.APPLICATION_PREPROCESS_LESS.toBoolean());
     }
 
     /**

@@ -83,7 +83,7 @@ public class InboundCookiesHandler implements HttpHandler {
             session = Session.build()
                     .withContent(new HashMap<>())
                     .withAuthenticity(UUID.randomUUID().toString())
-                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionExpires()));
+                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
         }
 
         return session;
@@ -110,7 +110,7 @@ public class InboundCookiesHandler implements HttpHandler {
             this.subject = new Subject(cookieParser.getAuthenticatedUser(), true);
         } else {
             authentication = Application.getInstance(Authentication.class)
-                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationExpires()))
+                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
                     .withAuthenticatedUser(null);
             
             this.subject = new Subject("", false);

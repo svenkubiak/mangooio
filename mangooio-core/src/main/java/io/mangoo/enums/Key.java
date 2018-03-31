@@ -121,7 +121,7 @@ public enum Key {
     OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    SESSION_COOKIE_ENCRYPTION("session.cookie.encryption"),
+    SESSION_COOKIE_ENCRYPT("session.cookie.encrypt"),
     SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
     SESSION_COOKIE_EXPIRES("session.cookie.expires"),
     SESSION_COOKIE_NAME("session.cookie.name"),

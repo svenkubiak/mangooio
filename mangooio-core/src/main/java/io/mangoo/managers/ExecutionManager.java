@@ -27,7 +27,7 @@ public class ExecutionManager {
     @Inject
     public ExecutionManager(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.executorService = Executors.newFixedThreadPool(config.getExecutionPool());
+        this.executorService = Executors.newFixedThreadPool(config.getApplicationThreadpool());
     }
 
     /**

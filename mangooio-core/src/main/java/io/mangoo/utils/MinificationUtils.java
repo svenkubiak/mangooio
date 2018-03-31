@@ -77,9 +77,9 @@ public final class MinificationUtils {
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
         }
 
-        if (config.isMinifyCSS() && absolutePath.endsWith(JS)) {
+        if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
             minifyJS(new File(absolutePath));
-        } else if (config.isMinifyJS() && absolutePath.endsWith(CSS)) {
+        } else if (config.isApplicationMinifyJS() && absolutePath.endsWith(CSS)) {
             minifyCSS(new File(absolutePath));
         }
     }
@@ -99,9 +99,9 @@ public final class MinificationUtils {
             config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
         }
 
-        if (config.isPreprocessLess() && absolutePath.endsWith(LESS)) {
+        if (config.isApplicationPreprocessLess() && absolutePath.endsWith(LESS)) {
             lessify(new File(absolutePath));
-        } else if (config.isPreprocessSass() && absolutePath.endsWith(SASS)) {
+        } else if (config.isApplicationPreprocessSass() && absolutePath.endsWith(SASS)) {
             sassify(new File(absolutePath));
         }
     }

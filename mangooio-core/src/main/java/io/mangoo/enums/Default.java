@@ -16,31 +16,38 @@ public enum Default {
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
     APPLICATION_HEADERS_XSSPROTECTION("1"),
     APPLICATION_JWT_ENCRYPT(Constants.FALSE),
-    APPLICATION_SECRET_MIN_LENGTH("32"),
-    APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
-    ASSETS_PATH("src/main/resources/files/assets/"),
+    APPLICATION_LANGUAGE("en"),
+    APPLICATION_MINIFY_CSS(Constants.FALSE),
+    APPLICATION_MINIFY_JS(Constants.FALSE),
     
+    APPLICATION_PREPROCESS_LESS(Constants.FALSE),
+    
+    APPLICATION_PREPROCESS_SASS(Constants.FALSE),
+    
+    APPLICATION_SECRET_MIN_LENGTH("32"),
+    
+    APPLICATION_TEMPLATEENGINE("io.mangoo.templating.TemplateEngineFreemarker"),
+    
+    APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
+    
+    APPLICATION_THREADPOOL("10"),
+    
+    ASSETS_PATH("src/main/resources/files/assets/"),
+ 
     @Deprecated /** Use AUTHENTICATION_COOKIE_ENCRYPT instead **/
     AUTH_COOKIE_ENCRYPT(Constants.FALSE),
-    
     @Deprecated /** Use AUTHENTICATION_COOKIE_EXPIRES instead **/
     AUTH_COOKIE_EXPIRES("3600"),
-    
     @Deprecated /** Use AUTHENTICATION_COOKIE_NAME instead **/
     AUTH_COOKIE_NAME("MANGOOIO-AUTH"),
-    
     @Deprecated /** Use AUTHENTICATION_COOKIE_REMEMBER_EXPIRES instead **/
     AUTH_COOKIE_REMEMBER_EXPIRES("1209600"),
-    
     @Deprecated /** Use AUTHENTICATION_COOKIE_SECURE instead **/
     AUTH_COOKIE_SECURE(Constants.FALSE),
-    
     @Deprecated /** Use AUTHENTICATION_COOKIE_VERSION instead **/
     AUTH_COOKIE_VERSION("0"),
-    
     @Deprecated /** Use AUTHENTICATION_LOCK instead **/
     AUTH_LOCK("10"),
- 
     AUTHENTICATION_COOKIE_ENCRYPT(Constants.FALSE),
     AUTHENTICATION_COOKIE_EXPIRES("3600"),
     AUTHENTICATION_COOKIE_NAME("MANGOOIO-AUTH"),
@@ -48,48 +55,41 @@ public enum Default {
     AUTHENTICATION_COOKIE_SECURE(Constants.FALSE),
     AUTHENTICATION_COOKIE_VERSION("0"),
     AUTHENTICATION_LOCK("10"),
+    
     AUTHENTICITY("authenticity"),
+    
     BASICAUTH_CREDENTIALS_LENGTH("2"),
+    
     BUNDLE_NAME("translations/messages"),
+    
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
+    
     CONFIG_PATH("/src/main/resources/application.yaml"),
+    
     CONFIGURATION_FILE("application.yaml"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
-    
     @Deprecated /** Use SESSION_COOKIE_ENCRYPTION instead **/
     COOKIE_ENCRYPTION(Constants.FALSE),
-    
     @Deprecated /** Use SESSION_COOKIE_EXPIRES instead **/
     COOKIE_EXPIRES("86400"),
-    
     @Deprecated /** Use SESSION_COOKIE_NAME instead **/
     COOKIE_NAME("MANGOOIO-SESSION"),
-    
     @Deprecated /** Use SESSION_COOKIE_SECURE instead **/
     COOKIE_SECURE(Constants.FALSE),
-    
     @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
     COOKIE_VERSION("0"),
-    
-    I18N_COOKIE_NAME("MANGOOIO-I18N"),
-    SESSION_COOKIE_ENCRYPTION(Constants.FALSE),
-    SESSION_COOKIE_EXPIRES("86400"),
-    SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
-    SESSION_COOKIE_SECURE(Constants.FALSE),
-    SESSION_COOKIE_VERSION("0"),
     DATA_DELIMITER("#"),
-    DEFAULT_CONFIGURATION("default"),
+    DEFAULT_CONFIGURATION("default"), //NOSONAR
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"), //NOSONAR
-    DELIMITER("|"), //NOSONAR
+    DELIMITER("|"),
     ENCODING("UTF-8"),
-    EXECUTION_THREADPOOL("10"),
     FILES_FOLDER("files"),
     FILES_PATH("src/main/resources/files/"),
     FILTER_METHOD("execute"),
     FLASH_COOKIE_NAME("MANGOOIO-FLASH"),
+    I18N_COOKIE_NAME("MANGOOIO-I18N"),
     JAVASCRIPT_FOLDER("javascript"),
     JBCRYPT_ROUNDS("12"),
-    LANGUAGE("en"),
     LIFECYCLE_CLASS("conf.Lifecycle"),
     LOGO_FILE("logo.txt"),
     METRICS_ENABLE(Constants.FALSE),
@@ -102,6 +102,11 @@ public enum Default {
     SCHEDULER_PACKAGE("jobs"),
     SCHEDULER_PREFIX("org.quartz."),
     SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
+    SESSION_COOKIE_ENCRYPT(Constants.FALSE),
+    SESSION_COOKIE_EXPIRES("86400"),
+    SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
+    SESSION_COOKIE_SECURE(Constants.FALSE),
+    SESSION_COOKIE_VERSION("0"),
     SMTP_FROM("mangoo I/O application <noreply@example.com>"),
     SMTP_HOST("localhost"),
     SMTP_PORT("25"),
@@ -109,7 +114,6 @@ public enum Default {
     SMTP_SSL(Constants.FALSE),
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
     STYLESHEET_FOLDER("stylesheet"),
-    TEMPLATE_ENGINE_CLASS("io.mangoo.templating.TemplateEngineFreemarker"),
     TEMPLATES_FOLDER("/templates/"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
     VERSION("unknown"),

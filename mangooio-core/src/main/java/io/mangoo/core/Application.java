@@ -393,7 +393,7 @@ public final class Application {
                         if (StringUtils.isNotBlank(mapping)) {
                             if (routeType == RouteType.REQUEST) {
                                 int lastIndexOf = mapping.trim().lastIndexOf('.');
-                                String controllerClass = BootstrapUtils.getPackageName(config.getControllerPackage()) + mapping.substring(0, lastIndexOf);
+                                String controllerClass = BootstrapUtils.getPackageName(config.getApplicationController()) + mapping.substring(0, lastIndexOf);
                                 route.withClass(Class.forName(controllerClass));
 
                                 String methodName = mapping.substring(lastIndexOf + 1);
@@ -403,7 +403,7 @@ public final class Application {
                                     error = true;
                                 }
                             } else {
-                                route.withClass(Class.forName(BootstrapUtils.getPackageName(config.getControllerPackage()) + mapping));
+                                route.withClass(Class.forName(BootstrapUtils.getPackageName(config.getApplicationController()) + mapping));
                             }
                         }
                        Router.addRoute(route);

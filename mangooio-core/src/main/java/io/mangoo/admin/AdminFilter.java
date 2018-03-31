@@ -75,9 +75,9 @@ public class AdminFilter implements MangooFilter {
 
         return StringUtils.isNotBlank(username) &&
                StringUtils.isNotBlank(password) &&
-               StringUtils.isNotBlank(this.config.getAdminAuthenticationUser()) &&
-               StringUtils.isNotBlank(this.config.getAdminAuthenticationPassword()) &&
-               this.config.getAdminAuthenticationUser().equals(username) &&
-               CodecUtils.checkJBCrypt(password, this.config.getAdminAuthenticationPassword());
+               StringUtils.isNotBlank(this.config.getApplicationAdminUsername()) &&
+               StringUtils.isNotBlank(this.config.getApplicationAdminPassword()) &&
+               this.config.getApplicationAdminUsername().equals(username) &&
+               CodecUtils.checkJBCrypt(password, this.config.getApplicationAdminPassword());
     }
 }

@@ -117,7 +117,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
                 claims.put(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
                 
-                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(this.config.getAuthenticationRememberExpires()) : authentication.getExpires();
+                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()) : authentication.getExpires();
                 String jwt = Jwts.builder()
                         .setClaims(claims)
                         .setSubject(authentication.getAuthenticatedUser())

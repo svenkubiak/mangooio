@@ -24,7 +24,7 @@ public class ConcurrentService {
     @Inject
     public ConcurrentService(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.executorService = Executors.newFixedThreadPool(config.getExecutionPool());
+        this.executorService = Executors.newFixedThreadPool(config.getApplicationThreadpool());
     }
 
     /**
