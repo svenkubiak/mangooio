@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -189,7 +188,7 @@ public final class MinificationUtils {
             basePath = basePath + "/";
         }
 
-        String assetPath = Default.ASSETS_PATH.toString();
+        String assetPath = config.getAssetsPath();
         if (assetPath.startsWith("/")) {
             assetPath = assetPath.substring(1);
         }

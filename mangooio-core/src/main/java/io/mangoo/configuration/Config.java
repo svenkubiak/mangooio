@@ -490,6 +490,15 @@ public class Config {
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
+
+    /**
+     * @return application.assets.path (for testing purposes only)
+     *         Do note use in production!
+     */
+    public String getAssetsPath() {
+        return Default.ASSETS_PATH.toString();
+    }
+    
     /**
      * @return authentication.cookie.encrypt from application.yaml or default value if undefined
      */
