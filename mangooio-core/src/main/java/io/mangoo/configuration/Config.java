@@ -491,10 +491,6 @@ public class Config {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
 
-    /**
-     * @return application.assets.path (for testing purposes only)
-     *         Do note use in production!
-     */
     public String getAssetsPath() {
         return Default.ASSETS_PATH.toString();
     }
