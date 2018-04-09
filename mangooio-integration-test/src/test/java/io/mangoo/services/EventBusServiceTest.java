@@ -2,15 +2,17 @@ package io.mangoo.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooEventBusException;
-import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -47,7 +49,7 @@ public class EventBusServiceTest {
     
     @Test
     public void testBConcurrentEventBus() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             TestListener testListener = new TestListener();
             EventBusService busManager = Application.getInstance(EventBusService.class);
@@ -56,13 +58,8 @@ public class EventBusServiceTest {
             //when
             busManager.publish("This is a test");
             
-            //then
-            assertThat(testListener.getCount(), greaterThan(0));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(50)
-            .run();
+            // then
+            return testListener.getCount() > 0;
+        }, new RunsInThreads<>(new AtomicInteger(), 500));
     }
 }

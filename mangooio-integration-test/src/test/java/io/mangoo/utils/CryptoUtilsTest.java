@@ -5,9 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import io.mangoo.test.utils.ConcurrentTester;
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 /**
  * 
@@ -17,7 +19,7 @@ import io.mangoo.test.utils.ConcurrentTester;
 public class CryptoUtilsTest {
     private static final String VALID_SECRET = "jklfdjskjfkldsnjkvbnxjk<fbufsjkfdsjkfdhsjkfdvcxvcx";
     private static final String INVALID_SECRET = "fdsfdsf";
-    private static final int THREADS = 50;
+    private static final int THREADS = 500;
 
     @Test
     public void testGetSizedKey() {
@@ -31,19 +33,13 @@ public class CryptoUtilsTest {
     
     @Test
     public void testConcurrentGetSizedKey() throws InterruptedException {
-        Runnable runnable = () -> {
-            //given
+        MatcherAssert.assertThat(t -> {
+            // given
             String secret = CryptoUtils.getSizedSecret(VALID_SECRET);
             
-            //then
-            assertThat(secret, not(nullValue()));
-            assertThat(secret.length(), equalTo(32));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return secret.length() == 32;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -57,18 +53,13 @@ public class CryptoUtilsTest {
     
     @Test
     public void testConcurrentIsValidSecret() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             boolean valid = CryptoUtils.isValidSecret(VALID_SECRET);
             
-            //then
-            assertThat(valid, equalTo(true));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return valid;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -82,18 +73,13 @@ public class CryptoUtilsTest {
     
     @Test
     public void testConcurrentIsInvalidSecret() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             boolean valid = CryptoUtils.isValidSecret(INVALID_SECRET);
             
-            //then
-            assertThat(valid, equalTo(false));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return !valid;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -108,19 +94,14 @@ public class CryptoUtilsTest {
     
     @Test
     public void testConcurrentRandomString() throws InterruptedException {
-        Runnable runnable = () -> {
-            //given
-            String string = CryptoUtils.randomString(32);
+        MatcherAssert.assertThat(t -> {
+            // given
+            int size = (int) (Math.random() * (64 - 16)) + 16;
+            String secret = CryptoUtils.randomString(size);
             
-            //then
-            assertThat(string, not(nullValue()));
-            assertThat(string.length(), equalTo(32));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return secret.length() == size;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test(expected = IllegalArgumentException.class)

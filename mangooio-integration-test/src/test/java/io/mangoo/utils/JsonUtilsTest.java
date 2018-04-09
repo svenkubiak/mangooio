@@ -6,13 +6,15 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.models.Car;
-import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -20,7 +22,8 @@ import io.mangoo.test.utils.ConcurrentTester;
  *
  */
 public class JsonUtilsTest {
-    private final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
+    private static final int THREADS = 250;
+    private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test
     public void testToJson() {
@@ -37,7 +40,7 @@ public class JsonUtilsTest {
     
     @Test
     public void testConcurrentToJson() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
             Car car = new Car(uuid);
@@ -45,15 +48,9 @@ public class JsonUtilsTest {
             //when
             String json = JsonUtils.toJson(car);
             
-            //then
-            assertThat(json, not(nullValue()));
-            assertThat(json, equalTo("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}"));   
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(50)
-            .run();
+            // then
+            return json.equals("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}");
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -71,7 +68,7 @@ public class JsonUtilsTest {
     
     @Test
     public void testConcurrentFromJson() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString(); 
             String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
@@ -79,15 +76,9 @@ public class JsonUtilsTest {
             //when
             ReadContext readContext = JsonUtils.fromJson(json);
             
-            //then
-            assertThat(readContext, not(nullValue()));
-            assertThat(readContext.read("$.foo"), equalTo(uuid));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            // then
+            return readContext.read("$.foo").equals(uuid);
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -107,24 +98,16 @@ public class JsonUtilsTest {
     
     @Test
     public void testConcurrentFromJsonToClass() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString(); 
             String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
             
-            //when
+            ///when
             Car car = JsonUtils.fromJson(json, Car.class);
             
-            //then
-            assertThat(car, not(nullValue()));
-            assertThat(car.brand, equalTo(null));
-            assertThat(car.doors, equalTo(0));
-            assertThat(car.foo, equalTo(uuid));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            // then
+            return car.brand != null && car.doors == 0 && car.foo.equals(uuid);
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 }

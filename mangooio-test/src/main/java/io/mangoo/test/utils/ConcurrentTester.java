@@ -6,8 +6,10 @@ import java.util.List;
 /**
  * 
  * @author svenkubiak
+ * @depracted as of version 4.12.0, use RunsInThreads from org.cactoos.cactoos instead
  *
  */
+@Deprecated
 public class ConcurrentTester {
     private Runnable runnable;
     private int threads = 10; //NOSONAR

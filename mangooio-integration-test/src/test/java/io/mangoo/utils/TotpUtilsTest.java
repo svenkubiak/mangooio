@@ -6,10 +6,13 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import io.mangoo.enums.HmacShaAlgorithm;
-import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -19,7 +22,7 @@ import io.mangoo.test.utils.ConcurrentTester;
 public class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;
-	private static final int THREADS = 50;
+	private static final int THREADS = 500;
 
 	@Test
 	public void testCreateKey() {
@@ -33,19 +36,13 @@ public class TotpUtilsTest {
 	
 	@Test
 	public void testCreateKeyConcurrent() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             String secret = TotpUtils.createSecret().get();
             
-            //then
-            assertThat(secret, not(nullValue()));
-            assertThat(secret.length(), equalTo(SECRET_LENGTH));  
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return secret.length() == SECRET_LENGTH;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
 	}
 	
 	@Test
@@ -63,22 +60,16 @@ public class TotpUtilsTest {
 	
 	@Test
 	public void testGetTotpConcurrent() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
-    			String secret = TotpUtils.createSecret().get();
-    		
-    			//when
+            String secret = TotpUtils.createSecret().get();
+        
+            //when
             String totp = TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512).get();
             
-            //then
-            assertThat(totp, not(nullValue()));
-            assertThat(totp.length(), equalTo(PASSWORD_LENGTH));
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return totp.length() == PASSWORD_LENGTH;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
 	}
 	
 	@Test
@@ -93,19 +84,14 @@ public class TotpUtilsTest {
 	
 	@Test
 	public void testVerifyTotpConcurrent() throws InterruptedException {
-		Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
-    			String secret = TotpUtils.createSecret().get();
-    			String totp = TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512).get();
-    			
-            //then
-            assertThat(true, equalTo(TotpUtils.verifiedTotp(secret, totp, HmacShaAlgorithm.HMAC_SHA_512)));
-        };
+            String secret = TotpUtils.createSecret().get();
+            String totp = TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512).get();
         
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return TotpUtils.verifiedTotp(secret, totp, HmacShaAlgorithm.HMAC_SHA_512);
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
 	}
 	
 	@Test
@@ -132,19 +118,13 @@ public class TotpUtilsTest {
 	
 	@Test
 	public void testGetTotpURLConcurrent() throws InterruptedException {
-		Runnable runnable = () -> {
-	        //given
-			String secret = "foo";
-			String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512);
-
-	        //then
-			assertThat(qr, not(nullValue()));
-	        assertThat(qr, equalTo("otpauth://totp/test?secret=MZXW6&algorithm=HmacSHA512&issuer=issuer"));
-        };
+        MatcherAssert.assertThat(t -> {
+            //given
+            String secret = "foo";
+            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512);
         
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(THREADS)
-            .run();
+            // then
+            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512));
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
 	}
 }

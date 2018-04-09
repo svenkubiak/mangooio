@@ -1,17 +1,14 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import com.google.common.net.MediaType;
 
-import io.mangoo.test.utils.ConcurrentTester;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -25,7 +22,7 @@ public class ConcurrentControllerTest {
 
     @Test
     public void testConcurrentJsonParsing() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
             String json = "{\"firstname\":\"$$\",\"lastname\":\"Parker\",\"age\":24}";
@@ -35,16 +32,9 @@ public class ConcurrentControllerTest {
                     .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                     .withRequestBody(json)
                     .execute();
-
-            //then
-            assertThat(response, not(nullValue()));
-            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-            assertThat(response.getContent(), equalTo(uuid + ";Parker;24"));    
-        };
-        
-        ConcurrentTester.create()
-            .withRunnable(runnable)
-            .withThreads(50)
-            .run();
+            
+            // then
+            return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid + ";Parker;24");
+        }, new RunsInThreads<>(new AtomicInteger(), 250));
     }
 }

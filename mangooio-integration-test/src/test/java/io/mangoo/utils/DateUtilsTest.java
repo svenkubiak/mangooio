@@ -7,10 +7,11 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
-
-import io.mangoo.test.utils.ConcurrentTester;
 
 /**
  * 
@@ -18,6 +19,7 @@ import io.mangoo.test.utils.ConcurrentTester;
  *
  */
 public class DateUtilsTest {
+    private static final int THREADS = 500;
     
     @Test
     public void testLocalDateTimeToDate() {
@@ -30,18 +32,13 @@ public class DateUtilsTest {
     
     @Test
     public void testConcurrentLocalDateTimeToDate() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             LocalDateTime localDateTime = LocalDateTime.now();
             
-            //then
-            assertThat(DateUtils.localDateTimeToDate(localDateTime), not(equalTo(nullValue())));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            // then
+            return DateUtils.localDateTimeToDate(localDateTime) != null;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
@@ -55,17 +52,12 @@ public class DateUtilsTest {
     
     @Test
     public void testConcurrentLocalDateToDate() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
-            LocalDate localDate = LocalDate.now();
+            LocalDateTime localDateTime = LocalDateTime.now();
             
-            //then
-            assertThat(DateUtils.localDateToDate(localDate), not(equalTo(nullValue())));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            // then
+            return DateUtils.localDateTimeToDate(localDateTime) != null;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 }

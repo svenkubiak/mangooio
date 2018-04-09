@@ -6,7 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +19,6 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
-import io.mangoo.test.utils.ConcurrentTester;
 import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.DateUtils;
 
@@ -26,6 +28,7 @@ import io.mangoo.utils.DateUtils;
  *
  */
 public class CookieParserTest {
+    private static int THREADS = 500;
     private static String sessionCookie = "";
     private static String authenticationCookie = "";
     private static String sessionCookieEncrypted = "";
@@ -77,20 +80,15 @@ public class CookieParserTest {
     
     @Test
     public void testValidSessionConcurrent() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             final CookieParser cookieParser = CookieParser.build()
                     .withContent(sessionCookie)
                     .isEncrypted(false);
-
-            //then
-            assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            
+            // then
+            return cookieParser.hasValidSessionCookie();
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 
     @Test
@@ -106,20 +104,15 @@ public class CookieParserTest {
     
     @Test
     public void testValidSessionWithEncryptionConcurrent() throws InterruptedException {
-        Runnable runnable = () -> {
+        MatcherAssert.assertThat(t -> {
             //given
             final CookieParser cookieParser = CookieParser.build()
                     .withContent(sessionCookieEncrypted)
                     .isEncrypted(true);
-
-            //then
-            assertThat(cookieParser.hasValidSessionCookie(), equalTo(true));
-        };
-        
-        ConcurrentTester.create()
-        .withRunnable(runnable)
-        .withThreads(50)
-        .run();
+            
+            // then
+            return cookieParser.hasValidSessionCookie();
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
     
     @Test
