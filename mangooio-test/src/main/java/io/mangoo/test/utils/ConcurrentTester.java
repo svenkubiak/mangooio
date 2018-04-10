@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 
  * @author svenkubiak
- * @depracted as of version 4.12.0, use RunsInThreads from org.cactoos.cactoos instead
+ * @deprecated as of version 4.12.0, use RunsInThreads from org.cactoos.cactoos instead
  *
  */
 @Deprecated
