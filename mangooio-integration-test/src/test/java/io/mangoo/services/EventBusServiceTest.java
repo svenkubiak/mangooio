@@ -60,6 +60,6 @@ public class EventBusServiceTest {
             
             // then
             return testListener.getCount() > 0;
-        }, new RunsInThreads<>(new AtomicInteger(), 500));
+        }, new RunsInThreads<>(new AtomicInteger(), 100));
     }
 }

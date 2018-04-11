@@ -19,7 +19,7 @@ import org.junit.Test;
  *
  */
 public class DateUtilsTest {
-    private static final int THREADS = 500;
+    private static final int THREADS = 100;
     
     @Test
     public void testLocalDateTimeToDate() {

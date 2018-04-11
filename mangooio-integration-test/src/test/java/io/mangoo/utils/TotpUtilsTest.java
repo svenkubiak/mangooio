@@ -22,7 +22,7 @@ import io.mangoo.enums.HmacShaAlgorithm;
 public class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;
-	private static final int THREADS = 500;
+	private static final int THREADS = 100;
 
 	@Test
 	public void testCreateKey() {

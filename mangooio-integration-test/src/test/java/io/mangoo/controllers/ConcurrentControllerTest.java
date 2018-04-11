@@ -35,6 +35,6 @@ public class ConcurrentControllerTest {
             
             // then
             return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid + ";Parker;24");
-        }, new RunsInThreads<>(new AtomicInteger(), 250));
+        }, new RunsInThreads<>(new AtomicInteger(), 100));
     }
 }

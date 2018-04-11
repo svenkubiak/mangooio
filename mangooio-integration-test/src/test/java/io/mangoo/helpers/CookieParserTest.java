@@ -28,7 +28,7 @@ import io.mangoo.utils.DateUtils;
  *
  */
 public class CookieParserTest {
-    private static int THREADS = 500;
+    private static int THREADS = 100;
     private static String sessionCookie = "";
     private static String authenticationCookie = "";
     private static String sessionCookieEncrypted = "";

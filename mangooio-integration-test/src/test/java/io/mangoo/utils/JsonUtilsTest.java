@@ -22,7 +22,7 @@ import io.mangoo.models.Car;
  *
  */
 public class JsonUtilsTest {
-    private static final int THREADS = 150;
+    private static final int THREADS = 100;
     private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test

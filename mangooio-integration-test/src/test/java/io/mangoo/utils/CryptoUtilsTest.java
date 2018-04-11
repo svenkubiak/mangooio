@@ -19,7 +19,7 @@ import org.junit.Test;
 public class CryptoUtilsTest {
     private static final String VALID_SECRET = "jklfdjskjfkldsnjkvbnxjk<fbufsjkfdsjkfdhsjkfdvcxvcx";
     private static final String INVALID_SECRET = "fdsfdsf";
-    private static final int THREADS = 500;
+    private static final int THREADS = 100;
 
     @Test
     public void testGetSizedKey() {
