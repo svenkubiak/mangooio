@@ -82,10 +82,10 @@ public class Config {
         try {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
-                LOG.info("Loading application configuration from " + path + " in classpath");
+                LOG.info("Loading application configuration from {} in classpath", path);
             } else {
                 inputStream = new FileInputStream(new File(path)); //NOSONAR
-                LOG.info("Loading application configuration from: " + path);
+                LOG.info("Loading application configuration from: {}", path);
             }
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);

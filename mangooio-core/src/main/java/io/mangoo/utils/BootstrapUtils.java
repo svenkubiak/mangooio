@@ -143,7 +143,7 @@ public final class BootstrapUtils {
         }
 
         if (!exists) {
-            LOG.error("Could not find controller method '" + controllerMethod + "' in controller class '" + controllerClass.getSimpleName() + "'");
+            LOG.error("Could not find controller method '{}' in controller class '{}'", controllerMethod, controllerClass.getSimpleName());
         }
 
         return exists;

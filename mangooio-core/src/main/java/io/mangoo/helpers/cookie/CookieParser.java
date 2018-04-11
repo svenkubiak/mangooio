@@ -20,18 +20,17 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
-import io.mangoo.routing.handlers.DispatcherHandler;
 
 /**
  *
  * @author svenkubiak
  * 
  * @deprecated As of 4.12.0 without replacement, will be removed in 5.0.0
- * Use io.mangoo.helper.CookieParser instead
+ * Use io.mangoo.helpers.CookieParser instead
  */
 @Deprecated
 public class CookieParser {
-    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final Logger LOG = LogManager.getLogger(CookieParser.class);
     private Map<String, String> sessionValues = new HashMap<>();
     private String value;
     private String authenticityToken;

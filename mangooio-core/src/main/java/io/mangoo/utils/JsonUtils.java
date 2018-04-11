@@ -13,7 +13,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.enums.Required;
-import io.mangoo.routing.handlers.DispatcherHandler;
 
 /**
  * 
@@ -21,7 +20,7 @@ import io.mangoo.routing.handlers.DispatcherHandler;
  *
  */
 public final class JsonUtils {
-    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
     private static ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.setSerializationInclusion(Include.NON_NULL);

@@ -11,7 +11,6 @@ import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-import io.mangoo.admin.AdminController;
 import io.mangoo.i18n.Messages;
 
 /**
@@ -21,7 +20,7 @@ import io.mangoo.i18n.Messages;
  */
 @SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
-    private static final Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;
     private final Messages messages;
 
@@ -44,7 +43,7 @@ public class I18nMethod implements TemplateMethodModelEx {
                 } else if (object instanceof SimpleNumber) {
                     strings.add(object.toString());
                 } else {
-                    LOG.warn("Argument can only be of type SimpleScalar or SimpleNumber. Is: " + object.getClass());
+                    LOG.warn("Argument can only be of type SimpleScalar or SimpleNumber. Is: {}", object.getClass());
                 }
             }
 

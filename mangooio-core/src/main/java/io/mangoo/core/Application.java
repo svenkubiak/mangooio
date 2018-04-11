@@ -599,9 +599,9 @@ public final class Application {
                         } catch (MangooSchedulerException e) {
                             LOG.error("Failed to add a job to the scheduler", e);
                         }
-                        LOG.info("Successfully scheduled job " + clazz.getName() + " with cron " + schedule.cron());
+                        LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
                     } else {
-                        LOG.error("Invalid or missing cron expression for job: " + clazz.getName());
+                        LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
                         error = true;
                     }
                 }

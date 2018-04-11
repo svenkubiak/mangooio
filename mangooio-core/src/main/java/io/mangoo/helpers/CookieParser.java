@@ -22,7 +22,6 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
-import io.mangoo.routing.handlers.DispatcherHandler;
 
 /**
  *
@@ -30,7 +29,7 @@ import io.mangoo.routing.handlers.DispatcherHandler;
  *
  */
 public class CookieParser {
-    private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
+    private static final Logger LOG = LogManager.getLogger(CookieParser.class);
     private Map<String, String> sessionValues = new HashMap<>();
     private String value;
     private String authenticityToken;
