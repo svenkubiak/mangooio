@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,7 +15,6 @@ import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
-import io.mangoo.models.JsonWebToken;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -31,7 +29,6 @@ import io.undertow.util.HttpString;
 public class Request extends Validator {
     private static final long serialVersionUID = 1901891944955577394L;
     private transient HttpServerExchange httpServerExchange;
-    private transient JsonWebToken jsonWebToken;
     private transient Session session;
     private transient Authentication authentication;
     private Map<String, Cookie> cookies;
@@ -298,23 +295,6 @@ public class Request extends Validator {
      */
     public Map<String, Object> getAttributes() {
         return this.attributes;
-    }
-    
-    /**
-     * Set a Json Web Token to the request
-     * @param jsonWebToken The Json Web Token
-     */
-    public void setJsonWebToken(JsonWebToken jsonWebToken) {
-        if (this.jsonWebToken == null) {
-            this.jsonWebToken = jsonWebToken;
-        }
-    }
-    
-    /**
-     * @return The validated Json Web Token if present
-     */
-    public Optional<JsonWebToken> getJsonWebToken() {
-        return Optional.ofNullable(this.jsonWebToken);
     }
     
     private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {

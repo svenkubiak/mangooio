@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,11 +18,19 @@ import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocket.Connection;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.keys.HmacKey;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.base.Charsets;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.ClaimKey;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 
@@ -31,9 +41,6 @@ import io.undertow.websockets.core.WebSockets;
  */
 public class WebSocketServiceTest {
     private static String eventData;
-    private static final String COOKIE_NAME = "TEST-AUTH";
-    private static final String VALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooio";
-    private static final String INVALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooiO";
 
     @Test
     public void testAddChannel() {
@@ -159,9 +166,20 @@ public class WebSocketServiceTest {
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
 
+        JwtClaims jwtClaims = new JwtClaims();
+        jwtClaims.setSubject("foo");
+        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
+        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        
+        JsonWebSignature jsonWebSignature = new JsonWebSignature();
+        jsonWebSignature.setKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
+        jsonWebSignature.setPayload(jwtClaims.toJson());
+        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+        
         //when
         final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(COOKIE_NAME, VALID_COOKIE_VALUE);
+        client.getCookies().put(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization());
         client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
@@ -206,10 +224,21 @@ public class WebSocketServiceTest {
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
         final String data = "Server sent data with authentication FTW!";
         eventData = null;
+        
+        JwtClaims jwtClaims = new JwtClaims();
+        jwtClaims.setSubject("foo");
+        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
+        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        
+        JsonWebSignature jsonWebSignature = new JsonWebSignature();
+        jsonWebSignature.setKey(new HmacKey("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8)));
+        jsonWebSignature.setPayload(jwtClaims.toJson());
+        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(COOKIE_NAME, INVALID_COOKIE_VALUE);
+        client.getCookies().put(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization());
         client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {

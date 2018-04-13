@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -21,11 +23,20 @@ import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.keys.HmacKey;
+import org.jose4j.lang.JoseException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.common.base.Charsets;
+
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.enums.ClaimKey;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
 /**
@@ -35,9 +46,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  */
 public class ServerSentEventServiceTest {
     private static String eventData;
-    private static final String COOKIE_NAME = "TEST-AUTH";
-    private static final String VALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooio";
-    private static final String INVALID_COOKIE_VALUE = "3372c6783fa8d223c700e9903b4e8037db710b4b60ee2ca129465fa0a12e0a0b1860019962ae04e4b329e4da03ce09eb347c97b5598085cc8530213b9b82f91f|2999-11-11T11:11:11.111|0#mangooiO";
     
     @Test
     public void testAddConnection() {
@@ -113,26 +121,35 @@ public class ServerSentEventServiceTest {
 	}
 
     @Test
-    public void testSendDataWithValidAuthentication() throws InterruptedException {
+    public void testSendDataWithValidAuthentication() throws InterruptedException, IllegalArgumentException, JoseException {
         //given
         final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
+        
+        JwtClaims jwtClaims = new JwtClaims();
+        jwtClaims.setSubject("foo");
+        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
+        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        
+        JsonWebSignature jsonWebSignature = new JsonWebSignature();
+        jsonWebSignature.setKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
+        jsonWebSignature.setPayload(jwtClaims.toJson());
+        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
         //when
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
                 .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-
-        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, VALID_COOKIE_VALUE));
+        
+        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization()));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
         final EventListener listener = new EventListener() {
             @Override
             public void onEvent(InboundEvent inboundEvent) {
-                if (StringUtils.isBlank(eventData)) {
-                    eventData = inboundEvent.readData(String.class);
-                }
+                eventData = inboundEvent.readData(String.class);
             }
         };
         eventSource.register(listener);
@@ -145,11 +162,22 @@ public class ServerSentEventServiceTest {
     }
 
     @Test
-    public void testSendDataWithInvalidAuthentication() throws InterruptedException {
+    public void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, JoseException {
         //given
         final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
+        
+        JwtClaims jwtClaims = new JwtClaims();
+        jwtClaims.setSubject("foo");
+        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
+        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
+        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        
+        JsonWebSignature jsonWebSignature = new JsonWebSignature();
+        jsonWebSignature.setKey(new HmacKey("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8)));
+        jsonWebSignature.setPayload(jwtClaims.toJson());
+        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
         //when
         final WebTarget target = ClientBuilder.newBuilder()
@@ -157,7 +185,7 @@ public class ServerSentEventServiceTest {
                 .build()
                 .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
-        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(COOKIE_NAME, INVALID_COOKIE_VALUE));
+        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization()));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
         final EventListener listener = new EventListener() {
             @Override

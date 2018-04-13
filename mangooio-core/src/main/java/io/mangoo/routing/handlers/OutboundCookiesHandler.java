@@ -1,17 +1,23 @@
 package io.mangoo.routing.handlers;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.keys.HmacKey;
+import org.jose4j.lang.JoseException;
 
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
@@ -23,7 +29,6 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.DateUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -35,6 +40,7 @@ import io.undertow.server.handlers.CookieImpl;
  *
  */
 public class OutboundCookiesHandler implements HttpHandler {
+    private static final Logger LOG = LogManager.getLogger(OutboundCookiesHandler.class);
     private static final String SAME_SITE_MODE = "Strict";
     private Attachment attachment;
     private Config config;
@@ -64,31 +70,37 @@ public class OutboundCookiesHandler implements HttpHandler {
         Session session = this.attachment.getSession();
         
         if (session != null && session.hasChanges()) {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
-            claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
-            claims.put(ClaimKey.DATA.toString(), session.getValues());
-
-            final LocalDateTime expires = session.getExpires();
-            String jwt = Jwts.builder()
-                    .setClaims(claims)
-                    .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8))
-                    .compact();
-
-            if (this.config.isSessionCookieEncrypt()) {
-                jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getSessionCookieEncryptionKey());
-            }
+            Instant instant = session.getExpires().atZone(ZoneId.systemDefault()).toInstant();
             
-            final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
-                .setValue(jwt)
-                .setSameSite(true)
-                .setSameSiteMode(SAME_SITE_MODE)
-                .setHttpOnly(true)
-                .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))
-                .setSecure(this.config.isSessionCookieSecure());
+            JwtClaims jwtClaims = new JwtClaims();
+            jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
+            jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getSessionCookieVersion());
+            jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
+            jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
+            
+            JsonWebSignature jsonWebSignature = new JsonWebSignature();
+            jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)));
+            jsonWebSignature.setPayload(jwtClaims.toJson());
+            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
-            exchange.setResponseCookie(cookie);
+            //FIX ME: Need additonal code for encryption
+//          if (this.config.isSessionCookieEncrypt()) {
+//              jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getSessionCookieEncryptionKey());
+//          }
+            
+            try {
+                final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
+                        .setValue(jsonWebSignature.getCompactSerialization())
+                        .setSameSite(true)
+                        .setSameSiteMode(SAME_SITE_MODE)
+                        .setHttpOnly(true)
+                        .setExpires(Date.from(instant))
+                        .setSecure(this.config.isSessionCookieSecure());
+
+                exchange.setResponseCookie(cookie);
+            } catch (JoseException e) {
+                LOG.error("Failed to generate session cookie", e);
+            }
         }
     }
 
@@ -101,10 +113,9 @@ public class OutboundCookiesHandler implements HttpHandler {
         Authentication authentication = this.attachment.getAuthentication();
         
         if (authentication != null && authentication.hasAuthenticatedUser()) {
-            Cookie cookie;
             final String cookieName = this.config.getAuthenticationCookieName();
             if (authentication.isLogout()) {
-                cookie = exchange.getRequestCookies().get(cookieName)
+                Cookie cookie = exchange.getRequestCookies().get(cookieName)
                     .setSecure(this.config.isAuthenticationCookieSecure())
                     .setHttpOnly(true)
                     .setPath("/")
@@ -112,33 +123,46 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setSameSite(true)
                     .setSameSiteMode(SAME_SITE_MODE)
                     .setDiscard(true);
+                
+                exchange.setResponseCookie(cookie);
             } else {
-                Map<String, Object> claims = new HashMap<>();
-                claims.put(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
-                claims.put(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
-                
-                final LocalDateTime expires = authentication.isRememberMe() ? LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()) : authentication.getExpires();
-                String jwt = Jwts.builder()
-                        .setClaims(claims)
-                        .setSubject(authentication.getAuthenticatedUser())
-                        .setExpiration(DateUtils.localDateTimeToDate(expires))
-                        .signWith(SignatureAlgorithm.HS512, this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8))
-                        .compact();
-                
-                if (this.config.isAuthenticationCookieEncrypt()) {
-                    jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getAuthenticationCookieEncryptionKey());
+                Instant instant;
+                if (authentication.isRememberMe()) {
+                    instant = LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()).atZone(ZoneId.systemDefault()).toInstant();
+                } else {
+                    instant = authentication.getExpires().atZone(ZoneId.systemDefault()).toInstant();
                 }
+                
+                JwtClaims jwtClaims = new JwtClaims();
+                jwtClaims.setSubject(authentication.getAuthenticatedUser());
+                jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
+                jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
+                jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
+                
+                JsonWebSignature jsonWebSignature = new JsonWebSignature();
+                jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
+                jsonWebSignature.setPayload(jwtClaims.toJson());
+                jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+                
+                //FIX ME Need additional code for encryption
+//                if (this.config.isAuthenticationCookieEncrypt()) {
+//                    jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getAuthenticationCookieEncryptionKey());
+//                }
 
-                cookie = new CookieImpl(cookieName)
-                        .setValue(jwt)
-                        .setSecure(this.config.isAuthenticationCookieSecure())
-                        .setHttpOnly(true)
-                        .setSameSite(true)
-                        .setSameSiteMode(SAME_SITE_MODE)
-                        .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+                try {
+                    Cookie cookie = new CookieImpl(cookieName)
+                            .setValue(jsonWebSignature.getCompactSerialization())
+                            .setSecure(this.config.isAuthenticationCookieSecure())
+                            .setHttpOnly(true)
+                            .setSameSite(true)
+                            .setSameSiteMode(SAME_SITE_MODE)
+                            .setExpires(Date.from(instant));
+
+                    exchange.setResponseCookie(cookie);
+                } catch (JoseException e) {
+                    LOG.error("Failed to generate authentication cookie", e);
+                }
             }
-
-            exchange.setResponseCookie(cookie);
         }
     }
 
@@ -146,35 +170,41 @@ public class OutboundCookiesHandler implements HttpHandler {
      * Sets the flash cookie to current HttpServerExchange
      *
      * @param exchange The Undertow HttpServerExchange
+     * @throws MangooCookieException 
      */
     protected void setFlashCookie(HttpServerExchange exchange) {
         Flash flash = this.attachment.getFlash();
         Form form = this.attachment.getForm();
         
         if (flash != null && !flash.isDiscard() && (flash.hasContent() || form.flashify())) {
-            Map<String, Object> claims = new HashMap<>();
-            claims.put(ClaimKey.DATA.toString(), flash.getValues());
+            JwtClaims jwtClaims = new JwtClaims();
+            jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
             
             if (form.flashify()) {
-                claims.put(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
+                jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
             }
             
-            final LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
-            String jwt = Jwts.builder()
-                    .setClaims(claims)
-                    .setExpiration(DateUtils.localDateTimeToDate(expires))
-                    .signWith(SignatureAlgorithm.HS512, this.config.getApplicationSecret().getBytes(Charsets.UTF_8))
-                    .compact();
+            Instant instant = LocalDateTime.now().plusSeconds(60).atZone(ZoneId.systemDefault()).toInstant();
+            jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
             
-            final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
-                    .setValue(jwt)
-                    .setSecure(this.config.isFlashCookieSecure())
-                    .setHttpOnly(true)
-                    .setSameSite(true)
-                    .setSameSiteMode(SAME_SITE_MODE)
-                    .setExpires(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()));
+            JsonWebSignature jsonWebSignature = new JsonWebSignature();
+            jsonWebSignature.setKey(new HmacKey(this.config.getApplicationSecret().getBytes(Charsets.UTF_8)));
+            jsonWebSignature.setPayload(jwtClaims.toJson());
+            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
-            exchange.setResponseCookie(cookie);
+            try {
+                final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
+                        .setValue(jsonWebSignature.getCompactSerialization())
+                        .setSecure(this.config.isFlashCookieSecure())
+                        .setHttpOnly(true)
+                        .setSameSite(true)
+                        .setSameSiteMode(SAME_SITE_MODE)
+                        .setExpires(Date.from(instant));
+                
+                exchange.setResponseCookie(cookie);
+            } catch (JoseException e) {
+                LOG.error("Failed to generate flash cookie", e);
+            }
         } else {
             final Cookie cookie = exchange.getRequestCookies().get(this.config.getFlashCookieName());
             if (cookie != null) {

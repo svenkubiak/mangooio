@@ -11,12 +11,8 @@
 default:
     application:
         name       : TEST
-        secret     : myvoiceismypasswordmyvoiceismypassword
+        secret     : Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvv
         language   : en
-        jwt        :
-            signkey       : myvoiceismypasswordmyvoiceismypassword
-            encrypt       : true
-            encryptionkey : myvoiceismypasswordmyvoiceismypa
         timer      : true
         minify:
             js        : true
@@ -33,15 +29,18 @@ default:
             port      : 9899
     session:
        cookie:
+          name: test-session
           encrypt: true
+          signkey: cPg4dO20cdvYw6sWn0g9L15RPYZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
     metrics:
        enable: true
     authentication:
         redirect  : /login
         cookie:
-            name    : TEST-AUTH
+            name    : test-authentication
             encrypt : false
             expires : 3600
+            signkey : 2GC5DKQCTd7ysQ8C6eSQbdtiNHvH6obfo1ISDxj3KpuH6BkpKOIIgUhR2UA7TgmK
     oauth:
         twitter:
             key       : ###
@@ -55,10 +54,6 @@ default:
             key       : ###
             secret    : ###
             callback  : http://localhost:50000/authenticate?oauth=facebook
-    cookie:
-        name       : TEST-SESSION
-        expires    : 86400
-        encryption : true
     smtp:
         host       : localhost
         port       : 25

@@ -2,8 +2,6 @@ package io.mangoo.helpers;
 
 import java.net.URI;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -12,20 +10,27 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.keys.HmacKey;
 
 import com.github.scribejava.apis.FacebookApi;
 import com.github.scribejava.apis.GoogleApi20;
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuthService;
+import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
@@ -41,10 +46,8 @@ import io.undertow.security.handlers.SecurityInitialHandler;
 import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.AttachmentKey;
-import io.undertow.util.Cookies;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
@@ -55,13 +58,10 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public class RequestHelper {
+    private static final Logger LOG = LogManager.getLogger(RequestHelper.class);
     public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
-    private static final int AUTH_PREFIX_LENGTH = 3;
-    private static final int INDEX_0 = 0;
-    private static final int INDEX_1 = 1;
-    private static final int INDEX_2 = 2;
 
     /**
      * Converts request and query parameter into a single map
@@ -185,47 +185,40 @@ public class RequestHelper {
     /**
      * Checks if the given header contains a valid authentication
      *
-     * @param cookieHeader The header to parse
+     * @param cookie The cookie to parse
      * @return True if the cookie contains a valid authentication, false otherwise
      */
-    public boolean hasValidAuthentication(String cookieHeader) {
-        boolean validAuthentication = false;
-        if (StringUtils.isNotBlank(cookieHeader)) {
-            final Map<String, Cookie> cookies = Cookies.parseRequestCookies(1, false, Arrays.asList(cookieHeader));
-
+    public boolean hasValidAuthentication(String cookie) {
+        boolean valid = false;
+        if (StringUtils.isNotBlank(cookie)) {
             Config config = Application.getInstance(Config.class);
-            String cookieValue = cookies.get(config.getAuthenticationCookieName()).getValue();
-            if (StringUtils.isNotBlank(cookieValue) && !("null").equals(cookieValue)) {
-                if (config.isAuthenticationCookieEncrypt()) {
-                    cookieValue = Application.getInstance(Crypto.class).decrypt(cookieValue);
+
+            String value = null;
+            String [] contents = cookie.split(";");
+            for (String content : contents) {
+                if (StringUtils.isNotBlank(content) && content.startsWith(config.getAuthenticationCookieName())) {
+                    value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
                 }
-
-                String sign = null;
-                String expires = null;
-                String version = null;
-                final String prefix = StringUtils.substringBefore(cookieValue, Default.DATA_DELIMITER.toString());
-
-                if (StringUtils.isNotBlank(prefix)) {
-                    final String [] prefixes = prefix.split("\\" + Default.DELIMITER.toString());
-                    if (prefixes != null && prefixes.length == AUTH_PREFIX_LENGTH) {
-                        sign = prefixes [INDEX_0];
-                        expires = prefixes [INDEX_1];
-                        version = prefixes [INDEX_2];
-                    }
-                }
-
-                if (StringUtils.isNotBlank(sign) && StringUtils.isNotBlank(expires)) {
-                    final String authenticatedUser = cookieValue.substring(cookieValue.indexOf(Default.DATA_DELIMITER.toString()) + 1, cookieValue.length());
-                    final LocalDateTime expiresDate = LocalDateTime.parse(expires);
-
-                    if (LocalDateTime.now().isBefore(expiresDate) && DigestUtils.sha512Hex(authenticatedUser + expires + version + config.getApplicationSecret()).equals(sign)) {
-                        validAuthentication = true;
-                    }
+            }
+            
+            if (StringUtils.isNotBlank(value)) {
+                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                        .setRequireExpirationTime()
+                        .setRequireSubject()
+                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)))
+                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+                        .build();
+                
+                try {
+                    jwtConsumer.processToClaims(value);
+                    valid = true;
+                } catch (InvalidJwtException e) {
+                    LOG.error("Failed to parse authentication cookie", e);
                 }
             }
         }
 
-        return validAuthentication;
+        return valid;
     }
 
     /**
