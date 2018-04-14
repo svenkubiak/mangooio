@@ -300,33 +300,6 @@ public class ConfigTest {
         assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE.toString()));
         assertThat(yaml.delete(), equalTo(true));
     }  
-    
-    @Test
-    public void testIsAuthentcationCookieEncrypt() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String encrypt = "true";
-
-        // when
-        Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("encrypt", encrypt)));
-        File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
-        
-        // then
-        assertThat(config.isAuthenticationCookieEncrypt(), equalTo(Boolean.valueOf(encrypt)));
-        assertThat(yaml.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsAuthentcationCookieEncryptDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // when
-        Map<Object, Object> configValues = new HashMap<>();
-        File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
-
-        // then
-        assertThat(config.isAuthenticationCookieEncrypt(), equalTo(Default.AUTHENTICATION_COOKIE_ENCRYPT.toBoolean()));
-        assertThat(yaml.delete(), equalTo(true));
-    } 
 
     @Test
     public void testGetAuthenticationCookieVersion() throws JsonGenerationException, JsonMappingException, IOException {
@@ -451,33 +424,6 @@ public class ConfigTest {
         
         // then
         assertThat(config.getSchedulerPackage(), equalTo(schedulerPackage));
-        assertThat(yaml.delete(), equalTo(true));
-    }  
-    
-    @Test
-    public void testIsSessionCookieEncrypt() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String encrypt = "true";
-
-        // when
-        Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("encrypt", encrypt)));
-        File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
-        
-        // then
-        assertThat(config.isSessionCookieEncrypt(), equalTo(Boolean.valueOf(encrypt)));
-        assertThat(yaml.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsSessionCookieEncryptDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // when
-        Map<Object, Object> configValues = new HashMap<>();
-        File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
-
-        // then
-        assertThat(config.isSessionCookieEncrypt(), equalTo(Default.SESSION_COOKIE_ENCRYPT.toBoolean()));
         assertThat(yaml.delete(), equalTo(true));
     }  
     

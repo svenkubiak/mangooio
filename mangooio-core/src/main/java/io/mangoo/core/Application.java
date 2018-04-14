@@ -314,14 +314,14 @@ public final class Application {
                 LOG.warn(warning);
             }
             
-            if (config.isAuthenticationCookieEncrypt() && !CryptoUtils.isValidSecret(config.getAuthenticationCookieEncryptionKey())) {
-                String warning = "Authentication cookie encryption is enabled and encryption key is not a valid secret. A valid secret has to be at least 32 characters.";
+            if (!CryptoUtils.isValidSecret(config.getAuthenticationCookieEncryptionKey())) {
+                String warning = "Authentication cookie encryption is not a valid secret. A valid secret has to be at least 64 characters.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            if (config.isAuthenticationCookieEncrypt() && config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Authentication cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+            if (config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                String warning = "Authentication cookie encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
@@ -344,14 +344,26 @@ public final class Application {
                 LOG.warn(warning);
             }
             
-            if (config.isSessionCookieEncrypt() && !CryptoUtils.isValidSecret(config.getSessionCookieEncryptionKey())) {
-                String warning = "Session cookie encryption is enabled and encryption key is not a valid secret. A valid secret has to be at least 32 characters.";
+            if (!CryptoUtils.isValidSecret(config.getSessionCookieEncryptionKey())) {
+                String warning = "Session cookie encryption key is not a valid secret. A valid secret has to be at least 64 characters.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            if (config.isSessionCookieEncrypt() && config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Session cookie encryption is enabled and encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+            if (config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                String warning = "Session cookie encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (!CryptoUtils.isValidSecret(config.getFlashCookieEncryptionKey())) {
+                String warning = "Flash cookie encryption key is not a valid secret. A valid secret has to be at least 64 characters.";
+                warnings.add(warning);
+                LOG.warn(warning);
+            }
+            
+            if (config.getFlashCookieEncryptionKey().equals(config.getApplicationSecret())) {
+                String warning = "Flash cookie encryption is using application secret. It is highly recommend to set a dedicated value to flash.cookie.encryptionkey.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }

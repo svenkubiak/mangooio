@@ -74,13 +74,12 @@ public enum Key {
     @Deprecated /** Use AUTHENTICATION_REDIRECT instead **/
     AUTH_REDIRECT("auth.redirect"),
     
-    AUTHENTICATION_COOKIE_ENCRYPT("authentication.cookie.encrypt"),
+    AUTHENTICATION_COOKIE_ENCRYPTIONKEY("authentication.cookie.encryptionkey"),
     AUTHENTICATION_COOKIE_EXPIRES("authentication.cookie.expires"),
     AUTHENTICATION_COOKIE_NAME("authentication.cookie.name"),
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("authentication.cookie.remember.expires"),
     AUTHENTICATION_COOKIE_SECURE("authentication.cookie.secure"),
     AUTHENTICATION_COOKIE_SIGNKEY("authentication.cookie.signkey"),
-    AUTHENTICATION_COOKIE_ENCRYPTIONKEY("authentication.cookie.encryptionkey"),
     AUTHENTICATION_COOKIE_VERSION("authentication.cookie.version"),
     AUTHENTICATION_LOCK("authentication.lock"),
     AUTHENTICATION_REDIRECT("authentication.redirect"),
@@ -106,6 +105,8 @@ public enum Key {
     
     @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
     COOKIE_VERSION("cookie.version"),
+    FLASH_COOKIE_ENCRYPTIONKEY("flash.cookie.encryptionkey"),
+    FLASH_COOKIE_SIGNKEY("flash.cookie.signkey"),
     I18N_COOKIE_NAME("i18n.cookie.name"),
     LOGGER_MESSAGE("logger.configuration.message"),
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
@@ -121,7 +122,6 @@ public enum Key {
     OAUTH_TWITTER_SECRET("oauth.twitter.secret"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_PACKAGE("scheduler.package"),
-    SESSION_COOKIE_ENCRYPT("session.cookie.encrypt"),
     SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
     SESSION_COOKIE_EXPIRES("session.cookie.expires"),
     SESSION_COOKIE_NAME("session.cookie.name"),

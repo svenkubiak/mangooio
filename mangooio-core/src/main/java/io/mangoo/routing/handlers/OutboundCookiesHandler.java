@@ -83,14 +83,11 @@ public class OutboundCookiesHandler implements HttpHandler {
             jsonWebSignature.setPayload(jwtClaims.toJson());
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
-            //FIX ME: Need additonal code for encryption
-//          if (this.config.isSessionCookieEncrypt()) {
-//              jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getSessionCookieEncryptionKey());
-//          }
-            
             try {
+                String jwt = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
+                
                 final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
-                        .setValue(jsonWebSignature.getCompactSerialization())
+                        .setValue(jwt)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
@@ -144,14 +141,11 @@ public class OutboundCookiesHandler implements HttpHandler {
                 jsonWebSignature.setPayload(jwtClaims.toJson());
                 jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
                 
-                //FIX ME Need additional code for encryption
-//                if (this.config.isAuthenticationCookieEncrypt()) {
-//                    jwt = this.attachment.getCrypto().encrypt(jwt, this.config.getAuthenticationCookieEncryptionKey());
-//                }
-
                 try {
+                    String jwt = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
+                    
                     Cookie cookie = new CookieImpl(cookieName)
-                            .setValue(jsonWebSignature.getCompactSerialization())
+                            .setValue(jwt)
                             .setSecure(this.config.isAuthenticationCookieSecure())
                             .setHttpOnly(true)
                             .setSameSite(true)
@@ -188,13 +182,15 @@ public class OutboundCookiesHandler implements HttpHandler {
             jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
-            jsonWebSignature.setKey(new HmacKey(this.config.getApplicationSecret().getBytes(Charsets.UTF_8)));
+            jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)));
             jsonWebSignature.setPayload(jwtClaims.toJson());
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
             try {
+                String jwt = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
+                
                 final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
-                        .setValue(jsonWebSignature.getCompactSerialization())
+                        .setValue(jwt)
                         .setSecure(this.config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)

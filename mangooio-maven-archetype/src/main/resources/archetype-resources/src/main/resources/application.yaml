@@ -38,6 +38,11 @@ default:
         encryption    : false
         signkey       : session.cookie.signkey
         encryptionkey : session.cookie.encryptionkey
+    flash:
+      cookie:
+        name          : ${application-name}-flash
+        signkey       : flash.cookie.signkey
+        encryptionkey : flash.cookie.encryptionkey        
     smtp:
         host          : localhost
         port          : 25

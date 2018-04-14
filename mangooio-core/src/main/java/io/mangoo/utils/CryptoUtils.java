@@ -20,6 +20,7 @@ public final class CryptoUtils {
     private static final int MAX_PASSWORD_LENGTH = 256;
     private static final int MIN_PASSWORD_LENGTH = 0;
     private static final int MAX_KEY_LENGTH = 32;
+    private static final int MIN_KEY_LENGTH = 64;    
     private static final int KEYINDEX_START = 0;
     
     private CryptoUtils() {
@@ -52,7 +53,7 @@ public final class CryptoUtils {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         String key = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
 
-        return key.length() >= MAX_KEY_LENGTH;
+        return key.length() >= MIN_KEY_LENGTH;
     }
     
     /**

@@ -31,6 +31,7 @@ import com.google.common.net.MediaType;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
@@ -191,6 +192,7 @@ public class RequestHelper {
     public boolean hasValidAuthentication(String cookie) {
         boolean valid = false;
         if (StringUtils.isNotBlank(cookie)) {
+            Crypto crypto = Application.getInstance(Crypto.class);
             Config config = Application.getInstance(Config.class);
 
             String value = null;
@@ -198,19 +200,21 @@ public class RequestHelper {
             for (String content : contents) {
                 if (StringUtils.isNotBlank(content) && content.startsWith(config.getAuthenticationCookieName())) {
                     value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
+                    value = value.replaceAll("\"", "");
                 }
             }
             
             if (StringUtils.isNotBlank(value)) {
+                String jwt = crypto.decrypt(value, config.getAuthenticationCookieEncryptionKey());
+                
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setRequireExpirationTime()
                         .setRequireSubject()
                         .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)))
                         .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                         .build();
-                
                 try {
-                    jwtConsumer.processToClaims(value);
+                    jwtConsumer.processToClaims(jwt);
                     valid = true;
                 } catch (InvalidJwtException e) {
                     LOG.error("Failed to parse authentication cookie", e);

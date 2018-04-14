@@ -494,13 +494,6 @@ public class Config {
     public String getAssetsPath() {
         return Default.ASSETS_PATH.toString();
     }
-    
-    /**
-     * @return authentication.cookie.encrypt from application.yaml or default value if undefined
-     */
-    public boolean isAuthenticationCookieEncrypt() {
-        return getBoolean(Key.AUTHENTICATION_COOKIE_ENCRYPT, Default.AUTHENTICATION_COOKIE_ENCRYPT.toBoolean());
-    }
 
     /**
      * @deprecated As of 4.8.0, replace by getAuthenticationCookieVersion
@@ -560,13 +553,6 @@ public class Config {
      */
     public String getSchedulerPackage() {
         return getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
-    }
-
-    /**
-     * @return session.cookie.encryption from application.yaml or default value if undefined
-     */
-    public boolean isSessionCookieEncrypt() {
-        return getBoolean(Key.SESSION_COOKIE_ENCRYPT, Default.SESSION_COOKIE_ENCRYPT.toBoolean());
     }
 
     /**
@@ -857,5 +843,19 @@ public class Config {
      */
     public String getAuthenticationCookieEncryptionKey() {
         return getString(Key.AUTHENTICATION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return flash.cookie.encryptionkey or application secret if undefined
+     */
+    public String getFlashCookieEncryptionKey() {
+        return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    }
+
+    /**
+     * @return flash.cookie.signkey or application secret if undefined
+     */
+    public String getFlashCookieSignKey() {
+        return getString(Key.FLASH_COOKIE_SIGNKEY, getApplicationSecret());
     }
 }

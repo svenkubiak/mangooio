@@ -36,6 +36,7 @@ import com.google.common.base.Charsets;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
@@ -137,14 +138,18 @@ public class ServerSentEventServiceTest {
         jsonWebSignature.setKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
         jsonWebSignature.setPayload(jwtClaims.toJson());
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+        
+        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
 
+        System.out.println("SSE jwt: " + jwt);
+        
         //when
         final WebTarget target = ClientBuilder.newBuilder()
                 .register(SseFeature.class)
                 .build()
                 .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
         
-        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization()));
+        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jwt));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
         final EventListener listener = new EventListener() {
             @Override
@@ -178,6 +183,8 @@ public class ServerSentEventServiceTest {
         jsonWebSignature.setKey(new HmacKey("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8)));
         jsonWebSignature.setPayload(jwtClaims.toJson());
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+        
+        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
 
         //when
         final WebTarget target = ClientBuilder.newBuilder()
@@ -185,7 +192,7 @@ public class ServerSentEventServiceTest {
                 .build()
                 .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
-        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization()));
+        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jwt));
         final EventSource eventSource = EventSource.target(customWebTarget).build();
         final EventListener listener = new EventListener() {
             @Override

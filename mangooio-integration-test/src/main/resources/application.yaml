@@ -11,7 +11,7 @@
 default:
     application:
         name       : TEST
-        secret     : Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvv
+        secret     : Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
         language   : en
         timer      : true
         minify:
@@ -30,8 +30,11 @@ default:
     session:
        cookie:
           name: test-session
-          encrypt: true
           signkey: cPg4dO20cdvYw6sWn0g9L15RPYZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+    flash:
+       cookie:
+          name: test-flash
+          signkey: 2GC5DKQCTd7ysQ8C6eSQbdtiNHvHu5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvd
     metrics:
        enable: true
     authentication:

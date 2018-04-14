@@ -30,6 +30,7 @@ import com.google.common.base.Charsets;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
@@ -177,9 +178,13 @@ public class WebSocketServiceTest {
         jsonWebSignature.setPayload(jwtClaims.toJson());
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
         
+        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
+        
+        System.out.println("input: " + jwt);
+        
         //when
         final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization());
+        client.getCookies().put(config.getAuthenticationCookieName(), jwt);
         client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {
@@ -235,10 +240,12 @@ public class WebSocketServiceTest {
         jsonWebSignature.setKey(new HmacKey("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8)));
         jsonWebSignature.setPayload(jwtClaims.toJson());
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+        
+        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
 
         //when
         final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(config.getAuthenticationCookieName(), jsonWebSignature.getCompactSerialization());
+        client.getCookies().put(config.getAuthenticationCookieName(), jwt);
         client.open(new URI(url), new WebSocket.OnTextMessage() {
             @Override
             public void onOpen(Connection connection) {

@@ -47,6 +47,7 @@ import io.undertow.server.handlers.Cookie;
  */
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
+    private Attachment attachment;
     private Config config;
     private Subject subject;
     private Form form;
@@ -58,14 +59,14 @@ public class InboundCookiesHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Attachment attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
-        attachment.setSession(getSessionCookie(exchange));
-        attachment.setAuthentication(getAuthenticationCookie(exchange));
-        attachment.setSubject(this.subject);
-        attachment.setFlash(getFlashCookie(exchange));
-        attachment.setForm(this.form);
+        this.attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
+        this.attachment.setSession(getSessionCookie(exchange));
+        this.attachment.setAuthentication(getAuthenticationCookie(exchange));
+        this.attachment.setSubject(this.subject);
+        this.attachment.setFlash(getFlashCookie(exchange));
+        this.attachment.setForm(this.form);
 
-        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
+        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, this.attachment);
         nextHandler(exchange);
     }
 
@@ -77,10 +78,11 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("unchecked")
     protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session = null;
-        //FIX ME Need additional code for decryption
         
         String cookie = getCookie(exchange, this.config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookie)) {
+            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getSessionCookieEncryptionKey());
+            
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
                     .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
@@ -88,7 +90,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     .build();
             
             try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
                 
                 session = Session.build()
                         .withContent(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))
@@ -114,10 +116,11 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = null;
-        //FIX ME Need additional code for decryption
         
         String cookie = getCookie(exchange, this.config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookie)) {
+            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getAuthenticationCookieEncryptionKey());
+            
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
                     .setRequireSubject()
@@ -126,8 +129,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     .build();
             
             try {
-                
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
                 
                 authentication = Application.getInstance(Authentication.class)
                         .withExpires(LocalDateTime.ofInstant(Instant.ofEpochMilli(jwtClaims.getExpirationTime().getValue()), ZoneId.systemDefault()))
@@ -160,14 +162,16 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookie = getCookie(exchange, this.config.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookie)) {
+            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getFlashCookieEncryptionKey());
+            
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
-                    .setVerificationKey(new HmacKey(this.config.getApplicationSecret().getBytes(Charsets.UTF_8)))
+                    .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                     .build();
             
             try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
                 final Map<String, String> values = jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class);
 
                 if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {
