@@ -52,7 +52,7 @@ public class ConfigTest {
         final Config config = Application.getInstance(Config.class);
 
         // then
-        assertThat(config.getFlashCookieName(), equalTo(Default.FLASH_COOKIE_NAME.toString()));
+        assertThat(config.getFlashCookieName(), equalTo("test-flash"));
     }
     
     @Test

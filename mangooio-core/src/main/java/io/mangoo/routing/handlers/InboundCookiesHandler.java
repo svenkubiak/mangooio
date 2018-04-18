@@ -162,8 +162,6 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookie = getCookie(exchange, this.config.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookie)) {
-            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getFlashCookieEncryptionKey());
-            
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
                     .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
@@ -171,7 +169,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     .build();
             
             try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
                 final Map<String, String> values = jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class);
 
                 if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {

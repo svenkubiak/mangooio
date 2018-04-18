@@ -140,8 +140,6 @@ public class ServerSentEventServiceTest {
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
         
         String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
-
-        System.out.println("SSE jwt: " + jwt);
         
         //when
         final WebTarget target = ClientBuilder.newBuilder()

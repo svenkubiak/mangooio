@@ -106,6 +106,7 @@ public enum Key {
     @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
     COOKIE_VERSION("cookie.version"),
     FLASH_COOKIE_ENCRYPTIONKEY("flash.cookie.encryptionkey"),
+    FLASH_COOKIE_NAME("flash.cookie.name"),
     FLASH_COOKIE_SIGNKEY("flash.cookie.signkey"),
     I18N_COOKIE_NAME("i18n.cookie.name"),
     LOGGER_MESSAGE("logger.configuration.message"),

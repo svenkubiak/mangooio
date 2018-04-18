@@ -180,8 +180,6 @@ public class WebSocketServiceTest {
         
         String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
         
-        System.out.println("input: " + jwt);
-        
         //when
         final WebSocketClient client = new WebSocketClient(factory);
         client.getCookies().put(config.getAuthenticationCookieName(), jwt);

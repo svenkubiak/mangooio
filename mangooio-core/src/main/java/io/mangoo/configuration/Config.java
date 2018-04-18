@@ -414,10 +414,10 @@ public class Config {
     }
 
     /**
-     * @return default name of flash cookie name
+     * @return flash.cookie.name or default value if undefined
      */
     public String getFlashCookieName() {
-        return Default.FLASH_COOKIE_NAME.toString();
+        return getString(Key.FLASH_COOKIE_NAME, Default.FLASH_COOKIE_NAME.toString());
     }
 
     /**
