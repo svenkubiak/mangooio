@@ -41,8 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.sun.nio.file.SensitivityWatchEventModifier; //NOSONAR
-
 import io.mangoo.enums.Suffix;
 import io.mangoo.utils.MinificationUtils;
 
@@ -95,24 +93,6 @@ public class Watcher implements Runnable {
         });
     }
 
-    /**
-     *
-     * USUALLY THIS IS THE DEFAULT WAY TO REGISTER THE EVENTS:
-     *
-     * WatchKey watchKey = path.register(
-     *    watchService,
-     *    ENTRY_CREATE,
-     *    ENTRY_DELETE,
-     *    ENTRY_MODIFY);
-     *
-     *  BUT THIS IS DAMN SLOW (at least on a Mac)
-     *  THEREFORE WE USE EVENTS FROM COM.SUN PACKAGES THAT ARE WAY FASTER
-     *  THIS MIGHT BREAK COMPATIBILITY WITH OTHER JDKs
-     *   MORE: http://stackoverflow.com/questions/9588737/is-java-7-watchservice-slow-for-anyone-else
-     *
-     * @param path
-     * @throws IOException
-     */
     private void register(Path path) throws IOException {
         WatchKey watchKey = path.register(
                 watchService,
@@ -120,8 +100,7 @@ public class Watcher implements Runnable {
                         StandardWatchEventKinds.ENTRY_CREATE, //NOSONAR
                         StandardWatchEventKinds.ENTRY_MODIFY, //NOSONAR
                         StandardWatchEventKinds.ENTRY_DELETE //NOSONAR
-                },
-                SensitivityWatchEventModifier.HIGH);
+                });
 
         watchKeys.put(watchKey, path);
     }
