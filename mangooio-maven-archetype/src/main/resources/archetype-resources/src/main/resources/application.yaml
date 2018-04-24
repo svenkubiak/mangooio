@@ -41,8 +41,7 @@ default:
     flash:
       cookie:
         name          : ${application-name}-flash
-        signkey       : flash.cookie.signkey
-        encryptionkey : flash.cookie.encryptionkey        
+        signkey       : flash.cookie.signkey      
     smtp:
         host          : localhost
         port          : 25

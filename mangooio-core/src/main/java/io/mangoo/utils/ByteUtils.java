@@ -2,6 +2,8 @@ package io.mangoo.utils;
 
 import java.util.Objects;
 
+import com.google.common.base.Charsets;
+
 import io.mangoo.enums.Required;
 
 /**
@@ -38,7 +40,7 @@ public final class ByteUtils {
      */
     public static int bitLength (String string) {
         Objects.requireNonNull(string, Required.STRING.toString());
-        int byteLength = string.getBytes().length;
+        int byteLength = string.getBytes(Charsets.UTF_8).length;
         
         int length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {

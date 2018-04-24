@@ -30,7 +30,7 @@ default:
     session:
        cookie:
           name: test-session
-          signkey: cPg4dO20cdvYw6sWn0g9L15RPYZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+          signkey: cPg4dO20cdvYw6sWn0gCvHu5cvEWz9rZMR1EED9t3l8eWvHu5cvEWz9rZMR1EED9t3l8eW
     flash:
        cookie:
           name: test-flash

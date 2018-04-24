@@ -17,71 +17,8 @@ import org.junit.Test;
  *
  */
 public class CryptoUtilsTest {
-    private static final String VALID_SECRET = "jklfdjskjfkldsnjkvbnxjk<ffdsjklfdjhkfhyjkv<hjfkdbshjfkbshfbdvhjlbufsjkfdsjkfdhsjkfdvcxvcx";
-    private static final String INVALID_SECRET = "fdsfdsf";
     private static final int THREADS = 100;
 
-    @Test
-    public void testGetSizedKey() {
-        //given
-        String secret = CryptoUtils.getSizedSecret(VALID_SECRET);
-        
-        //then
-        assertThat(secret, not(nullValue()));
-        assertThat(secret.length(), equalTo(32));
-    }
-    
-    @Test
-    public void testConcurrentGetSizedKey() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            // given
-            String secret = CryptoUtils.getSizedSecret(VALID_SECRET);
-            
-            // then
-            return secret.length() == 32;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
-    }
-    
-    @Test
-    public void testIsValidSecret() {
-        //given
-        boolean valid = CryptoUtils.isValidSecret(VALID_SECRET);
-        
-        //then
-        assertThat(valid, equalTo(true));
-    }
-    
-    @Test
-    public void testConcurrentIsValidSecret() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            boolean valid = CryptoUtils.isValidSecret(VALID_SECRET);
-            
-            // then
-            return valid;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
-    }
-    
-    @Test
-    public void testIsInvalidSecret() {
-        //given
-        boolean valid = CryptoUtils.isValidSecret(INVALID_SECRET);
-        
-        //then
-        assertThat(valid, equalTo(false));
-    }
-    
-    @Test
-    public void testConcurrentIsInvalidSecret() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            //given
-            boolean valid = CryptoUtils.isValidSecret(INVALID_SECRET);
-            
-            // then
-            return !valid;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
-    }
-    
     @Test
     public void testRandomString() {
         //given

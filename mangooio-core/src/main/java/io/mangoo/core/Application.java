@@ -30,7 +30,6 @@ import com.netflix.governator.lifecycle.LifecycleManager;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
-import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.core.yaml.YamlRoute;
@@ -55,7 +54,7 @@ import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
-import io.mangoo.utils.CryptoUtils;
+import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -77,6 +76,7 @@ import io.undertow.util.Methods;
  */
 public final class Application {
     private static Logger LOG; //NOSONAR
+    private static final int MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
@@ -276,9 +276,40 @@ public final class Application {
     private static void prepareConfig() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
-            if (!CryptoUtils.isValidSecret(config.getApplicationSecret())) {
-                LOG.error("Please make sure that your application.yaml has an application.secret property which has at least 32 characters");
+            
+            int bitLength = getBitLength(config.getApplicationSecret());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only " + bitLength + " bit.");
                 error = true;
+            }
+            
+            bitLength = getBitLength(config.getAuthenticationCookieEncryptionKey());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.encryptionkey has only " + bitLength + " bit.");
+                error = true;
+            }
+            
+            bitLength = getBitLength(config.getAuthenticationCookieSignKey());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only " + bitLength + " bit.");
+                error = true;
+            }
+            
+            bitLength = getBitLength(config.getSessionCookieEncryptionKey());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Session cookie requires a 512 bit encryption key. The current property for session.cookie.encryptionkey has only " + bitLength + " bit.");
+                error = true;
+            }
+            
+            bitLength = getBitLength(config.getSessionCookieSignKey());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only " + bitLength + " bit.");
+                error = true;
+            }
+
+            bitLength = getBitLength(config.getFlashCookieSignKey());
+            if (bitLength < MIN_BIT_LENGTH) {
+                LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only " + bitLength + " bit.");
             }
             
             if (!config.isDecrypted()) {
@@ -294,8 +325,8 @@ public final class Application {
     private static void sanityChecks() {
         if (!error) {
             Config config = injector.getInstance(Config.class);
-            Cache cache = injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION);
             List<String> warnings = new ArrayList<>();
+            
             if (!config.isAuthenticationCookieSecure()) {
                 String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set authentication.cookie.secure to true in an production environment.";
                 warnings.add(warning);
@@ -313,12 +344,7 @@ public final class Application {
                 warnings.add(warning);
                 LOG.warn(warning);
             }
-            
-            if (!CryptoUtils.isValidSecret(config.getAuthenticationCookieEncryptionKey())) {
-                String warning = "Authentication cookie encryption is not a valid secret. A valid secret has to be at least 64 characters.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
+
             
             if (config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
                 String warning = "Authentication cookie encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
@@ -344,31 +370,25 @@ public final class Application {
                 LOG.warn(warning);
             }
             
-            if (!CryptoUtils.isValidSecret(config.getSessionCookieEncryptionKey())) {
-                String warning = "Session cookie encryption key is not a valid secret. A valid secret has to be at least 64 characters.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
             if (config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
                 String warning = "Session cookie encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            if (!CryptoUtils.isValidSecret(config.getFlashCookieEncryptionKey())) {
-                String warning = "Flash cookie encryption key is not a valid secret. A valid secret has to be at least 64 characters.";
+            if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
+                String warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            if (config.getFlashCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Flash cookie encryption is using application secret. It is highly recommend to set a dedicated value to flash.cookie.encryptionkey.";
+            if (config.getFlashCookieSignKey().equals(config.getApplicationSecret())) {
+                String warning = "Flash cookie sign key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.signkey.";
                 warnings.add(warning);
                 LOG.warn(warning);
             }
             
-            cache.put(Key.MANGOOIO_WARNINGS.toString(), warnings);
+            injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
         }
     }
 
@@ -565,6 +585,11 @@ public final class Application {
             
             LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
         }
+    }
+
+    private static int getBitLength(String secret) {
+        secret = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
+        return ByteUtils.bitLength(secret);
     }
 
     private static List<Module> getModules() {

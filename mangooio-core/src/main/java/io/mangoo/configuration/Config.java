@@ -846,13 +846,6 @@ public class Config {
     }
 
     /**
-     * @return flash.cookie.encryptionkey or application secret if undefined
-     */
-    public String getFlashCookieEncryptionKey() {
-        return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
-    }
-
-    /**
      * @return flash.cookie.signkey or application secret if undefined
      */
     public String getFlashCookieSignKey() {

@@ -315,7 +315,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.29.2</version>
+				<version>0.30</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
