@@ -397,7 +397,7 @@
 			<dependency>
 				<groupId>io.bit3</groupId>
 				<artifactId>jsass</artifactId>
-				<version>5.7.0</version>
+				<version>5.7.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
