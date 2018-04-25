@@ -34,6 +34,7 @@ import io.mangoo.configuration.Config;
 import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
+import io.mangoo.email.MailEventListener;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
@@ -53,6 +54,7 @@ import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.services.EventBusService;
 import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.SchedulerUtils;
@@ -114,6 +116,7 @@ public final class Application {
             prepareConfig();
             prepareRoutes();
             createRoutes();
+            prepareBus();
             prepareScheduler();
             prepareUndertow();
 
@@ -128,6 +131,13 @@ public final class Application {
                 System.exit(1); //NOSONAR
             }   
         }
+    }
+
+    /**
+     * Registers Listeners at the event bus
+     */
+    private static void prepareBus() {
+        injector.getInstance(EventBusService.class).register(injector.getInstance(MailEventListener.class));
     }
 
     /**

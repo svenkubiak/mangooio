@@ -210,6 +210,11 @@
 				<version>1.2.0</version>
 			</dependency>
 			<dependency>
+				<groupId>org.jodd</groupId>
+				<artifactId>jodd-mail</artifactId>
+				<version>4.3.2</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
 				<version>3.5.1</version>
@@ -261,11 +266,6 @@
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j-impl</artifactId>
 				<version>${log4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-email</artifactId>
-				<version>1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>

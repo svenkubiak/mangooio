@@ -36,7 +36,7 @@ public class EventBusServiceTest {
         
         //then
         assertThat(testListener.getCount(), equalTo(3));
-        assertThat(busManager.getNumListeners(), equalTo(1L));
+        assertThat(busManager.getNumListeners(), equalTo(2L));
         assertThat(busManager.getNumEvents(), equalTo(3L));
         
         //when

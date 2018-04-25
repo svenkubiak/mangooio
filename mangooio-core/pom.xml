@@ -107,12 +107,12 @@
 			<artifactId>jBCrypt</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.github.lukehutch</groupId>
-			<artifactId>fast-classpath-scanner</artifactId>
+			<groupId>org.jodd</groupId>
+			<artifactId>jodd-mail</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-email</artifactId>
+			<groupId>io.github.lukehutch</groupId>
+			<artifactId>fast-classpath-scanner</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-validator</groupId>

@@ -6,10 +6,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMultipart;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,6 +23,8 @@ import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.test.email.SmtpMock;
+import jodd.mail.Email;
+import jodd.mail.EmailAttachment;
 
 /**
  * 
@@ -44,14 +47,16 @@ public class MailTest {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(0));
+        Map<String, Object> content = new HashMap<>();
+        content.put("king", "geofrey");
         
         //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@winterfell.com>")
-            .withRecipient("sansa.stark@winterfell.com")
-            .withSubject("Lord of light")
-            .withTemplate("emails/simple.ftl")
-            .withContent("king", "geofrey")
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@winterfell.com")
+                    .subject("Lord of light"))
+            .templateMessage("emails/simple.ftl", content)
             .send();
         
         //then
@@ -64,14 +69,16 @@ public class MailTest {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(0));
+        Map<String, Object> content = new HashMap<>();
+        content.put("king", "kong");
         
         //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@thewall.com>")
-            .withRecipient("sansa.stark@thewall.com")
-            .withSubject("Lord of light")
-            .withTemplate("emails/html.ftl")
-            .withContent("king", "kong")
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@thewall.com")
+                    .subject("Lord of light"))
+            .templateMessage("emails/html.ftl", content)
             .send();
         
         //then
@@ -86,16 +93,20 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         File file = new File(UUID.randomUUID().toString());
         file.createNewFile();
+        Map<String, Object> content = new HashMap<>();
+        content.put("name", "raven");
+        content.put("king", "none");
         
         //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@westeros.com>")
-            .withRecipient("sansa.stark@westeros.com")
-            .withSubject("Lord of light")
-            .withTemplate("emails/multipart.ftl")
-            .withContent("name", "raven")
-            .withContent("king", "none")
-            .withAttachment(file)
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("Lord of light")
+                    .attachment(EmailAttachment.with()
+                            .name("some name")
+                            .content(file)))
+            .templateMessage("emails/multipart.ftl", content)
             .send();
         
         //then
@@ -110,31 +121,17 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@westeros.com>")
-            .withRecipient("sansa.stark@westeros.com")
-            .withSubject("Lord of light")
-            .withBody("what is dead may never die")
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("Lord of light")
+                    .textMessage("what is dead may never die"))
             .send();
         
         //then
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
-    }
-    
-    @Test
-    public void testTemplatePath() {
-        //given
-        Mail mail1 = Mail.newMail();
-        Mail mail2 = Mail.newMail();
-        
-        //when
-        mail1.withTemplate("/foo/vbar");
-        mail2.withTemplate("\\foo\\vbar");
-        
-        //then
-        assertThat(mail1.getTemplate(), equalTo("foo/vbar"));
-        assertThat(mail2.getTemplate(), equalTo("foo\\vbar"));
     }
     
     @Test
@@ -144,11 +141,12 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@westeros.com>")
-            .withRecipient("sansa.stark@westeros.com")
-            .withSubject("ÄÜÖ")
-            .withBody("This is a body with üäö")
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("ÄÜÖ")
+                    .textMessage("This is a body with üäö"))
             .send();
         
         //then
@@ -164,41 +162,18 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.newHtmlMail()
-            .withFrom("Jon Snow <jon.snow@westeros.com>")
-            .withRecipient("sansa.stark@westeros.com")
-            .withSubject("ÄÜÖ")
-            .withBody("This is a body with üäö")
+        Mail.build()
+            .withEmail(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("ÄÜÖ")
+                    .htmlMessage("This is a body with üäö"))
             .send();
         
         //then
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-        assertThat(((MimeMultipart)(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent())).getBodyPart(0).getContent().toString(), equalTo("This is a body with üäö"));
-    }
-    
-    @Test
-    public void testMultipartEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
-        //given
-        greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-        File file = new File(UUID.randomUUID().toString());
-        file.createNewFile();
-        
-        //when
-        Mail.newMail()
-            .withFrom("Jon Snow <jon.snow@westeros.com>")
-            .withRecipient("sansa.stark@westeros.com")
-            .withSubject("ÄÜÖ")
-            .withBody("This is a body with üäö")
-            .withAttachment(file)
-            .send();
-        
-        //then
-        assertThat(file.delete(), equalTo(true));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-        assertThat(((MimeMultipart)(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent())).getBodyPart(0).getContent().toString(), equalTo("This is a body with üäö"));
+        assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n"));
     }
     
     @AfterClass

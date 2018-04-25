@@ -35,6 +35,7 @@ public enum Required {
     DATA("data can not be null"),
     DATE("date can not be null"),
     EHCACHE("ehCache can not be null"),
+    EMAIL("email can not be null"),
     ENCRYPTED_TEXT("encrypted text can not be null"),
     EVENT("event can not be null"),
     EVENT_CALLBACK("event callback can not be null"),

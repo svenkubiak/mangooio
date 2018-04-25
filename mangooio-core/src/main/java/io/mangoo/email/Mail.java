@@ -7,23 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.mail.Authenticator;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.MangooTemplateEngine;
+import io.mangoo.services.EventBusService;
+import jodd.mail.Email;
+import jodd.mail.EmailAttachment;
 
 /**
  * 
@@ -31,6 +24,7 @@ import io.mangoo.interfaces.MangooTemplateEngine;
  *
  */
 public class Mail {
+    private Email email;
     private List<File> files = new ArrayList<>();
     private List<String> recipients = new ArrayList<>();
     private List<String> ccRecipients = new ArrayList<>();
@@ -42,21 +36,46 @@ public class Mail {
     private String body;
     private boolean html;
     private boolean attachment;
+    
+    /**
+     * Creates a new mail instance
+     * @return A mail object instance
+     */
+    public static Mail build() {
+        return new Mail();
+    }
 
     /**
+     * Sets the org.Jodd.Email instance that the email is based on
+     * 
+     * @param email The Email instance
+     * @return A mail object instance
+     */
+    public Mail withEmail(Email email) {
+        Objects.requireNonNull(email, Required.EMAIL.toString());
+        this.email = email;
+        
+        return this;
+    }
+    
+    /**
      * Creates a new simple mail instance
+     * @deprecated As of 4.13.0, use build() instead
      * 
      * @return Simple mail instance
      */
+    @Deprecated
     public static Mail newMail(){
         return new Mail();
     }
     
     /**
      * Creates a new HTML mail instance
+     * @deprecated As of 4.13.0, use build() instead
      * 
      * @return HTML mail instance
      */
+    @Deprecated
     public static Mail newHtmlMail() {
         Mail mail = new Mail();
         mail.html = true;
@@ -66,10 +85,12 @@ public class Mail {
     
     /**
      * Adds a recipient to the mail
+     * @deprecated As of 4.13.0, use specific to, cc and bcc methods instead
      * 
      * @param recipient The mail address of the recipient
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withRecipient(String recipient) {
         Objects.requireNonNull(recipient, Required.RECIPIENT.toString());
         
@@ -79,10 +100,12 @@ public class Mail {
     
     /**
      * Adds a cc recipient to the mail
+     * @deprecated As of 4.13.0, use specific to, cc and bcc methods instead
      * 
      * @param recipient The mail address of the cc recipient
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withCC(String recipient) {
         Objects.requireNonNull(recipient, Required.CC_RECIPIENT.toString());
         
@@ -92,10 +115,12 @@ public class Mail {
     
     /**
      * Adds a subject to the mail
+     * @deprecated As of 4.13.0, use subject() instead
      * 
      * @param subject The subject of the email
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withSubject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT.toString());
         
@@ -105,10 +130,12 @@ public class Mail {
     
     /**
      * Add a template to the mail which will be rendered before the mail is send
+     * @deprecated As of 4.13.0, use templateMessage(...) instead
      * 
      * @param template The path to the template fail (e.g. emails/mail.ftl)
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withTemplate(String template) {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
         
@@ -122,18 +149,46 @@ public class Mail {
     }
     
     /**
+     * Sets a template to be render to the email. Rendered templates
+     * will make the Email HTML by default
+     * 
+     * @param template The template to use
+     * @param content The content for the template
+     * 
+     * @return A mail object instance
+     */
+    public Mail templateMessage(String template, Map<String, Object> content) {
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
+        Objects.requireNonNull(content, Required.CONTENT.toString());
+        
+        this.content = content;
+        if (template.charAt(0) == '/' || template.startsWith("\\")) {
+            this.template = template.substring(1, template.length());
+        } else {
+            this.template = template;
+        }
+
+        return this;   
+    }
+    
+    /**
+     * @deprecated As of 4.13.0, will be removed in 5.0.0
+     * 
      * @return The current template path
      */
+    @Deprecated
     public String getTemplate() {
         return this.template;
     }
     
     /**
      * Adds a bcc recipient to the mail
+     * @deprecated As of 4.13.0, use specific to, cc and bcc methods instead
      * 
      * @param recipient The subject of the email
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withBCC(String recipient) {
         Objects.requireNonNull(recipient, Required.BCC_RECIPIENT.toString());
         
@@ -145,10 +200,13 @@ public class Mail {
      * Adds a custom to the mail
      * 
      * This will overwrite rendering of the template!
+     * @deprecated As of 4.13.0, use textMessage(), htmlMessage() or templateMessage() instead
+     * 
      * 
      * @param body The body of the email
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withBody(String body) {
         Objects.requireNonNull(body, Required.BODY.toString());
         
@@ -158,10 +216,12 @@ public class Mail {
     
     /**
      * Adds the from address to the mail
-
+     * @deprecated As of 4.13.0, use from() instead 
+     * 
      * @param from The from address, e.g. jon.snow@winterfell.com
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withFrom(String from) {
         Objects.requireNonNull(from, Required.FROM.toString());
         
@@ -171,10 +231,12 @@ public class Mail {
     
     /**
      * Adds a file attachment to the mail
+     * @deprecated As of 4.13.0, use attachment() instead
      * 
      * @param file The file to add
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withAttachment(File file) {
         Objects.requireNonNull(file, Required.FILE.toString());
         
@@ -197,11 +259,13 @@ public class Mail {
     
     /**
      * Adds content to the template which will be rendered
+     * @deprecated As of version 4.13.0, use templateMessage(...) instead
      * 
      * @param key The key 
      * @param value The value
      * @return A mail object instance
      */
+    @Deprecated
     public Mail withContent(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
@@ -216,132 +280,58 @@ public class Mail {
      * @throws MangooMailerException when sending the mail failed
      */
     public void send() throws MangooMailerException {
-        Config config = Application.getInstance(Config.class);
-        if (StringUtils.isBlank(this.from)) {
-            this.from = config.getSmtpFrom();
+        transform();
+        Application.getInstance(EventBusService.class).publish(this.email);
+    }
+
+    /**
+     * Transforms the content from mail object into jodd email object
+     * Needs to be removed with 5.0.0
+     * @throws MangooMailerException 
+     */
+    @Deprecated
+    private void transform() throws MangooMailerException {
+        if (this.bccRecipients.size() > 0) {
+            this.email.bcc(this.bccRecipients.toArray(new String[this.bccRecipients.size()]));
         }
         
-        if (this.html) {
-            sendHtmlEmail();
-        } else if (this.attachment) {
-            sendMultipartEmail();
-        } else {
-            sendSimpleEmail();
+        if (this.ccRecipients.size() > 0) {
+            this.email.cc(this.ccRecipients.toArray(new String[this.ccRecipients.size()]));
         }
-    }
-
-    private void sendSimpleEmail() throws MangooMailerException {
-        Config config = Application.getInstance(Config.class);
-        try {
-            Email email = new SimpleEmail();
-            email.setCharset(Default.ENCODING.toString());
-            email.setHostName(config.getSmtpHost());
-            email.setSmtpPort(config.getSmtpPort());
-            email.setAuthenticator(getDefaultAuthenticator());
-            email.setSSLOnConnect(config.isSmtpSSL());
-            email.setFrom(this.from);
-            email.setSubject(this.subject);
-            email.setMsg(render());
-            
-            for (String recipient : this.recipients) {
-                email.addTo(recipient);
-            }
-            
-            for (String cc : this.ccRecipients) {
-                email.addCc(cc);
-            }
-            
-            for (String bcc : this.bccRecipients) {
-                email.addBcc(bcc);
-            }
-            
-            email.send();
-        } catch (EmailException | MangooTemplateEngineException e) {
-            throw new MangooMailerException(e);
-        }        
-    }
-
-    private void sendMultipartEmail() throws MangooMailerException {
-        Config config = Application.getInstance(Config.class);
-        try {
-            MultiPartEmail multiPartEmail = new MultiPartEmail();
-            multiPartEmail.setCharset(Default.ENCODING.toString());
-            multiPartEmail.setHostName(config.getSmtpHost());
-            multiPartEmail.setSmtpPort(config.getSmtpPort());
-            multiPartEmail.setAuthenticator(getDefaultAuthenticator());
-            multiPartEmail.setSSLOnConnect(config.isSmtpSSL());
-            multiPartEmail.setFrom(this.from);
-            multiPartEmail.setSubject(this.subject);
-            multiPartEmail.setMsg(render());
-            
-            for (String recipient : this.recipients) {
-                multiPartEmail.addTo(recipient);
-            }
-            
-            for (String cc : this.ccRecipients) {
-                multiPartEmail.addCc(cc);
-            }
-            
-            for (String bcc : this.bccRecipients) {
-                multiPartEmail.addBcc(bcc);
-            }
-            
+        
+        if (StringUtils.isNotEmpty(this.from)) {
+            this.email.from(this.from);
+        }
+        
+        if (this.recipients.size() > 0) {
+            this.email.to(this.recipients.toArray(new String[this.recipients.size()]));
+        }
+        
+        if (StringUtils.isNotBlank(this.subject)) {
+            this.email.subject(this.subject);
+        }
+        
+        if (this.attachment) {
             for (File file : this.files) {
-                multiPartEmail.attach(file);
+                this.email.attachment(EmailAttachment.with().name(file.getName()).content(file));
             }
-            
-            multiPartEmail.send();
-        } catch (EmailException | MangooTemplateEngineException e) {
-            throw new MangooMailerException(e);
-        }   
-    }
-
-    private void sendHtmlEmail() throws MangooMailerException {
-        Config config = Application.getInstance(Config.class);
-        try {
-            HtmlEmail htmlEmail = new HtmlEmail();
-            htmlEmail.setCharset(Default.ENCODING.toString());
-            htmlEmail.setHostName(config.getSmtpHost());
-            htmlEmail.setSmtpPort(config.getSmtpPort());
-            htmlEmail.setAuthenticator(getDefaultAuthenticator());
-            htmlEmail.setSSLOnConnect(config.isSmtpSSL());
-            htmlEmail.setFrom(this.from);
-            htmlEmail.setSubject(this.subject);
-            htmlEmail.setHtmlMsg(render());
-            
-            for (String recipient : this.recipients) {
-                htmlEmail.addTo(recipient);
-            }
-            
-            for (String cc : this.ccRecipients) {
-                htmlEmail.addCc(cc);
-            }
-            
-            for (String bcc : this.bccRecipients) {
-                htmlEmail.addBcc(bcc);
-            }
-            
-            for (File file : this.files) {
-                htmlEmail.attach(file);
-            }
-            
-            htmlEmail.send();
-        } catch (EmailException | MangooTemplateEngineException e) {
-            throw new MangooMailerException(e);
-        } 
-    }
-    
-    private Authenticator getDefaultAuthenticator() {
-        Config config = Application.getInstance(Config.class);
-        
-        DefaultAuthenticator defaultAuthenticator = null;
-        final String username = config.getSmtpUsername();
-        final String password = config.getSmtpPassword();
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            defaultAuthenticator = new DefaultAuthenticator(username, password);
         }
         
-        return defaultAuthenticator;
+        if (StringUtils.isNotBlank(this.body)) {
+            if (this.html) {
+                this.email.htmlMessage(body);
+            } else {
+                this.email.textMessage(this.body);                
+            }
+        }
+        
+        if (StringUtils.isNotBlank(this.template)) {
+            try {
+                this.email.htmlMessage(render());
+            } catch (MangooTemplateEngineException e) {
+                throw new MangooMailerException(e);
+            }
+        }
     }
 
     private String render() throws MangooTemplateEngineException {
