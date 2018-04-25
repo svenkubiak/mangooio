@@ -320,6 +320,7 @@ public final class Application {
             bitLength = getBitLength(config.getFlashCookieSignKey());
             if (bitLength < MIN_BIT_LENGTH) {
                 LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only " + bitLength + " bit.");
+                error = true;
             }
             
             if (!config.isDecrypted()) {
