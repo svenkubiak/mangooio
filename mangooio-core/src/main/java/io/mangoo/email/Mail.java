@@ -51,7 +51,7 @@ public class Mail {
      * @param email The Email instance
      * @return A mail object instance
      */
-    public Mail withEmail(Email email) {
+    public Mail withBuilder(Email email) {
         Objects.requireNonNull(email, Required.EMAIL.toString());
         this.email = email;
         

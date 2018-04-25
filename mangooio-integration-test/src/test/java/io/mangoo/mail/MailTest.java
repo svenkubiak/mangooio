@@ -52,7 +52,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@winterfell.com")
                     .subject("Lord of light"))
@@ -74,7 +74,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@thewall.com")
                     .subject("Lord of light"))
@@ -99,7 +99,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@westeros.com")
                     .subject("Lord of light")
@@ -122,7 +122,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@westeros.com")
                     .subject("Lord of light")
@@ -142,7 +142,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@westeros.com")
                     .subject("ÄÜÖ")
@@ -163,7 +163,7 @@ public class MailTest {
         
         //when
         Mail.build()
-            .withEmail(Email.create()
+            .withBuilder(Email.create()
                     .from("Jon Snow <jon.snow@winterfell.com>")
                     .to("sansa.stark@westeros.com")
                     .subject("ÄÜÖ")
