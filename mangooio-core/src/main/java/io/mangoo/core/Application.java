@@ -289,37 +289,37 @@ public final class Application {
             
             int bitLength = getBitLength(config.getApplicationSecret());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only " + bitLength + " bit.");
+                LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bit.", bitLength);
                 error = true;
             }
             
             bitLength = getBitLength(config.getAuthenticationCookieEncryptionKey());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.encryptionkey has only " + bitLength + " bit.");
+                LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.encryptionkey has only {} bit.", bitLength);
                 error = true;
             }
             
             bitLength = getBitLength(config.getAuthenticationCookieSignKey());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only " + bitLength + " bit.");
+                LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bit.", bitLength);
                 error = true;
             }
             
             bitLength = getBitLength(config.getSessionCookieEncryptionKey());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Session cookie requires a 512 bit encryption key. The current property for session.cookie.encryptionkey has only " + bitLength + " bit.");
+                LOG.error("Session cookie requires a 512 bit encryption key. The current property for session.cookie.encryptionkey has only {} bit.", bitLength);
                 error = true;
             }
             
             bitLength = getBitLength(config.getSessionCookieSignKey());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only " + bitLength + " bit.");
+                LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bit.", bitLength);
                 error = true;
             }
 
             bitLength = getBitLength(config.getFlashCookieSignKey());
             if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only " + bitLength + " bit.");
+                LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bit.", bitLength);
                 error = true;
             }
             
