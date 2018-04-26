@@ -88,11 +88,10 @@ public final class Application {
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start = LocalDateTime.now();
-    private static volatile boolean started;
-    private static volatile boolean error;
     private static volatile PathHandler pathHandler;
     private static volatile ResourceHandler resourceHandler;
-
+    private static volatile boolean started;
+    
     private Application() {
     }
 
@@ -116,27 +115,22 @@ public final class Application {
             prepareConfig();
             prepareRoutes();
             createRoutes();
-            prepareBus();
+            prepareEventBus();
             prepareScheduler();
             prepareUndertow();
-
-            if (!error) {
-                sanityChecks();
-                showLogo();
-                applicationStarted();
-                Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
-                started = true;
-            } else {
-                System.out.print("Failed to start mangoo I/O application"); //NOSONAR
-                System.exit(1); //NOSONAR
-            }   
+            sanityChecks();
+            showLogo();
+            applicationStarted();
+            
+            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+            started = true;
         }
     }
 
     /**
      * Registers Listeners at the event bus
      */
-    private static void prepareBus() {
+    private static void prepareEventBus() {
         injector.getInstance(EventBusService.class).register(injector.getInstance(MailEventListener.class));
     }
 
@@ -255,78 +249,72 @@ public final class Application {
      * Sets the injector wrapped through netflix Governator
      */
     private static void prepareInjector() {
-        if (!error) {
-            injector = LifecycleInjector.builder()
-                    .withModules(getModules())
-                    .usingBasePackages(".")
-                    .build()
-                    .createInjector();
-            
-            try {
-                injector.getInstance(LifecycleManager.class).start();
-            } catch (Exception e) {
-                LOG.error("Failed to start Governator LifecycleManager", e);
-                error = true;
-            } 
-        }
+        injector = LifecycleInjector.builder()
+                .withModules(getModules())
+                .usingBasePackages(".")
+                .build()
+                .createInjector();
+        
+        try {
+            injector.getInstance(LifecycleManager.class).start();
+        } catch (Exception e) {
+            LOG.error("Failed to start Governator LifecycleManager", e);
+            failsafe();
+        } 
     }
 
     /**
      * Callback to MangooLifecycle applicationInitialized
      */
     private static void applicationInitialized() {
-        if (!error) {
-            injector.getInstance(MangooLifecycle.class).applicationInitialized();            
-        }
+        injector.getInstance(MangooLifecycle.class).applicationInitialized();            
     }
 
     /**
      * Checks for config failures that pervent the application from starting
      */
     private static void prepareConfig() {
-        if (!error) {
-            Config config = injector.getInstance(Config.class);
-            
-            int bitLength = getBitLength(config.getApplicationSecret());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bit.", bitLength);
-                error = true;
-            }
-            
-            bitLength = getBitLength(config.getAuthenticationCookieEncryptionKey());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.encryptionkey has only {} bit.", bitLength);
-                error = true;
-            }
-            
-            bitLength = getBitLength(config.getAuthenticationCookieSignKey());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bit.", bitLength);
-                error = true;
-            }
-            
-            bitLength = getBitLength(config.getSessionCookieEncryptionKey());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Session cookie requires a 512 bit encryption key. The current property for session.cookie.encryptionkey has only {} bit.", bitLength);
-                error = true;
-            }
-            
-            bitLength = getBitLength(config.getSessionCookieSignKey());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bit.", bitLength);
-                error = true;
-            }
+        Config config = injector.getInstance(Config.class);
+        
+        int bitLength = getBitLength(config.getApplicationSecret());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bit.", bitLength);
+            failsafe();
+        }
+        
+        bitLength = getBitLength(config.getAuthenticationCookieEncryptionKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.encryptionkey has only {} bit.", bitLength);
+            failsafe();
+        }
+        
+        bitLength = getBitLength(config.getAuthenticationCookieSignKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bit.", bitLength);
+            failsafe();
+        }
+        
+        bitLength = getBitLength(config.getSessionCookieEncryptionKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Session cookie requires a 512 bit encryption key. The current property for session.cookie.encryptionkey has only {} bit.", bitLength);
+            failsafe();
+        }
+        
+        bitLength = getBitLength(config.getSessionCookieSignKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bit.", bitLength);
+            failsafe();
+        }
 
-            bitLength = getBitLength(config.getFlashCookieSignKey());
-            if (bitLength < MIN_BIT_LENGTH) {
-                LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bit.", bitLength);
-                error = true;
-            }
-            
-            if (!config.isDecrypted()) {
-                LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
-                error = true;
-            }
+        bitLength = getBitLength(config.getFlashCookieSignKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bit.", bitLength);
+            failsafe();
+        }
+        
+        if (!config.isDecrypted()) {
+            LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
+            failsafe();
         }
     }
     
@@ -334,127 +322,123 @@ public final class Application {
      * Do sanity checks on the configuration an warn about it in the log
      */
     private static void sanityChecks() {
-        if (!error) {
-            Config config = injector.getInstance(Config.class);
-            List<String> warnings = new ArrayList<>();
-            
-            if (!config.isAuthenticationCookieSecure()) {
-                String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set authentication.cookie.secure to true in an production environment.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-                String warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
-                String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.signkey.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-
-            
-            if (config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Authentication cookie encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (!config.isSessionCookieSecure()) {
-                String warning = "Session cookie has secure flag set to false. It is highly recommended to set session.cookie.secure to true in an production environment.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-                String warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
-                String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
-                String warning = "Session cookie encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
-                String warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            if (config.getFlashCookieSignKey().equals(config.getApplicationSecret())) {
-                String warning = "Flash cookie sign key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.signkey.";
-                warnings.add(warning);
-                LOG.warn(warning);
-            }
-            
-            injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
+        Config config = injector.getInstance(Config.class);
+        List<String> warnings = new ArrayList<>();
+        
+        if (!config.isAuthenticationCookieSecure()) {
+            String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set authentication.cookie.secure to true in an production environment.";
+            warnings.add(warning);
+            LOG.warn(warning);
         }
+        
+        if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
+            String warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
+            String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.signkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
+            String warning = "Authentication cookie encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (!config.isSessionCookieSecure()) {
+            String warning = "Session cookie has secure flag set to false. It is highly recommended to set session.cookie.secure to true in an production environment.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
+            String warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
+            String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
+            String warning = "Session cookie encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
+            String warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getFlashCookieSignKey().equals(config.getApplicationSecret())) {
+            String warning = "Flash cookie sign key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.signkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
     }
 
     /**
      * Parse routes from routes.yaml file and set up dispatcher
      */
     private static void prepareRoutes() {
-        if (!error) {
-            Config config = injector.getInstance(Config.class);
-            ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-            YamlRouter yamlRouter = null;
-            try {
-                yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
-            } catch (IOException e) {
-                LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
-                error = true;
-            }
-            
-            if (!error && yamlRouter != null) {
-                for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                    RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
-                    final Route route = new Route(routeType)
-                            .toUrl(yamlRoute.getUrl().trim())
-                            .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
-                            .withUsername(yamlRoute.getUsername())
-                            .withPassword(yamlRoute.getPassword())
-                            .withAuthentication(yamlRoute.isAuthentication())
-                            .withTimer(yamlRoute.isTimer())
-                            .withLimit(yamlRoute.getLimit())
-                            .allowBlocking(yamlRoute.isBlocking());
-                    
-                    try {
-                        String mapping = yamlRoute.getMapping();   
-                        if (StringUtils.isNotBlank(mapping)) {
-                            if (routeType == RouteType.REQUEST) {
-                                int lastIndexOf = mapping.trim().lastIndexOf('.');
-                                String controllerClass = BootstrapUtils.getPackageName(config.getApplicationController()) + mapping.substring(0, lastIndexOf);
-                                route.withClass(Class.forName(controllerClass));
+        Config config = injector.getInstance(Config.class);
+        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+        YamlRouter yamlRouter = null;
+        try {
+            yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
+        } catch (IOException e) {
+            LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
+            failsafe();
+        }
+        
+        if (yamlRouter != null) {
+            for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
+                RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
+                final Route route = new Route(routeType)
+                        .toUrl(yamlRoute.getUrl().trim())
+                        .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
+                        .withUsername(yamlRoute.getUsername())
+                        .withPassword(yamlRoute.getPassword())
+                        .withAuthentication(yamlRoute.isAuthentication())
+                        .withTimer(yamlRoute.isTimer())
+                        .withLimit(yamlRoute.getLimit())
+                        .allowBlocking(yamlRoute.isBlocking());
+                
+                try {
+                    String mapping = yamlRoute.getMapping();   
+                    if (StringUtils.isNotBlank(mapping)) {
+                        if (routeType == RouteType.REQUEST) {
+                            int lastIndexOf = mapping.trim().lastIndexOf('.');
+                            String controllerClass = BootstrapUtils.getPackageName(config.getApplicationController()) + mapping.substring(0, lastIndexOf);
+                            route.withClass(Class.forName(controllerClass));
 
-                                String methodName = mapping.substring(lastIndexOf + 1);
-                                if (BootstrapUtils.methodExists(methodName, route.getControllerClass())) {
-                                    route.withMethod(methodName);
-                                } else {
-                                    error = true;
-                                }
+                            String methodName = mapping.substring(lastIndexOf + 1);
+                            if (BootstrapUtils.methodExists(methodName, route.getControllerClass())) {
+                                route.withMethod(methodName);
                             } else {
-                                route.withClass(Class.forName(BootstrapUtils.getPackageName(config.getApplicationController()) + mapping));
+                                LOG.error("Method '{}' does not exists in controller class '{}'", methodName, route.getControllerClass());
+                                failsafe();
                             }
+                        } else {
+                            route.withClass(Class.forName(BootstrapUtils.getPackageName(config.getApplicationController()) + mapping));
                         }
-                       Router.addRoute(route);
-                    } catch (final ClassNotFoundException e) {
-                        LOG.error("Failed to create routes from routes.yaml");
-                        LOG.error("Please verify that your routes.yaml mapping is correct", e);
-                        error = true;
                     }
+                   Router.addRoute(route);
+                } catch (final ClassNotFoundException e) {
+                    LOG.error("Failed to create routes from routes.yaml");
+                    LOG.error("Please verify that your routes.yaml mapping is correct", e);
+                    failsafe();
                 }
             }
         }
@@ -464,26 +448,24 @@ public final class Application {
      * Create routes for WebSockets ServerSentEvent and Resource files
      */
     private static void createRoutes() {
-        if (!error) {
-            pathHandler = new PathHandler(getRoutingHandler());
-            for (final Route route : Router.getRoutes()) {
-                if (RouteType.WEBSOCKET == route.getRouteType()) {
-                    pathHandler.addExactPath(route.getUrl(),
-                            Handlers.websocket(injector.getInstance(WebSocketHandler.class)
-                                    .withControllerClass(route.getControllerClass())
-                                    .withAuthentication(route.isAuthenticationRequired())));
-                } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
-                    pathHandler.addExactPath(route.getUrl(),
-                            Handlers.serverSentEvents(injector.getInstance(ServerSentEventHandler.class)
-                                    .withAuthentication(route.isAuthenticationRequired())));
-                } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
-                    pathHandler.addPrefixPath(route.getUrl(),
-                            new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
-                } else {
-                    // Ignoring anything else except WebSocket ServerSentEvent or Resource Path for PathHandler
-                }
-            }            
-        }
+        pathHandler = new PathHandler(getRoutingHandler());
+        for (final Route route : Router.getRoutes()) {
+            if (RouteType.WEBSOCKET == route.getRouteType()) {
+                pathHandler.addExactPath(route.getUrl(),
+                        Handlers.websocket(injector.getInstance(WebSocketHandler.class)
+                                .withControllerClass(route.getControllerClass())
+                                .withAuthentication(route.isAuthenticationRequired())));
+            } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
+                pathHandler.addExactPath(route.getUrl(),
+                        Handlers.serverSentEvents(injector.getInstance(ServerSentEventHandler.class)
+                                .withAuthentication(route.isAuthenticationRequired())));
+            } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
+                pathHandler.addPrefixPath(route.getUrl(),
+                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
+            } else {
+                // Ignoring anything else except WebSocket ServerSentEvent or Resource Path for PathHandler
+            }
+        }            
     }
 
     private static RoutingHandler getRoutingHandler() {
@@ -533,69 +515,65 @@ public final class Application {
     }
 
     private static void prepareUndertow() {
-        if (!error) {
-            Config config = injector.getInstance(Config.class);
-            
-            HttpHandler httpHandler;
-            if (config.isMetricsEnable()) {
-                httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
-                        .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
-            } else {
-                httpHandler = Handlers.exceptionHandler(pathHandler)
-                        .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
-            }
-            
-            Builder builder = Undertow.builder()
-                    .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
-                    .setHandler(httpHandler);
+        Config config = injector.getInstance(Config.class);
+        
+        HttpHandler httpHandler;
+        if (config.isMetricsEnable()) {
+            httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
+                    .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class)));
+        } else {
+            httpHandler = Handlers.exceptionHandler(pathHandler)
+                    .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
+        }
+        
+        Builder builder = Undertow.builder()
+                .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
+                .setHandler(httpHandler);
 
-            httpHost = config.getConnectorHttpHost();
-            httpPort = config.getConnectorHttpPort();
-            ajpHost = config.getConnectorAjpHost();
-            ajpPort = config.getConnectorAjpPort();
+        httpHost = config.getConnectorHttpHost();
+        httpPort = config.getConnectorHttpPort();
+        ajpHost = config.getConnectorAjpHost();
+        ajpPort = config.getConnectorAjpPort();
 
-            boolean hasConnector = false;
-            if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
-                builder.addHttpListener(httpPort, httpHost);
-                hasConnector = true;
-            }
-            
-            if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-                builder.addAjpListener(ajpPort, ajpHost);
-                hasConnector = true;
-            }
-                    
-            if (hasConnector) {
-                undertow = builder.build();
-                undertow.start();
-            } else {
-                LOG.error("No connector found! Please configure a HTTP and/or AJP connector in your application.yaml");
-                error = true;
-            }
+        boolean hasConnector = false;
+        if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
+            builder.addHttpListener(httpPort, httpHost);
+            hasConnector = true;
+        }
+        
+        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
+            builder.addAjpListener(ajpPort, ajpHost);
+            hasConnector = true;
+        }
+                
+        if (hasConnector) {
+            undertow = builder.build();
+            undertow.start();
+        } else {
+            LOG.error("No connector found! Please configure a HTTP and/or AJP connector in your application.yaml");
+            failsafe();
         }
     }
 
     private static void showLogo() {
-        if (!error) {
-            final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
-            buffer.append('\n')
-                .append(BootstrapUtils.getLogo())
-                .append("\n\nhttps://mangoo.io | @mangoo_io | ")
-                .append(BootstrapUtils.getVersion())
-                .append('\n');
+        final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
+        buffer.append('\n')
+            .append(BootstrapUtils.getLogo())
+            .append("\n\nhttps://mangoo.io | @mangoo_io | ")
+            .append(BootstrapUtils.getVersion())
+            .append('\n');
 
-            LOG.info(buffer.toString()); //NOSONAR
-            
-            if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
-                LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
-            }
-            
-            if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-                LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
-            }
-            
-            LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
+        LOG.info(buffer.toString()); //NOSONAR
+        
+        if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
+            LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
         }
+        
+        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
+            LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
+        }
+        
+        LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
     }
 
     private static int getBitLength(String secret) {
@@ -612,57 +590,59 @@ public final class Application {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
-            error = true;
+            failsafe();
         }
         
         return modules;
     }
     
     private static void applicationStarted() {
-        if (!error) {
-            injector.getInstance(MangooLifecycle.class).applicationStarted();            
-        }
+        injector.getInstance(MangooLifecycle.class).applicationStarted();            
     }
 
     private static void prepareScheduler() {
-        if (!error) {
-            Config config = injector.getInstance(Config.class);
+        Config config = injector.getInstance(Config.class);
+        
+        List<Class<?>> jobs = new ArrayList<>();
+        new FastClasspathScanner(config.getSchedulerPackage())
+            .matchClassesWithAnnotation(Schedule.class, jobs::add)
+            .scan();
+
+        if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
+            final Scheduler mangooScheduler = injector.getInstance(Scheduler.class);
+            mangooScheduler.initialize();
             
-            List<Class<?>> jobs = new ArrayList<>();
-            new FastClasspathScanner(config.getSchedulerPackage())
-                .matchClassesWithAnnotation(Schedule.class, jobs::add)
-                .scan();
-
-            if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
-                final Scheduler mangooScheduler = injector.getInstance(Scheduler.class);
-                mangooScheduler.initialize();
-                
-                for (Class<?> clazz : jobs) {
-                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
-                    if (CronExpression.isValidExpression(schedule.cron())) {
-                        final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
-                        try {
-                            mangooScheduler.schedule(jobDetail, trigger);
-                        } catch (MangooSchedulerException e) {
-                            LOG.error("Failed to add a job to the scheduler", e);
-                        }
-                        LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
-                    } else {
-                        LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
-                        error = true;
-                    }
-                }
-
-                if (!error) {
+            for (Class<?> clazz : jobs) {
+                final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
+                if (CronExpression.isValidExpression(schedule.cron())) {
+                    final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                    final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
                     try {
-                        mangooScheduler.start();
+                        mangooScheduler.schedule(jobDetail, trigger);
                     } catch (MangooSchedulerException e) {
-                        LOG.error("Failed to start the scheduler", e);
-                        error = true;
+                        LOG.error("Failed to add a job to the scheduler", e);
                     }
+                    LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
+                } else {
+                    LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
+                    failsafe();
                 }
             }
+
+            try {
+                mangooScheduler.start();
+            } catch (MangooSchedulerException e) {
+                LOG.error("Failed to start the scheduler", e);
+                failsafe();
+            }
         }
+    }
+    
+    /**
+     * Failsafe exit of application startup
+     */
+    private static void failsafe() {
+        System.out.print("Failed to start mangoo I/O application"); //NOSONAR
+        System.exit(1); //NOSONAR
     }
 }
