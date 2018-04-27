@@ -1,5 +1,7 @@
 package io.mangoo.utils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.Charsets;
@@ -48,5 +50,22 @@ public final class ByteUtils {
         }
         
         return length;
+    }
+    
+    /**
+     * Copies a given map to a new map instance
+     * 
+     * @param originalMap The map to copy
+     * @return A new Map instance with value from originalMap
+     */
+    public static Map<String, String> copyMap(Map<String, String> originalMap) {
+        Objects.requireNonNull(originalMap, Required.MAP.toString());
+        
+        Map<String, String> copy = new HashMap<>();
+        for (Map.Entry<String, String> entry : originalMap.entrySet()) {
+            copy.put(entry.getKey(), entry.getValue());
+        }
+
+        return copy;
     }
 }

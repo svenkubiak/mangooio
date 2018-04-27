@@ -35,6 +35,7 @@ import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.CodecUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -91,11 +92,11 @@ public class InboundCookiesHandler implements HttpHandler {
             
             try {
                 JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
-                
+
                 session = Session.build()
-                        .withContent(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))
+                        .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
                         .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                        .withExpires(LocalDateTime.ofInstant(Instant.ofEpochMilli(jwtClaims.getExpirationTime().getValue()), ZoneId.systemDefault()));    
+                        .withExpires(LocalDateTime.ofInstant(Instant.ofEpochMilli(jwtClaims.getExpirationTime().getValue()), ZoneId.systemDefault())); 
             } catch (InvalidJwtException | MalformedClaimException e) {
                 LOG.error("Failed to parse session cookie", e);
             }
@@ -170,13 +171,11 @@ public class InboundCookiesHandler implements HttpHandler {
             
             try {
                 JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
-                final Map<String, String> values = jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class);
-
                 if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {
                     this.form = CodecUtils.deserializeFromBase64(jwtClaims.getClaimValue(ClaimKey.FORM.toString(), String.class));
                 } 
                 
-                flash = new Flash(values);
+                flash = new Flash(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
                 flash.setDiscard(true); 
             } catch (InvalidJwtException | MalformedClaimException e) {
                 LOG.error("Failed to parse flash cookie", e);
