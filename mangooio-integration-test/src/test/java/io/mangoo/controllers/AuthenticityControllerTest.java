@@ -22,7 +22,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class AuthenticityControllerTest {
-	private static final int AUTHENTICITY_LENGTH = 36;
+	private static final int AUTHENTICITY_LENGTH = 32;
     
     @Test
     public void testAuthenticityForm() {

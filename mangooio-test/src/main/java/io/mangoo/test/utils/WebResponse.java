@@ -17,6 +17,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -87,7 +89,9 @@ public class WebResponse {
 
         this.cookieStore.clear();
         this.responseUrl = "http://" + host + ":" + port;
-        this.httpClientBuilder = HttpClientBuilder.create().setDefaultCookieStore(this.cookieStore);
+        this.httpClientBuilder = HttpClientBuilder.create()
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build())
+                .setDefaultCookieStore(this.cookieStore);
     }
 
     /**

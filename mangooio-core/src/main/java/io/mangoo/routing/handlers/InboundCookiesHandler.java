@@ -1,12 +1,9 @@
 package io.mangoo.routing.handlers;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +34,8 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CryptoUtils;
+import io.mangoo.utils.DateUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -80,30 +79,31 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session = null;
         
-        String cookie = getCookie(exchange, this.config.getSessionCookieName());
-        if (StringUtils.isNotBlank(cookie)) {
-            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getSessionCookieEncryptionKey());
+        String cookieValue = getCookieValue(exchange, this.config.getSessionCookieName());
+        if (StringUtils.isNotBlank(cookieValue)) {
+            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
             
-            JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                    .setRequireExpirationTime()
-                    .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
-                    .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-                    .build();
-            
-            try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
+            if (StringUtils.isNotBlank(decryptedValue)) {
+                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                        .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
+                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+                        .build();
+                
+                try {
+                    JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
 
-                session = Session.build()
-                        .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
-                        .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                        .withExpires(LocalDateTime.ofInstant(Instant.ofEpochMilli(jwtClaims.getExpirationTime().getValue()), ZoneId.systemDefault())); 
-            } catch (InvalidJwtException | MalformedClaimException e) {
-                LOG.error("Failed to parse session cookie", e);
+                    session = Session.build()
+                            .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                            .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
+                            .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter)); 
+                } catch (InvalidJwtException | MalformedClaimException e) {
+                    LOG.error("Failed to parse session cookie", e);
+                }                
             }
         } else {
             session = Session.build()
                     .withContent(new HashMap<>())
-                    .withAuthenticity(UUID.randomUUID().toString())
+                    .withAuthenticity(CryptoUtils.randomString(32))
                     .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
         }
 
@@ -118,22 +118,21 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = null;
         
-        String cookie = getCookie(exchange, this.config.getAuthenticationCookieName());
-        if (StringUtils.isNotBlank(cookie)) {
-            String value = this.attachment.getCrypto().decrypt(cookie, this.config.getAuthenticationCookieEncryptionKey());
+        String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
+        if (StringUtils.isNotBlank(cookieValue)) {
+            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getAuthenticationCookieEncryptionKey());
             
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                    .setRequireExpirationTime()
                     .setRequireSubject()
                     .setVerificationKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                     .build();
             
             try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(value);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
                 
                 authentication = Application.getInstance(Authentication.class)
-                        .withExpires(LocalDateTime.ofInstant(Instant.ofEpochMilli(jwtClaims.getExpirationTime().getValue()), ZoneId.systemDefault()))
+                        .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))
                         .withAuthenticatedUser(jwtClaims.getSubject())
                         .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 
@@ -160,11 +159,10 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final String cookie = getCookie(exchange, this.config.getFlashCookieName());
+        final String cookie = getCookieValue(exchange, this.config.getFlashCookieName());
         
         if (StringUtils.isNotBlank(cookie)) {
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                    .setRequireExpirationTime()
                     .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                     .build();
@@ -204,7 +202,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * 
      * @return The value of the cookie or null if none found
      */
-    private String getCookie(HttpServerExchange exchange, String cookieName) {
+    private String getCookieValue(HttpServerExchange exchange, String cookieName) {
         String value = null;
         Map<String, Cookie> requestCookies = exchange.getRequestCookies();
         if (requestCookies != null) {

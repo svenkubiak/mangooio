@@ -19,6 +19,9 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class SessionControllerTest {
+    
+    
+    
     @Test
     public void testSessionCookie() {
         //when

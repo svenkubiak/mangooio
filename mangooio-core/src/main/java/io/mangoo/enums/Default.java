@@ -19,21 +19,13 @@ public enum Default {
     APPLICATION_JWT_ENCRYPT(Constants.FALSE),
     APPLICATION_LANGUAGE("en"),
     APPLICATION_MINIFY_CSS(Constants.FALSE),
-    
     APPLICATION_MINIFY_JS(Constants.FALSE),
-    
     APPLICATION_PREPROCESS_LESS(Constants.FALSE),
-    
     APPLICATION_PREPROCESS_SASS(Constants.FALSE),
-    
     APPLICATION_SECRET_MIN_LENGTH("32"),
-    
     APPLICATION_TEMPLATEENGINE("io.mangoo.templating.TemplateEngineFreemarker"),
-    
     APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
-    
     APPLICATION_THREADPOOL("10"),
- 
     ASSETS_PATH("src/main/resources/files/assets/"),
     @Deprecated /** Use AUTHENTICATION_COOKIE_ENCRYPT instead **/
     AUTH_COOKIE_ENCRYPT(Constants.FALSE),
@@ -54,17 +46,11 @@ public enum Default {
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("1209600"),
     AUTHENTICATION_COOKIE_SECURE(Constants.FALSE),
     AUTHENTICATION_COOKIE_VERSION("0"),
-    
     AUTHENTICATION_LOCK("10"),
-    
     AUTHENTICITY("authenticity"),
-    
     BASICAUTH_CREDENTIALS_LENGTH("2"),
-    
     BUNDLE_NAME("translations/messages"),
-    
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
-    
     CONFIG_PATH("/src/main/resources/application.yaml"),
     CONFIGURATION_FILE("application.yaml"),
     CONTENT_TYPE("text/html; charset=UTF-8"),

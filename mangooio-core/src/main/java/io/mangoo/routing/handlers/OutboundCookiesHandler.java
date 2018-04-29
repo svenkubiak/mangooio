@@ -1,8 +1,7 @@
 package io.mangoo.routing.handlers;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Objects;
 
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 
@@ -29,6 +27,7 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.DateUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -70,13 +69,11 @@ public class OutboundCookiesHandler implements HttpHandler {
         Session session = this.attachment.getSession();
         
         if (session != null && session.hasChanges()) {
-            Instant instant = session.getExpires().atZone(ZoneId.systemDefault()).toInstant();
-            
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
             jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getSessionCookieVersion());
             jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
-            jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
+            jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
             jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -84,14 +81,14 @@ public class OutboundCookiesHandler implements HttpHandler {
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
 
             try {
-                String jwt = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
+                String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
                 
                 final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
-                        .setValue(jwt)
+                        .setValue(encryptedValue)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
-                        .setExpires(Date.from(instant))
+                        .setExpires(DateUtils.localDateTimeToDate(session.getExpires()))
                         .setSecure(this.config.isSessionCookieSecure());
 
                 exchange.setResponseCookie(cookie);
@@ -109,7 +106,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = this.attachment.getAuthentication();
         
-        if (authentication != null && authentication.hasAuthenticatedUser()) {
+        if (authentication.hasAuthenticatedUser()) {
             final String cookieName = this.config.getAuthenticationCookieName();
             if (authentication.isLogout()) {
                 Cookie cookie = exchange.getRequestCookies().get(cookieName)
@@ -123,18 +120,18 @@ public class OutboundCookiesHandler implements HttpHandler {
                 
                 exchange.setResponseCookie(cookie);
             } else {
-                Instant instant;
+                LocalDateTime expires;
                 if (authentication.isRememberMe()) {
-                    instant = LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()).atZone(ZoneId.systemDefault()).toInstant();
+                    expires = LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires());
                 } else {
-                    instant = authentication.getExpires().atZone(ZoneId.systemDefault()).toInstant();
+                    expires = authentication.getExpires();
                 }
                 
                 JwtClaims jwtClaims = new JwtClaims();
                 jwtClaims.setSubject(authentication.getAuthenticatedUser());
                 jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
                 jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
-                jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));
                 
                 JsonWebSignature jsonWebSignature = new JsonWebSignature();
                 jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -142,15 +139,15 @@ public class OutboundCookiesHandler implements HttpHandler {
                 jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
                 
                 try {
-                    String jwt = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
+                    String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
                     
                     Cookie cookie = new CookieImpl(cookieName)
-                            .setValue(jwt)
+                            .setValue(encryptedValue)
                             .setSecure(this.config.isAuthenticationCookieSecure())
                             .setHttpOnly(true)
                             .setSameSite(true)
                             .setSameSiteMode(SAME_SITE_MODE)
-                            .setExpires(Date.from(instant));
+                            .setExpires(Date.from(expires.toInstant(ZoneOffset.ofHours(2))));
 
                     exchange.setResponseCookie(cookie);
                 } catch (JoseException e) {
@@ -171,15 +168,13 @@ public class OutboundCookiesHandler implements HttpHandler {
         Form form = this.attachment.getForm();
         
         if (flash != null && !flash.isDiscard() && (flash.hasContent() || form.flashify())) {
+            
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
             
             if (form.flashify()) {
                 jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
             }
-            
-            Instant instant = LocalDateTime.now().plusSeconds(60).atZone(ZoneId.systemDefault()).toInstant();
-            jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(instant.toEpochMilli()));
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
             jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -193,7 +188,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setHttpOnly(true)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
-                        .setExpires(Date.from(instant));
+                        .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(60)));
                 
                 exchange.setResponseCookie(cookie);
             } catch (JoseException e) {
