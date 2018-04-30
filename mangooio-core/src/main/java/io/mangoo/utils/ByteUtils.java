@@ -61,11 +61,6 @@ public final class ByteUtils {
     public static Map<String, String> copyMap(Map<String, String> originalMap) {
         Objects.requireNonNull(originalMap, Required.MAP.toString());
         
-        Map<String, String> copy = new HashMap<>();
-        for (Map.Entry<String, String> entry : originalMap.entrySet()) {
-            copy.put(entry.getKey(), entry.getValue());
-        }
-
-        return copy;
+        return new HashMap<String, String>(originalMap);
     }
 }
