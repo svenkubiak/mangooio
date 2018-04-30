@@ -49,6 +49,7 @@ public enum Required {
     HEADERS("headers can not be null"),
     HTTP_HANDLER("httpHandler can not be null"),
     HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),
+    IDENTIFIER("identifier can not be null"),
     IDENTITY("identity can not be null"),
     ISSUER("issuer can not be null"),
     JOB_DETAIL("job detail can not be null"),

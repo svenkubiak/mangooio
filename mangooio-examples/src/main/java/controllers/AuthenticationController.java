@@ -1,5 +1,7 @@
 package controllers;
 
+import java.util.UUID;
+
 import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
@@ -34,7 +36,7 @@ public class AuthenticationController {
             User user = this.dataService.getUser();
             if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
                 authentication
-                        .login()
+                        .login(UUID.randomUUID().toString())
                         .rememberMe(form.getBoolean("remember").orElse(Boolean.FALSE));
 
                 return Response.withRedirect("/");

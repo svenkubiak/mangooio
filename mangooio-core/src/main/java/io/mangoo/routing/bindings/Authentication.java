@@ -16,7 +16,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.TotpUtils;
 
 /**
@@ -156,49 +155,38 @@ public class Authentication {
      * Creates a hashed value of a given clear text password and checks if the
      * value matches a given, already hashed password
      *
-     * @param subject The subject to authenticate
+     * @param identifier The identifier to authenticate
      * @param password The clear text password
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String subject, String password, String hash) {
-        Objects.requireNonNull(subject, Required.USERNAME.toString());
+    public boolean validLogin(String identifier, String password, String hash) {
+        Objects.requireNonNull(identifier, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
         boolean authenticated = false;
-        if (!userHasLock(subject) && CodecUtils.checkJBCrypt(password, hash)) {
+        if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
             authenticated = true;
         } else {
-            this.cache.increment(subject);
+            this.cache.increment(identifier);
         }
 
         return authenticated;
     }
     
     /**
-     * Performs a login by setting the authenticated user to the given subject
+     * Performs a login by setting the authentication to the given identifier
      * Please note, that calling validLogin is mandatory before this call!
      * 
-     * @deprecated As of version 4.13.0, use login() instead
+     * It is highly recommended NOT to use a username or anything else than
+     * can be related to a user as an identifer!
      * 
-     * @param subject The subject to login
+     * @param identifier The identifier to use
      * @return Authentication object
      */
-    @Deprecated
-    public Authentication login(String subject) {
-        this.identifier = subject;
-        return this;
-    }
-    
-    /**
-     * Performs a login by setting the authenticated user to the given subject
-     * Please note, that calling validLogin is mandatory before this call!
-     * 
-     * @return Authentication object
-     */
-    public Authentication login() {
-        this.identifier = CryptoUtils.randomString(32);
+    public Authentication login(String identifier) {
+        this.identifier = identifier;
         return this;
     }
     

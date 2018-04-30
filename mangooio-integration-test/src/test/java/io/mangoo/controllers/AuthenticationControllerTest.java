@@ -89,7 +89,7 @@ public class AuthenticationControllerTest {
         
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContent().length(), equalTo(32));
+        assertThat(response.getContent().length(), equalTo(26));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when

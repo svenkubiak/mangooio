@@ -9,6 +9,7 @@ import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Form;
 
 public class AuthenticationController {
+    private static final String IDENTIFIER = "jfljfdklöjklöjkfdEweje2kqe";
     private static final String SECRET = "MyVoiceIsMySecret";
     private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
@@ -26,7 +27,7 @@ public class AuthenticationController {
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
         if (authentication.isValid()) {
-            authentication.login();
+            authentication.login(IDENTIFIER);
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
 
@@ -34,12 +35,12 @@ public class AuthenticationController {
     }
 
     public Response doLogin(Authentication authentication) {
-        authentication.login();
+        authentication.login(IDENTIFIER);
         return Response.withRedirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
-        authentication.login().twoFactorAuthentication(true);
+        authentication.login(IDENTIFIER).twoFactorAuthentication(true);
         
         return Response.withRedirect("/");
     }
