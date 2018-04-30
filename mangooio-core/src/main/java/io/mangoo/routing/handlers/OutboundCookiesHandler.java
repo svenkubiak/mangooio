@@ -106,7 +106,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = this.attachment.getAuthentication();
         
-        if (authentication.hasAuthenticatedUser()) {
+        if (authentication.isValid()) {
             final String cookieName = this.config.getAuthenticationCookieName();
             if (authentication.isLogout()) {
                 Cookie cookie = exchange.getRequestCookies().get(cookieName)
@@ -128,7 +128,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 }
                 
                 JwtClaims jwtClaims = new JwtClaims();
-                jwtClaims.setSubject(authentication.getAuthenticatedUser());
+                jwtClaims.setSubject(authentication.getIdentifier());
                 jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
                 jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
                 jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));

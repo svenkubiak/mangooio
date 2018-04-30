@@ -43,7 +43,7 @@ public class AuthenticationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("\tHello Guest!\n\t//Display navigation for not authenticated user\n"));
+        assertThat(response.getContent(), equalTo("not authenticated"));
         
         //given
         WebBrowser instance = WebBrowser.open();
@@ -64,7 +64,7 @@ public class AuthenticationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("\tHello foo!\n\t//Display navigation for authenticated user\n"));
+        assertThat(response.getContent(), equalTo("authenticated"));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class AuthenticationControllerTest {
         
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContent(), equalTo("foo"));
+        assertThat(response.getContent().length(), equalTo(32));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when

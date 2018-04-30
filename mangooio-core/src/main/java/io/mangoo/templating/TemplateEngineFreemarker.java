@@ -33,7 +33,6 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.models.Source;
-import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
@@ -83,7 +82,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
 
     @Override
     @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String controller, Locale locale) throws MangooTemplateEngineException {
+    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content, String controller, Locale locale) throws MangooTemplateEngineException {
         Template template;
         try {
             template = configuration.getTemplate(templatePath);
@@ -101,7 +100,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         content.put("form", form);
         content.put("flash", flash);
         content.put("session", session);
-        content.put("subject", subject);
         content.put("i18n", new I18nMethod(messages));
         content.put("route", new RouteMethod());
         content.put("location", new LocationMethod(controller));

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
-import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
@@ -24,7 +23,6 @@ public interface MangooTemplateEngine {
      * @param session The current session
      * @param form The current Form
      * @param messages The current messages
-     * @param subject The current subject
      * @param templatePath The path to the template to render
      * @param content The content map which is passed to the template
      * @param path The relative path of the request 
@@ -33,7 +31,7 @@ public interface MangooTemplateEngine {
      *
      * @throws MangooTemplateEngineException MangooTemplateEngineException
      */
-    String render(Flash flash, Session session, Form form, Messages messages, Subject subject, String templatePath, Map<String, Object> content, String path, Locale locale) throws MangooTemplateEngineException;
+    String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content, String path, Locale locale) throws MangooTemplateEngineException;
 
     /**
      * Renders a template for a specific controller class and method

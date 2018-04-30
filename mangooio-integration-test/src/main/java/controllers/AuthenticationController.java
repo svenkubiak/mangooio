@@ -15,7 +15,7 @@ public class AuthenticationController {
     @FilterWith(AuthenticationFilter.class)
     public Response notauthenticated(Authentication authentication) {
         return Response.withOk()
-                .andTextBody(authentication.getAuthenticatedUser());
+                .andTextBody(authentication.getIdentifier());
     }
 
     @FilterWith(OAuthLoginFilter.class)
@@ -25,8 +25,8 @@ public class AuthenticationController {
 
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
-        if (authentication.hasAuthenticatedUser()) {
-            authentication.login(authentication.getAuthenticatedUser());
+        if (authentication.isValid()) {
+            authentication.login();
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
 
@@ -34,18 +34,18 @@ public class AuthenticationController {
     }
 
     public Response doLogin(Authentication authentication) {
-        authentication.login("foo");
+        authentication.login();
         return Response.withRedirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
-        authentication.login("foo").twoFactorAuthentication(true);
+        authentication.login().twoFactorAuthentication(true);
         
         return Response.withRedirect("/");
     }
     
     public Response factorize(Form form, Authentication authentication) {
-        if (authentication.hasAuthenticatedUser() && authentication.validSecondFactor(SECRET, form.getString("twofactor").orElse(""))) {
+        if (authentication.isValid() && authentication.validSecondFactor(SECRET, form.getString("twofactor").orElse(""))) {
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
         
@@ -57,7 +57,8 @@ public class AuthenticationController {
         return Response.withOk().andEmptyBody();
     }
     
-    public Response subject() {
-        return Response.withOk();
+    public Response subject(Authentication authentication) {
+        return Response.withOk()
+                .andContent("identifier", authentication.getIdentifier());
     }
 }

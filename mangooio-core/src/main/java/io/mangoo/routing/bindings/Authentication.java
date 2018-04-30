@@ -16,6 +16,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
+import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.TotpUtils;
 
 /**
@@ -28,7 +29,7 @@ public class Authentication {
     private Config config;
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
-    private String authenticatedUser;
+    private String identifier;
     private Cache cache;
     private boolean twoFactor;
     private boolean remember;
@@ -52,21 +53,21 @@ public class Authentication {
         return this;
     }
     
-    public Authentication withAuthenticatedUser(String authenticatedUser) {
-        if (StringUtils.isBlank(this.authenticatedUser)) {
-            this.authenticatedUser = authenticatedUser;            
+    public Authentication withIdentifier(String identifier) {
+        if (StringUtils.isBlank(this.identifier)) {
+            this.identifier = identifier;            
         }
         
         return this;
     }
 
     /**
-     * Retrieves the current authenticated user
+     * Retrieves the current identifier
      *
-     * @return The username of the current authenticated user or null
+     * @return The identifier of the current authenticated user or null
      */
-    public String getAuthenticatedUser() {
-        return this.authenticatedUser;
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     /**
@@ -142,7 +143,7 @@ public class Authentication {
 
         boolean authenticated = false;
         if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
-            this.authenticatedUser = username;
+            this.identifier = username;
             authenticated = true;
         } else {
             this.cache.increment(username);
@@ -179,11 +180,25 @@ public class Authentication {
      * Performs a login by setting the authenticated user to the given subject
      * Please note, that calling validLogin is mandatory before this call!
      * 
+     * @deprecated As of version 4.13.0, use login() instead
+     * 
      * @param subject The subject to login
      * @return Authentication object
      */
+    @Deprecated
     public Authentication login(String subject) {
-        this.authenticatedUser = subject;
+        this.identifier = subject;
+        return this;
+    }
+    
+    /**
+     * Performs a login by setting the authenticated user to the given subject
+     * Please note, that calling validLogin is mandatory before this call!
+     * 
+     * @return Authentication object
+     */
+    public Authentication login() {
+        this.identifier = CryptoUtils.randomString(32);
         return this;
     }
     
@@ -270,11 +285,22 @@ public class Authentication {
 
     /**
      * Checks if the authentication contains an authenticated user
+     * @deprecated As of version 4.13.0, use isValid() instead
      *
      * @return True if authentication contains an authenticated user, false otherwise
      */
+    @Deprecated
     public boolean hasAuthenticatedUser() {
-        return StringUtils.isNotBlank(this.authenticatedUser) || this.oAuthUser != null;
+        return StringUtils.isNotBlank(this.identifier) || this.oAuthUser != null;
+    }
+    
+    /**
+     * Checks if the authentication class contains an authentication
+     *
+     * @return True if authentication contains an authentication, false otherwise
+     */
+    public boolean isValid() {
+        return StringUtils.isNotBlank(this.identifier) || this.oAuthUser != null;
     }
 
     /**
@@ -288,6 +314,6 @@ public class Authentication {
     public boolean isAuthenticated(String username) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
 
-        return username.equals(this.authenticatedUser);
+        return username.equals(this.identifier);
     }
 }

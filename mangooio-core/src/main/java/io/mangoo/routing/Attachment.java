@@ -14,7 +14,6 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooTemplateEngine;
-import io.mangoo.models.Subject;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -51,7 +50,6 @@ public class Attachment {
     private Response response;
     private Session session;
     private final long start = System.currentTimeMillis();
-    private Subject subject;
     private MangooTemplateEngine templateEngine;
     private boolean timer;
 
@@ -157,10 +155,6 @@ public class Attachment {
         return this.session;
     }
 
-    public Subject getSubject() {
-        return this.subject;
-    }
-
     public MangooTemplateEngine getTemplateEngine() {
         return this.templateEngine;
     }
@@ -211,10 +205,6 @@ public class Attachment {
 
     public void setSession(Session session) {
         this.session = session;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
     }
 
     public Attachment withClassAnnotations(List<Annotation> classAnnotations) {

@@ -26,7 +26,6 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
-import io.mangoo.models.Subject;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -49,7 +48,6 @@ public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private Attachment attachment;
     private Config config;
-    private Subject subject;
     private Form form;
 
     @Inject
@@ -62,7 +60,6 @@ public class InboundCookiesHandler implements HttpHandler {
         this.attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
         this.attachment.setSession(getSessionCookie(exchange));
         this.attachment.setAuthentication(getAuthenticationCookie(exchange));
-        this.attachment.setSubject(this.subject);
         this.attachment.setFlash(getFlashCookie(exchange));
         this.attachment.setForm(this.form);
 
@@ -142,16 +139,12 @@ public class InboundCookiesHandler implements HttpHandler {
                 if (expires.isAfter(LocalDateTime.now())) {
                     authentication = Application.getInstance(Authentication.class)
                             .withExpires(expires)
-                            .withAuthenticatedUser(jwtClaims.getSubject())
+                            .withIdentifier(jwtClaims.getSubject())
                             .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
-                    
-                    this.subject = new Subject(jwtClaims.getSubject(), true);  
                 } else {
                     authentication = Application.getInstance(Authentication.class)
                             .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
-                            .withAuthenticatedUser(null);
-                    
-                    this.subject = new Subject("", false);
+                            .withIdentifier(null);
                 }
             } catch (InvalidJwtException | MalformedClaimException e) {
                 LOG.error("Failed to parse authentication cookie", e);
@@ -159,9 +152,7 @@ public class InboundCookiesHandler implements HttpHandler {
         } else {
             authentication = Application.getInstance(Authentication.class)
                     .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
-                    .withAuthenticatedUser(null);
-            
-            this.subject = new Subject("", false);
+                    .withIdentifier(null);
         }
 
         return authentication;

@@ -34,7 +34,7 @@ public class AuthenticationController {
             User user = this.dataService.getUser();
             if (user != null && authentication.validLogin(form.get(USERNAME), form.get(PASSWORD), user.getPassword())) {
                 authentication
-                        .login(form.get(USERNAME))
+                        .login()
                         .rememberMe(form.getBoolean("remember").orElse(Boolean.FALSE));
 
                 return Response.withRedirect("/");
