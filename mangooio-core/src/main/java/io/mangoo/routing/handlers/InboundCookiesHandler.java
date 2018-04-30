@@ -82,7 +82,6 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, this.config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
-            
             if (StringUtils.isNotBlank(decryptedValue)) {
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
@@ -91,11 +90,19 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 try {
                     JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-
-                    session = Session.build()
-                            .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
-                            .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                            .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter)); 
+                    LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
+                    
+                    if (expires.isAfter(LocalDateTime.now())) {
+                        session = Session.build()
+                                .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                                .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
+                                .withExpires(expires);                         
+                    } else {
+                        session = Session.build()
+                                .withContent(new HashMap<>())
+                                .withAuthenticity(CryptoUtils.randomString(32))
+                                .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
+                    }
                 } catch (InvalidJwtException | MalformedClaimException e) {
                     LOG.error("Failed to parse session cookie", e);
                 }                
@@ -130,13 +137,22 @@ public class InboundCookiesHandler implements HttpHandler {
             
             try {
                 JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+                LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
                 
-                authentication = Application.getInstance(Authentication.class)
-                        .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))
-                        .withAuthenticatedUser(jwtClaims.getSubject())
-                        .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
-                
-                this.subject = new Subject(jwtClaims.getSubject(), true);
+                if (expires.isAfter(LocalDateTime.now())) {
+                    authentication = Application.getInstance(Authentication.class)
+                            .withExpires(expires)
+                            .withAuthenticatedUser(jwtClaims.getSubject())
+                            .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
+                    
+                    this.subject = new Subject(jwtClaims.getSubject(), true);  
+                } else {
+                    authentication = Application.getInstance(Authentication.class)
+                            .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
+                            .withAuthenticatedUser(null);
+                    
+                    this.subject = new Subject("", false);
+                }
             } catch (InvalidJwtException | MalformedClaimException e) {
                 LOG.error("Failed to parse authentication cookie", e);
             } 
@@ -169,12 +185,16 @@ public class InboundCookiesHandler implements HttpHandler {
             
             try {
                 JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
-                if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {
-                    this.form = CodecUtils.deserializeFromBase64(jwtClaims.getClaimValue(ClaimKey.FORM.toString(), String.class));
-                } 
+                LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
                 
-                flash = new Flash(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
-                flash.setDiscard(true); 
+                if (expires.isAfter(LocalDateTime.now())) {
+                    if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {
+                        this.form = CodecUtils.deserializeFromBase64(jwtClaims.getClaimValue(ClaimKey.FORM.toString(), String.class));
+                    } 
+                    
+                    flash = new Flash(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
+                    flash.setDiscard(true); 
+                }
             } catch (InvalidJwtException | MalformedClaimException e) {
                 LOG.error("Failed to parse flash cookie", e);
             }  

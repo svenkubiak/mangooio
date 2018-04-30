@@ -168,13 +168,15 @@ public class OutboundCookiesHandler implements HttpHandler {
         Form form = this.attachment.getForm();
         
         if (flash != null && !flash.isDiscard() && (flash.hasContent() || form.flashify())) {
-            
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
             
             if (form.flashify()) {
                 jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
             }
+            
+            LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
+            jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), expires.format(DateUtils.formatter));
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
             jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -188,7 +190,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setHttpOnly(true)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
-                        .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(60)));
+                        .setExpires(DateUtils.localDateTimeToDate(expires));
                 
                 exchange.setResponseCookie(cookie);
             } catch (JoseException e) {
