@@ -35,3 +35,8 @@ key = (1..64).collect { pool[random.nextInt(pool.size())] }
 replacePatternInFile(new File(path)){
     it.replaceAll("flash.cookie.signkey", key.join())
 }
+
+key = (1..64).collect { pool[random.nextInt(pool.size())] }
+replacePatternInFile(new File(path)){
+    it.replaceAll("flash.cookie.encryptionkey", key.join())
+}

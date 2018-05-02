@@ -312,6 +312,12 @@ public final class Application {
             failsafe();
         }
         
+        bitLength = getBitLength(config.getFlashCookieEncryptionKey());
+        if (bitLength < MIN_BIT_LENGTH) {
+            LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.encryptionkey has only {} bit.", bitLength);
+            failsafe();
+        }
+        
         if (!config.isDecrypted()) {
             LOG.error("Found encrypted config values in application.yaml but decryption was not successful!");
             failsafe();
@@ -381,6 +387,12 @@ public final class Application {
         
         if (config.getFlashCookieSignKey().equals(config.getApplicationSecret())) {
             String warning = "Flash cookie sign key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.signkey.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+        
+        if (config.getFlashCookieEncryptionKey().equals(config.getApplicationSecret())) {
+            String warning = "Flash cookie encryption key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.encryptionkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }

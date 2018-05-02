@@ -166,16 +166,17 @@ public class InboundCookiesHandler implements HttpHandler {
     @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = null;
-        final String cookie = getCookieValue(exchange, this.config.getFlashCookieName());
         
-        if (StringUtils.isNotBlank(cookie)) {
+        final String cookieValue = getCookieValue(exchange, this.config.getFlashCookieName());
+        if (StringUtils.isNotBlank(cookieValue)) {
+            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                     .build();
             
             try {
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(cookie);
+                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
                 LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
                 
                 if (expires.isAfter(LocalDateTime.now())) {

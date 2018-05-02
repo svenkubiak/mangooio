@@ -851,4 +851,11 @@ public class Config {
     public String getFlashCookieSignKey() {
         return getString(Key.FLASH_COOKIE_SIGNKEY, getApplicationSecret());
     }
+
+    /**
+     * @return flash.cookie.encryptionkey or application secret if undefined
+     */
+    public String getFlashCookieEncryptionKey() {
+        return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    }
 }

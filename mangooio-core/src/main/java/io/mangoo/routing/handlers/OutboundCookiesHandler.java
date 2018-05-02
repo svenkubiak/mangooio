@@ -184,8 +184,10 @@ public class OutboundCookiesHandler implements HttpHandler {
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
             try {
+                String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
+                
                 final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
-                        .setValue(jsonWebSignature.getCompactSerialization())
+                        .setValue(encryptedValue)
                         .setSecure(this.config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
