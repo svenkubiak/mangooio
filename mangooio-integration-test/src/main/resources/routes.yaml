@@ -91,6 +91,10 @@ routes:
   url: /session
   mapping: SessionController.session
 
+- method: GET
+  url: /session/valued/{uuid}
+  mapping: SessionController.valued
+
 # ParameterController
 - method: GET
   url: /string/{foo}

@@ -9,4 +9,10 @@ public class SessionController {
 
         return Response.withOk().andEmptyBody();
     }
+    
+    public Response valued(String uuid, Session session) {
+        session.put("uuid", uuid);
+
+        return Response.withOk().andEmptyBody();
+    }
 }

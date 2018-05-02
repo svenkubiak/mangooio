@@ -1295,7 +1295,37 @@ public class ConfigTest {
         // then
         assertThat(config.getSessionCookieEncryptionKey(), equalTo(secret));
         assertThat(yaml.delete(), equalTo(true));
-    } 
+    }
+    
+    @Test
+    public void testGetFlashCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String key = UUID.randomUUID().toString();
+
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("flash", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        
+        // then
+        assertThat(config.getFlashCookieEncryptionKey(), equalTo(key));
+        assertThat(yaml.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetFlashCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        
+        // when
+        Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
+        File yaml = createTempYaml(configValues);
+        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+
+        // then
+        assertThat(config.getFlashCookieEncryptionKey(), equalTo(secret));
+        assertThat(yaml.delete(), equalTo(true));
+    }
     
     @Test
     public void testGetAuthenticationCookieSignKey() throws JsonGenerationException, JsonMappingException, IOException {
