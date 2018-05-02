@@ -137,12 +137,12 @@ public class InboundCookiesHandler implements HttpHandler {
                 LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
                 
                 if (expires.isAfter(LocalDateTime.now())) {
-                    authentication = Application.getInstance(Authentication.class)
+                    authentication = Authentication.create()
                             .withExpires(expires)
                             .withIdentifier(jwtClaims.getSubject())
                             .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 } else {
-                    authentication = Application.getInstance(Authentication.class)
+                    authentication = Authentication.create()
                             .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
                             .withIdentifier(null);
                 }
@@ -150,7 +150,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 LOG.error("Failed to parse authentication cookie", e);
             } 
         } else {
-            authentication = Application.getInstance(Authentication.class)
+            authentication = Authentication.create()
                     .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
                     .withIdentifier(null);
         }

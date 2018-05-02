@@ -6,10 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.inject.Inject;
-
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
+import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
@@ -25,22 +24,15 @@ import io.mangoo.utils.TotpUtils;
  *
  */
 public class Authentication {
-    private Config config;
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
     private String identifier;
-    private Cache cache;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
-
-    @Inject
-    public Authentication(CacheProvider cacheProvider, Config config) {
-        Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
-        Objects.requireNonNull(config, Required.CONFIG.toString());
-        
-        this.cache = cacheProvider.getCache(CacheName.AUTH);
-        this.config = config;
+    
+    public static Authentication create() {
+        return new Authentication();
     }
     
     public Authentication withExpires(LocalDateTime expires) {
@@ -140,12 +132,13 @@ public class Authentication {
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         boolean authenticated = false;
         if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
             this.identifier = username;
             authenticated = true;
         } else {
-            this.cache.increment(username);
+            cache.increment(username);
         }
 
         return authenticated;
@@ -165,11 +158,12 @@ public class Authentication {
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         boolean authenticated = false;
         if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
             authenticated = true;
         } else {
-            this.cache.increment(identifier);
+            cache.increment(identifier);
         }
 
         return authenticated;
@@ -242,8 +236,10 @@ public class Authentication {
         Objects.requireNonNull(username, Required.USERNAME.toString());
         boolean lock = false;
         
-        AtomicInteger counter = this.cache.getCounter(username);
-        if (counter != null && counter.get() > this.config.getAuthenticationLock()) {
+        Config config = Application.getInstance(Config.class);
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        AtomicInteger counter = cache.getCounter(username);
+        if (counter != null && counter.get() > config.getAuthenticationLock()) {
             lock = true;
         }
         
