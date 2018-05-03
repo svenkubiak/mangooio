@@ -1,8 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -148,14 +146,13 @@ public class OutboundCookiesHandler implements HttpHandler {
                 
                 try {
                     String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
-                    
                     final Cookie cookie = new CookieImpl(cookieName)
                             .setValue(encryptedValue)
                             .setSecure(this.config.isAuthenticationCookieSecure())
                             .setHttpOnly(true)
                             .setSameSite(true)
                             .setSameSiteMode(SAME_SITE_MODE)
-                            .setExpires(Date.from(expires.toInstant(ZoneOffset.ofHours(2))));
+                            .setExpires(DateUtils.localDateTimeToDate(expires));
 
                     exchange.setResponseCookie(cookie);
                 } catch (JoseException e) {
@@ -193,7 +190,6 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             try {
                 String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
-                
                 final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
                         .setValue(encryptedValue)
                         .setSecure(this.config.isFlashCookieSecure())
