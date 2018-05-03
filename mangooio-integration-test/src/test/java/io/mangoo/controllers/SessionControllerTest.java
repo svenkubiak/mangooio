@@ -8,7 +8,10 @@ import static org.hamcrest.Matchers.nullValue;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -61,8 +64,8 @@ public class SessionControllerTest {
          WebResponse response = WebRequest.get("/session/valued/" + uuid).execute();
         
          //when
-         String cleaned = response.getCookie(config.getSessionCookieName()).getValue().replace("\"", "").trim();
-         String decryptedValue = Application.getInstance(Crypto.class).decrypt(cleaned, config.getSessionCookieEncryptionKey());
+         String cookieValue = response.getCookie(config.getSessionCookieName()).getValue();
+         String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, config.getSessionCookieEncryptionKey());
          JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setVerificationKey(new HmacKey(config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
                 .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
@@ -88,5 +91,32 @@ public class SessionControllerTest {
          assertThat(response, not(nullValue()));
          assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
          assertThat(session.get("uuid"), equalTo(uuid));
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSessionCookieWithValueConcurrent() throws InvalidJwtException, MalformedClaimException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            Config config = Application.getInstance(Config.class);
+            String uuid = UUID.randomUUID().toString();
+            WebResponse response = WebRequest.get("/session/valued/" + uuid).execute();
+           
+            //when
+            String cookieValue = response.getCookie(config.getSessionCookieName()).getValue();
+            
+            JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                   .setVerificationKey(new HmacKey(config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
+                   .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+                   .build();
+           
+            String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, config.getSessionCookieEncryptionKey());
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+            Session session = Session.create()
+                       .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
+            
+            // then
+            return response != null && response.getStatusCode() == StatusCodes.OK && session != null && session.get("uuid") != null && session.get("uuid").equals(uuid);
+        }, new RunsInThreads<>(new AtomicInteger(), 50));
     }
 }

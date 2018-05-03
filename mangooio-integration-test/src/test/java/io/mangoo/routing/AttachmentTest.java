@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import io.mangoo.admin.AdminController;
 import io.mangoo.core.Application;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooTemplateEngine;
 
@@ -34,7 +33,6 @@ public class AttachmentTest {
         attachment.withControllerClassName("foo");
         attachment.withControllerInstance(new String());
         attachment.withControllerMethodName("bar");
-        attachment.withCrypto(Application.getInstance(Crypto.class));
         attachment.withLimit(23);
         attachment.withMessages(Application.getInstance(Messages.class));
         attachment.withMethodAnnotations(new ArrayList<Annotation>());
@@ -53,7 +51,6 @@ public class AttachmentTest {
         assertThat(attachment.getControllerClassName(), equalTo("foo"));
         assertThat(attachment.getControllerInstance(), instanceOf(String.class));
         assertThat(attachment.getControllerMethodName(), equalTo("bar"));
-        assertThat(attachment.getCrypto(), instanceOf(Crypto.class));
         assertThat(attachment.getLimit(), equalTo(23));
         assertThat(attachment.getMessages(), instanceOf(Messages.class));
         assertThat(attachment.getMethodAnnotations(), instanceOf(ArrayList.class));

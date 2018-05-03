@@ -6,10 +6,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Before;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import io.mangoo.core.Application;
+import io.mangoo.utils.CryptoUtils;
 
 /**
  * 
@@ -18,22 +22,16 @@ import io.mangoo.core.Application;
  */
 @SuppressWarnings("unchecked")
 public class CryptoTest {
-    private static Crypto crypto;
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
     private static final String plainText = "This is a super secret message!";
     private static final String key33 = "123456789012345678901234567890123";
     private static final String key32 = "12345678901234567890123456789012";
     private static final String key31 = "1234567890123456789012345678901";
     
-    @Before
-    public void init() {
-        crypto = Application.getInjector().getInstance(Crypto.class);
-    }
-    
     @Test
     public void testEncryption() {
         //when
-        String encrypt = crypto.encrypt(plainText);
+        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
 
         //then
         assertThat(encrypt, not(nullValue()));
@@ -42,9 +40,24 @@ public class CryptoTest {
     }
     
     @Test
+    public void testEncryptionConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String text = CryptoUtils.randomString(32);
+            
+            //when
+            String encrypt = Application.getInstance(Crypto.class).encrypt(text);
+            String decrypt = Application.getInstance(Crypto.class).decrypt(encrypt);
+           
+            //when
+            return decrypt.equals(text);
+        }, new RunsInThreads<>(new AtomicInteger(), 50));
+    }
+    
+    @Test
     public void testLongKey() {
         //when
-        String encrypt = crypto.encrypt(plainText, key33);
+        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key33);
 
         //then
         assertThat(encrypt, not(nullValue()));
@@ -55,13 +68,13 @@ public class CryptoTest {
     @Test(expected = IllegalArgumentException.class)
     public void testShortKey() {
         //when
-        crypto.encrypt(plainText, key31);
+        Application.getInstance(Crypto.class).encrypt(plainText, key31);
     }
     
     @Test
     public void testEncryptionWithKey() {
         //when
-        String encrypt = crypto.encrypt(plainText, key32);
+        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key32);
         
         //then
         assertThat(encrypt, not(nullValue()));
@@ -72,10 +85,10 @@ public class CryptoTest {
     @Test
     public void testDecryption() {
         //given
-        String encrypt = crypto.encrypt(plainText);
+        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
         
         //when
-        String decrypt = crypto.decrypt(encrypt);
+        String decrypt = Application.getInstance(Crypto.class).decrypt(encrypt);
 
         //then
         assertThat(decrypt, not(nullValue()));
@@ -85,10 +98,10 @@ public class CryptoTest {
     @Test
     public void testDecryptionWithKey() {
         //given
-        String encrypt = crypto.encrypt(plainText, key32);
+        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key32);
 
         //when
-        String decrypt = crypto.decrypt(encrypt, key32);
+        String decrypt = Application.getInstance(Crypto.class).decrypt(encrypt, key32);
 
         //then
         assertThat(decrypt, not(nullValue()));

@@ -92,13 +92,13 @@ public class Crypto {
      * @param key The key to use for encryption
      * @return The encrypted text or null if encryption fails
      */
-    public String encrypt(String plainText, String key) {
+    public String encrypt(final String plainText, final String key) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(Charsets.UTF_8)));
         this.cipher.init(true, cipherParameters);
-
+        
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
 
@@ -108,7 +108,7 @@ public class Crypto {
      * @param data The data to encrypt or decrypt
      * @return A clear text or encrypted byte array
      */
-    private byte[] cipherData(byte[] data) {
+    private byte[] cipherData(final byte[] data) {
         byte[] result = null;
         try {
             final byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
@@ -124,7 +124,7 @@ public class Crypto {
 
         return result;
     }
-    
+
     public static String getSizedSecret(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         String key = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");

@@ -10,7 +10,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooTemplateEngine;
@@ -33,7 +32,6 @@ public class Attachment {
     private String controllerClassName;
     private Object controllerInstance;
     private String controllerMethodName;
-    private Crypto crypto;
     private Flash flash;
     private Form form;
     private int limit;
@@ -89,10 +87,6 @@ public class Attachment {
 
     public String getControllerMethodName() {
         return this.controllerMethodName;
-    }
-
-    public Crypto getCrypto() {
-        return this.crypto;
     }
 
     public Flash getFlash() {
@@ -229,11 +223,6 @@ public class Attachment {
 
     public Attachment withControllerMethodName(String controllerMethodName) {
         this.controllerMethodName = Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
-        return this;
-    }
-
-    public Attachment withCrypto(Crypto crypto) {
-        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         return this;
     }
 

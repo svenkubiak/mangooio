@@ -23,6 +23,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
@@ -78,7 +79,7 @@ public class InboundCookiesHandler implements HttpHandler {
         
         String cookieValue = getCookieValue(exchange, this.config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
-            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
+            String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
             if (StringUtils.isNotBlank(decryptedValue)) {
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
@@ -134,7 +135,7 @@ public class InboundCookiesHandler implements HttpHandler {
         
         String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
-            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getAuthenticationCookieEncryptionKey());
+            String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getAuthenticationCookieEncryptionKey());
             
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireSubject()
@@ -179,7 +180,7 @@ public class InboundCookiesHandler implements HttpHandler {
         
         final String cookieValue = getCookieValue(exchange, this.config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
-            String decryptedValue = this.attachment.getCrypto().decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
+            String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))

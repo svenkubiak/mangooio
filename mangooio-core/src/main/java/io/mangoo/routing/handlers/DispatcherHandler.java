@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
 import io.mangoo.i18n.Messages;
@@ -48,7 +47,6 @@ public class DispatcherHandler implements HttpHandler {
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
     private Messages messages;
-    private Crypto crypto;
     private Map<String, Class<?>> methodParameters;
     private Class<?> controllerClass;
     private String controllerClassName;
@@ -73,7 +71,6 @@ public class DispatcherHandler implements HttpHandler {
         Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
 
         this.messages = Application.getInstance(Messages.class);
-        this.crypto = Application.getInstance(Crypto.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethodName;
         this.controllerClassName = controllerClass.getSimpleName();
@@ -153,8 +150,7 @@ public class DispatcherHandler implements HttpHandler {
             .withLimit(this.limit)
             .withUsername(this.username)
             .withPassword(this.password)
-            .withTemplateEngine(this.templateEngine)
-            .withCrypto(this.crypto);
+            .withTemplateEngine(this.templateEngine);
 
         exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
         nextHandler(exchange);

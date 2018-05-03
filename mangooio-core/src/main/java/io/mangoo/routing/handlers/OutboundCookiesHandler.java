@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.helpers.RequestHelper;
@@ -84,10 +85,9 @@ public class OutboundCookiesHandler implements HttpHandler {
             jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)));
             jsonWebSignature.setPayload(jwtClaims.toJson());
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
-
+            
             try {
-                String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
-                
+                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
                 Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
                         .setValue(encryptedValue)
                         .setSameSite(true)
@@ -96,7 +96,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(this.config.isSessionCookieSecure());
                 
                 if (session.getExpires() != null) {
-                    System.out.println("----> " + session.getExpires());
                     cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
                 }
 
@@ -148,7 +147,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
                 
                 try {
-                    String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
+                    String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
                     
                     final Cookie cookie = new CookieImpl(cookieName)
                             .setValue(encryptedValue)
@@ -193,7 +192,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
             try {
-                String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
+                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
                 
                 final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
                         .setValue(encryptedValue)
