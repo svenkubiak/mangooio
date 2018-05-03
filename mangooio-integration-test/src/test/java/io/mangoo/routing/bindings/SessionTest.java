@@ -17,7 +17,7 @@ public class SessionTest {
     @Test
     public void testNoContent() {
         //given
-        final Session session = Session.build();
+        final Session session = Session.create();
 
         //then
         assertThat(session.hasContent(), equalTo(false));
@@ -26,7 +26,7 @@ public class SessionTest {
     @Test
     public void testContent() {
         //given
-        final Session session = Session.build();
+        final Session session = Session.create();
 
         //when
         session.put(FOO, BAR);
@@ -40,7 +40,7 @@ public class SessionTest {
     @Test
     public void testRemove() {
         //given
-        final Session session = Session.build();
+        final Session session = Session.create();
 
         //when
         session.put(FOO, BAR);
@@ -55,7 +55,7 @@ public class SessionTest {
     @Test
     public void testClear() {
         //given
-        final Session session = Session.build();
+        final Session session = Session.create();
 
         //when
         session.put(FOO, BAR);
@@ -70,7 +70,7 @@ public class SessionTest {
     @Test
     public void testInvalidCharacters() {
         //given
-        final Session session = Session.build();
+        final Session session = Session.create();
 
         //when
         session.put("|", FOO);

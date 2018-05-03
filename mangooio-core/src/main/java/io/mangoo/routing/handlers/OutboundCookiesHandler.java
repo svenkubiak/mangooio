@@ -73,7 +73,12 @@ public class OutboundCookiesHandler implements HttpHandler {
             jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
             jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getSessionCookieVersion());
             jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
-            jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));
+            
+            if (session.getExpires() != null) {
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));                
+            } else {
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");    
+            }
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
             jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -83,13 +88,17 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
                 
-                final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
+                Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
                         .setValue(encryptedValue)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
-                        .setExpires(DateUtils.localDateTimeToDate(session.getExpires()))
                         .setSecure(this.config.isSessionCookieSecure());
+                
+                if (session.getExpires() != null) {
+                    System.out.println("----> " + session.getExpires());
+                    cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
+                }
 
                 exchange.setResponseCookie(cookie);
             } catch (JoseException e) {
@@ -141,7 +150,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 try {
                     String encryptedValue = this.attachment.getCrypto().encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
                     
-                    Cookie cookie = new CookieImpl(cookieName)
+                    final Cookie cookie = new CookieImpl(cookieName)
                             .setValue(encryptedValue)
                             .setSecure(this.config.isAuthenticationCookieSecure())
                             .setHttpOnly(true)

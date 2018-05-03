@@ -55,30 +55,38 @@ public class SessionControllerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSessionCookieWithValue() throws InvalidJwtException, MalformedClaimException {
-        //given
-        Config config = Application.getInstance(Config.class);
-        String uuid = UUID.randomUUID().toString();
-        WebResponse response = WebRequest.get("/session/valued/" + uuid).execute();
+         //given
+         Config config = Application.getInstance(Config.class);
+         String uuid = UUID.randomUUID().toString();
+         WebResponse response = WebRequest.get("/session/valued/" + uuid).execute();
         
-        //when
-        String cleaned = response.getCookie(config.getSessionCookieName()).getValue().replace("\"", "").trim();
-        String decryptedValue = Application.getInstance(Crypto.class).decrypt(cleaned, config.getSessionCookieEncryptionKey());
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+         //when
+         String cleaned = response.getCookie(config.getSessionCookieName()).getValue().replace("\"", "").trim();
+         String decryptedValue = Application.getInstance(Crypto.class).decrypt(cleaned, config.getSessionCookieEncryptionKey());
+         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setVerificationKey(new HmacKey(config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
                 .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                 .build();
         
-        JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-        LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
+         JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+         String expiresValue = jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class);
         
-         Session session = Session.build()
+         LocalDateTime expires = null;
+         if (!("-1").equals(expiresValue)) {
+            expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);            
+         } 
+        
+         Session session = Session.create()
                     .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
-                    .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                    .withExpires(expires);                         
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(session.get("uuid"), equalTo(uuid));
+                    .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class));
+         
+         if (!("-1").equals(expiresValue)) {
+             session.withExpires(expires);            
+          } 
+         
+         //then
+         assertThat(response, not(nullValue()));
+         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+         assertThat(session.get("uuid"), equalTo(uuid));
     }
 }

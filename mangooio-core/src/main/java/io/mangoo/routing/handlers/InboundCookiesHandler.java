@@ -87,28 +87,38 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 try {
                     JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-                    LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
+                    String expiresClaim = jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class);
                     
-                    if (expires.isAfter(LocalDateTime.now())) {
-                        session = Session.build()
+                    if (("-1").equals(expiresClaim)) {
+                        session = Session.create()
+                                .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                                .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class));
+                    } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
+                        session = Session.create()
                                 .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
                                 .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                                .withExpires(expires);                         
+                                .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter));
                     } else {
-                        session = Session.build()
+                        session = Session.create()
                                 .withContent(new HashMap<>())
-                                .withAuthenticity(CryptoUtils.randomString(32))
-                                .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
+                                .withAuthenticity(CryptoUtils.randomString(32));
+                        
+                        if (this.config.getSessionCookieExpires() > 0) {
+                            session.withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
+                        }
                     }
                 } catch (InvalidJwtException | MalformedClaimException e) {
                     LOG.error("Failed to parse session cookie", e);
                 }                
             }
         } else {
-            session = Session.build()
+            session = Session.create()
                     .withContent(new HashMap<>())
-                    .withAuthenticity(CryptoUtils.randomString(32))
-                    .withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
+                    .withAuthenticity(CryptoUtils.randomString(32));
+            
+                    if (this.config.getSessionCookieExpires() > 0) {
+                        session.withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
+                    }
         }
 
         return session;
