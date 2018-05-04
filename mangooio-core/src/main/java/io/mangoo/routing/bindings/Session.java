@@ -23,8 +23,9 @@ public class Session {
     private static final Set<String> INVALID_CHRACTERTS = Sets.newHashSet("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private String authenticity;
-    private boolean changed;
     private LocalDateTime expires;
+    private boolean changed;
+    private boolean invalid;
 
     public static Session create() {
         return new Session();
@@ -49,6 +50,13 @@ public class Session {
         
         this.expires = expires;
         return this;
+    }
+    
+    /**
+     * Invalidates the session by sending expiring the client cookie
+     */
+    public void invalidate() {
+        this.invalid = true;
     }
 
     /**
@@ -122,6 +130,10 @@ public class Session {
      */
     public boolean hasChanges() {
         return this.changed;
+    }
+    
+    public boolean isInvalid() {
+        return this.invalid;
     }
 
     /**

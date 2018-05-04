@@ -502,7 +502,8 @@ public final class Application {
 
         Router.getRoutes().parallelStream().forEach((Route route) -> {
             if (RouteType.REQUEST == route.getRouteType()) {
-                DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class).dispatch(route.getControllerClass(), route.getControllerMethod())
+                DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
+                        .dispatch(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
                         .withTimer(route.isTimerEnabled())
                         .withUsername(route.getUsername())

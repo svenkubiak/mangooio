@@ -5,6 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import io.mangoo.test.utils.WebRequest;
@@ -28,6 +33,20 @@ public class ParameterControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar"));
+    }
+    
+    @Test
+    public void testStringParameterConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String uuid = UUID.randomUUID().toString();
+            
+            //when
+            WebResponse response = WebRequest.get("/string/" + uuid).execute();
+            
+            //then
+            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
+        }, new RunsInThreads<>(new AtomicInteger(), 100));
     }
     
     @Test

@@ -22,9 +22,14 @@ public class Flash {
     private static final String SUCCESS = "success";
     private Map<String, String> values = new HashMap<>();
     private boolean discard;
+    private boolean invalid;
 
     public Flash() {
       //Empty constructor required for Google Guice
+    }
+    
+    public static Flash create() {
+        return new Flash();
     }
 
     public Flash(Map<String, String> values) {
@@ -79,6 +84,13 @@ public class Flash {
             this.values.put(key, value);
         }
     }
+    
+    /**
+     * Invalidates the flash by sending expiring the client cookie
+     */
+    public void invalidate() {
+        this.invalid = true;
+    }
 
     /**
      * Retrieves a specific value from the flash
@@ -96,6 +108,10 @@ public class Flash {
 
     public boolean isDiscard() {
         return discard;
+    }
+    
+    public boolean isInvalid() {
+        return invalid;
     }
 
     public void setDiscard(boolean discard) {

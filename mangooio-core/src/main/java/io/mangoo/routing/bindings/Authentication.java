@@ -30,6 +30,7 @@ public class Authentication {
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
+    private boolean invalid;
     
     public static Authentication create() {
         return new Authentication();
@@ -59,6 +60,13 @@ public class Authentication {
      */
     public String getIdentifier() {
         return this.identifier;
+    }
+    
+    /**
+     * Invalidates the authentication by sending expiring the client cookie
+     */
+    public void invalidate() {
+        this.invalid = true;
     }
 
     /**
@@ -299,5 +307,9 @@ public class Authentication {
         Objects.requireNonNull(username, Required.USERNAME.toString());
 
         return username.equals(this.identifier);
+    }
+    
+    public boolean isInvalid() {
+        return this.invalid;
     }
 }

@@ -192,7 +192,6 @@ public class RequestHelper {
     public boolean hasValidAuthentication(String cookie) {
         boolean valid = false;
         if (StringUtils.isNotBlank(cookie)) {
-            Crypto crypto = Application.getInstance(Crypto.class);
             Config config = Application.getInstance(Config.class);
 
             String value = null;
@@ -205,7 +204,7 @@ public class RequestHelper {
             }
             
             if (StringUtils.isNotBlank(value)) {
-                String jwt = crypto.decrypt(value, config.getAuthenticationCookieEncryptionKey());
+                String jwt = Application.getInstance(Crypto.class).decrypt(value, config.getAuthenticationCookieEncryptionKey());
                 
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setRequireExpirationTime()

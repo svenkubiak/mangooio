@@ -46,20 +46,20 @@ public class DispatcherHandler implements HttpHandler {
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
+    private RequestHelper requestHelper;
+    private MangooTemplateEngine templateEngine;
     private Messages messages;
     private Map<String, Class<?>> methodParameters;
     private Class<?> controllerClass;
     private String controllerClassName;
     private String controllerMethodName;
-    private boolean hasRequestFilter;
-    private MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
     private String username;
     private String password;    
     private int limit;
     private int methodParametersCount;
+    private boolean hasRequestFilter;
     private boolean blocking;
     private boolean timer;
-    private final RequestHelper requestHelper;
 
     @Inject
     public DispatcherHandler(RequestHelper requestHelper) {
@@ -70,6 +70,7 @@ public class DispatcherHandler implements HttpHandler {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
 
+        this.templateEngine = Application.getInstance(MangooTemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethodName;
