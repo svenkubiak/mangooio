@@ -14,7 +14,11 @@ import io.mangoo.enums.Required;
  *
  */
 public final class ByteUtils {
+    private static final int BYTES = 8;
     private static final int MAX_BYTE_LENGTH = Integer.MAX_VALUE / 8;
+    
+    private ByteUtils() {
+    }
     
     /**
      * Calculates the bit length of a given byte array
@@ -28,7 +32,7 @@ public final class ByteUtils {
         
         int length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {
-            length = byteLength * 8;
+            length = byteLength * BYTES;
         }
         
         return length;
@@ -61,6 +65,6 @@ public final class ByteUtils {
     public static Map<String, String> copyMap(Map<String, String> originalMap) {
         Objects.requireNonNull(originalMap, Required.MAP.toString());
         
-        return new HashMap<String, String>(originalMap);
+        return new HashMap<>(originalMap);
     }
 }

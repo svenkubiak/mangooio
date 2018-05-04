@@ -83,10 +83,10 @@ public class OutboundCookiesHandler implements HttpHandler {
             jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getSessionCookieVersion());
             jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
             
-            if (session.getExpires() != null) {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));                
+            if (session.getExpires() == null) {
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");
             } else {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");    
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));        
             }
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
@@ -108,9 +108,11 @@ public class OutboundCookiesHandler implements HttpHandler {
                 }
 
                 exchange.setResponseCookie(cookie);
-            } catch (Exception e) {
+            } catch (Exception e) { //NOSONAR
                 LOG.error("Failed to generate session cookie", e);
             }
+        } else {
+            //Ignore and send no cookie to the client
         }
     }
 
@@ -133,18 +135,20 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (authentication.isValid()) {
-            LocalDateTime expires;
             if (authentication.isRememberMe()) {
-                expires = LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires());
-            } else {
-                expires = authentication.getExpires();
-            }
+                authentication.withExpires(LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()));
+            } 
             
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setSubject(authentication.getIdentifier());
             jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
             jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
-            jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));
+            
+            if (authentication.getExpires() == null) {
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");    
+            } else {
+                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));   
+            }
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
             jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
@@ -158,13 +162,18 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
-                        .setSameSiteMode(SAME_SITE_MODE)
-                        .setExpires(DateUtils.localDateTimeToDate(expires));
-
+                        .setSameSiteMode(SAME_SITE_MODE);
+                        
+                if (authentication.getExpires() != null) {
+                    cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
+                } 
+                
                 exchange.setResponseCookie(cookie);
-            } catch (JoseException e) {
+            } catch (JoseException e) { //NOSONAR
                 LOG.error("Failed to generate authentication cookie", e);
             }
+        } else {
+            //Ignore and send no cookie to the client
         }
     }
 
@@ -216,9 +225,11 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setExpires(DateUtils.localDateTimeToDate(expires));
                 
                 exchange.setResponseCookie(cookie);
-            } catch (Exception e) {
+            } catch (Exception e) { //NOSONAR
                 LOG.error("Failed to generate flash cookie", e); 
             }
+        } else {
+            //Ignore and send no cookie to the client
         }
     }
 

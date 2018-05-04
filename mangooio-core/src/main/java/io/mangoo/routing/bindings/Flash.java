@@ -2,12 +2,15 @@ package io.mangoo.routing.bindings;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Sets;
+
+import io.mangoo.enums.Required;
 
 /**
  *
@@ -31,9 +34,12 @@ public class Flash {
     public static Flash create() {
         return new Flash();
     }
-
-    public Flash(Map<String, String> values) {
+    
+    public Flash withContent(Map<String, String> values) {
+        Objects.requireNonNull(values, Required.VALUES.toString());
         this.values = values;
+        
+        return this;
     }
 
     /**
@@ -114,8 +120,10 @@ public class Flash {
         return invalid;
     }
 
-    public void setDiscard(boolean discard) {
+    public Flash setDiscard(boolean discard) {
         this.discard = discard;
+        
+        return this;
     }
 
     public boolean hasContent() {

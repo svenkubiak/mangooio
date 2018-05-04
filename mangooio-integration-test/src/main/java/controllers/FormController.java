@@ -17,6 +17,7 @@ import io.mangoo.routing.bindings.Form;
     
 public class FormController {
     private static final Logger LOG = LogManager.getLogger(FormController.class);
+    private static final Pattern PATTERN = Pattern.compile("[a-z]");
     private static final int MIN_SIZE = 11;
     private static final int MAX_SIZE = 12;
 
@@ -65,7 +66,7 @@ public class FormController {
         form.expectMatch("email2", "email2confirm");
         form.expectIpv4("ipv4");
         form.expectIpv6("ipv6");
-        form.expectRegex("regex", Pattern.compile("[a-z]"));
+        form.expectRegex("regex", PATTERN);
         form.expectMax("phone", MAX_SIZE);
         form.expectMin("fax", MIN_SIZE);
 

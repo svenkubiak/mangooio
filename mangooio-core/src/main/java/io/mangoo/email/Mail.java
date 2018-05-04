@@ -291,20 +291,20 @@ public class Mail {
      */
     @Deprecated
     private void transform() throws MangooMailerException {
-        if (this.bccRecipients.size() > 0) {
+        if (!this.bccRecipients.isEmpty()) {
             this.email.bcc(this.bccRecipients.toArray(new String[this.bccRecipients.size()]));
         }
         
-        if (this.ccRecipients.size() > 0) {
+        if (!this.ccRecipients.isEmpty()) {
             this.email.cc(this.ccRecipients.toArray(new String[this.ccRecipients.size()]));
         }
         
-        if (StringUtils.isNotEmpty(this.from)) {
-            this.email.from(this.from);
+        if (!this.recipients.isEmpty()) {
+            this.email.to(this.recipients.toArray(new String[this.recipients.size()]));
         }
         
-        if (this.recipients.size() > 0) {
-            this.email.to(this.recipients.toArray(new String[this.recipients.size()]));
+        if (StringUtils.isNotBlank(this.from)) {
+            this.email.from(this.from);
         }
         
         if (StringUtils.isNotBlank(this.subject)) {
