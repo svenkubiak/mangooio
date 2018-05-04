@@ -57,6 +57,8 @@ import io.mangoo.utils.MinificationUtils;
 @SuppressWarnings({"unchecked"})
 public class Watcher implements Runnable {
     private static final Logger LOG = LogManager.getLogger(Watcher.class);
+    private static final String PATTERN = "files";
+    private static final String SEPARATOR = System.getProperty("file.separator");
     private final Trigger trigger;
     private final Set<String> includes;
     private final Set<String> excludes;
@@ -172,8 +174,8 @@ public class Watcher implements Runnable {
         String absolutePath = path.toFile().getAbsolutePath();
         if (isPreprocess(absolutePath)){
             MinificationUtils.preprocess(absolutePath);
-            String [] tempPath = absolutePath.split("files");
-            MinificationUtils.minify(tempPath[0] + "files/assets/stylesheet/" + StringUtils.substringAfterLast(absolutePath, "/")
+            String [] tempPath = absolutePath.split(PATTERN);
+            MinificationUtils.minify(tempPath[0] + "files" + SEPARATOR + "assets" + SEPARATOR + "stylesheet" + SEPARATOR + StringUtils.substringAfterLast(absolutePath, "/")
                 .replace(Suffix.SASS.toString(), Suffix.CSS.toString())
                 .replace(Suffix.LESS.toString(), Suffix.CSS.toString()));
         }
