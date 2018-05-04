@@ -50,7 +50,7 @@ public final class ByteUtils {
         
         int length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {
-            length = byteLength * 8;
+            length = byteLength * BYTES;
         }
         
         return length;

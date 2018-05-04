@@ -286,7 +286,8 @@ public class Mail {
 
     /**
      * Transforms the content from mail object into jodd email object
-     * Needs to be removed with 5.0.0
+     * @deprecated Needs to be removed with 5.0.0
+     * 
      * @throws MangooMailerException 
      */
     @Deprecated

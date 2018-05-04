@@ -39,6 +39,7 @@ import io.undertow.server.handlers.CookieImpl;
  */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(OutboundCookiesHandler.class);
+    private static final int SIXTY = 60;
     private static final String SAME_SITE_MODE = "Strict";
     private Attachment attachment;
     private Config config;
@@ -207,7 +208,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
                 }
                 
-                LocalDateTime expires = LocalDateTime.now().plusSeconds(60);
+                LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
                 jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), expires.format(DateUtils.formatter));
                 
                 JsonWebSignature jsonWebSignature = new JsonWebSignature();

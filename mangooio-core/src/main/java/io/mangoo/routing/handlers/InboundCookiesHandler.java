@@ -44,6 +44,7 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class InboundCookiesHandler implements HttpHandler {
+    private static final int STRING_LENGTH = 32;
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private Config config;
     private Form form;
@@ -74,7 +75,7 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session = Session.create()
             .withContent(new HashMap<>())
-            .withAuthenticity(CryptoUtils.randomString(32));
+            .withAuthenticity(CryptoUtils.randomString(STRING_LENGTH));
     
         if (this.config.getSessionCookieExpires() > 0) {
             session.withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
