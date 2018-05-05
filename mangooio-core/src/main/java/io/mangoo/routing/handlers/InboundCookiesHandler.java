@@ -120,9 +120,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = Authentication.create()
-            .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
-            .withIdentifier(null);
+        Authentication authentication = Authentication.create().withIdentifier(null);
         
         String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
@@ -141,7 +139,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 if (("-1").equals(expiresClaim)) {
                     authentication = Authentication.create()
                             .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
-                            .withIdentifier(null);
+                            .withIdentifier(jwtClaims.getSubject());
                 } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
                             .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))

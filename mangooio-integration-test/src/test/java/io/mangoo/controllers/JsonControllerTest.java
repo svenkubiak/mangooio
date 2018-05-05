@@ -5,6 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import com.google.common.net.MediaType;
@@ -44,6 +49,24 @@ public class JsonControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Peter;Parker;24"));
+    }
+    
+    @Test
+    public void testJsonParsingPostConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String uuid = UUID.randomUUID().toString();
+            String json = "{\"firstname\":\"Peter\",\"lastname\":\"" + uuid + "\",\"age\":24}";
+            
+            //when
+            WebResponse response = WebRequest.post("/parse")
+                    .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
+                    .withRequestBody(json)
+                    .execute();
+
+            // then
+            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Peter;" + uuid + ";24");
+        }, new RunsInThreads<>(new AtomicInteger(), 100));
     }
     
     @Test

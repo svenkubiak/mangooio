@@ -41,8 +41,6 @@ default:
         redirect  : /login
         cookie:
             name    : test-authentication
-            encrypt : false
-            expires : 3600
             signkey : 2GC5DKQCTd7ysQ8C6eSQbdtiNHvH6obfo1ISDxj3KpuH6BkpKOIIgUhR2UA7TgmK
     oauth:
         twitter:
