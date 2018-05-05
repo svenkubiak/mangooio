@@ -11,11 +11,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.message.BasicNameValuePair;
+import org.cactoos.matchers.RunsInThreads;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import com.google.common.io.Resources;
@@ -50,6 +53,26 @@ public class FormControllerTest {
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response.getContent(), equalTo("vip;secret"));
 	}
+	
+    @Test
+    public void testFormPostConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            // given
+            String username = UUID.randomUUID().toString();
+            String password = UUID.randomUUID().toString();
+            List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+            parameter.add(new BasicNameValuePair("username", username));
+            parameter.add(new BasicNameValuePair("password", password));
+
+            // when
+            WebResponse response = WebRequest.post("/form")
+                    .withContentType(MediaType.FORM_DATA.withoutParameters().toString()).withPostParameters(parameter)
+                    .execute();
+            
+            // then
+            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
+        }, new RunsInThreads<>(new AtomicInteger(), 100));
+    }
 	
     @Test
     public void testMultiValue() {

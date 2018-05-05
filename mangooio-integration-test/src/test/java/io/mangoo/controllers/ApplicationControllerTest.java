@@ -63,7 +63,6 @@ public class ApplicationControllerTest {
         assertThat(response.getContent(), equalTo("my 404"));
     }
     
-    
     @Test
     public void testRoute() {
         //given
