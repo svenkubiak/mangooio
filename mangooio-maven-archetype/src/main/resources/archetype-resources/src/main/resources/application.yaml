@@ -27,15 +27,11 @@ default:
         redirect      : /login
         cookie:
             name          : ${application-name}-authentication
-            encrypt       : false
-            expires       : 3600
             signkey       : authentication.cookie.signkey
             encryptionkey : authentication.cookie.encryptionkey
     session:
       cookie:
         name          : ${application-name}-session
-        expires       : 86400
-        encryption    : false
         signkey       : session.cookie.signkey
         encryptionkey : session.cookie.encryptionkey
     flash:
