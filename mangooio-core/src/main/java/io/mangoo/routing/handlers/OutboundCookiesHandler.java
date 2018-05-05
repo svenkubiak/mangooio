@@ -124,18 +124,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      */
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = this.attachment.getAuthentication();
-        if (authentication.isInvalid() || authentication.isLogout()) {
-            Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
-                    .setSecure(this.config.isAuthenticationCookieSecure())
-                    .setHttpOnly(true)
-                    .setPath("/")
-                    .setMaxAge(0)
-                    .setSameSite(true)
-                    .setSameSiteMode(SAME_SITE_MODE)
-                    .setDiscard(true);
-            
-            exchange.setResponseCookie(cookie);
-        } else if (authentication.isValid()) {
+        if (authentication.isValid()) {
             if (authentication.isRememberMe()) {
                 authentication.withExpires(LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()));
             } 
@@ -173,6 +162,17 @@ public class OutboundCookiesHandler implements HttpHandler {
             } catch (JoseException e) { //NOSONAR
                 LOG.error("Failed to generate authentication cookie", e);
             }
+        } else if (authentication.isInvalid() || authentication.isLogout()) {
+            Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
+                    .setSecure(this.config.isAuthenticationCookieSecure())
+                    .setHttpOnly(true)
+                    .setPath("/")
+                    .setMaxAge(0)
+                    .setSameSite(true)
+                    .setSameSiteMode(SAME_SITE_MODE)
+                    .setDiscard(true);
+            
+            exchange.setResponseCookie(cookie);
         } else {
             //Ignore and send no cookie to the client
         }

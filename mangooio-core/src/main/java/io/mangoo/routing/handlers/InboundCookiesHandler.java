@@ -138,8 +138,8 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 if (("-1").equals(expiresClaim)) {
                     authentication = Authentication.create()
-                            .withExpires(LocalDateTime.now().plusSeconds(this.config.getAuthenticationCookieExpires()))
-                            .withIdentifier(jwtClaims.getSubject());
+                            .withIdentifier(jwtClaims.getSubject())
+                            .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
                             .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))
