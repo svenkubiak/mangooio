@@ -12,6 +12,7 @@ import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import io.mangoo.TestSuite;
 import io.mangoo.enums.HmacShaAlgorithm;
 
 /**
@@ -22,7 +23,6 @@ import io.mangoo.enums.HmacShaAlgorithm;
 public class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;
-	private static final int THREADS = 100;
 
 	@Test
 	public void testCreateKey() {
@@ -42,7 +42,7 @@ public class TotpUtilsTest {
             
             // then
             return secret.length() == SECRET_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class TotpUtilsTest {
             
             // then
             return totp.length() == PASSWORD_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
 	}
 	
 	@Test
@@ -91,7 +91,7 @@ public class TotpUtilsTest {
         
             // then
             return TotpUtils.verifiedTotp(secret, totp, HmacShaAlgorithm.HMAC_SHA_512);
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
 	}
 	
 	@Test
@@ -125,6 +125,6 @@ public class TotpUtilsTest {
         
             // then
             return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512));
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
 	}
 }

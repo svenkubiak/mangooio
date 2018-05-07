@@ -11,6 +11,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import io.mangoo.TestSuite;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooEventBusException;
 
@@ -59,6 +60,6 @@ public class EventBusServiceTest {
             
             // then
             return testListener.getCount() > 0;
-        }, new RunsInThreads<>(new AtomicInteger(), 100));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }

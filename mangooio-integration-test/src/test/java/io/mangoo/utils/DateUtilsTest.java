@@ -13,13 +13,14 @@ import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import io.mangoo.TestSuite;
+
 /**
  * 
  * @author svenkubiak
  *
  */
 public class DateUtilsTest {
-    private static final int THREADS = 100;
     
     @Test
     public void testLocalDateTimeToDate() {
@@ -38,7 +39,7 @@ public class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test
@@ -58,6 +59,6 @@ public class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }

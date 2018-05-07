@@ -24,6 +24,7 @@ import org.junit.Test;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
+import io.mangoo.TestSuite;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -35,7 +36,7 @@ import io.undertow.util.StatusCodes;
  */
 public class FormControllerTest {
 
-	@Test
+    @Test
 	public void testFormPost() {
 		// given
 		List<NameValuePair> parameter = new ArrayList<NameValuePair>();
@@ -71,7 +72,7 @@ public class FormControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
-        }, new RunsInThreads<>(new AtomicInteger(), 100));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 	
     @Test
@@ -92,6 +93,29 @@ public class FormControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("1\n2\n3\n"));
+    }
+    
+    @Test
+    public void testMultiValueConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            // given
+            String uuid1 = UUID.randomUUID().toString();
+            String uuid2 = UUID.randomUUID().toString();
+            String uuid3 = UUID.randomUUID().toString();
+            List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+            parameter.add(new BasicNameValuePair("foo[]", uuid1));
+            parameter.add(new BasicNameValuePair("foo[]", uuid2));
+            parameter.add(new BasicNameValuePair("foo[]", uuid3));
+
+            // when
+            WebResponse response = WebRequest.post("/multivalued")
+                    .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
+                    .withPostParameters(parameter)
+                    .execute();
+            
+            // then
+            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid1 + "\n" + uuid2 + "\n" + uuid3 + "\n");
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 
 	@Test

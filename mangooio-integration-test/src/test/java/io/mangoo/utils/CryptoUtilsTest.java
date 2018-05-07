@@ -11,13 +11,14 @@ import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import io.mangoo.TestSuite;
+
 /**
  * 
  * @author svenkubiak
  *
  */
 public class CryptoUtilsTest {
-    private static final int THREADS = 100;
 
     @Test
     public void testRandomString() {
@@ -38,7 +39,7 @@ public class CryptoUtilsTest {
             
             // then
             return secret.length() == size;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test(expected = IllegalArgumentException.class)

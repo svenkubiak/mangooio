@@ -12,8 +12,9 @@ import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import io.mangoo.TestSuite;
+
 public class ByteUtilsTest {
-    private static final int THREADS = 100;
     
     @Test
     public void testBitLengthAsByte() {
@@ -65,6 +66,6 @@ public class ByteUtilsTest {
             
             // then
             return copy.get("value1").equals(value1) && copy.get("value2").equals(value2);
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }

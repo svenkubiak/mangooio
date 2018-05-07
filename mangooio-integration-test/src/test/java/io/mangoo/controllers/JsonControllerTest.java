@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.google.common.net.MediaType;
 
+import io.mangoo.TestSuite;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -66,7 +67,7 @@ public class JsonControllerTest {
 
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Peter;" + uuid + ";24");
-        }, new RunsInThreads<>(new AtomicInteger(), 100));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test

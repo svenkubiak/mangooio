@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.jayway.jsonpath.ReadContext;
 
+import io.mangoo.TestSuite;
 import io.mangoo.models.Car;
 
 /**
@@ -22,7 +23,6 @@ import io.mangoo.models.Car;
  *
  */
 public class JsonUtilsTest {
-    private static final int THREADS = 100;
     private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test
@@ -50,7 +50,7 @@ public class JsonUtilsTest {
             
             // then
             return json.equals("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}");
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test
@@ -78,7 +78,7 @@ public class JsonUtilsTest {
             
             // then
             return readContext.read("$.foo").equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test
@@ -108,6 +108,6 @@ public class JsonUtilsTest {
             
             // then
             return car.brand == null && car.doors == 0 && car.foo.equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }

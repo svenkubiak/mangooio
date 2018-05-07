@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import com.google.common.base.Charsets;
 
+import io.mangoo.TestSuite;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -117,6 +118,6 @@ public class SessionControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && session != null && session.get("uuid") != null && session.get("uuid").equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), 50));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }

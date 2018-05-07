@@ -12,6 +12,7 @@ import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import io.mangoo.TestSuite;
 import io.mangoo.core.Application;
 import io.mangoo.utils.CryptoUtils;
 
@@ -51,7 +52,7 @@ public class CryptoTest {
            
             //when
             return decrypt.equals(text);
-        }, new RunsInThreads<>(new AtomicInteger(), 50));
+        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
     
     @Test
