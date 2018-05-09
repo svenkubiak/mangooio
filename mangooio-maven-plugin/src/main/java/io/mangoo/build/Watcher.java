@@ -170,6 +170,7 @@ public class Watcher implements Runnable {
         }
     }
 
+    @SuppressWarnings("all")
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
         if (isPreprocess(absolutePath)){
