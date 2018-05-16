@@ -5,11 +5,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestSuite;
 import io.mangoo.core.Application;

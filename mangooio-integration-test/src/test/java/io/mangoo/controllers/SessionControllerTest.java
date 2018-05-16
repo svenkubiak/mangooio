@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
@@ -22,6 +21,7 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 import org.junit.Test;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.base.Charsets;
 

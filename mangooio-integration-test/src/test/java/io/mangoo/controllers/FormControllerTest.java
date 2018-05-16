@@ -17,9 +17,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.message.BasicNameValuePair;
-import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
@@ -72,7 +72,7 @@ public class FormControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 	
     @Test

@@ -3,7 +3,6 @@ package io.mangoo.controllers;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.cactoos.matchers.RunsInThreads;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -36,6 +35,6 @@ public class ConcurrentControllerTest {
             
             // then
             return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid + ";Parker;24");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
     }
 }
