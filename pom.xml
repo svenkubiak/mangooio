@@ -1,10 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>4.13.0-RC3-SNAPSHOT</version>
+	<version>4.13.0-RC3</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>Intuitive, Lightweight Full Stack Java Web Framework.</description>
@@ -46,7 +44,7 @@
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
 		<developerConnection>scm:git:git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<url>github.com:svenkubiak/mangooio.git</url>
-		<tag>HEAD</tag>
+		<tag>4.13.0-RC3</tag>
 	</scm>
 	<build>
 		<pluginManagement>
