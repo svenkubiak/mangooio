@@ -42,7 +42,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import io.mangoo.enums.Suffix;
-import io.mangoo.utils.MinificationUtils;
 
 /**
  * This is a refactored version of
@@ -174,15 +173,15 @@ public class Watcher implements Runnable {
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
         if (isPreprocess(absolutePath)){
-            MinificationUtils.preprocess(absolutePath);
+            Minification.preprocess(absolutePath);
             String [] tempPath = absolutePath.split(PATTERN);
-            MinificationUtils.minify(tempPath[0] + "files" + SEPARATOR + "assets" + SEPARATOR + "stylesheet" + SEPARATOR + StringUtils.substringAfterLast(absolutePath, "/")
+            Minification.minify(tempPath[0] + "files" + SEPARATOR + "assets" + SEPARATOR + "stylesheet" + SEPARATOR + StringUtils.substringAfterLast(absolutePath, "/")
                 .replace(Suffix.SASS.toString(), Suffix.CSS.toString())
                 .replace(Suffix.LESS.toString(), Suffix.CSS.toString()));
         }
         
         if (isAsset(absolutePath)) {
-            MinificationUtils.minify(absolutePath);
+            Minification.minify(absolutePath);
         }
         
         RuleMatch match = matchRule(includes, excludes, absolutePath);

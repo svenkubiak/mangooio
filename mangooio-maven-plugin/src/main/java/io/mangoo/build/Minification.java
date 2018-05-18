@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.build;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +22,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Suffix;
+import io.mangoo.utils.IOUtils;
 import net.jawr.web.minification.CSSMinifier;
 import net.jawr.web.minification.JSMin;
 import net.jawr.web.minification.JSMin.JSMinException;
@@ -34,8 +35,8 @@ import net.jawr.web.minification.JSMin.JSMinException;
  *
  */
 @SuppressWarnings("all")
-public final class MinificationUtils {
-    private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
+public final class Minification {
+    private static final Logger LOG = LogManager.getLogger(Minification.class);
     private static final int HUNDRED_PERCENT = 100;
     private static final String JS = "js";
     private static final String CSS = "css";
@@ -45,12 +46,12 @@ public final class MinificationUtils {
     private static String basePath;
     private static volatile Config config; //NOSONAR
 
-    private MinificationUtils() {
+    private Minification() {
         config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
     }
 
     public static void setBasePath(String path) {
-        synchronized (MinificationUtils.class) {
+        synchronized (Minification.class) {
             basePath = path;
         }
     }
