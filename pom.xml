@@ -26,7 +26,7 @@
 		<log4j.version>2.11.0</log4j.version>
 		<maven.version>3.5.3</maven.version>
 		<httpcomponents.version>4.5.5</httpcomponents.version>
-		<scribejava.version>5.4.0</scribejava.version>
+		<scribejava.version>5.5.0</scribejava.version>
 		<jackson.version>2.9.5</jackson.version>
 		<fluentlenium.version>3.5.2</fluentlenium.version>
 		<jersey.version>2.27</jersey.version>
@@ -200,7 +200,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>4.0.1.Final</version>
+				<version>4.0.2.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
@@ -324,12 +324,12 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.33</version>
+				<version>0.34</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.9.1</version>
+				<version>0.10</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.junit-toolbox</groupId>
