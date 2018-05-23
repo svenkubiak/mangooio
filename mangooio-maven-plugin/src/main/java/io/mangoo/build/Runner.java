@@ -118,11 +118,13 @@ public class Runner {
             commandLine.add("-Xdebug");
             commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
         }
+        
         if (StringUtils.isNotBlank(jvmArgs)){
             Arrays.stream(jvmArgs.split(" "))
-                    .filter(arg->arg.length()>0)
-                    .forEach(arg->commandLine.add(arg));
+                    .filter(arg -> arg.length() > 0)
+                    .forEach(arg -> commandLine.add(arg));
         }
+        
         commandLine.add("-Dapplication.mode=dev");
         commandLine.add("-cp");
         commandLine.add(classpath);
