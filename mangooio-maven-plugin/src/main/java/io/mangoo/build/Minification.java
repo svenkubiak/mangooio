@@ -44,6 +44,7 @@ public final class Minification {
     private static final String SASS = "sass";
     private static final String MIN = "min";
     private static String basePath;
+    private static String assetPath;
     private static volatile Config config; //NOSONAR
 
     private Minification() {
@@ -53,6 +54,12 @@ public final class Minification {
     public static void setBasePath(String path) {
         synchronized (Minification.class) {
             basePath = path;
+        }
+    }
+    
+    public static void setAssetPath(String path) {
+        synchronized (Minification.class) {
+            assetPath = path;
         }
     }
 
@@ -189,7 +196,6 @@ public final class Minification {
             basePath = basePath + "/";
         }
 
-        String assetPath = config.getAssetsPath();
         if (assetPath.startsWith("/")) {
             assetPath = assetPath.substring(1);
         }

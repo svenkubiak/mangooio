@@ -491,10 +491,6 @@ public class Config {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
 
-    public String getAssetsPath() {
-        return Default.ASSETS_PATH.toString();
-    }
-
     /**
      * @deprecated As of 4.8.0, replace by getAuthenticationCookieVersion
      * @return auth.cookie.version from application.yaml or default value if undefined

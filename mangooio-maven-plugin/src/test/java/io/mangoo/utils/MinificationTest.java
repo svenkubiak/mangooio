@@ -40,8 +40,8 @@ public class MinificationTest {
         when(config.isApplicationMinifyJS()).thenReturn(true);
         when(config.isApplicationPreprocessLess()).thenReturn(true);
         when(config.isApplicationPreprocessSass()).thenReturn(true);
-        when(config.getAssetsPath()).thenReturn(ASSET_PATH);
         Minification.setConfig(config);
+        Minification.setAssetPath(ASSET_PATH);
         Minification.setBasePath(TEMP);
         
         File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());
