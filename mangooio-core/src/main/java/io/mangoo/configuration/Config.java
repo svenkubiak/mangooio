@@ -25,7 +25,6 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.IOUtils;
 
@@ -44,31 +43,23 @@ public class Config {
     private boolean decrypted = true;
     
     public Config() {
-        prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
-        decrypt();
-    }
-    
-    public Config(String configFile, Mode mode) {
-        Objects.requireNonNull(configFile, Required.CONFIG_FILE.toString());
-        Objects.requireNonNull(mode, Required.MODE.toString());
-
-        prepare(configFile, mode);
+        prepare();
         decrypt();
     }
 
-    private void prepare(String configFile, Mode mode) {
+    private void prepare() {
         final String configPath = System.getProperty(Jvm.APPLICATION_CONFIG.toString());
 
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
             map = (Map) loadConfiguration(configPath, false);
         } else {
-            map = (Map) loadConfiguration(configFile, true);
+            map = (Map) loadConfiguration(Default.CONFIGURATION_FILE.toString(), true);
         }
 
         if (map != null) {
             final Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
-            final Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
+            final Map<String, Object> environment = (Map<String, Object>) map.get(Application.getMode().toString());
 
             load("", defaults);
             if (environment != null && !environment.isEmpty()) {

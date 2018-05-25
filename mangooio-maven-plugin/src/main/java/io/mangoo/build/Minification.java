@@ -20,7 +20,6 @@ import io.bit3.jsass.Output;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Suffix;
 import io.mangoo.utils.IOUtils;
 import net.jawr.web.minification.CSSMinifier;
@@ -48,7 +47,6 @@ public final class Minification {
     private static volatile Config config; //NOSONAR
 
     private Minification() {
-        config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
     }
 
     public static void setBasePath(String path) {
@@ -81,7 +79,7 @@ public final class Minification {
 
         if (config == null) {
             System.setProperty(Jvm.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+            config = new Config();
         }
 
         if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
@@ -103,7 +101,7 @@ public final class Minification {
 
         if (config == null) {
             System.setProperty(Jvm.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+            config = new Config();
         }
 
         if (config.isApplicationPreprocessLess() && absolutePath.endsWith(LESS)) {
