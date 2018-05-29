@@ -73,9 +73,6 @@ Here are some used libraries and their purpose in mangoo I/O.
 **Documentation**   
 [https://mangoo.io/documentation](https://mangoo.io/documentation)  
 
-**Discuss**   
-[https://mangoo.io/discuss](https://mangoo.io/discuss)  
-
 **Changelog**   
 [https://mangoo.io/changelog](https://mangoo.io/changelog)  
 
