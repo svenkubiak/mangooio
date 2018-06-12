@@ -15,8 +15,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.Yaml;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
@@ -52,9 +53,9 @@ public class Config {
 
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
-            map = (Map) loadConfiguration(configPath, false);
+            map = loadConfiguration(configPath, false);
         } else {
-            map = (Map) loadConfiguration(Default.CONFIGURATION_FILE.toString(), true);
+            map = loadConfiguration(Default.CONFIGURATION_FILE.toString(), true);
         }
 
         if (map != null) {
@@ -68,8 +69,10 @@ public class Config {
         }
     }
 
-    private Object loadConfiguration(String path, boolean resource) {
+    private Map loadConfiguration(String path, boolean resource) {
         InputStream inputStream = null;
+        Map map = null;
+        
         try {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
@@ -78,18 +81,16 @@ public class Config {
                 inputStream = new FileInputStream(new File(path)); //NOSONAR
                 LOG.info("Loading application configuration from: {}", path);
             }
+            
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            map = mapper.readValue(inputStream, Map.class);
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
         }
         
-        Object object = null;
-        if (inputStream != null) {
-            final Yaml yaml = new Yaml();
-            object = yaml.load(inputStream);
-            IOUtils.closeQuietly(inputStream);
-        }
+        IOUtils.closeQuietly(inputStream);
 
-        return object;
+        return map;
     }
 
     /**
