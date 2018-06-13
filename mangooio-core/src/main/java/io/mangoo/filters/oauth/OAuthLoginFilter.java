@@ -77,6 +77,7 @@ public class OAuthLoginFilter implements MangooFilter {
             requestToken = oAuthService.getRequestToken();
         } catch (IOException | InterruptedException | ExecutionException e) {
             LOG.error("Failed to get Url for twitter OAuth1", e);
+            Thread.currentThread().interrupt();
         }
         return oAuthService.getAuthorizationUrl(requestToken);
     }

@@ -95,6 +95,7 @@ public class Runner {
             } catch (ExecutionException | InterruptedException | IOException e) {
                 LOG.error("Something fishy happenend. Unable to cleanly restart!", e);
                 LOG.error("You'll probably need to restart maven?");
+                Thread.currentThread().interrupt();
             } finally {
                 restarting.set(false);
             }

@@ -93,6 +93,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 oAuth2AccessToken = oAuth20Service.getAccessToken(code);
             } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get facebook OAuth2 accesstoken", e);
+                Thread.currentThread().interrupt();
             }
 
             if (oAuth2AccessToken != null) {
@@ -103,6 +104,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     scribeResponseBody = scribeResponse.getBody();
                 } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for facebook OAuth2", e);
+                    Thread.currentThread().interrupt();
                 }
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
@@ -129,6 +131,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 oAuth2AccessToken = oAuth20Service.getAccessToken(code);
             } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get google OAuth2 access token", e);
+                Thread.currentThread().interrupt();
             }
 
             if (oAuth2AccessToken != null) {
@@ -177,6 +180,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     scribeResponseBody = scribeResponse.getBody();
                 } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for goolge OAuth1" ,e);
+                    Thread.currentThread().interrupt();
                 }
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
