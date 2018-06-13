@@ -69,6 +69,7 @@ public class Config {
         }
     }
 
+    @SuppressWarnings("all")
     private Map loadConfiguration(String path, boolean resource) {
         InputStream inputStream = null;
         Map map = null;
@@ -78,7 +79,7 @@ public class Config {
                 inputStream = Resources.getResource(path).openStream();
                 LOG.info("Loading application configuration from {} in classpath", path);
             } else {
-                inputStream = new FileInputStream(new File(path)); //NOSONAR
+                inputStream = new FileInputStream(new File(path));
                 LOG.info("Loading application configuration from: {}", path);
             }
             
