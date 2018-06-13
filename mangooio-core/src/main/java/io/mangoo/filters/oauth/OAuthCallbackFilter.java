@@ -142,6 +142,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                     scribeResponseBody = scribeResponse.getBody();
                 } catch (IOException | InterruptedException | ExecutionException e) {
                     LOG.error("Failed to get response body for goolge OAuth2", e);
+                    Thread.currentThread().interrupt();
                 }
                 
                 if (scribeResponse != null && scribeResponse.isSuccessful() && StringUtils.isNotBlank(scribeResponseBody)) {
@@ -170,6 +171,7 @@ public class OAuthCallbackFilter implements MangooFilter {
                 oAuth1AccessToken = oAuth10aService.getAccessToken(requestToken, oauthVerifier);
             } catch (IOException | InterruptedException | ExecutionException e) {
                 LOG.error("Failed to get twitter OAuth access token", e);
+                Thread.currentThread().interrupt();
             }
 
             if (oAuth1AccessToken != null) {
