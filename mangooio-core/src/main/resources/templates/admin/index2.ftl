@@ -1,4 +1,3 @@
- <#include "header.ftl">
  <div class="content-wrapper">
     <div class="content-header">
       <div class="container-fluid">
@@ -260,4 +259,3 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <#include "footer.ftl">
