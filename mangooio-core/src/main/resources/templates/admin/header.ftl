@@ -22,10 +22,6 @@
     </ul>
     </nav>
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="/@admin" class="brand-link">
-        <img src="dist/img/AdminLTELogo.png" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light"><strong>mangoo</strong> I/O</span>
-    </a>
     <div class="sidebar">
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
