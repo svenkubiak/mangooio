@@ -28,7 +28,7 @@
 		<httpcomponents.version>4.5.5</httpcomponents.version>
 		<scribejava.version>5.5.0</scribejava.version>
 		<jackson.version>2.9.6</jackson.version>
-		<fluentlenium.version>3.5.2</fluentlenium.version>
+		<fluentlenium.version>3.6.0</fluentlenium.version>
 		<jersey.version>2.27</jersey.version>
 	</properties>
 	<modules>
@@ -360,7 +360,7 @@
 			<dependency>
 				<groupId>io.github.lukehutch</groupId>
 				<artifactId>fast-classpath-scanner</artifactId>
-				<version>3.1.0</version>
+				<version>3.1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -370,7 +370,7 @@
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
 				<artifactId>selenium-java</artifactId>
-				<version>3.12.0</version>
+				<version>3.13.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
