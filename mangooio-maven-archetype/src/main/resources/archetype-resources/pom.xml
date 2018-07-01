@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://mangoo.io</url>
 	<properties>
-		<mangooio.version>4.13.0</mangooio.version>
+		<mangooio.version>4.14.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<build>

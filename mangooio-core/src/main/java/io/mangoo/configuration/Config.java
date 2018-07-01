@@ -15,8 +15,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.Yaml;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
@@ -25,7 +26,6 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.IOUtils;
 
@@ -44,31 +44,23 @@ public class Config {
     private boolean decrypted = true;
     
     public Config() {
-        prepare(Default.CONFIGURATION_FILE.toString(), Application.getMode());
-        decrypt();
-    }
-    
-    public Config(String configFile, Mode mode) {
-        Objects.requireNonNull(configFile, Required.CONFIG_FILE.toString());
-        Objects.requireNonNull(mode, Required.MODE.toString());
-
-        prepare(configFile, mode);
+        prepare();
         decrypt();
     }
 
-    private void prepare(String configFile, Mode mode) {
+    private void prepare() {
         final String configPath = System.getProperty(Jvm.APPLICATION_CONFIG.toString());
 
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
-            map = (Map) loadConfiguration(configPath, false);
+            map = loadConfiguration(configPath, false);
         } else {
-            map = (Map) loadConfiguration(configFile, true);
+            map = loadConfiguration(Default.CONFIGURATION_FILE.toString(), true);
         }
 
         if (map != null) {
             final Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
-            final Map<String, Object> environment = (Map<String, Object>) map.get(mode.toString());
+            final Map<String, Object> environment = (Map<String, Object>) map.get(Application.getMode().toString());
 
             load("", defaults);
             if (environment != null && !environment.isEmpty()) {
@@ -77,28 +69,29 @@ public class Config {
         }
     }
 
-    private Object loadConfiguration(String path, boolean resource) {
+    @SuppressWarnings("all")
+    private Map loadConfiguration(String path, boolean resource) {
         InputStream inputStream = null;
+        Map map = null;
+        
         try {
             if (resource) {
                 inputStream = Resources.getResource(path).openStream();
                 LOG.info("Loading application configuration from {} in classpath", path);
             } else {
-                inputStream = new FileInputStream(new File(path)); //NOSONAR
+                inputStream = new FileInputStream(new File(path));
                 LOG.info("Loading application configuration from: {}", path);
             }
+            
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            map = mapper.readValue(inputStream, Map.class);
         } catch (final IOException e) {
             LOG.error("Failed to load application.yaml", e);
         }
         
-        Object object = null;
-        if (inputStream != null) {
-            final Yaml yaml = new Yaml();
-            object = yaml.load(inputStream);
-            IOUtils.closeQuietly(inputStream);
-        }
+        IOUtils.closeQuietly(inputStream);
 
-        return object;
+        return map;
     }
 
     /**
@@ -489,10 +482,6 @@ public class Config {
      */
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
-    }
-
-    public String getAssetsPath() {
-        return Default.ASSETS_PATH.toString();
     }
 
     /**

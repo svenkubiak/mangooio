@@ -38,12 +38,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+import io.mangoo.build.Minification;
 import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
 import io.mangoo.core.Application;
 import io.mangoo.utils.IOUtils;
-import io.mangoo.utils.MinificationUtils;
 
 /**
  * This is a refactored version of
@@ -113,7 +113,7 @@ public class MangooMojo extends AbstractMojo {
         initMojo();
         checkClasses(buildOutputDirectory);
 
-        MinificationUtils.setBasePath(project.getBasedir().getAbsolutePath());
+        Minification.setBasePath(project.getBasedir().getAbsolutePath());
 
         List<String> classpathItems = new ArrayList<>();
         classpathItems.add(buildOutputDirectory);

@@ -39,7 +39,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("name", applicationName));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationName(), equalTo(applicationName));
@@ -63,7 +64,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("name", sessionCookieName)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSessionCookieName(), equalTo(sessionCookieName));
@@ -75,7 +77,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME.toString()));
@@ -90,7 +93,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", applicationSecret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationSecret(), equalTo(applicationSecret));
@@ -105,7 +109,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("name", authenticationCookieName)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieName(), equalTo(authenticationCookieName));
@@ -117,7 +122,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME.toString()));
@@ -132,7 +138,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("expires", expires)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieExpires(), equalTo(Long.valueOf(expires)));
@@ -144,7 +151,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES.toLong()));
@@ -159,7 +167,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("expires", expires)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSessionCookieExpires(), equalTo(Long.valueOf(expires)));
@@ -171,7 +180,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieExpires(), equalTo(Default.SESSION_COOKIE_EXPIRES.toLong()));
@@ -186,7 +196,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("secure", secure)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -198,7 +209,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE.toBoolean()));
@@ -213,7 +225,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("secure", secure)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isAuthenticationCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -225,7 +238,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE.toBoolean()));
@@ -240,7 +254,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("i18n", ImmutableMap.of("cookie", ImmutableMap.of("name", name)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getI18nCookieName(), equalTo(name));
@@ -252,7 +267,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME.toString()));
@@ -267,7 +283,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("secure", secure)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isFlashCookieSecure(), equalTo(Boolean.valueOf(secure)));
@@ -282,7 +299,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("language", language));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationLanguage(), equalTo(language));
@@ -294,7 +312,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE.toString()));
@@ -309,7 +328,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("version", version)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieVersion(), equalTo(version));
@@ -321,7 +341,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieVersion(), equalTo(Default.AUTHENTICATION_COOKIE_VERSION.toString()));
@@ -336,7 +357,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("version", version)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSessionCookieVersion(), equalTo(version));
@@ -348,7 +370,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieVersion(), equalTo(Default.SESSION_COOKIE_VERSION.toString()));
@@ -363,7 +386,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("scheduler", ImmutableMap.of("autostart", autostart));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isSchedulerAutostart(), equalTo(Boolean.valueOf(autostart)));
@@ -375,7 +399,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isSchedulerAutostart(), equalTo(Default.SCHEDULER_AUTOSTART.toBoolean()));
@@ -390,7 +415,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("admin", ImmutableMap.of("username", username)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationAdminUsername(), equalTo(username));
@@ -405,7 +431,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("admin", ImmutableMap.of("password", password)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationAdminPassword(), equalTo(password));
@@ -420,7 +447,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("scheduler", ImmutableMap.of("package", schedulerPackage));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSchedulerPackage(), equalTo(schedulerPackage));
@@ -435,7 +463,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("remember", ImmutableMap.of("expires", expires))));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Long.valueOf(expires)));
@@ -447,7 +476,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong()));
@@ -462,7 +492,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("threadpool", threadpool));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationThreadpool(), equalTo(Integer.valueOf(threadpool)));
@@ -474,7 +505,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationThreadpool(), equalTo(Default.APPLICATION_THREADPOOL.toInt()));
@@ -489,7 +521,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("controller", controller));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationController(), equalTo(controller));
@@ -501,7 +534,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER.toString()));
@@ -516,7 +550,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("templateengine", engine));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationTemplateEngine(), equalTo(engine));
@@ -528,7 +563,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationTemplateEngine(), equalTo(Default.APPLICATION_TEMPLATEENGINE.toString()));
@@ -543,7 +579,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("minify", ImmutableMap.of("js", minify)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isApplicationMinifyJS(), equalTo(Boolean.valueOf(minify)));
@@ -555,7 +592,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationMinifyJS(), equalTo(Default.APPLICATION_MINIFY_JS.toBoolean()));
@@ -570,7 +608,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("minify", ImmutableMap.of("css", minify)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isApplicationMinifyCSS(), equalTo(Boolean.valueOf(minify)));
@@ -582,7 +621,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationMinifyCSS(), equalTo(Default.APPLICATION_MINIFY_CSS.toBoolean()));
@@ -597,7 +637,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("preprocess", ImmutableMap.of("sass", preprocess)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isApplicationPreprocessSass(), equalTo(Boolean.valueOf(preprocess)));
@@ -609,7 +650,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationPreprocessSass(), equalTo(Default.APPLICATION_PREPROCESS_SASS.toBoolean()));
@@ -624,7 +666,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("preprocess", ImmutableMap.of("less", preprocess)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isApplicationPreprocessLess(), equalTo(Boolean.valueOf(preprocess)));
@@ -636,7 +679,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationPreprocessLess(), equalTo(Default.APPLICATION_PREPROCESS_LESS.toBoolean()));
@@ -651,7 +695,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("admin", ImmutableMap.of("enable", enable)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isApplicationAdminEnable(), equalTo(Boolean.valueOf(enable)));
@@ -663,7 +708,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE.toBoolean()));
@@ -678,7 +724,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("host", host));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSmtpHost(), equalTo(host));
@@ -690,7 +737,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST.toString()));
@@ -705,7 +753,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("port", port));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSmtpPort(), equalTo(Integer.valueOf(port)));
@@ -717,7 +766,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT.toInt()));
@@ -732,7 +782,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("ssl", ssl));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isSmtpSSL(), equalTo(Boolean.valueOf(ssl)));
@@ -744,7 +795,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isSmtpSSL(), equalTo(Default.SMTP_SSL.toBoolean()));
@@ -759,7 +811,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("username", username));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSmtpUsername(), equalTo(username));
@@ -771,7 +824,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(null));
@@ -786,7 +840,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("password", password));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSmtpPassword(), equalTo(password));
@@ -798,7 +853,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpUsername(), equalTo(null));
@@ -813,7 +869,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("smtp", ImmutableMap.of("from", from));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSmtpFrom(), equalTo(from));
@@ -825,7 +882,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM.toString()));
@@ -840,7 +898,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("ajp", ImmutableMap.of("host", host)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getConnectorAjpHost(), equalTo(host));
@@ -852,7 +911,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorAjpHost(), equalTo(null));
@@ -867,7 +927,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("ajp", ImmutableMap.of("port", port)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getConnectorAjpPort(), equalTo(Integer.valueOf(port)));
@@ -879,7 +940,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorAjpPort(), equalTo(0));
@@ -894,7 +956,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("http", ImmutableMap.of("host", host)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getConnectorHttpHost(), equalTo(host));
@@ -906,7 +969,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpHost(), equalTo(null));
@@ -921,7 +985,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("connector", ImmutableMap.of("http", ImmutableMap.of("port", port)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
@@ -933,7 +998,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getConnectorHttpPort(), equalTo(0));
@@ -948,7 +1014,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xssprotection", xss)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeaderXssProection(), equalTo(Integer.valueOf(xss)));
@@ -960,7 +1027,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeaderXssProection(), equalTo(Default.APPLICATION_HEADERS_XSSPROTECTION.toInt()));
@@ -975,7 +1043,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xcontenttypeoptions", type)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeadersXContentTypeOptions(), equalTo(type));
@@ -987,7 +1056,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeadersXContentTypeOptions(), equalTo(Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString()));
@@ -1002,7 +1072,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("xframeoptions", frame)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeadersXFrameOptions(), equalTo(frame));
@@ -1014,7 +1085,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeadersXFrameOptions(), equalTo(Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString()));
@@ -1029,7 +1101,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("server", server)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeadersServer(), equalTo(server));
@@ -1041,7 +1114,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeadersServer(), equalTo(Default.APPLICATION_HEADERS_SERVER.toString()));
@@ -1056,7 +1130,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("contentsecuritypolicy", policy)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeadersContentSecurityPolicy(), equalTo(policy));
@@ -1068,7 +1143,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeadersContentSecurityPolicy(), equalTo(Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString()));
@@ -1083,7 +1159,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("cache", ImmutableMap.of("cluster", ImmutableMap.of("enable", enable)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isCacheCluserEnable(), equalTo(Boolean.valueOf(enable)));
@@ -1095,7 +1172,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isCacheCluserEnable(), equalTo(Default.CACHE_CLUSTER_ENABLE.toBoolean()));
@@ -1110,7 +1188,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("metrics", ImmutableMap.of("enable", true));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.isMetricsEnable(), equalTo(Boolean.valueOf(enable)));
@@ -1122,7 +1201,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE.toBoolean()));
@@ -1137,7 +1217,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("lock", lock));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationLock(), equalTo(Integer.valueOf(lock)));
@@ -1149,7 +1230,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK.toInt()));
@@ -1164,7 +1246,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("cache", ImmutableMap.of("cluster", ImmutableMap.of("url", url)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getCacheClusterUrl(), equalTo(url));
@@ -1176,7 +1259,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getCacheClusterUrl(), equalTo(null));
@@ -1191,7 +1275,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("headers", ImmutableMap.of("refererpolicy", policy)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getApplicationHeadersRefererPolicy(), equalTo(policy));
@@ -1203,7 +1288,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getApplicationHeadersRefererPolicy(), equalTo(Default.APPLICATION_HEADERS_REFERERPOLICY.toString()));
@@ -1218,7 +1304,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("undertow", ImmutableMap.of("maxentitysize", size));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getUndertowMaxEntitySize(), equalTo(Long.valueOf(size)));
@@ -1230,7 +1317,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = new HashMap<>();
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()));
@@ -1245,7 +1333,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("signkey", key)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSessionCookieSignKey(), equalTo(key));
@@ -1260,7 +1349,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieSignKey(), equalTo(secret));
@@ -1275,7 +1365,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("session", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getSessionCookieEncryptionKey(), equalTo(key));
@@ -1290,7 +1381,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getSessionCookieEncryptionKey(), equalTo(secret));
@@ -1305,7 +1397,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("flash", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getFlashCookieEncryptionKey(), equalTo(key));
@@ -1320,7 +1413,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getFlashCookieEncryptionKey(), equalTo(secret));
@@ -1335,7 +1429,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("signkey", key)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieSignKey(), equalTo(key));
@@ -1350,7 +1445,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieSignKey(), equalTo(secret));
@@ -1365,7 +1461,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("authentication", ImmutableMap.of("cookie", ImmutableMap.of("encryptionkey", key)));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
         
         // then
         assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(key));
@@ -1380,7 +1477,8 @@ public class ConfigTest {
         // when
         Map<Object, Object> configValues = ImmutableMap.of("application", ImmutableMap.of("secret", secret));
         File yaml = createTempYaml(configValues);
-        Config config = new Config(yaml.getAbsolutePath(), Mode.TEST);
+        System.setProperty("application.mode", Mode.TEST.toString());
+        Config config = new Config();
 
         // then
         assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(secret));

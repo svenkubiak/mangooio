@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.build;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,8 +20,8 @@ import io.bit3.jsass.Output;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Jvm;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Suffix;
+import io.mangoo.utils.IOUtils;
 import net.jawr.web.minification.CSSMinifier;
 import net.jawr.web.minification.JSMin;
 import net.jawr.web.minification.JSMin.JSMinException;
@@ -34,8 +34,8 @@ import net.jawr.web.minification.JSMin.JSMinException;
  *
  */
 @SuppressWarnings("all")
-public final class MinificationUtils {
-    private static final Logger LOG = LogManager.getLogger(MinificationUtils.class);
+public final class Minification {
+    private static final Logger LOG = LogManager.getLogger(Minification.class);
     private static final int HUNDRED_PERCENT = 100;
     private static final String JS = "js";
     private static final String CSS = "css";
@@ -43,15 +43,21 @@ public final class MinificationUtils {
     private static final String SASS = "sass";
     private static final String MIN = "min";
     private static String basePath;
+    private static String assetPath;
     private static volatile Config config; //NOSONAR
 
-    private MinificationUtils() {
-        config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+    private Minification() {
     }
 
     public static void setBasePath(String path) {
-        synchronized (MinificationUtils.class) {
+        synchronized (Minification.class) {
             basePath = path;
+        }
+    }
+    
+    public static void setAssetPath(String path) {
+        synchronized (Minification.class) {
+            assetPath = path;
         }
     }
 
@@ -73,7 +79,7 @@ public final class MinificationUtils {
 
         if (config == null) {
             System.setProperty(Jvm.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+            config = new Config();
         }
 
         if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
@@ -95,7 +101,7 @@ public final class MinificationUtils {
 
         if (config == null) {
             System.setProperty(Jvm.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config(basePath + Default.CONFIG_PATH.toString(), Mode.DEV);
+            config = new Config();
         }
 
         if (config.isApplicationPreprocessLess() && absolutePath.endsWith(LESS)) {
@@ -188,7 +194,6 @@ public final class MinificationUtils {
             basePath = basePath + "/";
         }
 
-        String assetPath = config.getAssetsPath();
         if (assetPath.startsWith("/")) {
             assetPath = assetPath.substring(1);
         }

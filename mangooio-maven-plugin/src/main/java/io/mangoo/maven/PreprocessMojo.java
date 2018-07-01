@@ -11,9 +11,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+import io.mangoo.build.Minification;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Suffix;
-import io.mangoo.utils.MinificationUtils;
 
 /**
  * 
@@ -32,7 +32,7 @@ public class PreprocessMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         String baseDir = project.getBasedir().getAbsolutePath();
-        MinificationUtils.setBasePath(baseDir);
+        Minification.setBasePath(baseDir);
         preprocessFiles(baseDir);
     }
     
@@ -48,7 +48,7 @@ public class PreprocessMojo extends AbstractMojo {
                 if (file.isFile()){
                     String fileName = file.getName();
                     if (fileName.endsWith(Suffix.LESS.toString()) || fileName.endsWith(Suffix.SASS.toString())) {
-                        MinificationUtils.preprocess(file.getAbsolutePath());
+                        Minification.preprocess(file.getAbsolutePath());
                     }
                 } else if (file.isDirectory()){
                     preprocessFiles(file.getAbsolutePath());

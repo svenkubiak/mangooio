@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import io.mangoo.build.Minification;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Default;
 
@@ -23,7 +24,7 @@ import io.mangoo.enums.Default;
  * @author svenkubiak
  *
  */
-public class MinificationUtilsTest {
+public class MinificationTest {
     private static final String COMPILED_LESS = "background-color: #143352;";
     private static final String COMPILED_SASS = "font: 100% Helvetica, sans-serif;";
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
@@ -39,9 +40,9 @@ public class MinificationUtilsTest {
         when(config.isApplicationMinifyJS()).thenReturn(true);
         when(config.isApplicationPreprocessLess()).thenReturn(true);
         when(config.isApplicationPreprocessSass()).thenReturn(true);
-        when(config.getAssetsPath()).thenReturn(ASSET_PATH);
-        MinificationUtils.setConfig(config);
-        MinificationUtils.setBasePath(TEMP);
+        Minification.setConfig(config);
+        Minification.setAssetPath(ASSET_PATH);
+        Minification.setBasePath(TEMP);
         
         File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());
         File dir2 = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString());
@@ -65,7 +66,7 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".css");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.minify(file.getAbsolutePath());
+        Minification.minify(file.getAbsolutePath());
         File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".min.css");
 
         //then
@@ -92,7 +93,7 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".js");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.minify(file.getAbsolutePath());
+        Minification.minify(file.getAbsolutePath());
         File outputfile = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
 
         //then
@@ -120,7 +121,7 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".less");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.preprocess(file.getAbsolutePath());
+        Minification.preprocess(file.getAbsolutePath());
         File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
 
         //then
@@ -146,7 +147,7 @@ public class MinificationUtilsTest {
         //when
         File file = new File(TEMP + uuid + ".sass");
         FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        MinificationUtils.preprocess(file.getAbsolutePath());
+        Minification.preprocess(file.getAbsolutePath());
         File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
 
         //then
