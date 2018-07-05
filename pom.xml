@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -99,7 +101,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>3.1.2</version>
+					<version>3.2.1</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>4</failBuildOnCVSS>
@@ -115,7 +117,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.4.0.905</version>
+					<version>3.4.1.1168</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -160,7 +162,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.21.0</version>
+					<version>2.22.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -170,7 +172,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.0.0-M1</version>
+					<version>3.0.0-M2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
