@@ -28,7 +28,7 @@
 		<httpcomponents.version>4.5.5</httpcomponents.version>
 		<scribejava.version>5.5.0</scribejava.version>
 		<jackson.version>2.9.6</jackson.version>
-		<fluentlenium.version>3.6.0</fluentlenium.version>
+		<fluentlenium.version>3.6.1</fluentlenium.version>
 		<jersey.version>2.27</jersey.version>
 	</properties>
 	<modules>
@@ -324,7 +324,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.35</version>
+				<version>0.36</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
