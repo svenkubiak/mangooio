@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -60,7 +61,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 public class RequestHelper {
     public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
-    private static final String PATTERN = "\"";
+    private static final Pattern PATTERN = Pattern.compile("\"");
     private static final Logger LOG = LogManager.getLogger(RequestHelper.class);
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
@@ -200,7 +201,7 @@ public class RequestHelper {
             for (String content : contents) {
                 if (StringUtils.isNotBlank(content) && content.startsWith(config.getAuthenticationCookieName())) {
                     value = StringUtils.substringAfter(content, config.getAuthenticationCookieName() + "=");
-                    value = value.replaceAll(PATTERN, "");
+                    value = PATTERN.matcher(value).replaceAll("");
                 }
             }
             

@@ -94,13 +94,14 @@ public class Watcher implements Runnable {
         });
     }
 
+    @SuppressWarnings("all")
     private void register(Path path) throws IOException {
         WatchKey watchKey = path.register(
                 watchService,
                 new WatchEvent.Kind[]{
-                        StandardWatchEventKinds.ENTRY_CREATE, //NOSONAR
-                        StandardWatchEventKinds.ENTRY_MODIFY, //NOSONAR
-                        StandardWatchEventKinds.ENTRY_DELETE //NOSONAR
+                        StandardWatchEventKinds.ENTRY_CREATE,
+                        StandardWatchEventKinds.ENTRY_MODIFY,
+                        StandardWatchEventKinds.ENTRY_DELETE
                 });
 
         watchKeys.put(watchKey, path);

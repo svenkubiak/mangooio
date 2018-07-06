@@ -15,8 +15,8 @@ import jodd.mail.SendMailSession;
 import jodd.mail.SmtpServer;
 
 @Singleton
+@SuppressWarnings("rawtypes")
 public class MailEventListener {
-    @SuppressWarnings("rawtypes")
     private final SmtpServer smtpServer;
     
     @Inject
@@ -34,14 +34,14 @@ public class MailEventListener {
         this.smtpServer = builder.buildSmtpMailServer();
     }
     
-	@Subscribe
-	public void listen(Email email) {
-	    SendMailSession session = smtpServer.createSession();
-	    try {
-	        session.open();
-	        session.sendMail(email);  
-	    } finally {
-	        session.close();
-	    }
-	}
+    @Subscribe
+    public void listen(Email email) {
+        SendMailSession session = smtpServer.createSession();
+        try {
+            session.open();
+            session.sendMail(email);  
+        } finally {
+            session.close();
+        }
+    }
 }
