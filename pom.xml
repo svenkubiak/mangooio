@@ -363,7 +363,7 @@
 			<dependency>
 				<groupId>io.github.lukehutch</groupId>
 				<artifactId>fast-classpath-scanner</artifactId>
-				<version>3.1.6</version>
+				<version>3.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -506,7 +506,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>4.4.3</version>
+				<version>4.4.4</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.xml.bind</groupId>
@@ -541,7 +541,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>mangooio-mongodb-extension</artifactId>
-				<version>3.2.4</version>
+				<version>3.2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
