@@ -129,7 +129,8 @@ public class AdminController {
             }
         }
         
-        return Response.withOk().andEmptyBody();
+        return Response.withOk()
+                .andEmptyBody();
     }
     
     public Response metrics() {
