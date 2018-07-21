@@ -1,6 +1,7 @@
 package io.mangoo.email;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +35,10 @@ public class Mail {
     private String subject;
     private String from;
     private String body;
+    private String charset;
     private boolean html;
     private boolean attachment;
-    
+
     /**
      * Creates a new mail instance
      * @return A mail object instance
@@ -149,8 +151,9 @@ public class Mail {
     }
     
     /**
-     * Sets a template to be render to the email. Rendered templates
-     * will make the Email HTML by default
+     * Sets a template to be rendered for the email. Rendered templates
+     * will make it a HTML Email by default. Charset defaults to
+     * Charset.defaultCharset()
      * 
      * @param template The template to use
      * @param content The content for the template
@@ -158,17 +161,32 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail templateMessage(String template, Map<String, Object> content) {
+        return templateMessage(template, content, Charset.defaultCharset().name());
+    }
+
+    /**
+     * Sets a template to be rendered for the email. Rendered templates
+     * will make it a HTML Email by default.
+     *
+     * @param template The template to use
+     * @param content The content for the template
+     * @param charset The charset of the email
+     * @return A mail object instance
+     */
+    public Mail templateMessage(String template, Map<String, Object> content, String charset) {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
         Objects.requireNonNull(content, Required.CONTENT.toString());
-        
+        Objects.requireNonNull(charset, Required.CHARSET.toString());
+
         this.content = content;
+        this.charset = charset;
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             this.template = template.substring(1, template.length());
         } else {
             this.template = template;
         }
 
-        return this;   
+        return this;
     }
     
     /**
@@ -328,7 +346,7 @@ public class Mail {
         
         if (StringUtils.isNotBlank(this.template)) {
             try {
-                this.email.htmlMessage(render());
+                this.email.htmlMessage(render(), charset);
             } catch (MangooTemplateEngineException e) {
                 throw new MangooMailerException(e);
             }
