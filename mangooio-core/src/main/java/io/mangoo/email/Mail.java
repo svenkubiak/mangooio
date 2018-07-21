@@ -151,7 +151,7 @@ public class Mail {
     }
     
     /**
-     * Sets a template to be rendered for the email. Rendered templates
+     * Sets a template to be rendered for the email. Using a template
      * will make it a HTML Email by default. Charset defaults to
      * Charset.defaultCharset()
      * 
@@ -165,7 +165,7 @@ public class Mail {
     }
 
     /**
-     * Sets a template to be rendered for the email. Rendered templates
+     * Sets a template to be rendered for the email. Using a template
      * will make it a HTML Email by default.
      *
      * @param template The template to use
