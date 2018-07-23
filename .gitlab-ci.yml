@@ -2,6 +2,7 @@ stages:
   - test
   - sonar
   - smoke
+  - dependencies
 
 before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
@@ -33,3 +34,16 @@ smoke:
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/loader.sh'
   only:
   - master
+
+dependencies:
+  stage: dependencies
+  script: mvn clean verify versions:display-dependency-updates
+  artifacts:
+    paths:
+      - target/site/dependency-updates-report.html
+    expire_in: 10m
+  script:
+  - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
+  - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/dependencies.sh'
+  only:
+    - /^feature.*$/
