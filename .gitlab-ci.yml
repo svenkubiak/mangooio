@@ -4,6 +4,15 @@ stages:
   - smoke
   - dependencies
 
+variables:
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+cache:
+  key: "$CI_JOB_NAME"  
+  paths:
+    - .m2/repository
+
 before_script:
   - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
   - eval $(ssh-agent -s)
@@ -15,16 +24,16 @@ before_script:
  
 test:
   stage: test
-  script: mvn clean verify
+  script: mvn $MAVEN_CLI_OPTS clean verify
 
 sonar:
   stage: sonar
   script: 
-  - mvn clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS clean verify sonar:sonar --settings settings.xml
 
 smoke:
   stage: smoke
-  script: mvn clean verify
+  script: mvn $MAVEN_CLI_OPTS clean verify
   artifacts:
     paths:
       - target/load.jar
@@ -37,7 +46,7 @@ smoke:
 
 dependencies:
   stage: dependencies
-  script: mvn clean verify versions:display-dependency-updates
+  script: mvn $MAVEN_CLI_OPTS clean verify versions:display-dependency-updates
   artifacts:
     paths:
       - target/site/dependency-updates-report.html
