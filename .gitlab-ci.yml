@@ -49,7 +49,7 @@ dependencies:
   script: mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   artifacts:
     paths:
-      - target/site/dependency-updates-report.html
+      - target
     expire_in: 10m
   script:
   - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
