@@ -1,0 +1,12 @@
+stages:
+  - test
+  - sonar
+
+test:
+  stage: test
+  script: mvn clean verify
+
+sonar:
+  stage: sonar
+  script: 
+  - mvn clean verify sonar:sonar --settings settings.xml
