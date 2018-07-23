@@ -46,7 +46,7 @@ smoke:
 
 dependencies:
   stage: dependencies
-  script: mvn $MAVEN_CLI_OPTS clean verify versions:display-dependency-updates
+  script: mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   artifacts:
     paths:
       - target/site/dependency-updates-report.html
