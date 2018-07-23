@@ -45,3 +45,5 @@ dependencies:
   script:
   - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/dependencies.sh'
+  only:
+    - /^feature.*$/
