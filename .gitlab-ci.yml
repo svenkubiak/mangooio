@@ -1,7 +1,17 @@
 stages:
   - test
   - sonar
+  - smoke
 
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+ 
 test:
   stage: test
   script: mvn clean verify
@@ -10,3 +20,16 @@ sonar:
   stage: sonar
   script: 
   - mvn clean verify sonar:sonar --settings settings.xml
+
+smoke:
+  stage: smoke
+  script: mvn clean verify
+  artifacts:
+    paths:
+      - target/load.jar
+    expire_in: 10m
+  script:
+  - scp -P $LOADER_PORT target/load.jar $LOADER_URL
+  - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/loader.sh'
+  only:
+  - master
