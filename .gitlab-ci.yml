@@ -46,12 +46,12 @@ smoke:
 
 dependencies:
   stage: dependencies
-  script: mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   artifacts:
     paths:
       - target
     expire_in: 10m
   script:
+  - mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/dependencies.sh'
   only:
