@@ -42,7 +42,7 @@
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
+			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-core</artifactId>
 		</dependency>
 		<dependency>
