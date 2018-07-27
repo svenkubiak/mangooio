@@ -71,13 +71,13 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://mangoo.io](https://mangoo.io)
 
 **Documentation**   
-[https://mangoo.io/documentation](https://mangoo.io/documentation)  
+[https://github.com/svenkubiak/mangooio/wiki](https://github.com/svenkubiak/mangooio/wiki)  
 
 **Changelog**   
-[https://mangoo.io/changelog](https://mangoo.io/changelog)  
+[https://github.com/svenkubiak/mangooio/wiki/Changelog](https://github.com/svenkubiak/mangooio/wiki/Changelog)  
 
 **Apidocs**   
-[https://mangoo.io/apidocs](https://mangoo.io/apidocs)
+[http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)
 
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
