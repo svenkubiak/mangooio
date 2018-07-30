@@ -26,6 +26,7 @@ public enum Binding {
     LOCALDATETIME("java.time.LocalDateTime"),
     LONG("java.lang.Long"),
     LONG_PRIMITIVE("long"),
+    MESSAGES("io.mangoo.i18n.Messages"),
     OPTIONAL("java.util.Optional"),
     REQUEST("io.mangoo.routing.bindings.Request"),
     SESSION("io.mangoo.routing.bindings.Session"),

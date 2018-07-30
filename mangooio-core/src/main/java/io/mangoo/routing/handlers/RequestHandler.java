@@ -206,6 +206,9 @@ public class RequestHandler implements HttpHandler {
             case REQUEST:
                 convertedParameters[index] = this.attachment.getRequest();
                 break;
+            case MESSAGES:
+                convertedParameters[index] = this.attachment.getMessages();
+                break;
             case LOCALDATE:
                 convertedParameters[index] = StringUtils.isBlank(this.attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(this.attachment.getRequestParameter().get(key));
                 break;
