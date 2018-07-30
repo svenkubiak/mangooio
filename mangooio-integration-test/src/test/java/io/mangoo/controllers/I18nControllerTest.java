@@ -85,6 +85,31 @@ public class I18nControllerTest {
     }
     
     @Test
+    public void testWithInjectedAdditionalHeaderDe() {
+        //given
+        WebResponse response = WebRequest.get("/messages")
+                .withHeader("Accept-Language", "de-DE")
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("willkommen"));
+    }
+    
+    @Test
+    public void testWithInjectedMessagesDefaultLanguage() {
+        //given
+        WebResponse response = WebRequest.get("/messages")
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("welcome"));
+    }
+    
+    @Test
     public void testWithI18nCookie() {
         //given
         WebBrowser browser = WebBrowser.open();

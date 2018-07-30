@@ -37,6 +37,10 @@ routes:
   mapping: I18nController.translation
 
 - method: GET
+  url: /messages
+  mapping: I18nController.messages
+
+- method: GET
   url: /special
   mapping: I18nController.special
 
