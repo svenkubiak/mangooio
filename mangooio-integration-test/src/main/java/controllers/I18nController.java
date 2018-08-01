@@ -3,7 +3,6 @@ package controllers;
 import io.mangoo.enums.Default;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Request;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 
@@ -26,7 +25,7 @@ public class I18nController {
         return Response.withOk();
     }
     
-    public Response messages(Request request, Messages messages) {
+    public Response messages(Messages messages) {
         return Response.withOk().andTextBody(messages.get("welcome"));
     }
 }
