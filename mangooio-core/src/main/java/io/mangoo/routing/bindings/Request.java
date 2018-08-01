@@ -28,8 +28,8 @@ public class Request extends Validator {
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
     private transient Authentication authentication;
-    private Map<String, Cookie> cookies;
-    private Map<String, Object> attributes = new HashMap<>();
+    private transient Map<String, Cookie> cookies;
+    private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
     private Map<String, String> parameter;
