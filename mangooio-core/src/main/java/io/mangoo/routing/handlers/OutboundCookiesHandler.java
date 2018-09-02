@@ -102,7 +102,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
-                        .setSecure(this.config.isSessionCookieSecure());
+                        .setSecure(this.config.isSessionCookieSecure())
+                        .setPath("/");
                 
                 if (session.getExpires() != null) {
                     cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
