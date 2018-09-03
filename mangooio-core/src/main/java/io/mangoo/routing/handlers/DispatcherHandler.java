@@ -82,7 +82,7 @@ public class DispatcherHandler implements HttpHandler {
         try {
             this.method = Application.getInstance(this.controllerClass)
                     .getClass()
-                    .getMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
+                    .getDeclaredMethod(this.controllerMethodName, this.methodParameters.values().toArray(new Class[0]));
             
             for (Annotation annotation : this.method.getAnnotations()) {
                 if (annotation.annotationType().equals(FilterWith.class)) {
