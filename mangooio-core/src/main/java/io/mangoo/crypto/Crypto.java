@@ -3,7 +3,7 @@ package io.mangoo.crypto;
 import java.util.Base64;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherParameters;
@@ -127,7 +127,7 @@ public class Crypto {
 
     public static String getSizedSecret(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
-        String key = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
+        String key = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
 
         return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEYINDEX_START, MAX_KEY_LENGTH);
     }

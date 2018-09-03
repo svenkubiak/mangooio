@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -210,7 +212,7 @@
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-mail</artifactId>
-				<version>5.0.3</version>
+				<version>5.0.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
@@ -279,7 +281,7 @@
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
-				<version>1.5.7</version>
+				<version>1.5.8</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.commons</groupId>
@@ -318,7 +320,7 @@
 			<dependency>
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
-				<version>3.5.2</version>
+				<version>3.6.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -363,9 +365,9 @@
 				<version>8.2.0.v20160908</version>
 			</dependency>
 			<dependency>
-				<groupId>io.github.lukehutch</groupId>
-				<artifactId>fast-classpath-scanner</artifactId>
-				<version>3.1.3</version>
+				<groupId>io.github.classgraph</groupId>
+				<artifactId>classgraph</artifactId>
+				<version>4.1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -462,7 +464,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.7</version>
+				<version>3.8</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>

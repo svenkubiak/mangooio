@@ -86,6 +86,7 @@ public enum Default {
     SCHEDULER_AUTOSTART("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
     SCHEDULER_PACKAGE("jobs"),
+    SCHEDULER_ANNOTATION("io.mangoo.annotations.Schedule"),
     SCHEDULER_PREFIX("org.quartz."),
     SCHEDULER_TRIGGER_GROUP("MangooSchedulerTriggerGroup"),
     SESSION_COOKIE_EXPIRES("0"),

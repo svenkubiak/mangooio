@@ -15,7 +15,6 @@ import jodd.mail.SendMailSession;
 import jodd.mail.SmtpServer;
 
 @Singleton
-@SuppressWarnings("rawtypes")
 public class MailEventListener {
     private final SmtpServer smtpServer;
     

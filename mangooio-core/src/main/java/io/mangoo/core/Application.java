@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,8 @@ import com.google.inject.Module;
 import com.netflix.governator.guice.LifecycleInjector;
 import com.netflix.governator.lifecycle.LifecycleManager;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
@@ -590,7 +592,7 @@ public final class Application {
     }
 
     private static int getBitLength(String secret) {
-        secret = StringUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
+        secret = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
         return ByteUtils.bitLength(secret);
     }
 
@@ -617,10 +619,15 @@ public final class Application {
         Config config = injector.getInstance(Config.class);
         
         List<Class<?>> jobs = new ArrayList<>();
-        new FastClasspathScanner(config.getSchedulerPackage())
-            .matchClassesWithAnnotation(Schedule.class, jobs::add)
-            .scan();
-
+        try (ScanResult scanResult =
+                new ClassGraph()
+                    .enableAnnotationInfo()
+                    .enableClassInfo()
+                    .whitelistPackages(config.getSchedulerPackage())
+                    .scan()) {
+            scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
+        }
+        
         if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
             final Scheduler mangooScheduler = injector.getInstance(Scheduler.class);
             mangooScheduler.initialize();

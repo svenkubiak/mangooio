@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -152,7 +152,7 @@ public class TotpUtils {
         buffer.append("otpauth://totp/")
             .append(name)
             .append("?secret=")
-            .append(StringUtils.replaceAll(base32.encodeAsString(secret.getBytes(Charsets.UTF_8)), "=", ""))
+            .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(Charsets.UTF_8)), "=", ""))
                 .append("&algorithm=")
                 .append(hmacShaAlgorithm.getAlgorithm())
                 .append("&issuer=")
