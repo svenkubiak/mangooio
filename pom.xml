@@ -89,7 +89,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -99,7 +99,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>4</failBuildOnCVSS>
