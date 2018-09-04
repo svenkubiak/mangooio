@@ -102,6 +102,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
+                        .setPath("/")
                         .setSecure(this.config.isSessionCookieSecure());
                 
                 if (session.getExpires() != null) {
@@ -163,6 +164,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
+                        .setPath("/")
                         .setSameSiteMode(SAME_SITE_MODE);
                         
                 if (authentication.getExpires() != null) {
@@ -222,6 +224,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setSecure(this.config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
+                        .setPath("/")
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setExpires(DateUtils.localDateTimeToDate(expires));
                 
