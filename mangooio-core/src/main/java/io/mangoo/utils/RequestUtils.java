@@ -1,4 +1,4 @@
-package io.mangoo.helpers;
+package io.mangoo.utils;
 
 import java.net.URI;
 import java.security.SecureRandom;
@@ -59,20 +59,31 @@ import io.undertow.websockets.core.WebSocketChannel;
  * @author svenkubiak
  *
  */
-public class RequestHelper {
-    public static final AttachmentKey<Attachment> ATTACHMENT_KEY = AttachmentKey.create(Attachment.class);
+public final class RequestUtils {
+    private static AttachmentKey<Attachment> attachmentKey;
     private static final Pattern PATTERN = Pattern.compile("\"");
-    private static final Logger LOG = LogManager.getLogger(RequestHelper.class);
+    private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
 
+    private RequestUtils() {
+    }
+    
+    public static AttachmentKey<Attachment> getAttachmentKey() {
+        if (attachmentKey == null) {
+            attachmentKey = AttachmentKey.create(Attachment.class);
+        }
+        
+        return attachmentKey;
+    }
+    
     /**
      * Converts request and query parameter into a single map
      *
      * @param exchange The Undertow HttpServerExchange
      * @return A single map contain both request and query parameter
      */
-    public Map<String, String> getRequestParameters(HttpServerExchange exchange) {
+    public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final Map<String, String> requestParamater = new HashMap<>();
@@ -89,7 +100,7 @@ public class RequestHelper {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request is a POST, PUT or PATCH request, false otherwise
      */
-    public boolean isPostPutPatch(HttpServerExchange exchange) {
+    public static boolean isPostPutPatch(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
@@ -101,7 +112,7 @@ public class RequestHelper {
      * @param exchange The Undertow HttpServerExchange
      * @return True if the request content-type contains application/json, false otherwise
      */
-    public boolean isJsonRequest(HttpServerExchange exchange) {
+    public static boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         final HeaderMap headerMap = exchange.getRequestHeaders();
@@ -115,7 +126,7 @@ public class RequestHelper {
      * @param oAuthProvider The OAuth provider Enum
      * @return An Optional OAuthService
      */
-    public Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
+    public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
         Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
 
         Config config = Application.getInstance(Config.class);
@@ -155,7 +166,7 @@ public class RequestHelper {
      * @param oauth The string to lookup the OAuthProvider Enum
      * @return OAuthProvider Enum
      */
-    public Optional<OAuthProvider> getOAuthProvider(String oauth) {
+    public static Optional<OAuthProvider> getOAuthProvider(String oauth) {
         OAuthProvider oAuthProvider = null;
         if (OAuthProvider.FACEBOOK.toString().equalsIgnoreCase(oauth)) {
             oAuthProvider = OAuthProvider.FACEBOOK;
@@ -176,7 +187,7 @@ public class RequestHelper {
      * @param cookie The cookie to parse
      * @return True if the cookie contains a valid authentication, false otherwise
      */
-    public boolean hasValidAuthentication(String cookie) {
+    public static boolean hasValidAuthentication(String cookie) {
         boolean valid = false;
         if (StringUtils.isNotBlank(cookie)) {
             Config config = Application.getInstance(Config.class);
@@ -218,7 +229,7 @@ public class RequestHelper {
      *
      * @return The URL of the Server-Sent Event Connection
      */
-    public String getServerSentEventURL(ServerSentEventConnection connection) {
+    public static String getServerSentEventURL(ServerSentEventConnection connection) {
         return getURL(URI.create(connection.getRequestURI()));
     }
 
@@ -229,7 +240,7 @@ public class RequestHelper {
      *
      * @return The URL of the WebSocket Channel
      */
-    public String getWebSocketURL(WebSocketChannel channel) {
+    public static String getWebSocketURL(WebSocketChannel channel) {
         return getURL(URI.create(channel.getUrl()));
     }
 
@@ -240,7 +251,7 @@ public class RequestHelper {
      * @param uri The URI to generate from
      * @return The generated URL
      */
-    public String getURL(URI uri) {
+    public static String getURL(URI uri) {
         final StringBuilder buffer = new StringBuilder();
         buffer.append(uri.getPath());
         
@@ -266,7 +277,7 @@ public class RequestHelper {
      * @param password The password to use
      * @return An HttpHandler wrapped through BasicAuthentication
      */
-    public HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
+    public static HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
         Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());

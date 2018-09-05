@@ -12,16 +12,14 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.inject.Inject;
-
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
-import io.mangoo.helpers.RequestHelper;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.routing.Attachment;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
@@ -46,7 +44,6 @@ public class DispatcherHandler implements HttpHandler {
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
-    private RequestHelper requestHelper;
     private MangooTemplateEngine templateEngine;
     private Messages messages;
     private Map<String, Class<?>> methodParameters;
@@ -61,11 +58,6 @@ public class DispatcherHandler implements HttpHandler {
     private boolean blocking;
     private boolean timer;
 
-    @Inject
-    public DispatcherHandler(RequestHelper requestHelper) {
-        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
-    }
-    
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
@@ -129,7 +121,7 @@ public class DispatcherHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (this.requestHelper.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }
@@ -145,7 +137,7 @@ public class DispatcherHandler implements HttpHandler {
             .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)
             .withRequestFilter(this.hasRequestFilter)
-            .withRequestParameter(this.requestHelper.getRequestParameters(exchange))
+            .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withTimer(this.timer)
             .withLimit(this.limit)
@@ -153,7 +145,7 @@ public class DispatcherHandler implements HttpHandler {
             .withPassword(this.password)
             .withTemplateEngine(this.templateEngine);
 
-        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
+        exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);
     }
 

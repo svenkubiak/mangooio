@@ -4,15 +4,13 @@ import java.util.Objects;
 
 import org.xnio.ChannelListener;
 
-import com.google.inject.Inject;
-
 import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
-import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.services.WebSocketService;
 import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
@@ -24,14 +22,8 @@ import io.undertow.websockets.spi.WebSocketHttpExchange;
  */
 @SuppressWarnings("unchecked")
 public class WebSocketHandler implements WebSocketConnectionCallback {
-    private final RequestHelper requestHelper;
     private boolean hasAuthentication;
     private Class<?> controllerClass;
-    
-    @Inject
-    public WebSocketHandler(RequestHelper requestHelper) {
-        this.requestHelper = Objects.requireNonNull(requestHelper, Required.REQUEST_HELPER.toString());
-    }
     
     public WebSocketHandler withAuthentication(boolean hasAuthentication) {
         this.hasAuthentication = hasAuthentication;
@@ -53,7 +45,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
                 header = exchange.getRequestHeader(Header.COOKIE.toString());
             }
             
-            if (this.requestHelper.hasValidAuthentication(header)) {
+            if (RequestUtils.hasValidAuthentication(header)) {
                 channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
                 channel.resumeReceives();
                 channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));

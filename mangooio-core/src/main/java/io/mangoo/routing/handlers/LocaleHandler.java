@@ -11,8 +11,8 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
-import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.Attachment;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -36,7 +36,7 @@ public class LocaleHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Locale locale = Locale.forLanguageTag(this.config.getApplicationLanguage());
-        Attachment attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
+        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
         Cookie i18nCookie = exchange.getRequestCookies().get(this.config.getI18nCookieName());
         if (i18nCookie == null) {
@@ -54,7 +54,7 @@ public class LocaleHandler implements HttpHandler {
         attachment.getMessages().reload(locale);
         attachment.withLocale(locale);
         
-        exchange.putAttachment(RequestHelper.ATTACHMENT_KEY, attachment);
+        exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);
     }
 

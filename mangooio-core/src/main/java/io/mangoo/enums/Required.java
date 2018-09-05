@@ -75,7 +75,6 @@ public enum Required {
     PLAIN_TEXT("plan text can not be null"),
     RECIPIENT("recipient can not be null"),
     REDIRECT_TO("redirect to can not be null"),
-    REQUEST_HELPER("requesthelper can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),
     RESPONSE("response can not be null"),
     ROUTE("route can not be null"),

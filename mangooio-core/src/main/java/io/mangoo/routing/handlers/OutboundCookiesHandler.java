@@ -19,7 +19,6 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
-import io.mangoo.helpers.RequestHelper;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -27,6 +26,7 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -51,7 +51,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.attachment = exchange.getAttachment(RequestHelper.ATTACHMENT_KEY);
+        this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
         setSessionCookie(exchange);
         setFlashCookie(exchange);
