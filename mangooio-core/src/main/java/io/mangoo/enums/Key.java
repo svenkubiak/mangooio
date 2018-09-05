@@ -10,8 +10,6 @@ public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
-    
-    @Deprecated /** Use Jvm.APPLICATION_CONFIG instead **/
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY("application.headers.contentsecuritypolicy"),
@@ -20,60 +18,19 @@ public enum Key {
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("application.headers.xcontenttypeoptions"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("application.headers.xframeoptions"),
     APPLICATION_HEADERS_XSSPROTECTION("application.headers.xssprotection"),
-    
-    @Deprecated /** Will be removed in 5.0.0 without replacement **/
-    APPLICATION_JWT_ENCRYPT("application.jwt.encrypt"),
-    
-    @Deprecated /** Will be removed in 5.0.0 without replacement **/
-    APPLICATION_JWT_ENCRYPTION_KEY("application.jwt.encryptionkey"),
-    
-    @Deprecated /** Will be removed in 5.0.0 without replacement **/
-    APPLICATION_JWT_SIGNKEY("application.jwt.signkey"),
-    
     APPLICATION_LANGUAGE("application.language"),
-    
-    @Deprecated /** Use Jvm.APPLICATION_LOG instead **/
     APPLICATION_LOG("application.log"),
-
-    @Deprecated /** Use APPLICATION_MASTERKEY_FILE instead **/
     APPLICATION_MASTERKEY("application.masterkey"),
     APPLICATION_MASTERKEY_FILE("application.masterkeyfile"),
     APPLICATION_MINIFY_CSS("application.minify.css"),
     APPLICATION_MINIFY_JS("application.minify.js"),
-    
-    @Deprecated /** Use Jvm.APPLICATION_MODE instead **/
     APPLICATION_MODE("application.mode"),
-    APPLICATION_NAME("application.name"),
-    APPLICATION_PREPROCESS_LESS("application.preprocess.less"),   
+    APPLICATION_NAME("application.name"),   
+    APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
     APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),
     APPLICATION_SECRET("application.secret"),
     APPLICATION_TEMPLATEENGINE("application.templateengine"),
     APPLICATION_THREADPOOL("application.threadpool"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_ENCRYPT instead **/
-    AUTH_COOKIE_ENCRYPT("auth.cookie.encrypt"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_EXPIRES instead **/
-    AUTH_COOKIE_EXPIRES("auth.cookie.expires"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_NAME instead **/
-    AUTH_COOKIE_NAME("auth.cookie.name"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_REMEMBER_EXPIRES instead **/
-    AUTH_COOKIE_REMEMBER_EXPIRES("auth.cookie.remember.expires"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_SECURE instead **/
-    AUTH_COOKIE_SECURE("auth.cookie.secure"),
-    
-    @Deprecated /** Use AUTHENTICATION_COOKIE_VERSION instead **/
-    AUTH_COOKIE_VERSION("auth.cookie.version"),
-    
-    @Deprecated /** Use AUTHENTICATION_LOCK instead **/
-    AUTH_LOCK("auth.lock"),
-    
-    @Deprecated /** Use AUTHENTICATION_REDIRECT instead **/
-    AUTH_REDIRECT("auth.redirect"),
-    
     AUTHENTICATION_COOKIE_ENCRYPTIONKEY("authentication.cookie.encryptionkey"),
     AUTHENTICATION_COOKIE_EXPIRES("authentication.cookie.expires"),
     AUTHENTICATION_COOKIE_NAME("authentication.cookie.name"),
@@ -88,23 +45,7 @@ public enum Key {
     CONNECTOR_AJP_HOST("connector.ajp.host"),
     CONNECTOR_AJP_PORT("connector.ajp.port"),
     CONNECTOR_HTTP_HOST("connector.http.host"),
-    
     CONNECTOR_HTTP_PORT("connector.http.port"),
-    
-    @Deprecated /** Use SESSION_COOKIE_ENCRYPTION instead **/
-    COOKIE_ENCRYPTION("cookie.encryption"),
-    
-    @Deprecated /** Use SESSION_COOKIE_ENCRYPTION instead **/
-    COOKIE_EXPIRES("cookie.expires"),
-    
-    @Deprecated /** Use SESSION_COOKIE_NAME instead **/
-    COOKIE_NAME("cookie.name"),
-    
-    @Deprecated /** Use SESSION_COOKIE_SECURE instead **/
-    COOKIE_SECURE("cookie.secure"),
-    
-    @Deprecated /** Use SESSION_COOKIE_VERSION instead **/
-    COOKIE_VERSION("cookie.version"),
     FLASH_COOKIE_ENCRYPTIONKEY("flash.cookie.encryptionkey"),
     FLASH_COOKIE_NAME("flash.cookie.name"),
     FLASH_COOKIE_SIGNKEY("flash.cookie.signkey"),

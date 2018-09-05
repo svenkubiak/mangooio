@@ -122,35 +122,6 @@ public class Authentication {
     public OAuthUser getOAuthUser() {
         return this.oAuthUser;
     }
-
-    /**
-     * Creates a hashed value of a given clear text password and checks if the
-     * value matches a given, already hashed password
-     * 
-     * @deprecated  As of release 4.3.0, replaced by {@link #validLogin(String, String, String)}, will be removed in 5.0.0
-     *
-     * @param username The username to authenticate
-     * @param password The clear text password
-     * @param hash The previously hashed password to check
-     * @return True if the new hashed password matches the hash, false otherwise
-     */
-    @Deprecated
-    public boolean login(String username, String password, String hash) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
-        Objects.requireNonNull(hash, Required.HASH.toString());
-
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        boolean authenticated = false;
-        if (!userHasLock(username) && CodecUtils.checkJBCrypt(password, hash)) {
-            this.identifier = username;
-            authenticated = true;
-        } else {
-            cache.increment(username);
-        }
-
-        return authenticated;
-    }
     
     /**
      * Creates a hashed value of a given clear text password and checks if the
@@ -190,17 +161,6 @@ public class Authentication {
     public Authentication login(String identifier) {
         this.identifier = identifier;
         return this;
-    }
-    
-    /**
-     * Sets the remember me functionality
-     * @deprecated As of release 4.3.0, replaced by {@link #rememberMe(boolean)}, will be removed in 5.0.0
-     * 
-     * @param remember true or false
-     */
-    @Deprecated
-    public void remember(boolean remember) {
-        this.remember = remember;
     }
     
     /**
@@ -274,17 +234,6 @@ public class Authentication {
     public void logout() {
         this.loggedOut = true;
     }
-
-    /**
-     * Checks if the authentication contains an authenticated user
-     * @deprecated As of version 4.13.0, use isValid() instead
-     *
-     * @return True if authentication contains an authenticated user, false otherwise
-     */
-    @Deprecated
-    public boolean hasAuthenticatedUser() {
-        return StringUtils.isNotBlank(this.identifier) || this.oAuthUser != null;
-    }
     
     /**
      * Checks if the authentication class contains an authentication
@@ -293,20 +242,6 @@ public class Authentication {
      */
     public boolean isValid() {
         return StringUtils.isNotBlank(this.identifier) || this.oAuthUser != null;
-    }
-
-    /**
-     * Checks if the given user name is authenticated
-     * @deprecated  As of release 4.3.0, will be removed in 5.0.0
-     *
-     * @param username The user name to check
-     * @return True if the given user name is authenticates
-     */
-    @Deprecated
-    public boolean isAuthenticated(String username) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-
-        return username.equals(this.identifier);
     }
     
     public boolean isInvalid() {

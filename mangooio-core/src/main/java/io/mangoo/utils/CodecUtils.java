@@ -8,8 +8,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.google.common.base.Charsets;
-
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
@@ -75,40 +73,6 @@ public final class CodecUtils {
         Objects.requireNonNull(hash, Required.HASH.toString());
         
         return BCrypt.checkpw(data, hash);
-    }
-    
-    /**
-     * Encodes a given byte array of data to Base64
-     * 
-     * @deprecated As of version 4.4.0, will be removed in 5.0.0
-     * 
-     * This method is not thread-safe!
-     * 
-     * @param data The String to convert
-     * @return Base64 encoded String
-     */
-    @Deprecated
-    public static String encodeBase64(byte[] data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        return new String(base64Encoder.encode(data), Charsets.UTF_8);
-    }
-    
-    /**
-     * Decodes a given byte array of data to Base64
-     * 
-     * @deprecated As of version 4.4.0, will be removed in 5.0.0
-     * 
-     * This method is not thread-safe!
-     *
-     * @param data The String to convert
-     * @return Base64 encoded String
-     */
-    @Deprecated
-    public static String decodeBase64(byte[] data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        return new String(base64Decoder.decode(data), Charsets.UTF_8);
     }
     
     /**

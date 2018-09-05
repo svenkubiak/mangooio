@@ -39,7 +39,6 @@ import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.email.MailEventListener;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
@@ -232,7 +231,7 @@ public final class Application {
      * @param providedMode A given mode or null
      */
     private static void prepareMode(Mode providedMode) {
-        final String applicationMode = System.getProperty(Jvm.APPLICATION_MODE.toString());
+        final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
             switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
                 case "dev"  : mode = Mode.DEV;

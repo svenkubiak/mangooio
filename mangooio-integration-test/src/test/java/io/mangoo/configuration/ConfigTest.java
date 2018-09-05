@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableMap;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
@@ -1614,7 +1613,7 @@ public class ConfigTest {
     public void testGetMasterKey() {
         //given
         final Config config = Application.getInstance(Config.class);
-        System.setProperty(Jvm.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
+        System.setProperty(Key.APPLICATION_MASTERKEY.toString(), "thisismymasterkey");
 
         //then
         assertThat(config.getMasterKeys().get(0), equalTo("thisismymasterkey"));
@@ -1625,7 +1624,7 @@ public class ConfigTest {
         defaults.put("default", values);
 
         File configTestFile = new File(UUID.randomUUID().toString());
-        System.setProperty(Jvm.APPLICATION_CONFIG.toString(), configTestFile.getAbsolutePath());
+        System.setProperty(Key.APPLICATION_CONFIG.toString(), configTestFile.getAbsolutePath());
         new ObjectMapper(new YAMLFactory()).writeValue(configTestFile, defaults);
 
         return configTestFile;

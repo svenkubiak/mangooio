@@ -14,7 +14,6 @@ import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.yaml.YamlConfiguration;
 
 import io.mangoo.core.Application;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 
 /**
@@ -28,7 +27,7 @@ public class ConfigFactory extends ConfigurationFactory {
     @Override
     @SuppressWarnings("all")
     public Configuration getConfiguration(LoggerContext loggerContext, ConfigurationSource configurationSource) {
-        String configurationFile = System.getProperty(Jvm.APPLICATION_LOG.toString());
+        String configurationFile = System.getProperty(Key.APPLICATION_LOG.toString());
         
         URL url = null;
         if (StringUtils.isNotBlank(configurationFile)) {

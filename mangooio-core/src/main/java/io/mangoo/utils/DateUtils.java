@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -23,60 +22,6 @@ public final class DateUtils {
     private DateUtils() {
     }
 
-    /**
-     * Converts a Date to LocalDateTime
-     * 
-     * @deprecated As of version 4.4.0, will be removed in 5.0.0
-     * 
-     * This method is not thread-safe!
-     * 
-     * @param date The Date to convert
-     * @return The converted LocalDateTime
-     */
-    @Deprecated
-    public static LocalDateTime dateToLocalDateTime(Date date) {
-        Objects.requireNonNull(date, Required.DATE.toString());
-        
-        Instant instant = Instant.ofEpochMilli(date.getTime());
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-    }
-    
-    /**
-     * Converts a Date to LocalDate
-     * 
-     * @deprecated As of version 4.4.0, will be removed in 5.0.0
-     * 
-     * This method is not thread-safe!
-     * 
-     * @param date The Date to convert
-     * @return The converted LocalDate
-     */
-    @Deprecated
-    public static LocalDate dateToLocalDate(Date date) {
-        Objects.requireNonNull(date, Required.DATE.toString());
-        
-        Instant instant = Instant.ofEpochMilli(date.getTime());
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
-    }
-    
-    /**
-     * Converts a Date to LocalTime
-     * 
-     * @deprecated As of version 4.4.0, will be removed in 5.0.0
-     * 
-     * This method is not thread-safe!
-     * 
-     * @param date The Date to convert
-     * @return The converted LocalTime
-     */
-    @Deprecated
-    public static LocalTime dateToLocalTime(Date date) {
-        Objects.requireNonNull(date, Required.DATE.toString());
-        
-        Instant instant = Instant.ofEpochMilli(date.getTime());
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalTime();
-    }
-    
     /**
      * Converts a LocalDateTime to Date
      * 

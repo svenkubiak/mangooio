@@ -8,7 +8,7 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 import de.svenkubiak.embeddedmongodb.EmbeddedMongo;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Jvm;
+import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 /**
@@ -23,7 +23,7 @@ public class TestSuite {
     @BeforeClass
     public static final void start() {
         before();
-        System.setProperty(Jvm.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         Application.main(null);
     }
 

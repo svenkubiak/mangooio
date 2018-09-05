@@ -24,7 +24,6 @@ import com.google.inject.Singleton;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Jvm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.IOUtils;
@@ -49,7 +48,7 @@ public class Config {
     }
 
     private void prepare() {
-        final String configPath = System.getProperty(Jvm.APPLICATION_CONFIG.toString());
+        final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
 
         Map map;
         if (StringUtils.isNotBlank(configPath)) {
@@ -162,7 +161,7 @@ public class Config {
      * @return The master key(s) for encrypted config value
      */
     public List<String> getMasterKeys() {
-        String masterkey = System.getProperty(Jvm.APPLICATION_MASTERKEY.toString());
+        String masterkey = System.getProperty(Key.APPLICATION_MASTERKEY.toString());
         List<String> keys = new ArrayList<>();
         
         if (StringUtils.isNotBlank(masterkey)) {
@@ -483,30 +482,12 @@ public class Config {
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
-
-    /**
-     * @deprecated As of 4.8.0, replace by getAuthenticationCookieVersion
-     * @return auth.cookie.version from application.yaml or default value if undefined
-     */
-    @Deprecated
-    public String getAuthCookieVersion() {
-        return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
-    }
     
     /**
      * @return authentication.cookie.version from application.yaml or default value if undefined
      */
     public String getAuthenticationCookieVersion() {
         return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
-    }
-
-    /**
-     * @deprecated As of 4.8.0, replace by getSessionCookieVersion
-     * @return cookie.version from application.yaml or default value if undefined
-     */
-    @Deprecated
-    public String getCookieVersion() {
-        return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
     }
     
     /**
@@ -653,8 +634,7 @@ public class Config {
      * @return jvm property http.host or connector.http.host or null if undefined
      */
     public String getConnectorHttpHost() {
-        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
-        String httpHost = System.getProperty(Jvm.HTTP_HOST.toString());
+        String httpHost = System.getProperty(Key.CONNECTOR_HTTP_HOST.toString());
         if (StringUtils.isNotBlank(httpHost)) {
             return httpHost;
         }
@@ -666,8 +646,7 @@ public class Config {
      * @return jvm property http.port or connector.http.port or 0 if undefined
      */
     public int getConnectorHttpPort() {
-        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
-        String httpPort = System.getProperty(Jvm.HTTP_PORT.toString());
+        String httpPort = System.getProperty(Key.CONNECTOR_HTTP_PORT.toString());
         if (StringUtils.isNotBlank(httpPort)) {
             return Integer.parseInt(httpPort);
         }
@@ -679,8 +658,7 @@ public class Config {
      * @return jvm property ajp.host or connector.ajp.host or null if undefined
      */
     public String getConnectorAjpHost() {
-        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
-        String ajpHost = System.getProperty(Jvm.AJP_HOST.toString());
+        String ajpHost = System.getProperty(Key.CONNECTOR_AJP_HOST.toString());
         if (StringUtils.isNotBlank(ajpHost)) {
             return ajpHost;
         }
@@ -693,39 +671,12 @@ public class Config {
      */
     public int getConnectorAjpPort() {
         // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
-        String ajpPort = System.getProperty(Jvm.AJP_PORT.toString());
+        String ajpPort = System.getProperty(Key.CONNECTOR_AJP_PORT.toString());
         if (StringUtils.isNotBlank(ajpPort)) {
             return Integer.parseInt(ajpPort);
         }
         
         return getInt(Key.CONNECTOR_AJP_PORT, 0);
-    }
-    
-    /**
-     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
-     * @return application.jwt.signkey or application secret if undefined
-     */
-    @Deprecated
-    public String getJwtsSignKey() {
-        return getString(Key.APPLICATION_JWT_SIGNKEY, getApplicationSecret());
-    }
-
-    /**
-     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
-     * @return application.jwt.encrypt or default value if undefined
-     */
-    @Deprecated
-    public boolean isJwtsEncrypted() {
-        return getBoolean(Key.APPLICATION_JWT_ENCRYPT, Default.APPLICATION_JWT_ENCRYPT.toBoolean());
-    }
-
-    /**
-     * @deprecated As of 4.10.0, will be removed in 5.0.0 without replacement
-     * @return application.jwt.encryptionkey or application secret if undefined
-     */
-    @Deprecated
-    public String getJwtsEncryptionKey() {
-        return getString(Key.APPLICATION_JWT_ENCRYPTION_KEY, getApplicationSecret());
     }
 
     /**

@@ -22,6 +22,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
+import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.email.SmtpMock;
 import jodd.mail.Email;
 import jodd.mail.EmailAttachment;
@@ -43,7 +44,7 @@ public class MailTest {
     }
     
     @Test
-    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException {
+    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(0));
@@ -65,7 +66,7 @@ public class MailTest {
     }
     
     @Test
-    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException {
+    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(0));
@@ -87,7 +88,7 @@ public class MailTest {
     }
 
     @Test
-    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException {
+    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
