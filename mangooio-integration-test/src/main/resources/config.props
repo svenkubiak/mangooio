@@ -1,0 +1,72 @@
+[application]
+	name = TEST
+	secret = Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+	language = en
+	minify.js = true
+	minify.css = true
+	preprocess.js = true
+	preprocess.css = true
+[connector]
+	http.host = localhost
+	http.port = 9898
+	ajp.host = 
+	ajp.port = 9899
+[session]
+	cookie.name = test-session
+	cookie.signkey = cPg4dO20cdvYw6sWn0gCvHu5cvEWz9rZMR1EED9t3l8eWvHu5cvEWz9rZMR1EED9t3l8eW
+[flash]
+	cookie.name = test-flash
+	cookie.signkey = 2GC5DKQCTd7ysQ8C6eSQbdtiNHvHu5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvd
+[metrics]
+	enable = true
+[authentication]
+	redirect = /login
+	cookie.name = test-authentication
+	cookie.signkey = 2GC5DKQCTd7ysQ8C6eSQbdtiNHvH6obfo1ISDxj3KpuH6BkpKOIIgUhR2UA7TgmK
+[oauth]
+	twitter.key = ###
+	twitter.secret = ###
+	twitter.callback = http://localhost:50000/authenticate?oauth=twitter
+	google.key = ###
+	google.secret = ###
+	google.callback = http://localhost:50000/authenticate?oauth=google
+	facebook.key = ###
+	facebook.secret = ###
+	facebook.callback = http://localhost:50000/authenticate?oauth=facebook	
+[smtp]
+	host = localhost
+	port = 25
+    username = foo
+    password = bar
+    ssl = false
+[]
+
+[application<test>]
+#	foo = cryptex[MloJcu6/zaaNs7gfpfZATg==]
+#	bar = cryptex[WqfTFTyaEW2umq5d47Twow==, 3]
+#	foobar = cryptex[NtUQaVGVUAVoTsl2c1HMDw==, 2] 
+	admin.enable = true
+	admin.username = admin
+	admin.password = admin
+[connector<test>]
+	http.host = localhost
+	http.port = 10808
+	ajp.host = localhost
+	ajp.port = 10809	
+[smtp<test>]
+	port = 3025
+	username = bla
+[]
+
+[application<dev>]
+	admin.enable = true
+	admin.username = admin
+	admin.password = admin
+[connector<dev>]
+	http.host = localhost
+	http.port = 50000
+	ajp.host = localhost
+	ajp.port = 50001	
+[smtp<dev>]
+	port = 3125
+[]

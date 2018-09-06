@@ -6,6 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
@@ -107,5 +111,87 @@ public class CryptoTest {
         //then
         assertThat(decrypt, not(nullValue()));
         assertThat(decrypt, equalTo(plainText));
+    }
+    
+    @Test
+    public void testGenerateKeyPair() throws NoSuchAlgorithmException {
+        //given
+        Crypto crypto = Application.getInstance(Crypto.class);
+
+        //when
+        KeyPair keyPair = crypto.generateKeyPair();
+
+        //then
+        assertThat(keyPair.getPrivate(), not(nullValue()));
+        assertThat(keyPair.getPublic(), not(nullValue()));
+    }
+    
+    @Test
+    public void testEncryptWithPublicAndPrivateKey() throws Exception {
+        //given
+        Crypto crypto = Application.getInstance(Crypto.class);
+
+        //when
+        KeyPair keyPair = crypto.generateKeyPair();
+        String encryptedText = crypto.encrypt(plainText, keyPair.getPublic());
+        
+        //then
+        assertThat(encryptedText, not(nullValue()));
+        assertThat(encryptedText, not(equalTo(plainText)));
+    }
+    
+    @Test
+    public void testDecryptWithPublicAndPrivateKey() throws Exception {
+        //given
+        Crypto crypto = Application.getInstance(Crypto.class);
+
+        //when
+        KeyPair keyPair = crypto.generateKeyPair();
+        String encryptedText = crypto.encrypt(plainText, keyPair.getPublic());
+        
+        //then
+        assertThat(encryptedText, not(nullValue()));
+        assertThat(encryptedText, not(equalTo(plainText)));
+        
+        //when
+        String decryptedText = crypto.decrypt(encryptedText, keyPair.getPrivate());
+        
+        //then
+        assertThat(decryptedText, not(nullValue()));
+        assertThat(decryptedText, equalTo(plainText));
+    }
+    
+    @Test
+    public void testGetKeyAsString() throws Exception {
+        //given
+        Crypto crypto = Application.getInstance(Crypto.class);
+
+        //when
+        KeyPair keyPair = crypto.generateKeyPair();
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        
+        //then
+        assertThat(privateKey, not(nullValue()));
+        assertThat(publicKey, not(nullValue()));
+        assertThat(crypto.getKeyAsString(publicKey), not(nullValue()));
+        assertThat(crypto.getKeyAsString(privateKey), not(nullValue()));
+    }
+    
+    @Test
+    public void testGetPublicKeyFromString() throws Exception {
+        //given
+        Crypto crypto = Application.getInstance(Crypto.class);
+
+        //when
+        KeyPair keyPair = crypto.generateKeyPair();
+        String privateKey = crypto.getKeyAsString(keyPair.getPrivate());
+        String publicKey = crypto.getKeyAsString(keyPair.getPublic());
+        
+        //then
+        assertThat(privateKey, not(nullValue()));
+        assertThat(publicKey, not(nullValue()));
+        assertThat(crypto.getPublicKeyFromString(publicKey), not(nullValue()));
+        assertThat(crypto.getPrivateKeyFromString(privateKey), not(nullValue()));
     }
 }

@@ -16,7 +16,6 @@ import io.mangoo.enums.Template;
 import io.mangoo.interfaces.MangooFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.CodecUtils;
 
 /**
  * Authentication filter for administrative area
@@ -77,7 +76,6 @@ public class AdminFilter implements MangooFilter {
                StringUtils.isNotBlank(password) &&
                StringUtils.isNotBlank(this.config.getApplicationAdminUsername()) &&
                StringUtils.isNotBlank(this.config.getApplicationAdminPassword()) &&
-               this.config.getApplicationAdminUsername().equals(username) &&
-               CodecUtils.checkJBCrypt(password, this.config.getApplicationAdminPassword());
+               this.config.getApplicationAdminUsername().equals(username);
     }
 }

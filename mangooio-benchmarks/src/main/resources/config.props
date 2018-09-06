@@ -1,0 +1,49 @@
+[application]
+	name = mangooio.benchmark 
+	secret = Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+	language = en
+[connector]
+	http.host = localhost
+	http.port = 8080
+[session]
+	cookie.name = test-session
+	cookie.signkey = cPg4dO20cdvYw6sWn0gCvHu5cvEWz9rZMR1EED9t3l8eWvHu5cvEWz9rZMR1EED9t3l8eW
+	cookie.expires = 86400
+[flash]
+	cookie.name = test-flash
+	cookie.signkey = 2GC5DKQCTd7ysQ8C6eSQbdtiNHvHu5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvd
+[mongodb]
+    host = 127.0.0.1
+    port = 27017
+    dbname = hello_word
+    user = 
+    pass = 
+    authdb = 
+[morphia]
+    package = models
+    init = true 
+[]
+
+[connector<test>]
+	http.host = localhost
+	http.port = 10808
+[mongodb<test>]
+    host = 127.0.0.1
+    port = 29019
+    dbname = test
+    user = 
+    pass = 
+    authdb = 
+[]
+
+[connector<dev>]
+	http.host = localhost
+	http.port = 50000
+[mongodb<dev>]
+    host = 127.0.0.1
+    port = 29019
+    dbname = test
+    user = 
+    pass = 
+    authdb = 
+[]

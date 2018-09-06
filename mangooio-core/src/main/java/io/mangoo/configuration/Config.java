@@ -1,23 +1,19 @@
 package io.mangoo.configuration;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.PrivateKey;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
@@ -25,21 +21,19 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Required;
-import io.mangoo.utils.IOUtils;
+import jodd.props.Props;
 
 /**
- * Main configuration class for all properties configured in application.yaml
+ * Main configuration class for all properties configured in config.props
  *
  * @author svenkubiak
  * @author williamdunne
  *
  */
 @Singleton
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private final Map<String, String> values = new ConcurrentHashMap<>(16, 0.9F, 1);
+    private Props props = new Props();
     private boolean decrypted = true;
     
     public Config() {
@@ -48,76 +42,22 @@ public class Config {
     }
 
     private void prepare() {
+        this.props.setActiveProfiles(Application.getMode().toString());
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
-
-        Map map;
+        
         if (StringUtils.isNotBlank(configPath)) {
-            map = loadConfiguration(configPath, false);
+            try {
+                this.props.load(new File(configPath));
+            } catch (IOException e) {
+                LOG.error("Failed to load config.props from {}", configPath, e);
+            }
         } else {
-            map = loadConfiguration(Default.CONFIGURATION_FILE.toString(), true);
-        }
-
-        if (map != null) {
-            final Map<String, Object> defaults = (Map<String, Object>) map.get(Default.DEFAULT_CONFIGURATION.toString());
-            final Map<String, Object> environment = (Map<String, Object>) map.get(Application.getMode().toString());
-
-            load("", defaults);
-            if (environment != null && !environment.isEmpty()) {
-                load("", environment);
+            try (InputStream inputStream = Resources.getResource(Default.CONFIGURATION_FILE.toString()).openStream()){
+                this.props.load(inputStream);
+            } catch (IOException e) {
+                LOG.error("Failed to load config.props from src/main/resources/config.props", e);
             }
-        }
-    }
-
-    @SuppressWarnings("all")
-    private Map loadConfiguration(String path, boolean resource) {
-        InputStream inputStream = null;
-        Map map = null;
-        
-        try {
-            if (resource) {
-                inputStream = Resources.getResource(path).openStream();
-                LOG.info("Loading application configuration from {} in classpath", path);
-            } else {
-                inputStream = new FileInputStream(new File(path));
-                LOG.info("Loading application configuration from: {}", path);
-            }
-            
-            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            map = mapper.readValue(inputStream, Map.class);
-        } catch (final IOException e) {
-            LOG.error("Failed to load application.yaml", e);
-        }
-        
-        IOUtils.closeQuietly(inputStream);
-
-        return map;
-    }
-
-    /**
-     * Recursively iterates over the yaml file and flatting out the values
-     *
-     * @param parentKey The current key
-     * @param map The map to iterate over
-     */
-    private void load(String parentKey, Map<String, Object> map) {
-        for (final Map.Entry<String, Object> entry : map.entrySet()) {
-            final String key = entry.getKey();
-            final Object value = entry.getValue();
-
-            if (key != null) {
-                if (value instanceof Map) {
-                    load(parentKey + "." + key, (Map<String, Object>) value);
-                } else {
-                    if (value == null) {
-                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), "");   
-                    } else if (("${arg}").equalsIgnoreCase(String.valueOf(value))) {
-                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), System.getProperty(entry.getKey()));   
-                    } else {
-                        this.values.put(StringUtils.substringAfter(parentKey + "." + key, "."), String.valueOf(value));   
-                    }
-                }
-            }
-        }
+        }    
     }
 
     /**
@@ -126,28 +66,37 @@ public class Config {
     private void decrypt() {
         Crypto crypto = new Crypto(this);
 
-        for (final Entry<String, String> entry : this.values.entrySet()) {
-            if (isEncrypted(entry.getValue())) {
-                List<String> keys = getMasterKeys();
-                
-                String value = StringUtils.substringBetween(entry.getValue(), "cryptex[", "]");
-                String [] cryptex = value.split(",");
-                
-                String decryptedValue = null;
-                if (cryptex.length == 1) {
-                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(0));
-                } else if (cryptex.length == 2) { //NOSONAR
-                    decryptedValue = crypto.decrypt(cryptex[0].trim(), keys.get(Integer.parseInt(cryptex[1].trim()) - 1));
-                }
-                
-                if (StringUtils.isNotBlank(decryptedValue)) {
-                    this.values.put(entry.getKey(), decryptedValue);
+        Map<String, String> activeProps = new HashMap<>();
+        this.props.extractProps(activeProps, Application.getMode().toString());
+        this.props.entries().forEach(prop -> activeProps.put(prop.getKey(), prop.getValue()));
+        
+        activeProps.forEach((propKey, propValue) -> {
+            if (propValue.startsWith("cryptex[")) {
+                String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
+                if (StringUtils.isNotBlank(keyFile)) {
+                    try {
+                        String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
+                        if (StringUtils.isNotBlank(key)) {
+                            PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
+                            String cryptex = StringUtils.substringBetween(propValue, "cryptex[", "]");
+
+                            if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
+                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey));
+                            } else {
+                                LOG.error("Failed to decrypt and encrypted config value");
+                                this.decrypted = false;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Failed to decrypt and encrypted config value", e);
+                        this.decrypted = false;
+                    }
                 } else {
-                    LOG.error("Failed to decrypt a config value");
+                    LOG.error("Found and encrypted value in config but private key is missing");
                     this.decrypted = false;
                 }
             }
-        }
+        });
     }
     
     /**
@@ -158,49 +107,13 @@ public class Config {
     }
 
     /**
-     * @return The master key(s) for encrypted config value
-     */
-    public List<String> getMasterKeys() {
-        String masterkey = System.getProperty(Key.APPLICATION_MASTERKEY.toString());
-        List<String> keys = new ArrayList<>();
-        
-        if (StringUtils.isNotBlank(masterkey)) {
-            keys.add(masterkey);
-        } else {
-            String masterkeyFile = this.values.get(Key.APPLICATION_MASTERKEY_FILE.toString());
-            if (StringUtils.isNotBlank(masterkeyFile)) {
-                try {
-                    keys = FileUtils.readLines(new File(masterkeyFile), Default.ENCODING.toString()); //NOSONAR
-                } catch (IOException e) {
-                    LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values", e);
-                }
-            } else {
-                LOG.error("Failed to load masterkey file. Please make sure to set a masterkey file if using encrypted config values");
-            }  
-        }
-
-        return keys;
-    }
-
-    /**
-     * Checks if a value is encrypt by checking for the prefix crpytex
-     *
-     * @param value The value to check
-     * @return True if the value starts with cryptex, false otherwise
-    */
-    public boolean isEncrypted(String value) {
-        Objects.requireNonNull(value, Required.VALUE.toString());
-        return value.startsWith("cryptex[");
-    }
-
-    /**
      * Retrieves a configuration value with the given key
      *
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as String or null if the key is not configured
      */
     public String getString(String key) {
-        return this.values.get(key);
+        return this.props.getValue(key);
     }
 
     /**
@@ -211,7 +124,7 @@ public class Config {
      * @return The configured value as String or the passed defautlValue if the key is not configured
      */
     public String getString(String key, String defaultValue) {
-        return this.values.getOrDefault(key, defaultValue);
+        return this.props.getValueOrDefault(key, defaultValue);
     }
 
     /**
@@ -221,7 +134,7 @@ public class Config {
      * @return The configured value as int or 0 if the key is not configured
      */
     public int getInt(String key) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -236,7 +149,7 @@ public class Config {
      * @return The configured value as long or 0 if the key is not configured
      */
     public long getLong(String key) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -252,7 +165,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public long getLong(String key, long defaultValue) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -268,7 +181,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public int getInt(String key, int defaultValue) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -283,7 +196,7 @@ public class Config {
      * @return The configured value as boolean or false if the key is not configured
      */
     public boolean getBoolean(String key) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -299,7 +212,7 @@ public class Config {
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
      */
     public boolean getBoolean(String key, boolean defaultValue) {
-        final String value = this.values.get(key);
+        final String value = this.props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -395,11 +308,14 @@ public class Config {
      * @return All configuration options of the current environment
      */
     public Map<String, String> getAllConfigurations() {
-        return new ConcurrentHashMap(this.values);
+        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();        
+        this.props.entries().forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+        
+        return map;
     }
 
     /**
-     * @return application.name from application.yaml
+     * @return application.name from config.props
      */
     public String getApplicationName() {
         return getString(Key.APPLICATION_NAME);
@@ -413,49 +329,56 @@ public class Config {
     }
 
     /**
-     * @return session.cookie.name from application.yaml or default value if undefined
+     * @return session.cookie.name from config.props or default value if undefined
      */
     public String getSessionCookieName() {
         return getString(Key.SESSION_COOKIE_NAME, Default.SESSION_COOKIE_NAME.toString());
     }
 
     /**
-     * @return application.secret from application.yaml
+     * @return application.secret from config.props
      */
     public String getApplicationSecret() {
         return getString(Key.APPLICATION_SECRET);
     }
+    
+    /**
+     * @return application.publickey from config.props
+     */
+    public String getApplicationPublicKey() {
+        return getString(Key.APPLICATION_PUBLICKEY);
+    }
 
     /**
-     * @return authentication.cookie.name from application.yaml or default value if undefined
+     * @return authentication.cookie.name from config.props or default value if undefined
      */
     public String getAuthenticationCookieName() {
         return getString(Key.AUTHENTICATION_COOKIE_NAME, Default.AUTHENTICATION_COOKIE_NAME.toString());
     }
 
     /**
-     * @return authentication.cookie.expires from application.yaml or default value if undefined
+     * @return authentication.cookie.expires from config.props or default value if undefined
      */
     public long getAuthenticationCookieExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toLong());
     }
 
     /**
-     * @return session.cookie.expires from application.yaml or default value if undefined
+     * @return session.cookie.expires from config.props or default value if undefined
      */
     public long getSessionCookieExpires() {
         return getLong(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toLong());
     }
 
     /**
-     * @return session.cookie.secure from application.yaml or default value if undefined
+     * @return session.cookie.secure from config.props or default value if undefined
      */
     public boolean isSessionCookieSecure() {
         return getBoolean(Key.SESSION_COOKIE_SECURE, Default.SESSION_COOKIE_SECURE.toBoolean());
     }
 
     /**
-     * @return authentication.cookie.secure from application.yaml or default value if undefined
+     * @return authentication.cookie.secure from config.props or default value if undefined
      */
     public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTHENTICATION_COOKIE_SECURE, Default.AUTHENTICATION_COOKIE_SECURE.toBoolean());
@@ -463,7 +386,7 @@ public class Config {
 
     /**
      * @author William Dunne
-     * @return i18n.cookie.name from application.yaml or default value if undefined
+     * @return i18n.cookie.name from config.props or default value if undefined
      */
     public String getI18nCookieName() {
         return getString(Key.I18N_COOKIE_NAME, Default.I18N_COOKIE_NAME.toString());
@@ -477,77 +400,77 @@ public class Config {
     }
 
     /**
-     * @return application.language from application.yaml or default value if undefined
+     * @return application.language from config.props or default value if undefined
      */
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
     
     /**
-     * @return authentication.cookie.version from application.yaml or default value if undefined
+     * @return authentication.cookie.version from config.props or default value if undefined
      */
     public String getAuthenticationCookieVersion() {
         return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
     }
     
     /**
-     * @return session.cookie.version from application.yaml or default value if undefined
+     * @return session.cookie.version from config.props or default value if undefined
      */
     public String getSessionCookieVersion() {
         return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
     }
 
     /**
-     * @return scheduler.autostart from application.yaml or default value if undefined
+     * @return scheduler.autostart from config.props or default value if undefined
      */
     public boolean isSchedulerAutostart() {
         return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
     }
 
     /**
-     * @return application.admin.username from application.yaml or null if undefined
+     * @return application.admin.username from config.props or null if undefined
      */
     public String getApplicationAdminUsername() {
         return getString(Key.APPLICATION_ADMIN_USERNAME);
     }
 
     /**
-     * @return application.admin.password from application.yaml or null if undefined
+     * @return application.admin.password from config.props or null if undefined
      */
     public String getApplicationAdminPassword() {
         return getString(Key.APPLICATION_ADMIN_PASSWORD);
     }
 
     /**
-     * @return scheduler.package from application.yaml or default value if undefined
+     * @return scheduler.package from config.props or default value if undefined
      */
     public String getSchedulerPackage() {
         return getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
     }
 
     /**
-     * @return authentication.cookie.remember.expires from application.yaml or default value if undefined
+     * @return authentication.cookie.remember.expires from config.props or default value if undefined
      */
     public long getAuthenticationCookieRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong());
     }
 
     /**
-     * @return application.threadpool from application.yaml or default value if undefined
+     * @return application.threadpool from config.props or default value if undefined
      */
     public int getApplicationThreadpool() {
         return getInt(Key.APPLICATION_THREADPOOL, Default.APPLICATION_THREADPOOL.toInt());
     }
 
     /**
-     * @return application.controller from application.yaml or default value if undefined
+     * @return application.controller from config.props or default value if undefined
      */
     public String getApplicationController() {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER.toString());
     }
 
     /**
-     * @return application.templateengine from application.yaml or default value if undefined
+     * @return application.templateengine from config.props or default value if undefined
      */
     public String getApplicationTemplateEngine() {
         return getString(Key.APPLICATION_TEMPLATEENGINE, Default.APPLICATION_TEMPLATEENGINE.toString());
@@ -670,7 +593,6 @@ public class Config {
      * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
      */
     public int getConnectorAjpPort() {
-        // FIXME in 5.0.0 - Remove ambiguous arguments; should be accessed from ${arg} in application.yaml
         String ajpPort = System.getProperty(Key.CONNECTOR_AJP_PORT.toString());
         if (StringUtils.isNotBlank(ajpPort)) {
             return Integer.parseInt(ajpPort);

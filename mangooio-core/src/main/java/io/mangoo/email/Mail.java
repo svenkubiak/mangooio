@@ -48,7 +48,7 @@ public class Mail {
      * @param template The template to use
      * @param content The content for the template
      * @return A mail object instance
-     * @throws MangooTemplateEngineException 
+     * @throws MangooTemplateEngineException if rendering of template fails
      */
     public Mail templateMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());

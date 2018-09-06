@@ -37,8 +37,8 @@ public enum Default {
     BASICAUTH_CREDENTIALS_LENGTH("2"),
     BUNDLE_NAME("translations/messages"),
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
-    CONFIG_PATH("/src/main/resources/application.yaml"),
-    CONFIGURATION_FILE("application.yaml"),
+    CONFIG_PATH("/src/main/resources/config.props"),
+    CONFIGURATION_FILE("config.props"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
     COOKIE_VERSION("0"),
     DATA_DELIMITER("#"), //NOSONAR

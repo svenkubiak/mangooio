@@ -100,7 +100,9 @@ public enum Required {
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null");
+    VALUES("values can not be null"),
+    PUBLIC_KEY("public key can not be null"),
+    PRIVATE_KEY("private key can not be null");
     
     private final String value;
 
