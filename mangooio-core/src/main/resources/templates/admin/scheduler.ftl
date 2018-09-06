@@ -1,21 +1,27 @@
 <#include "header.ftl">
+<div class="content-wrapper" style="min-height: 846px;">
 <section class="content-header">
-	<h1>Scheduler</h1>
-</section>
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Scheduler</h1>
+          </div>
+        </div>
+      </div>
+    </section>
 <section class="content">
 <#if jobs?size gt 0>
+      <div class="container-fluid">
 <div class="row">
-	<div class="col-xs-12">
-    	<div class="box">
-	    	<div class="box-header">
-				<div class="form-group">
-	            	<input type="text" name="table_search" id="filter" class="form-control" placeholder="Start typing what you are looking for...">
-	            </div>
-	        </div>
-            <div class="box-body table-responsive no-padding">
-            	<table class="table table-hover">
-                	<thead>
-						<tr>
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><input type="text" name="table_search" class="form-control float-left" placeholder="Start typing what you are looking for...">
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover">
+                  <tbody>								<tr>
 							<th data-sort="string"><b>Job name</b></th>
 							<th data-sort="string"><b>Active</b></th>
 							<th data-sort="string"><b>Description</b></th>
@@ -23,8 +29,6 @@
 							<th data-sort="string"><b>Next execution</b></th>
 							<th data-sort="string"><b>Actions</b></th>
 						</tr>
-					</thead>
-					<tbody class="searchable">
 						<#list jobs as job>
 							<tr>
 								<td>${job.name}</td>
@@ -50,11 +54,11 @@
 								</td>
 							</tr>
 						</#list>
-                	</tbody>
-                </table>
-        	</div>
-    	</div>
-	</div>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+        </div>
 </div>
 <#else>
 <div class="row">
@@ -68,4 +72,5 @@
 </div>
 </#if>
 </section>
+</div>
 <#include "footer.ftl">
