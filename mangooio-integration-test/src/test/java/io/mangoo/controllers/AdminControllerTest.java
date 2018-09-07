@@ -28,7 +28,7 @@ public class AdminControllerTest {
     private static final String ROUTES = "routes";
     private static final String TOOLS = "tools";
     private static final String ADMIN = "admin";
-    private static final String CONTROL_PANEL = "mangoo I/O | Control Panel";
+    private static final String CONTROL_PANEL = "Dashboard";
     
     @Test
     public void testDashboardAuthorized() {

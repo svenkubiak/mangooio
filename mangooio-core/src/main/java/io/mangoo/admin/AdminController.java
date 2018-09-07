@@ -1,5 +1,8 @@
 package io.mangoo.admin;
 
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -42,7 +45,6 @@ import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
-import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MetricsUtils;
 
 /**
@@ -272,17 +274,30 @@ public class AdminController {
         
         if (body != null && body.size() > 0) {
             String function = body.get("function").toString();
-            String cleartext = body.get("cleartext").toString();
-            String key = body.get("key").toString();
 
-            if (("hash").equalsIgnoreCase(function)) {
-                value = CodecUtils.hexJBcrypt(cleartext);
-            } else if (("encrypt").equalsIgnoreCase(function)) {
-                if (StringUtils.isNotBlank(key)) {
-                    value = this.crypto.encrypt(cleartext, key);
-                } else {
-                    value = this.crypto.encrypt(cleartext);
+            if (("keypair").equalsIgnoreCase(function)) {
+                String publickey = null;
+                String privatekey = null;
+                
+                try {
+                    KeyPair keyPair = this.crypto.generateKeyPair();
+                    publickey = this.crypto.getKeyAsString(keyPair.getPublic());
+                    privatekey = this.crypto.getKeyAsString(keyPair.getPrivate());
+                } catch (NoSuchAlgorithmException e) {
+                    LOG.error("Failed to create public/private key pair.", e);
                 }
+                
+                value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
+            } else if (("encrypt").equalsIgnoreCase(function)) {
+                String cleartext = body.get("cleartext").toString();
+                String key = body.get("key").toString();
+                try {
+                    PublicKey publicKey = this.crypto.getPublicKeyFromString(key);
+                    value = this.crypto.encrypt(cleartext, publicKey);
+                } catch (Exception e) {
+                    LOG.error("Failed to encrypt cleartext.", e);
+                }
+
             } else {
                 LOG.warn("Invalid or no function selected for AJAX request. Either choose 'hash' order 'encrypt'.");
             }

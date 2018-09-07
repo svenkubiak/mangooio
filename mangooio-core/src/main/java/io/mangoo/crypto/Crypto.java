@@ -46,9 +46,9 @@ public class Crypto {
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String ENCODING = "UTF8";
-    private static final String CIPHER = "RSA/ECB/PKCS1Padding";
+    private static final String CIPHER = "RSA/NONE/OAEPWithSHA512AndMGF1Padding";
     private static final String ALGORITHM = "RSA";
-    private static final int KEYLENGTH = 4096;
+    private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
     private Config config;
@@ -269,7 +269,8 @@ public class Crypto {
      * 
      * @param key Base64 encoded string which represents the key
      * @return The PublicKey
-     * @throws java.lang.Exception
+     * 
+     * @throws Exception if conversion fails
      */
     public PublicKey getPublicKeyFromString(String key) throws Exception {
         Objects.requireNonNull(key, Required.KEY.toString());

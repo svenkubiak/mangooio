@@ -21,6 +21,7 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
 import jodd.props.Props;
 
 /**
@@ -33,7 +34,7 @@ import jodd.props.Props;
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private Props props = new Props();
+    private Props props = Props.create();
     private boolean decrypted = true;
     
     public Config() {
@@ -64,39 +65,53 @@ public class Config {
      * Decrypts all encrypted config value
      */
     private void decrypt() {
-        Crypto crypto = new Crypto(this);
-
-        Map<String, String> activeProps = new HashMap<>();
-        this.props.extractProps(activeProps, Application.getMode().toString());
-        this.props.entries().forEach(prop -> activeProps.put(prop.getKey(), prop.getValue()));
+        this.props.entries().forEach((prop) -> doDecrypt(prop.getKey(), prop.getValue(), null));
         
-        activeProps.forEach((propKey, propValue) -> {
-            if (propValue.startsWith("cryptex[")) {
-                String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
-                if (StringUtils.isNotBlank(keyFile)) {
-                    try {
-                        String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
-                        if (StringUtils.isNotBlank(key)) {
-                            PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
-                            String cryptex = StringUtils.substringBetween(propValue, "cryptex[", "]");
+        Map<String, String> profileProps = new HashMap<>();
+        this.props.extractProps(profileProps, Application.getMode().toString());
+        profileProps.forEach((propKey, propValue) -> {
+            doDecrypt(propKey, propValue, Application.getMode());
+        });
+    }
 
-                            if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
-                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey));
+    /**
+     * Decrypts a given property key and rewrites it to props
+     * 
+     * @param propKey The property key
+     * @param propValue The property value
+     */
+    private void doDecrypt(String propKey, String propValue, Mode mode) {
+        Crypto crypto = new Crypto(this);
+        
+        if (propValue.startsWith("cryptex[")) {
+            String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
+            if (StringUtils.isNotBlank(keyFile)) {
+                try {
+                    String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
+                    if (StringUtils.isNotBlank(key)) {
+                        PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
+                        String cryptex = StringUtils.substringBetween(propValue, "cryptex[", "]");
+
+                        if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
+                            if (mode != null) {
+                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey), Application.getMode().toString());                                
                             } else {
-                                LOG.error("Failed to decrypt and encrypted config value");
-                                this.decrypted = false;
+                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey), null);
                             }
+                        } else {
+                            LOG.error("Failed to decrypt and encrypted config value");
+                            this.decrypted = false;
                         }
-                    } catch (Exception e) {
-                        LOG.error("Failed to decrypt and encrypted config value", e);
-                        this.decrypted = false;
                     }
-                } else {
-                    LOG.error("Found and encrypted value in config but private key is missing");
+                } catch (Exception e) {
+                    LOG.error("Failed to decrypt and encrypted config value", e);
                     this.decrypted = false;
                 }
+            } else {
+                LOG.error("Found and encrypted value in config but private key is missing");
+                this.decrypted = false;
             }
-        });
+        }
     }
     
     /**
