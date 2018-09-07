@@ -340,68 +340,6 @@ public class ConfigTest {
         assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }  
-
-    @Test
-    public void testGetAuthenticationCookieVersion() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String version = "4";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("authentication.cookie.version", version);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getAuthenticationCookieVersion(), equalTo(version));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetAuthenticationCookieVersionDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationCookieVersion(), equalTo(Default.AUTHENTICATION_COOKIE_VERSION.toString()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetSessionCookieVersion() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String version = "7";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("session.cookie.version", version);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getSessionCookieVersion(), equalTo(version));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetSessionCookieVersionDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getAuthenticationCookieVersion(), equalTo(Default.SESSION_COOKIE_VERSION.toString()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
     
     @Test
     public void testIsSchedulerAutostart() throws JsonGenerationException, JsonMappingException, IOException {

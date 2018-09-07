@@ -174,7 +174,6 @@ public class ServerSentEventServiceTest {
         
         JwtClaims jwtClaims = new JwtClaims();
         jwtClaims.setSubject("foo");
-        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
         jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
         jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
         

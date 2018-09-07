@@ -31,7 +31,6 @@ public enum Default {
     AUTHENTICATION_COOKIE_NAME("MANGOOIO-AUTH"),
     AUTHENTICATION_COOKIE_REMEMBER_EXPIRES("1209600"),
     AUTHENTICATION_COOKIE_SECURE(Constants.FALSE),
-    AUTHENTICATION_COOKIE_VERSION("0"),
     AUTHENTICATION_LOCK("10"),
     AUTHENTICITY("authenticity"),
     BASICAUTH_CREDENTIALS_LENGTH("2"),
@@ -40,7 +39,6 @@ public enum Default {
     CONFIG_PATH("/src/main/resources/config.props"),
     CONFIGURATION_FILE("config.props"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
-    COOKIE_VERSION("0"),
     DATA_DELIMITER("#"), //NOSONAR
     DEFAULT_CONFIGURATION("default"), //NOSONAR
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
@@ -69,7 +67,6 @@ public enum Default {
     SESSION_COOKIE_EXPIRES("0"),
     SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
     SESSION_COOKIE_SECURE(Constants.FALSE),
-    SESSION_COOKIE_VERSION("0"),
     SMTP_FROM("mangoo I/O <noreply@example.com>"),
     SMTP_HOST("localhost"),
     SMTP_PORT("25"),

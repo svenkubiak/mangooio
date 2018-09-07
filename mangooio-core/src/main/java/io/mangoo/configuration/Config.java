@@ -420,20 +420,6 @@ public class Config {
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE.toString());
     }
-    
-    /**
-     * @return authentication.cookie.version from config.props or default value if undefined
-     */
-    public String getAuthenticationCookieVersion() {
-        return getString(Key.AUTHENTICATION_COOKIE_VERSION, Default.AUTHENTICATION_COOKIE_VERSION.toString());
-    }
-    
-    /**
-     * @return session.cookie.version from config.props or default value if undefined
-     */
-    public String getSessionCookieVersion() {
-        return getString(Key.SESSION_COOKIE_VERSION, Default.SESSION_COOKIE_VERSION.toString());
-    }
 
     /**
      * @return scheduler.autostart from config.props or default value if undefined

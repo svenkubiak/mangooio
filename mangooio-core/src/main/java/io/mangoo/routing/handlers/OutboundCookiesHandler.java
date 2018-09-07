@@ -81,7 +81,6 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (session.hasChanges()) {
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
-            jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getSessionCookieVersion());
             jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
             
             if (session.getExpires() == null) {
@@ -143,7 +142,6 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             JwtClaims jwtClaims = new JwtClaims();
             jwtClaims.setSubject(authentication.getIdentifier());
-            jwtClaims.setClaim(ClaimKey.VERSION.toString(), this.config.getAuthenticationCookieVersion());
             jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
             
             if (authentication.getExpires() == null) {
