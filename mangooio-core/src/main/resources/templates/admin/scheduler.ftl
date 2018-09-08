@@ -16,13 +16,12 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><input type="text" name="table_search" class="form-control float-left" placeholder="Start typing what you are looking for...">
+                <h3 class="card-title"><input id="filter" type="text" name="table_search" class="form-control float-left" placeholder="Start typing what you are looking for...">
               </div>
-              <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
                   		<thead>
-	                  		<tr>
+	                  		<tr>	
 								<th data-sort="string"><b>Job name</b></th>
 								<th data-sort="string"><b>Active</b></th>
 								<th data-sort="string"><b>Description</b></th>

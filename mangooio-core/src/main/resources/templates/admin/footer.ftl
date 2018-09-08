@@ -19,13 +19,6 @@
 	                  return rex.test($(this).text());
 	              }).show();
 	          })
-	          $('#additionalfilter').keyup(function () {
-	              var rex = new RegExp($(this).val(), 'i');
-	              $('.additionalsearchable tr').hide();
-	              $('.additionalsearchable tr').filter(function () {
-	                  return rex.test($(this).text());
-	              }).show();
-	          })
 	      }(jQuery));
 	      
 	      $("#keypair").click(function() {

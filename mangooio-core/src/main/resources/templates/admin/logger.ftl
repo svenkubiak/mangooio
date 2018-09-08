@@ -15,9 +15,8 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><input type="text" name="table_search" class="form-control float-left" placeholder="Start typing what you are looking for...">
+                <h3 class="card-title"><input id="filter" type="text" name="table_search" class="form-control float-left" placeholder="Start typing what you are looking for...">
               </div>
-              <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
 	                  <thead>
@@ -25,7 +24,7 @@
 		                    <th data-sort="string">Class</th>
 		                  </tr>
 	                  </thead>
-                  	<tbody class="searchable">
+                  	  <tbody class="searchable">
 	                  <#list loggers as logger>
 						<tr>
 							<td>${logger.name}</td>
