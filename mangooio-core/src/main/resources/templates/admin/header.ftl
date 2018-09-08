@@ -26,39 +26,39 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a href="/@admin" class="nav-link">
+            <a href="/@admin" class="nav-link<#if !space??> active</#if>">
               <i class="nav-icon fa fa-dashboard"></i>
               <p>Dashboard</p>
             </a>
           </li>  
           <li class="nav-item">
-            <a href="/@admin/logger" class="nav-link">
+            <a href="/@admin/logger" class="nav-link<#if space?? && space == "logger"> active</#if>">
               <i class="nav-icon fa fa-file-text"></i>
               <p>Logger</p>
             </a> 
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/routes" class="nav-link">
+            <a href="/@admin/routes" class="nav-link<#if space?? && space == "routes"> active</#if>">
               <i class="nav-icon fa fa-arrows-alt"></i>
               <p>Routes</p>
             </a>  
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/scheduler" class="nav-link">
+            <a href="/@admin/scheduler" class="nav-link<#if space?? && space == "scheduler"> active</#if>">
               <i class="nav-icon fa fa-calendar"></i>
               <p>Scheduler</p>
             </a>  
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/metrics" class="nav-link">
+            <a href="/@admin/metrics" class="nav-link<#if space?? && space == "metrics"> active</#if>">
               <i class="nav-icon fa fa-bar-chart"></i>
               <p>Metrics</p>
             </a>   
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/tools" class="nav-link">
+            <a href="/@admin/tools" class="nav-link<#if space?? && space == "tools"> active</#if>">
               <i class="nav-icon fa fa-wrench"></i>
-              <p>Tools</p>
+              <p>Config tools</p>
             </a>   
                       </li>
                       <li class="nav-item">
