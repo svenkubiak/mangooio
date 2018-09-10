@@ -21,29 +21,29 @@
                 <table class="table table-hover">
 	                  <thead>
 		                  <tr>
-		                    <th data-sort="string">Class</th>
+		                    <th data-sort="string"><b>Class</b></th>
 		                  </tr>
 	                  </thead>
                   	  <tbody class="searchable">
-	                  <#list loggers as logger>
-						<tr>
-							<td>${logger.name}</td>
-							<td>
-								<div class="form-group">
-								<select name="level" class="form-control loglevel" data-class="${logger.name}">
-									<option value="ALL"<#if logger.level == "ALL"> selected</#if>>ALL</option>
-									<option value="TRACE"<#if logger.level == "TRACE"> selected</#if>>TRACE</option>
-									<option value="DEBUG"<#if logger.level == "DEBUG"> selected</#if>>DEBUG</option>
-									<option value="INFO"<#if logger.level == "INFO"> selected</#if>>INFO</option>
-									<option value="WARN"<#if logger.level == "WARN"> selected</#if>>WARN</option>
-									<option value="ERROR"<#if logger.level == "ERROR"> selected</#if>>ERROR</option>
-									<option value="FATAL"<#if logger.level == "FATAL"> selected</#if>>FATAL</option>
-									<option value="OFF"<#if logger.level == "OFF"> selected</#if>>OFF</option>
-								</select>
-								</div>
-							</td>
-						</tr>
-					  </#list>
+		                  <#list loggers as logger>
+							<tr>
+								<td>${logger.name}</td>
+								<td>
+									<div class="form-group">
+									<select name="level" class="form-control loglevel" data-class="${logger.name}">
+										<option value="ALL"<#if logger.level == "ALL"> selected</#if>>ALL</option>
+										<option value="TRACE"<#if logger.level == "TRACE"> selected</#if>>TRACE</option>
+										<option value="DEBUG"<#if logger.level == "DEBUG"> selected</#if>>DEBUG</option>
+										<option value="INFO"<#if logger.level == "INFO"> selected</#if>>INFO</option>
+										<option value="WARN"<#if logger.level == "WARN"> selected</#if>>WARN</option>
+										<option value="ERROR"<#if logger.level == "ERROR"> selected</#if>>ERROR</option>
+										<option value="FATAL"<#if logger.level == "FATAL"> selected</#if>>FATAL</option>
+										<option value="OFF"<#if logger.level == "OFF"> selected</#if>>OFF</option>
+									</select>
+									</div>
+								</td>
+							</tr>
+						  </#list>
                 	</tbody>
                 </table>
               </div>
@@ -53,3 +53,4 @@
 </div>
 </section>
 </div>
+<#include "footer.ftl">

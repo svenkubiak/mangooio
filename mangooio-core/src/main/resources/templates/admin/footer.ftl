@@ -1,6 +1,3 @@
-    <footer class="main-footer">
-    <strong><b>mangoo I/O</b> | Version: ${version}</strong>
-  </footer>
 </div>
 <script><#include "js/jquery.min.js"></script>
 <script><#include "js/bootstrap.min.js"></script>
