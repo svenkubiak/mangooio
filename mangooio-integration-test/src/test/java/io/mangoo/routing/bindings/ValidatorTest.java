@@ -7,8 +7,10 @@ import static org.hamcrest.Matchers.equalTo;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 
 /**
@@ -16,6 +18,7 @@ import io.mangoo.core.Application;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ValidatorTest {
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9_.]+$");
     private static final String URL = "url";

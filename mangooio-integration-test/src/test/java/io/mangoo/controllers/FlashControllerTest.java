@@ -5,8 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -16,6 +18,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class FlashControllerTest {
     @Test
     public void testFlash() {

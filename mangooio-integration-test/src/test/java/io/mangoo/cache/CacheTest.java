@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 
 /**
@@ -18,6 +20,7 @@ import io.mangoo.core.Application;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class CacheTest {
     private static final String TEST_VALUE = "This is a test value for the cache!";
 

@@ -6,14 +6,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import interfaces.Constants;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
+import mangooio.TestExtension;
 import utils.RandomUtils;
 
+@ExtendWith({TestExtension.class})
 public class ApplicationControllerTest {
 	private static final String HELLO_WORLD_JSON = "{\"text\":\"Hello, World!\"}";
 	

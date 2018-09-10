@@ -15,13 +15,13 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.oauth.OAuthProvider;
 import io.undertow.server.HttpHandler;
@@ -87,7 +87,7 @@ public class RequestUtilsTest {
 
 
             return requestParameters != null && requestParameters.get("first").equals(one) && requestParameters.get("second").equals(two);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
 
@@ -197,7 +197,7 @@ public class RequestUtilsTest {
             
             // then
             return security != null && security.getClass().getSimpleName().equals("SecurityInitialHandler");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -228,6 +228,6 @@ public class RequestUtilsTest {
             Optional<OAuthProvider> google = RequestUtils.getOAuthProvider("google");
 
             return twitter.get().name().equals("TWITTER") && facebook.get().name().equals("FACEBOOK") && google.get().name().equals("GOOGLE");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

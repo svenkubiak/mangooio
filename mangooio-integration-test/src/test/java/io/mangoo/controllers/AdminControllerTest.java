@@ -6,8 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
 import io.mangoo.test.utils.WebRequest;
@@ -19,6 +21,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";

@@ -6,8 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.services.executors.TestCallable;
 import io.mangoo.services.executors.TestRunnable;
@@ -17,6 +19,7 @@ import io.mangoo.services.executors.TestRunnable;
  * @author Kubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ConcurrentServicesTest {
 
     @Test

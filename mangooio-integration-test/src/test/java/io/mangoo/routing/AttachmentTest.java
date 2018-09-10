@@ -8,8 +8,10 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.admin.AdminController;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
@@ -20,6 +22,7 @@ import io.mangoo.interfaces.MangooTemplateEngine;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class AttachmentTest {
 
     @Test

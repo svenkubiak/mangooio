@@ -9,10 +9,10 @@ import static org.hamcrest.Matchers.startsWith;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.enums.HmacShaAlgorithm;
 
 /**
@@ -42,7 +42,7 @@ public class TotpUtilsTest {
             
             // then
             return secret.length() == SECRET_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -69,7 +69,7 @@ public class TotpUtilsTest {
             
             // then
             return totp.length() == PASSWORD_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -91,7 +91,7 @@ public class TotpUtilsTest {
         
             // then
             return TotpUtils.verifiedTotp(secret, totp, HmacShaAlgorithm.HMAC_SHA_512);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -125,6 +125,6 @@ public class TotpUtilsTest {
         
             // then
             return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512));
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 }

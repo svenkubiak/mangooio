@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 
 /**
  * 
@@ -39,7 +39,7 @@ public class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -59,6 +59,6 @@ public class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

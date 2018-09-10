@@ -6,12 +6,11 @@ import static org.hamcrest.Matchers.equalTo;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooEventBusException;
 
@@ -20,14 +19,14 @@ import io.mangoo.exceptions.MangooEventBusException;
  * @author svenkubiak
  *
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ExtendWith({TestExtension.class})
 public class EventBusServiceTest {
 
-    @Test(expected = MangooEventBusException.class)
-    public void testAEventBus() throws MangooEventBusException {
+    @Test
+    public void testEventBus() throws MangooEventBusException  {
         //given
-        TestListener testListener = new TestListener();
         EventBusService busManager = Application.getInstance(EventBusService.class);
+        TestListener testListener = new TestListener();
         busManager.register(testListener);
         
         //when
@@ -41,25 +40,20 @@ public class EventBusServiceTest {
         
         //when
         busManager.unregister(testListener);
-        busManager.unregister(testListener);
         
         //then
-        assertThat(busManager.getNumListeners(), equalTo(0L));
-    }
-    
-    @Test
-    public void testBConcurrentEventBus() throws InterruptedException {
+        assertThat(busManager.getNumListeners(), equalTo(1L));
+        
         MatcherAssert.assertThat(t -> {
             //given
-            TestListener testListener = new TestListener();
-            EventBusService busManager = Application.getInstance(EventBusService.class);
-            busManager.register(testListener);
+            TestListener newtestListener = new TestListener();
+            busManager.register(newtestListener);
             
             //when
             busManager.publish("This is a test");
             
             // then
             return testListener.getCount() > 0;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

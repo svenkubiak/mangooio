@@ -9,10 +9,11 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -22,6 +23,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ParameterControllerTest {
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
 
@@ -47,7 +49,7 @@ public class ParameterControllerTest {
             
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -72,7 +74,7 @@ public class ParameterControllerTest {
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -97,7 +99,7 @@ public class ParameterControllerTest {
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

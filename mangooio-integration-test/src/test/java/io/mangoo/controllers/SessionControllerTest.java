@@ -20,12 +20,13 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.base.Charsets;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -42,6 +43,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class SessionControllerTest {
     
     @Test
@@ -118,6 +120,6 @@ public class SessionControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && session != null && session.get("uuid") != null && session.get("uuid").equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

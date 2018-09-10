@@ -13,10 +13,12 @@ import java.security.PublicKey;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.utils.CryptoUtils;
 
@@ -25,6 +27,7 @@ import io.mangoo.utils.CryptoUtils;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 @SuppressWarnings("unchecked")
 public class CryptoTest {
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
@@ -56,7 +59,7 @@ public class CryptoTest {
            
             //when
             return decrypt.equals(text);
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -70,10 +73,11 @@ public class CryptoTest {
         assertThat(encrypt, not(equalTo(plainText)));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testShortKey() {
-        //when
-        Application.getInstance(Crypto.class).encrypt(plainText, key31);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Application.getInstance(Crypto.class).encrypt(plainText, key31);
+          });
     }
     
     @Test

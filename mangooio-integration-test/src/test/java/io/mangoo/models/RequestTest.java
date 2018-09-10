@@ -5,8 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Request;
@@ -17,6 +19,7 @@ import io.mangoo.routing.bindings.Session;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class RequestTest {
 
     @Test

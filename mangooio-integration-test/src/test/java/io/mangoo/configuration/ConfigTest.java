@@ -18,21 +18,21 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
-@FixMethodOrder(MethodSorters.JVM)
+@ExtendWith({TestExtension.class})
 public class ConfigTest {
 
     @Test

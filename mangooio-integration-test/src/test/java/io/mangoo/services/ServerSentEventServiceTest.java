@@ -29,11 +29,13 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 
+import io.mangoo.TestExtension;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -45,6 +47,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ServerSentEventServiceTest {
     private static String eventData;
     
@@ -120,8 +123,7 @@ public class ServerSentEventServiceTest {
         sseEventSource.close();
         client.close();
 	}
-
-//FIX ME: Test is failing!?
+// FIXME: Test is currently failing
 //    @Test
 //    public void testSendDataWithValidAuthentication() throws InterruptedException, IllegalArgumentException, JoseException {
 //        //given
@@ -131,7 +133,6 @@ public class ServerSentEventServiceTest {
 //        
 //        JwtClaims jwtClaims = new JwtClaims();
 //        jwtClaims.setSubject("foo");
-//        jwtClaims.setClaim(ClaimKey.VERSION.toString(), config.getAuthenticationCookieVersion());
 //        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
 //        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
 //        
@@ -161,7 +162,7 @@ public class ServerSentEventServiceTest {
 //        serverSentEventService.send("/sseauth", data);
 //
 //        //then
-//        await().atMost(5,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
+//        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
 //        eventSource.close();
 //    }
 
@@ -205,7 +206,7 @@ public class ServerSentEventServiceTest {
         serverSentEventService.send("/sseauth", data);
 
         //then
-        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
         eventSource.close();
     }
 }

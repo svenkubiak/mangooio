@@ -9,8 +9,10 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketClient;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 
@@ -19,6 +21,7 @@ import io.mangoo.core.Application;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class WebSocketControllerTest {
 
     @Test

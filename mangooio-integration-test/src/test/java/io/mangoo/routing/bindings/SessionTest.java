@@ -3,13 +3,17 @@ package io.mangoo.routing.bindings;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import io.mangoo.TestExtension;
 
 /**
  *
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class SessionTest {
     private static final String BAR = "bar";
     private static final String FOO = "foo";

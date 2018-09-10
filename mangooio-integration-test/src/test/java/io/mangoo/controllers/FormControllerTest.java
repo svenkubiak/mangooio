@@ -18,13 +18,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.message.BasicNameValuePair;
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
 import io.undertow.util.StatusCodes;
@@ -34,6 +35,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class FormControllerTest {
 
     @Test
@@ -72,7 +74,7 @@ public class FormControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
-        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 	
     @Test
@@ -115,7 +117,7 @@ public class FormControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid1 + "\n" + uuid2 + "\n" + uuid3 + "\n");
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
 	@Test

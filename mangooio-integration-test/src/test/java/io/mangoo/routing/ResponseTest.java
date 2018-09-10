@@ -14,10 +14,12 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.google.common.net.MediaType;
 
+import io.mangoo.TestExtension;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
@@ -27,6 +29,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ResponseTest {
     
     @Test

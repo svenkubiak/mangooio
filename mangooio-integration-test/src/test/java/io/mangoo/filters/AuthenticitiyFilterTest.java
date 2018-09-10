@@ -6,9 +6,11 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import io.mangoo.TestExtension;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Template;
@@ -22,6 +24,7 @@ import io.undertow.util.StatusCodes;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class AuthenticitiyFilterTest {
     
     @Test

@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * 
@@ -13,7 +13,6 @@ import org.junit.Test;
  *
  */
 public class MetricsUtilsTest {
-    
     @Test
     public void testReadableFileSize() {
         //given

@@ -5,9 +5,12 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import controllers.ApplicationController;
+import io.mangoo.TestExtension;
 import io.mangoo.enums.RouteType;
 
 /**
@@ -15,6 +18,7 @@ import io.mangoo.enums.RouteType;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class RouterTest {
     
     @Test
@@ -27,11 +31,12 @@ public class RouterTest {
         assertThat(Router.getRoutes().size(), greaterThan(0));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test()
     public void testMaxRoutes() {
-        //given
-        for (int i=0; i <= 100000; i++) {
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/foo").withMethod("bar").withClass(ApplicationController.class));  
-        }
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            for (int i=0; i <= 100000; i++) {
+                Router.addRoute(new Route(RouteType.REQUEST).toUrl("/foo").withMethod("bar").withClass(ApplicationController.class));  
+            }
+          });
     }
 }

@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 
 /**
  * 
- * @author sven.kubiak
+ * @author svenkubiak
  *
  */
 public class TestListener {

@@ -5,15 +5,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import io.mangoo.TestExtension;
 
 /**
  * 
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class CauseTest {
-
     @Test
     public void testCreateCause() {
         //given

@@ -12,13 +12,15 @@ import java.util.UUID;
 
 import javax.mail.MessagingException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
@@ -32,11 +34,12 @@ import jodd.mail.EmailAttachment;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class MailTest {
     private static GreenMail greenMail;
     private static SmtpMock smtp;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws FolderException {
         smtp = Application.getInstance(SmtpMock.class);
         smtp.start();
@@ -177,7 +180,7 @@ public class MailTest {
         assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n"));
     }
     
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         smtp.stop();
     }

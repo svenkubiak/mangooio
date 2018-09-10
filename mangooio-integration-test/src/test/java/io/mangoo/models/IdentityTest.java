@@ -5,8 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
 import io.mangoo.utils.CodecUtils;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.PasswordCredential;
@@ -16,6 +18,7 @@ import io.undertow.security.idm.PasswordCredential;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class IdentityTest {
     private static final char [] password = {'b','a','r'};
     

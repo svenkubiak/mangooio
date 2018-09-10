@@ -8,13 +8,15 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
 
+import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooSchedulerException;
 
@@ -24,11 +26,12 @@ import io.mangoo.exceptions.MangooSchedulerException;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class SchedulerTest {
     private static final String JOB_NAME = "jobs.InfoJob";
     private static Scheduler scheduler;
     
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         scheduler = Application.getInstance(Scheduler.class);
     }

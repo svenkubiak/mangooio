@@ -1,10 +1,7 @@
 package io.mangoo.test;
 
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-
-import com.googlecode.junittoolbox.SuiteClasses;
-import com.googlecode.junittoolbox.WildcardPatternSuite;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
@@ -14,12 +11,22 @@ import io.mangoo.enums.Mode;
  * @author svenkubiak
  *
  */ 
-@RunWith(WildcardPatternSuite.class)
-@SuiteClasses({"**/*Test.class"})
 @SuppressWarnings("all")
-public class TestRunner {
-    @BeforeClass
-    public static final void start() {
-        Application.start(Mode.TEST);
+public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+    private static boolean started = false;
+    
+    protected void init() {
+    }
+    
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        if (!started) {
+            init();
+            Application.start(Mode.TEST);  
+        }
+    }
+
+    @Override
+    public void close() throws Throwable {
     }
 }

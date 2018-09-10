@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.mangoo.build.Minification;
@@ -33,7 +33,7 @@ public class MinificationTest {
     private static final String ASSET_PATH = "assets/";
     private Config config;
     
-    @Before
+    @BeforeEach
     public void init() {
         config = Mockito.mock(Config.class);
         when(config.isApplicationMinifyCSS()).thenReturn(true);

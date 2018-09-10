@@ -8,10 +8,11 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestSuite;
+import io.mangoo.TestExtension;
 
 /**
  * 
@@ -39,18 +40,21 @@ public class CryptoUtilsTest {
             
             // then
             return secret.length() == size;
-        }, new RunsInThreads<>(new AtomicInteger(), TestSuite.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void testInvalidMinRandomString() {
-        //given
-        CryptoUtils.randomString(0);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //given
+            CryptoUtils.randomString(0);
+          });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void testInvalidMaxRandomString() {
-        //given
-        CryptoUtils.randomString(257);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            CryptoUtils.randomString(257);
+          });
     }
 }

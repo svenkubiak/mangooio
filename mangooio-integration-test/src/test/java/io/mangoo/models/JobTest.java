@@ -7,13 +7,17 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import io.mangoo.TestExtension;
 
 /**
  * 
  * @author sven.kubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class JobTest {
     @Test
     public void testCreateJob() {

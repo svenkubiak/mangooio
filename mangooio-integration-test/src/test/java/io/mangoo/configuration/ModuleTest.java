@@ -5,13 +5,15 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.logging.Logger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.quartz.spi.JobFactory;
 
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 
+import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooLifecycle;
@@ -23,6 +25,7 @@ import io.mangoo.interfaces.MangooTemplateEngine;
  * @author sven.kubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class ModuleTest {
 	@Test
 	public void testBindings() {

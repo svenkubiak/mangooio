@@ -23,11 +23,13 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jose4j.keys.HmacKey;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import com.google.common.base.Charsets;
 
+import io.mangoo.TestExtension;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -40,6 +42,7 @@ import io.undertow.websockets.core.WebSockets;
  * @author svenkubiak
  *
  */
+@ExtendWith({TestExtension.class})
 public class WebSocketServiceTest {
     private static String eventData;
 
