@@ -24,10 +24,6 @@ public class ApplicationController {
         return Response.withRedirect("/");
     }
     
-    public Response restricted() {
-        return Response.withOk().andContent("form", "foo");
-    }
-
     public Response text() {
         return Response.withOk().andTextBody("foo");
     }

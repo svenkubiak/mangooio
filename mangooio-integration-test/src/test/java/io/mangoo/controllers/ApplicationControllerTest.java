@@ -79,16 +79,6 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testRestricted() {
-        //given
-        final WebResponse response = WebRequest.get("/restricted").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
-    }
-    
-    @Test
     public void testReverse() {
         //given
         final WebResponse response = WebRequest.get("/reverse").execute();

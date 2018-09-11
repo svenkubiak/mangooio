@@ -9,7 +9,7 @@
   <title>mangoo I/O | Admin Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <style><#include "css/ionicons.min.css"></style>
-  <style><#include "css/adminlte.min.css"></style>
+  <style><#include "css/admin.min.css"></style>
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">

@@ -23,6 +23,7 @@ import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -136,16 +137,20 @@ public class RequestHandler implements HttpHandler {
 
         invokedResponse.andContent(response.getContent());
         invokedResponse.andHeaders(response.getHeaders());
+        
         if (!invokedResponse.isRendered()) {
-            invokedResponse.andBody(this.attachment.getTemplateEngine().render(
-                    this.attachment.getFlash(),
-                    this.attachment.getSession(),
-                    this.attachment.getForm(),
-                    this.attachment.getMessages(),
-                    getTemplatePath(invokedResponse),
-                    invokedResponse.getContent(),
-                    this.attachment.getControllerAndMethod(),
-                    this.attachment.getLocale()));
+            TemplateContext templateContext = new TemplateContext(invokedResponse.getContent())
+                    .withFlash(this.attachment.getFlash())
+                    .withSession(this.attachment.getSession())
+                    .withForm(this.attachment.getForm())
+                    .withMessages(this.attachment.getMessages())
+                    .withController(this.attachment.getControllerAndMethod())
+                    .withPrettyTime(this.attachment.getLocale())
+                    .withAuthenticity(this.attachment.getSession())
+                    .withAuthenticityForm(this.attachment.getSession())
+                    .withTemplatePath(getTemplatePath(invokedResponse));
+            
+            invokedResponse.andBody(this.attachment.getTemplateEngine().renderTemplate(templateContext));
         }
 
         return invokedResponse;

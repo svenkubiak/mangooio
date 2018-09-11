@@ -271,10 +271,6 @@ routes:
   mapping: ApplicationController.reverse
 
 - method: GET
-  url: /restricted
-  mapping: ApplicationController.restricted
-
-- method: GET
   url: /location
   mapping: ApplicationController.location
 

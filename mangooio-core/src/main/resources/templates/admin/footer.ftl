@@ -1,7 +1,7 @@
 </div>
 <script><#include "js/jquery.min.js"></script>
 <script><#include "js/bootstrap.min.js"></script>
-<script><#include "js/adminlte.min.js"></script>
+<script><#include "js/admin.min.js"></script>
 <script><#include "js/stupidtable.min.js"></script>
 	  <script>
 	  $(document).ready(function(){

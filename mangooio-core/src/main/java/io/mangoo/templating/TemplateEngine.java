@@ -10,10 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,17 +28,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.i18n.Messages;
 import io.mangoo.models.Source;
-import io.mangoo.routing.bindings.Flash;
-import io.mangoo.routing.bindings.Form;
-import io.mangoo.routing.bindings.Session;
-import io.mangoo.templating.directives.FormDirective;
-import io.mangoo.templating.directives.TokenDirective;
-import io.mangoo.templating.methods.I18nMethod;
-import io.mangoo.templating.methods.LocationMethod;
-import io.mangoo.templating.methods.PrettyTimeMethod;
-import io.mangoo.templating.methods.RouteMethod;
 import io.mangoo.utils.BootstrapUtils;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
@@ -57,9 +45,6 @@ public class TemplateEngine {
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
     private static final Version VERSION = new Version(2, 3, 27);
-    private static final List<String> blacklist = Arrays.asList(
-            "form", "flash", "session", "subject", "i18n", "route", "location", "prettytime", "authenticity", "authenticityForm"
-            );
     
     public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
@@ -79,45 +64,22 @@ public class TemplateEngine {
         }
     }
 
-    @SuppressWarnings("all")
-    public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content, String controller, Locale locale) throws MangooTemplateEngineException {
+    public String renderTemplate(TemplateContext context) throws MangooTemplateEngineException {
         Template template;
         try {
-            template = configuration.getTemplate(templatePath);
+            template = configuration.getTemplate(context.getTemplatePath());
         } catch (IOException e) {
-            throw new MangooTemplateEngineException("Template not found on path: " + templatePath, e);
+            throw new MangooTemplateEngineException("Template not found on path: " + context.getTemplatePath(), e);
         }
-        
-        if (!Application.inProdMode()) { 
-            Optional<String> key = containsInvalidKey(content);
-            if (key.isPresent()) {
-                throw new MangooTemplateEngineException(templatePath + " contains the following restricted key: " + key.get());
-            }
-        }
-        
-        content.put("form", form);
-        content.put("flash", flash);
-        content.put("session", session);
-        content.put("i18n", new I18nMethod(messages));
-        content.put("route", new RouteMethod());
-        content.put("location", new LocationMethod(controller));
-        content.put("prettytime", new PrettyTimeMethod(locale));
-        content.put("authenticity", new TokenDirective(session));
-        content.put("authenticityForm", new FormDirective(session));
 
-        return processTemplate(content, template);
-    }
-
-    @SuppressWarnings("all")
-    public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException {
-        Template template;
+        StringWriter buffer = new StringWriter(MAX_CHARS);
         try {
-            template = configuration.getTemplate(pathPrefix + "/" + getTemplateName(templateName));
-        } catch (IOException e) {
-            throw new MangooTemplateEngineException("Failed to render template", e);
+            template.process(context.getContent(), buffer);
+        } catch (TemplateException | IOException e) {
+            throw new MangooTemplateEngineException("Failed to process template", e);
         }
 
-        return processTemplate(content, template);
+        return buffer.toString();
     }
 
     @SuppressWarnings("all")
@@ -161,48 +123,11 @@ public class TemplateEngine {
 
         return writer.toString();
     }
-
-    /**
-     * Process a template by rendering the content into the template
-     *
-     * @param content The content to render in the template
-     * @param template The template
-     * @return A completely rendered template
-     *
-     * @throws TemplateExceptions TemplateExceptions
-     * @throws IOException IOException
-     */
-    private String processTemplate(Map<String, Object> content, Template template) throws MangooTemplateEngineException {
-        Objects.requireNonNull(content, Required.CONTENT.toString());
-        Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        
-        StringWriter buffer = new StringWriter(MAX_CHARS);
-        try {
-            template.process(content, buffer);
-        } catch (TemplateException | IOException e) {
-            throw new MangooTemplateEngineException("Failed to process template", e);
-        }
-
-        return buffer.toString();
-    }
-
+    
     public String getTemplateName(String templateName) {
         Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
-    
-    private Optional<String> containsInvalidKey(Map<String, Object> content) {
-        String found = null;
-        for (String key : blacklist) {
-            if (content.containsKey(key)) {
-                found = key;
-                break;
-            }
-        }
-        
-        return Optional.ofNullable(found);
-    }
-    
 
     /**
      * Retrieves the lines of code where an exception occurred
