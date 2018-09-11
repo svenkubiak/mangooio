@@ -385,6 +385,18 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testFreemarkerConfiguration() {
+        //given
+        final WebResponse response = WebRequest.get("/freemarker").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), containsString("Output format: HTML"));
+        assertThat(response.getContent(), containsString("Auto-escaping: true"));
+    }
+    
+    @Test
     public void testHeaders() {
         //given
         final WebResponse response = WebRequest.get("/").execute();

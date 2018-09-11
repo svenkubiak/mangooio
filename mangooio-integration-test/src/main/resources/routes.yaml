@@ -348,6 +348,10 @@ routes:
   url: /jsonboonput
   mapping: ApplicationController.jsonBoonPut
 
+- method: GET
+  url: /freemarker
+  mapping: ApplicationController.freemarker
+
 # Controllers in Sub Packages
 - method: GET
   url: /subcontroller

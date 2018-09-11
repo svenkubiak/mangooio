@@ -106,6 +106,10 @@ public class ApplicationController {
     public Response location(String myloc) {
         return Response.withOk().andContent("myloc", myloc);
     }
+    
+    public Response freemarker() {
+        return Response.withOk();
+    }
 
     public Response header() {
         return Response

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import com.google.common.base.Charsets;
 
 import freemarker.cache.MruCacheStorage;
+import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -44,7 +45,7 @@ public class TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 27);
+    private static final Version VERSION = new Version(2, 3, 28);
     
     public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
@@ -52,9 +53,10 @@ public class TemplateEngine {
         this.configuration.setOutputEncoding(Charsets.UTF_8.name());
         this.configuration.setLocalizedLookup(false);
         this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
-        this.configuration.setTemplateLoader(new TemplateEngineLoader(configuration.getTemplateLoader()));
         this.configuration.setAPIBuiltinEnabled(true);
         this.configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
+        this.configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
+        this.configuration.setRecognizeStandardFileExtensions(false);
 
         if (Application.inDevMode()) {
             this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);

@@ -63,12 +63,10 @@
 		  			url: "/@admin/logger/ajax",
 		  			data: JSON.stringify({ "class": clazz, "level" : level }),
 		  			dataType: "text",
-		  			success: function(data){
-						$this.parent().addClass("has-success");
-		  			}
+		  			success: function(data){}
 			});
 	    }); 
-	   
+	    
 		});
 	  </script>
 </body>
