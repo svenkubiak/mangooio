@@ -33,7 +33,6 @@ import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
-import io.mangoo.configuration.ConfigFactory;
 import io.mangoo.core.yaml.YamlRoute;
 import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.email.MailEventListener;
@@ -78,7 +77,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class Application {
-    private static Logger LOG; //NOSONAR
+    private static Logger LOG = LogManager.getLogger(Application.class);
     private static final int MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
     private static volatile String httpHost;
@@ -90,8 +89,10 @@ public final class Application {
     private static volatile Injector injector;
     private static volatile LocalDateTime start = LocalDateTime.now();
     private static volatile PathHandler pathHandler;
-    private static volatile ResourceHandler resourceHandler;
     private static volatile boolean started;
+    private static volatile ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
+            Thread.currentThread().getContextClassLoader(),
+            Default.FILES_FOLDER.toString() + '/'));
     
     private Application() {
     }
@@ -105,12 +106,6 @@ public final class Application {
         
         if (!started) {
             prepareMode(mode);
-            System.setProperty("log4j.configurationFactory", ConfigFactory.class.getName());
-            
-            resourceHandler = Handlers.
-                    resource(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + '/'));
-            
-            prepareLogger();
             prepareInjector();
             applicationInitialized();
             prepareConfig();
@@ -520,12 +515,6 @@ public final class Application {
         });
 
         return routingHandler;
-    }
-    
-    @SuppressWarnings("all")
-    private static void prepareLogger() {
-        LOG = LogManager.getLogger(Application.class);
-        LOG.info(System.getProperty(Key.LOGGER_MESSAGE.toString()));
     }
 
     private static void prepareUndertow() {

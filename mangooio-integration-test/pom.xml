@@ -86,6 +86,9 @@
 				<includes>
 					<include>**/*</include>
 				</includes>
+				<excludes>
+					<exclude>**/log4j2-test.yaml</exclude>
+				</excludes>
 			</resource>
 		</resources>
 		<plugins>
