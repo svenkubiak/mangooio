@@ -18,7 +18,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.interfaces.MangooTemplateEngine;
+import io.mangoo.templating.TemplateEngine;
 
 /**
  * 
@@ -39,7 +39,7 @@ public class ModuleTest {
 		Binding<Config> config = guice.getBinding(Config.class);
 		Binding<JobFactory> jobFactory = guice.getBinding(JobFactory.class);
 		Binding<Cache> cache = guice.getBinding(Cache.class);
-		Binding<MangooTemplateEngine> mangooTemplateEngine = guice.getBinding(MangooTemplateEngine.class);		
+		Binding<TemplateEngine> templateEngine = guice.getBinding(TemplateEngine.class);		
 		Binding<MangooRequestFilter> mangooRequestFilter = guice.getBinding(MangooRequestFilter.class);
 		Binding<MangooLifecycle> mangooLifecycle = guice.getBinding(MangooLifecycle.class);
 		
@@ -50,7 +50,7 @@ public class ModuleTest {
 		assertThat(config.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.configuration.Config"));
 		assertThat(jobFactory.getKey().getTypeLiteral().getType().getTypeName(), equalTo("org.quartz.spi.JobFactory"));
 		assertThat(cache.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.cache.Cache"));
-		assertThat(mangooTemplateEngine.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooTemplateEngine"));
+		assertThat(templateEngine.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.templating.TemplateEngine"));
 		assertThat(mangooRequestFilter.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooRequestFilter"));
 		assertThat(mangooLifecycle.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooLifecycle"));
 		

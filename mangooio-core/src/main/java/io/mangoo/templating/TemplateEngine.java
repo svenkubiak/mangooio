@@ -31,7 +31,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.models.Source;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -51,7 +50,7 @@ import no.api.freemarker.java8.Java8ObjectWrapper;
  * @author svenkubiak
  *
  */
-public class TemplateEngineFreemarker implements MangooTemplateEngine {
+public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
     private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final int MAX_CHARS = 65_536;
@@ -62,7 +61,7 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
             "form", "flash", "session", "subject", "i18n", "route", "location", "prettytime", "authenticity", "authenticityForm"
             );
     
-    public TemplateEngineFreemarker() {
+    public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
         this.configuration.setDefaultEncoding(Charsets.UTF_8.name());
         this.configuration.setOutputEncoding(Charsets.UTF_8.name());
@@ -80,7 +79,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         }
     }
 
-    @Override
     @SuppressWarnings("all")
     public String render(Flash flash, Session session, Form form, Messages messages, String templatePath, Map<String, Object> content, String controller, Locale locale) throws MangooTemplateEngineException {
         Template template;
@@ -110,7 +108,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         return processTemplate(content, template);
     }
 
-    @Override
     @SuppressWarnings("all")
     public String render(String pathPrefix, String templateName, Map<String, Object> content) throws MangooTemplateEngineException {
         Template template;
@@ -123,7 +120,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         return processTemplate(content, template);
     }
 
-    @Override
     @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Writer writer = new StringWriter();
@@ -190,7 +186,6 @@ public class TemplateEngineFreemarker implements MangooTemplateEngine {
         return buffer.toString();
     }
 
-    @Override
     public String getTemplateName(String templateName) {
         Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);

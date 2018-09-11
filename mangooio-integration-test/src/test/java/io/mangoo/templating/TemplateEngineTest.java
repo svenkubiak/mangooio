@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.interfaces.MangooTemplateEngine;
 
 /**
  * 
@@ -16,11 +15,11 @@ import io.mangoo.interfaces.MangooTemplateEngine;
  *
  */
 @ExtendWith({TestExtension.class})
-public class TemplateEngineFreemarkerTest {
+public class TemplateEngineTest {
     @Test
     public void testGetTemplateName() {
         //given
-        MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
+        TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
         
         //when
         String templateWithSuffix = templateEngine.getTemplateName("template.ftl");

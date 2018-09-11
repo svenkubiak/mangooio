@@ -8,8 +8,8 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.services.EventBusService;
+import io.mangoo.templating.TemplateEngine;
 import jodd.mail.Email;
 
 /**
@@ -57,7 +57,7 @@ public class Mail {
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.substring(1, template.length());
         } 
-        this.email.htmlMessage(Application.getInstance(MangooTemplateEngine.class).render("", template, content), Default.ENCODING.toString());
+        this.email.htmlMessage(Application.getInstance(TemplateEngine.class).render("", template, content), Default.ENCODING.toString());
 
         return this;
     }

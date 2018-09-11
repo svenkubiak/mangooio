@@ -12,12 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.templating.TemplateEngine;
 
 /**
  *
@@ -48,7 +48,7 @@ public class Attachment {
     private Response response;
     private Session session;
     private final long start = System.currentTimeMillis();
-    private MangooTemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private boolean timer;
 
     private String username;
@@ -149,7 +149,7 @@ public class Attachment {
         return this.session;
     }
 
-    public MangooTemplateEngine getTemplateEngine() {
+    public TemplateEngine getTemplateEngine() {
         return this.templateEngine;
     }
 
@@ -276,7 +276,7 @@ public class Attachment {
         return this;
     }
     
-    public Attachment withTemplateEngine(MangooTemplateEngine templateEngine) {
+    public Attachment withTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = Objects.requireNonNull(templateEngine, Required.TEMPLATE_ENGINE.toString());
         return this;
     }

@@ -17,8 +17,8 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.routing.Attachment;
+import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -44,7 +44,7 @@ public class DispatcherHandler implements HttpHandler {
     private Method method;
     private List<Annotation> methodAnnotations = new ArrayList<>();
     private List<Annotation> classAnnotations = new ArrayList<>();
-    private MangooTemplateEngine templateEngine;
+    private TemplateEngine templateEngine;
     private Messages messages;
     private Map<String, Class<?>> methodParameters;
     private Class<?> controllerClass;
@@ -62,7 +62,7 @@ public class DispatcherHandler implements HttpHandler {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
 
-        this.templateEngine = Application.getInstance(MangooTemplateEngine.class);
+        this.templateEngine = Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
         this.controllerClass = controllerClass;
         this.controllerMethodName = controllerMethodName;

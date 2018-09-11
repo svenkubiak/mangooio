@@ -16,10 +16,8 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooLifecycle;
 import io.mangoo.interfaces.MangooRequestFilter;
-import io.mangoo.interfaces.MangooTemplateEngine;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.providers.TemplateEngineProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
@@ -36,6 +34,7 @@ import io.mangoo.scheduler.SchedulerFactory;
 import io.mangoo.services.ConcurrentService;
 import io.mangoo.services.ServerSentEventService;
 import io.mangoo.services.WebSocketService;
+import io.mangoo.templating.TemplateEngine;
 
 /**
  * 
@@ -226,18 +225,9 @@ public class InjectionTest {
     }
     
     @Test
-    public void testTemplateEngineProvider() {
-        //given
-        TemplateEngineProvider templateEngineProvider = Application.getInstance(TemplateEngineProvider.class);
-        
-        //then
-        assertThat(templateEngineProvider, not(nullValue()));
-    }
-    
-    @Test
     public void testTemplateEngine() {
         //given
-        MangooTemplateEngine templateEngine = Application.getInstance(MangooTemplateEngine.class);
+        TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
         
         //then
         assertThat(templateEngine, not(nullValue()));
