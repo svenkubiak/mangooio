@@ -372,17 +372,6 @@ public class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
-
-    @Test
-    public void testResponseTimer() {
-        //given
-        final WebResponse response = WebRequest.get("/").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getHeader(Header.X_RESPONSE_TIME.toString()), containsString("ms"));
-    }
     
     @Test
     public void testFreemarkerConfiguration() {

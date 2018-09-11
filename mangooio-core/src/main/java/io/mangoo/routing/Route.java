@@ -22,7 +22,6 @@ public class Route {
     private int limit;
     private boolean authentication;
     private boolean blocking;
-    private boolean timer;
     private boolean internalTemplateEngine;
 
     public Route(RouteType routeType) {
@@ -51,11 +50,6 @@ public class Route {
 
     public Route withClass(Class<?> controllerClass) {
         this.controllerClass = controllerClass;
-        return this;
-    }
-
-    public Route withTimer(boolean timer) {
-        this.timer = timer;
         return this;
     }
 
@@ -141,9 +135,5 @@ public class Route {
 
     public boolean isBlockingAllowed() {
         return this.blocking;
-    }
-    
-    public boolean isTimerEnabled() {
-        return this.timer;
     }
 }

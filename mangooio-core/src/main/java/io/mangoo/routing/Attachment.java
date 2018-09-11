@@ -49,7 +49,6 @@ public class Attachment {
     private Session session;
     private final long start = System.currentTimeMillis();
     private TemplateEngine templateEngine;
-    private boolean timer;
 
     private String username;
 
@@ -169,10 +168,6 @@ public class Attachment {
         return this.requestFilter;
     }
 
-    public boolean hasTimer() {
-        return this.timer;
-    }
-
     public void setAuthentication(Authentication authentication) {
         this.authentication = authentication;
     }
@@ -278,11 +273,6 @@ public class Attachment {
     
     public Attachment withTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = Objects.requireNonNull(templateEngine, Required.TEMPLATE_ENGINE.toString());
-        return this;
-    }
-
-    public Attachment withTimer(boolean timer) {
-        this.timer = timer;
         return this;
     }
 

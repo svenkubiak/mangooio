@@ -14,7 +14,6 @@ public class YamlRoute {
     private int limit;
     private boolean blocking;
     private boolean authentication;
-    private boolean timer;
     
     public String getMethod() {
         return method;
@@ -78,13 +77,5 @@ public class YamlRoute {
     
     public void setAuthentication(boolean authentication) {
         this.authentication = authentication;
-    }
-    
-    public boolean isTimer() {
-        return timer;
-    }
-    
-    public void setTimer(boolean timer) {
-        this.timer = timer;
     }
 }

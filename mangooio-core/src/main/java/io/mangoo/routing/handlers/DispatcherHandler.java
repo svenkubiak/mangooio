@@ -56,7 +56,6 @@ public class DispatcherHandler implements HttpHandler {
     private int methodParametersCount;
     private boolean hasRequestFilter;
     private boolean blocking;
-    private boolean timer;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
@@ -99,11 +98,6 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
     
-    public DispatcherHandler withTimer(boolean timer) {
-        this.timer = timer;
-        return this;
-    }
-    
     public DispatcherHandler withUsername(String username) {
         this.username = username;
         return this;
@@ -139,7 +133,6 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestFilter(this.hasRequestFilter)
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
-            .withTimer(this.timer)
             .withLimit(this.limit)
             .withUsername(this.username)
             .withPassword(this.password)

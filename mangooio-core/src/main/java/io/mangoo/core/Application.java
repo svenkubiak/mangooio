@@ -419,7 +419,6 @@ public final class Application {
                         .withUsername(yamlRoute.getUsername())
                         .withPassword(yamlRoute.getPassword())
                         .withAuthentication(yamlRoute.isAuthentication())
-                        .withTimer(yamlRoute.isTimer())
                         .withLimit(yamlRoute.getLimit())
                         .allowBlocking(yamlRoute.isBlocking());
                 
@@ -501,7 +500,6 @@ public final class Application {
                 DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                         .dispatch(route.getControllerClass(), route.getControllerMethod())
                         .isBlocking(route.isBlockingAllowed())
-                        .withTimer(route.isTimerEnabled())
                         .withUsername(route.getUsername())
                         .withPassword(route.getPassword())
                         .withLimit(route.getLimit());

@@ -45,7 +45,6 @@ public class AttachmentTest {
         attachment.withRequestFilter(true);
         attachment.withRequestParameter(new HashMap<>());
         attachment.withTemplateEngine(Application.getInstance(TemplateEngine.class));
-        attachment.withTimer(true);
         attachment.withUsername("peter");
         
         //then
@@ -63,7 +62,6 @@ public class AttachmentTest {
         assertThat(attachment.hasRequestFilter(), equalTo(true));
         assertThat(attachment.getRequestParameter(), instanceOf(HashMap.class));
         assertThat(attachment.getTemplateEngine(), instanceOf(TemplateEngine.class));
-        assertThat(attachment.hasTimer(), equalTo(true));
         assertThat(attachment.getUsername(), equalTo("peter"));
         assertThat(attachment.hasAuthentication(), equalTo(true));
     }
