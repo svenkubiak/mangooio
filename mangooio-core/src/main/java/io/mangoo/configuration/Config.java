@@ -21,7 +21,6 @@ import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
 import jodd.props.Props;
 
 /**
@@ -38,11 +37,10 @@ public class Config {
     private boolean decrypted = true;
     
     public Config() {
-        prepare();
-        decrypt();
+        load();
     }
 
-    private void prepare() {
+    private void load() {
         this.props.setActiveProfiles(Application.getMode().toString());
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         
@@ -58,19 +56,38 @@ public class Config {
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from src/main/resources/config.props", e);
             }
-        }    
-    }
-
-    /**
-     * Decrypts all encrypted config value
-     */
-    private void decrypt() {
-        this.props.entries().forEach((prop) -> doDecrypt(prop.getKey(), prop.getValue(), null));
+        } 
+        
+        this.props.entries().forEach((prop) -> {
+            if (prop.getValue().startsWith("args{")) {
+               String value = System.getProperty(StringUtils.substringBetween(prop.getValue(), "args{", "}"));
+               
+               if (prop.getValue().startsWith("cryptex[")) {
+                   value = decrypt(value);
+               }
+               this.props.setValue(prop.getKey(), value, null);
+            }
+            
+            if (prop.getValue().startsWith("cryptex[")) {
+                this.props.setValue(prop.getKey(), decrypt(prop.getValue()), null);
+            }
+        });
         
         Map<String, String> profileProps = new HashMap<>();
         this.props.extractProps(profileProps, Application.getMode().toString());
         profileProps.forEach((propKey, propValue) -> {
-            doDecrypt(propKey, propValue, Application.getMode());
+            if (propValue.startsWith("args{")) {
+                String value = System.getProperty(StringUtils.substringBetween(propValue, "args{", "}"));
+                
+                if (propValue.startsWith("cryptex[")) {
+                    value = decrypt(value);
+                }
+                this.props.setValue(propKey, value, Application.getMode().toString());
+             }
+            
+            if (propValue.startsWith("cryptex[")) {
+                this.props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
+            }
         });
     }
 
@@ -80,38 +97,34 @@ public class Config {
      * @param propKey The property key
      * @param propValue The property value
      */
-    private void doDecrypt(String propKey, String propValue, Mode mode) {
+    private String decrypt(String value) {
         Crypto crypto = new Crypto(this);
         
-        if (propValue.startsWith("cryptex[")) {
-            String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
-            if (StringUtils.isNotBlank(keyFile)) {
-                try {
-                    String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
-                    if (StringUtils.isNotBlank(key)) {
-                        PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
-                        String cryptex = StringUtils.substringBetween(propValue, "cryptex[", "]");
+        String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
+        if (StringUtils.isNotBlank(keyFile)) {
+            try {
+                String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
+                if (StringUtils.isNotBlank(key)) {
+                    PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
+                    String cryptex = StringUtils.substringBetween(value, "cryptex[", "]");
 
-                        if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
-                            if (mode != null) {
-                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey), Application.getMode().toString());                                
-                            } else {
-                                this.props.setValue(propKey, crypto.decrypt(cryptex, privateKey), null);
-                            }
-                        } else {
-                            LOG.error("Failed to decrypt and encrypted config value");
-                            this.decrypted = false;
-                        }
+                    if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
+                        return crypto.decrypt(cryptex, privateKey);
+                    } else {
+                        LOG.error("Failed to decrypt an encrypted config value");
+                        this.decrypted = false;
                     }
-                } catch (Exception e) {
-                    LOG.error("Failed to decrypt and encrypted config value", e);
-                    this.decrypted = false;
                 }
-            } else {
-                LOG.error("Found and encrypted value in config but private key is missing");
+            } catch (Exception e) {
+                LOG.error("Failed to decrypt an encrypted config value", e);
                 this.decrypted = false;
             }
+        } else {
+            LOG.error("Found and encrypted value in config but private key is missing");
+            this.decrypted = false;
         }
+        
+        return "";
     }
     
     /**
