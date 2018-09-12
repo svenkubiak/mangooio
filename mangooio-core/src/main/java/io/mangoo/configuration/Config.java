@@ -33,6 +33,8 @@ import jodd.props.Props;
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
+    private static final String CRYPTEX_TAG = "cryptex{";
+    private static final String ARG_TAG = "arg{}";
     private Props props = Props.create();
     private boolean decrypted = true;
     
@@ -58,37 +60,37 @@ public class Config {
             }
         } 
         
-        this.props.entries().forEach((prop) -> {
-            if (prop.getValue().startsWith("args{")) {
-               String value = System.getProperty(StringUtils.substringBetween(prop.getValue(), "args{", "}"));
-               
-               if (prop.getValue().startsWith("cryptex[")) {
-                   value = decrypt(value);
-               }
-               this.props.setValue(prop.getKey(), value, null);
-            }
-            
-            if (prop.getValue().startsWith("cryptex[")) {
-                this.props.setValue(prop.getKey(), decrypt(prop.getValue()), null);
-            }
-        });
+        this.props.entries().forEach((prop) -> parse(prop.getKey(), prop.getValue()));
         
         Map<String, String> profileProps = new HashMap<>();
         this.props.extractProps(profileProps, Application.getMode().toString());
         profileProps.forEach((propKey, propValue) -> {
-            if (propValue.startsWith("args{")) {
-                String value = System.getProperty(StringUtils.substringBetween(propValue, "args{", "}"));
-                
-                if (propValue.startsWith("cryptex[")) {
-                    value = decrypt(value);
-                }
-                this.props.setValue(propKey, value, Application.getMode().toString());
-             }
-            
-            if (propValue.startsWith("cryptex[")) {
-                this.props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
-            }
+            parse(propKey, propValue);
         });
+        
+        System.setProperty(Key.APPLICATION_SECRET.toString(), "");
+    }
+
+    /**
+     * Parses a given property key and value and checks if the value comes from
+     * a system property and maybe decrypts the value
+     * 
+     * @param propKey The property key
+     * @param propValue The property value
+     */
+    private void parse(String propKey, String propValue) {
+        if (ARG_TAG.equals(propValue)) {
+            String value = System.getProperty(propKey);
+            
+            if (value.startsWith(CRYPTEX_TAG)) {
+                value = decrypt(value);
+            }
+            this.props.setValue(propKey, value, Application.getMode().toString());
+         }
+        
+        if (propValue.startsWith(CRYPTEX_TAG)) {
+            this.props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
+        }
     }
 
     /**
@@ -106,7 +108,7 @@ public class Config {
                 String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
-                    String cryptex = StringUtils.substringBetween(value, "cryptex[", "]");
+                    String cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
                         return crypto.decrypt(cryptex, privateKey);

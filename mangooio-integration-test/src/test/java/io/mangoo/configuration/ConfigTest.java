@@ -561,6 +561,58 @@ public class ConfigTest {
     }
     
     @Test
+    public void testValueFromSystemPropertyInProfile() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Config config = Application.getInstance(Config.class);
+        String value = config.getString("application.test");
+        
+        // then
+        assertThat(value, equalTo("valuefromarg"));
+    }
+    
+    @Test
+    public void testValueFromSystemProperty() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Config config = Application.getInstance(Config.class);
+        String applicationName = config.getApplicationName();
+        
+        // then
+        assertThat(applicationName, equalTo("namefromarg"));
+    }
+    
+    @Test
+    public void testValueFromSystemPropertyInProfileEncrypted() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Config config = Application.getInstance(Config.class);
+        String value = config.getString("application.profil");
+        
+        // then
+        assertThat(value, equalTo("admin"));
+    }
+    
+    @Test
+    public void testValueFromSystemPropertyEncrypted() {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Config config = Application.getInstance(Config.class);
+        String value = config.getString("application.encrypted");
+        
+        // then
+        assertThat(value, equalTo("admin"));
+    }
+    
+    @Test
     public void testIsApplicationMinifyJSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
