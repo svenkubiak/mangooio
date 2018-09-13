@@ -82,10 +82,13 @@ public class Config {
         if (ARG_TAG.equals(propValue)) {
             String value = System.getProperty(propKey);
             
-            if (value.startsWith(CRYPTEX_TAG)) {
+            if (StringUtils.isNotBlank(value) && value.startsWith(CRYPTEX_TAG)) {
                 value = decrypt(value);
+            } 
+            
+            if (StringUtils.isNotBlank(value)) {
+                this.props.setValue(propKey, value, Application.getMode().toString());
             }
-            this.props.setValue(propKey, value, Application.getMode().toString());
          }
         
         if (propValue.startsWith(CRYPTEX_TAG)) {
