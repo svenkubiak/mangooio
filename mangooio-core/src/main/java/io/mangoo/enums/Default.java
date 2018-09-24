@@ -54,7 +54,7 @@ public enum Default {
     LIFECYCLE_CLASS("conf.Lifecycle"),
     LOGO_FILE("logo.txt"),
     METRICS_ENABLE(Constants.FALSE),
-    MODULE_CLASS("conf.Module"),
+    MODULE_CLASS("app.Module"),
     NUMBER_FORMAT("0.######"),
     OAUTH_REQUEST_PARAMETER("oauth"),
     ROUTES_FILE("routes.yaml"),

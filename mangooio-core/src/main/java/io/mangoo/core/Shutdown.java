@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import com.netflix.governator.lifecycle.LifecycleManager;
 
 import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.ConcurrentService;
@@ -36,7 +36,7 @@ public class Shutdown extends Thread {
     }
 
     private static void invokeLifecycle() {
-        Application.getInstance(MangooLifecycle.class).applicationStopped();
+        Application.getInstance(MangooBootstrap.class).applicationStopped();
     }
 
     private static void stopExecutionManager() {

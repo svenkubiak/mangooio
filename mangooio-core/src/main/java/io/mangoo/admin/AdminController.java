@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +24,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
 
-import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
@@ -40,8 +37,6 @@ import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.Route;
-import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.BootstrapUtils;
@@ -53,7 +48,6 @@ import io.mangoo.utils.MetricsUtils;
  * @author svenkubiak
  *
  */
-@FilterWith(AdminFilter.class)
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
     private static final String JOBS = "jobs";
@@ -176,15 +170,15 @@ public class AdminController {
     }
     
     public Response routes() {
-        Set<Route> routes = Router.getRoutes()
-            .stream()
-            .filter((Route route) -> !route.getUrl().contains("@admin"))
-            .collect(Collectors.toSet());
-        
+//        Set<Route> routes = Router.getRoutes()
+//            .stream()
+//            .filter((Route route) -> !route.getUrl().contains("@admin"))
+//            .collect(Collectors.toSet());
+//        
         return Response.withOk()
                 .andContent(SPACE, ROUTES)
                 .andContent(VERSION, VERSION_TAG)
-                .andContent(ROUTES, routes)
+                //.andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
     }
     

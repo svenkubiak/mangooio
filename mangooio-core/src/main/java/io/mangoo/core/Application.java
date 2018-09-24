@@ -1,6 +1,5 @@
 package io.mangoo.core;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,9 +18,6 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -33,19 +29,17 @@ import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.annotations.Schedule;
 import io.mangoo.configuration.Config;
-import io.mangoo.core.yaml.YamlRoute;
-import io.mangoo.core.yaml.YamlRouter;
 import io.mangoo.email.MailEventListener;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
-import io.mangoo.enums.RouteType;
 import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.routing.Route;
+import io.mangoo.routing.Bind;
+import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.handlers.DispatcherHandler;
 import io.mangoo.routing.handlers.ExceptionHandler;
@@ -53,6 +47,11 @@ import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
+import io.mangoo.routing.routes.FileRoute;
+import io.mangoo.routing.routes.PathRoute;
+import io.mangoo.routing.routes.RequestRoute;
+import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.BootstrapUtils;
@@ -67,7 +66,6 @@ import io.undertow.server.RoutingHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
-import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
 /**
@@ -127,7 +125,7 @@ public final class Application {
      * Registers Listeners at the event bus
      */
     private static void prepareEventBus() {
-        injector.getInstance(EventBusService.class).register(injector.getInstance(MailEventListener.class));
+        getInstance(EventBusService.class).register(getInstance(MailEventListener.class));
     }
 
     /**
@@ -200,7 +198,7 @@ public final class Application {
 
     /**
      * Short form for getting an Goolge Guice injected class by
-     * calling injector.getInstance(...)
+     * calling getInstance(...)
      *
      * @param clazz The class to retrieve from the injector
      * @param <T> JavaDoc requires this (just ignore it)
@@ -252,7 +250,7 @@ public final class Application {
                 .createInjector();
         
         try {
-            injector.getInstance(LifecycleManager.class).start();
+            getInstance(LifecycleManager.class).start();
         } catch (Exception e) {
             LOG.error("Failed to start Governator LifecycleManager", e);
             failsafe();
@@ -263,14 +261,14 @@ public final class Application {
      * Callback to MangooLifecycle applicationInitialized
      */
     private static void applicationInitialized() {
-        injector.getInstance(MangooLifecycle.class).applicationInitialized();            
+        getInstance(MangooBootstrap.class).applicationInitialized();            
     }
 
     /**
      * Checks for config failures that pervent the application from starting
      */
     private static void prepareConfig() {
-        Config config = injector.getInstance(Config.class);
+        Config config = getInstance(Config.class);
         
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
@@ -324,7 +322,7 @@ public final class Application {
      * Do sanity checks on the configuration an warn about it in the log
      */
     private static void sanityChecks() {
-        Config config = injector.getInstance(Config.class);
+        Config config = getInstance(Config.class);
         List<String> warnings = new ArrayList<>();
         
         if (!config.isAuthenticationCookieSecure()) {
@@ -393,62 +391,25 @@ public final class Application {
             LOG.warn(warning);
         }
         
-        injector.getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
+        getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
     }
 
     /**
-     * Parse routes from routes.yaml file and set up dispatcher
+     * Validate if the routes that are defined in the router are valid
      */
     private static void prepareRoutes() {
-        Config config = injector.getInstance(Config.class);
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        YamlRouter yamlRouter = null;
-        try {
-            yamlRouter = objectMapper.readValue(Resources.getResource(Default.ROUTES_FILE.toString()).openStream(), YamlRouter.class);
-        } catch (IOException e) {
-            LOG.error("Failed to load routes.yaml Please make sure that your routes.yaml exists in your application src/main/resources folder", e);
-            failsafe();
-        }
+        injector.getInstance(MangooBootstrap.class).initializeRoutes();
         
-        if (yamlRouter != null) {
-            for (final YamlRoute yamlRoute : yamlRouter.getRoutes()) {
-                RouteType routeType = BootstrapUtils.getRouteType(yamlRoute.getMethod());
-                final Route route = new Route(routeType)
-                        .toUrl(yamlRoute.getUrl().trim())
-                        .withRequest(HttpString.tryFromString(yamlRoute.getMethod()))
-                        .withUsername(yamlRoute.getUsername())
-                        .withPassword(yamlRoute.getPassword())
-                        .withAuthentication(yamlRoute.isAuthentication())
-                        .withLimit(yamlRoute.getLimit())
-                        .allowBlocking(yamlRoute.isBlocking());
-                
-                try {
-                    String mapping = yamlRoute.getMapping();   
-                    if (StringUtils.isNotBlank(mapping)) {
-                        if (routeType == RouteType.REQUEST) {
-                            int lastIndexOf = mapping.trim().lastIndexOf('.');
-                            String controllerClass = BootstrapUtils.getPackageName(config.getApplicationController()) + mapping.substring(0, lastIndexOf);
-                            route.withClass(Class.forName(controllerClass));
+        Router.getRoutes().forEach((mangooRoute) -> {
+            if (mangooRoute instanceof RequestRoute) {
+                RequestRoute requestRoute = (RequestRoute) mangooRoute;
 
-                            String methodName = mapping.substring(lastIndexOf + 1);
-                            if (BootstrapUtils.methodExists(methodName, route.getControllerClass())) {
-                                route.withMethod(methodName);
-                            } else {
-                                LOG.error("Method '{}' does not exists in controller class '{}'", methodName, route.getControllerClass());
-                                failsafe();
-                            }
-                        } else {
-                            route.withClass(Class.forName(BootstrapUtils.getPackageName(config.getApplicationController()) + mapping));
-                        }
-                    }
-                   Router.addRoute(route);
-                } catch (final ClassNotFoundException e) {
-                    LOG.error("Failed to create routes from routes.yaml");
-                    LOG.error("Please verify that your routes.yaml mapping is correct", e);
+                if (!BootstrapUtils.methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
+                    LOG.error("Method '{}' does not exists in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                     failsafe();
                 }
             }
-        }
+        });
     }
 
     /**
@@ -456,57 +417,64 @@ public final class Application {
      */
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
-        for (final Route route : Router.getRoutes()) {
-            if (RouteType.WEBSOCKET == route.getRouteType()) {
-                pathHandler.addExactPath(route.getUrl(),
-                        Handlers.websocket(injector.getInstance(WebSocketHandler.class)
-                                .withControllerClass(route.getControllerClass())
-                                .withAuthentication(route.isAuthenticationRequired())));
-            } else if (RouteType.SERVER_SENT_EVENT == route.getRouteType()) {
-                pathHandler.addExactPath(route.getUrl(),
-                        Handlers.serverSentEvents(injector.getInstance(ServerSentEventHandler.class)
-                                .withAuthentication(route.isAuthenticationRequired())));
-            } else if (RouteType.RESOURCE_PATH == route.getRouteType()) {
-                pathHandler.addPrefixPath(route.getUrl(),
-                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + route.getUrl())));
+        Router.getRoutes().forEach((mangooRoute) -> {
+            if (mangooRoute instanceof WebSocketRoute) {
+                WebSocketRoute webSocketRoute = (WebSocketRoute) mangooRoute;
+                
+                pathHandler.addExactPath(webSocketRoute.getUrl(),
+                        Handlers.websocket(getInstance(WebSocketHandler.class)
+                                .withControllerClass(webSocketRoute.getControllerClass())));
+            } else if (mangooRoute instanceof ServerSentEventRoute) {
+                ServerSentEventRoute serverSentEventRoute = (ServerSentEventRoute) mangooRoute;
+                
+                pathHandler.addExactPath(serverSentEventRoute.getUrl(),
+                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)));
+            } else if (mangooRoute instanceof PathRoute) {
+                PathRoute pathRoute = (PathRoute) mangooRoute;
+                
+                pathHandler.addPrefixPath(pathRoute.getUrl(),
+                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())));
             } else {
                 // Ignoring anything else except WebSocket ServerSentEvent or Resource Path for PathHandler
             }
-        }            
+        });
     }
 
     private static RoutingHandler getRoutingHandler() {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
-        Config config = injector.getInstance(Config.class);
+        Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin").withRequest(Methods.GET).withClass(AdminController.class).withMethod("index").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/health").withRequest(Methods.GET).withClass(AdminController.class).withMethod("health").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler").withRequest(Methods.GET).withClass(AdminController.class).withMethod("scheduler").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger").withRequest(Methods.GET).withClass(AdminController.class).withMethod("logger").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/logger/ajax").withRequest(Methods.POST).withClass(AdminController.class).withMethod("loggerajax").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/routes").withRequest(Methods.GET).withClass(AdminController.class).withMethod("routes").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/metrics").withRequest(Methods.GET).withClass(AdminController.class).withMethod("metrics").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/metrics/reset").withRequest(Methods.GET).withClass(AdminController.class).withMethod("resetMetrics").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/tools").withRequest(Methods.GET).withClass(AdminController.class).withMethod("tools").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/tools/ajax").withRequest(Methods.POST).withClass(AdminController.class).withMethod("toolsajax").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/execute/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("execute").useInternalTemplateEngine());
-            Router.addRoute(new Route(RouteType.REQUEST).toUrl("/@admin/scheduler/state/{name}").withRequest(Methods.GET).withClass(AdminController.class).withMethod("state").useInternalTemplateEngine());
+            Bind.controller(AdminController.class).with(
+                    On.get().to("/@admin").respondeWith("index"),
+                    On.get().to("/@admin/health").respondeWith("health"),
+                    On.get().to("/@admin/scheduler").respondeWith("scheduler"),
+                    On.get().to("/@admin/logger").respondeWith("logger"),
+                    On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
+                    On.get().to("/@admin/routes").respondeWith("routes"),
+                    On.get().to("/@admin/metrics").respondeWith("metrics"),
+                    On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
+                    On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
+                    On.get().to("/@admin/tools").respondeWith("tools"),
+                    On.post().to("/@admin/tools/ajax").respondeWith("toolsajax"),
+                    On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
+                    On.get().to("/@admin/scheduler/state/{name}").respondeWith("state")
+             );
         }
 
-        Router.getRoutes().parallelStream().forEach((Route route) -> {
-            if (RouteType.REQUEST == route.getRouteType()) {
+        Router.getRoutes().forEach((mangooRoute) -> {
+            if (mangooRoute instanceof RequestRoute) {
+                RequestRoute requestRoute = (RequestRoute) mangooRoute;
                 DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
-                        .dispatch(route.getControllerClass(), route.getControllerMethod())
-                        .isBlocking(route.isBlockingAllowed())
-                        .withUsername(route.getUsername())
-                        .withPassword(route.getPassword())
-                        .withLimit(route.getLimit());
+                        .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
+                        .isBlocking(requestRoute.isBlocking())
+                        .withLimit(requestRoute.getLimit());
                 
-                routingHandler.add(route.getRequestMethod(),route.getUrl(), dispatcherHandler);
-            } else if (RouteType.RESOURCE_FILE == route.getRouteType()) {
-                routingHandler.add(Methods.GET, route.getUrl(), resourceHandler);
+                routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
+            } else if (mangooRoute instanceof FileRoute) {
+                FileRoute fileRoute = (FileRoute) mangooRoute;
+                routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler);
             } else {
                 // Ignoring anything else except Request and RequestFile for DispatcherHandler
             }
@@ -516,7 +484,7 @@ public final class Application {
     }
 
     private static void prepareUndertow() {
-        Config config = injector.getInstance(Config.class);
+        Config config = getInstance(Config.class);
         
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -585,9 +553,8 @@ public final class Application {
     private static List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
         try {
-            final Class<?> applicationModule = Class.forName(Default.MODULE_CLASS.toString());
             modules.add(new io.mangoo.core.Module());
-            modules.add((AbstractModule) applicationModule.getConstructor().newInstance());
+            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
@@ -598,11 +565,11 @@ public final class Application {
     }
     
     private static void applicationStarted() {
-        injector.getInstance(MangooLifecycle.class).applicationStarted();            
+        getInstance(MangooBootstrap.class).applicationStarted();            
     }
 
     private static void prepareScheduler() {
-        Config config = injector.getInstance(Config.class);
+        Config config = getInstance(Config.class);
         
         List<Class<?>> jobs = new ArrayList<>();
         try (ScanResult scanResult =
@@ -615,7 +582,7 @@ public final class Application {
         }
         
         if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
-            final Scheduler mangooScheduler = injector.getInstance(Scheduler.class);
+            final Scheduler mangooScheduler = getInstance(Scheduler.class);
             mangooScheduler.initialize();
             
             for (Class<?> clazz : jobs) {

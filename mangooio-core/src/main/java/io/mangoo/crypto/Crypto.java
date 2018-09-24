@@ -46,7 +46,7 @@ public class Crypto {
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String ENCODING = "UTF8";
-    private static final String CIPHER = "RSA/NONE/OAEPWithSHA512AndMGF1Padding";
+    private static final String CIPHER = "RSA/ECB/OAEPWithSHA512AndMGF1Padding";
     private static final String ALGORITHM = "RSA";
     private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
@@ -297,7 +297,7 @@ public class Crypto {
      * @return Bytes array
      * @throws IOException
      */
-    private byte[] decodeBase64(String text) throws IOException {
+    private byte[] decodeBase64(String text) {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         
         return org.apache.commons.codec.binary.Base64.decodeBase64(text);

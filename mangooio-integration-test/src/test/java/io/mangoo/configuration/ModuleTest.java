@@ -16,7 +16,7 @@ import com.google.inject.Stage;
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
-import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.templating.TemplateEngine;
 
@@ -41,7 +41,7 @@ public class ModuleTest {
 		Binding<Cache> cache = guice.getBinding(Cache.class);
 		Binding<TemplateEngine> templateEngine = guice.getBinding(TemplateEngine.class);		
 		Binding<MangooRequestFilter> mangooRequestFilter = guice.getBinding(MangooRequestFilter.class);
-		Binding<MangooLifecycle> mangooLifecycle = guice.getBinding(MangooLifecycle.class);
+		Binding<MangooBootstrap> mangooBootstrap = guice.getBinding(MangooBootstrap.class);
 		
 		//then
 		assertThat(stage.getKey().getTypeLiteral().getType().getTypeName(), equalTo("com.google.inject.Stage"));
@@ -52,7 +52,6 @@ public class ModuleTest {
 		assertThat(cache.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.cache.Cache"));
 		assertThat(templateEngine.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.templating.TemplateEngine"));
 		assertThat(mangooRequestFilter.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooRequestFilter"));
-		assertThat(mangooLifecycle.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooLifecycle"));
-		
+		assertThat(mangooBootstrap.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooBootstrap"));
 	}
 }

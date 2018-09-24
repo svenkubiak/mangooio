@@ -10,8 +10,8 @@ import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
-import io.mangoo.routing.Route;
 import io.mangoo.routing.Router;
+import io.mangoo.routing.routes.RequestRoute;
 
 /**
  *
@@ -28,9 +28,9 @@ public class RouteMethod implements TemplateMethodModelEx {
         String url;
         if (arguments.size() >= MIN_ARGUMENTS) {
             String controller = ((SimpleScalar) arguments.get(0)).getAsString();
-            Route route = Router.getReverseRoute(controller);
-            if (route != null) {
-                url = route.getUrl();
+            RequestRoute requestRoute = Router.getReverseRoute(controller);
+            if (requestRoute != null) {
+                url = requestRoute.getUrl();
                 Matcher matcher = PARAMETER_PATTERN.matcher(url);
                 int i = 1;
                 while (matcher.find()) {

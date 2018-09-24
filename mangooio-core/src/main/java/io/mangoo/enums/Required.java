@@ -102,7 +102,9 @@ public enum Required {
     VALUE("value can not be null"),
     VALUES("values can not be null"),
     PUBLIC_KEY("public key can not be null"),
-    PRIVATE_KEY("private key can not be null");
+    PRIVATE_KEY("private key can not be null"),
+    HTTP_METHOD("HTTP method can not be null"),
+    MAPPING("mapping can not be null");
     
     private final String value;
 

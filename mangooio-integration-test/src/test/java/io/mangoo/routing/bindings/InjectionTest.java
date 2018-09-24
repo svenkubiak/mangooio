@@ -14,7 +14,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooLifecycle;
+import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
@@ -207,9 +207,9 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMangooLifecycle() {
+    public void testMangooBootstrap() {
         //given
-        MangooLifecycle mangooLifecycle = Application.getInstance(MangooLifecycle.class);
+        MangooBootstrap mangooLifecycle = Application.getInstance(MangooBootstrap.class);
         
         //then
         assertThat(mangooLifecycle, not(nullValue()));

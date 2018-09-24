@@ -8,9 +8,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Preconditions;
+import com.tc.text.StringUtils;
 
 import io.mangoo.enums.Required;
-import io.mangoo.enums.RouteType;
+import io.mangoo.interfaces.MangooRoute;
+import io.mangoo.routing.routes.RequestRoute;
 
 /**
  *
@@ -18,8 +20,8 @@ import io.mangoo.enums.RouteType;
  *
  */
 public final class Router {
-    private static Set<Route> routes = ConcurrentHashMap.newKeySet();
-    private static Map<String, Route> reverseRoutes = new ConcurrentHashMap<>();
+    private static Set<MangooRoute> routes = ConcurrentHashMap.newKeySet();
+    private static Map<String, RequestRoute> reverseRoutes = new ConcurrentHashMap<>();
     private static final int MAX_ROUTES = 100000;
 
     private Router(){
@@ -30,20 +32,24 @@ public final class Router {
      *
      * @param route The route to add
      */
-    public static void addRoute(Route route) {
+    public static void addRoute(MangooRoute route) {
         Objects.requireNonNull(route, Required.ROUTE.toString());
         Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);
-        if (route.getRouteType() == RouteType.REQUEST) {
-            reverseRoutes.put((route.getControllerClass().getSimpleName() + ":" + route.getControllerMethod()).toLowerCase(Locale.ENGLISH), route);    
+
+        if (route instanceof RequestRoute) {
+            RequestRoute requestRoute = (RequestRoute) route;
+            if (requestRoute.getControllerClass() != null && StringUtils.isNotBlank(requestRoute.getControllerMethod())) {
+                reverseRoutes.put((requestRoute.getControllerClass().getSimpleName() + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);    
+            }   
         }
     }
 
     /**
      * @return An unmodifiable set of all configured routes
      */
-    public static Set<Route> getRoutes() {
+    public static Set<MangooRoute> getRoutes() {
         return Collections.unmodifiableSet(routes);
     }
     
@@ -53,8 +59,8 @@ public final class Router {
      * @param key The controller class and method in the form ControllerClass:ControllerMethod
      * @return A route object based on the given controller and method or null if none found
      */
-    public static Route getReverseRoute(String key) {
+    public static RequestRoute getReverseRoute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
+        return (RequestRoute) reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
     }
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -16,7 +15,6 @@ import com.google.common.io.Resources;
 
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.enums.RouteType;
 
 /**
  *
@@ -27,37 +25,6 @@ public final class BootstrapUtils {
     private static final Logger LOG = LogManager.getLogger(BootstrapUtils.class);
 
     private BootstrapUtils() {
-    }
-
-    /**
-     * Retrieves a RouteType enum based on a given method string
-     *
-     * @param method The method to check
-     * @return The RouteType enum or null if given method is undefined
-     */
-    public static RouteType getRouteType(String method) {
-        Objects.requireNonNull(method, Required.METHOD.toString());
-        
-        switch (method.toUpperCase(Locale.ENGLISH)) {
-        case "GET":
-        case "POST":
-        case "PUT":
-        case "DELETE":
-        case "PATCH":
-        case "OPTIONS":
-        case "HEAD":
-            return RouteType.REQUEST;
-        case "WSS":
-            return RouteType.WEBSOCKET;
-        case "SSE":
-            return RouteType.SERVER_SENT_EVENT;
-        case "FILE":
-            return RouteType.RESOURCE_FILE;
-        case "PATH":
-            return RouteType.RESOURCE_PATH;
-        default:
-            return null;
-        }
     }
 
     /**

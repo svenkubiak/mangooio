@@ -1,11 +1,17 @@
 package io.mangoo.interfaces;
 
 /**
- *
+ * 
  * @author svenkubiak
  *
  */
-public interface MangooLifecycle {
+public interface MangooBootstrap {
+    
+    /**
+     * Place all routes for your application in this method
+     */
+    void initializeRoutes();
+    
     /**
      * Executed after config is loaded and Google Guice injector is initialized
      */
