@@ -29,6 +29,7 @@ public class RouteMethod implements TemplateMethodModelEx {
         if (arguments.size() >= MIN_ARGUMENTS) {
             String controller = ((SimpleScalar) arguments.get(0)).getAsString();
             RequestRoute requestRoute = Router.getReverseRoute(controller);
+            
             if (requestRoute != null) {
                 url = requestRoute.getUrl();
                 Matcher matcher = PARAMETER_PATTERN.matcher(url);

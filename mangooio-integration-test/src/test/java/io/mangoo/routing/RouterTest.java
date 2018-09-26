@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import controllers.ApplicationController;
 import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.interfaces.MangooBootstrap;
 
 /**
  * 
@@ -33,8 +36,13 @@ public class RouterTest {
     public void testMaxRoutes() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             for (int i=0; i <= 100000; i++) {
-                On.get().to("/foo").respondeWith("index");
+                Bind.controller(ApplicationController.class).withRoutes(
+                        On.get().to("/foo").respondeWith("index")
+                );
             }
           });
+        
+        Router.reset();
+        Application.getInstance(MangooBootstrap.class).initializeRoutes();
     }
 }

@@ -170,15 +170,13 @@ public class AdminController {
     }
     
     public Response routes() {
-//        Set<Route> routes = Router.getRoutes()
-//            .stream()
-//            .filter((Route route) -> !route.getUrl().contains("@admin"))
-//            .collect(Collectors.toSet());
-//        
+        //FIX ME
+        //Set<MangooRoute> routes = Router.getRoutes();
+        
         return Response.withOk()
                 .andContent(SPACE, ROUTES)
                 .andContent(VERSION, VERSION_TAG)
-                //.andContent(ROUTES, routes)
+                .andContent(ROUTES, new ArrayList<>())
                 .andTemplate(Template.DEFAULT.routesPath());
     }
     

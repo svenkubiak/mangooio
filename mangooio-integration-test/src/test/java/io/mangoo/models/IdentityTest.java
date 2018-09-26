@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.utils.CodecUtils;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.PasswordCredential;
 
@@ -25,7 +24,7 @@ public class IdentityTest {
     @Test
     public void testValidVerify() {
         //given
-        Identity identity = new Identity("foo", CodecUtils.hexJBcrypt("bar"));
+        Identity identity = new Identity("foo", "bar");
         PasswordCredential credential = new PasswordCredential(password);
 
         //when
@@ -39,7 +38,7 @@ public class IdentityTest {
     @Test
     public void testNonValidVerify() {
         //given
-        Identity identity = new Identity("foo", CodecUtils.hexJBcrypt("abar"));
+        Identity identity = new Identity("foo", "abar");
         PasswordCredential credential = new PasswordCredential(password);
 
         //when

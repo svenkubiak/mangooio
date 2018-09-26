@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.mangoo.enums.Required;
-import io.mangoo.utils.CodecUtils;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.IdentityManager;
@@ -73,9 +72,7 @@ public class Identity implements IdentityManager {
 
     private boolean verifyCredential(Credential credential) {
         if (credential instanceof PasswordCredential) {
-            return CodecUtils.checkJBCrypt(
-                    new String (((PasswordCredential) credential).getPassword()),
-                    this.password);
+            return new String (((PasswordCredential) credential).getPassword()).equals(this.password);
         }
         
         return false;

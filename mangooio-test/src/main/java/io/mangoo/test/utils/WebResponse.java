@@ -228,7 +228,7 @@ public class WebResponse {
      * @param password The password
      * @return Response
      */
-    public WebResponse withBasicauthentication(String username, String password) {
+    public WebResponse withBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, "username can not be null");
         Objects.requireNonNull(password, "password can not be null");
 

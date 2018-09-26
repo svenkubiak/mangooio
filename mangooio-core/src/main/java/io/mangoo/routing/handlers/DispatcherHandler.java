@@ -56,6 +56,8 @@ public class DispatcherHandler implements HttpHandler {
     private int methodParametersCount;
     private boolean hasRequestFilter;
     private boolean blocking;
+    private boolean authentication;
+    private boolean authroization;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
@@ -98,13 +100,24 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
     
-    public DispatcherHandler withUsername(String username) {
+    public DispatcherHandler withBasicAuthentication(String username, String password) {
         this.username = username;
+        this.password = password;
+        
+        return this;
+    }
+
+    public DispatcherHandler withAuthentication(boolean hasAuthentication) {
+        this.authentication = true;
         return this;
     }
     
-    public DispatcherHandler withPassword(String password) {
-        this.password = password;
+    public DispatcherHandler withAuthorization(boolean authorization) {
+//        if (authorization) {
+//            this.authentication = true;
+//            this.authroization = true;
+//        }
+//        
         return this;
     }
     
@@ -134,8 +147,9 @@ public class DispatcherHandler implements HttpHandler {
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withLimit(this.limit)
-            .withUsername(this.username)
-            .withPassword(this.password)
+            .withAuthorization(this.authroization)
+            .withAuthentication(this.authentication)
+            .withBasicAuthentication(this.username, this.password)
             .withTemplateEngine(this.templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);

@@ -23,6 +23,7 @@ public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.Clo
         if (!started) {
             init();
             Application.start(Mode.TEST);  
+            started = true;
         }
     }
 

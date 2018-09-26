@@ -73,9 +73,9 @@ public class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/route"));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
     @Test
@@ -85,9 +85,9 @@ public class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/string\n/int/23\n/multiple/11/42"));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
     @Test

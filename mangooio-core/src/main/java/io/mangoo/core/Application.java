@@ -423,12 +423,15 @@ public final class Application {
                 
                 pathHandler.addExactPath(webSocketRoute.getUrl(),
                         Handlers.websocket(getInstance(WebSocketHandler.class)
-                                .withControllerClass(webSocketRoute.getControllerClass())));
+                                .withControllerClass(webSocketRoute.getControllerClass())
+                                .withAuthentication(webSocketRoute.hasAuthentication())));
+
             } else if (mangooRoute instanceof ServerSentEventRoute) {
                 ServerSentEventRoute serverSentEventRoute = (ServerSentEventRoute) mangooRoute;
                 
                 pathHandler.addExactPath(serverSentEventRoute.getUrl(),
-                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)));
+                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
+                                .withAuthentication(serverSentEventRoute.hasAuthentication())));
             } else if (mangooRoute instanceof PathRoute) {
                 PathRoute pathRoute = (PathRoute) mangooRoute;
                 
@@ -446,7 +449,8 @@ public final class Application {
         
         Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
-            Bind.controller(AdminController.class).with(
+            Bind.controller(AdminController.class).withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+            .withRoutes(
                     On.get().to("/@admin").respondeWith("index"),
                     On.get().to("/@admin/health").respondeWith("health"),
                     On.get().to("/@admin/scheduler").respondeWith("scheduler"),
@@ -469,6 +473,9 @@ public final class Application {
                 DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                         .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                         .isBlocking(requestRoute.isBlocking())
+                        .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
+                        .withAuthentication(requestRoute.hasAuthentication())
+                        .withAuthorization(requestRoute.hasAuthorization())
                         .withLimit(requestRoute.getLimit());
                 
                 routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
@@ -557,7 +564,7 @@ public final class Application {
             modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            LOG.error("Failed to load modules. Check that conf/Module.java exists in your application", e);
+            LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);
             failsafe();
         }
         

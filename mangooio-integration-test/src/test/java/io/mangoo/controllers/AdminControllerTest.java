@@ -24,7 +24,6 @@ import io.undertow.util.StatusCodes;
 @ExtendWith({TestExtension.class})
 public class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
-    private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
     private static final String METRICS = "metrics";
@@ -34,10 +33,21 @@ public class AdminControllerTest {
     private static final String CONTROL_PANEL = "Dashboard";
     
     @Test
+    public void testDashboardUnAuthorized() {
+        //given
+        WebResponse response = WebRequest.get("/@admin").execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
+    }
+    
+    @Test
     public void testDashboardAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -55,7 +65,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(LOGGER)));
     }
     
@@ -63,7 +72,7 @@ public class AdminControllerTest {
     public void testLoggerAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/logger")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -72,24 +81,12 @@ public class AdminControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(LOGGER));
     }
-    
-    @Test
-    public void testDashboardUnAuthorized() {
-        //given
-        WebResponse response = WebRequest.get("/@admin").execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
-        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
-    }
 
     @Test
     public void testRoutedAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/routes")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -107,7 +104,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(ROUTES)));
     }
 
@@ -115,7 +111,7 @@ public class AdminControllerTest {
     public void testMetricsAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/metrics")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -129,7 +125,7 @@ public class AdminControllerTest {
     public void testResetMetricsAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/metrics/reset")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -162,7 +158,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(ROUTES)));
     }
     
@@ -174,7 +169,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(METRICS)));
     }
     
@@ -182,7 +176,7 @@ public class AdminControllerTest {
     public void testSchedulerAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/scheduler")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -200,7 +194,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
     
@@ -208,7 +201,7 @@ public class AdminControllerTest {
     public void testToolsAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/tools")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -226,7 +219,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), not(containsString(TOOLS)));
     }
     
@@ -234,7 +226,7 @@ public class AdminControllerTest {
     public void testToolsAjaxAuthorized() {
         //given
         WebResponse response = WebRequest.post("/@admin/tools/ajax")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -251,7 +243,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
     
@@ -259,7 +250,7 @@ public class AdminControllerTest {
     public void testLoggerAjaxAuthorized() {
         //given
         WebResponse response = WebRequest.post("/@admin/logger/ajax")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -276,7 +267,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
     
@@ -284,7 +274,7 @@ public class AdminControllerTest {
     public void testHealthAuthorized() {
         //given
         WebResponse response = WebRequest.get("/@admin/health")
-                .withBasicauthentication(ADMIN, ADMIN)
+                .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
         //then
@@ -302,7 +292,6 @@ public class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
         assertThat(response.getContent(), not(containsString("uptime")));
     }
 }

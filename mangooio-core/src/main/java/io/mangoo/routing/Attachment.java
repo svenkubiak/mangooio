@@ -44,6 +44,7 @@ public class Attachment {
     private String password;
     private Request request;
     private boolean requestFilter;
+    private boolean authorization;
     private Map<String, String> requestParameter;
     private Response response;
     private Session session;
@@ -159,6 +160,10 @@ public class Attachment {
     public boolean hasAuthentication() {
         return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
     }
+    
+    public boolean hasAuthorization() {
+        return this.authorization;
+    }
 
     public boolean hasLimit() {
         return this.limit > 0;
@@ -256,8 +261,10 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withPassword(String password) {
+    public Attachment withBasicAuthentication(String username, String password) {
+        this.username = username;
         this.password = password;
+        
         return this;
     }
     
@@ -276,8 +283,13 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withUsername(String username) {
-        this.username = username;
+    public Attachment withAuthorization(boolean authroization) {
+        this.authorization = authroization;
+        return this;
+    }
+
+    public Attachment withAuthentication(boolean authentication) {
+        //this.authentication = authentication;
         return this;
     }
 }

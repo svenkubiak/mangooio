@@ -41,11 +41,10 @@ public class AttachmentTest {
         attachment.withMethodAnnotations(new ArrayList<Annotation>());
         attachment.withMethodParameterCount(42);
         attachment.withMethodParameters(new HashMap<>());
-        attachment.withPassword("foobar");
+        attachment.withBasicAuthentication("peter", "foobar");
         attachment.withRequestFilter(true);
         attachment.withRequestParameter(new HashMap<>());
         attachment.withTemplateEngine(Application.getInstance(TemplateEngine.class));
-        attachment.withUsername("peter");
         
         //then
         assertThat(attachment.getClassAnnotations(), instanceOf(ArrayList.class));

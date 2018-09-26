@@ -356,7 +356,7 @@
 			<dependency>
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
-				<version>3.6.0</version>
+				<version>3.6.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -367,7 +367,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.36</version>
+				<version>0.37</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
@@ -392,7 +392,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.1.7</version>
+				<version>4.2.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -489,7 +489,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.8</version>
+				<version>3.8.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>

@@ -41,7 +41,7 @@ public final class Router {
         if (route instanceof RequestRoute) {
             RequestRoute requestRoute = (RequestRoute) route;
             if (requestRoute.getControllerClass() != null && StringUtils.isNotBlank(requestRoute.getControllerMethod())) {
-                reverseRoutes.put((requestRoute.getControllerClass().getSimpleName() + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);    
+                reverseRoutes.put((requestRoute.getControllerClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);    
             }   
         }
     }
@@ -62,5 +62,13 @@ public final class Router {
     public static RequestRoute getReverseRoute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         return (RequestRoute) reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
+    }
+    
+    /**
+     * Removes all routes from the router
+     */
+    public static void reset() {
+        routes = ConcurrentHashMap.newKeySet();
+        reverseRoutes = new ConcurrentHashMap<>();
     }
 }

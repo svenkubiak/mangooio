@@ -29,11 +29,11 @@ public class BasicAuthenticationControllerTest {
     @Test
     public void testBasicAuthenticationSuccess() {
         //given
-        final WebResponse response = WebRequest.get("/basicauth").withBasicauthentication("foo", "bar").execute();
+        final WebResponse response = WebRequest.get("/basicauth").withBasicAuthentication("foo", "bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContent(), equalTo("authenticated"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("authenticated"));
     }
 }

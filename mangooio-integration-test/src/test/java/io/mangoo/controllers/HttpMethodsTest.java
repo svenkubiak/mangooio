@@ -44,7 +44,7 @@ public class HttpMethodsTest {
     @Test
     public void testPut() {
         //given
-        final WebResponse response = WebRequest.put("/").execute();
+        final WebResponse response = WebRequest.put("/put").execute();
 
         //then
         assertThat(response, not(nullValue()));

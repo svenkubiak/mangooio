@@ -7,7 +7,7 @@
             <h1>Routes</h1>
           </div>
         </div>
-      </div><!-- /.container-fluid -->
+      </div>
     </section>
 <section class="content">
       <div class="container-fluid">
