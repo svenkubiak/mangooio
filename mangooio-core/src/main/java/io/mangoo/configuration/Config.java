@@ -9,6 +9,7 @@ import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -107,8 +108,8 @@ public class Config {
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
-            try {
-                String key = Files.lines(Paths.get(keyFile)).findFirst().orElse(null);
+            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) {
+                String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
                     String cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");

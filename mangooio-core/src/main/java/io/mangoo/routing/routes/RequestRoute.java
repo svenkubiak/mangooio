@@ -1,5 +1,6 @@
 package io.mangoo.routing.routes;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +35,8 @@ public class RequestRoute implements MangooRoute {
     }
     
     public RequestRoute(Http... methods) {
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
-        this.methods = methods;
+        Objects.requireNonNull(methods, Required.HTTP_METHOD.toString());
+        this.methods = Arrays.copyOf(methods, methods.length);;
     }
 
     /**
@@ -176,17 +177,16 @@ public class RequestRoute implements MangooRoute {
         return password;
     }
 
-    public RequestRoute requireAuthorization(String role) {
-        //TODO needs implementation
-        return this;
-    }
-    
     public boolean hasMultipleMethods() {
         return methods != null && methods.length > 0;
     }
 
     public Http[] getMethods() {
-        return methods;
+        if (this.methods != null) {
+            return Arrays.copyOf(this.methods, this.methods.length);
+        }
+        
+        return null;
     }
 
     @Override

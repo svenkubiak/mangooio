@@ -25,7 +25,6 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
-    private Attachment attachment;
     private Config config;
     
     @Inject
@@ -35,8 +34,8 @@ public class ResponseHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        final Response response = this.attachment.getResponse();
+        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
+        final Response response = attachment.getResponse();
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);
