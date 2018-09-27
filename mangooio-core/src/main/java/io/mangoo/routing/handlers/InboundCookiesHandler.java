@@ -120,7 +120,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = Authentication.create().withIdentifier(null);
+        Authentication authentication = Authentication.create().withSubject(null);
         
         String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
@@ -138,12 +138,12 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 if (("-1").equals(expiresClaim)) {
                     authentication = Authentication.create()
-                            .withIdentifier(jwtClaims.getSubject())
+                            .withSubject(jwtClaims.getSubject())
                             .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
                             .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))
-                            .withIdentifier(jwtClaims.getSubject())
+                            .withSubject(jwtClaims.getSubject())
                             .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 } else {
                     //Ignore this and use default authentication

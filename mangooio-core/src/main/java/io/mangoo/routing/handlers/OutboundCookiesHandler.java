@@ -141,7 +141,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             } 
             
             JwtClaims jwtClaims = new JwtClaims();
-            jwtClaims.setSubject(authentication.getIdentifier());
+            jwtClaims.setSubject(authentication.getSubject());
             jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
             
             if (authentication.getExpires() == null) {

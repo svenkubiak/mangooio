@@ -8,13 +8,13 @@ import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Form;
 
 public class AuthenticationController {
-    private static final String IDENTIFIER = "jfljfdklöjklöjkfdEweje2kqe";
+    private static final String SUBJECT = "mysubject";
     private static final String SECRET = "MyVoiceIsMySecret";
     private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
     public Response notauthenticated(Authentication authentication) {
         return Response.withOk()
-                .andTextBody(authentication.getIdentifier());
+                .andTextBody(authentication.getSubject());
     }
 
     @FilterWith(OAuthLoginFilter.class)
@@ -25,7 +25,7 @@ public class AuthenticationController {
     @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
         if (authentication.isValid()) {
-            authentication.login(IDENTIFIER);
+            authentication.login(SUBJECT);
             return Response.withRedirect(AUTHENTICATIONREQUIRED);
         }
 
@@ -33,12 +33,12 @@ public class AuthenticationController {
     }
 
     public Response doLogin(Authentication authentication) {
-        authentication.login(IDENTIFIER);
+        authentication.login(SUBJECT);
         return Response.withRedirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
-        authentication.login(IDENTIFIER).twoFactorAuthentication(true);
+        authentication.login(SUBJECT).twoFactorAuthentication(true);
         
         return Response.withRedirect("/");
     }
@@ -58,6 +58,6 @@ public class AuthenticationController {
     
     public Response subject(Authentication authentication) {
         return Response.withOk()
-                .andContent("identifier", authentication.getIdentifier());
+                .andContent("identifier", authentication.getSubject());
     }
 }

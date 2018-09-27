@@ -26,7 +26,7 @@ import io.mangoo.utils.TotpUtils;
 public class Authentication {
     private LocalDateTime expires;
     private OAuthUser oAuthUser;
-    private String identifier;
+    private String subject;
     private boolean twoFactor;
     private boolean remember;
     private boolean loggedOut;
@@ -45,21 +45,21 @@ public class Authentication {
         return this;
     }
     
-    public Authentication withIdentifier(String identifier) {
-        if (StringUtils.isBlank(this.identifier)) {
-            this.identifier = identifier;            
+    public Authentication withSubject(String subject) {
+        if (StringUtils.isBlank(this.subject)) {
+            this.subject = subject;            
         }
         
         return this;
     }
 
     /**
-     * Retrieves the current identifier
+     * Retrieves the current subject
      *
-     * @return The identifier of the current authenticated user or null
+     * @return The subject of the current authentication or null if not set
      */
-    public String getIdentifier() {
-        return this.identifier;
+    public String getSubject() {
+        return this.subject;
     }
     
     /**
@@ -72,7 +72,7 @@ public class Authentication {
     /**
      * Returns the LocalDateTime when the authentication expires
      *
-     * @return A LocalDateTime object or null if unset
+     * @return A LocalDateTime object or null if not set
      */
     public LocalDateTime getExpires() {
         return this.expires;
@@ -152,25 +152,22 @@ public class Authentication {
      * Performs a login by setting the authentication to the given identifier
      * Please note, that calling validLogin is mandatory before this call!
      * 
-     * It is highly recommended NOT to use a username or anything else than
-     * can be related to a user as an identifer!
-     * 
-     * @param identifier The identifier to use
+     * @param subject The subject to login
      * @return Authentication object
      */
-    public Authentication login(String identifier) {
-        this.identifier = identifier;
+    public Authentication login(String subject) {
+        this.subject = subject;
         return this;
     }
     
     /**
      * Sets the remember me functionality, default is false
      * 
-     * @param rememmber The state of remember to set
+     * @param remember The state of remember to set
      * @return Authentication object
      */
-    public Authentication rememberMe(boolean rememmber) {
-        this.remember = rememmber;
+    public Authentication rememberMe(boolean remember) {
+        this.remember = remember;
         return this;
     }
     
@@ -241,7 +238,7 @@ public class Authentication {
      * @return True if authentication contains an authentication, false otherwise
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.identifier) || this.oAuthUser != null;
+        return StringUtils.isNotBlank(this.subject) || this.oAuthUser != null;
     }
     
     public boolean isInvalid() {
