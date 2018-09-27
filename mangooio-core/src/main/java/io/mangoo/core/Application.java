@@ -475,6 +475,7 @@ public final class Application {
                         .isBlocking(requestRoute.isBlocking())
                         .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                         .withAuthentication(requestRoute.hasAuthentication())
+                        .withAuthorization(requestRoute.hasAuthorization())
                         .withLimit(requestRoute.getLimit());
                 
                 routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);

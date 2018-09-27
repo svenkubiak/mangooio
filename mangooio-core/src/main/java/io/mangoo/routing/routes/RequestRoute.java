@@ -143,7 +143,13 @@ public class RequestRoute implements MangooRoute {
         return this;
     }
     
-    public RequestRoute requiresAuthrozation(String role) {
+    /**
+     * Sets authorization to true, default is false
+     * 
+     * @return RequestRoute instance
+     */
+    public RequestRoute requireAuthorization() {
+        this.authorization = true;
         return this;
     }
     
@@ -162,7 +168,7 @@ public class RequestRoute implements MangooRoute {
     }
 
     public boolean hasAuthorization() {
-        return authorization;
+        return this.authorization;
     }
     
     public boolean hasBasicAuthentication() {

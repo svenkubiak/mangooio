@@ -51,6 +51,7 @@ public class Attachment {
     private int methodParametersCount;
     private boolean requestFilter;
     private boolean requiresAuthentication;
+    private boolean requiresAuthorization;
 
     public static Attachment build() {
         return new Attachment();
@@ -285,5 +286,14 @@ public class Attachment {
     public Attachment withAuthentication(boolean authentication) {
         this.requiresAuthentication = authentication;
         return this;
+    }
+    
+    public Attachment withAuthorization(boolean authorization) {
+        this.requiresAuthorization = authorization;
+        return this;
+    }
+
+    public boolean hasAuthorization() {
+        return this.requiresAuthorization;
     }
 }

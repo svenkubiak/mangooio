@@ -16,9 +16,10 @@ import io.mangoo.routing.Router;
  */
 public class ControllerRoute {
     private Class<?> controllerClass;
-    private boolean authentication;
     private String username;
     private String password;
+    private boolean authentication;
+    private boolean authorization;
     
     /**
      * Creates a new set of route to a given controller class
@@ -45,6 +46,14 @@ public class ControllerRoute {
 
             if (hasBasicAuthentication()) {
                 requestRoute.withBasicAuthentication(this.username, this.password);
+            }
+            
+            if (hasAuthentication()) {
+                requestRoute.requireAuthentication();
+            }
+            
+            if (hasAuthorization()) {
+                requestRoute.requireAuthorization();
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -83,12 +92,25 @@ public class ControllerRoute {
      */
     public ControllerRoute requireAuthentication() {
         this.authentication = true;
-        
+        return this;
+    }
+    
+    /**
+     * Sets authentication to true, default is false
+     * 
+     * @return controller route instance
+     */
+    public ControllerRoute requireAuthorization() {
+        this.authorization = true;
         return this;
     }
     
     public boolean hasAuthentication() {
         return this.authentication;
+    }
+    
+    public boolean hasAuthorization() {
+        return this.authorization;
     }
     
     public boolean hasBasicAuthentication() {

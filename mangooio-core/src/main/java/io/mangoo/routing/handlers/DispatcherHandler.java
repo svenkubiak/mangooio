@@ -57,6 +57,7 @@ public class DispatcherHandler implements HttpHandler {
     private boolean requestFilter;
     private boolean blocking;
     private boolean authentication;
+    private boolean authorization;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
@@ -111,6 +112,11 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
     
+    public DispatcherHandler withAuthorization(boolean authorization) {
+        this.authorization = authorization;
+        return this;
+    }
+    
     public DispatcherHandler withLimit(int limit) {
         this.limit = limit;
         return this;
@@ -138,6 +144,7 @@ public class DispatcherHandler implements HttpHandler {
             .withMessages(this.messages)
             .withLimit(this.limit)
             .withAuthentication(this.authentication)
+            .withAuthorization(this.authorization)
             .withBasicAuthentication(this.username, this.password)
             .withTemplateEngine(this.templateEngine);
 

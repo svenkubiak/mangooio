@@ -10,6 +10,7 @@ public enum Required {
     ALGORITHM("algorithm can not be null"),
     APPLICATION_SECRET("application secret can not be null"),
     AUTHENTICITY("authenticity can not be null"),
+    AUTHORIZATION_SERVICE("authorization service can not be null"),
     BCC_RECIPIENT("bcc recipient can not be null"),
     BINDING("binding can not be null"),
     BODY("body can not be null"),
@@ -48,6 +49,7 @@ public enum Required {
     HEADER("header can not be null"),
     HEADERS("headers can not be null"),
     HTTP_HANDLER("httpHandler can not be null"),
+    HTTP_METHOD("HTTP method can not be null"),
     HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),
     IDENTIFIER("identifier can not be null"),
     IDENTITY("identity can not be null"),
@@ -61,6 +63,7 @@ public enum Required {
     LOCAL_DATE_TIME("localDateTime can not be null"),
     LOCALE("locale can not be null"),
     MAP("map can not be null"),
+    MAPPING("mapping can not be null"),
     MESSAGE("message can not be null"),
     MESSAGES("messages can not be null"),
     METHOD("method can not be null"),
@@ -73,6 +76,8 @@ public enum Required {
     PASSWORD("password can not be null"),
     PATH("path can not be null"),
     PLAIN_TEXT("plan text can not be null"),
+    PRIVATE_KEY("private key can not be null"),
+    PUBLIC_KEY("public key can not be null"),
     RECIPIENT("recipient can not be null"),
     REDIRECT_TO("redirect to can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),
@@ -100,11 +105,7 @@ public enum Required {
     USERNAME("username can not be null"),
     VALIDATOR("validator can not be null"),
     VALUE("value can not be null"),
-    VALUES("values can not be null"),
-    PUBLIC_KEY("public key can not be null"),
-    PRIVATE_KEY("private key can not be null"),
-    HTTP_METHOD("HTTP method can not be null"),
-    MAPPING("mapping can not be null");
+    VALUES("values can not be null");
     
     private final String value;
 
