@@ -1,7 +1,6 @@
 package controllers;
 
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.filters.AuthenticationFilter;
 import io.mangoo.filters.oauth.OAuthCallbackFilter;
 import io.mangoo.filters.oauth.OAuthLoginFilter;
 import io.mangoo.routing.Response;
@@ -13,7 +12,6 @@ public class AuthenticationController {
     private static final String SECRET = "MyVoiceIsMySecret";
     private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
-    @FilterWith(AuthenticationFilter.class)
     public Response notauthenticated(Authentication authentication) {
         return Response.withOk()
                 .andTextBody(authentication.getIdentifier());

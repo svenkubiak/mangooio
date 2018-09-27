@@ -338,13 +338,13 @@ public final class Application {
         }
         
         if (config.getAuthenticationCookieSignKey().equals(config.getApplicationSecret())) {
-            String warning = "Authentication cookie sign key is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.signkey.";
+            String warning = "Authentication cookie sign key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.signkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getAuthenticationCookieEncryptionKey().equals(config.getApplicationSecret())) {
-            String warning = "Authentication cookie encryption is using application secret. It is highly recommend to set a dedicated value to authentication.cookie.encryptionkey.";
+            String warning = "Authentication cookie encryption is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.encryptionkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -362,13 +362,13 @@ public final class Application {
         }
         
         if (config.getSessionCookieSignKey().equals(config.getApplicationSecret())) {
-            String warning = "Session cookie sign key is using application secret. It is highly recommend to set a dedicated value to session.cookie.signkey.";
+            String warning = "Session cookie sign key is using application secret. It is highly recommended to set a dedicated value to session.cookie.signkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getSessionCookieEncryptionKey().equals(config.getApplicationSecret())) {
-            String warning = "Session cookie encryption is using application secret. It is highly recommend to set a dedicated value to session.cookie.encryptionkey.";
+            String warning = "Session cookie encryption is using application secret. It is highly recommended to set a dedicated value to session.cookie.encryptionkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -380,13 +380,13 @@ public final class Application {
         }
         
         if (config.getFlashCookieSignKey().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie sign key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.signkey.";
+            String warning = "Flash cookie sign key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.signkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getFlashCookieEncryptionKey().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie encryption key is using application secret. It is highly recommend to set a dedicated value to flash.cookie.encryptionkey.";
+            String warning = "Flash cookie encryption key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.encryptionkey.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -475,7 +475,7 @@ public final class Application {
                         .isBlocking(requestRoute.isBlocking())
                         .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                         .withAuthentication(requestRoute.hasAuthentication())
-                        .withAuthorization(requestRoute.hasAuthorization())
+                        //.withAuthorization(requestRoute.hasAuthorization())
                         .withLimit(requestRoute.getLimit());
                 
                 routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
@@ -535,7 +535,7 @@ public final class Application {
         final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
         buffer.append('\n')
             .append(BootstrapUtils.getLogo())
-            .append("\n\nhttps://mangoo.io | @mangoo_io | ")
+            .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
             .append(BootstrapUtils.getVersion())
             .append('\n');
 

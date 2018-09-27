@@ -50,7 +50,7 @@ public class FormController {
         List<File> files = form.getFiles();
         for (File file : files) {
             try {
-                content = content + Files.readFirstLine(file, Charset.defaultCharset());
+                content = content + Files.asCharSource(file, Charset.defaultCharset()).readFirstLine();
             } catch (IOException e) {
                 LOG.error("Failed to one of multiple files", e);
             }

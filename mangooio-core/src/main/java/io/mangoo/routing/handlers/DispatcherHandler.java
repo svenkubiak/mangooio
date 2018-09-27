@@ -54,10 +54,9 @@ public class DispatcherHandler implements HttpHandler {
     private String password;    
     private int limit;
     private int methodParametersCount;
-    private boolean hasRequestFilter;
+    private boolean requestFilter;
     private boolean blocking;
     private boolean authentication;
-    private boolean authroization;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
@@ -70,7 +69,7 @@ public class DispatcherHandler implements HttpHandler {
         this.controllerClassName = controllerClass.getSimpleName();
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
-        this.hasRequestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
+        this.requestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
 
         try {
             this.method = Application.getInstance(this.controllerClass)
@@ -107,17 +106,8 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
 
-    public DispatcherHandler withAuthentication(boolean hasAuthentication) {
-        this.authentication = true;
-        return this;
-    }
-    
-    public DispatcherHandler withAuthorization(boolean authorization) {
-//        if (authorization) {
-//            this.authentication = true;
-//            this.authroization = true;
-//        }
-//        
+    public DispatcherHandler withAuthentication(boolean authentication) {
+        this.authentication = authentication;
         return this;
     }
     
@@ -143,11 +133,10 @@ public class DispatcherHandler implements HttpHandler {
             .withMethodParameters(this.methodParameters)
             .withMethod(this.method)
             .withMethodParameterCount(this.methodParametersCount)
-            .withRequestFilter(this.hasRequestFilter)
+            .withRequestFilter(this.requestFilter)
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
             .withMessages(this.messages)
             .withLimit(this.limit)
-            .withAuthorization(this.authroization)
             .withAuthentication(this.authentication)
             .withBasicAuthentication(this.username, this.password)
             .withTemplateEngine(this.templateEngine);

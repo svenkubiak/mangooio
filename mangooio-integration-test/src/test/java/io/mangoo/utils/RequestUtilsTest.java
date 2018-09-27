@@ -179,7 +179,7 @@ public class RequestUtilsTest {
         HttpHandler handler = Mockito.mock(HttpHandler.class);
 
         // when
-        HttpHandler security = RequestUtils.wrapSecurity(handler, "foo", "bar");
+        HttpHandler security = RequestUtils.wrapBasicAuthentication(handler, "foo", "bar");
 
         // then
         assertThat(security, not(equalTo(null)));
@@ -193,7 +193,7 @@ public class RequestUtilsTest {
             HttpHandler handler = Mockito.mock(HttpHandler.class);
 
             // when
-            HttpHandler security = RequestUtils.wrapSecurity(handler, "foo", "bar");
+            HttpHandler security = RequestUtils.wrapBasicAuthentication(handler, "foo", "bar");
             
             // then
             return security != null && security.getClass().getSimpleName().equals("SecurityInitialHandler");

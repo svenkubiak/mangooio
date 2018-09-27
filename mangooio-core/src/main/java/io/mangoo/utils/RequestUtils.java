@@ -277,7 +277,7 @@ public final class RequestUtils {
      * @param password The password to use
      * @return An HttpHandler wrapped through BasicAuthentication
      */
-    public static HttpHandler wrapSecurity(HttpHandler httpHandler, String username, String password) {
+    public static HttpHandler wrapBasicAuthentication(HttpHandler httpHandler, String username, String password) {
         Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());

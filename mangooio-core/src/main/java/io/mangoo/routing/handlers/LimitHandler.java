@@ -110,8 +110,8 @@ public class LimitHandler implements HttpHandler {
      */
     @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (this.attachment.hasAuthentication()) {
-            HttpHandler httpHandler = RequestUtils.wrapSecurity(
+        if (this.attachment.hasBasicAuthentication()) {
+            HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
                     Application.getInstance(LocaleHandler.class),
                     this.attachment.getUsername(),
                     this.attachment.getPassword());

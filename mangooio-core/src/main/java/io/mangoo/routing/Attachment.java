@@ -25,33 +25,32 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 public class Attachment {
+    private final long start = System.currentTimeMillis();
     private Authentication authentication;
+    private String controllerClassName;
+    private String controllerMethodName;
     private String body;
+    private String username;
+    private String password;
     private List<Annotation> classAnnotations;
     private Class<?> controllerClass;
-    private String controllerClassName;
     private Object controllerInstance;
-    private String controllerMethodName;
     private Flash flash;
     private Form form;
-    private int limit;
     private Locale locale;
     private Messages messages;
     private Method method;
     private List<Annotation> methodAnnotations;
     private Map<String, Class<?>> methodParameters;
-    private int methodParametersCount;
-    private String password;
     private Request request;
-    private boolean requestFilter;
-    private boolean authorization;
     private Map<String, String> requestParameter;
     private Response response;
     private Session session;
-    private final long start = System.currentTimeMillis();
     private TemplateEngine templateEngine;
-
-    private String username;
+    private int limit;
+    private int methodParametersCount;
+    private boolean requestFilter;
+    private boolean requiresAuthentication;
 
     public static Attachment build() {
         return new Attachment();
@@ -158,11 +157,11 @@ public class Attachment {
     }
 
     public boolean hasAuthentication() {
-        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
+        return this.requiresAuthentication;
     }
     
-    public boolean hasAuthorization() {
-        return this.authorization;
+    public boolean hasBasicAuthentication() {
+        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
     }
 
     public boolean hasLimit() {
@@ -283,13 +282,8 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withAuthorization(boolean authroization) {
-        this.authorization = authroization;
-        return this;
-    }
-
     public Attachment withAuthentication(boolean authentication) {
-        //this.authentication = authentication;
+        this.requiresAuthentication = authentication;
         return this;
     }
 }

@@ -1,0 +1,48 @@
+[application]
+	name = ${application-name}
+	secret = application.secret
+	admin.enable = false
+	language = en
+	minify.js = true
+	minify.css = true
+	preprocess.js = true
+	preprocess.css = true
+[connector]
+	http.host = localhost
+	http.port = 8080
+[session]
+	cookie.name = ${application-name}-session
+	cookie.signkey = session.cookie.signkey
+	cookie.encryptionskey = session.cookie.encryptionkey
+[flash]
+	cookie.name = ${application-name}-flash
+	cookie.signkey = flash.cookie.signkey
+	cookie.encryptionskey = flash.cookie.encryptionkey 
+[metrics]
+	enable = true
+[authentication]
+	redirect = /login
+	cookie.name = ${application-name}-authentication
+	cookie.signkey = authentication.cookie.signkey
+	cookie.encryptionkey = authentication.cookie.encryptionkey
+[smtp]
+	host = localhost
+	port = 25
+    username = 
+    password = 
+    ssl = false
+[]
+
+[connector<test>]
+	http.host = localhost
+	http.port = 9090
+[smtp<test>]
+	port = 3025
+[]
+
+[connector<dev>]
+	http.host = localhost
+	http.port = 9090
+[smtp<dev>]
+	port = 3025
+[]

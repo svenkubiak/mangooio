@@ -194,17 +194,6 @@ public class InboundCookiesHandler implements HttpHandler {
         
         return flash;
     }
-
-    /**
-     * Handles the next request in the handler chain
-     *
-     * @param exchange The HttpServerExchange
-     * @throws Exception Thrown when an exception occurs
-     */
-    @SuppressWarnings("all")
-    protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(FormHandler.class).handleRequest(exchange);
-    }
     
     /**
      * Retrieves the value of a cookie with a given name from a HttpServerExchange
@@ -225,5 +214,16 @@ public class InboundCookiesHandler implements HttpHandler {
         }
 
         return value;
+    }
+
+    /**
+     * Handles the next request in the handler chain
+     *
+     * @param exchange The HttpServerExchange
+     * @throws Exception Thrown when an exception occurs
+     */
+    @SuppressWarnings("all")
+    protected void nextHandler(HttpServerExchange exchange) throws Exception {
+        Application.getInstance(AuthenticationHandler.class).handleRequest(exchange);
     }
 }

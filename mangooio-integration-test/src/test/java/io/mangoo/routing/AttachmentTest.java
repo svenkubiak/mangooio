@@ -62,6 +62,6 @@ public class AttachmentTest {
         assertThat(attachment.getRequestParameter(), instanceOf(HashMap.class));
         assertThat(attachment.getTemplateEngine(), instanceOf(TemplateEngine.class));
         assertThat(attachment.getUsername(), equalTo("peter"));
-        assertThat(attachment.hasAuthentication(), equalTo(true));
+        assertThat(attachment.hasBasicAuthentication(), equalTo(true));
     }
 }

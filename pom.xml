@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>Intuitive, Lightweight Full Stack Java Web Framework.</description>
-	<url>https://mangoo.io</url>
+	<url>https://github.com/svenkubiak/mangooio</url>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>
 		<license>
@@ -235,6 +235,11 @@
 						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.casbin</groupId>
+				<artifactId>jcasbin</artifactId>
+				<version>1.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.netflix.governator</groupId>
