@@ -87,19 +87,6 @@ public class ControllerRoute {
         return this;
     }
     
-    /**
-     * Sets required authorization role to this route
-     * Authorization implicitly set authentication to true
-     * 
-     * @param role The require role
-     * @return controller route instance
-     */
-    public ControllerRoute requireAuthorization(String role) {
-        // TODO Implementation needed
-        
-        return this;
-    }
-    
     public boolean hasAuthentication() {
         return this.authentication;
     }

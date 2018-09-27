@@ -137,7 +137,7 @@ public class RequestRoute implements MangooRoute {
      * 
      * @return RequestRoute instance
      */
-    public RequestRoute withAuthentication() {
+    public RequestRoute requireAuthentication() {
         this.authentication = true;
         return this;
     }

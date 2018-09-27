@@ -79,19 +79,19 @@ public class Bootstrap implements MangooBootstrap {
         );
         
         // AuthenticationController
-        Bind.controller(AuthenticationController.class).requireAuthentication()
+        Bind.controller(AuthenticationController.class)
         .withRoutes(
                 On.post().to("/dologin").respondeWith("doLogin"),
                 On.post().to("/login").respondeWith("login"),
                 On.get().to("/login").respondeWith("login"),
                 On.get().to("/subject").respondeWith("subject"),
-                On.get().to("/authenticationrequired").respondeWith("notauthenticated"),
+                On.get().to("/authenticationrequired").respondeWith("notauthenticated").requireAuthentication(),
                 On.get().to("/authenticate").respondeWith("authenticate"),
                 On.get().to("/logout").respondeWith("logout")
         );
         
         // ParameterController
-        Bind.controller(ParameterController.class).requireAuthorization("role")
+        Bind.controller(ParameterController.class)
         .withRoutes(
                 On.get().to("/string/{foo}").respondeWith("stringParam"),
                 On.get().to("/optional/{foo}").respondeWith("optionalParam"),
