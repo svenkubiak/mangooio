@@ -52,6 +52,8 @@ public class AuthorizationHandler implements HttpHandler {
             } else {
                 nextHandler(exchange);            
             }
+        } else {
+            nextHandler(exchange); 
         }
     }
     
