@@ -92,8 +92,8 @@ public class AuthenticationControllerTest {
         
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContent().length(), equalTo(26));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent().length(), equalTo(9));
 
         //when
         response = instance.withUri("/logout")

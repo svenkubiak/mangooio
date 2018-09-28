@@ -15,8 +15,6 @@ import io.mangoo.services.AuthorizationService;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.util.HttpString;
-import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -44,7 +42,7 @@ public class AuthorizationHandler implements HttpHandler {
             if (authentication != null && authentication.isValid()) {
                 String subject = authentication.getSubject();
                 String resource = attachment.getControllerAndMethod();
-                String operation = getOperation(exchange.getRequestMethod());
+                String operation = RequestUtils.getOperation(exchange.getRequestMethod());
                 
                 if (isNotBlank(subject, resource, operation) && this.authorizationService.validAuthorization(subject, resource, operation)) {
                     nextHandler(exchange);
@@ -57,42 +55,6 @@ public class AuthorizationHandler implements HttpHandler {
         } else {
             nextHandler(exchange); 
         }
-    }
-    
-    /**
-     * Return if a given HTTP method results in a read or write request to a resource
-     * 
-     * GET = read
-     * POST = write
-     * PUT = write
-     * DELETE = write
-     * PATCH = write
-     * OPTIONS = read
-     * HEAD = read
-     * 
-     * @param method The HTTP method
-     * @return read or write if HTTP method is found, blank otherwise
-     */
-    private String getOperation(HttpString method) {
-        String operation = "";
-        
-        if (Methods.POST.equals(method)) {
-            operation = "write";
-        } else if (Methods.PUT.equals(method)) {
-            operation = "write";
-        } else if (Methods.DELETE.equals(method)) {
-            operation = "write";
-        } else if (Methods.GET.equals(method)) {
-            operation = "read";
-        } else if (Methods.PATCH.equals(method)) {
-            operation = "write";
-        } else if (Methods.OPTIONS.equals(method)) {
-            operation = "read";
-        } else if (Methods.HEAD.equals(method)) {
-            operation = "read";
-        }
-        
-        return operation;
     }
 
     /**
