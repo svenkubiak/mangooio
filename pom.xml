@@ -274,6 +274,11 @@
 				<version>${log4j.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j18-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-core</artifactId>
 				<version>1.3</version>
@@ -282,17 +287,6 @@
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-junit</artifactId>
 				<version>2.0.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>${log4j.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
