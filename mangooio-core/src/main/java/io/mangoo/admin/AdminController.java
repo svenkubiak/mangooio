@@ -39,8 +39,7 @@ import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
-import io.mangoo.utils.BootstrapUtils;
-import io.mangoo.utils.MetricsUtils;
+import io.mangoo.utils.MangooUtils;
 
 /**
  * Controller class for administrative area
@@ -58,7 +57,7 @@ public class AdminController {
     private static final String SPACE = "space";
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
-    private static final String VERSION_TAG = BootstrapUtils.getVersion();
+    private static final String VERSION_TAG = MangooUtils.getVersion();
     private final Cache cache; //NOSONAR
     private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
@@ -90,7 +89,7 @@ public class AdminController {
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         
         return Response.withOk()
-                .andContent(VERSION, BootstrapUtils.getVersion())
+                .andContent(VERSION, MangooUtils.getVersion())
                 .andContent(SPACE, null)
                 .andContent("uptime", Date.from(instant))
                 .andContent("started", Application.getStart())
@@ -152,7 +151,7 @@ public class AdminController {
                     .andContent(SPACE, METRICS)
                     .andContent(VERSION, VERSION_TAG)
                     .andContent(METRICS, metrics.getResponseMetrics())
-                    .andContent("dataSend", MetricsUtils.readableFileSize(metrics.getDataSend()))
+                    .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
                     .andContent("totalRequests", totalRequests)
                     .andContent("minRequestTime", metrics.getMinRequestTime())
                     .andContent("avgRequestTime", metrics.getAvgRequestTime())

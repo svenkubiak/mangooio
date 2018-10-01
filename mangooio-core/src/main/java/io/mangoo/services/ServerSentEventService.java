@@ -12,7 +12,7 @@ import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
@@ -106,7 +106,7 @@ public class ServerSentEventService {
         if (uriConnections != null) {
             uriConnections.forEach((ServerSentEventConnection connection) -> {
                 if (connection.isOpen()){
-                    IOUtils.closeQuietly(connection);
+                    MangooUtils.closeQuietly(connection);
                 }
            });
            removeConnections(uri);

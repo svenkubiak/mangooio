@@ -30,7 +30,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.models.Source;
-import io.mangoo.utils.BootstrapUtils;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 
@@ -109,7 +108,7 @@ public class TemplateEngine {
             content.put("line", stackTraceElement.getLineNumber());
             content.put("causeSource", cause.toString());
             content.put("stackTraces", cause.getStackTrace());
-            content.put("sourceCodePath", StringUtils.substringAfter(new File(BootstrapUtils.getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+            content.put("sourceCodePath", StringUtils.substringAfter(new File(getBaseDirectory()).toPath().resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
         Configuration config = new Configuration(VERSION);
@@ -169,6 +168,22 @@ public class TemplateEngine {
         }
 
         return sources;
+    }
+
+    /**
+     * @return The OS specific path to src/main/java
+     */
+    private String getBaseDirectory() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(System.getProperty("user.dir"))
+        .append(File.separator)
+        .append("src")
+        .append(File.separator)
+        .append("main")
+        .append(File.separator)
+        .append("java");
+        
+        return buffer.toString();
     }
 
     /**

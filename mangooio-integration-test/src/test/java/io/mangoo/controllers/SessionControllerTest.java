@@ -34,8 +34,8 @@ import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.test.utils.WebRequest;
 import io.mangoo.test.utils.WebResponse;
-import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.MangooUtils;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -83,7 +83,7 @@ public class SessionControllerTest {
          } 
         
          Session session = Session.create()
-                    .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                    .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
                     .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class));
          
          if (!("-1").equals(expiresValue)) {
@@ -116,7 +116,7 @@ public class SessionControllerTest {
             String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, config.getSessionCookieEncryptionKey());
             JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
             Session session = Session.create()
-                       .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
+                       .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)));
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && session != null && session.get("uuid") != null && session.get("uuid").equals(uuid);

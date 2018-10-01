@@ -61,12 +61,12 @@ import io.undertow.websockets.core.WebSocketChannel;
  *
  */
 public final class RequestUtils {
-    private static AttachmentKey<Attachment> attachmentKey;
-    private static final Pattern PATTERN = Pattern.compile("\"");
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
+    private static final Pattern PATTERN = Pattern.compile("\"");
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
-
+    private static AttachmentKey<Attachment> attachmentKey;
+    
     private RequestUtils() {
     }
     
@@ -289,7 +289,6 @@ public final class RequestUtils {
         
         return new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), wrap);
     }
-    
     
     /**
      * Return if a given HTTP method results in a read or write request to a resource

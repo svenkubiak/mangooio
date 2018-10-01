@@ -43,7 +43,7 @@ import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
 import io.mangoo.core.Application;
-import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.MangooUtils;
 
 /**
  * This is a refactored version of
@@ -137,7 +137,7 @@ public class MangooMojo extends AbstractMojo {
 
         getArtifacts(includesSet, excludesSet, watchDirectories);
         startRunner(classpathItems, includesSet, excludesSet, watchDirectories);
-        IOUtils.closeQuietly(fileSystem);
+        MangooUtils.closeQuietly(fileSystem);
     }
 
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {

@@ -29,10 +29,9 @@ import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.CryptoUtils;
 import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -75,7 +74,7 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session = Session.create()
             .withContent(new HashMap<>())
-            .withAuthenticity(CryptoUtils.randomString(STRING_LENGTH));
+            .withAuthenticity(MangooUtils.randomString(STRING_LENGTH));
     
         if (this.config.getSessionCookieExpires() > 0) {
             session.withExpires(LocalDateTime.now().plusSeconds(this.config.getSessionCookieExpires()));
@@ -95,11 +94,11 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 if (("-1").equals(expiresClaim)) {
                     session = Session.create()
-                            .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
                             .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class));
                 } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
                             .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
                             .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter));
                 } else {
@@ -184,7 +183,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     } 
                     
                     flash = Flash.create()
-                            .withContent(ByteUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
+                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
                 }
             } catch (Exception e) { //NOSONAR
                 LOG.error("Failed to parse flash cookie", e);

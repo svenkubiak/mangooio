@@ -1,6 +1,9 @@
 package io.mangoo.core;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -9,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +22,7 @@ import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
+import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -54,8 +59,8 @@ import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
-import io.mangoo.utils.BootstrapUtils;
 import io.mangoo.utils.ByteUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -404,12 +409,31 @@ public final class Application {
             if (mangooRoute instanceof RequestRoute) {
                 RequestRoute requestRoute = (RequestRoute) mangooRoute;
 
-                if (!BootstrapUtils.methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
-                    LOG.error("Method '{}' does not exists in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
+                if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
+                    LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                     failsafe();
                 }
             }
         });
+    }
+    
+    /**
+     * Checks if a given method exists in a given class
+     * @param controllerMethod The method to check
+     * @param controllerClass The class to check 
+     * 
+     * @return True if the method exists, false otherwise
+     */
+    private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
+        boolean exists = false;
+        for (final Method method : controllerClass.getMethods()) {
+            if (method.getName().equals(controllerMethod)) {
+                exists = true;
+                break;
+            }
+        }
+
+        return exists;
     }
 
     /**
@@ -534,9 +558,9 @@ public final class Application {
     private static void showLogo() {
         final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
         buffer.append('\n')
-            .append(BootstrapUtils.getLogo())
+            .append(getLogo())
             .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
-            .append(BootstrapUtils.getVersion())
+            .append(MangooUtils.getVersion())
             .append('\n');
 
         LOG.info(buffer.toString()); //NOSONAR
@@ -550,6 +574,22 @@ public final class Application {
         }
         
         LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
+    }
+
+    /**
+     * Retrieves the logo from the logo file and returns the string
+     * 
+     * @return The mangoo I/O logo string
+     */
+    public static String getLogo() {
+        String logo = "";
+        try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
+            logo = IOUtils.toString(inputStream, Default.ENCODING.toString());
+        } catch (final IOException e) {
+            LOG.error("Failed to get application logo", e);
+        }
+
+        return logo;
     }
 
     private static int getBitLength(String secret) {

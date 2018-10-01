@@ -20,7 +20,7 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.utils.CryptoUtils;
+import io.mangoo.utils.MangooUtils;
 
 /**
  * 
@@ -51,7 +51,7 @@ public class CryptoTest {
     public void testEncryptionConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
-            String text = CryptoUtils.randomString(32);
+            String text = MangooUtils.randomString(32);
             
             //when
             String encrypt = Application.getInstance(Crypto.class).encrypt(text);

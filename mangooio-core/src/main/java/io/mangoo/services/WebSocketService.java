@@ -12,7 +12,7 @@ import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.providers.CacheProvider;
-import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -103,7 +103,7 @@ public class WebSocketService {
         if (channels != null) {
             channels.forEach((WebSocketChannel channel) -> {
                 if (channel.isOpen()) {
-                    IOUtils.closeQuietly(channel);
+                    MangooUtils.closeQuietly(channel);
                 }
             });
             removeChannels(uri);

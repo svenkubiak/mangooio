@@ -7,7 +7,7 @@
 	<version>4.16.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
-	<description>Intuitive, Lightweight Full Stack Java Web Framework.</description>
+	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</description>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<inceptionYear>2015</inceptionYear>
 	<licenses>
@@ -20,7 +20,7 @@
 	<developers>
 		<developer>
 			<name>Sven Kubiak</name>
-			<email>contact@mangoo.io</email>
+			<email>sk@svenkubiak.de</email>
 		</developer>
 	</developers>
 	<properties>
@@ -391,7 +391,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.2.3</version>
+				<version>4.2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>

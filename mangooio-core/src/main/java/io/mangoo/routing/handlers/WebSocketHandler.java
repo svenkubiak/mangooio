@@ -9,7 +9,7 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.services.WebSocketService;
-import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.WebSocketChannel;
@@ -51,7 +51,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
                 channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
                 Application.getInstance(WebSocketService.class).addChannel(channel);
             } else {
-                IOUtils.closeQuietly(channel);
+                MangooUtils.closeQuietly(channel);
             }
         } else {
             channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));

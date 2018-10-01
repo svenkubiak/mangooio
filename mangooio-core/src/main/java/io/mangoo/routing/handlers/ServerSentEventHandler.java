@@ -4,7 +4,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.services.ServerSentEventService;
-import io.mangoo.utils.IOUtils;
+import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
@@ -36,7 +36,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
                 Application.getInstance(ServerSentEventService.class).addConnection(connection);
                 connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
             } else {
-                IOUtils.closeQuietly(connection);
+                MangooUtils.closeQuietly(connection);
             }
         } else {
             Application.getInstance(ServerSentEventService.class).addConnection(connection);
