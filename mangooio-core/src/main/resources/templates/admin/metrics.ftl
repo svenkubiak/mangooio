@@ -5,7 +5,7 @@
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1>Routes</h1>
+				<h1>Metrics</h1>
 			</div>
 		</div>
 	</div>
@@ -82,6 +82,30 @@
             </div>
           </div>
         </div>
+		<div class="row">
+          <div class="col-lg-4 col-6">
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>${events}</h3>
+                <p>EventBus events</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-android-bus"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-6">
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>${listeners}</h3>
+                <p>EventBus listeners</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-ios-telephone"></i>
+              </div>
+            </div>
+          </div>
+        </div>        
         <#if metrics?has_content>
         <div class="row">
           <div class="col-12">

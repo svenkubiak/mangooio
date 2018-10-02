@@ -39,6 +39,7 @@ import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 
 /**
@@ -147,6 +148,8 @@ public class AdminController {
                 errorRate = totalRequests / (double) errorRequests;
             }
 
+            EventBusService eventBusService = Application.getInstance(EventBusService.class);
+            
             return Response.withOk()
                     .andContent(SPACE, METRICS)
                     .andContent(VERSION, VERSION_TAG)
@@ -157,6 +160,8 @@ public class AdminController {
                     .andContent("avgRequestTime", metrics.getAvgRequestTime())
                     .andContent("maxRequestTime", metrics.getMaxRequestTime())
                     .andContent("errorRate", errorRate)
+                    .andContent("events", eventBusService.getNumEvents())
+                    .andContent("listeners", eventBusService.getNumListeners())
                     .andContent("enabled", enabled)
                     .andTemplate(Template.DEFAULT.metricsPath());
         }
