@@ -59,21 +59,6 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Sets a defined response to the request route that will be returned directly
-     * on this request
-     * 
-     * @param response The response to return
-     * 
-     * @return RequestRoute instance
-     */
-    public RequestRoute respondeWith(Response response) {
-        Objects.requireNonNull(response, Required.RESPONSE.toString());
-        this.response = response;
-        
-        return this;
-    }
-    
-    /**
      * Sets the controller method to response with on the request
      * 
      * @param method The controller method

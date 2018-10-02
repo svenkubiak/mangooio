@@ -409,7 +409,7 @@ public final class Application {
             if (mangooRoute instanceof RequestRoute) {
                 RequestRoute requestRoute = (RequestRoute) mangooRoute;
 
-                if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
+                if (requestRoute.getResponse() == null && !methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
                     LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                     failsafe();
                 }
@@ -479,21 +479,21 @@ public final class Application {
         Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class).withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
-            .withRoutes(
-                    On.get().to("/@admin").respondeWith("index"),
-                    On.get().to("/@admin/health").respondeWith("health"),
-                    On.get().to("/@admin/scheduler").respondeWith("scheduler"),
-                    On.get().to("/@admin/logger").respondeWith("logger"),
-                    On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
-                    On.get().to("/@admin/routes").respondeWith("routes"),
-                    On.get().to("/@admin/metrics").respondeWith("metrics"),
-                    On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
-                    On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
-                    On.get().to("/@admin/tools").respondeWith("tools"),
-                    On.post().to("/@admin/tools/ajax").respondeWith("toolsajax"),
-                    On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
-                    On.get().to("/@admin/scheduler/state/{name}").respondeWith("state")
-             );
+                .withRoutes(
+                        On.get().to("/@admin").respondeWith("index"),
+                        On.get().to("/@admin/health").respondeWith("health"),
+                        On.get().to("/@admin/scheduler").respondeWith("scheduler"),
+                        On.get().to("/@admin/logger").respondeWith("logger"),
+                        On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
+                        On.get().to("/@admin/routes").respondeWith("routes"),
+                        On.get().to("/@admin/metrics").respondeWith("metrics"),
+                        On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
+                        On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
+                        On.get().to("/@admin/tools").respondeWith("tools"),
+                        On.post().to("/@admin/tools/ajax").respondeWith("toolsajax"),
+                        On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
+                        On.get().to("/@admin/scheduler/state/{name}").respondeWith("state")
+                 );
         }
 
         Router.getRoutes().forEach((mangooRoute) -> {
@@ -512,7 +512,7 @@ public final class Application {
                 FileRoute fileRoute = (FileRoute) mangooRoute;
                 routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler);
             } else {
-                // Ignoring anything else except Request and RequestFile for DispatcherHandler
+                // Ignoring anything else except RequestRoute and FileRoute for DispatcherHandler
             }
         });
 
