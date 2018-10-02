@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
+import io.mangoo.enums.Default;
 
 /**
  * 
@@ -131,5 +132,30 @@ public class MangooUtilsTest {
         //then
         assertThat(readableSize, not(nullValue()));
         assertThat(readableSize, equalTo("24 MB"));
+    }
+    
+    @Test
+    public void testResourceExists() {
+        //when
+        boolean exists = MangooUtils.resourceExists(Default.MODEL_CONF.toString());
+        
+        //then
+        assertThat(exists, equalTo(true));
+    }
+    
+    @Test
+    public void testResourceExistsConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            return MangooUtils.resourceExists(Default.MODEL_CONF.toString());
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+    
+    @Test
+    public void testResourceNotExists() {
+        //when
+        boolean exists = MangooUtils.resourceExists("foo.txt");
+        
+        //then
+        assertThat(exists, equalTo(false));
     }
 }

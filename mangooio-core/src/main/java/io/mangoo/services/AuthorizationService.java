@@ -1,11 +1,12 @@
 package io.mangoo.services;
 
-import java.util.List;
-
 import org.casbin.jcasbin.main.Enforcer;
 
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
+
+import io.mangoo.enums.Default;
+import io.mangoo.utils.MangooUtils;
 
 /**
  * 
@@ -17,23 +18,18 @@ public class AuthorizationService {
     private Enforcer enforcer;
 
     public AuthorizationService () {
-        this.enforcer = new Enforcer(Resources.getResource("model.conf").getPath(), Resources.getResource("policy.csv").getPath());
-    }
-    
-    /**
-     * Returns a list of a roles for a given user
-     * @param username The user to check
-     * @return List of roles as string
-     */
-    public List<String> getRoles(String username) {
-        return this.enforcer.getRolesForUser(username);
+        if (MangooUtils.resourceExists(Default.MODEL_CONF.toString()) && MangooUtils.resourceExists(Default.POLICY_CSV.toString())) {
+            this.enforcer = new Enforcer(Resources.getResource(Default.MODEL_CONF.toString()).getPath(), Resources.getResource(Default.POLICY_CSV.toString()).getPath());            
+        } else {
+            this.enforcer = new Enforcer();
+        }
     }
     
     /**
      * Validates the authorization for a give subject on a given resource with a given operation
      * 
      * @param subject The subject, e.g. username, to check
-     * @param resource The resource, e.g. /foo, to check
+     * @param resource The resource, e.g. ApplicationController:write, to check
      * @param operation The operation, e.g. read, to check
      * 
      * @return true if authorization is valid, false otherwise

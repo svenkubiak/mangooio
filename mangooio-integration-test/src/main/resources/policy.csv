@@ -1,0 +1,2 @@
+p, alice, AuthorizationController:read, read
+p, bob, AuthorizationController:write, write

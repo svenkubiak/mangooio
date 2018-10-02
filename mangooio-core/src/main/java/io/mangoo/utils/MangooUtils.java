@@ -3,6 +3,7 @@ package io.mangoo.utils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -108,5 +109,24 @@ public final class MangooUtils {
         
         int index = (int) (Math.log10(size) / Math.log10(CONVERTION));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(CONVERTION, index)) + " " + UNITS[index];
+    }
+    
+    /**
+     * Checks if a resource exists in the classpath
+     * 
+     * @param name The name of the resource
+     * @return True if the resources exists, false otherwise
+     */
+    public static boolean resourceExists(String name) {
+        Objects.requireNonNull(name, Required.NAME.toString());
+        
+        URL resource = null;
+        try {
+            resource = Resources.getResource(name);            
+        } catch (Exception e) {
+            LOG.error("Resource '{}' not found in classpath", name);
+        }
+        
+        return resource != null;
     }
 }
