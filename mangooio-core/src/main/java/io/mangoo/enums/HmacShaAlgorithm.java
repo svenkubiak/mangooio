@@ -8,6 +8,15 @@ public enum HmacShaAlgorithm {
     HMAC_SHA_256("HmacSHA256"),
     HMAC_SHA_512("HmacSHA512");
 
+    public static HmacShaAlgorithm from(String algorithm) {
+        for (HmacShaAlgorithm alg : values()) {
+            if (alg.algorithm.equals(algorithm)) {
+                return alg;
+            }
+        }
+        throw new IllegalArgumentException("No matching HmacShaAlgorithm constant for [" + algorithm + "]");
+    }
+
     private final String algorithm;
 
     HmacShaAlgorithm(String algorithm) {
@@ -16,15 +25,6 @@ public enum HmacShaAlgorithm {
 
     public String getAlgorithm() {
         return algorithm;
-    }
-
-    public static HmacShaAlgorithm from(String algorithm) {
-        for (HmacShaAlgorithm alg : values()) {
-            if (alg.algorithm.equals(algorithm)) {
-                return alg;
-            }
-        }
-        throw new IllegalArgumentException("No matching HmacShaAlgorithm constant for [" + algorithm + "]");
     }
 
     @Override

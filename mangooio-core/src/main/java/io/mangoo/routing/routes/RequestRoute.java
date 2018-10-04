@@ -59,7 +59,7 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Sets the controller method to response with on the request
+     * Sets the controller method to response on request
      * 
      * @param method The controller method
      * @return RequestRoute instance
@@ -73,7 +73,7 @@ public class RequestRoute implements MangooRoute {
     /**
      * Sets a request limit to the request
      * 
-     * @param requestsPerSecond Number of request per second
+     * @param requestsPerSecond Number of requests per second
      * @return RequestRoute instance
      */
     public RequestRoute withRequestLimit(int requestsPerSecond) {
@@ -92,7 +92,8 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Sets the controller method of this request
+     * Sets the HTTP method of this request
+     * 
      * @param method The controller method
      */
     public void withHttpMethod(Http method) {
@@ -119,7 +120,7 @@ public class RequestRoute implements MangooRoute {
     }
 
     /**
-     * Sets authentication to true, default is false
+     * Sets authentication to true for this route, default is false
      * 
      * @return RequestRoute instance
      */
@@ -129,11 +130,13 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Sets authorization to true, default is false
+     * Sets authorization to true for this route, default is false
+     * Also sets authentication to true, default is false
      * 
      * @return RequestRoute instance
      */
     public RequestRoute requireAuthorization() {
+        this.authentication = true;
         this.authorization = true;
         return this;
     }
@@ -143,9 +146,14 @@ public class RequestRoute implements MangooRoute {
      * 
      * @return RequestRoute instance
      */
-    public RequestRoute canBlock() {
+    public RequestRoute longRunning() {
         this.blocking = true;
         return this;
+    }
+    
+    @Override
+    public String getUrl() {
+        return url;
     }
     
     public boolean hasAuthentication() {
@@ -178,11 +186,6 @@ public class RequestRoute implements MangooRoute {
         }
         
         return null;
-    }
-
-    @Override
-    public String getUrl() {
-        return url;
     }
 
     public Class<?> getControllerClass() {

@@ -22,7 +22,7 @@ public class ControllerRoute {
     private boolean authorization;
     
     /**
-     * Creates a new set of route to a given controller class
+     * Creates a new set of routes bind to a given controller class
      * 
      * @param clazz The controller class to bind to
      */
@@ -68,7 +68,7 @@ public class ControllerRoute {
     }
 
     /**
-     * Sets Basic HTTP authentication to all method on the defined controller class
+     * Sets Basic HTTP authentication to all method on the given controller class
      * 
      * @param username The username for basic authentication in clear text
      * @param password The password for basic authentication in clear text
@@ -86,7 +86,7 @@ public class ControllerRoute {
     }
 
     /**
-     * Sets authentication to true, default is false
+     * Sets authentication to true for all provided routes, default is false
      * 
      * @return controller route instance
      */
@@ -96,12 +96,14 @@ public class ControllerRoute {
     }
     
     /**
-     * Sets authentication to true, default is false
+     * Sets authentication to true for all provided routes, default is false
+     * Also sets authentication to true, default is false
      * 
      * @return controller route instance
      */
     public ControllerRoute requireAuthorization() {
         this.authorization = true;
+        this.authentication = true;
         return this;
     }
     
@@ -118,14 +120,14 @@ public class ControllerRoute {
     }
 
     public Class<?> getControllerClass() {
-        return controllerClass;
+        return this.controllerClass;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 }

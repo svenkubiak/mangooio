@@ -33,17 +33,7 @@ public enum Binding {
     STRING("java.lang.String"),
     UNDEFINED("undefined");
 
-    private final String value;
     private static Map<String, Binding> values;
-    
-    Binding (String value) {
-        this.value = value;
-    }
-    
-    public static Binding fromString(String value) {
-        return values.get(value.toLowerCase(Locale.ENGLISH));
-    }
-    
     static {
         Map<String, Binding> bindings = Maps.newHashMapWithExpectedSize(Binding.values().length);
         for (Binding binding : Binding.values()) {
@@ -51,6 +41,16 @@ public enum Binding {
         }
         
         values = Collections.unmodifiableMap(bindings);
+    }
+    
+    public static Binding fromString(String value) {
+        return values.get(value.toLowerCase(Locale.ENGLISH));
+    }
+    
+    private final String value;
+    
+    Binding (String value) {
+        this.value = value;
     }
     
     @Override

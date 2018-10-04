@@ -120,7 +120,7 @@ public class Bootstrap implements MangooBootstrap {
         
          // ApplicationController
          Bind.controller(ApplicationController.class).withRoutes(
-                On.get().to("/").respondeWith("index").canBlock(),
+                On.get().to("/").respondeWith("index").longRunning(),
                 On.get().to("/route").respondeWith("route"),
                 On.post().to("/").respondeWith("index"),
                 On.put().to("/put").respondeWith("put"),
@@ -139,7 +139,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/badrequest").respondeWith("badrequest"),
                 On.get().to("/unauthorized").respondeWith("unauthorized"),
                 On.get().to("/binary").respondeWith("binary"),
-                On.get().to("/header").respondeWith("header").canBlock(),
+                On.get().to("/header").respondeWith("header").longRunning(),
                 On.get().to("/etag").respondeWith("etag"),
                 On.get().to("/request").respondeWith("request"),
                 On.post().to("/post").respondeWith("post"),

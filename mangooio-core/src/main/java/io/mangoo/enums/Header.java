@@ -24,9 +24,9 @@ public enum Header {
     X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options", new HttpString("X-Content-Type-Options")),
     X_FORWARDED_FOR("X-Forwarded-For", new HttpString("X-Forwarded-For")),
     X_FRAME_OPTIONS("X-Frame-Options", new HttpString("X-Frame-Options")),
-    X_XSS_PPROTECTION("X-XSS-Protection", new HttpString("X-XSS-Protection")),
     X_RATELIMIT("X-RateLimit", new HttpString("X-RateLimit")),
-    X_RATELIMIT_REMAINING("X-RateLimit-Remaining", new HttpString("X-RateLimit-Remaining"));
+    X_RATELIMIT_REMAINING("X-RateLimit-Remaining", new HttpString("X-RateLimit-Remaining")),
+    X_XSS_PPROTECTION("X-XSS-Protection", new HttpString("X-XSS-Protection"));
 
     private final HttpString httpString;
     private final String value;
