@@ -409,7 +409,7 @@ public final class Application {
             if (mangooRoute instanceof RequestRoute) {
                 RequestRoute requestRoute = (RequestRoute) mangooRoute;
 
-                if (requestRoute.getResponse() == null && !methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
+                if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
                     LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                     failsafe();
                 }

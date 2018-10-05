@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import io.mangoo.enums.Http;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
-import io.mangoo.routing.Response;
 
 /**
  * 
@@ -19,7 +18,6 @@ public class RequestRoute implements MangooRoute {
     private Class<?> controllerClass;
     private Http[] methods;
     private Http method;
-    private Response response;
     private String url;
     private String controllerMethod;
     private String username;
@@ -206,9 +204,5 @@ public class RequestRoute implements MangooRoute {
 
     public boolean isBlocking() {
         return blocking;
-    }
-
-    public Response getResponse() {
-        return response;
     }
 }
