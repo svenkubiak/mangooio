@@ -38,7 +38,6 @@
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
-		<module>mangooio-maven-plugin</module>
 		<module>mangooio-maven-archetype</module>
 		<module>mangooio-integration-test</module>
 		<module>mangooio-test</module>
