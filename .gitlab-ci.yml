@@ -1,4 +1,4 @@
-image: hronom/ubuntu1804-docker-dind-openjdk11-maven
+image: adoptopenjdk/maven-openjdk11
 
 stages:
   - test
@@ -26,7 +26,7 @@ before_script:
  
 test:
   stage: test
-  script: mvn $MAVEN_CLI_OPTS clean verify
+  script: mvn $MAVEN_CLI_OPTS clean verify -pl '!mangooio-maven-plugin'
 
 sonar:
   stage: sonar
