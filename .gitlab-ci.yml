@@ -1,3 +1,5 @@
+image: adoptopenjdk/maven-openjdk11
+
 stages:
   - test
   - sonar
@@ -24,12 +26,12 @@ before_script:
  
 test:
   stage: test
-  script: mvn $MAVEN_CLI_OPTS clean verify
+  script: mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify
 
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS clean verify sonar:sonar --settings settings.xml
+  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify sonar:sonar --settings settings.xml
 
 smoke:
   stage: smoke
@@ -38,7 +40,7 @@ smoke:
       - mangooio-integration-test/target/mangooio.jar
     expire_in: 10m
   script:
-  - mvn $MAVEN_CLI_OPTS clean verify
+  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify
   - scp -P $LOADER_PORT mangooio-integration-test/target/mangooio.jar $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/loader.sh'
   only:
@@ -51,7 +53,7 @@ dependencies:
       - target
     expire_in: 10m
   script:
-  - mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
+  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/dependencies.sh'
   only:
