@@ -1,4 +1,4 @@
-image: kgrevehagen/jdk11_maven
+image: hronom/ubuntu1804-docker-dind-openjdk11-maven
 
 stages:
   - test
