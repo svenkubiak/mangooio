@@ -1,4 +1,4 @@
-image: adoptopenjdk/maven-openjdk11
+image: kgrevehagen/jdk11_maven
 
 stages:
   - test
