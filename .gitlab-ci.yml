@@ -8,7 +8,7 @@ stages:
 
 variables:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
-  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true -pl '!mangooio-maven-plugin'"
 
 cache:
   key: "$CI_JOB_NAME"  
@@ -26,12 +26,12 @@ before_script:
  
 test:
   stage: test
-  script: mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify
+  script: mvn $MAVEN_CLI_OPTS clean verify
 
 sonar:
   stage: sonar
   script: 
-  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS clean verify sonar:sonar --settings settings.xml
 
 smoke:
   stage: smoke
@@ -40,7 +40,7 @@ smoke:
       - mangooio-integration-test/target/mangooio.jar
     expire_in: 10m
   script:
-  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify
+  - mvn $MAVEN_CLI_OPTS clean verify
   - scp -P $LOADER_PORT mangooio-integration-test/target/mangooio.jar $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/loader.sh'
   only:
@@ -53,7 +53,7 @@ dependencies:
       - target
     expire_in: 10m
   script:
-  - mvn -pl '!mangooio-maven-plugin' $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
+  - mvn $MAVEN_CLI_OPTS clean verify versions:dependency-updates-report
   - scp -P $LOADER_PORT target/site/dependency-updates-report.html $LOADER_URL
   - ssh git@zeus.svenkubiak.de -p $LOADER_PORT 'sudo /opt/scripts/dependencies.sh'
   only:
