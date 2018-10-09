@@ -9,15 +9,15 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.WebSocket;
+import java.net.http.WebSocket.Listener;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.UUID;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocket.Connection;
-import org.eclipse.jetty.websocket.WebSocketClient;
-import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -81,31 +81,19 @@ public class WebSocketServiceTest {
     @Test
     public void testCloseChannel() throws Exception {
         //given
+        final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
         final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         webSocketService.removeChannels("/websocket");
-        final WebSocketClientFactory factory = new WebSocketClientFactory();
-        factory.start();
-        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
 
-        //when
-        final WebSocketClient client = new WebSocketClient(factory);
-        client.open(new URI(url), new WebSocket.OnTextMessage() {
+        // when
+        Listener listener = new Listener() {
             @Override
-            public void onOpen(Connection connection) {
-                // intentionally left blank
+            public void onOpen(WebSocket webSocket) {
             }
-
-            @Override
-            public void onClose(int closeCode, String message) {
-                // intentionally left blank
-            }
-
-            @Override
-            public void onMessage(String data) {
-                // intentionally left blank
-            }
-        }).get(5, TimeUnit.SECONDS);
+        };
+        httpClient.newWebSocketBuilder().buildAsync(new URI(url), listener).join();
 
         webSocketService.close("/websocket");
 
@@ -116,37 +104,24 @@ public class WebSocketServiceTest {
 
     @Test
     public void testSendData() throws Exception {
-        //given
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
-        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
-        webSocketService.removeChannels("/websocket");
-        final WebSocketClientFactory factory = new WebSocketClientFactory();
-        factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
-        final String data = "Server sent data FTW!";
+        final String data = UUID.randomUUID().toString();
         eventData = null;
 
-        //when
-        Connection connection = new WebSocketClient(factory).open(new URI(url), new WebSocket.OnTextMessage() {
+        // when
+        Listener listener = new Listener() {
             @Override
-            public void onOpen(Connection connection) {
-                // intentionally left blank
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
+                eventData = message.toString();
+                return null;
             }
+        };
+        httpClient.newWebSocketBuilder().buildAsync(new URI(url), listener).get();
 
-            @Override
-            public void onClose(int closeCode, String message) {
-                // intentionally left blank
-            }
-
-            @Override
-            public void onMessage(String data) {
-                eventData = data;
-            }
-        }).get(5, TimeUnit.SECONDS);
-
-        //then
-        await().atMost(1,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(connection, not(equalTo(null))));
-        webSocketService.getChannels("/websocket").forEach(channel -> {
+        Application.getInstance(WebSocketService.class).getChannels("/websocket").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -155,21 +130,21 @@ public class WebSocketServiceTest {
                 e.printStackTrace();
             }
          });
-        await().atMost(4,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
+
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
     @Test
     public void testSendDataWithValidAuthentication() throws Exception {
-        //given
-        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
-        webSocketService.removeChannels("/websocketauth");
-        final WebSocketClientFactory factory = new WebSocketClientFactory();
-        factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
-        final String data = "Server sent data with authentication FTW!";
+        final String data = UUID.randomUUID().toString();
         eventData = null;
 
+        // then
         JwtClaims jwtClaims = new JwtClaims();
         jwtClaims.setSubject("foo");
         jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
@@ -182,31 +157,18 @@ public class WebSocketServiceTest {
         
         String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
         
-        //when
-        final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(config.getAuthenticationCookieName(), jwt);
-        client.open(new URI(url), new WebSocket.OnTextMessage() {
+        Listener listener = new Listener() {
             @Override
-            public void onOpen(Connection connection) {
-                // intentionally left blank
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
+                eventData = message.toString();
+                return null;
             }
-
-            @Override
-            public void onClose(int closeCode, String message) {
-                // intentionally left blank
-            }
-
-            @Override
-            public void onMessage(String data) {
-                if (StringUtils.isBlank(eventData)) {
-                    eventData = data;
-                }
-            }
-        }).get(5, TimeUnit.SECONDS);
-
-        //then
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertThat(client, not(equalTo(null))));
-        webSocketService.getChannels("/websocketauth").forEach(channel -> {
+        };
+        httpClient.newWebSocketBuilder().header("Cookie", config.getAuthenticationCookieName() + "=" + jwt).buildAsync(new URI(url), listener);
+        
+        Thread.sleep(2000);
+        
+        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -215,21 +177,21 @@ public class WebSocketServiceTest {
                 e.printStackTrace();
             }
          });
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
+        
+        // then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
     @Test
     public void testSendDataWithInvalidAuthentication() throws Exception {
-        //given
-        final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
-        webSocketService.removeChannels("/websocketauth");
-        final WebSocketClientFactory factory = new WebSocketClientFactory();
-        factory.start();
         final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
-        final String data = "Server sent data with authentication FTW!";
+        final String data = UUID.randomUUID().toString();
         eventData = null;
-        
+
+        // then
         JwtClaims jwtClaims = new JwtClaims();
         jwtClaims.setSubject("foo");
         jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
@@ -241,30 +203,19 @@ public class WebSocketServiceTest {
         jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
         
         String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
-
-        //when
-        final WebSocketClient client = new WebSocketClient(factory);
-        client.getCookies().put(config.getAuthenticationCookieName(), jwt);
-        client.open(new URI(url), new WebSocket.OnTextMessage() {
+        
+        Listener listener = new Listener() {
             @Override
-            public void onOpen(Connection connection) {
-                // intentionally left blank
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
+                eventData = message.toString();
+                return null;
             }
-
-            @Override
-            public void onClose(int closeCode, String message) {
-                // intentionally left blank
-            }
-
-            @Override
-            public void onMessage(String data) {
-                if (StringUtils.isBlank(eventData)) {
-                    eventData = data;
-                }
-            }
-        }).get(5, TimeUnit.SECONDS);
-
-        webSocketService.getChannels(url).forEach(channel -> {
+        };
+        httpClient.newWebSocketBuilder().header("Cookie", config.getAuthenticationCookieName() + "=" + jwt).buildAsync(new URI(url), listener);
+        
+        Thread.sleep(2000);
+        
+        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
             try {
                 if (channel.isOpen()) {
                     WebSockets.sendTextBlocking(data, channel);
@@ -273,8 +224,8 @@ public class WebSocketServiceTest {
                 e.printStackTrace();
             }
          });
-
-        //then
-        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
+        
+        // then
+        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data)))); 
     }
 }

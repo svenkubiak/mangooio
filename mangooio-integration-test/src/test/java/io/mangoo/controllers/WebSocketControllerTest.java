@@ -4,11 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
+import java.net.http.HttpClient;
+import java.net.http.WebSocket;
+import java.net.http.WebSocket.Listener;
 
-import org.eclipse.jetty.websocket.WebSocket;
-import org.eclipse.jetty.websocket.WebSocketClient;
-import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -21,40 +20,27 @@ import io.mangoo.core.Application;
  * @author svenkubiak
  *
  */
-@ExtendWith({TestExtension.class})
+@ExtendWith({ TestExtension.class })
 public class WebSocketControllerTest {
+    private static boolean connected = false;
 
     @Test
     public void testWebSocketConnection() throws Exception {
-        //given
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
         final String uri = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocket";
-        final WebSocketClientFactory factory = new WebSocketClientFactory();
 
-        //when
-        factory.start();
-        final WebSocketClient client = new WebSocketClient(factory);
-        final WebSocket.Connection connection = client.open(new URI(uri), new WebSocket.OnTextMessage() {
+        // when
+        Listener listener = new Listener() {
             @Override
-            public void onOpen(Connection connection) {
-                // open notification
+            public void onOpen(WebSocket webSocket) {
+                connected = true;
             }
-
-            @Override
-            public void onClose(int closeCode, String message) {
-                // close notification
-            }
-
-            @Override
-            public void onMessage(String data) {
-                // handle incoming message
-            }
-        }).get(5, TimeUnit.SECONDS);
-        connection.sendMessage("Hello World");
-        connection.sendMessage("Hello World".getBytes(), 0, 0);
-
-        //then
-        assertThat(connection.isOpen(), equalTo(true));
-        connection.close();
+        };
+        httpClient.newWebSocketBuilder().buildAsync(new URI(uri), listener).join();
+        
+        // then
+        assertThat(connected, equalTo(true));
     }
 }

@@ -195,6 +195,11 @@
 				<version>2.0.13.Final</version>
 			</dependency>
 			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>0.9.11</version>
+			</dependency>
+			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
 				<version>4.2.1</version>
@@ -378,14 +383,14 @@
 				<version>3.1.2</version>
 			</dependency>
 			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>26.0-jre</version>
+			</dependency>
+			<dependency>
 				<groupId>biz.gabrys.lesscss</groupId>
 				<artifactId>compiler</artifactId>
 				<version>1.2.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-websocket</artifactId>
-				<version>8.2.0.v20160908</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
