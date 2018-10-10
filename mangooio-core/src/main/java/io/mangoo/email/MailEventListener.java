@@ -14,6 +14,11 @@ import jodd.mail.MailServer.Builder;
 import jodd.mail.SendMailSession;
 import jodd.mail.SmtpServer;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @Singleton
 public class MailEventListener {
     private final SmtpServer smtpServer;
@@ -35,6 +40,8 @@ public class MailEventListener {
     
     @Subscribe
     public void listen(Email email) {
+        Objects.requireNonNull(email,  Required.EMAIL.toString());
+        
         SendMailSession session = smtpServer.createSession();
         try {
             session.open();
