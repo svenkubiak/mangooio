@@ -295,7 +295,7 @@ public class AdminController {
                 }
 
             } else {
-                LOG.warn("Invalid or no function selected for AJAX request. Either choose 'hash' order 'encrypt'.");
+                LOG.warn("Invalid or no function selected for AJAX request. Either choose 'keypair' order 'encrypt'.");
             }
         }
         
