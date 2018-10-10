@@ -65,6 +65,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [JUnit](http://junit.org/), [FluentLenium](https://github.com/FluentLenium/FluentLenium) - Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) - Strong hashing
 * [Bouncy Castle](https://www.bouncycastle.org/) - Strong cryptography
+* [jCasbin](https://github.com/casbin/jcasbin) - Authorization
 * And many more ...
 
 **Homepage**   
