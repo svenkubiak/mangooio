@@ -270,7 +270,7 @@ public final class Application {
     }
 
     /**
-     * Checks for config failures that pervent the application from starting
+     * Checks for config failures that prevent the application from starting
      */
     private static void prepareConfig() {
         Config config = getInstance(Config.class);
@@ -405,9 +405,11 @@ public final class Application {
     private static void prepareRoutes() {
         injector.getInstance(MangooBootstrap.class).initializeRoutes();
         
-        Router.getRoutes().forEach((mangooRoute) -> {
-            if (mangooRoute instanceof RequestRoute) {
-                RequestRoute requestRoute = (RequestRoute) mangooRoute;
+        Router.getRoutes()
+            .stream()
+            .filter(route -> route instanceof RequestRoute)
+            .forEach((route) -> {
+                RequestRoute requestRoute = (RequestRoute) route;
 
                 if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
                     LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
@@ -418,8 +420,7 @@ public final class Application {
                     LOG.error("Router on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                     failsafe();
                 }
-            }
-        });
+            });
     }
     
     /**
@@ -478,7 +479,8 @@ public final class Application {
         
         Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
-            Bind.controller(AdminController.class).withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+            Bind.controller(AdminController.class)
+                .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
                         On.get().to("/@admin/health").respondeWith("health"),
