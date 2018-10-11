@@ -6,13 +6,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.tc.text.StringUtils;
 
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
+import io.mangoo.routing.routes.FileRoute;
+import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
+import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.WebSocketRoute;
 
 /**
  *
@@ -54,6 +60,61 @@ public final class Router {
     }
     
     /**
+     * @return An unmodifiable set of all configured RequestRoutes
+     */
+    public static Stream<RequestRoute> getRequestRoutes() {
+        return routes.stream()
+                .filter(RequestRoute.class::isInstance)
+                .map(RequestRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+    
+    /**
+     * @return An unmodifiable set of all configured FileRoutes
+     */
+    public static Stream<FileRoute> getFileRoutes() {
+        return routes.stream()
+                .filter(FileRoute.class::isInstance)
+                .map(FileRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+    
+    /**
+     * @return An unmodifiable set of all configured PathRouts
+     */
+    public static Stream<PathRoute> getPathRoutes() {
+        return routes.stream()
+                .filter(PathRoute.class::isInstance)
+                .map(PathRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+    
+    /**
+     * @return An unmodifiable set of all configured WebSocketRoutes
+     */
+    public static Stream<WebSocketRoute> getWebSocketRoutes() {
+        return routes.stream()
+                .filter(WebSocketRoute.class::isInstance)
+                .map(WebSocketRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+    
+    /**
+     * @return An unmodifiable set of all configured ServerSentEventRoutes
+     */
+    public static Stream<ServerSentEventRoute> getServerSentEventRoutes() {
+        return routes.stream()
+                .filter(ServerSentEventRoute.class::isInstance)
+                .map(ServerSentEventRoute.class::cast)
+                .collect(Collectors.toUnmodifiableSet())
+                .stream();
+    }
+    
+    /**
      * Retrieves a reverse route by its controller class and controller method
      * 
      * @param key The controller class and method in the form ControllerClass:ControllerMethod
@@ -61,7 +122,7 @@ public final class Router {
      */
     public static RequestRoute getReverseRoute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return (RequestRoute) reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
+        return reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
     }
     
     /**

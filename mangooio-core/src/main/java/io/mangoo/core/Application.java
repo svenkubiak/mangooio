@@ -52,11 +52,6 @@ import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
@@ -405,22 +400,17 @@ public final class Application {
     private static void prepareRoutes() {
         injector.getInstance(MangooBootstrap.class).initializeRoutes();
         
-        Router.getRoutes()
-            .stream()
-            .filter(route -> route instanceof RequestRoute)
-            .forEach((route) -> {
-                RequestRoute requestRoute = (RequestRoute) route;
-
-                if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
-                    LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
-                    failsafe();
-                }
-                
-                if (requestRoute.hasAuthorization() && (!MangooUtils.resourceExists(Default.MODEL_CONF.toString()) || !MangooUtils.resourceExists(Default.POLICY_CSV.toString()))) {
-                    LOG.error("Router on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
-                    failsafe();
-                }
-            });
+        Router.getRequestRoutes().forEach(requestRoute -> {
+            if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
+                LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
+                failsafe();
+            }
+            
+            if (requestRoute.hasAuthorization() && (!MangooUtils.resourceExists(Default.MODEL_CONF.toString()) || !MangooUtils.resourceExists(Default.POLICY_CSV.toString()))) {
+                LOG.error("Router on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
+                failsafe();
+            } 
+        });
     }
     
     /**
@@ -447,29 +437,23 @@ public final class Application {
      */
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
-        Router.getRoutes().forEach((mangooRoute) -> {
-            if (mangooRoute instanceof WebSocketRoute) {
-                WebSocketRoute webSocketRoute = (WebSocketRoute) mangooRoute;
-                
-                pathHandler.addExactPath(webSocketRoute.getUrl(),
-                        Handlers.websocket(getInstance(WebSocketHandler.class)
-                                .withControllerClass(webSocketRoute.getControllerClass())
-                                .withAuthentication(webSocketRoute.hasAuthentication())));
-
-            } else if (mangooRoute instanceof ServerSentEventRoute) {
-                ServerSentEventRoute serverSentEventRoute = (ServerSentEventRoute) mangooRoute;
-                
-                pathHandler.addExactPath(serverSentEventRoute.getUrl(),
-                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
-                                .withAuthentication(serverSentEventRoute.hasAuthentication())));
-            } else if (mangooRoute instanceof PathRoute) {
-                PathRoute pathRoute = (PathRoute) mangooRoute;
-                
-                pathHandler.addPrefixPath(pathRoute.getUrl(),
-                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())));
-            } else {
-                // Ignoring anything else except WebSocket ServerSentEvent or Resource Path for PathHandler
-            }
+        
+        Router.getWebSocketRoutes().forEach(webSocketRoute -> {
+            pathHandler.addExactPath(webSocketRoute.getUrl(),
+                    Handlers.websocket(getInstance(WebSocketHandler.class)
+                            .withControllerClass(webSocketRoute.getControllerClass())
+                            .withAuthentication(webSocketRoute.hasAuthentication())));
+        });
+        
+        Router.getServerSentEventRoutes().forEach(serverSentEventRoute -> {
+            pathHandler.addExactPath(serverSentEventRoute.getUrl(),
+                    Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
+                            .withAuthentication(serverSentEventRoute.hasAuthentication())));
+        });
+        
+        Router.getPathRoutes().forEach(pathRoute -> {
+            pathHandler.addPrefixPath(pathRoute.getUrl(),
+                    new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())));  
         });
     }
 
@@ -498,26 +482,20 @@ public final class Application {
                  );
         }
 
-        Router.getRoutes().forEach((mangooRoute) -> {
-            if (mangooRoute instanceof RequestRoute) {
-                RequestRoute requestRoute = (RequestRoute) mangooRoute;
-                DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
-                        .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
-                        .isBlocking(requestRoute.isBlocking())
-                        .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
-                        .withAuthentication(requestRoute.hasAuthentication())
-                        .withAuthorization(requestRoute.hasAuthorization())
-                        .withLimit(requestRoute.getLimit());
-                
-                routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
-            } else if (mangooRoute instanceof FileRoute) {
-                FileRoute fileRoute = (FileRoute) mangooRoute;
-                routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler);
-            } else {
-                // Ignoring anything else except RequestRoute and FileRoute for DispatcherHandler
-            }
+        Router.getRequestRoutes().forEach(requestRoute -> {
+            DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
+                    .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
+                    .isBlocking(requestRoute.isBlocking())
+                    .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
+                    .withAuthentication(requestRoute.hasAuthentication())
+                    .withAuthorization(requestRoute.hasAuthorization())
+                    .withLimit(requestRoute.getLimit());
+            
+            routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
-
+        
+        Router.getFileRoutes().forEach(fileRoute -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
+        
         return routingHandler;
     }
 
