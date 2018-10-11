@@ -8,8 +8,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.Sets;
-
 import io.mangoo.enums.Required;
 
 /**
@@ -19,7 +17,7 @@ import io.mangoo.enums.Required;
  */
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
-    private static final Set<String> INVALID_CHARACTERS = Sets.newHashSet("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private static final String ERROR = "error";
     private static final String WARNING = "warning";
     private static final String SUCCESS = "success";

@@ -101,7 +101,7 @@ public class WebSocketService {
 
         final Set<WebSocketChannel> channels = getChannels(uri);
         if (channels != null) {
-            channels.forEach((WebSocketChannel channel) -> {
+            channels.forEach(channel -> {
                 if (channel.isOpen()) {
                     MangooUtils.closeQuietly(channel);
                 }

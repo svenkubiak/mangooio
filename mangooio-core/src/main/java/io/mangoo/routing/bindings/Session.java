@@ -9,8 +9,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.Sets;
-
 import io.mangoo.enums.Required;
 
 /**
@@ -20,7 +18,7 @@ import io.mangoo.enums.Required;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final Set<String> INVALID_CHRACTERTS = Sets.newHashSet("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHRACTERTS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private String authenticity;
     private LocalDateTime expires;

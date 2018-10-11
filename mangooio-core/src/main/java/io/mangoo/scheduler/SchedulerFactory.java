@@ -1,5 +1,7 @@
 package io.mangoo.scheduler;
 
+import static io.mangoo.core.Application.getInstance;
+
 import java.util.Objects;
 
 import org.quartz.Job;
@@ -7,7 +9,6 @@ import org.quartz.Scheduler;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
-import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 
 /**
@@ -22,6 +23,6 @@ public class SchedulerFactory implements JobFactory {
         Objects.requireNonNull(triggerFiredBundle, Required.TRIGGER_FIRE_BUNDLE.toString());
         Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
 
-        return Application.getInstance(triggerFiredBundle.getJobDetail().getJobClass());
+        return getInstance(triggerFiredBundle.getJobDetail().getJobClass());
     }
 }

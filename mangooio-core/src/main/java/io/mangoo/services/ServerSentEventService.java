@@ -64,12 +64,11 @@ public class ServerSentEventService {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach((ServerSentEventConnection connection) -> {
-                if (connection.isOpen()) {
-                    connection.send(data);
-                }
-            });
-        }
+            uriConnections.stream()
+                .filter(ServerSentEventConnection::isOpen)
+                .forEach(connection -> connection.send(data));
+            
+       }
     }
 
     /**
@@ -86,11 +85,9 @@ public class ServerSentEventService {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach((ServerSentEventConnection connection) -> {
-                if (connection.isOpen()) {
-                    connection.send(data, eventCallback);
-                }
-            });
+            uriConnections.stream()
+                .filter(ServerSentEventConnection::isOpen)
+                .forEach(connection -> connection.send(data, eventCallback));
         }
     }
 
@@ -104,7 +101,7 @@ public class ServerSentEventService {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach((ServerSentEventConnection connection) -> {
+            uriConnections.forEach(connection -> {
                 if (connection.isOpen()){
                     MangooUtils.closeQuietly(connection);
                 }

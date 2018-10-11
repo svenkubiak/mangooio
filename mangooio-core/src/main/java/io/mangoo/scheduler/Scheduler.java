@@ -245,14 +245,10 @@ public class Scheduler {
     public JobKey getJobKey(String name) throws MangooSchedulerException {
         Objects.requireNonNull(name, Required.NAME.toString());
         
-        List<JobKey> allJobKeys = getAllJobKeys();
-        for (JobKey jobKey : allJobKeys) {
-            if (jobKey.getName().equalsIgnoreCase(name)) {
-                return jobKey;
-            }
-        }
-        
-        return null;
+        return getAllJobKeys().stream()
+                .filter(jobKey -> jobKey.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .get();
     }
     
     /**
@@ -289,7 +285,7 @@ public class Scheduler {
         try {
             for (String groupName : this.quartzScheduler.getJobGroupNames()) {
                 jobKeys.addAll(this.quartzScheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName)));
-            }            
+            }   
         } catch (SchedulerException e) {
             throw new MangooSchedulerException(e);
         }

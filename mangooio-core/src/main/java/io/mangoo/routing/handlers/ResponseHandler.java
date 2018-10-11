@@ -112,7 +112,6 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
-
         exchange.getResponseSender().send(getResponseBody(exchange, response));
     }
 }
