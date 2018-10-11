@@ -1,4 +1,4 @@
-package io.mangoo.cache;
+package io.mangoo.interfaces;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;

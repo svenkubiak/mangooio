@@ -20,11 +20,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.configuration.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.Cache;
 
 /**
  * 

@@ -9,10 +9,10 @@ import org.xnio.ChannelListener;
 
 import com.google.inject.Inject;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;

@@ -8,11 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;

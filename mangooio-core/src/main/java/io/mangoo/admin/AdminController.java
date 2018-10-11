@@ -24,7 +24,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
@@ -33,6 +32,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;

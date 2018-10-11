@@ -6,12 +6,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.models.OAuthUser;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;

@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.models.Metrics;

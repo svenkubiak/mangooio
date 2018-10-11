@@ -4,8 +4,8 @@ import org.quartz.spi.JobFactory;
 
 import com.google.inject.AbstractModule;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.configuration.Config;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.scheduler.SchedulerFactory;
 

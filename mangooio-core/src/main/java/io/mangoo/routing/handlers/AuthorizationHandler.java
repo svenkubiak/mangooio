@@ -9,9 +9,9 @@ import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.MangooAuthorizationService;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
-import io.mangoo.services.AuthorizationService;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -24,10 +24,10 @@ import io.undertow.util.StatusCodes;
  */
 public class AuthorizationHandler implements HttpHandler {
     private Config config;
-    private AuthorizationService authorizationService;
+    private MangooAuthorizationService authorizationService;
     
     @Inject
-    public AuthorizationHandler(Config config, AuthorizationService authorizationService) {
+    public AuthorizationHandler(Config config, MangooAuthorizationService authorizationService) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.authorizationService = Objects.requireNonNull(authorizationService, Required.AUTHORIZATION_SERVICE.toString());
     }

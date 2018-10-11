@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
+import io.mangoo.interfaces.Cache;
 
 /**
  * 

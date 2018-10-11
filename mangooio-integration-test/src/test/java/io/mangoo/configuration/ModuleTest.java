@@ -14,8 +14,8 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import io.mangoo.TestExtension;
-import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
+import io.mangoo.interfaces.Cache;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.templating.TemplateEngine;

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.mangoo.enums.Required;
+import io.mangoo.interfaces.Cache;
 
 /**
  * EhCache implementation 

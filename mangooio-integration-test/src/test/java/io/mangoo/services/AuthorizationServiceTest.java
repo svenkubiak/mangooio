@@ -12,6 +12,7 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
+import io.mangoo.interfaces.MangooAuthorizationService;
 
 @ExtendWith({TestExtension.class})
 public class AuthorizationServiceTest {
@@ -19,7 +20,7 @@ public class AuthorizationServiceTest {
     @Test
     public void testInvalidAuthorization() {
         //given
-        AuthorizationService authorizationService = Application.getInstance(AuthorizationService.class);
+        MangooAuthorizationService authorizationService = Application.getInstance(MangooAuthorizationService.class);
         
         //when
         boolean authorization = authorizationService.validAuthorization("foo", "bar", "foobar");
@@ -32,7 +33,7 @@ public class AuthorizationServiceTest {
     public void testInvalidAuthorizationConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
-            AuthorizationService authorizationService = Application.getInstance(AuthorizationService.class);
+            MangooAuthorizationService authorizationService = Application.getInstance(MangooAuthorizationService.class);
             
             // then
             return !authorizationService.validAuthorization("foo", "bar", "foobar");
@@ -43,7 +44,7 @@ public class AuthorizationServiceTest {
     public void testValidAuthorizationConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
-            AuthorizationService authorizationService = Application.getInstance(AuthorizationService.class);
+            MangooAuthorizationService authorizationService = Application.getInstance(MangooAuthorizationService.class);
             
             // then
             return authorizationService.validAuthorization("bob", "AuthorizationController:write", "write");
