@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
@@ -116,12 +115,10 @@ public class AdminController {
             String level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
                 LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
-                for (Logger logger : loggerContext.getLoggers()) { //NOSONAR
-                    if (clazz.equals(logger.getName())) {
-                        logger.setLevel(Level.getLevel(level));
-                        break;
-                    }
-                }
+                loggerContext.getLoggers()
+                    .stream()
+                    .filter(logger -> clazz.equals(logger.getName()))
+                    .forEach(logger -> logger.setLevel(Level.getLevel(level)));
             }
         }
         

@@ -39,7 +39,7 @@ public class ControllerRoute {
      */
     public void withRoutes(MangooRoute... routes) {
         Objects.requireNonNull(routes, Required.ROUTE.toString());
-
+        
         for (MangooRoute route : routes) {
             RequestRoute requestRoute = (RequestRoute) route;
             requestRoute.withControllerClass(this.controllerClass);

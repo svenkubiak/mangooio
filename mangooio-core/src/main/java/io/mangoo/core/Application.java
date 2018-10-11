@@ -422,6 +422,7 @@ public final class Application {
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
         boolean exists = false;
+        
         for (final Method method : controllerClass.getMethods()) {
             if (method.getName().equals(controllerMethod)) {
                 exists = true;

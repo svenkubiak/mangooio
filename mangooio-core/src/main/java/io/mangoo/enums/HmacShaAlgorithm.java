@@ -1,7 +1,9 @@
 package io.mangoo.enums;
 
 /**
- * Enumeration of HMAC-SHA algorithm types.
+ * 
+ * @author svenkubiak
+ *
  */
 public enum HmacShaAlgorithm {
     HMAC_SHA_1("HmacSHA1"),
