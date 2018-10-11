@@ -31,7 +31,6 @@ public class AuthorizationService implements MangooAuthorizationService {
     
     @Override
     public boolean validAuthorization(String subject, String resource, String operation) {
-        System.out.println("should not be here");
         return enforcer.enforce(subject, resource, operation);
     }
 }

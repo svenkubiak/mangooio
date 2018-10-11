@@ -12,7 +12,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.Cache;
+import io.mangoo.interfaces.MangooCache;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
@@ -29,7 +29,7 @@ import io.undertow.util.StatusCodes;
  */
 public class LimitHandler implements HttpHandler {
     private Attachment attachment;
-    private Cache cache;
+    private MangooCache cache;
     
     @Inject
     public LimitHandler(CacheProvider cacheProvider) {

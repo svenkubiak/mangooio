@@ -585,8 +585,8 @@ public final class Application {
     private static List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
         try {
-            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
             modules.add(new io.mangoo.core.Module());
+            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);

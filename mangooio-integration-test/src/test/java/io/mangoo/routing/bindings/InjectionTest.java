@@ -13,7 +13,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.Cache;
+import io.mangoo.interfaces.MangooCache;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.models.Metrics;
@@ -83,7 +83,7 @@ public class InjectionTest {
     @Test
     public void testCache() {
         //given
-        Cache cache = Application.getInstance(Cache.class);
+        MangooCache cache = Application.getInstance(MangooCache.class);
         
         //then
         assertThat(cache, not(nullValue()));

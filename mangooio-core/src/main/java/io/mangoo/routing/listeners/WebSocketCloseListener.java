@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.Cache;
+import io.mangoo.interfaces.MangooCache;
 import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
@@ -24,7 +24,7 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 @Singleton
 public class WebSocketCloseListener implements ChannelListener<WebSocketChannel> {
-    private final Cache cache;
+    private final MangooCache cache;
     
     @Inject
     private WebSocketCloseListener(CacheProvider cacheProvider) {

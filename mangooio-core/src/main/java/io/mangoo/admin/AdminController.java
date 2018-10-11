@@ -32,7 +32,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.interfaces.Cache;
+import io.mangoo.interfaces.MangooCache;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.providers.CacheProvider;
@@ -59,7 +59,7 @@ public class AdminController {
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
-    private final Cache cache; //NOSONAR
+    private final MangooCache cache; //NOSONAR
     private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
     private final Scheduler scheduler; //NOSONAR

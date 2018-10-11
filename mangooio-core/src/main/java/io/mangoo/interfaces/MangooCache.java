@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author svenkubiak
  *
  */
-public interface Cache {
+public interface MangooCache {
     /**
      * Adds a value to cache with a given key overwriting and existing value
      *

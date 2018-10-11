@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.Cache;
+import io.mangoo.interfaces.MangooCache;
 
 /**
  * EhCache implementation 
@@ -13,7 +13,7 @@ import io.mangoo.interfaces.Cache;
  * @author sven.kubiak
  *
  */
-public class CacheImpl implements Cache {
+public class CacheImpl implements MangooCache {
     private org.ehcache.Cache<String, Object> ehCache;
     
     public CacheImpl(org.ehcache.Cache<String, Object> ehCache) {
