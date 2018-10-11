@@ -3,11 +3,11 @@ package io.mangoo.core;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -80,14 +80,14 @@ public final class Application {
     private static final int BUFFERSIZE = 255;
     private static volatile String httpHost;
     private static volatile String ajpHost;
-    private static volatile int httpPort;
-    private static volatile int ajpPort;
     private static volatile Undertow undertow;
     private static volatile Mode mode;
     private static volatile Injector injector;
     private static volatile LocalDateTime start = LocalDateTime.now();
     private static volatile PathHandler pathHandler;
     private static volatile boolean started;
+    private static volatile int httpPort;
+    private static volatile int ajpPort;
     private static volatile ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
             Thread.currentThread().getContextClassLoader(),
             Default.FILES_FOLDER.toString() + '/'));
@@ -407,7 +407,7 @@ public final class Application {
             }
             
             if (requestRoute.hasAuthorization() && (!MangooUtils.resourceExists(Default.MODEL_CONF.toString()) || !MangooUtils.resourceExists(Default.POLICY_CSV.toString()))) {
-                LOG.error("Router on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
+                LOG.error("Route on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                 failsafe();
             } 
         });
@@ -421,16 +421,10 @@ public final class Application {
      * @return True if the method exists, false otherwise
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
-        boolean exists = false;
+        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
+        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
         
-        for (final Method method : controllerClass.getMethods()) {
-            if (method.getName().equals(controllerMethod)) {
-                exists = true;
-                break;
-            }
-        }
-
-        return exists;
+        return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
 
     /**
@@ -579,8 +573,9 @@ public final class Application {
     }
 
     private static int getBitLength(String secret) {
-        secret = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
-        return ByteUtils.bitLength(secret);
+        Objects.requireNonNull(secret, Required.SECRET.toString());
+
+        return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", ""));
     }
 
     private static List<Module> getModules() {
