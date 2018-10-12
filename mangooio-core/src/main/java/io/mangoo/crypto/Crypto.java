@@ -211,9 +211,8 @@ public class Crypto {
      * 
      * @param text The encrypted text
      * @param key The private key
-     * @return The unencrypted text
      * 
-     * @throws Exception if decryption fails
+     * @return The unencrypted text
      */
     public byte[] decrypt(byte[] text, PrivateKey key) {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
@@ -236,9 +235,8 @@ public class Crypto {
      * 
      * @param text The encrypted text, encoded as Base64
      * @param key The private key
-     * @return The plain text encoded as UTF8
      * 
-     * @throws Exception if decryption fails
+     * @return The plain text encoded as UTF8
      */
     public String decrypt(String text, PrivateKey key) {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
@@ -271,9 +269,8 @@ public class Crypto {
      * Generates Private Key from Base64 encoded string
      * 
      * @param key Base64 encoded string which represents the key
+
      * @return The PrivateKey
-     * 
-     * @throws Exception if generation fails
      */
     public PrivateKey getPrivateKeyFromString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
@@ -291,9 +288,8 @@ public class Crypto {
      * Generates Public Key from Base64 encoded string
      * 
      * @param key Base64 encoded string which represents the key
+
      * @return The PublicKey
-     * 
-     * @throws Exception if conversion fails
      */
     public PublicKey getPublicKeyFromString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
