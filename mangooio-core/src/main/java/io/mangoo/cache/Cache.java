@@ -1,4 +1,4 @@
-package io.mangoo.interfaces;
+package io.mangoo.cache;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author svenkubiak
  *
  */
-public interface MangooCache {
+public interface Cache {
     /**
      * Adds a value to cache with a given key overwriting and existing value
      *

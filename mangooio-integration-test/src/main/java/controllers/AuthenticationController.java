@@ -1,8 +1,8 @@
 package controllers;
 
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.filters.oauth.OAuthCallbackFilter;
-import io.mangoo.filters.oauth.OAuthLoginFilter;
+import io.mangoo.filters.OAuthCallbackFilter;
+import io.mangoo.filters.OAuthLoginFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Form;

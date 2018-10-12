@@ -5,8 +5,8 @@ import java.util.Objects;
 import com.google.inject.Inject;
 
 import biz.gabrys.lesscss.compiler.StringUtils;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooAuthorizationService;

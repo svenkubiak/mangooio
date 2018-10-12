@@ -27,8 +27,8 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 import com.google.common.base.Charsets;
 
 import io.mangoo.TestExtension;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.bindings.Session;

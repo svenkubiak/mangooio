@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;

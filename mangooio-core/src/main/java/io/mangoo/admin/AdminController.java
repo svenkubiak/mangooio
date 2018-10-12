@@ -23,18 +23,18 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.interfaces.MangooCache;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
@@ -58,7 +58,7 @@ public class AdminController {
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
-    private final MangooCache cache; //NOSONAR
+    private final Cache cache; //NOSONAR
     private final Config config; //NOSONAR
     private final Crypto crypto; //NOSONAR
     private final Scheduler scheduler; //NOSONAR

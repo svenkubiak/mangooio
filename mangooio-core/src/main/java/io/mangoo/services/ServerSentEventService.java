@@ -7,11 +7,11 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooCache;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
@@ -24,7 +24,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
  */
 @Singleton
 public class ServerSentEventService {
-    private final MangooCache cache;
+    private final Cache cache;
     
     @Inject
     private ServerSentEventService(CacheProvider cacheProvider) {

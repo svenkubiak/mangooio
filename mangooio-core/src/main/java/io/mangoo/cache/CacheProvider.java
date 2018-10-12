@@ -1,4 +1,4 @@
-package io.mangoo.providers;
+package io.mangoo.cache;
 
 import java.net.URI;
 import java.time.Duration;
@@ -20,11 +20,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import io.mangoo.cache.CacheImpl;
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooCache;
 
 /**
  * 
@@ -32,10 +30,10 @@ import io.mangoo.interfaces.MangooCache;
  *
  */
 @Singleton
-public class CacheProvider implements Provider<MangooCache> {
-    private Map<String, MangooCache> caches = new HashMap<>();
+public class CacheProvider implements Provider<Cache> {
+    private Map<String, Cache> caches = new HashMap<>();
     private CacheManager cacheManager;
-    private MangooCache cache;
+    private Cache cache;
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FORTY_THOUSAND_ELEMENTS = 40000;
@@ -107,7 +105,7 @@ public class CacheProvider implements Provider<MangooCache> {
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
     }
 
-    public MangooCache registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
+    public Cache registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
         cache = new CacheImpl(cacheManager.createCache(name, configuration));
         this.caches.put(name, cache);
 
@@ -115,7 +113,7 @@ public class CacheProvider implements Provider<MangooCache> {
     }
 
     @Override
-    public MangooCache get() {
+    public Cache get() {
         return this.cache;
     }
 
@@ -125,7 +123,7 @@ public class CacheProvider implements Provider<MangooCache> {
      * @param name The name of the cache
      * @return An Cache instance
      */
-    public MangooCache getCache(CacheName name) {
+    public Cache getCache(CacheName name) {
         return getCache(name.toString());
     }
 
@@ -135,7 +133,7 @@ public class CacheProvider implements Provider<MangooCache> {
      * @param name The name of the cache
      * @return An Cache instance
      */
-    public MangooCache getCache(String name) {
+    public Cache getCache(String name) {
         return this.caches.get(name);
     }
 

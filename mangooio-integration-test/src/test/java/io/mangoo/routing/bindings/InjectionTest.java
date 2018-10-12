@@ -8,16 +8,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.configuration.Config;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooCache;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.models.Metrics;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
@@ -83,7 +83,7 @@ public class InjectionTest {
     @Test
     public void testCache() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //then
         assertThat(cache, not(nullValue()));

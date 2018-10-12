@@ -1,4 +1,4 @@
-package io.mangoo.configuration;
+package io.mangoo.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
-import io.mangoo.core.Application;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;

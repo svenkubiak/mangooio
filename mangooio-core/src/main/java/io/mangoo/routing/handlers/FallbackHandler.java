@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;

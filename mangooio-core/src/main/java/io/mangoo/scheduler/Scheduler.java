@@ -18,8 +18,8 @@ import org.quartz.impl.matchers.GroupMatcher;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooSchedulerException;

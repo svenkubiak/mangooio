@@ -6,7 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import jodd.mail.Email;
 import jodd.mail.MailServer;

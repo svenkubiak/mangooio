@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 
 /**

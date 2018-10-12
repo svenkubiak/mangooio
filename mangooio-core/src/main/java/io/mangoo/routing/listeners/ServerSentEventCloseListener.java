@@ -9,11 +9,11 @@ import org.xnio.ChannelListener;
 
 import com.google.inject.Inject;
 
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooCache;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
@@ -24,7 +24,7 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  */
 @Singleton
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
-    private final MangooCache cache;
+    private final Cache cache;
     
     @Inject
     private ServerSentEventCloseListener(CacheProvider cacheProvider) {

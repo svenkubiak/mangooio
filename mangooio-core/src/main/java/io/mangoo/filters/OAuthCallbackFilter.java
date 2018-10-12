@@ -1,4 +1,4 @@
-package io.mangoo.filters.oauth;
+package io.mangoo.filters;
 
 import java.io.IOException;
 import java.util.Optional;

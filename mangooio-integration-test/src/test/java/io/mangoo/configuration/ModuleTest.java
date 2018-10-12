@@ -14,9 +14,10 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 import io.mangoo.TestExtension;
+import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.interfaces.MangooCache;
 import io.mangoo.interfaces.MangooRequestFilter;
 import io.mangoo.templating.TemplateEngine;
 
@@ -38,7 +39,7 @@ public class ModuleTest {
 		Binding<Logger> logger = guice.getBinding(Logger.class);
 		Binding<Config> config = guice.getBinding(Config.class);
 		Binding<JobFactory> jobFactory = guice.getBinding(JobFactory.class);
-		Binding<MangooCache> cache = guice.getBinding(MangooCache.class);
+		Binding<Cache> cache = guice.getBinding(Cache.class);
 		Binding<TemplateEngine> templateEngine = guice.getBinding(TemplateEngine.class);		
 		Binding<MangooRequestFilter> mangooRequestFilter = guice.getBinding(MangooRequestFilter.class);
 		Binding<MangooBootstrap> mangooBootstrap = guice.getBinding(MangooBootstrap.class);

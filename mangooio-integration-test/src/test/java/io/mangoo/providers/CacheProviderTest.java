@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 
 /**

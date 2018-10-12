@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.interfaces.MangooCache;
 
 /**
  * 
@@ -28,7 +27,7 @@ public class CacheTest {
     @Test
     public void testAdd() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
         cache.put("test", TEST_VALUE);
@@ -41,7 +40,7 @@ public class CacheTest {
     @Test
     public void testClear() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
         cache.put("test", TEST_VALUE);
@@ -54,7 +53,7 @@ public class CacheTest {
     @Test
     public void testCast() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
     	cache.put("test", 1);
@@ -66,7 +65,7 @@ public class CacheTest {
     @Test
     public void testPutAll() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
         Map<String, Object> map = new HashMap<>();
@@ -82,7 +81,7 @@ public class CacheTest {
     @Test
     public void testIncrement() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
         AtomicInteger increment = cache.increment("increment");
@@ -100,7 +99,7 @@ public class CacheTest {
     @Test
     public void testDecrement() {
         //given
-        MangooCache cache = Application.getInstance(MangooCache.class);
+        Cache cache = Application.getInstance(Cache.class);
         
         //when
         AtomicInteger decrement = cache.decrement("decrement");

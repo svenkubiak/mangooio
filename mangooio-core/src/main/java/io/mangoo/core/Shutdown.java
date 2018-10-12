@@ -6,9 +6,9 @@ import org.apache.logging.log4j.Logger;
 import com.google.inject.Singleton;
 import com.netflix.governator.lifecycle.LifecycleManager;
 
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.ConcurrentService;
 

@@ -31,7 +31,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 
 /**

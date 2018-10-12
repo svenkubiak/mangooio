@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.google.common.net.MediaType;
 import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Response;

@@ -6,14 +6,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.mangoo.configuration.Config;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
-import io.mangoo.interfaces.MangooCache;
 import io.mangoo.models.OAuthUser;
-import io.mangoo.providers.CacheProvider;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.TotpUtils;
 
@@ -137,7 +137,7 @@ public class Authentication {
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
-        MangooCache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         boolean authenticated = false;
         if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
             authenticated = true;
@@ -202,7 +202,7 @@ public class Authentication {
         boolean lock = false;
         
         Config config = Application.getInstance(Config.class);
-        MangooCache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         AtomicInteger counter = cache.getCounter(username);
         if (counter != null && counter.get() > config.getAuthenticationLock()) {
             lock = true;

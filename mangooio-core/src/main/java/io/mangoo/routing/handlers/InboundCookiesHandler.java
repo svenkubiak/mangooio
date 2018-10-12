@@ -19,8 +19,8 @@ import org.jose4j.keys.HmacKey;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;

@@ -30,8 +30,8 @@ import com.github.scribejava.core.oauth.OAuthService;
 import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;

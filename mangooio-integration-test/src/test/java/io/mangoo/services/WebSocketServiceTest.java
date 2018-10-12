@@ -30,8 +30,8 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 
 import io.mangoo.TestExtension;
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.undertow.websockets.core.WebSocketChannel;
