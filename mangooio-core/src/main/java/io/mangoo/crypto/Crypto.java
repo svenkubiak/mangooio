@@ -1,6 +1,7 @@
 package io.mangoo.crypto;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -203,17 +204,22 @@ public class Crypto {
      * 
      * @param text The plain text
      * @param key The public key 
-     * @return Encrypted string as base64
      * 
-     * @throws Exception if encryption fails
+     * @return Encrypted string as base64
      */
-    public String encrypt(String text, PublicKey key) throws Exception {
+    public String encrypt(String text, PublicKey key) {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
-        byte[] cipherText = encrypt(text.getBytes(ENCODING), key);
+        String encrypt = null;
+        try {
+            byte[] cipherText = encrypt(text.getBytes(ENCODING), key);
+            encrypt = encodeBase64(cipherText);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         
-        return encodeBase64(cipherText);
+        return encrypt;
     }
 
     /**
