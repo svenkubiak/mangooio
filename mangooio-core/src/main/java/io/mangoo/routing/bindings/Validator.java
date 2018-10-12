@@ -86,7 +86,6 @@ public class Validator implements Serializable {
         expectMin(name, minLength, messages.get(Validation.MIN_KEY.name(), name, minLength));
     }
 
-
     /**
      * Validates a given field to have a minimum length
      *
