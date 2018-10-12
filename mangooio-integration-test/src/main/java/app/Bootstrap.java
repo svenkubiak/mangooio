@@ -18,6 +18,7 @@ import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 
+@SuppressWarnings("all")
 public class Bootstrap implements MangooBootstrap {
 
     @Override
