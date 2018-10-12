@@ -1,6 +1,7 @@
 package io.mangoo.crypto;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -9,12 +10,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Objects;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +47,7 @@ import io.mangoo.enums.Required;
  */
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
-    private final PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
+    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String ENCODING = "UTF8";
@@ -83,7 +88,7 @@ public class Crypto {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(Charsets.UTF_8)));
-        this.cipher.init(false, cipherParameters);
+        this.paddedBufferedBlockCipher.init(false, cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
     }
@@ -116,7 +121,7 @@ public class Crypto {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(Charsets.UTF_8)));
-        this.cipher.init(true, cipherParameters);
+        this.paddedBufferedBlockCipher.init(true, cipherParameters);
         
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
     }
@@ -130,10 +135,10 @@ public class Crypto {
     private byte[] cipherData(final byte[] data) {
         byte[] result = null;
         try {
-            final byte[] buffer = new byte[this.cipher.getOutputSize(data.length)];
+            final byte[] buffer = new byte[this.paddedBufferedBlockCipher.getOutputSize(data.length)];
 
-            final int processedBytes = this.cipher.processBytes(data, 0, data.length, buffer, 0);
-            final int finalBytes = this.cipher.doFinal(buffer, processedBytes);
+            final int processedBytes = this.paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
+            final int finalBytes = this.paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
 
             result = new byte[processedBytes + finalBytes];
             System.arraycopy(buffer, 0, result, 0, result.length);
@@ -210,14 +215,20 @@ public class Crypto {
      * 
      * @throws Exception if decryption fails
      */
-    public byte[] decrypt(byte[] text, PrivateKey key) throws Exception {
+    public byte[] decrypt(byte[] text, PrivateKey key) {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
 
-        Cipher cipher = Cipher.getInstance(ENCRYPTION);
-        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] decrypt = null;
+        try {
+            Cipher cipher = Cipher.getInstance(ENCRYPTION);
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            decrypt = cipher.doFinal(text);
+        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+            LOG.error("Failed to decrypt encrypted text with private key", e);
+        }
         
-        return cipher.doFinal(text);
+        return decrypt;
     }
     
     /**
@@ -229,13 +240,19 @@ public class Crypto {
      * 
      * @throws Exception if decryption fails
      */
-    public String decrypt(String text, PrivateKey key) throws Exception {
+    public String decrypt(String text, PrivateKey key) {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
         
-        byte[] dectyptedText = decrypt(decodeBase64(text), key);
+        String decrypt = null;
+        try {
+            byte[] dectyptedText = decrypt(decodeBase64(text), key);
+            decrypt = new String(dectyptedText, ENCODING);
+        } catch (Exception e) {
+            LOG.error("Failed to decrypt encrypted text with private key", e);
+        }
 
-        return new String(dectyptedText, ENCODING);
+        return decrypt;
     }
 
     /**
@@ -258,10 +275,16 @@ public class Crypto {
      * 
      * @throws Exception if generation fails
      */
-    public PrivateKey getPrivateKeyFromString(String key) throws Exception {
+    public PrivateKey getPrivateKeyFromString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
-        return KeyFactory.getInstance(ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decodeBase64(key)));
+        try {
+            return KeyFactory.getInstance(ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decodeBase64(key)));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            LOG.error("Failed to get private key from string", e);
+        }
+        
+        return null;
     }
 
     /**
@@ -272,10 +295,16 @@ public class Crypto {
      * 
      * @throws Exception if conversion fails
      */
-    public PublicKey getPublicKeyFromString(String key) throws Exception {
+    public PublicKey getPublicKeyFromString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
-        return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(decodeBase64(key)));
+        try {
+            return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(decodeBase64(key)));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            LOG.error("Failed to get pulbic key from string", e);
+        }
+        
+        return null;
     }
 
     /**
