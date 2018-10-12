@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.utils.WebRequest;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -25,7 +25,7 @@ public class FilterControllerTest {
     @Test
     public void testFilterWithAdditionalContent() {
         //given
-        WebResponse response = WebRequest.get("/filter").execute();
+        TestResponse response = TestRequest.get("/filter").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -36,7 +36,7 @@ public class FilterControllerTest {
     @Test
     public void testFilterWithAdditionalHeader() {
         //given
-        WebResponse response = WebRequest.get("/headerfilter").execute();
+        TestResponse response = TestRequest.get("/headerfilter").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -47,7 +47,7 @@ public class FilterControllerTest {
     @Test
     public void testMultipleFilters() {
         //given
-        WebResponse response = WebRequest.get("/filters").execute();
+        TestResponse response = TestRequest.get("/filters").execute();
 
         //then
         assertThat(response, not(nullValue()));

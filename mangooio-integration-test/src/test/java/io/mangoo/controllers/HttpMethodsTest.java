@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.utils.WebRequest;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -24,7 +24,7 @@ public class HttpMethodsTest {
     @Test
     public void testGet() {
         //given
-        final WebResponse response = WebRequest.get("/").execute();
+        final TestResponse response = TestRequest.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -34,7 +34,7 @@ public class HttpMethodsTest {
     @Test
     public void testPost() {
         //given
-        final WebResponse response = WebRequest.post("/").execute();
+        final TestResponse response = TestRequest.post("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -44,7 +44,7 @@ public class HttpMethodsTest {
     @Test
     public void testPut() {
         //given
-        final WebResponse response = WebRequest.put("/put").execute();
+        final TestResponse response = TestRequest.put("/put").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -54,7 +54,7 @@ public class HttpMethodsTest {
     @Test
     public void testHead() {
         //given
-        final WebResponse response = WebRequest.head("/").execute();
+        final TestResponse response = TestRequest.head("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -64,7 +64,7 @@ public class HttpMethodsTest {
     @Test
     public void testDelete() {
         //given
-        final WebResponse response = WebRequest.delete("/").execute();
+        final TestResponse response = TestRequest.delete("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -74,7 +74,7 @@ public class HttpMethodsTest {
     @Test
     public void testOptions() {
         //given
-        final WebResponse response = WebRequest.options("/").execute();
+        final TestResponse response = TestRequest.options("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -84,7 +84,7 @@ public class HttpMethodsTest {
     @Test
     public void testPatch() {
         //given
-        final WebResponse response = WebRequest.patch("/").execute();
+        final TestResponse response = TestRequest.patch("/").execute();
 
         //then
         assertThat(response, not(nullValue()));

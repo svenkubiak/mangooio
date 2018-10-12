@@ -26,8 +26,8 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
-import io.mangoo.test.utils.WebRequest;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 
@@ -46,7 +46,7 @@ public class ApplicationControllerTest {
     @Test
     public void testIndex() {
         //given
-        final WebResponse response = WebRequest.get("/").execute();
+        final TestResponse response = TestRequest.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -57,7 +57,7 @@ public class ApplicationControllerTest {
     @Test
     public void testOverwriteDefaultTemplates() {
         //given
-        final WebResponse response = WebRequest.get("/lala").execute();
+        final TestResponse response = TestRequest.get("/lala").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -69,7 +69,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRoute() {
         //given
-        final WebResponse response = WebRequest.get("/route").execute();
+        final TestResponse response = TestRequest.get("/route").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -81,7 +81,7 @@ public class ApplicationControllerTest {
     @Test
     public void testReverse() {
         //given
-        final WebResponse response = WebRequest.get("/reverse").execute();
+        final TestResponse response = TestRequest.get("/reverse").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -93,7 +93,7 @@ public class ApplicationControllerTest {
     @Test
     public void testLocation() {
         //given
-        final WebResponse response = WebRequest.get("/location").execute();
+        final TestResponse response = TestRequest.get("/location").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -105,7 +105,7 @@ public class ApplicationControllerTest {
     @Test
     public void testLocationWithParameter() {
         //given
-        final WebResponse response = WebRequest.get("/location/8282838477").execute();
+        final TestResponse response = TestRequest.get("/location/8282838477").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -117,7 +117,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPrettyTime() {
         //given
-        final WebResponse response = WebRequest.get("/prettytime")
+        final TestResponse response = TestRequest.get("/prettytime")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
 
@@ -131,15 +131,15 @@ public class ApplicationControllerTest {
     @Test
     public void testLimit() {
         //given
-        WebResponse response = null;
+        TestResponse response = null;
 
         //then
         for (int i=0; i <= 10; i++) {
-            response = WebRequest.get("/limit").execute();   
+            response = TestRequest.get("/limit").execute();   
             assertThat(response, not(nullValue()));
             assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         }
-        response = WebRequest.get("/limit").execute();   
+        response = TestRequest.get("/limit").execute();   
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
     }
@@ -147,7 +147,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRequest() {
         //given
-        final WebResponse response = WebRequest.get("/request").execute();
+        final TestResponse response = TestRequest.get("/request").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -159,7 +159,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithDisableRedirects() {
         //given
-        final WebResponse response = WebRequest.get("/redirect").withDisableRedirects(true).execute();
+        final TestResponse response = TestRequest.get("/redirect").withDisableRedirects(true).execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -170,7 +170,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithoutDisableRedirects() {
         //given
-        final WebResponse response = WebRequest.get("/redirect").execute();
+        final TestResponse response = TestRequest.get("/redirect").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -182,7 +182,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPlainText() {
         //given
-        final WebResponse response = WebRequest.get("/text").execute();
+        final TestResponse response = TestRequest.get("/text").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -193,7 +193,7 @@ public class ApplicationControllerTest {
     @Test
     public void testNotFound() {
         //given
-        final WebResponse response = WebRequest.get("/foo").execute();
+        final TestResponse response = TestRequest.get("/foo").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -204,7 +204,7 @@ public class ApplicationControllerTest {
     @Test
     public void testForbidden() {
         //given
-        final WebResponse response = WebRequest.get("/forbidden").execute();
+        final TestResponse response = TestRequest.get("/forbidden").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -215,7 +215,7 @@ public class ApplicationControllerTest {
     @Test
     public void testBadRequest() {
         //given
-        final WebResponse response = WebRequest.get("/badrequest").execute();
+        final TestResponse response = TestRequest.get("/badrequest").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -226,7 +226,7 @@ public class ApplicationControllerTest {
     @Test
     public void testUnauthorized() {
         //given
-        final WebResponse response = WebRequest.get("/unauthorized").execute();
+        final TestResponse response = TestRequest.get("/unauthorized").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -237,7 +237,7 @@ public class ApplicationControllerTest {
     @Test
     public void testAdditionalHeaders() {
         //given
-        final WebResponse response = WebRequest.get("/header").execute();
+        final TestResponse response = TestRequest.get("/header").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -273,7 +273,7 @@ public class ApplicationControllerTest {
     @SuppressWarnings("unchecked")
     public void testEtag() {
         //given
-        WebResponse response = WebRequest.get("/etag").execute();
+        TestResponse response = TestRequest.get("/etag").execute();
         final String etag = response.getHeader(Headers.ETAG_STRING);
 
         //then
@@ -282,7 +282,7 @@ public class ApplicationControllerTest {
         assertThat(etag, matches("^[a-f0-9]{32}$"));
 
         //given
-        response = WebRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
+        response = TestRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
@@ -292,7 +292,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPost() {
         //given
-        final WebResponse response = WebRequest.post("/post")
+        final TestResponse response = TestRequest.post("/post")
                 .withRequestBody("Winter is coming!")
                 .execute();
 
@@ -306,7 +306,7 @@ public class ApplicationControllerTest {
     @Test
     public void testPut() {
         //given
-        final WebResponse response = WebRequest.put("/put")
+        final TestResponse response = TestRequest.put("/put")
                 .withRequestBody("The king of the north!")
                 .execute();
 
@@ -320,7 +320,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonPathWithPost() {
         //given
-        final WebResponse response = WebRequest.post("/jsonpathpost")
+        final TestResponse response = TestRequest.post("/jsonpathpost")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -334,7 +334,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonPathWithPut() {
         //given
-        final WebResponse response = WebRequest.put("/jsonpathput")
+        final TestResponse response = TestRequest.put("/jsonpathput")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -348,7 +348,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonBoonWithPost() {
         //given
-        final WebResponse response = WebRequest.post("/jsonboonpost")
+        final TestResponse response = TestRequest.post("/jsonboonpost")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -362,7 +362,7 @@ public class ApplicationControllerTest {
     @Test
     public void testJsonBoonWithPut() {
         //given
-        final WebResponse response = WebRequest.put("/jsonboonput")
+        final TestResponse response = TestRequest.put("/jsonboonput")
                 .withRequestBody(JSON)
                 .execute();
 
@@ -376,7 +376,7 @@ public class ApplicationControllerTest {
     @Test
     public void testFreemarkerConfiguration() {
         //given
-        final WebResponse response = WebRequest.get("/freemarker").execute();
+        final TestResponse response = TestRequest.get("/freemarker").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -388,7 +388,7 @@ public class ApplicationControllerTest {
     @Test
     public void testHeaders() {
         //given
-        final WebResponse response = WebRequest.get("/").execute();
+        final TestResponse response = TestRequest.get("/").execute();
 
         //then
         assertThat(response, not(nullValue()));

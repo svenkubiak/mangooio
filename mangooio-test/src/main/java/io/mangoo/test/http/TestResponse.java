@@ -1,4 +1,4 @@
-package io.mangoo.test.utils;
+package io.mangoo.test.http;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,8 +41,8 @@ import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.undertow.util.HttpString;
@@ -53,8 +53,8 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public class WebResponse {
-    private static final Logger LOG = LogManager.getLogger(WebResponse.class);
+public class TestResponse {
+    private static final Logger LOG = LogManager.getLogger(TestResponse.class);
     private final CookieStore cookieStore = new BasicCookieStore();
     private final Map<String, String> headers = new HashMap<>(); //NOSONAR
     private final MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
@@ -70,13 +70,13 @@ public class WebResponse {
     private boolean responseDisbaleRedirects;
     private boolean hasFileBody;
 
-    public WebResponse (String uri, HttpString method) {
+    public TestResponse (String uri, HttpString method) {
         this.responseUri = uri;
         this.responseMethod = method;
         init();
     }
 
-    public WebResponse() {
+    public TestResponse() {
         init();
     }
 
@@ -100,7 +100,7 @@ public class WebResponse {
      * @param contentType The content type to use
      * @return Response
      */
-    public WebResponse withContentType(String contentType) {
+    public TestResponse withContentType(String contentType) {
         Objects.requireNonNull(contentType, "contentType can not be null");
 
         this.responseContentType = contentType;
@@ -113,7 +113,7 @@ public class WebResponse {
      * @param requestBody The request body to use
      * @return Response
      */
-    public WebResponse withRequestBody(String requestBody) {
+    public TestResponse withRequestBody(String requestBody) {
         this.responseRequestBody = requestBody;
         return this;
     }
@@ -124,7 +124,7 @@ public class WebResponse {
      * @param postParameter A list of post parameter
      * @return Response
      */
-    public WebResponse withPostParameters(List<NameValuePair> postParameter) {
+    public TestResponse withPostParameters(List<NameValuePair> postParameter) {
         Objects.requireNonNull(postParameter, "postParameter can not be null");
 
         this.postParameter = Collections.unmodifiableList(postParameter);
@@ -137,7 +137,7 @@ public class WebResponse {
      * @param disableRedirects true or false
      * @return Response
      */
-    public WebResponse withDisableRedirects(boolean disableRedirects) {
+    public TestResponse withDisableRedirects(boolean disableRedirects) {
         this.responseDisbaleRedirects = disableRedirects;
         return this;
     }
@@ -147,7 +147,7 @@ public class WebResponse {
      *
      * @return Response
      */
-    public WebResponse withLaxRedirectStrategy() {
+    public TestResponse withLaxRedirectStrategy() {
         this.httpClientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         return this;
     }
@@ -158,7 +158,7 @@ public class WebResponse {
      * @param uri The URI to call
      * @return Response
      */
-    public WebResponse withUri(String uri) {
+    public TestResponse withUri(String uri) {
         Objects.requireNonNull(uri, "uri can not be null");
 
         this.responseUri = uri;
@@ -172,7 +172,7 @@ public class WebResponse {
      * @param fileBody The file body
      * @return Response
      */
-    public WebResponse withFileBody(String name, FileBody fileBody) {
+    public TestResponse withFileBody(String name, FileBody fileBody) {
         Objects.requireNonNull(fileBody, "fileBody can not be null");
 
         this.hasFileBody = true;
@@ -186,7 +186,7 @@ public class WebResponse {
      * @param method The HTTP Method
      * @return Response
      */
-    public WebResponse withMethod(HttpString method) {
+    public TestResponse withMethod(HttpString method) {
         Objects.requireNonNull(method, "method can not be null");
 
         this.responseMethod = method;
@@ -200,7 +200,7 @@ public class WebResponse {
      * @param value The value of the header
      * @return Response
      */
-    public WebResponse withHeader(String name, String value) {
+    public TestResponse withHeader(String name, String value) {
         Objects.requireNonNull(name, "name can not be null");
         Objects.requireNonNull(value, "value can not be null");
 
@@ -214,7 +214,7 @@ public class WebResponse {
      * @param cookie The cookie of the header
      * @return Response
      */
-    public WebResponse withCookie(Cookie cookie) {
+    public TestResponse withCookie(Cookie cookie) {
         Objects.requireNonNull(cookie, "cookie can not be null");
 
         this.cookieStore.addCookie(cookie);
@@ -228,7 +228,7 @@ public class WebResponse {
      * @param password The password
      * @return Response
      */
-    public WebResponse withBasicAuthentication(String username, String password) {
+    public TestResponse withBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, "username can not be null");
         Objects.requireNonNull(password, "password can not be null");
 
@@ -244,7 +244,7 @@ public class WebResponse {
      *
      * @return Response
      */
-    public WebResponse execute() {
+    public TestResponse execute() {
         if ((Methods.GET).equals(this.responseMethod)) {
             final HttpGet httpGet = new HttpGet(this.responseUrl + this.responseUri);
 
@@ -318,7 +318,7 @@ public class WebResponse {
      * @param request The HTTP request
      * @return Response
      */
-    private WebResponse doRequest(HttpUriRequest request) {
+    private TestResponse doRequest(HttpUriRequest request) {
         if (this.responseContentType != null) {
             request.setHeader(Header.CONTENT_TYPE.toString(), responseContentType);
         }

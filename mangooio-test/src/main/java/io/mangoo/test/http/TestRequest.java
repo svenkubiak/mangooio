@@ -1,4 +1,4 @@
-package io.mangoo.test.utils;
+package io.mangoo.test.http;
 
 import java.util.Objects;
 
@@ -9,10 +9,10 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public final class WebRequest {
+public final class TestRequest {
     private static final String URI_ERROR = "URI can not be null";
 
-    private WebRequest() {
+    private TestRequest() {
     }
 
     /**
@@ -21,10 +21,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse get(String uri) {
+    public static TestResponse get(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.GET);
+        return new TestResponse(uri, Methods.GET);
     }
     
     /**
@@ -33,10 +33,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse post(String uri) {
+    public static TestResponse post(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.POST);
+        return new TestResponse(uri, Methods.POST);
     }
 
     /**
@@ -45,10 +45,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse put(String uri) {
+    public static TestResponse put(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.PUT);
+        return new TestResponse(uri, Methods.PUT);
     }
     
     /**
@@ -57,10 +57,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse delete(String uri) {
+    public static TestResponse delete(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.DELETE);
+        return new TestResponse(uri, Methods.DELETE);
     }
     
     /**
@@ -69,10 +69,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse head(String uri) {
+    public static TestResponse head(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.HEAD);
+        return new TestResponse(uri, Methods.HEAD);
     }
     
     /**
@@ -81,10 +81,10 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse patch(String uri) {
+    public static TestResponse patch(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.PATCH);
+        return new TestResponse(uri, Methods.PATCH);
     }
     
     /**
@@ -93,9 +93,9 @@ public final class WebRequest {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static WebResponse options(String uri) {
+    public static TestResponse options(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new WebResponse(uri, Methods.OPTIONS);
+        return new TestResponse(uri, Methods.OPTIONS);
     }
 }

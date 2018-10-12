@@ -48,9 +48,9 @@ public class ModuleTest {
 		assertThat(stage.getKey().getTypeLiteral().getType().getTypeName(), equalTo("com.google.inject.Stage"));
 		assertThat(injector.getKey().getTypeLiteral().getType().getTypeName(), equalTo("com.google.inject.Injector"));
 		assertThat(logger.getKey().getTypeLiteral().getType().getTypeName(), equalTo("java.util.logging.Logger"));
-		assertThat(config.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.configuration.Config"));
+		assertThat(config.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.core.Config"));
 		assertThat(jobFactory.getKey().getTypeLiteral().getType().getTypeName(), equalTo("org.quartz.spi.JobFactory"));
-		assertThat(cache.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooCache"));
+		assertThat(cache.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.cache.Cache"));
 		assertThat(templateEngine.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.templating.TemplateEngine"));
 		assertThat(mangooRequestFilter.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooRequestFilter"));
 		assertThat(mangooBootstrap.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.MangooBootstrap"));

@@ -10,9 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Default;
-import io.mangoo.test.utils.WebBrowser;
-import io.mangoo.test.utils.WebRequest;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestBrowser;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -27,7 +27,7 @@ public class I18nControllerTest {
     @Test
     public void testWithOutAdditionalHeader() {
         //given
-        WebResponse response = WebRequest.get("/translation").execute();
+        TestResponse response = TestRequest.get("/translation").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -38,7 +38,7 @@ public class I18nControllerTest {
     @Test
     public void testSpecialCharacters() {
         //given
-        WebResponse response = WebRequest.get("/special")
+        TestResponse response = TestRequest.get("/special")
                 .withHeader("Accept-Language", "fr-FR")
                 .execute();
         
@@ -51,7 +51,7 @@ public class I18nControllerTest {
     @Test
     public void testUmlaute() {
         //given
-        WebResponse response = WebRequest.get("/umlaute")
+        TestResponse response = TestRequest.get("/umlaute")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -64,7 +64,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderDe() {
         //given
-        WebResponse response = WebRequest.get("/translation")
+        TestResponse response = TestRequest.get("/translation")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -77,7 +77,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderEn() {
         //given
-        WebResponse response = WebRequest.get("/translation")
+        TestResponse response = TestRequest.get("/translation")
                 .withHeader("Accept-Language", "en-US")
                 .execute();
         
@@ -90,7 +90,7 @@ public class I18nControllerTest {
     @Test
     public void testWithInjectedAdditionalHeaderDe() {
         //given
-        WebResponse response = WebRequest.get("/messages")
+        TestResponse response = TestRequest.get("/messages")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -103,7 +103,7 @@ public class I18nControllerTest {
     @Test
     public void testWithInjectedMessagesDefaultLanguage() {
         //given
-        WebResponse response = WebRequest.get("/messages")
+        TestResponse response = TestRequest.get("/messages")
                 .execute();
         
         //then
@@ -115,8 +115,8 @@ public class I18nControllerTest {
     @Test
     public void testWithI18nCookie() {
         //given
-        WebBrowser browser = WebBrowser.open();
-        WebResponse response = browser.withMethod(Methods.GET).withUri("/localize").execute();
+        TestBrowser browser = TestBrowser.open();
+        TestResponse response = browser.withMethod(Methods.GET).withUri("/localize").execute();
         
         //then
         assertThat(response, not(nullValue()));

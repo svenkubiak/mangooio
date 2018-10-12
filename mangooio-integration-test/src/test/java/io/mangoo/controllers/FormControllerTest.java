@@ -26,8 +26,8 @@ import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.utils.WebRequest;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -46,7 +46,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("password", "secret"));
 
 		// when
-		WebResponse response = WebRequest.post("/form")
+		TestResponse response = TestRequest.post("/form")
 				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
@@ -68,7 +68,7 @@ public class FormControllerTest {
             parameter.add(new BasicNameValuePair("password", password));
 
             // when
-            WebResponse response = WebRequest.post("/form")
+            TestResponse response = TestRequest.post("/form")
                     .withContentType(MediaType.FORM_DATA.withoutParameters().toString()).withPostParameters(parameter)
                     .execute();
             
@@ -86,7 +86,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("foo[]", "3"));
 
         // when
-        WebResponse response = WebRequest.post("/multivalued")
+        TestResponse response = TestRequest.post("/multivalued")
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withPostParameters(parameter)
                 .execute();
@@ -110,7 +110,7 @@ public class FormControllerTest {
             parameter.add(new BasicNameValuePair("foo[]", uuid3));
 
             // when
-            WebResponse response = WebRequest.post("/multivalued")
+            TestResponse response = TestRequest.post("/multivalued")
                     .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                     .withPostParameters(parameter)
                     .execute();
@@ -128,7 +128,7 @@ public class FormControllerTest {
 		FileUtils.copyInputStreamToFile(attachment, file);
 		
 		// when
-		WebResponse response = WebRequest.post("/singlefile")
+		TestResponse response = TestRequest.post("/singlefile")
 				.withFileBody("file", new FileBody(file))
 				.execute();
 
@@ -150,7 +150,7 @@ public class FormControllerTest {
 		FileUtils.copyInputStreamToFile(attachment2, file2);
 		
 		// when
-		WebResponse response = WebRequest.post("/multifile")
+		TestResponse response = TestRequest.post("/multifile")
 				.withFileBody("file1", new FileBody(file1))
 				.withFileBody("file2", new FileBody(file2))
 				.execute();
@@ -171,7 +171,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("password", "#+ß§"));
 
 		// when
-		WebResponse response = WebRequest.post("/form")
+		TestResponse response = TestRequest.post("/form")
 				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
@@ -190,7 +190,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("regex", "ABC"));
 
 		// when
-		WebResponse response = WebRequest.post("/validateform")
+		TestResponse response = TestRequest.post("/validateform")
 				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
@@ -228,7 +228,7 @@ public class FormControllerTest {
 		parameter.add(new BasicNameValuePair("regex", "a"));
 
 		// when
-		WebResponse response = WebRequest.post("/validateform")
+		TestResponse response = TestRequest.post("/validateform")
 		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withPostParameters(parameter)
 				.execute();
@@ -248,7 +248,7 @@ public class FormControllerTest {
         parameter.add(new BasicNameValuePair("email", "foo@bar.com"));
         
         // when
-        WebResponse response = WebRequest.post("/submit")
+        TestResponse response = TestRequest.post("/submit")
                 .withLaxRedirectStrategy()
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withPostParameters(parameter).execute();

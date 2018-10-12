@@ -7,8 +7,8 @@ import com.google.inject.Singleton;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-import io.mangoo.configuration.Config;
 import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 

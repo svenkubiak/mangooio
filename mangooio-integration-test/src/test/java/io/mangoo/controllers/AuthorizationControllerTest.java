@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.utils.WebBrowser;
-import io.mangoo.test.utils.WebResponse;
+import io.mangoo.test.http.TestBrowser;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -25,8 +25,8 @@ public class AuthorizationControllerTest {
     @Test
     public void testReadUnAuthorized() {
         //given
-        WebBrowser instance = WebBrowser.open();
-        WebResponse response = instance.withUri("/authorize/jack")
+        TestBrowser instance = TestBrowser.open();
+        TestResponse response = instance.withUri("/authorize/jack")
                 .withMethod(Methods.GET)
                 .withDisableRedirects(true)
                 .execute();
@@ -45,8 +45,8 @@ public class AuthorizationControllerTest {
     @Test
     public void testReadAuthorized() {
         //given
-        WebBrowser instance = WebBrowser.open();
-        WebResponse response = instance.withUri("/authorize/alice")
+        TestBrowser instance = TestBrowser.open();
+        TestResponse response = instance.withUri("/authorize/alice")
                 .withMethod(Methods.GET)
                 .withDisableRedirects(true)
                 .execute();
@@ -65,8 +65,8 @@ public class AuthorizationControllerTest {
     @Test
     public void testWriteUnAuthorized() {
         //given
-        WebBrowser instance = WebBrowser.open();
-        WebResponse response = instance.withUri("/authorize/peter")
+        TestBrowser instance = TestBrowser.open();
+        TestResponse response = instance.withUri("/authorize/peter")
                 .withMethod(Methods.GET)
                 .withDisableRedirects(true)
                 .execute();
@@ -85,8 +85,8 @@ public class AuthorizationControllerTest {
     @Test
     public void testWriteAuthorized() {
         //given
-        WebBrowser instance = WebBrowser.open();
-        WebResponse response = instance.withUri("/authorize/bob")
+        TestBrowser instance = TestBrowser.open();
+        TestResponse response = instance.withUri("/authorize/bob")
                 .withMethod(Methods.GET)
                 .withDisableRedirects(true)
                 .execute();
