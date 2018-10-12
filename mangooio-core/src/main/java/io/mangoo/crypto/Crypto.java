@@ -46,7 +46,7 @@ public class Crypto {
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String ENCODING = "UTF8";
-    private static final String CIPHER = "RSA/ECB/OAEPWithSHA512AndMGF1Padding";
+    private static final String ENCRYPTION = "RSA/ECB/OAEPWithSHA512AndMGF1Padding";
     private static final String ALGORITHM = "RSA";
     private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
@@ -177,7 +177,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
-        Cipher cipher = Cipher.getInstance(CIPHER);
+        Cipher cipher = Cipher.getInstance(ENCRYPTION);
         cipher.init(Cipher.ENCRYPT_MODE, key);
 
         return cipher.doFinal(text);
@@ -214,7 +214,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
 
-        Cipher cipher = Cipher.getInstance(CIPHER);
+        Cipher cipher = Cipher.getInstance(ENCRYPTION);
         cipher.init(Cipher.DECRYPT_MODE, key);
         
         return cipher.doFinal(text);

@@ -22,6 +22,7 @@ import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import jodd.props.Props;
+import jodd.props.PropsEntry;
 
 /**
  * Main configuration class for all properties configured in config.props
@@ -60,13 +61,11 @@ public class Config {
             }
         } 
         
-        this.props.entries().forEach((prop) -> parse(prop.getKey(), prop.getValue()));
+        this.props.entries().forEach((PropsEntry prop) -> parse(prop.getKey(), prop.getValue()));
         
         Map<String, String> profileProps = new HashMap<>();
         this.props.extractProps(profileProps, Application.getMode().toString());
-        profileProps.forEach((propKey, propValue) -> {
-            parse(propKey, propValue);
-        });
+        profileProps.forEach(this::parse);
         
         System.setProperty(Key.APPLICATION_SECRET.toString(), "");
     }
