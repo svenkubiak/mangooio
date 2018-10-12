@@ -1,7 +1,6 @@
 package io.mangoo.admin;
 
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -269,16 +268,9 @@ public class AdminController {
             String function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {
-                String publickey = null;
-                String privatekey = null;
-                
-                try {
-                    KeyPair keyPair = this.crypto.generateKeyPair();
-                    publickey = this.crypto.getKeyAsString(keyPair.getPublic());
-                    privatekey = this.crypto.getKeyAsString(keyPair.getPrivate());
-                } catch (NoSuchAlgorithmException e) {
-                    LOG.error("Failed to create public/private key pair.", e);
-                }
+                KeyPair keyPair = this.crypto.generateKeyPair();
+                String publickey = this.crypto.getKeyAsString(keyPair.getPublic());
+                String privatekey = this.crypto.getKeyAsString(keyPair.getPrivate());
                 
                 value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
             } else if (("encrypt").equalsIgnoreCase(function)) {

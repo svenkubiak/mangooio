@@ -119,7 +119,7 @@ public class Config {
                         this.decrypted = false;
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException | SecurityException e) {
                 LOG.error("Failed to decrypt an encrypted config value", e);
                 this.decrypted = false;
             }

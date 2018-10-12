@@ -160,13 +160,18 @@ public class Crypto {
      * Generate key which contains a pair of private and public key using 4096 bytes
      * 
      * @return key pair
-     * @throws NoSuchAlgorithmException if generation fails
      */
-    public KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(ALGORITHM);
-        keyGen.initialize(KEYLENGTH);
+    public KeyPair generateKeyPair() {
+        KeyPair keyPair = null;
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+            keyPairGenerator.initialize(KEYLENGTH);
+            keyPair = keyPairGenerator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("Failed to create publi/private key pair", e);
+        }
         
-        return keyGen.generateKeyPair();
+        return keyPair;
     }
     
     /**
@@ -174,18 +179,23 @@ public class Crypto {
      * 
      * @param text The plain text
      * @param key The public key
-     * @return Encrypted text
      * 
-     * @throws Exception if encryption fails
+     * @return Encrypted text
      */
-    public byte[] encrypt(byte[] text, PublicKey key) throws Exception {
+    public byte[] encrypt(byte[] text, PublicKey key) {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
-        Cipher cipher = Cipher.getInstance(ENCRYPTION);
-        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encrypt = null;
+        try {
+            Cipher cipher = Cipher.getInstance(ENCRYPTION);
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            encrypt = cipher.doFinal(text);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
+            LOG.error("Failed to encrypt clear text with public key", e);
+        }
 
-        return cipher.doFinal(text);
+        return encrypt;
     }
     
     /**
