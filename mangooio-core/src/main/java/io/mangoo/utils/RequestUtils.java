@@ -323,6 +323,8 @@ public final class RequestUtils {
             operation = READ;
         } else if (Methods.HEAD.equals(method)) {
             operation = READ;
+        } else {
+            // ignore everything else
         }
         
         return operation;

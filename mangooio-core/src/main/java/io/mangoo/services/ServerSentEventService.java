@@ -66,7 +66,7 @@ public class ServerSentEventService {
         if (uriConnections != null) {
             uriConnections.stream()
                 .filter(ServerSentEventConnection::isOpen)
-                .forEach(connection -> connection.send(data));
+                .forEach((ServerSentEventConnection connection) -> connection.send(data));
             
        }
     }
@@ -87,7 +87,7 @@ public class ServerSentEventService {
         if (uriConnections != null) {
             uriConnections.stream()
                 .filter(ServerSentEventConnection::isOpen)
-                .forEach(connection -> connection.send(data, eventCallback));
+                .forEach((ServerSentEventConnection connection) -> connection.send(data, eventCallback));
         }
     }
 

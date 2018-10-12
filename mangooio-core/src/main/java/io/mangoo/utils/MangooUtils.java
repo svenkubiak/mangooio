@@ -117,6 +117,7 @@ public final class MangooUtils {
      * @param name The name of the resource
      * @return True if the resources exists, false otherwise
      */
+    @SuppressWarnings("all")
     public static boolean resourceExists(String name) {
         Objects.requireNonNull(name, Required.NAME.toString());
         
