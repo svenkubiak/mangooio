@@ -62,6 +62,8 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
+    private static final String READ = "read";
+    private static final String WRITE = "write";
     private static final Pattern PATTERN = Pattern.compile("\"");
     private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
     private static final int MAX_RANDOM = 999_999;
@@ -308,19 +310,19 @@ public final class RequestUtils {
         String operation = "";
         
         if (Methods.POST.equals(method)) {
-            operation = "write";
+            operation = WRITE;
         } else if (Methods.PUT.equals(method)) {
-            operation = "write";
+            operation = WRITE;
         } else if (Methods.DELETE.equals(method)) {
-            operation = "write";
+            operation = WRITE;
         } else if (Methods.GET.equals(method)) {
-            operation = "read";
+            operation = READ;
         } else if (Methods.PATCH.equals(method)) {
-            operation = "write";
+            operation = WRITE;
         } else if (Methods.OPTIONS.equals(method)) {
-            operation = "read";
+            operation = READ;
         } else if (Methods.HEAD.equals(method)) {
-            operation = "read";
+            operation = READ;
         }
         
         return operation;

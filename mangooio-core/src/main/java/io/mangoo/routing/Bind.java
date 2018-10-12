@@ -12,6 +12,10 @@ import io.mangoo.routing.routes.WebSocketRoute;
  *
  */
 public class Bind {
+    
+    private Bind() {
+    }
+    
     /**
      * Creates a new ServerSentEvent route
      * 

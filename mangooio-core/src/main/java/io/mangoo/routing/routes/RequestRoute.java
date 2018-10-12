@@ -34,7 +34,7 @@ public class RequestRoute implements MangooRoute {
     
     public RequestRoute(Http... methods) {
         Objects.requireNonNull(methods, Required.HTTP_METHOD.toString());
-        this.methods = Arrays.copyOf(methods, methods.length);;
+        this.methods = Arrays.copyOf(methods, methods.length);
     }
 
     /**
@@ -183,7 +183,7 @@ public class RequestRoute implements MangooRoute {
             return Arrays.copyOf(this.methods, this.methods.length);
         }
         
-        return null;
+        return this.methods;
     }
 
     public Class<?> getControllerClass() {

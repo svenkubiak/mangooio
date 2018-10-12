@@ -248,7 +248,7 @@ public class Scheduler {
         return getAllJobKeys().stream()
                 .filter(jobKey -> jobKey.getName().equalsIgnoreCase(name))
                 .findFirst()
-                .get();
+                .orElse(null);
     }
     
     /**

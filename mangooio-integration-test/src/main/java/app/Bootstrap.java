@@ -173,16 +173,16 @@ public class Bootstrap implements MangooBootstrap {
     
     @Override
     public void applicationInitialized() {
-        // TODO Auto-generated method stub
+        // Nothing to do here
     }
 
     @Override
     public void applicationStarted() {
-        // TODO Auto-generated method stub
+        // Nothing to do here
     }
 
     @Override
     public void applicationStopped() {
-        // TODO Auto-generated method stub
+        // Nothing to do here
     }
 }

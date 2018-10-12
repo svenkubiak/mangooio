@@ -51,6 +51,11 @@ import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
 import io.mangoo.routing.handlers.WebSocketHandler;
+import io.mangoo.routing.routes.FileRoute;
+import io.mangoo.routing.routes.PathRoute;
+import io.mangoo.routing.routes.RequestRoute;
+import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
@@ -74,7 +79,7 @@ import io.undertow.util.Methods;
  *
  */
 public final class Application {
-    private static Logger LOG = LogManager.getLogger(Application.class);
+    private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
     private static volatile String httpHost;
@@ -399,7 +404,7 @@ public final class Application {
     private static void prepareRoutes() {
         injector.getInstance(MangooBootstrap.class).initializeRoutes();
         
-        Router.getRequestRoutes().forEach(requestRoute -> {
+        Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
             if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
                 LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                 failsafe();
@@ -432,20 +437,20 @@ public final class Application {
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
         
-        Router.getWebSocketRoutes().forEach(webSocketRoute -> {
+        Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
             pathHandler.addExactPath(webSocketRoute.getUrl(),
                     Handlers.websocket(getInstance(WebSocketHandler.class)
                             .withControllerClass(webSocketRoute.getControllerClass())
                             .withAuthentication(webSocketRoute.hasAuthentication())));
         });
         
-        Router.getServerSentEventRoutes().forEach(serverSentEventRoute -> {
+        Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) -> {
             pathHandler.addExactPath(serverSentEventRoute.getUrl(),
                     Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
                             .withAuthentication(serverSentEventRoute.hasAuthentication())));
         });
         
-        Router.getPathRoutes().forEach(pathRoute -> {
+        Router.getPathRoutes().forEach((PathRoute pathRoute) -> {
             pathHandler.addPrefixPath(pathRoute.getUrl(),
                     new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())));  
         });
@@ -476,7 +481,7 @@ public final class Application {
                  );
         }
 
-        Router.getRequestRoutes().forEach(requestRoute -> {
+        Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
             DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
@@ -488,7 +493,7 @@ public final class Application {
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
         
-        Router.getFileRoutes().forEach(fileRoute -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
+        Router.getFileRoutes().forEach((FileRoute fileRoute) -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
         
         return routingHandler;
     }

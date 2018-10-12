@@ -9,6 +9,9 @@ import io.mangoo.routing.routes.RequestRoute;
  *
  */
 public class On {
+    
+    private On() {
+    }
 
     /**
      * Creates a new RequestRoute for a HTTP GET request
