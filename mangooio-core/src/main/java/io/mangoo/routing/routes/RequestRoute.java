@@ -15,6 +15,7 @@ import io.mangoo.interfaces.MangooRoute;
  *
  */
 public class RequestRoute implements MangooRoute {
+    private static final Http[] NO_METHODS = {};
     private Class<?> controllerClass;
     private Http[] methods;
     private Http method;
@@ -183,7 +184,7 @@ public class RequestRoute implements MangooRoute {
             return Arrays.copyOf(this.methods, this.methods.length);
         }
         
-        return this.methods;
+        return NO_METHODS;
     }
 
     public Class<?> getControllerClass() {
