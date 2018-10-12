@@ -101,7 +101,7 @@ public class ServerSentEventService {
 
         final Set<ServerSentEventConnection> uriConnections = getConnections(uri);
         if (uriConnections != null) {
-            uriConnections.forEach(connection -> {
+            uriConnections.forEach((ServerSentEventConnection connection) -> {
                 if (connection.isOpen()){
                     MangooUtils.closeQuietly(connection);
                 }
