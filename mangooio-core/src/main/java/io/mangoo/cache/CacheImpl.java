@@ -38,6 +38,7 @@ public class CacheImpl implements Cache {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         return (T) ehCache.get(key);
