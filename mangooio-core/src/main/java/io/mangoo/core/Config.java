@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
 import jodd.props.PropsEntry;
 
@@ -119,7 +120,7 @@ public class Config {
                         this.decrypted = false;
                     }
                 }
-            } catch (IOException | SecurityException e) {
+            } catch (IOException | SecurityException | MangooEncryptionException e) {
                 LOG.error("Failed to decrypt an encrypted config value", e);
                 this.decrypted = false;
             }

@@ -1,6 +1,5 @@
 package io.mangoo.crypto;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -39,6 +38,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooEncryptionException;
 
 /**
  * Convenient class for encryption and decryption
@@ -73,7 +73,6 @@ public class Crypto {
      */
     public String decrypt(String encrytedText) {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
-
         return decrypt(encrytedText, getSizedSecret(this.config.getApplicationSecret()));
     }
 
@@ -144,7 +143,7 @@ public class Crypto {
             result = new byte[processedBytes + finalBytes];
             System.arraycopy(buffer, 0, result, 0, result.length);
         } catch (final CryptoException e) {
-            LOG.error("Failed to encrypt/decrypt", e);
+            LOG.error("Failed to encrypt/decrypt data array", e);
         }
 
         return result;
@@ -152,15 +151,15 @@ public class Crypto {
 
     public String getSizedSecret(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
+        
         String key = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
-
         return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEYINDEX_START, MAX_KEY_LENGTH);
     }
     
     /**
      * Generate key which contains a pair of private and public key using 4096 bytes
      * 
-     * @return key pair
+     * @return key pair 
      */
     public KeyPair generateKeyPair() {
         KeyPair keyPair = null;
@@ -182,8 +181,9 @@ public class Crypto {
      * @param key The public key
      * 
      * @return Encrypted text
+     * @throws MangooEncryptionException if encryption fails
      */
-    public byte[] encrypt(byte[] text, PublicKey key) {
+    public byte[] encrypt(byte[] text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
@@ -193,7 +193,7 @@ public class Crypto {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypt = cipher.doFinal(text);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
-            LOG.error("Failed to encrypt clear text with public key", e);
+            throw new MangooEncryptionException("Failed to encrypt clear text with public key", e);
         }
 
         return encrypt;
@@ -206,8 +206,9 @@ public class Crypto {
      * @param key The public key 
      * 
      * @return Encrypted string as base64
+     * @throws MangooEncryptionException if encryption fails
      */
-    public String encrypt(String text, PublicKey key) {
+    public String encrypt(String text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
@@ -215,8 +216,8 @@ public class Crypto {
         try {
             byte[] cipherText = encrypt(text.getBytes(ENCODING), key);
             encrypt = encodeBase64(cipherText);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch (UnsupportedEncodingException | MangooEncryptionException e) {
+            throw new MangooEncryptionException("Failed to encrypt clear text with public key", e);
         }
         
         return encrypt;
@@ -229,8 +230,9 @@ public class Crypto {
      * @param key The private key
      * 
      * @return The unencrypted text
+     * @throws MangooEncryptionException if decryption fails
      */
-    public byte[] decrypt(byte[] text, PrivateKey key) {
+    public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
 
@@ -240,7 +242,7 @@ public class Crypto {
             cipher.init(Cipher.DECRYPT_MODE, key);
             decrypt = cipher.doFinal(text);
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-            LOG.error("Failed to decrypt encrypted text with private key", e);
+            throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
         
         return decrypt;
@@ -253,8 +255,9 @@ public class Crypto {
      * @param key The private key
      * 
      * @return The plain text encoded as UTF8
+     * @throws MangooEncryptionException if decryption fails
      */
-    public String decrypt(String text, PrivateKey key) {
+    public String decrypt(String text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
         
@@ -263,7 +266,7 @@ public class Crypto {
             byte[] dectyptedText = decrypt(decodeBase64(text), key);
             decrypt = new String(dectyptedText, ENCODING);
         } catch (Exception e) {
-            LOG.error("Failed to decrypt encrypted text with private key", e);
+            throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
 
         return decrypt;
@@ -287,17 +290,16 @@ public class Crypto {
      * @param key Base64 encoded string which represents the key
 
      * @return The PrivateKey
+     * @throws MangooEncryptionException if getting private key from string fails
      */
-    public PrivateKey getPrivateKeyFromString(String key) {
+    public PrivateKey getPrivateKeyFromString(String key) throws MangooEncryptionException {
         Objects.requireNonNull(key, Required.KEY.toString());
         
         try {
             return KeyFactory.getInstance(ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decodeBase64(key)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            LOG.error("Failed to get private key from string", e);
+            throw new MangooEncryptionException("Failed to get private key from string", e);
         }
-        
-        return null;
     }
 
     /**
@@ -306,28 +308,26 @@ public class Crypto {
      * @param key Base64 encoded string which represents the key
 
      * @return The PublicKey
+     * @throws MangooEncryptionException if getting public key from string fails
      */
-    public PublicKey getPublicKeyFromString(String key) {
+    public PublicKey getPublicKeyFromString(String key) throws MangooEncryptionException {
         Objects.requireNonNull(key, Required.KEY.toString());
         
         try {
             return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(decodeBase64(key)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            LOG.error("Failed to get pulbic key from string", e);
+            throw new MangooEncryptionException("Failed to get pulbic key from string", e);
         }
-        
-        return null;
     }
 
     /**
      * Encode bytes array to Base64 string
      * 
-     * @param bytes
+     * @param bytes The bytes
      * @return Encoded string
      */
     private String encodeBase64(byte[] bytes) {
         Objects.requireNonNull(bytes, Required.BYTES.toString());
-        
         return org.apache.commons.codec.binary.Base64.encodeBase64String(bytes);
     }
 
@@ -336,11 +336,9 @@ public class Crypto {
      * 
      * @param text The string
      * @return Bytes array
-     * @throws IOException
      */
     private byte[] decodeBase64(String text) {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
-        
         return org.apache.commons.codec.binary.Base64.decodeBase64(text);
     }
 }
