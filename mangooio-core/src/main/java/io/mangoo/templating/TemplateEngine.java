@@ -83,7 +83,6 @@ public class TemplateEngine {
         return buffer.toString();
     }
 
-    @SuppressWarnings("all")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<>();
@@ -140,7 +139,6 @@ public class TemplateEngine {
      * @throws FileNotFoundException If the file is not found
      * @throws IOException If an IO exception occurs
      */
-    @SuppressWarnings("all")
     private List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 

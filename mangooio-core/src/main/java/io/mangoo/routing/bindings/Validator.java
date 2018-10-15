@@ -449,7 +449,6 @@ public class Validator implements Serializable {
      * @param name The name of the field to display the error message
      * @param message A custom error message instead of the default one
      */
-    @SuppressWarnings("all")
     public void validateFalse(boolean value, String name, String message) {
         if (value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.name(), name)));

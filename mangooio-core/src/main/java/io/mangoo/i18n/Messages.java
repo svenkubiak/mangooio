@@ -67,7 +67,6 @@ public class Messages implements Serializable {
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured
      */
-    @SuppressWarnings("all")
     public String get(String key, Object... arguments) {
         if (this.bundle.containsKey(key)) {
             return MessageFormat.format(this.bundle.getString(key), arguments);
@@ -86,7 +85,6 @@ public class Messages implements Serializable {
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured
      */
-    @SuppressWarnings("all")
     public String get(Key key, Object... arguments) {
         return get(key.toString(), arguments);
     }

@@ -86,7 +86,6 @@ public class AuthorizationHandler implements HttpHandler {
      * @param exchange The HttpServerExchange
      * @throws Exception Thrown when an exception occurs
      */
-    @SuppressWarnings("all")
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(FormHandler.class).handleRequest(exchange);
     }

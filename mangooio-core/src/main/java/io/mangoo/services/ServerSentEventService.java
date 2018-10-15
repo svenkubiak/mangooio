@@ -38,7 +38,6 @@ public class ServerSentEventService {
      *
      * @param connection The connection to put
      */
-    @SuppressWarnings("all")
     public void addConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, Required.CONNECTION.toString());
 
