@@ -40,6 +40,8 @@ import no.api.freemarker.java8.Java8ObjectWrapper;
  */
 public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
+    private static final int MIN_LINES = 6;
+    private static final int MAX_LINES = 8;
     private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
@@ -151,14 +153,14 @@ public class TemplateEngine {
         .append(File.separator)
         .append("java");
 
-        List<Source> sources = new ArrayList<Source>();
+        List<Source> sources = new ArrayList<>();
         File templateFile = new File(buffer.toString()).toPath().resolve(sourcePath).toFile();
         if (templateFile.exists()) {
             List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 
             int index = 0;
             for (String line : lines) {
-                if ( (index + 8 > errorLine) && (index - 6 < errorLine) ) {
+                if ( (index + MAX_LINES > errorLine) && (index - MIN_LINES < errorLine) ) {
                     sources.add(new Source((index + 1) == errorLine, index + 1, line));
                 }
                 index++;
