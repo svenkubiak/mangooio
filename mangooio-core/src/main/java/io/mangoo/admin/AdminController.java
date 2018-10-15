@@ -35,10 +35,12 @@ import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
+import net.minidev.json.JSONObject;
 
 /**
  * Controller class for administrative area
@@ -48,6 +50,9 @@ import io.mangoo.utils.MangooUtils;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String URL = "url";
+    private static final String METHOD = "method";
+    private static final String CACHE_ADMINROUTES = "cache_adminroutes";
     private static final String JOBS = "jobs";
     private static final String LOGGER = "logger";
     private static final String METRICS = "metrics"; //NOSONAR
@@ -170,16 +175,68 @@ public class AdminController {
     }
     
     public Response routes() {
-        //FIX ME
-        //Set<MangooRoute> routes = Router.getRoutes();
+        List<JSONObject> routes = getRoutes();
         
+        if (routes.isEmpty()) {
+            Router.getFileRoutes().forEach(route -> {
+                JSONObject json = new JSONObject();
+                json.put(METHOD, "FILE");
+                json.put(URL, route.getUrl());
+                routes.add(json);
+            });
+            
+            Router.getPathRoutes().forEach(route -> {
+                JSONObject json = new JSONObject();
+                json.put(METHOD, "PATH");
+                json.put(URL, route.getUrl());
+                routes.add(json);
+            });
+            
+            Router.getServerSentEventRoutes().forEach(route -> {
+                JSONObject json = new JSONObject();
+                json.put(METHOD, "SSE");
+                json.put(URL, route.getUrl());
+                routes.add(json);
+            });
+            
+            Router.getWebSocketRoutes().forEach(route -> {
+                JSONObject json = new JSONObject();
+                json.put(METHOD, "WSS");
+                json.put(URL, route.getUrl());
+                json.put("controllerClass", route.getControllerClass());
+                routes.add(json);
+            });
+            
+            Router.getRequestRoutes().forEach(route -> {
+                JSONObject json = new JSONObject();
+                json.put(METHOD, route.getMethod());
+                json.put(URL, route.getUrl());
+                json.put("controllerClass", route.getControllerClass());
+                json.put("controllerMethod", route.getControllerMethod());
+                json.put("limit", route.getLimit());
+                json.put("basicAuthentication", route.hasBasicAuthentication());
+                json.put("authentication", route.hasAuthentication());
+                json.put("authorization", route.hasAuthorization());
+                json.put("blocking", route.isBlocking());
+                routes.add(json);
+            });
+            
+            this.cache.put(CACHE_ADMINROUTES, routes);
+        }
+
         return Response.withOk()
                 .andContent(SPACE, ROUTES)
                 .andContent(VERSION, VERSION_TAG)
-                .andContent(ROUTES, new ArrayList<>())
+                .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
     }
     
+    private List<JSONObject> getRoutes() {
+        List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
+        
+        return (routes == null) ? new ArrayList<>() : routes;
+    }
+
     public Response resetMetrics() {
         Application.getInstance(Metrics.class).reset();
         return Response.withRedirect("/@admin/metrics");

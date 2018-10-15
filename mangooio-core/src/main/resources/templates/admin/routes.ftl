@@ -27,19 +27,23 @@
 								<th data-sort="string"><b>Controller method</b></th>
 								<th data-sort="string"><b>Rate limit</b></th>
 								<th data-sort="string"><b>Authentication</b></th>
+								<th data-sort="string"><b>Authorization</b></th>
+								<th data-sort="string"><b>Basic Authentication</b></th>
 								<th data-sort="string"><b>Blocking</b></th>
 							</tr>
 						</thead>
 						<tbody class="searchable">
 					    	<#list routes as route>
 								<tr>
-									<td><#if route.requestMethod??>${route.requestMethod}</#if></td>
+									<td><#if route.method??>${route.method?upper_case}</#if></td>
 									<td><#if route.url??>${route.url}</#if></td>
-									<td><#if route.controllerClass??>${route.controllerClass.name}</#if></td>
+									<td><#if route.controllerClass??>${route.controllerClass}</#if></td>
 									<td><#if route.controllerMethod??>${route.controllerMethod}</#if></td>
-									<td><#if route.url??>${route.limit}</#if></td>
-									<td><#if route.url??>${route.authenticationRequired?string('yes', 'no')}</#if></td>
-									<td><#if route.url??>${route.blockingAllowed?string('yes', 'no')}</#if></td>
+									<td><#if route.limit??>${route.limit}</#if></td>
+									<td><#if route.authentication??>${route.authentication?string('yes', 'no')}</#if></td>
+									<td><#if route.authorization??>${route.authorization?string('yes', 'no')}</#if></td>
+									<td><#if route.basicAuthentication??>${route.basicAuthentication?string('yes', 'no')}</#if></td>
+									<td><#if route.blocking??>${route.blocking?string('yes', 'no')}</#if></td>
 								</tr>
 							</#list>
 						</tbody>
