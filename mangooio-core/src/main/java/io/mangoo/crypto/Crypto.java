@@ -265,7 +265,7 @@ public class Crypto {
         try {
             byte[] dectyptedText = decrypt(decodeBase64(text), key);
             decrypt = new String(dectyptedText, ENCODING);
-        } catch (Exception e) {
+        } catch (MangooEncryptionException | UnsupportedEncodingException e) {
             throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
 

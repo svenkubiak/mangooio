@@ -31,12 +31,18 @@ import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
+import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.routing.routes.FileRoute;
+import io.mangoo.routing.routes.PathRoute;
+import io.mangoo.routing.routes.RequestRoute;
+import io.mangoo.routing.routes.ServerSentEventRoute;
+import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
@@ -178,28 +184,28 @@ public class AdminController {
         List<JSONObject> routes = getRoutes();
         
         if (routes.isEmpty()) {
-            Router.getFileRoutes().forEach(route -> {
+            Router.getFileRoutes().forEach((FileRoute route) -> {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, "FILE");
                 json.put(URL, route.getUrl());
                 routes.add(json);
             });
             
-            Router.getPathRoutes().forEach(route -> {
+            Router.getPathRoutes().forEach((PathRoute route) -> {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, "PATH");
                 json.put(URL, route.getUrl());
                 routes.add(json);
             });
             
-            Router.getServerSentEventRoutes().forEach(route -> {
+            Router.getServerSentEventRoutes().forEach((ServerSentEventRoute route) -> {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, "SSE");
                 json.put(URL, route.getUrl());
                 routes.add(json);
             });
             
-            Router.getWebSocketRoutes().forEach(route -> {
+            Router.getWebSocketRoutes().forEach((WebSocketRoute route) -> {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, "WSS");
                 json.put(URL, route.getUrl());
@@ -207,7 +213,7 @@ public class AdminController {
                 routes.add(json);
             });
             
-            Router.getRequestRoutes().forEach(route -> {
+            Router.getRequestRoutes().forEach((RequestRoute route) -> {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, route.getMethod());
                 json.put(URL, route.getUrl());
@@ -336,7 +342,7 @@ public class AdminController {
                 try {
                     PublicKey publicKey = this.crypto.getPublicKeyFromString(key);
                     value = this.crypto.encrypt(cleartext, publicKey);
-                } catch (Exception e) {
+                } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);
                 }
 

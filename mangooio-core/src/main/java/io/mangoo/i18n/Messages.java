@@ -72,6 +72,8 @@ public class Messages implements Serializable {
             return MessageFormat.format(this.bundle.getString(key), arguments);
         } else if (this.defaults.containsKey(key)) {
             return MessageFormat.format(this.defaults.get(key), arguments);
+        } else {
+            // Ignore anything else
         }
 
         return "";
