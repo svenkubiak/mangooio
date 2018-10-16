@@ -1,5 +1,8 @@
 package io.mangoo.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Default application values
  *
@@ -82,6 +85,24 @@ public enum Default {
     VERSION_PROPERTIES("version.properties"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
+    private static Map<String, String> messages = new HashMap<>();
+    static {
+        messages.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
+        messages.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
+        messages.put(Validation.MAX_KEY.name(), Validation.MAX.toString());
+        messages.put(Validation.EXACT_MATCH_KEY.name(), Validation.EXACT_MATCH.toString());
+        messages.put(Validation.MATCH_KEY.name(), Validation.MATCH.toString());
+        messages.put(Validation.EMAIL_KEY.name(), Validation.EMAIL.toString());
+        messages.put(Validation.IPV4_KEY.name(), Validation.IPV4.toString());
+        messages.put(Validation.IPV6_KEY.name(), Validation.IPV6.toString());
+        messages.put(Validation.RANGE_KEY.name(), Validation.RANGE.toString());
+        messages.put(Validation.URL_KEY.name(), Validation.URL.toString());
+        messages.put(Validation.MATCH_VALUES_KEY.name(), Validation.MATCH_VALUES.toString());
+        messages.put(Validation.REGEX_KEY.name(), Validation.REGEX.toString());
+        messages.put(Validation.NUMERIC_KEY.name(), Validation.NUMERIC.toString());
+        messages.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
+    }
+    
     private static class Constants {
         public static final String FALSE = "false";
         
@@ -105,6 +126,10 @@ public enum Default {
 
     public long toLong() {
         return Long.parseLong(this.value);
+    }
+    
+    public static Map<String, String> getMessages() {
+        return messages;
     }
     
     @Override
