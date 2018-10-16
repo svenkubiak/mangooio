@@ -15,18 +15,22 @@ import io.mangoo.enums.Mode;
 public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
     private static boolean started = false;
     
-    protected void init() {
-    }
-    
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
         if (!started) {
-            init();
+            beforeStartup();
             Application.start(Mode.TEST);  
             started = true;
+            afterStartup();
         }
     }
-
+    
+    protected void beforeStartup() {
+    }
+    
+    protected void afterStartup() {
+    }
+    
     @Override
     public void close() throws Throwable {
     }

@@ -75,7 +75,7 @@ public class ControllerRoute {
      * 
      * @return controller route instance
      */
-    public ControllerRoute withBasicAuthentication(String username, String password) {
+    public ControllerRoute requireBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         

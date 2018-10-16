@@ -7,7 +7,7 @@ public class TestExtension extends TestRunner {
     public static final int THREADS = 100;
 
     @Override
-    public void init() {
+    public void beforeStartup() {
         System.setProperty(Key.APPLICATION_PRIVATEKEY.toString(), "./key/privatekey.txt");
         System.setProperty(Key.APPLICATION_NAME.toString(), "namefromarg");
         System.setProperty("application.test", "valuefromarg");

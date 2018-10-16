@@ -463,7 +463,7 @@ public final class Application {
         Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class)
-                .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+                .requireBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
                         On.get().to("/@admin/health").respondeWith("health"),

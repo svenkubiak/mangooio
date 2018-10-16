@@ -63,7 +63,7 @@ public class ControllerRouteTest {
         
         //when
         ControllerRoute route = new ControllerRoute(ApplicationController.class);
-        route.withBasicAuthentication("foo", "bar").withRoutes(
+        route.requireBasicAuthentication("foo", "bar").withRoutes(
                 On.get().to("/route1").respondeWith(route1)
         );
         
