@@ -90,8 +90,7 @@ public final class MangooUtils {
                 closeable.close();
             }
         } catch (final IOException e) {
-            //NOSONAR
-            //intentionally left blank
+            LOG.error("Failed to close resource quietly", e);
         }
     }
     
@@ -122,8 +121,8 @@ public final class MangooUtils {
         URL resource = null;
         try {
             resource = Resources.getResource(name);            
-        } catch (Exception e) {
-            LOG.error("Resource '{}' not found in classpath", name);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Resource '{}' not found in classpath", name, e);
         }
         
         return resource != null;

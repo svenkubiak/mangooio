@@ -40,9 +40,10 @@ import no.api.freemarker.java8.Java8ObjectWrapper;
  */
 public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
+    private static final String TEMPLATE_SUFFIX = ".ftl";
+    private static final String REGEX = "\n";
     private static final int MIN_LINES = 6;
     private static final int MAX_LINES = 8;
-    private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
@@ -86,12 +87,11 @@ public class TemplateEngine {
     }
 
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
-        Writer writer = new StringWriter();
         Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
 
         if (templateException) {
-            content.put("exceptions", cause.getMessage().split("\n"));
+            content.put("exceptions", cause.getMessage().split(REGEX));
         } else {
             StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
             String sourceCodePath = getSourceCodePath(stackTraceElement);
@@ -115,6 +115,7 @@ public class TemplateEngine {
         Configuration config = new Configuration(VERSION);
         config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
 
+        Writer writer = new StringWriter();
         Template template;
         try {
             template = config.getTemplate("exception.ftl");
@@ -141,7 +142,7 @@ public class TemplateEngine {
      * @throws FileNotFoundException If the file is not found
      * @throws IOException If an IO exception occurs
      */
-    private List<Source> getSources(int errorLine, String sourcePath) throws FileNotFoundException, IOException {
+    private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
         StringBuffer buffer = new StringBuffer();
