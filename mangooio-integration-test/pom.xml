@@ -99,11 +99,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>io.mangoo</groupId>
-				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>4.16.1-SNAPSHOT</version>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<executions>
