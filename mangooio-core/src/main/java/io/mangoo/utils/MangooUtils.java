@@ -122,7 +122,7 @@ public final class MangooUtils {
         try {
             resource = Resources.getResource(name);            
         } catch (IllegalArgumentException e) {
-            LOG.error("Resource '{}' not found in classpath", name, e);
+           // Intentionally left blank
         }
         
         return resource != null;
