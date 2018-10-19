@@ -140,11 +140,13 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Configures this request as long running request that does not block other request
+     * Configures this request as long running request that is
+     * executed in a different thread pool to not block the
+     * non blocking I/O request
      * 
      * @return RequestRoute instance
      */
-    public RequestRoute longRunning() {
+    public RequestRoute withNonBlocking() {
         this.blocking = true;
         return this;
     }

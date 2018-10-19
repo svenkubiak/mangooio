@@ -20,6 +20,7 @@ public class ControllerRoute {
     private String password;
     private boolean authentication;
     private boolean authorization;
+    private boolean blocking;
     
     /**
      * Creates a new set of routes bind to a given controller class
@@ -54,6 +55,10 @@ public class ControllerRoute {
             
             if (hasAuthorization()) {
                 requestRoute.withAuthorization();
+            }
+            
+            if (hasBlocking()) {
+                requestRoute.withNonBlocking();
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -107,12 +112,28 @@ public class ControllerRoute {
         return this;
     }
     
+    /**
+     * Configures this request as long running request that is
+     * executed in a different thread pool to not block the
+     * non blocking I/O request
+     * 
+     * @return ControllerRoute instance
+     */
+    public ControllerRoute withNonBlocking() {
+        this.blocking = true;
+        return this;
+    }
+    
     public boolean hasAuthentication() {
         return this.authentication;
     }
     
     public boolean hasAuthorization() {
         return this.authorization;
+    }
+    
+    public boolean hasBlocking() {
+        return this.blocking;
     }
     
     public boolean hasBasicAuthentication() {
