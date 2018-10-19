@@ -68,4 +68,29 @@ public class RequestRouteTest {
         //then
         assertThat(requestRoute.hasBasicAuthentication(), equalTo(true));
     }
+    
+    @Test
+    public void testNonBlocking() {
+        //given
+        RequestRoute requestRoute = new RequestRoute(Http.GET);
+        
+        //when
+        requestRoute.withNonBlocking();
+        
+        //then
+        assertThat(requestRoute.isBlocking(), equalTo(true));
+    }
+    
+    @Test
+    public void testWithLimit() {
+        //given
+        RequestRoute requestRoute = new RequestRoute(Http.GET);
+        requestRoute.to("/foo");
+        
+        //when
+        requestRoute.withRequestLimit(42);
+        
+        //then
+        assertThat(requestRoute.getLimit(), equalTo(42));
+    }
 }

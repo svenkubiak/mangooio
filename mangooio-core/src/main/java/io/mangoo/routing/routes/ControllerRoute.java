@@ -21,6 +21,7 @@ public class ControllerRoute {
     private boolean authentication;
     private boolean authorization;
     private boolean blocking;
+    private int limit;
     
     /**
      * Creates a new set of routes bind to a given controller class
@@ -59,6 +60,10 @@ public class ControllerRoute {
             
             if (hasBlocking()) {
                 requestRoute.withNonBlocking();
+            }
+            
+            if (requestRoute.getLimit() == 0) {
+                requestRoute.withRequestLimit(this.limit);
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -124,6 +129,17 @@ public class ControllerRoute {
         return this;
     }
     
+    /**
+     * Sets a request limit to the request
+     * 
+     * @param requestsPerSecond Number of requests per second
+     * @return ControllerRoute instance
+     */
+    public ControllerRoute withRequestLimit(int requestsPerSecond) {
+        this.limit = requestsPerSecond;
+        return this;
+    }
+    
     public boolean hasAuthentication() {
         return this.authentication;
     }
@@ -150,5 +166,9 @@ public class ControllerRoute {
 
     public String getPassword() {
         return this.password;
+    }
+
+    public int getLimit() {
+        return limit;
     }
 }
