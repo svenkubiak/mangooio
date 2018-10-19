@@ -252,7 +252,7 @@ public final class Application {
                 .usingBasePackages(".")
                 .build()
                 .createInjector();
-        
+         
         try {
             getInstance(LifecycleManager.class).start();
         } catch (Exception e) {

@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.inject.Singleton;
-import com.netflix.governator.lifecycle.LifecycleManager;
 
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.exceptions.MangooSchedulerException;
@@ -32,7 +31,6 @@ public class Shutdown extends Thread {
         stopScheduler();
         stopExecutionManager();
         closeCaches();
-        closeLifecycleManager();
     }
 
     private static void invokeLifecycle() {
@@ -60,9 +58,5 @@ public class Shutdown extends Thread {
 
     private static void closeCaches() {
         Application.getInstance(CacheProvider.class).close();
-    }
-
-    private static void closeLifecycleManager() {
-        Application.getInstance(LifecycleManager.class).close();
     }
 }
