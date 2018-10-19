@@ -24,10 +24,10 @@ import org.quartz.Trigger;
 
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.netflix.governator.guice.LifecycleInjector;
-import com.netflix.governator.lifecycle.LifecycleManager;
+import com.google.inject.Stage;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -247,18 +247,7 @@ public final class Application {
      * Sets the injector wrapped through netflix Governator
      */
     private static void prepareInjector() {
-        injector = LifecycleInjector.builder()
-                .withModules(getModules())
-                .usingBasePackages(".")
-                .build()
-                .createInjector();
-         
-        try {
-            getInstance(LifecycleManager.class).start();
-        } catch (Exception e) {
-            LOG.error("Failed to start Governator LifecycleManager", e);
-            failsafe();
-        } 
+        injector = Guice.createInjector(Stage.PRODUCTION, getModules());
     }
 
     /**
