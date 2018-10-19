@@ -83,7 +83,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void testRoutedAuthorized() {
+    public void testRoutesAuthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/routes")
                 .withBasicAuthentication(ADMIN, ADMIN)
@@ -97,7 +97,21 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testRoutedUnauthorized() {
+    public void testRoutesNotConaintAdmin() {
+        //given
+        TestResponse response = TestRequest.get("/@admin/routes")
+                .withBasicAuthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), not(containsString("io.mangoo.admin.AdminController")));
+    }
+    
+    @Test
+    public void testRoutesUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/routes").execute();
         

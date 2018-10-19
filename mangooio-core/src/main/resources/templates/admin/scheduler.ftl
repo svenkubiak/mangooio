@@ -39,19 +39,16 @@
 									<td><#if job.previousFireTime??>${job.previousFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
 									<td><#if job.nextFireTime??>${job.nextFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
 									<td>
-										<a href="/@admin/scheduler/state/${job.name}" onclick="return confirm('Are you sure you want to change the state of the job?');" class="simpletooltip">
+										<a href="/@admin/scheduler/state/${job.name}" class="btn btn-app" onclick="return confirm('Are you sure you want to change the state of the job?');" class="simpletooltip">
 											<#if job.active>
-												<span class="simpletooltiptext">Deactivate job</span>
-												<i class="fa fa-stop" aria-hidden="true"></i>
+												<i class="fa fa-pause"></i> Deactivate
 											<#else>
-												<span class="simpletooltiptext">Activate job</span>
-												<i class="fa fa-play" aria-hidden="true"></i>
+												<i class="fa fa-play"></i> Activate
 											</#if>
 										</a>
 										&nbsp;&nbsp;
-										<a href="/@admin/scheduler/execute/${job.name}" onclick="return confirm('Are you sure you want to exectue the job?');" class="simpletooltip">
-											<span class="simpletooltiptext">Execute job</span>
-											<i class="fa fa-fire" aria-hidden="true"></i>
+										<a href="/@admin/scheduler/execute/${job.name}" class="btn btn-app"onclick="return confirm('Are you sure you want to exectue the job?');" class="simpletooltip">
+											<i class="fa fa-fire"></i> Run now
 										</a>
 									</td>
 								</tr>
