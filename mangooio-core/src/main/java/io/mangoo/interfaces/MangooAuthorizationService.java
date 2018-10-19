@@ -6,7 +6,6 @@ package io.mangoo.interfaces;
  *
  */
 public interface MangooAuthorizationService {
-
     /**
      * Validates the authorization for a give subject on a given resource with a given operation
      * 
@@ -17,5 +16,4 @@ public interface MangooAuthorizationService {
      * @return true if authorization is valid, false otherwise
      */
     boolean validAuthorization(String subject, String resource, String operation);
-
 }
