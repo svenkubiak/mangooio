@@ -76,7 +76,7 @@ public class WebSocketRouteTest {
         WebSocketRoute webSocketRoute = new WebSocketRoute();
         
         //when
-        webSocketRoute.to(url).requireAuthentication();
+        webSocketRoute.to(url).withAuthentication();
         
         //then
         Set<WebSocketRoute> webSocketRoutes = Router.getRoutes().stream()

@@ -63,7 +63,7 @@ public class ServerSentEventRouteTest {
         ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
         
         //when
-        serverSentEventRoute.to(url).requireAuthentication();
+        serverSentEventRoute.to(url).withAuthentication();
         
         //then
         Set<ServerSentEventRoute> serverSentEventRoutes = Router.getRoutes().stream()

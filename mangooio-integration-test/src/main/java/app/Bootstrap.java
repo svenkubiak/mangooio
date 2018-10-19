@@ -40,8 +40,8 @@ public class Bootstrap implements MangooBootstrap {
         // AuthorizationController
         Bind.controller(AuthorizationController.class).withRoutes(
                 On.get().to("/authorize/{subject}").respondeWith("authorize"),
-                On.get().to("/read").respondeWith("read").requireAuthorization(),
-                On.post().to("/write").respondeWith("write").requireAuthorization()
+                On.get().to("/read").respondeWith("read").withAuthorization(),
+                On.post().to("/write").respondeWith("write").withAuthorization()
         );
         
         // FilterController
@@ -94,7 +94,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.post().to("/login").respondeWith("login"),
                 On.get().to("/login").respondeWith("login"),
                 On.get().to("/subject").respondeWith("subject"),
-                On.get().to("/authenticationrequired").respondeWith("notauthenticated").requireAuthentication(),
+                On.get().to("/authenticationrequired").respondeWith("notauthenticated").withAuthentication(),
                 On.get().to("/authenticate").respondeWith("authenticate"),
                 On.get().to("/logout").respondeWith("logout")
         );
@@ -163,10 +163,10 @@ public class Bootstrap implements MangooBootstrap {
          );
          
          Bind.serverSentEvent().to("/sse");
-         Bind.serverSentEvent().to("/sseauth").requireAuthentication();
+         Bind.serverSentEvent().to("/sseauth").withAuthentication();
          
          Bind.webSocket().onController(WebSocketController.class).to("/websocket");
-         Bind.webSocket().onController(WebSocketController.class).to("/websocketauth").requireAuthentication();
+         Bind.webSocket().onController(WebSocketController.class).to("/websocketauth").withAuthentication();
 
          Bind.pathResource().to("/assets/");
          Bind.fileResource().to("/robots.txt");

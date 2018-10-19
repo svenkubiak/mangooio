@@ -52,7 +52,7 @@ public class WebSocketRoute implements MangooRoute {
     /**
      * Sets authentication to true, default is false
      */
-    public void requireAuthentication() {
+    public void withAuthentication() {
         this.authentication = true;
     }
 

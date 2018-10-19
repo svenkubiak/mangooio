@@ -49,11 +49,11 @@ public class ControllerRoute {
             }
             
             if (hasAuthentication()) {
-                requestRoute.requireAuthentication();
+                requestRoute.withAuthentication();
             }
             
             if (hasAuthorization()) {
-                requestRoute.requireAuthorization();
+                requestRoute.withAuthorization();
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -75,7 +75,7 @@ public class ControllerRoute {
      * 
      * @return controller route instance
      */
-    public ControllerRoute requireBasicAuthentication(String username, String password) {
+    public ControllerRoute withBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         
@@ -90,7 +90,7 @@ public class ControllerRoute {
      * 
      * @return controller route instance
      */
-    public ControllerRoute requireAuthentication() {
+    public ControllerRoute withAuthentication() {
         this.authentication = true;
         return this;
     }
@@ -101,7 +101,7 @@ public class ControllerRoute {
      * 
      * @return controller route instance
      */
-    public ControllerRoute requireAuthorization() {
+    public ControllerRoute withAuthorization() {
         this.authorization = true;
         this.authentication = true;
         return this;

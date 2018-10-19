@@ -30,4 +30,42 @@ public class RequestRouteTest {
         //then
         assertThat(requestRoute.getUrl(), equalTo("/bar"));
     }
+    
+    @Test
+    public void testAuthorization() {
+        //given
+        RequestRoute requestRoute = new RequestRoute(Http.GET);
+        
+        //when
+        requestRoute.withAuthorization();
+        
+        //then
+        assertThat(requestRoute.hasAuthentication(), equalTo(true));
+        assertThat(requestRoute.hasAuthorization(), equalTo(true));
+    }
+    
+    @Test
+    public void testAuthentication() {
+        //given
+        RequestRoute requestRoute = new RequestRoute(Http.GET);
+        
+        //when
+        requestRoute.withAuthentication();
+        
+        //then
+        assertThat(requestRoute.hasAuthentication(), equalTo(true));
+        assertThat(requestRoute.hasAuthorization(), equalTo(false));
+    }
+    
+    @Test
+    public void testBasicAuthentication() {
+        //given
+        RequestRoute requestRoute = new RequestRoute(Http.GET);
+        
+        //when
+        requestRoute.withBasicAuthentication("foo", "bar");
+        
+        //then
+        assertThat(requestRoute.hasBasicAuthentication(), equalTo(true));
+    }
 }
