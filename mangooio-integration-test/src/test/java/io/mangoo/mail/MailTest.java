@@ -138,47 +138,47 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
     }
     
-//    @Test
-//    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException, MessagingException {
-//        //given
-//        greenMail.purgeEmailFromAllMailboxes();
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-//        
-//        //when
-//        Mail.build()
-//            .withBuilder(Email.create()
-//                    .from("Jon Snow <jon.snow@winterfell.com>")
-//                    .to("sansa.stark@westeros.com")
-//                    .subject("ÄÜÖ")
-//                    .textMessage("This is a body with üäö"))
-//            .send();
-//        
-//        //then
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), equalTo("This is a body with üäö\r\n"));
-//    }
-//    
-//    @Test
-//    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
-//        //given
-//        greenMail.purgeEmailFromAllMailboxes();
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-//        
-//        //when
-//        Mail.build()
-//            .withBuilder(Email.create()
-//                    .from("Jon Snow <jon.snow@winterfell.com>")
-//                    .to("sansa.stark@westeros.com")
-//                    .subject("ÄÜÖ")
-//                    .htmlMessage("This is a body with üäö"))
-//            .send();
-//        
-//        //then
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-//        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-//        assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n"));
-//    }
+    @Test
+    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException, MessagingException {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
+        
+        //when
+        Mail.build()
+            .withBuilder(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("ÄÜÖ")
+                    .textMessage("This is a body with üäö"))
+            .send();
+        
+        //then
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), equalTo("This is a body with üäö\r\n"));
+    }
+    
+    @Test
+    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
+        //given
+        greenMail.purgeEmailFromAllMailboxes();
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
+        
+        //when
+        Mail.build()
+            .withBuilder(Email.create()
+                    .from("Jon Snow <jon.snow@winterfell.com>")
+                    .to("sansa.stark@westeros.com")
+                    .subject("ÄÜÖ")
+                    .htmlMessage("This is a body with üäö"))
+            .send();
+        
+        //then
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
+        assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n"));
+    }
     
     @AfterAll
     public static void shutdown() {
