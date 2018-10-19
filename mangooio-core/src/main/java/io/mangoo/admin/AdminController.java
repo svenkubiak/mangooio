@@ -213,19 +213,20 @@ public class AdminController {
                 routes.add(json);
             });
             
-            Router.getRequestRoutes().forEach((RequestRoute route) -> {
-                JSONObject json = new JSONObject();
-                json.put(METHOD, route.getMethod());
-                json.put(URL, route.getUrl());
-                json.put("controllerClass", route.getControllerClass());
-                json.put("controllerMethod", route.getControllerMethod());
-                json.put("limit", route.getLimit());
-                json.put("basicAuthentication", route.hasBasicAuthentication());
-                json.put("authentication", route.hasAuthentication());
-                json.put("authorization", route.hasAuthorization());
-                json.put("blocking", route.isBlocking());
-                routes.add(json);
-            });
+            Router.getRequestRoutes().filter((RequestRoute route) -> !route.getUrl().contains("@admin"))
+                    .forEach((RequestRoute route) -> {
+                        JSONObject json = new JSONObject();
+                        json.put(METHOD, route.getMethod());
+                        json.put(URL, route.getUrl());
+                        json.put("controllerClass", route.getControllerClass());
+                        json.put("controllerMethod", route.getControllerMethod());
+                        json.put("limit", route.getLimit());
+                        json.put("basicAuthentication", route.hasBasicAuthentication());
+                        json.put("authentication", route.hasAuthentication());
+                        json.put("authorization", route.hasAuthorization());
+                        json.put("blocking", route.isBlocking());
+                        routes.add(json);
+                    });
             
             this.cache.put(CACHE_ADMINROUTES, routes);
         }
