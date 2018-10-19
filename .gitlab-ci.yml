@@ -23,6 +23,15 @@ before_script:
   - chmod 700 ~/.ssh
   - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
+  - apt-get update >/dev/null
+  - apt-get install -y locales >/dev/null
+  - echo "en_US UTF-8" > /etc/locale.gen
+  - locale-gen en_US.UTF-8
+  - export LANG=en_US.UTF-8
+  - export LANGUAGE=en_US:en
+  - export LC_ALL=en_US.UTF-8
+  - bundle install --jobs $(nproc) --path=/cache/bundler
+
  
 test:
   stage: test
