@@ -7,11 +7,11 @@
             <h1>Logger</h1>
           </div>
         </div>
-      </div><!-- /.container-fluid -->
+      </div>
     </section>
 <section class="content">
       <div class="container-fluid">
-<div class="row">
+		<div class="row">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
@@ -27,8 +27,7 @@
                   	  <tbody class="searchable">
 		                  <#list loggers as logger>
 							<tr>
-								<td>${logger.name}</td>
-								<td>
+								<td>${logger.name}<br>
 									<select name="level" class="form-control loglevel" data-class="${logger.name}">
 										<option value="ALL"<#if logger.level == "ALL"> selected</#if>>ALL</option>
 										<option value="TRACE"<#if logger.level == "TRACE"> selected</#if>>TRACE</option>
@@ -48,7 +47,7 @@
             </div>
           </div>
         </div>
-</div>
+	</div>
 </section>
 </div>
 <#include "footer.ftl">
