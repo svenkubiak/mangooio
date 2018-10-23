@@ -302,7 +302,6 @@ public class AdminController {
             Map<String, Object> json = new HashMap<>();
             json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             json.put("uptime in seconds", Application.getUptime().getSeconds());
-            json.put(VERSION, VERSION_TAG);
             json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
             json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
             json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
