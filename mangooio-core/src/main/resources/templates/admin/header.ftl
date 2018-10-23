@@ -19,10 +19,6 @@
         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
       </li>
     </ul>
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item dropdown"><b>mangoo I/O</b> | Version: ${version}</li>
-      </ul>
-    </ul>
     </nav>
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <div class="sidebar">
