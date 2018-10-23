@@ -61,14 +61,17 @@
         </div>
 </div>
 <#else>
-<div class="row">
-	<div class="col-xs-12">
-    	<div class="box">
-	    	<div class="box-header">
-	        	No jobs are scheduled in this application.
+      <div class="container-fluid">
+		<div class="row">
+	          <div class="col-12">
+	            <div class="card">
+	              <div class="card-header">
+	                <h3 class="card-title">No jobs are scheduled in this application.</h3>
+	              </div>
+	            </div>
+	          </div>
 	        </div>
-    	</div>
-	</div>
+		</div>
 </div>
 </#if>
 </section>
