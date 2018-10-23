@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk11
 script: "mvn clean test -Dgpg.skip=true"
 notifications:
   email: sk@svenkubiak.de
