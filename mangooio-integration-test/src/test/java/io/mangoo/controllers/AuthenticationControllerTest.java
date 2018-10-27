@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestBrowser;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Browser;
+import io.mangoo.test.http.Request;
+import io.mangoo.test.http.Response;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -27,7 +27,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testNotAuthenticated() {
         //given
-        TestResponse response = TestRequest.get("/authenticationrequired")
+        Response response = Request.get("/authenticationrequired")
                 .withDisableRedirects(true)
                 .execute();
 
@@ -40,7 +40,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testSubject() {
         //given
-        TestResponse response = TestRequest.get("/subject")
+        Response response = Request.get("/subject")
                 .execute();
 
         //then
@@ -49,9 +49,9 @@ public class AuthenticationControllerTest {
         assertThat(response.getContent(), equalTo("not authenticated"));
         
         //given
-        TestBrowser instance = TestBrowser.open();
-        response = instance.withUri("/dologin")
-                .withMethod(Methods.POST)
+        Browser instance = Browser.open();
+        response = instance.to("/dologin")
+                .withHTTPMethod(Methods.POST.toString())
                 .withDisableRedirects(true)
                 .execute();
         
@@ -60,8 +60,8 @@ public class AuthenticationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
         
         //given
-        instance.withUri("/subject")
-                .withMethod(Methods.GET)
+        instance.to("/subject")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
 
         //then
@@ -73,11 +73,13 @@ public class AuthenticationControllerTest {
     @Test
     public void testAuthenticated() {
         //given
-        TestBrowser instance = TestBrowser.open();
+        Browser instance = Browser.open();
 
         //when
-        TestResponse response = instance.withUri("/dologin")
-                .withMethod(Methods.POST)
+        Response response = instance
+                .to("/dologin")
+                .withDisableRedirects(true)
+                .withHTTPMethod(Methods.POST.toString())
                 .execute();
         
         //then
@@ -85,9 +87,9 @@ public class AuthenticationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
 
         //when
-        response = instance.withUri("/authenticationrequired")
+        response = instance.to("/authenticationrequired")
                 .withDisableRedirects(true)
-                .withMethod(Methods.GET)
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -96,8 +98,8 @@ public class AuthenticationControllerTest {
         assertThat(response.getContent().length(), equalTo(9));
 
         //when
-        response = instance.withUri("/logout")
-                .withMethod(Methods.GET)
+        response = instance.to("/logout")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -105,8 +107,8 @@ public class AuthenticationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
         //when
-        response = instance.withUri("/authenticationrequired")
-                .withMethod(Methods.GET)
+        response = instance.to("/authenticationrequired")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestBrowser;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Browser;
+import io.mangoo.test.http.Request;
+import io.mangoo.test.http.Response;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -30,7 +30,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityForm() {
         //given
-        TestResponse response = TestRequest.get("/authenticityform").execute();
+        Response response = Request.get("/authenticityform").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -42,7 +42,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityToken() {
         //given
-        TestResponse response = TestRequest.get("/authenticitytoken").execute();
+        Response response = Request.get("/authenticitytoken").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -53,11 +53,11 @@ public class AuthenticityControllerTest {
     @Test
     public void testValidAuthenticity() {
         //given
-    	TestBrowser instance = TestBrowser.open();
+    	Browser instance = Browser.open();
 
     	//when
-        TestResponse response = instance.withUri("/authenticitytoken")
-                .withMethod(Methods.GET)
+        Response response = instance.to("/authenticitytoken")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         String token = response.getContent();
 
@@ -67,8 +67,8 @@ public class AuthenticityControllerTest {
         assertThat(response.getContent().length(), equalTo(AUTHENTICITY_LENGTH));
 
         //when
-        response = instance.withUri("/valid?authenticity=" + token)
-                .withMethod(Methods.GET)
+        response = instance.to("/valid?authenticity=" + token)
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
 
         //then
@@ -79,7 +79,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        TestResponse response = TestRequest.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
+        Response response = Request.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

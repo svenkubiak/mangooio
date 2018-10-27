@@ -14,8 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Request;
+import io.mangoo.test.http.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -30,7 +30,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameter() {
         //given
-        TestResponse response = TestRequest.get("/string/bar").execute();
+        Response response = Request.get("/string/bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -45,7 +45,7 @@ public class ParameterControllerTest {
             String uuid = UUID.randomUUID().toString();
             
             //when
-            TestResponse response = TestRequest.get("/string/" + uuid).execute();
+            Response response = Request.get("/string/" + uuid).execute();
             
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
@@ -55,7 +55,7 @@ public class ParameterControllerTest {
     @Test
     public void testOptionalRequestParameter() {
         //given
-        TestResponse response = TestRequest.get("/optional/bar").execute();
+        Response response = Request.get("/optional/bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -70,7 +70,7 @@ public class ParameterControllerTest {
             String uuid = UUID.randomUUID().toString();
             
             //when
-            TestResponse response = TestRequest.get("/optional/" + uuid).execute();
+            Response response = Request.get("/optional/" + uuid).execute();
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
@@ -80,7 +80,7 @@ public class ParameterControllerTest {
     @Test
     public void testOptionalQueryParameter() {
         //given
-        TestResponse response = TestRequest.get("/optional/?foo=bar").execute();
+        Response response = Request.get("/optional/?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -95,7 +95,7 @@ public class ParameterControllerTest {
             String uuid = UUID.randomUUID().toString();
             
             //when
-            TestResponse response = TestRequest.get("/optional/?foo=" + uuid).execute();
+            Response response = Request.get("/optional/?foo=" + uuid).execute();
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
@@ -105,7 +105,7 @@ public class ParameterControllerTest {
     @Test
     public void testWithoutParameter() {
         //given
-        TestResponse response = TestRequest.get("/string").execute();
+        Response response = Request.get("/string").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -116,7 +116,7 @@ public class ParameterControllerTest {
     @Test
     public void testUmlautParameter() {
         //given
-        TestResponse response = TestRequest.get("/string/äöü").execute();
+        Response response = Request.get("/string/äöü").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -127,7 +127,7 @@ public class ParameterControllerTest {
     @Test
     public void testStringParameterWithSpecialCharacters() {
         //given
-        TestResponse response = TestRequest.get("/string/tüsätö-$ß_").execute();
+        Response response = Request.get("/string/tüsätö-$ß_").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -138,7 +138,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoublePrimitiveParamter() {
         //given
-        TestResponse response = TestRequest.get("/doublePrimitive/1.42").execute();
+        Response response = Request.get("/doublePrimitive/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -149,7 +149,7 @@ public class ParameterControllerTest {
     @Test
     public void testDoubleParameter() {
         //given
-        TestResponse response = TestRequest.get("/double/1.42").execute();
+        Response response = Request.get("/double/1.42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -160,7 +160,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntParameter() {
         //given
-        TestResponse response = TestRequest.get("/int/42").execute();
+        Response response = Request.get("/int/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -171,7 +171,7 @@ public class ParameterControllerTest {
     @Test
     public void testIntegerParameter() {
         //given
-        TestResponse response = TestRequest.get("/integer/42").execute();
+        Response response = Request.get("/integer/42").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -182,7 +182,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatPrimitiveParameter() {
         //given
-        TestResponse response = TestRequest.get("/floatPrimitive/1.24").execute();
+        Response response = Request.get("/floatPrimitive/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -193,7 +193,7 @@ public class ParameterControllerTest {
     @Test
     public void testFloatParameter() {
         //given
-        TestResponse response = TestRequest.get("/float/1.24").execute();
+        Response response = Request.get("/float/1.24").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -204,7 +204,7 @@ public class ParameterControllerTest {
     @Test
     public void testPrimitiveLongParameter() {
         //given
-        TestResponse response = TestRequest.get("/longPrimitive/6000").execute();
+        Response response = Request.get("/longPrimitive/6000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -215,7 +215,7 @@ public class ParameterControllerTest {
     @Test
     public void testLongParameter() {
         //given
-        TestResponse response = TestRequest.get("/long/60000").execute();
+        Response response = Request.get("/long/60000").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -226,7 +226,7 @@ public class ParameterControllerTest {
     @Test
     public void testMultipleParameter() {
         //given
-        TestResponse response = TestRequest.get("/multiple/bar/1").execute();
+        Response response = Request.get("/multiple/bar/1").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -237,7 +237,7 @@ public class ParameterControllerTest {
     @Test
     public void testPathParameter() {
         //given
-        TestResponse response = TestRequest.get("/path?foo=bar").execute();
+        Response response = Request.get("/path?foo=bar").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -248,7 +248,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateParameter() {
         //given
-        TestResponse response = TestRequest.get("/localdate/2007-12-03").execute();
+        Response response = Request.get("/localdate/2007-12-03").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -260,7 +260,7 @@ public class ParameterControllerTest {
     @Test
     public void testLocalDateTimeParameter() {
         //given
-        TestResponse response = TestRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
+        Response response = Request.get("/localdatetime/2007-12-03T10:15:30").execute();
 
         //then
         assertThat(response, not(nullValue()));

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestBrowser;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Browser;
+import io.mangoo.test.http.Response;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -25,15 +25,15 @@ public class AuthorizationControllerTest {
     @Test
     public void testReadUnAuthorized() {
         //given
-        TestBrowser instance = TestBrowser.open();
-        TestResponse response = instance.withUri("/authorize/jack")
-                .withMethod(Methods.GET)
+        Browser instance = Browser.open();
+        Response response = instance.to("/authorize/jack")
+                .withHTTPMethod(Methods.GET.toString())
                 .withDisableRedirects(true)
                 .execute();
         
         //given
-        instance.withUri("/read")
-            .withMethod(Methods.GET)
+        instance.to("/read")
+            .withHTTPMethod(Methods.GET.toString())
             .execute();
         
         //then
@@ -45,15 +45,15 @@ public class AuthorizationControllerTest {
     @Test
     public void testReadAuthorized() {
         //given
-        TestBrowser instance = TestBrowser.open();
-        TestResponse response = instance.withUri("/authorize/alice")
-                .withMethod(Methods.GET)
+        Browser instance = Browser.open();
+        Response response = instance.to("/authorize/alice")
+                .withHTTPMethod(Methods.GET.toString())
                 .withDisableRedirects(true)
                 .execute();
         
         //given
-        instance.withUri("/read")
-            .withMethod(Methods.GET)
+        instance.to("/read")
+            .withHTTPMethod(Methods.GET.toString())
             .execute();
         
         //then
@@ -65,15 +65,15 @@ public class AuthorizationControllerTest {
     @Test
     public void testWriteUnAuthorized() {
         //given
-        TestBrowser instance = TestBrowser.open();
-        TestResponse response = instance.withUri("/authorize/peter")
-                .withMethod(Methods.GET)
+        Browser instance = Browser.open();
+        Response response = instance.to("/authorize/peter")
+                .withHTTPMethod(Methods.GET.toString())
                 .withDisableRedirects(true)
                 .execute();
         
         //given
-        instance.withUri("/write")
-            .withMethod(Methods.POST)
+        instance.to("/write")
+            .withHTTPMethod(Methods.POST.toString())
             .execute();
         
         //then
@@ -85,15 +85,15 @@ public class AuthorizationControllerTest {
     @Test
     public void testWriteAuthorized() {
         //given
-        TestBrowser instance = TestBrowser.open();
-        TestResponse response = instance.withUri("/authorize/bob")
-                .withMethod(Methods.GET)
+        Browser instance = Browser.open();
+        Response response = instance.to("/authorize/bob")
+                .withHTTPMethod(Methods.GET.toString())
                 .withDisableRedirects(true)
                 .execute();
         
         //given
-        instance.withUri("/write")
-            .withMethod(Methods.POST)
+        instance.to("/write")
+            .withHTTPMethod(Methods.POST.toString())
             .execute();
         
         //then

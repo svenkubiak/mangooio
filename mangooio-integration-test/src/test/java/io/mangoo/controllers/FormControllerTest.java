@@ -8,26 +8,31 @@ import static org.hamcrest.Matchers.nullValue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.NameValuePair;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Request;
+import io.mangoo.test.http.Response;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -41,14 +46,13 @@ public class FormControllerTest {
     @Test
 	public void testFormPost() {
 		// given
-		List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-		parameter.add(new BasicNameValuePair("username", "vip"));
-		parameter.add(new BasicNameValuePair("password", "secret"));
+		Multimap<String, String> parameter = ArrayListMultimap.create();
+		parameter.put("username", "vip");
+		parameter.put("password", "secret");
 
 		// when
-		TestResponse response = TestRequest.post("/form")
-				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-				.withPostParameters(parameter)
+		Response response = Request.post("/form")
+				.withForm(parameter)
 				.execute();
 
 		// then
@@ -63,13 +67,14 @@ public class FormControllerTest {
             // given
             String username = UUID.randomUUID().toString();
             String password = UUID.randomUUID().toString();
-            List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-            parameter.add(new BasicNameValuePair("username", username));
-            parameter.add(new BasicNameValuePair("password", password));
+            Multimap<String, String> parameter = ArrayListMultimap.create();
+            parameter.put("username", username);
+            parameter.put("password", password);
 
             // when
-            TestResponse response = TestRequest.post("/form")
-                    .withContentType(MediaType.FORM_DATA.withoutParameters().toString()).withPostParameters(parameter)
+            Response response = Request.post("/form")
+                    .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
+                    .withForm(parameter)
                     .execute();
             
             // then
@@ -80,15 +85,15 @@ public class FormControllerTest {
     @Test
     public void testMultiValue() {
         // given
-        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-        parameter.add(new BasicNameValuePair("foo[]", "1"));
-        parameter.add(new BasicNameValuePair("foo[]", "2"));
-        parameter.add(new BasicNameValuePair("foo[]", "3"));
-
+        Multimap<String, String> parameter = ArrayListMultimap.create();
+        parameter.put("foo[]", "1");
+        parameter.put("foo[]", "2");
+        parameter.put("foo[]", "3");
+        
         // when
-        TestResponse response = TestRequest.post("/multivalued")
+        Response response = Request.post("/multivalued")
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-                .withPostParameters(parameter)
+                .withForm(parameter)
                 .execute();
 
         // then
@@ -104,15 +109,15 @@ public class FormControllerTest {
             String uuid1 = UUID.randomUUID().toString();
             String uuid2 = UUID.randomUUID().toString();
             String uuid3 = UUID.randomUUID().toString();
-            List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-            parameter.add(new BasicNameValuePair("foo[]", uuid1));
-            parameter.add(new BasicNameValuePair("foo[]", uuid2));
-            parameter.add(new BasicNameValuePair("foo[]", uuid3));
-
+            Multimap<String, String> parameter = ArrayListMultimap.create();
+            parameter.put("foo[]", uuid1);
+            parameter.put("foo[]", uuid2);
+            parameter.put("foo[]", uuid3);
+            
             // when
-            TestResponse response = TestRequest.post("/multivalued")
+            Response response = Request.post("/multivalued")
                     .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-                    .withPostParameters(parameter)
+                    .withForm(parameter)
                     .execute();
             
             // then
@@ -122,58 +127,82 @@ public class FormControllerTest {
 
 	@Test
 	public void testSingleFileUpload() throws IOException {
-		// given
-		File file = new File(UUID.randomUUID().toString());
-		InputStream attachment = Resources.getResource("attachment.txt").openStream();		
-		FileUtils.copyInputStreamToFile(attachment, file);
-		
-		// when
-		TestResponse response = TestRequest.post("/singlefile")
-				.withFileBody("file", new FileBody(file))
-				.execute();
+	    // given
+	    MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+	    multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+	    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+	    // when
+        File file = new File(UUID.randomUUID().toString());
+        InputStream attachment = Resources.getResource("attachment.txt").openStream();
+        FileUtils.copyInputStreamToFile(attachment, file);
+        multipartEntityBuilder.addPart("attachment", new FileBody(file));
+        HttpPost httpPost = new HttpPost("http://localhost:10808/singlefile");
+        httpPost.setEntity(multipartEntityBuilder.build());
+
+        String response = null;
+        HttpResponse httpResponse = httpClientBuilder.build().execute(httpPost);
+
+        HttpEntity httpEntity = httpResponse.getEntity();
+        if (httpEntity != null) {
+            response = EntityUtils.toString(httpEntity);
+        }
 
 		// then
+		assertThat(httpResponse, not(nullValue()));
 		assertThat(response, not(nullValue()));
-		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-		assertThat(response.getContent(), equalTo("This is an attachment"));
+		assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
+		assertThat(response, equalTo("This is an attachment"));
 		file.delete();
 	}
 	
 	@Test
 	public void testMultiFileUpload() throws IOException {
-		// given
-		File file1 = new File(UUID.randomUUID().toString());
-		File file2 = new File(UUID.randomUUID().toString());
-		InputStream attachment1 = Resources.getResource("attachment.txt").openStream();
-		InputStream attachment2 = Resources.getResource("attachment.txt").openStream();
-		FileUtils.copyInputStreamToFile(attachment1, file1);
-		FileUtils.copyInputStreamToFile(attachment2, file2);
-		
-		// when
-		TestResponse response = TestRequest.post("/multifile")
-				.withFileBody("file1", new FileBody(file1))
-				.withFileBody("file2", new FileBody(file2))
-				.execute();
+	    // given
+        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+        multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-		// then
-		assertThat(response, not(nullValue()));
-		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-		assertThat(response.getContent(), equalTo("This is an attachmentThis is an attachment2"));
-		file1.delete();
-		file2.delete();
+        // when
+        File file1 = new File(UUID.randomUUID().toString());
+        File file2 = new File(UUID.randomUUID().toString());
+        InputStream attachment1 = Resources.getResource("attachment.txt").openStream();
+        InputStream attachment2 = Resources.getResource("attachment.txt").openStream();
+        FileUtils.copyInputStreamToFile(attachment1, file1);
+        FileUtils.copyInputStreamToFile(attachment2, file2);
+        multipartEntityBuilder.addPart("attachment1", new FileBody(file1));
+        multipartEntityBuilder.addPart("attachment2", new FileBody(file2));
+        HttpPost httpPost = new HttpPost("http://localhost:10808/multifile");
+        httpPost.setEntity(multipartEntityBuilder.build());
+
+        String response = null;
+        HttpResponse httpResponse = httpClientBuilder.build().execute(httpPost);
+
+        HttpEntity httpEntity = httpResponse.getEntity();
+        if (httpEntity != null) {
+            response = EntityUtils.toString(httpEntity);
+        }
+
+        // then
+        assertThat(httpResponse, not(nullValue()));
+        assertThat(response, not(nullValue()));
+        assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response, equalTo("This is an attachmentThis is an attachment2"));
+        file1.delete();
+        file2.delete();
 	}
 
 	@Test
 	public void testFormEncoding() {
 		// given
-		List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-		parameter.add(new BasicNameValuePair("username", "süpöä"));
-		parameter.add(new BasicNameValuePair("password", "#+ß§"));
-
+		Multimap<String, String> parameter = ArrayListMultimap.create();
+        parameter.put("username", "süpöä");
+        parameter.put("password", "#+ß§");
+		
 		// when
-		TestResponse response = TestRequest.post("/form")
-				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-				.withPostParameters(parameter)
+		Response response = Request.post("/form")
+		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
+				.withForm(parameter)
 				.execute();
 
 		// then
@@ -185,14 +214,14 @@ public class FormControllerTest {
 	@Test
 	public void testInvalidFormValues() {
 		// given
-		List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-		parameter.add(new BasicNameValuePair("phone", "1234567890123"));
-		parameter.add(new BasicNameValuePair("regex", "ABC"));
-
+		Multimap<String, String> parameter = ArrayListMultimap.create();
+        parameter.put("phone", "1234567890123");
+        parameter.put("regex", "ABC");
+		
 		// when
-		TestResponse response = TestRequest.post("/validateform")
+		Response response = Request.post("/validateform")
 				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-				.withPostParameters(parameter)
+				.withForm(parameter)
 				.execute();
 
 		// then
@@ -214,23 +243,23 @@ public class FormControllerTest {
 	@Test
 	public void testValidFormValues() {
 		// given
-		List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-		parameter.add(new BasicNameValuePair("name", "this is my name"));
-		parameter.add(new BasicNameValuePair("email", "foo@bar.com"));
-		parameter.add(new BasicNameValuePair("email2", "game@thrones.com"));
-		parameter.add(new BasicNameValuePair("email2confirm", "game@thrones.com"));
-		parameter.add(new BasicNameValuePair("password", "Secret"));
-		parameter.add(new BasicNameValuePair("passwordconfirm", "Secret"));
-		parameter.add(new BasicNameValuePair("ipv4", "11.12.23.42"));
-		parameter.add(new BasicNameValuePair("ipv6", "2001:db8:85a3:8d3:1319:8a2e:370:7348"));
-		parameter.add(new BasicNameValuePair("phone", "abcdef"));
-		parameter.add(new BasicNameValuePair("fax", "abchdjskcjsa"));
-		parameter.add(new BasicNameValuePair("regex", "a"));
+        Multimap<String, String> parameter = ArrayListMultimap.create();
+        parameter.put("name", "this is my name");
+        parameter.put("email", "foo@bar.com");
+        parameter.put("email2", "game@thrones.com");
+        parameter.put("email2confirm", "game@thrones.com");
+        parameter.put("password", "Secret");
+        parameter.put("passwordconfirm", "Secret");
+        parameter.put("ipv4", "11.12.23.42");
+        parameter.put("ipv6", "2001:db8:85a3:8d3:1319:8a2e:370:7348");
+        parameter.put("phone", "abcdef");
+        parameter.put("fax", "abchdjskcjsa");
+        parameter.put("regex", "a");
 
 		// when
-		TestResponse response = TestRequest.post("/validateform")
+		Response response = Request.post("/validateform")
 		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-				.withPostParameters(parameter)
+				.withForm(parameter)
 				.execute();
 
 		// then
@@ -243,15 +272,15 @@ public class FormControllerTest {
     public void testFlashify() {
         // given
         String data = "this is my namefoo@bar.com";
-        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
-        parameter.add(new BasicNameValuePair("name", "this is my name"));
-        parameter.add(new BasicNameValuePair("email", "foo@bar.com"));
+        Multimap<String, String> parameter = ArrayListMultimap.create();
+        parameter.put("name", "this is my name");
+        parameter.put("email", "foo@bar.com");
         
         // when
-        TestResponse response = TestRequest.post("/submit")
-                .withLaxRedirectStrategy()
+        Response response = Request.post("/submit")
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-                .withPostParameters(parameter).execute();
+                .withForm(parameter)
+                .execute();
 
         // then
         assertThat(response, not(nullValue()));

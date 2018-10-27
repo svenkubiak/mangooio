@@ -10,9 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Default;
-import io.mangoo.test.http.TestBrowser;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
+import io.mangoo.test.http.Browser;
+import io.mangoo.test.http.Request;
+import io.mangoo.test.http.Response;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -27,7 +27,7 @@ public class I18nControllerTest {
     @Test
     public void testWithOutAdditionalHeader() {
         //given
-        TestResponse response = TestRequest.get("/translation").execute();
+        Response response = Request.get("/translation").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -38,7 +38,7 @@ public class I18nControllerTest {
     @Test
     public void testSpecialCharacters() {
         //given
-        TestResponse response = TestRequest.get("/special")
+        Response response = Request.get("/special")
                 .withHeader("Accept-Language", "fr-FR")
                 .execute();
         
@@ -51,7 +51,7 @@ public class I18nControllerTest {
     @Test
     public void testUmlaute() {
         //given
-        TestResponse response = TestRequest.get("/umlaute")
+        Response response = Request.get("/umlaute")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -64,7 +64,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderDe() {
         //given
-        TestResponse response = TestRequest.get("/translation")
+        Response response = Request.get("/translation")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -77,7 +77,7 @@ public class I18nControllerTest {
     @Test
     public void testWithAdditionalHeaderEn() {
         //given
-        TestResponse response = TestRequest.get("/translation")
+        Response response = Request.get("/translation")
                 .withHeader("Accept-Language", "en-US")
                 .execute();
         
@@ -90,7 +90,7 @@ public class I18nControllerTest {
     @Test
     public void testWithInjectedAdditionalHeaderDe() {
         //given
-        TestResponse response = TestRequest.get("/messages")
+        Response response = Request.get("/messages")
                 .withHeader("Accept-Language", "de-DE")
                 .execute();
         
@@ -103,7 +103,7 @@ public class I18nControllerTest {
     @Test
     public void testWithInjectedMessagesDefaultLanguage() {
         //given
-        TestResponse response = TestRequest.get("/messages")
+        Response response = Request.get("/messages")
                 .execute();
         
         //then
@@ -115,8 +115,8 @@ public class I18nControllerTest {
     @Test
     public void testWithI18nCookie() {
         //given
-        TestBrowser browser = TestBrowser.open();
-        TestResponse response = browser.withMethod(Methods.GET).withUri("/localize").execute();
+        Browser browser = Browser.open();
+        Response response = browser.withHTTPMethod(Methods.GET.toString()).to("/localize").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -124,7 +124,7 @@ public class I18nControllerTest {
         assertThat(response.getCookie(Default.I18N_COOKIE_NAME.toString()), not(nullValue()));
         
         //given
-        response = browser.withUri("/translation").execute();
+        response = browser.to("/translation").execute();
         
         //then
         assertThat(response, not(nullValue()));

@@ -62,8 +62,8 @@ public class FormHandler implements HttpHandler {
                     if (deque != null) {
                         FormValue formValue = deque.element();
                         if (formValue != null) {
-                            if (formValue.isFile() && formValue.getPath() != null) {
-                                form.addFile(formValue.getPath().toFile());
+                            if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
+                                form.addFile(formValue.getFileItem().getFile().toFile());
                             } else {
                                 if (data.contains("[]")) {
                                     String key = StringUtils.replace(data, "[]", "");
@@ -77,7 +77,6 @@ public class FormHandler implements HttpHandler {
                         }
                     }
                 });
-
 
                 form.setSubmitted(true);
             }
