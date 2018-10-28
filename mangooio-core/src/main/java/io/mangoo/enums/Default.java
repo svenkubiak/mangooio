@@ -60,7 +60,6 @@ public enum Default {
     MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),
     NUMBER_FORMAT("0.######"),
-    OAUTH_REQUEST_PARAMETER("oauth"),
     POLICY_CSV("policy.csv"),
     ROUTES_FILE("routes.yaml"),
     SCHEDULER_ANNOTATION("io.mangoo.annotations.Schedule"),

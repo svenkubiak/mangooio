@@ -70,7 +70,6 @@ public enum Required {
     METHOD_PARAMETERS("method parameters can not be null"),
     MODE("mode can not be null"),
     NAME("name can not be null"),
-    OAUTH_PROVIDER("OAuthProvider can not be null"),
     OBJECT("object can not be null"),
     PACKAGE_NAME("package name"),
     PASSWORD("password can not be null"),

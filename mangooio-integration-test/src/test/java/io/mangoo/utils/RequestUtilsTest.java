@@ -10,7 +10,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,7 +22,6 @@ import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.oauth.OAuthProvider;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -214,37 +212,6 @@ public class RequestUtilsTest {
             
             // then
             return security != null && security.getClass().getSimpleName().equals("SecurityInitialHandler");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-
-    @Test
-    public void testGetOAuthProvider() {
-        // when
-        Optional<OAuthProvider> twitter = RequestUtils.getOAuthProvider("twitter");
-        Optional<OAuthProvider> facebook = RequestUtils.getOAuthProvider("facebook");
-        Optional<OAuthProvider> google = RequestUtils.getOAuthProvider("google");
-
-        // then
-        assertThat(twitter, not(nullValue()));
-        assertThat(twitter.isPresent(), equalTo(true));
-        assertThat(twitter.get().name(), equalTo("TWITTER"));
-        assertThat(facebook, not(nullValue()));
-        assertThat(facebook.isPresent(), equalTo(true));
-        assertThat(facebook.get().name(), equalTo("FACEBOOK"));
-        assertThat(google, not(nullValue()));
-        assertThat(google.isPresent(), equalTo(true));
-        assertThat(google.get().name(), equalTo("GOOGLE"));
-    }
-    
-    @Test
-    public void testGetOAuthProviderConcurrent() {
-        MatcherAssert.assertThat(t -> {
-            // when
-            Optional<OAuthProvider> twitter = RequestUtils.getOAuthProvider("twitter");
-            Optional<OAuthProvider> facebook = RequestUtils.getOAuthProvider("facebook");
-            Optional<OAuthProvider> google = RequestUtils.getOAuthProvider("google");
-
-            return twitter.get().name().equals("TWITTER") && facebook.get().name().equals("FACEBOOK") && google.get().name().equals("GOOGLE");
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

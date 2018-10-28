@@ -13,7 +13,6 @@ import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
-import io.mangoo.models.OAuthUser;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.TotpUtils;
 
@@ -25,7 +24,6 @@ import io.mangoo.utils.TotpUtils;
  */
 public class Authentication {
     private LocalDateTime expires;
-    private OAuthUser oAuthUser;
     private String subject;
     private boolean twoFactor;
     private boolean remember;
@@ -98,29 +96,6 @@ public class Authentication {
      */
     public boolean isTwoFactor() {
         return this.twoFactor;
-    }
-
-    /**
-     * Sets an OAuthUser to the current authentication.
-     * Can only be set once!
-     *
-     * @param oAuthUser An OAuthUser
-     */
-    public void withOAuthUser(OAuthUser oAuthUser) {
-        if (this.oAuthUser == null) {
-            this.oAuthUser = oAuthUser;
-        }
-    }
-
-    /**
-     * Retrieves the current OAuthUser from the authentication
-     * Note: This is only available during a OAuth authentication in a
-     * method that is annotated with @OAuthCallbackFilter
-     *
-     * @return The current OAuthUser instance or null if undefined
-     */
-    public OAuthUser getOAuthUser() {
-        return this.oAuthUser;
     }
     
     /**
@@ -238,7 +213,7 @@ public class Authentication {
      * @return True if authentication contains an authentication, false otherwise
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.subject) || this.oAuthUser != null;
+        return StringUtils.isNotBlank(this.subject);
     }
     
     public boolean isInvalid() {

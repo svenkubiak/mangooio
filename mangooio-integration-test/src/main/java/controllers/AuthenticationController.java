@@ -1,8 +1,5 @@
 package controllers;
 
-import io.mangoo.annotations.FilterWith;
-import io.mangoo.filters.OAuthCallbackFilter;
-import io.mangoo.filters.OAuthLoginFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Form;
@@ -17,12 +14,10 @@ public class AuthenticationController {
                 .andTextBody(authentication.getSubject());
     }
 
-    @FilterWith(OAuthLoginFilter.class)
     public Response login() {
         return Response.withOk().andEmptyBody();
     }
 
-    @FilterWith(OAuthCallbackFilter.class)
     public Response authenticate(Authentication authentication) {
         if (authentication.isValid()) {
             authentication.login(SUBJECT);

@@ -1,14 +1,12 @@
 package io.mangoo.utils;
 
 import java.net.URI;
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,11 +20,6 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 
-import com.github.scribejava.apis.FacebookApi;
-import com.github.scribejava.apis.GoogleApi20;
-import com.github.scribejava.apis.TwitterApi;
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.oauth.OAuthService;
 import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
@@ -34,9 +27,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
-import io.mangoo.enums.oauth.OAuthProvider;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
 import io.undertow.security.api.AuthenticationMechanism;
@@ -62,12 +53,10 @@ import io.undertow.websockets.core.WebSocketChannel;
  */
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
+    private static AttachmentKey<Attachment> attachmentKey;
     private static final String READ = "read";
     private static final String WRITE = "write";
     private static final Pattern PATTERN = Pattern.compile("\"");
-    private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email";
-    private static final int MAX_RANDOM = 999_999;
-    private static AttachmentKey<Attachment> attachmentKey;
     
     private RequestUtils() {
     }
@@ -121,67 +110,6 @@ public final class RequestUtils {
         final HeaderMap headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Header.CONTENT_TYPE.toHttpString()) != null &&
                 headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
-    }
-
-    /**
-     * Creates an OAuthService for authentication a user with OAuth
-     *
-     * @param oAuthProvider The OAuth provider Enum
-     * @return An Optional OAuthService
-     */
-    public static Optional<OAuthService> createOAuthService(OAuthProvider oAuthProvider) {
-        Objects.requireNonNull(oAuthProvider, Required.OAUTH_PROVIDER.toString());
-
-        Config config = Application.getInstance(Config.class);
-        OAuthService oAuthService = null;
-        switch (oAuthProvider) {
-        case TWITTER:
-            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_TWITTER_KEY))
-            .callback(config.getString(Key.OAUTH_TWITTER_CALLBACK))
-            .apiSecret(config.getString(Key.OAUTH_TWITTER_SECRET))
-            .build(TwitterApi.instance());
-            break;
-        case GOOGLE:
-            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_GOOGLE_KEY))
-            .scope(SCOPE)
-            .callback(config.getString(Key.OAUTH_GOOGLE_CALLBACK))
-            .apiSecret(config.getString(Key.OAUTH_GOOGLE_SECRET))
-            .state("secret" + new SecureRandom().nextInt(MAX_RANDOM))
-            .build(GoogleApi20.instance());
-            break;
-        case FACEBOOK:
-            oAuthService = new ServiceBuilder(config.getString(Key.OAUTH_FACEBOOK_KEY))
-            .callback(config.getString(Key.OAUTH_FACEBOOK_CALLBACK))
-            .apiSecret(config.getString(Key.OAUTH_FACEBOOK_SECRET))
-            .build(FacebookApi.instance());
-            break;
-        default:
-            break;
-        }
-
-        return (oAuthService == null) ? Optional.empty() : Optional.of(oAuthService);
-    }
-
-
-    /**
-     * Returns an OAuthProvider based on a given string
-     *
-     * @param oauth The string to lookup the OAuthProvider Enum
-     * @return OAuthProvider Enum
-     */
-    public static Optional<OAuthProvider> getOAuthProvider(String oauth) {
-        OAuthProvider oAuthProvider = null;
-        if (OAuthProvider.FACEBOOK.toString().equalsIgnoreCase(oauth)) {
-            oAuthProvider = OAuthProvider.FACEBOOK;
-        } else if (OAuthProvider.TWITTER.toString().equalsIgnoreCase(oauth)) {
-            oAuthProvider = OAuthProvider.TWITTER;
-        } else if (OAuthProvider.GOOGLE.toString().equalsIgnoreCase(oauth)) {
-            oAuthProvider = OAuthProvider.GOOGLE;
-        } else {
-            // Ignore all other providers
-        }
-
-        return (oAuthProvider == null) ? Optional.empty() : Optional.of(oAuthProvider);
     }
 
     /**
