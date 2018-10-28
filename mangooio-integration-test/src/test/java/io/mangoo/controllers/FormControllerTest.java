@@ -31,6 +31,8 @@ import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.test.http.Request;
 import io.mangoo.test.http.Response;
 import io.undertow.util.StatusCodes;
@@ -128,6 +130,8 @@ public class FormControllerTest {
 	@Test
 	public void testSingleFileUpload() throws IOException {
 	    // given
+	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
+	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
 	    MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
 	    multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 	    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -137,7 +141,7 @@ public class FormControllerTest {
         InputStream attachment = Resources.getResource("attachment.txt").openStream();
         FileUtils.copyInputStreamToFile(attachment, file);
         multipartEntityBuilder.addPart("attachment", new FileBody(file));
-        HttpPost httpPost = new HttpPost("http://localhost:10808/singlefile");
+        HttpPost httpPost = new HttpPost("http://" + host + ":" + port + "/singlefile");
         httpPost.setEntity(multipartEntityBuilder.build());
 
         String response = null;
@@ -159,6 +163,8 @@ public class FormControllerTest {
 	@Test
 	public void testMultiFileUpload() throws IOException {
 	    // given
+	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
+	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
         multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -172,7 +178,7 @@ public class FormControllerTest {
         FileUtils.copyInputStreamToFile(attachment2, file2);
         multipartEntityBuilder.addPart("attachment1", new FileBody(file1));
         multipartEntityBuilder.addPart("attachment2", new FileBody(file2));
-        HttpPost httpPost = new HttpPost("http://localhost:10808/multifile");
+        HttpPost httpPost = new HttpPost("http://" + host + ":" + port + "/multifile");
         httpPost.setEntity(multipartEntityBuilder.build());
 
         String response = null;
