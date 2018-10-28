@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Browser;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestBrowser;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -30,7 +30,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityForm() {
         //given
-        Response response = Request.get("/authenticityform").execute();
+        TestResponse response = TestRequest.get("/authenticityform").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -42,7 +42,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testAuthenticityToken() {
         //given
-        Response response = Request.get("/authenticitytoken").execute();
+        TestResponse response = TestRequest.get("/authenticitytoken").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -53,10 +53,10 @@ public class AuthenticityControllerTest {
     @Test
     public void testValidAuthenticity() {
         //given
-    	Browser instance = Browser.open();
+    	TestBrowser instance = TestBrowser.open();
 
     	//when
-        Response response = instance.to("/authenticitytoken")
+        TestResponse response = instance.to("/authenticitytoken")
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
         String token = response.getContent();
@@ -79,7 +79,7 @@ public class AuthenticityControllerTest {
     @Test
     public void testInvalidAuthenticity() {
         //when
-        Response response = Request.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
+        TestResponse response = TestRequest.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 @ExtendWith({TestExtension.class})
@@ -18,7 +18,7 @@ public class SubControllerTest {
     @Test
     public void testSubPackageGet() {
         //given
-        Response response = Request.get("/subcontroller").execute();
+        TestResponse response = TestRequest.get("/subcontroller").execute();
 
         //then
         assertThat(response, not(nullValue()));

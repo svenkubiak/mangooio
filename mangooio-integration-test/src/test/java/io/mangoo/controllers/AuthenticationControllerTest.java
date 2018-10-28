@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Browser;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestBrowser;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
@@ -27,7 +27,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testNotAuthenticated() {
         //given
-        Response response = Request.get("/authenticationrequired")
+        TestResponse response = TestRequest.get("/authenticationrequired")
                 .withDisableRedirects(true)
                 .execute();
 
@@ -40,7 +40,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testSubject() {
         //given
-        Response response = Request.get("/subject")
+        TestResponse response = TestRequest.get("/subject")
                 .execute();
 
         //then
@@ -49,7 +49,7 @@ public class AuthenticationControllerTest {
         assertThat(response.getContent(), equalTo("not authenticated"));
         
         //given
-        Browser instance = Browser.open();
+        TestBrowser instance = TestBrowser.open();
         response = instance.to("/dologin")
                 .withHTTPMethod(Methods.POST.toString())
                 .withDisableRedirects(true)
@@ -73,10 +73,10 @@ public class AuthenticationControllerTest {
     @Test
     public void testAuthenticated() {
         //given
-        Browser instance = Browser.open();
+        TestBrowser instance = TestBrowser.open();
 
         //when
-        Response response = instance
+        TestResponse response = instance
                 .to("/dologin")
                 .withDisableRedirects(true)
                 .withHTTPMethod(Methods.POST.toString())

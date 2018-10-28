@@ -12,8 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -35,7 +35,7 @@ public class AdminControllerTest {
     @Test
     public void testDashboardUnAuthorized() {
         //given
-        Response response = Request.get("/@admin").execute();
+        TestResponse response = TestRequest.get("/@admin").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -46,7 +46,7 @@ public class AdminControllerTest {
     @Test
     public void testDashboardAuthorized() {
         //given
-        Response response = Request.get("/@admin")
+        TestResponse response = TestRequest.get("/@admin")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -60,7 +60,7 @@ public class AdminControllerTest {
     @Test
     public void testLoggerUnAuthorized() {
         //given
-        Response response = Request.get("/@admin/logger").execute();
+        TestResponse response = TestRequest.get("/@admin/logger").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -71,7 +71,7 @@ public class AdminControllerTest {
     @Test
     public void testLoggerAuthorized() {
         //given
-        Response response = Request.get("/@admin/logger")
+        TestResponse response = TestRequest.get("/@admin/logger")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -85,7 +85,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutesAuthorized() {
         //given
-        Response response = Request.get("/@admin/routes")
+        TestResponse response = TestRequest.get("/@admin/routes")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -99,7 +99,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutesNotConaintAdmin() {
         //given
-        Response response = Request.get("/@admin/routes")
+        TestResponse response = TestRequest.get("/@admin/routes")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -113,7 +113,7 @@ public class AdminControllerTest {
     @Test
     public void testRoutesUnauthorized() {
         //given
-        Response response = Request.get("/@admin/routes").execute();
+        TestResponse response = TestRequest.get("/@admin/routes").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -124,7 +124,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsAuthorized() {
         //given
-        Response response = Request.get("/@admin/metrics")
+        TestResponse response = TestRequest.get("/@admin/metrics")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -138,7 +138,7 @@ public class AdminControllerTest {
     @Test
     public void testResetMetricsAuthorized() {
         //given
-        Response response = Request.get("/@admin/metrics/reset")
+        TestResponse response = TestRequest.get("/@admin/metrics/reset")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -149,9 +149,9 @@ public class AdminControllerTest {
         assertThat(response.getContent(), containsString(METRICS));
         
         //given
-        Request.get("/").execute();
-        Request.get("/").execute();
-        Request.get("/").execute();
+        TestRequest.get("/").execute();
+        TestRequest.get("/").execute();
+        TestRequest.get("/").execute();
         Metrics metrics = Application.getInstance(Metrics.class);
         metrics.reset();
         
@@ -166,7 +166,7 @@ public class AdminControllerTest {
     @Test
     public void testResetMetricsUnauthorized() {
         //given
-        Response response = Request.get("/@admin/metrics/reset")
+        TestResponse response = TestRequest.get("/@admin/metrics/reset")
                 .execute();
         
         //then
@@ -178,7 +178,7 @@ public class AdminControllerTest {
     @Test
     public void testMetricsUnauthorized() {
         //given
-        Response response = Request.get("/@admin/metrics").execute();
+        TestResponse response = TestRequest.get("/@admin/metrics").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -189,7 +189,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerAuthorized() {
         //given
-        Response response = Request.get("/@admin/scheduler")
+        TestResponse response = TestRequest.get("/@admin/scheduler")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -203,7 +203,7 @@ public class AdminControllerTest {
     @Test
     public void testSchedulerUnauthorized() {
         //given
-        Response response = Request.get("/@admin/scheduler").execute();
+        TestResponse response = TestRequest.get("/@admin/scheduler").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -214,7 +214,7 @@ public class AdminControllerTest {
     @Test
     public void testToolsAuthorized() {
         //given
-        Response response = Request.get("/@admin/tools")
+        TestResponse response = TestRequest.get("/@admin/tools")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -228,7 +228,7 @@ public class AdminControllerTest {
     @Test
     public void testToolsUnauthorized() {
         //given
-        Response response = Request.get("/@admin/tools").execute();
+        TestResponse response = TestRequest.get("/@admin/tools").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -239,7 +239,7 @@ public class AdminControllerTest {
     @Test
     public void testToolsAjaxAuthorized() {
         //given
-        Response response = Request.post("/@admin/tools/ajax")
+        TestResponse response = TestRequest.post("/@admin/tools/ajax")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -252,7 +252,7 @@ public class AdminControllerTest {
     @Test
     public void testToolsAjaxUnauthorized() {
         //given
-        Response response = Request.post("/@admin/tools/ajax").execute();
+        TestResponse response = TestRequest.post("/@admin/tools/ajax").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -263,7 +263,7 @@ public class AdminControllerTest {
     @Test
     public void testLoggerAjaxAuthorized() {
         //given
-        Response response = Request.post("/@admin/logger/ajax")
+        TestResponse response = TestRequest.post("/@admin/logger/ajax")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -276,7 +276,7 @@ public class AdminControllerTest {
     @Test
     public void testLoggerAjaxUnauthorized() {
         //given
-        Response response = Request.post("/@admin/logger/ajax").execute();
+        TestResponse response = TestRequest.post("/@admin/logger/ajax").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -287,7 +287,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthAuthorized() {
         //given
-        Response response = Request.get("/@admin/health")
+        TestResponse response = TestRequest.get("/@admin/health")
                 .withBasicAuthentication(ADMIN, ADMIN)
                 .execute();
         
@@ -301,7 +301,7 @@ public class AdminControllerTest {
     @Test
     public void testHealthUnauthorized() {
         //given
-        Response response = Request.get("/@admin/health").execute();
+        TestResponse response = TestRequest.get("/@admin/health").execute();
         
         //then
         assertThat(response, not(nullValue()));

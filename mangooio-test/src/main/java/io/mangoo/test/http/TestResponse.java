@@ -38,32 +38,31 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public class Response {
-    private static final Logger LOG = LogManager.getLogger(Response.class);
+public class TestResponse {
+    private static final Logger LOG = LogManager.getLogger(TestResponse.class);
+    private static final String CONTENT_TYPE = "Content-Type";
     private CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
     private Authenticator authenticator;
-    private HttpRequest.Builder httpRequest;
+    private HttpRequest.Builder httpRequest = HttpRequest.newBuilder();
     private BodyPublisher body = BodyPublishers.noBody();
-    private HttpClient.Builder httpClient;
+    private HttpClient.Builder httpClient = HttpClient.newBuilder();
     private HttpResponse<String> httpResponse;
     private String uri;
     private String url;
     private String method;
     
-    public Response (String uri, String method) {
+    public TestResponse (String uri, String method) {
         this.uri = uri;
         this.method = method;
         init();
     }
 
-    public Response() {
+    public TestResponse() {
         init();
     }
 
     private void init() {
-        this.httpRequest = HttpRequest.newBuilder();
         this.httpRequest.timeout(Duration.of(2, ChronoUnit.SECONDS));
-        this.httpClient = HttpClient.newBuilder();
         this.httpClient.followRedirects(HttpClient.Redirect.ALWAYS);
         this.httpClient.cookieHandler(this.cookieManager);
     }
@@ -75,7 +74,7 @@ public class Response {
      * @param value The value of the header
      * @return TestResponse instance
      */
-    public Response withHeader(String name, String value) {
+    public TestResponse withHeader(String name, String value) {
         Objects.requireNonNull(name, "name can not be null");
         Objects.requireNonNull(value, "value can not be null");
         
@@ -91,7 +90,7 @@ public class Response {
      * 
      * @return TestResponse instance
      */
-    public Response withHTTPMethod(String method) {
+    public TestResponse withHTTPMethod(String method) {
         Objects.requireNonNull(method, "method can not be null");
         
         this.method = method;
@@ -100,7 +99,7 @@ public class Response {
     }
     
     /**
-     * Sets a timeout to the HTTP request
+     * Sets the timeout of the HTTP request
      * 
      * Default is 2 seconds
      *
@@ -109,7 +108,7 @@ public class Response {
      * 
      * @return TestResponse instance
      */
-    public Response withTimeout(long amount, TemporalUnit unit) {
+    public TestResponse withTimeout(long amount, TemporalUnit unit) {
         Objects.requireNonNull(method, "method can not be null");
 
         this.httpRequest.timeout(Duration.of(amount, unit));
@@ -118,14 +117,14 @@ public class Response {
     }
     
     /**
-     * Sets Basic HTTP Authentication the the request
+     * Sets Basic HTTP Authentication the request
      *
      * @param username The username
      * @param password The password
      * 
      * @return TestResponse instance
      */
-    public Response withBasicAuthentication(String username, String password) {
+    public TestResponse withBasicAuthentication(String username, String password) {
         Objects.requireNonNull(username, "username can not be null");
         Objects.requireNonNull(password, "password can not be null");
 
@@ -148,7 +147,7 @@ public class Response {
      * 
      * @return TestResponse instance
      */
-    public Response to(String uri) {
+    public TestResponse to(String uri) {
         Objects.requireNonNull(uri, "uri can not be null");
 
         this.uri = uri;
@@ -158,11 +157,11 @@ public class Response {
     /**
      * Adds an additional cookie to the request
      *
-     * @param cookie The cookie of the header
+     * @param cookie The cookie to add
      * 
      * @return TestResponse instance
      */
-    public Response withCookie(HttpCookie cookie) {
+    public TestResponse withCookie(HttpCookie cookie) {
         Objects.requireNonNull(cookie, "cookie can not be null");
 
         this.cookieManager.getCookieStore().add(null, cookie);
@@ -171,13 +170,13 @@ public class Response {
     }
     
     /**
-     * Sets the RequestBody of the request
+     * Sets a String body to the request
      *
      * @param body The request body to use
      * 
      * @return TestResponse instance
      */
-    public Response withStringBody(String body) {
+    public TestResponse withStringBody(String body) {
         if (StringUtils.isNotBlank(body)) {
             this.body = BodyPublishers.ofString(body);   
         }
@@ -192,10 +191,10 @@ public class Response {
      * 
      * @return TestResponse instance
      */
-    public Response withContentType(String contentType) {
+    public TestResponse withContentType(String contentType) {
         Objects.requireNonNull(contentType, "contentType can not be null");
 
-        this.httpRequest.header("Content-Type", contentType);
+        this.httpRequest.header(CONTENT_TYPE, contentType);
         
         return this;
     }
@@ -209,7 +208,7 @@ public class Response {
      * 
      * @return TestResponse instance
      */
-    public Response withDisableRedirects(boolean redirect) {
+    public TestResponse withDisableRedirects(boolean redirect) {
         if (redirect) {
             this.httpClient.followRedirects(HttpClient.Redirect.NEVER);
         }
@@ -222,18 +221,18 @@ public class Response {
      * 
      * Content-Type to application/x-www-form-urlencoded
      * HTTP method to POST
-     * URLEncoding the given parameters
+     * URLEncoding of the given parameters
      * 
      * @param parameters The parameters to use
      * @return TestResponse instance
      */
-    public Response withForm(Multimap<String, String> parameters) {
+    public TestResponse withForm(Multimap<String, String> parameters) {
         String form = parameters.entries()
                 .stream()
                 .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), Charset.forName(Default.ENCODING.toString())))
                 .collect(Collectors.joining("&"));
         
-        this.httpRequest.header("Content-Type", "application/x-www-form-urlencoded");
+        this.httpRequest.header(CONTENT_TYPE, "application/x-www-form-urlencoded");
         this.body = BodyPublishers.ofString(form);
         this.method = Methods.POST.toString();
         
@@ -245,7 +244,7 @@ public class Response {
      * 
      * @return TestResponse instance with response parameters
      */
-    public Response execute() {
+    public TestResponse execute() {
         final Config config = Application.getInstance(Config.class);
         final String host = config.getConnectorHttpHost();
         final int port =  config.getConnectorHttpPort();
@@ -295,7 +294,7 @@ public class Response {
      * @return The content type of the response
      */
     public String getContentType() {
-        return this.httpResponse.headers().firstValue("Content-Type").orElse("");
+        return this.httpResponse.headers().firstValue(CONTENT_TYPE).orElse("");
     }
 
     /**

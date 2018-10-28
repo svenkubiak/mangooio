@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -30,7 +30,7 @@ public class ConcurrentControllerTest {
             String json = "{\"firstname\":\"$$\",\"lastname\":\"Parker\",\"age\":24}";
             json = json.replace("$$", uuid);
             
-            Response response = Request.post("/parse")
+            TestResponse response = TestRequest.post("/parse")
                     .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                     .withStringBody(json)
                     .execute();

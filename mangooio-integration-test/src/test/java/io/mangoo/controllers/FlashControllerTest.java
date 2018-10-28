@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -23,7 +23,7 @@ public class FlashControllerTest {
     @Test
     public void testFlash() {
         //given
-        Response response = Request.get("/flash").execute();
+        TestResponse response = TestRequest.get("/flash").execute();
 
         //then
         assertThat(response, not(nullValue()));

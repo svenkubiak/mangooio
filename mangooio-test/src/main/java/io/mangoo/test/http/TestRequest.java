@@ -9,10 +9,10 @@ import io.undertow.util.Methods;
  * @author svenkubiak
  *
  */
-public final class Request {
+public final class TestRequest {
     private static final String URI_ERROR = "URI can not be null";
 
-    private Request() {
+    private TestRequest() {
     }
 
     /**
@@ -21,10 +21,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response get(String uri) {
+    public static TestResponse get(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.GET.toString());
+        return new TestResponse(uri, Methods.GET.toString());
     }
     
     /**
@@ -33,10 +33,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response post(String uri) {
+    public static TestResponse post(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.POST.toString());
+        return new TestResponse(uri, Methods.POST.toString());
     }
 
     /**
@@ -45,10 +45,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response put(String uri) {
+    public static TestResponse put(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.PUT.toString());
+        return new TestResponse(uri, Methods.PUT.toString());
     }
     
     /**
@@ -57,10 +57,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response delete(String uri) {
+    public static TestResponse delete(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.DELETE.toString());
+        return new TestResponse(uri, Methods.DELETE.toString());
     }
     
     /**
@@ -69,10 +69,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response head(String uri) {
+    public static TestResponse head(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.HEAD.toString());
+        return new TestResponse(uri, Methods.HEAD.toString());
     }
     
     /**
@@ -81,10 +81,10 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response patch(String uri) {
+    public static TestResponse patch(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.PATCH.toString());
+        return new TestResponse(uri, Methods.PATCH.toString());
     }
     
     /**
@@ -93,9 +93,9 @@ public final class Request {
      * @param uri The URI to call
      * @return A MangooResponse
      */
-    public static Response options(String uri) {
+    public static TestResponse options(String uri) {
         Objects.requireNonNull(uri, URI_ERROR);
         
-        return new Response(uri, Methods.OPTIONS.toString());
+        return new TestResponse(uri, Methods.OPTIONS.toString());
     }
 }

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 @ExtendWith({TestExtension.class})
@@ -19,7 +19,7 @@ public class BasicAuthenticationControllerTest {
     @Test
     public void testBasicAuthenticationFail() {
         //given
-        final Response response = Request.get("/basicauth").execute();
+        final TestResponse response = TestRequest.get("/basicauth").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -29,7 +29,7 @@ public class BasicAuthenticationControllerTest {
     @Test
     public void testBasicAuthenticationSuccess() {
         //given
-        final Response response = Request.get("/basicauth").withBasicAuthentication("foo", "bar").execute();
+        final TestResponse response = TestRequest.get("/basicauth").withBasicAuthentication("foo", "bar").execute();
 
         //then
         assertThat(response, not(nullValue()));

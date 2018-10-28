@@ -32,8 +32,8 @@ import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
 import io.undertow.util.StatusCodes;
@@ -50,7 +50,7 @@ public class SessionControllerTest {
     public void testSessionCookie() {
         //when
         Config config = Application.getInstance(Config.class);
-        Response response = Request.get("/session").execute();
+        TestResponse response = TestRequest.get("/session").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -64,7 +64,7 @@ public class SessionControllerTest {
          //given
          Config config = Application.getInstance(Config.class);
          String uuid = UUID.randomUUID().toString();
-         Response response = Request.get("/session/valued/" + uuid).execute();
+         TestResponse response = TestRequest.get("/session/valued/" + uuid).execute();
         
          //when
          String cookieValue = response.getCookie(config.getSessionCookieName()).getValue();
@@ -103,7 +103,7 @@ public class SessionControllerTest {
             //given
             Config config = Application.getInstance(Config.class);
             String uuid = UUID.randomUUID().toString();
-            Response response = Request.get("/session/valued/" + uuid).execute();
+            TestResponse response = TestRequest.get("/session/valued/" + uuid).execute();
            
             //when
             String cookieValue = response.getCookie(config.getSessionCookieName()).getValue();

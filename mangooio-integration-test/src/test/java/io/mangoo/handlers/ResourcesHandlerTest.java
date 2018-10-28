@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -24,7 +24,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourceFile() {
         //given
-        Response response = Request.get("/robots.txt").execute();
+        TestResponse response = TestRequest.get("/robots.txt").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -35,7 +35,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathJavaScript() {
         //given
-        Response response = Request.get("/assets/javascript/jquery.min.js").execute();
+        TestResponse response = TestRequest.get("/assets/javascript/jquery.min.js").execute();
         
         //then
         assertThat(response, not(nullValue()));
@@ -46,7 +46,7 @@ public class ResourcesHandlerTest {
     @Test
     public void testResourcePathStylesheet() {
         //given
-        Response response = Request.get("/assets/stylesheet/css.css").execute();
+        TestResponse response = TestRequest.get("/assets/stylesheet/css.css").execute();
         
         //then
         assertThat(response, not(nullValue()));

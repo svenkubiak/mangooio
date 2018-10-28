@@ -16,8 +16,8 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 import com.google.common.net.MediaType;
 
 import io.mangoo.TestExtension;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -32,7 +32,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonSerialization() {
         //given
-        Response response = Request.get("/render").execute();
+        TestResponse response = TestRequest.get("/render").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -43,7 +43,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonParsingPost() {
         //given
-        Response response = Request.post("/parse")
+        TestResponse response = TestRequest.post("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(json)
                 .execute();
@@ -62,7 +62,7 @@ public class JsonControllerTest {
             String json = "{\"firstname\":\"Peter\",\"lastname\":\"" + uuid + "\",\"age\":24}";
             
             //when
-            Response response = Request.post("/parse")
+            TestResponse response = TestRequest.post("/parse")
                     .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                     .withStringBody(json)
                     .execute();
@@ -75,7 +75,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonParsingPut() {
         //given
-        Response response = Request.put("/parse")
+        TestResponse response = TestRequest.put("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(json)
                 .execute();
@@ -89,7 +89,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonParsingPatch() {
         //given
-        Response response = Request.patch("/parse")
+        TestResponse response = TestRequest.patch("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(json)
                 .execute();
@@ -103,7 +103,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonEmptyResponseBody() {
         //given
-        Response response = Request.post("/body")
+        TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody("")
                 .execute();
@@ -117,7 +117,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonNullResponseBody() {
         //given
-        Response response = Request.post("/body")
+        TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(null)
                 .execute();
@@ -131,7 +131,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonResponseBody() {
         //given
-        Response response = Request.post("/body")
+        TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(json)
                 .execute();
@@ -145,7 +145,7 @@ public class JsonControllerTest {
     @Test
     public void testJsonRequestBodyPost() {
         //given
-        Response response = Request.post("/requestAndJson")
+        TestResponse response = TestRequest.post("/requestAndJson")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
                 .withStringBody(json)
                 .execute();

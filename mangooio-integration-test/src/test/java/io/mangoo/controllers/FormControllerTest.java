@@ -33,8 +33,8 @@ import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.test.http.Request;
-import io.mangoo.test.http.Response;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -53,7 +53,7 @@ public class FormControllerTest {
 		parameter.put("password", "secret");
 
 		// when
-		Response response = Request.post("/form")
+		TestResponse response = TestRequest.post("/form")
 				.withForm(parameter)
 				.execute();
 
@@ -74,7 +74,7 @@ public class FormControllerTest {
             parameter.put("password", password);
 
             // when
-            Response response = Request.post("/form")
+            TestResponse response = TestRequest.post("/form")
                     .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                     .withForm(parameter)
                     .execute();
@@ -93,7 +93,7 @@ public class FormControllerTest {
         parameter.put("foo[]", "3");
         
         // when
-        Response response = Request.post("/multivalued")
+        TestResponse response = TestRequest.post("/multivalued")
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withForm(parameter)
                 .execute();
@@ -117,7 +117,7 @@ public class FormControllerTest {
             parameter.put("foo[]", uuid3);
             
             // when
-            Response response = Request.post("/multivalued")
+            TestResponse response = TestRequest.post("/multivalued")
                     .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                     .withForm(parameter)
                     .execute();
@@ -206,7 +206,7 @@ public class FormControllerTest {
         parameter.put("password", "#+ß§");
 		
 		// when
-		Response response = Request.post("/form")
+		TestResponse response = TestRequest.post("/form")
 		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withForm(parameter)
 				.execute();
@@ -225,7 +225,7 @@ public class FormControllerTest {
         parameter.put("regex", "ABC");
 		
 		// when
-		Response response = Request.post("/validateform")
+		TestResponse response = TestRequest.post("/validateform")
 				.withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withForm(parameter)
 				.execute();
@@ -263,7 +263,7 @@ public class FormControllerTest {
         parameter.put("regex", "a");
 
 		// when
-		Response response = Request.post("/validateform")
+		TestResponse response = TestRequest.post("/validateform")
 		        .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
 				.withForm(parameter)
 				.execute();
@@ -283,7 +283,7 @@ public class FormControllerTest {
         parameter.put("email", "foo@bar.com");
         
         // when
-        Response response = Request.post("/submit")
+        TestResponse response = TestRequest.post("/submit")
                 .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
                 .withForm(parameter)
                 .execute();
