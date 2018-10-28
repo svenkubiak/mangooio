@@ -264,6 +264,7 @@ public class TestResponse {
                     .send(this.httpRequest.build(), HttpResponse.BodyHandlers.ofString());
         } catch (URISyntaxException | IOException | InterruptedException e) {
             LOG.error("Failed to execute HTTP request", e);
+            Thread.currentThread().interrupt();
         }
         
         return this;
