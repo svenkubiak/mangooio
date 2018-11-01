@@ -64,6 +64,7 @@ public enum Default {
     ROUTES_FILE("routes.yaml"),
     SCHEDULER_ANNOTATION("io.mangoo.annotations.Schedule"),
     SCHEDULER_AUTOSTART("true"),
+    SCHEDULER_ENABLE("true"),
     SCHEDULER_JOB_GROUP("MangooSchedulerJobGroup"),
     SCHEDULER_PACKAGE("jobs"),
     SCHEDULER_PREFIX("org.quartz."),

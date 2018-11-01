@@ -592,43 +592,45 @@ public final class Application {
     private static void prepareScheduler() {
         Config config = getInstance(Config.class);
         
-        List<Class<?>> jobs = new ArrayList<>();
-        try (ScanResult scanResult =
-                new ClassGraph()
-                    .enableAnnotationInfo()
-                    .enableClassInfo()
-                    .whitelistPackages(config.getSchedulerPackage())
-                    .scan()) {
-            scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
-        }
-        
-        if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
-            final Scheduler mangooScheduler = getInstance(Scheduler.class);
-            mangooScheduler.initialize();
+        if (config.isSchedulerEnabled()) {
+            List<Class<?>> jobs = new ArrayList<>();
+            try (ScanResult scanResult =
+                    new ClassGraph()
+                        .enableAnnotationInfo()
+                        .enableClassInfo()
+                        .whitelistPackages(config.getSchedulerPackage())
+                        .scan()) {
+                scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
+            }
             
-            for (Class<?> clazz : jobs) {
-                final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
-                if (CronExpression.isValidExpression(schedule.cron())) {
-                    final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                    final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
-                    try {
-                        mangooScheduler.schedule(jobDetail, trigger);
-                    } catch (MangooSchedulerException e) {
-                        LOG.error("Failed to add a job to the scheduler", e);
+            if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
+                final Scheduler mangooScheduler = getInstance(Scheduler.class);
+                mangooScheduler.initialize();
+                
+                for (Class<?> clazz : jobs) {
+                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
+                    if (CronExpression.isValidExpression(schedule.cron())) {
+                        final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                        final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                        try {
+                            mangooScheduler.schedule(jobDetail, trigger);
+                        } catch (MangooSchedulerException e) {
+                            LOG.error("Failed to add a job to the scheduler", e);
+                        }
+                        LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
+                    } else {
+                        LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
+                        failsafe();
                     }
-                    LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
-                } else {
-                    LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
+                }
+
+                try {
+                    mangooScheduler.start();
+                } catch (MangooSchedulerException e) {
+                    LOG.error("Failed to start the scheduler", e);
                     failsafe();
                 }
-            }
-
-            try {
-                mangooScheduler.start();
-            } catch (MangooSchedulerException e) {
-                LOG.error("Failed to start the scheduler", e);
-                failsafe();
-            }
+            }            
         }
     }
     

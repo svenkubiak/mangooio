@@ -159,7 +159,7 @@ public class ApplicationControllerTest {
     @Test
     public void testRedirectWithDisableRedirects() {
         //given
-        final TestResponse response = TestRequest.get("/redirect").withDisableRedirects(true).execute();
+        final TestResponse response = TestRequest.get("/redirect").withDisabledRedirects().execute();
 
         //then
         assertThat(response, not(nullValue()));

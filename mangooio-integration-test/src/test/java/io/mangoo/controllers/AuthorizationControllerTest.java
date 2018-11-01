@@ -28,7 +28,7 @@ public class AuthorizationControllerTest {
         TestBrowser instance = TestBrowser.open();
         TestResponse response = instance.to("/authorize/jack")
                 .withHTTPMethod(Methods.GET.toString())
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
         
         //given
@@ -48,7 +48,7 @@ public class AuthorizationControllerTest {
         TestBrowser instance = TestBrowser.open();
         TestResponse response = instance.to("/authorize/alice")
                 .withHTTPMethod(Methods.GET.toString())
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
         
         //given
@@ -68,7 +68,7 @@ public class AuthorizationControllerTest {
         TestBrowser instance = TestBrowser.open();
         TestResponse response = instance.to("/authorize/peter")
                 .withHTTPMethod(Methods.GET.toString())
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
         
         //given
@@ -88,7 +88,7 @@ public class AuthorizationControllerTest {
         TestBrowser instance = TestBrowser.open();
         TestResponse response = instance.to("/authorize/bob")
                 .withHTTPMethod(Methods.GET.toString())
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
         
         //given

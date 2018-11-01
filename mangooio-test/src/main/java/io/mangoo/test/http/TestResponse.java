@@ -207,7 +207,7 @@ public class TestResponse {
      *
      * @return TestResponse instance
      */
-    public TestResponse withDisablesRedirects() {
+    public TestResponse withDisabledRedirects() {
         this.httpClient.followRedirects(HttpClient.Redirect.NEVER);
 
         return this;

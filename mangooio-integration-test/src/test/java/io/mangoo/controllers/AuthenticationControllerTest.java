@@ -28,7 +28,7 @@ public class AuthenticationControllerTest {
     public void testNotAuthenticated() {
         //given
         TestResponse response = TestRequest.get("/authenticationrequired")
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
 
         //then
@@ -52,7 +52,7 @@ public class AuthenticationControllerTest {
         TestBrowser instance = TestBrowser.open();
         response = instance.to("/dologin")
                 .withHTTPMethod(Methods.POST.toString())
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .execute();
         
         //then
@@ -78,7 +78,7 @@ public class AuthenticationControllerTest {
         //when
         TestResponse response = instance
                 .to("/dologin")
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .withHTTPMethod(Methods.POST.toString())
                 .execute();
         
@@ -88,7 +88,7 @@ public class AuthenticationControllerTest {
 
         //when
         response = instance.to("/authenticationrequired")
-                .withDisableRedirects(true)
+                .withDisabledRedirects()
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
         

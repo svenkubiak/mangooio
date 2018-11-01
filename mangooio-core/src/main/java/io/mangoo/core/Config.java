@@ -739,4 +739,8 @@ public class Config {
     public String getFlashCookieEncryptionKey() {
         return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
     }
+
+    public boolean isSchedulerEnabled() {
+        return getBoolean(Key.SCHEDULER_ENABLE, Default.SCHEDULER_ENABLE.toBoolean());
+    }
 }

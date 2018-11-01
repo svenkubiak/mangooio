@@ -53,6 +53,7 @@ public enum Key {
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
     SCHEDULER_AUTOSTART("scheduler.autostart"),
+    SCHEDULER_ENABLE("scheduler.enable"),
     SCHEDULER_PACKAGE("scheduler.package"),
     SESSION_COOKIE_ENCRYPTIONKEY("session.cookie.encryptionkey"),
     SESSION_COOKIE_EXPIRES("session.cookie.expires"),

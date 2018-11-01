@@ -355,6 +355,38 @@ public class ConfigTest {
         // then
         assertThat(config.isSchedulerAutostart(), equalTo(Default.SCHEDULER_AUTOSTART.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    
+    @Test
+    public void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String enabled = "false";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("scheduler.enable", enabled);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isSchedulerEnabled(), equalTo(Boolean.valueOf(enabled)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSchedulerEnabledDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
