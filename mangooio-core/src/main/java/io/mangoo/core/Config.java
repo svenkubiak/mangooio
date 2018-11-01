@@ -418,7 +418,6 @@ public class Config {
     }
 
     /**
-     * @author William Dunne
      * @return i18n.cookie.name from config.props or default value if undefined
      */
     public String getI18nCookieName() {

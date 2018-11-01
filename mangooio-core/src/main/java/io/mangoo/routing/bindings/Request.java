@@ -154,7 +154,6 @@ public class Request extends Validator {
 
     /**
      * Retrieves a the clients accepted languages
-     * @author William Dunne
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
