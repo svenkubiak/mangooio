@@ -200,19 +200,16 @@ public class TestResponse {
     }
     
     /**
-     * Disables redirects when the request is executed
+     * Disables redirects when the request is executed by setting
+     * followReditects to HttpClient.Redirect.NEVER
      * 
      * Default is HttpClient.Redirect.ALWAYS
      *
-     * @param disableRedirects true or false
-     * 
      * @return TestResponse instance
      */
-    public TestResponse withDisableRedirects(boolean redirect) {
-        if (redirect) {
-            this.httpClient.followRedirects(HttpClient.Redirect.NEVER);
-        }
-        
+    public TestResponse withDisablesRedirects() {
+        this.httpClient.followRedirects(HttpClient.Redirect.NEVER);
+
         return this;
     }
 
