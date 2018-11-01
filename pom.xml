@@ -504,7 +504,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.fluentlenium</groupId>
-				<artifactId>fluentlenium-junit</artifactId>
+				<artifactId>fluentlenium-junit-jupiter</artifactId>
 				<version>${fluentlenium.version}</version>
 			</dependency>
 			<dependency>

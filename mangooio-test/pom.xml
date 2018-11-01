@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.fluentlenium</groupId>
-			<artifactId>fluentlenium-junit</artifactId>
+			<artifactId>fluentlenium-junit-jupiter</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>

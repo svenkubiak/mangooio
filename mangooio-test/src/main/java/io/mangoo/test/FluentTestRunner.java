@@ -1,6 +1,6 @@
 package io.mangoo.test;
 
-import org.fluentlenium.adapter.junit.FluentTest;
+import org.fluentlenium.adapter.junit.jupiter.FluentTest;
 import org.fluentlenium.configuration.FluentConfiguration;
 
 /**
