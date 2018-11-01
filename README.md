@@ -31,16 +31,22 @@ Here are some key features of mangoo I/O in a nutshell:
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
 * Easy to use template engine
-* Support for Web Sockets
-* Support for Server-Sent Events
+* Super minimal use of Annotations
+* Dependency Injection
+* Simplified Caching
+* Build-in asynchronous email handling
+* Support for Web Sockets and Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
+* Build-in authentication and authorization
+* Programmatically routing configuration
 * Easy handling of JSON in- and output
+* Simple global or per request filters
 * Strong cryptography and enforced security
-* Build-in asset minification in development mode
+* Build-in EventBus for asynchronous tasks
+* Administrative interface
+* Build-in asset minification
 * Flexible testing tools
-* Build-in authentication tools
-* Support for OAuth with Twitter, Google and Facebook
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
