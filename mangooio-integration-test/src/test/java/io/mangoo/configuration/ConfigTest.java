@@ -35,22 +35,6 @@ import io.mangoo.enums.Mode;
 
 @ExtendWith({TestExtension.class})
 public class ConfigTest {
-
-    @Test
-    public void testGetApplicationName() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String applicationName = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.name", applicationName);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getApplicationName(), equalTo(applicationName));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
     
     @Test
     public void testFlashCookieName() {
