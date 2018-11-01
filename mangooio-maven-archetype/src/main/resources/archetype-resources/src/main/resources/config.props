@@ -3,10 +3,6 @@
 	secret = application.secret
 	admin.enable = false
 	language = en
-	minify.js = true
-	minify.css = true
-	preprocess.js = true
-	preprocess.css = true
 [connector]
 	http.host = localhost
 	http.port = 8080

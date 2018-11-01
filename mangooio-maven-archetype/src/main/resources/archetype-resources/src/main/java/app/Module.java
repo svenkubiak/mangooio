@@ -1,14 +1,14 @@
-package conf;
-
-import io.mangoo.interfaces.MangooLifecycle;
+package app;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+
+import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton
 public class Module extends AbstractModule {
 	@Override
     protected void configure() {
-        bind(MangooLifecycle.class).to(Lifecycle.class);
+	    bind(MangooBootstrap.class).to(Bootstrap.class);
     }
 }

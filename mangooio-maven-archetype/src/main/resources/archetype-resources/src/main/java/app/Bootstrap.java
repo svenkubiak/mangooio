@@ -1,6 +1,7 @@
 package app;
 
 import controllers.ApplicationController;
+import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 
@@ -10,7 +11,7 @@ public class Bootstrap implements MangooBootstrap {
     public void initializeRoutes() {
         // ApplicationController
         Bind.controller(ApplicationController.class).withRoutes(
-                On.get().to("/").respondeWith("index"),
+                On.get().to("/").respondeWith("index")
         );
     }
     
