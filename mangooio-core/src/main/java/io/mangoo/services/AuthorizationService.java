@@ -28,7 +28,7 @@ import io.mangoo.utils.MangooUtils;
 public class AuthorizationService implements MangooAuthorizationService {
     private static final Logger LOG = LogManager.getLogger(AuthorizationService.class);
     private Enforcer enforcer;
-    private boolean logging = false;
+    private boolean logging;
     
     public AuthorizationService () {
         Util.enableLog = logging;
@@ -53,7 +53,7 @@ public class AuthorizationService implements MangooAuthorizationService {
         return enforcer.enforce(subject, resource, operation);
     }
     
-    private class AuthorizationAdapter implements Adapter {
+    private static class AuthorizationAdapter implements Adapter {
         @Override
         public void loadPolicy(Model model) {
             loadPolicyFile(model, Helper::loadPolicyLine);
@@ -64,7 +64,7 @@ public class AuthorizationService implements MangooAuthorizationService {
                 List<String> lines = IOUtils.readLines(Resources.getResource(Default.POLICY_CSV.toString()).openStream(), Default.ENCODING.toString());
                 lines.forEach(line -> handler.accept(line, model));
             } catch (IOException e) {
-                LOG.error("Failed to load policy configuration authorization handling", e);
+                LOG.error("Failed to load policy configuration for authorization handling", e);
             }        
         }
 
