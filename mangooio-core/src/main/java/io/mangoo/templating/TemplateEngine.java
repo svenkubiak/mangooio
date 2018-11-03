@@ -145,7 +145,7 @@ public class TemplateEngine {
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)
         .append("src")

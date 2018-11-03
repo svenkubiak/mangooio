@@ -41,6 +41,7 @@ import io.undertow.util.Methods;
 public class TestResponse {
     private static final Logger LOG = LogManager.getLogger(TestResponse.class);
     private static final String CONTENT_TYPE = "Content-Type";
+    private static final int TWO_SECONDS = 2;
     private CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
     private Authenticator authenticator;
     private HttpRequest.Builder httpRequest = HttpRequest.newBuilder();
@@ -62,7 +63,7 @@ public class TestResponse {
     }
 
     private void init() {
-        this.httpRequest.timeout(Duration.of(2, ChronoUnit.SECONDS));
+        this.httpRequest.timeout(Duration.of(TWO_SECONDS, ChronoUnit.SECONDS));
         this.httpClient.followRedirects(HttpClient.Redirect.ALWAYS);
         this.httpClient.cookieHandler(this.cookieManager);
     }
