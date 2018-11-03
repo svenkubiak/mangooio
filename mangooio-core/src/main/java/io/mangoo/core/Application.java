@@ -126,7 +126,7 @@ public final class Application {
     }
 
     /**
-     * Registers Listeners at the event bus
+     * Registers the Mail Event Listener at the event bus
      */
     private static void prepareEventBus() {
         getInstance(EventBusService.class).register(getInstance(MailEventListener.class));

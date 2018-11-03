@@ -81,7 +81,7 @@ public enum Default {
     STYLESHEET_FOLDER("stylesheet"),
     TEMPLATES_FOLDER("/templates/"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
-    VERSION("unknown"),
+    VERSION_UNKNOW("unknown"),
     VERSION_PROPERTIES("version.properties"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 

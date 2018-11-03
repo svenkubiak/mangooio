@@ -43,7 +43,7 @@ public final class MangooUtils {
      * @return Current mangoo I/O version
      */
     public static String getVersion() {
-        String version = Default.VERSION.toString();
+        String version = Default.VERSION_UNKNOW.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
             final Properties properties = new Properties();
             properties.load(inputStream);
