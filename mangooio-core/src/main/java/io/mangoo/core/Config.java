@@ -23,7 +23,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
-import jodd.props.PropsEntry;
 
 /**
  * Main configuration class for all properties configured in config.props
@@ -58,16 +57,14 @@ public class Config {
             try (InputStream inputStream = Resources.getResource(Default.CONFIGURATION_FILE.toString()).openStream()){
                 this.props.load(inputStream);
             } catch (IOException e) {
-                LOG.error("Failed to load config.props from src/main/resources/config.props", e);
+                LOG.error("Failed to load config.props from /src/main/resources/config.props", e);
             }
         } 
-        
-        this.props.entries().forEach((PropsEntry prop) -> parse(prop.getKey(), prop.getValue()));
         
         Map<String, String> profileProps = new HashMap<>();
         this.props.extractProps(profileProps, Application.getMode().toString());
         profileProps.forEach(this::parse);
-        
+
         System.setProperty(Key.APPLICATION_SECRET.toString(), "");
     }
 
@@ -81,16 +78,16 @@ public class Config {
     private void parse(String propKey, String propValue) {
         if (ARG_TAG.equals(propValue)) {
             String value = System.getProperty(propKey);
-            
+
             if (StringUtils.isNotBlank(value) && value.startsWith(CRYPTEX_TAG)) {
                 value = decrypt(value);
-            } 
-            
+            }
+
             if (StringUtils.isNotBlank(value)) {
                 this.props.setValue(propKey, value, Application.getMode().toString());
             }
-         }
-        
+        }
+
         if (propValue.startsWith(CRYPTEX_TAG)) {
             this.props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
         }
@@ -125,7 +122,7 @@ public class Config {
                 this.decrypted = false;
             }
         } else {
-            LOG.error("Found and encrypted value in config but private key is missing");
+            LOG.error("Found an encrypted value in config file but private key for decryption is missing");
             this.decrypted = false;
         }
         

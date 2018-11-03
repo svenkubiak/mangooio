@@ -26,7 +26,7 @@ public enum Key {
     APPLICATION_NAME("application.name"),
     APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
     APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),   
-    APPLICATION_PRIVATEKEY("application.privateky"),
+    APPLICATION_PRIVATEKEY("application.privatekey"),
     APPLICATION_PUBLICKEY("application.publickey"),
     APPLICATION_SECRET("application.secret"),
     APPLICATION_TEMPLATEENGINE("application.templateengine"),

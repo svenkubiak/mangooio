@@ -25,16 +25,6 @@
 	redirect = /login
 	cookie.name = test-authentication
 	cookie.signkey = oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
-[oauth]
-	twitter.key = ###
-	twitter.secret = ###
-	twitter.callback = http://localhost:50000/authenticate?oauth=twitter
-	google.key = ###
-	google.secret = ###
-	google.callback = http://localhost:50000/authenticate?oauth=google
-	facebook.key = ###
-	facebook.secret = ###
-	facebook.callback = http://localhost:50000/authenticate?oauth=facebook	
 [smtp]
 	host = localhost
 	port = 25
