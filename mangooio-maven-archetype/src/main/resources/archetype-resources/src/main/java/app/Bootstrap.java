@@ -1,18 +1,22 @@
 package app;
 
 import controllers.ApplicationController;
+import com.google.inject.Singleton;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 
+@Singleton
 public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void initializeRoutes() {
-        // ApplicationController
         Bind.controller(ApplicationController.class).withRoutes(
                 On.get().to("/").respondeWith("index")
         );
+        
+        Bind.pathResource().to("/assets/");
+        Bind.fileResource().to("/robots.txt");
     }
     
     @Override

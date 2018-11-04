@@ -1,44 +1,56 @@
 [application]
 	name = ${application-name}
 	secret = application.secret
-	admin.enable = false
 	language = en
+	
 [connector]
 	http.host = localhost
 	http.port = 8080
+	
+[connector<test>]
+	http.port = 9090
+
+[connector<dev>]
+	http.port = 9090	
+
 [session]
 	cookie.name = ${application-name}-session
 	cookie.signkey = session.cookie.signkey
-	cookie.encryptionskey = session.cookie.encryptionkey
-[flash]
-	cookie.name = ${application-name}-flash
-	cookie.signkey = flash.cookie.signkey
-	cookie.encryptionskey = flash.cookie.encryptionkey 
-[metrics]
-	enable = true
+	cookie.encryptionkey = session.cookie.encryptionkey
+	cookie.secure = true
+
+[session<test>]
+	cookie.secure = false
+	
+[session<dev>]
+	cookie.secure = false	
+
 [authentication]
 	redirect = /login
 	cookie.name = ${application-name}-authentication
 	cookie.signkey = authentication.cookie.signkey
 	cookie.encryptionkey = authentication.cookie.encryptionkey
+	cookie.secure = true
+	
+[authentication<test>]
+	cookie.secure = false
+	
+[authentication<dev>]
+	cookie.secure = false		
+
+[flash]
+	cookie.name = ${application-name}-flash
+	cookie.signkey = flash.cookie.signkey
+	cookie.encryptionkey = flash.cookie.encryptionkey 
+	cookie.secure = true	
+
+[flash<test>]
+	cookie.secure = false
+	
+[flash<dev>]
+	cookie.secure = false
+
 [smtp]
 	host = localhost
 	port = 25
-    username = 
-    password = 
-    ssl = false
-[]
-
-[connector<test>]
-	http.host = localhost
-	http.port = 9090
-[smtp<test>]
-	port = 3025
-[]
-
-[connector<dev>]
-	http.host = localhost
-	http.port = 9090
-[smtp<dev>]
-	port = 3025
 []

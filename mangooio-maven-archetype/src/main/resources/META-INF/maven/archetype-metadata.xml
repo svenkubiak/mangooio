@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archetype-descriptor name="basic">
+	<requiredProperties>
+		<requiredProperty key="application-name" />
+	</requiredProperties>
 	<fileSets>
 		<fileSet filtered="true">
 			<directory>src/main/java</directory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="true">
+			<directory>src/test/java</directory>
 			<includes>
 				<include>**/*</include>
 			</includes>
