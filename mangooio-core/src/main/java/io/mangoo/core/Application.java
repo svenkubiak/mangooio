@@ -426,23 +426,23 @@ public final class Application {
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
         
-        Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> {
+        Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> 
             pathHandler.addExactPath(webSocketRoute.getUrl(),
                     Handlers.websocket(getInstance(WebSocketHandler.class)
                             .withControllerClass(webSocketRoute.getControllerClass())
-                            .withAuthentication(webSocketRoute.hasAuthentication())));
-        });
+                            .withAuthentication(webSocketRoute.hasAuthentication())))
+        );
         
-        Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) -> {
+        Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) ->
             pathHandler.addExactPath(serverSentEventRoute.getUrl(),
                     Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
-                            .withAuthentication(serverSentEventRoute.hasAuthentication())));
-        });
+                            .withAuthentication(serverSentEventRoute.hasAuthentication())))
+        );
         
-        Router.getPathRoutes().forEach((PathRoute pathRoute) -> {
+        Router.getPathRoutes().forEach((PathRoute pathRoute) ->
             pathHandler.addPrefixPath(pathRoute.getUrl(),
-                    new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())));  
-        });
+                    new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())))
+        );
     }
 
     private static RoutingHandler getRoutingHandler() {

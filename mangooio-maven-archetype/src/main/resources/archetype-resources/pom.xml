@@ -100,7 +100,7 @@
 									<exclude>org.glassfish.jersey.core:*</exclude>
 									<exclude>org.glassfish.hk2:*</exclude>
 									<exclude>org.glassfish.hk2.external:*</exclude>
-									<exclude>com.google.com.findbugs:*</exclude>
+									<exclude>com.google.code.findbugs:*</exclude>
 									<exclude>com.google.xing:*</exclude>
 									<exclude>com.icegreen:*</exclude>
 									<exclude>org.hamcrest:*</exclude>

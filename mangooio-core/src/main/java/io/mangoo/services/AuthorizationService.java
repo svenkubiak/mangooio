@@ -61,8 +61,7 @@ public class AuthorizationService implements MangooAuthorizationService {
 
         private void loadPolicyFile(Model model, Helper.loadPolicyLineHandler<String, Model> handler) {
             try {
-                List<String> lines = IOUtils.readLines(Resources.getResource(Default.POLICY_CSV.toString()).openStream(), Default.ENCODING.toString());
-                lines.forEach(line -> handler.accept(line, model));
+                IOUtils.readLines(Resources.getResource(Default.POLICY_CSV.toString()).openStream(), Default.ENCODING.toString()).forEach(line -> handler.accept(line, model));
             } catch (IOException e) {
                 LOG.error("Failed to load policy configuration for authorization handling", e);
             }        
