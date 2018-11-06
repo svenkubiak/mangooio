@@ -74,7 +74,7 @@ public class ResponseHandler implements HttpHandler {
     }
 
     /**
-     * Retrieves the body of the request and checks i an ETag needs to be handled
+     * Retrieves the body of the request and checks if an ETag needs to be handled
      *
      * @param exchange The HttpServerExchange
      * @param response The Response object
@@ -84,7 +84,7 @@ public class ResponseHandler implements HttpHandler {
         String responseBody = response.getBody();
         if (response.isETag()) {
             final String noneMatch = exchange.getRequestHeaders().getFirst(Header.IF_NONE_MATCH.toString());
-            final String etag = DigestUtils.md5Hex(responseBody);
+            final String etag = DigestUtils.sha1Hex(responseBody);
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
                 responseBody = "";

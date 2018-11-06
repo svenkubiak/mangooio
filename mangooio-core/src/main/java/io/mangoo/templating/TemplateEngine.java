@@ -20,6 +20,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.common.base.Charsets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.cache.MruCacheStorage;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
@@ -87,6 +88,7 @@ public class TemplateEngine {
         return buffer.toString();
     }
 
+    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
@@ -143,6 +145,7 @@ public class TemplateEngine {
      * @throws FileNotFoundException If the file is not found
      * @throws IOException If an IO exception occurs
      */
+    @SuppressFBWarnings(justification = "SourcePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
