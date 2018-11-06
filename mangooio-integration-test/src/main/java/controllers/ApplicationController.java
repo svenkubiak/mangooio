@@ -59,10 +59,6 @@ public class ApplicationController {
         return Response.withUnauthorized().andEmptyBody();
     }
 
-    public Response etag() {
-        return Response.withOk().andTextBody("foo").andEtag();
-    }
-
     @SuppressWarnings("all")
     public Response binary() {
         final URL url = this.getClass().getResource("/attachment.txt");

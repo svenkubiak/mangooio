@@ -3,9 +3,6 @@ package io.mangoo.routing.handlers;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
@@ -74,29 +71,6 @@ public class ResponseHandler implements HttpHandler {
     }
 
     /**
-     * Retrieves the body of the request and checks if an ETag needs to be handled
-     *
-     * @param exchange The HttpServerExchange
-     * @param response The Response object
-     * @return The body from the response object or an empty body if etag matches NONE_MATCH header
-     */
-    protected String getResponseBody(HttpServerExchange exchange, Response response) {
-        String responseBody = response.getBody();
-        if (response.isETag()) {
-            final String noneMatch = exchange.getRequestHeaders().getFirst(Header.IF_NONE_MATCH.toString());
-            final String etag = DigestUtils.sha1Hex(responseBody);
-            if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
-                exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
-                responseBody = "";
-            } else {
-                exchange.getResponseHeaders().put(Header.ETAG.toHttpString(), etag);
-            }
-        }
-
-        return responseBody;
-    }
-
-    /**
      * Handles a rendered response to the client by sending the rendered body from the response object
      *
      * @param exchange The Undertow HttpServerExchange
@@ -112,6 +86,6 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
-        exchange.getResponseSender().send(getResponseBody(exchange, response));
+        exchange.getResponseSender().send(response.getBody());
     }
 }

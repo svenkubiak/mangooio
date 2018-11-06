@@ -44,7 +44,7 @@ public class Config {
         load();
     }
 
-    @SuppressFBWarnings(justification = "ConfigPath can intentionally come from user input", value = "squid:S2095")
+    @SuppressFBWarnings(justification = "ConfigPath can intentionally come from user input", value = "S2095")
     private final void load() {
         this.props.setActiveProfiles(Application.getMode().toString());
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
@@ -101,7 +101,7 @@ public class Config {
      * @param propKey The property key
      * @param propValue The property value
      */
-    @SuppressFBWarnings(justification = "KeyFile can intentionally come from user input", value = "squid:S2095")
+    @SuppressFBWarnings(justification = "KeyFile can intentionally come from user input", value = "S2095")
     private String decrypt(String value) {
         Crypto crypto = new Crypto(this);
         

@@ -277,18 +277,6 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndEtag() throws IOException {
-        //given
-        Response response = Response.withOk();
-        
-        //when
-        response.andEtag();
-        
-        //then
-        assertThat(response.isETag(), equalTo(true));
-    }
-    
-    @Test
     public void testAndEnd() throws IOException {
         //given
         Response response = Response.withOk();
