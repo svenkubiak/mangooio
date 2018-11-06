@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -44,14 +43,13 @@ public class Config {
         load();
     }
 
-    @SuppressFBWarnings(justification = "ConfigPath can intentionally come from user input", value = "S2095")
     private final void load() {
         this.props.setActiveProfiles(Application.getMode().toString());
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         
         if (StringUtils.isNotBlank(configPath)) {
             try {
-                this.props.load(new File(configPath));
+                this.props.load(new File(configPath)); //NOSONAR - justification = ConfigPath can intentionally come from user input
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
@@ -101,13 +99,12 @@ public class Config {
      * @param propKey The property key
      * @param propValue The property value
      */
-    @SuppressFBWarnings(justification = "KeyFile can intentionally come from user input", value = "S2095")
     private String decrypt(String value) {
         Crypto crypto = new Crypto(this);
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) {
+            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR - justification = KeyFile can intentionally come from user input
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
