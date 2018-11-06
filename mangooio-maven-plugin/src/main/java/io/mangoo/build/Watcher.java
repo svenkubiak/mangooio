@@ -219,6 +219,10 @@ public class Watcher implements Runnable {
         public RuleMatch(boolean proceed) {
             this.proceed = proceed;
         }
+        
+        public boolean doProceed() {
+            return this.proceed;
+        }
     }
 
     public static RuleMatch matchRule(Set<String> includes, Set<String> excludes, String string) {
@@ -242,6 +246,6 @@ public class Watcher implements Runnable {
     }
 
     public static boolean checkIfWouldBeExcluded(Set<String> patterns, String string) {
-        return !matchRule(null, patterns, string).proceed;
+        return !matchRule(null, patterns, string).doProceed();
     }
 }
