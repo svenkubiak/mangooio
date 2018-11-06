@@ -49,7 +49,7 @@ public class Config {
         
         if (StringUtils.isNotBlank(configPath)) {
             try {
-                this.props.load(new File(configPath));
+                this.props.load(new File(configPath)); //NOSONAR
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
@@ -104,7 +104,7 @@ public class Config {
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) {
+            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
