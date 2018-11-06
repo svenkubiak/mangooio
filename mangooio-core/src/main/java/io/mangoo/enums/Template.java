@@ -3,7 +3,6 @@ package io.mangoo.enums;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -36,7 +35,6 @@ public enum Template {
     private String unauthorizedContent;
     
     Template () {
-        Logger LOG = LogManager.getLogger(Template.class);
         try {
             this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), Charsets.UTF_8);
             this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH), Charsets.UTF_8);
@@ -44,7 +42,7 @@ public enum Template {
             this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH), Charsets.UTF_8);
             this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH), Charsets.UTF_8);
         } catch (IOException e) {
-            LOG.error("Failed to load default templates", e);
+            LogManager.getLogger(Template.class).error("Failed to load default templates", e);
         }
     }
 

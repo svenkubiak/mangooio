@@ -54,31 +54,30 @@ public class FormHandler implements HttpHandler {
             builder.setDefaultCharset(Charsets.UTF_8.name());
 
             final FormDataParser formDataParser = builder.build().createParser(exchange);
-            if (formDataParser != null) {
-                exchange.startBlocking();
-                final FormData formData = formDataParser.parseBlocking();
-                formData.forEach(data -> {
-                    Deque<FormValue> deque = formData.get(data);
-                    if (deque != null) {
-                        FormValue formValue = deque.element();
-                        if (formValue != null) {
-                            if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
-                                form.addFile(formValue.getFileItem().getFile().toFile());
-                            } else {
-                                if (data.contains("[]")) {
-                                    String key = StringUtils.replace(data, "[]", "");
-                                    for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
-                                        form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
-                                    }
-                                } else {
-                                    form.addValue(new HttpString(data).toString(), formValue.getValue());
+            exchange.startBlocking();
+            
+            final FormData formData = formDataParser.parseBlocking();
+            formData.forEach((String data) -> {
+                Deque<FormValue> deque = formData.get(data);
+                if (deque != null) {
+                    FormValue formValue = deque.element();
+                    if (formValue != null) {
+                        if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
+                            form.addFile(formValue.getFileItem().getFile().toFile());
+                        } else {
+                            if (data.contains("[]")) {
+                                String key = StringUtils.replace(data, "[]", "");
+                                for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
+                                    form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
                                 }
-                            }    
-                        }
+                            } else {
+                                form.addValue(new HttpString(data).toString(), formValue.getValue());
+                            }
+                        }    
                     }
-                });
-                form.setSubmitted(true);
-            }
+                }
+            });
+            form.setSubmitted(true);
         }
 
         return form;

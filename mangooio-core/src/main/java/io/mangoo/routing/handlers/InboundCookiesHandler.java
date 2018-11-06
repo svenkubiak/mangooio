@@ -12,6 +12,8 @@ import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
@@ -104,7 +106,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 } else {
                     //Ignore this and use default session
                 }
-            } catch (Exception e) {
+            } catch (MalformedClaimException | InvalidJwtException e) {
                 LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
@@ -147,7 +149,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 } else {
                     //Ignore this and use default authentication
                 }
-            } catch (Exception e) {
+            } catch (MalformedClaimException | InvalidJwtException  e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
@@ -185,7 +187,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     flash = Flash.create()
                             .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
                 }
-            } catch (Exception e) {
+            } catch (MalformedClaimException | InvalidJwtException  e) {
                 LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
             } 
