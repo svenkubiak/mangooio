@@ -1,6 +1,5 @@
 package io.mangoo.controllers;
 
-import static io.mangoo.test.hamcrest.RegexMatcher.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -267,26 +266,6 @@ public class ApplicationControllerTest {
         assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(FileUtils.readFileToString(file, Default.ENCODING.toString()), equalTo("This is an attachment"));
         assertThat(file.delete(), equalTo(true));
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testEtag() {
-        //given
-        TestResponse response = TestRequest.get("/etag").execute();
-        final String etag = response.getHeader(Headers.ETAG_STRING);
-
-        //then
-        assertThat(etag, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(etag, matches("^[a-f0-9]{40}$"));
-
-        //given
-        response = TestRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
-
-        //then
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
-        assertThat(response.getContent(), equalTo(""));
     }
 
     @Test
