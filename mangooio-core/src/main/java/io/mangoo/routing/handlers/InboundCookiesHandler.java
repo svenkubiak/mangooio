@@ -104,7 +104,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 } else {
                     //Ignore this and use default session
                 }
-            } catch (Exception e) { //NOSONAR
+            } catch (Exception e) {
                 LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
@@ -147,7 +147,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 } else {
                     //Ignore this and use default authentication
                 }
-            } catch (Exception e) { //NOSONAR
+            } catch (Exception e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
@@ -185,7 +185,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     flash = Flash.create()
                             .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
                 }
-            } catch (Exception e) { //NOSONAR
+            } catch (Exception e) {
                 LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
             } 

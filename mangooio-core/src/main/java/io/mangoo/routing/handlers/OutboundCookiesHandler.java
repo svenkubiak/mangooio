@@ -109,7 +109,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 }
 
                 exchange.setResponseCookie(cookie);
-            } catch (Exception e) { //NOSONAR
+            } catch (Exception e) {
                 LOG.error("Failed to generate session cookie", e);
             }
         } else {
@@ -170,7 +170,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 } 
                 
                 exchange.setResponseCookie(cookie);
-            } catch (JoseException e) { //NOSONAR
+            } catch (JoseException e) {
                 LOG.error("Failed to generate authentication cookie", e);
             }
         } else {
@@ -227,7 +227,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setExpires(DateUtils.localDateTimeToDate(expires));
                 
                 exchange.setResponseCookie(cookie);
-            } catch (Exception e) { //NOSONAR
+            } catch (Exception e) {
                 LOG.error("Failed to generate flash cookie", e); 
             }
         } else {

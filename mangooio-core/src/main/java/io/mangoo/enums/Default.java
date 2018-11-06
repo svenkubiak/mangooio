@@ -42,8 +42,8 @@ public enum Default {
     CONFIG_PATH("/src/main/resources/config.props"),
     CONFIGURATION_FILE("config.props"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
-    DATA_DELIMITER("#"), //NOSONAR
-    DEFAULT_CONFIGURATION("default"), //NOSONAR
+    DATA_DELIMITER("#"),
+    DEFAULT_CONFIGURATION("default"),
     DEFAULT_TEMPLATES_DIR("/templates/defaults/"),
     DELIMITER("|"),
     ENCODING("UTF-8"),

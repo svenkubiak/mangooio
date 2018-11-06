@@ -81,7 +81,7 @@ public final class RequestUtils {
         final Map<String, String> requestParamater = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element())); //NOSONAR
+        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element()));
 
         return requestParamater;
     }

@@ -265,7 +265,7 @@ public final class TOTPBuilder {
     private String generateTOTP(long time) {
         // Calculate the number of time steps between the initial counter time
         // (i.e. T0 = 0 = Unix epoch) and the specified 'time'.
-        final long tc = (long) Math.floor(time / timeStep); //NOSONAR
+        final long tc = (long) Math.floor(time / timeStep);
 
         // Using the counter
         // First 8 bytes are for the movingFactor

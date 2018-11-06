@@ -158,10 +158,10 @@ public class DispatcherHandler implements HttpHandler {
      * @return A Map containing the declared methods of the method parameters and their class type
      */
     private Map<String, Class<?>> getMethodParameters() {
-        final Map<String, Class<?>> parameters = new LinkedHashMap<>(); //NOSONAR
+        final Map<String, Class<?>> parameters = new LinkedHashMap<>();
         for (final Method declaredMethod : this.controllerClass.getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethodName) && declaredMethod.getParameterCount() > 0) {
-                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType())); //NOSONAR
+                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
                 break;
             }
         }

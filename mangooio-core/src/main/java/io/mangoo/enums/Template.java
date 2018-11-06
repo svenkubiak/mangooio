@@ -31,7 +31,7 @@ public enum Template {
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
     private String badRequestContent;
     private String forbiddenContent;
-    private transient Logger LOG = LogManager.getLogger(Template.class); //NOSONAR
+    private transient Logger LOG = LogManager.getLogger(Template.class);
     private String notFoundContent;
     private String serverErrorContent;
     private String unauthorizedContent;

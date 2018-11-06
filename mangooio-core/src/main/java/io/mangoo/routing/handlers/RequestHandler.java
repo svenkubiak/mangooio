@@ -187,7 +187,7 @@ public class RequestHandler implements HttpHandler {
 
             switch (binding) {
             case FORM:
-                convertedParameters[index] = this.attachment.getForm(); //NOSONAR
+                convertedParameters[index] = this.attachment.getForm();
                 break;
             case AUTHENTICATION:
                 convertedParameters[index] = this.attachment.getAuthentication();
@@ -273,7 +273,7 @@ public class RequestHandler implements HttpHandler {
                     return response;
                 } else {
                     final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
-                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response); //NOSONAR
+                    response = (Response) classMethod.invoke(Application.getInstance(clazz), this.attachment.getRequest(), response);
                 }
             }
         }

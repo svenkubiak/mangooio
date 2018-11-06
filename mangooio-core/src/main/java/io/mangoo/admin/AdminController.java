@@ -61,17 +61,17 @@ public class AdminController {
     private static final String CACHE_ADMINROUTES = "cache_adminroutes";
     private static final String JOBS = "jobs";
     private static final String LOGGER = "logger";
-    private static final String METRICS = "metrics"; //NOSONAR
-    private static final String ROUTES = "routes"; //NOSONAR
+    private static final String METRICS = "metrics";
+    private static final String ROUTES = "routes";
     private static final String SCHEDULER = "scheduler";    
     private static final String SPACE = "space";
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
-    private final Cache cache; //NOSONAR
-    private final Config config; //NOSONAR
-    private final Crypto crypto; //NOSONAR
-    private final Scheduler scheduler; //NOSONAR
+    private final Cache cache;
+    private final Config config;
+    private final Crypto crypto;
+    private final Scheduler scheduler;
     
     @Inject
     public AdminController(Scheduler scheduler, Crypto crypto, Config config, CacheProvider cacheProvider) {

@@ -69,7 +69,7 @@ public class ResponseHandler implements HttpHandler {
         exchange.setStatusCode(StatusCodes.FOUND);
         exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), response.getRedirectTo());
         exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.endExchange();
     }
 
@@ -84,7 +84,7 @@ public class ResponseHandler implements HttpHandler {
         String responseBody = response.getBody();
         if (response.isETag()) {
             final String noneMatch = exchange.getRequestHeaders().getFirst(Header.IF_NONE_MATCH.toString());
-            final String etag = DigestUtils.md5Hex(responseBody); //NOSONAR
+            final String etag = DigestUtils.md5Hex(responseBody);
             if (StringUtils.isNotBlank(noneMatch) && StringUtils.isNotBlank(etag) && noneMatch.equals(etag)) {
                 exchange.setStatusCode(StatusCodes.NOT_MODIFIED);
                 responseBody = "";
@@ -111,7 +111,7 @@ public class ResponseHandler implements HttpHandler {
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
-        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value)); //NOSONAR
+        response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getResponseSender().send(getResponseBody(exchange, response));
     }
 }

@@ -110,7 +110,7 @@ public class TemplateEngine {
             content.put("line", stackTraceElement.getLineNumber());
             content.put("causeSource", cause.toString());
             content.put("stackTraces", cause.getStackTrace());
-            content.put("sourceCodePath", StringUtils.substringAfter(Paths.get(getBaseDirectory()).resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber()); //NOSONAR
+            content.put("sourceCodePath", StringUtils.substringAfter(Paths.get(getBaseDirectory()).resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
         Configuration config = new Configuration(VERSION);
@@ -156,7 +156,7 @@ public class TemplateEngine {
         .append("java");
 
         List<Source> sources = new ArrayList<>();
-        File templateFile = Paths.get(buffer.toString()).resolve(sourcePath).toFile(); //NOSONAR
+        File templateFile = Paths.get(buffer.toString()).resolve(sourcePath).toFile();
         if (templateFile.exists()) {
             List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
 

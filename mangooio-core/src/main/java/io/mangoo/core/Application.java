@@ -536,7 +536,7 @@ public final class Application {
             .append(MangooUtils.getVersion())
             .append('\n');
 
-        LOG.info(buffer.toString()); //NOSONAR
+        LOG.info(buffer.toString());
         
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
@@ -638,7 +638,7 @@ public final class Application {
      * Failsafe exit of application startup
      */
     private static void failsafe() {
-        System.out.print("Failed to start mangoo I/O application"); //NOSONAR
-        System.exit(1); //NOSONAR
+        System.out.print("Failed to start mangoo I/O application");
+        System.exit(1);
     }
 }
