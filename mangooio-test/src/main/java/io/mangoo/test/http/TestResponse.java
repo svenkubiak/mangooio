@@ -62,7 +62,7 @@ public class TestResponse {
         init();
     }
 
-    private void init() {
+    private final void init() {
         this.httpRequest.timeout(Duration.of(TWO_SECONDS, ChronoUnit.SECONDS));
         this.httpClient.followRedirects(HttpClient.Redirect.ALWAYS);
         this.httpClient.cookieHandler(this.cookieManager);

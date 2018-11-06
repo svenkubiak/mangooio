@@ -43,7 +43,7 @@ public class Config {
         load();
     }
 
-    private void load() {
+    private final void load() {
         this.props.setActiveProfiles(Application.getMode().toString());
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         

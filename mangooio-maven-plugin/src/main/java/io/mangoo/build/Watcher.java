@@ -223,8 +223,8 @@ public class Watcher implements Runnable {
 
     public static RuleMatch matchRule(Set<String> includes, Set<String> excludes, String string) {
         if (includes != null) {
-            for (String regex: includes) {
-                if (string.matches(regex)) {
+            for (String include : includes) {
+                if (string.matches(include)) {
                     return new RuleMatch(true);
                 }
             }

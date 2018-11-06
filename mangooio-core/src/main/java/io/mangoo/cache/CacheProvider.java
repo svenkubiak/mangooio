@@ -61,7 +61,7 @@ public class CacheProvider implements Provider<Cache> {
         initWebSocketCache();
     }
 
-    private void initApplicationCache() {
+    private final void initApplicationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .build();
@@ -69,7 +69,7 @@ public class CacheProvider implements Provider<Cache> {
         this.cache = registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
     }
 
-    private void initAuthenticationCache() {
+    private final void initAuthenticationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.MINUTES)))
@@ -78,7 +78,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.AUTH.toString(), configuration);
     }
 
-    private void initRequestCache() {
+    private final void initRequestCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(FORTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.SECONDS)))
@@ -87,7 +87,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
     }
 
-    private void initServerEventCache() {
+    private final void initServerEventCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
@@ -96,7 +96,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.SSE.toString(), configuration);
     }
 
-    private void initWebSocketCache() {
+    private final void initWebSocketCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))

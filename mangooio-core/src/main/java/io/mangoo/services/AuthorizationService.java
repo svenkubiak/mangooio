@@ -28,23 +28,22 @@ import io.mangoo.utils.MangooUtils;
 public class AuthorizationService implements MangooAuthorizationService {
     private static final Logger LOG = LogManager.getLogger(AuthorizationService.class);
     private Enforcer enforcer;
-    private boolean logging;
     
     public AuthorizationService () {
-        Util.enableLog = logging;
+        Util.enableLog = false;
         
         if (MangooUtils.resourceExists(Default.MODEL_CONF.toString()) && MangooUtils.resourceExists(Default.POLICY_CSV.toString())) {
             Model model = new Model();
             try {
                 model.loadModelFromText(IOUtils.toString(Resources.getResource(Default.MODEL_CONF.toString()).openStream(), Default.ENCODING.toString()));
                 this.enforcer = new Enforcer(model, new AuthorizationAdapter());
-                this.enforcer.enableLog(logging);
+                this.enforcer.enableLog(false);
             } catch (IOException e) {
                 LOG.error("Failed to load model configuration for authorization handling", e);
             }
         } else {
             this.enforcer = new Enforcer();
-            this.enforcer.enableLog(logging);   
+            this.enforcer.enableLog(false);   
         }
     }
     
