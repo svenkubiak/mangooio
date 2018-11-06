@@ -1,8 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -294,13 +291,5 @@ public class Request extends Validator {
      */
     public Map<String, Object> getAttributes() {
         return this.attributes;
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
     }
 }

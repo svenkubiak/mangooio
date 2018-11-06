@@ -46,7 +46,7 @@ public class FormHandler implements HttpHandler {
      *
      * @throws IOException
      */
-    @SuppressWarnings("all")
+    @SuppressWarnings("rawtypes")
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostPutPatch(exchange)) {
