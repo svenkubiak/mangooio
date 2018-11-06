@@ -77,7 +77,7 @@ public class FormHandler implements HttpHandler {
                         }
                     }
                 });
-
+                formDataParser.close();
                 form.setSubmitted(true);
             }
         }

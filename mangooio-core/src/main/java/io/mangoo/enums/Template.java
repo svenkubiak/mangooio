@@ -31,12 +31,12 @@ public enum Template {
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
     private String badRequestContent;
     private String forbiddenContent;
-    private transient Logger LOG = LogManager.getLogger(Template.class);
     private String notFoundContent;
     private String serverErrorContent;
     private String unauthorizedContent;
     
     Template () {
+        Logger LOG = LogManager.getLogger(Template.class);
         try {
             this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), Charsets.UTF_8);
             this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH), Charsets.UTF_8);

@@ -29,6 +29,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
@@ -528,6 +529,7 @@ public final class Application {
         }
     }
 
+    @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
         final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
         buffer.append('\n')
