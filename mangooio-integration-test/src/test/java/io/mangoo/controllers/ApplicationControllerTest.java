@@ -279,7 +279,7 @@ public class ApplicationControllerTest {
         //then
         assertThat(etag, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(etag, matches("^[a-f0-9]{32}$"));
+        assertThat(etag, matches("^[a-f0-9]{40}$"));
 
         //given
         response = TestRequest.get("/etag").withHeader(Headers.IF_NONE_MATCH_STRING, etag).execute();
