@@ -41,6 +41,8 @@ public class ResponseHandler implements HttpHandler {
         } else {
             handleRenderedResponse(exchange, response);
         }
+        
+        attachment.getForm().discard();
     }
 
     /**

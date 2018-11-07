@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import io.mangoo.enums.Required;
+import io.mangoo.utils.MangooUtils;
 
 /**
  *
@@ -20,8 +21,8 @@ import io.mangoo.enums.Required;
  */
 public class Form extends Validator {
     private static final long serialVersionUID = -5815141142864033904L;
-    private final List<InputStream> files = new ArrayList<>();
-    private final Map<String, List<String>> valueMap = new HashMap<>();
+    private List<InputStream> files = new ArrayList<>();
+    private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean flash;
     
@@ -162,6 +163,15 @@ public class Form extends Validator {
     public Map<String, String> getValues() {
         return this.values;
     }
+    
+    /**
+     * Adds a file as an InputStream to the form
+     *  
+     * @param inputStream The InputStream to add
+     */
+    public void addFile(InputStream inputStream) {
+        this.files.add(inputStream);
+    }
  
     /**
      * Adds the form values to the flash scope
@@ -211,12 +221,16 @@ public class Form extends Validator {
         return this.flash;
     }
     
+    /**
+     * Discards the complete form
+     */
+    public void discard() {
+        this.files.forEach((InputStream inputStream) -> MangooUtils.closeQuietly(inputStream));
+        this.valueMap = new HashMap<>();
+    }
+    
     public boolean isSubmitted() {
         return submitted;
-    }
-
-    public void addFile(InputStream inputStream) {
-        this.files.add(inputStream);
     }
 
     public void setSubmitted(boolean submitted) {
