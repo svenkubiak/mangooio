@@ -10,6 +10,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -201,20 +205,20 @@ public class ResponseTest {
     public void testAndBinaryFile() throws FileNotFoundException, IOException {
         //given
         Response response = Response.withOk();
-        File file = new File(UUID.randomUUID().toString());
-        file.createNewFile();
-        FileInputStream fileInpuStream = new FileInputStream(file);
+        Path file = Paths.get(UUID.randomUUID().toString());
+        Files.createFile(file);
+        InputStream fileInpuStream = Files.newInputStream(file);
         
         //when
         response.andBinaryFile(file);
         
         //then
-        assertThat(response.getBinaryFileName(), equalTo(file.getName()));
+        assertThat(response.getBinaryFileName(), equalTo(file.getFileName().toString()));
         assertThat(response.isBinary(), equalTo(true));
         assertThat(response.isRendered(), equalTo(true));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInpuStream)));
         fileInpuStream.close();
-        assertThat(file.delete(), equalTo(true));
+        Files.delete(file);
     }
     
     @Test

@@ -1,8 +1,9 @@
 package io.mangoo.routing;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -318,12 +319,12 @@ public class Response {
      * @param file The file to send
      * @return A response object {@link io.mangoo.routing.Response}
      */
-    public Response andBinaryFile(File file) {
+    public Response andBinaryFile(Path file) {
         Objects.requireNonNull(file, Required.FILE.toString());
 
-        try (FileInputStream fileInputStream = new FileInputStream(file)){
-            this.binaryFileName = file.getName();
-            this.binaryContent = IOUtils.toByteArray(fileInputStream);
+        try (InputStream inputStream = Files.newInputStream(file)) {
+            this.binaryFileName = file.getFileName().toString();
+            this.binaryContent = IOUtils.toByteArray(inputStream);
             this.binary = true;
             this.rendered = true;
         } catch (final IOException e) {

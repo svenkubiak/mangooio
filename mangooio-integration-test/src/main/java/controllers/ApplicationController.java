@@ -1,7 +1,9 @@
 package controllers;
 
-import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -60,9 +62,9 @@ public class ApplicationController {
     }
 
     @SuppressWarnings("all")
-    public Response binary() {
+    public Response binary() throws URISyntaxException {
         final URL url = this.getClass().getResource("/attachment.txt");
-        final File file = new File(url.getFile());
+        final Path file = Paths.get(url.toURI());
         
         return Response.withOk().andBinaryFile(file);
     }

@@ -1,11 +1,11 @@
 package io.mangoo.templating;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -142,7 +141,6 @@ public class TemplateEngine {
      * @param sourcePath The path to the source code file
      * @return A list of source code with the exception and surrounding lines
      *
-     * @throws FileNotFoundException If the file is not found
      * @throws IOException If an IO exception occurs
      */
     @SuppressFBWarnings(justification = "SourcePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN")
@@ -159,9 +157,9 @@ public class TemplateEngine {
         .append("java");
 
         List<Source> sources = new ArrayList<>();
-        File templateFile = Paths.get(buffer.toString()).resolve(sourcePath).toFile();
-        if (templateFile.exists()) {
-            List<String> lines = IOUtils.readLines(new FileInputStream(templateFile), Charsets.UTF_8);
+        Path templateFile = Paths.get(buffer.toString()).resolve(sourcePath);
+        if (Files.exists(templateFile)) {
+            List<String> lines = Files.readAllLines(templateFile);
 
             int index = 0;
             for (String line : lines) {
