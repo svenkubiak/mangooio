@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -319,6 +320,7 @@ public class Response {
      * @param file The file to send
      * @return A response object {@link io.mangoo.routing.Response}
      */
+    @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Response andBinaryFile(Path file) {
         Objects.requireNonNull(file, Required.FILE.toString());
 

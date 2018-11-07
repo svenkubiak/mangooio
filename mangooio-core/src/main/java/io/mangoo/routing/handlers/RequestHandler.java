@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
@@ -176,6 +177,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @throws IOException
      */
+    @SuppressFBWarnings(justification = "Intentionally adding unrelated types", value = "UCC_UNRELATED_COLLECTION_CONTENTS")
     protected Object[] getConvertedParameters(HttpServerExchange exchange) {
         final Object [] convertedParameters = new Object[this.attachment.getMethodParametersCount()];
 

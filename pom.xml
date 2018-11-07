@@ -273,7 +273,7 @@
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
 				<artifactId>annotations</artifactId>
-				<version>3.0.1</version>
+				<version>3.0.1u2</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.code.findbugs</groupId>
@@ -399,7 +399,7 @@
 			<dependency>
 				<groupId>org.seleniumhq.selenium</groupId>
 				<artifactId>selenium-java</artifactId>
-				<version>3.141.0</version>
+				<version>3.141.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

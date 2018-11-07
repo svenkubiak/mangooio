@@ -640,7 +640,7 @@ public final class Application {
      * Failsafe exit of application startup
      */
     private static void failsafe() {
-        System.out.print("Failed to start mangoo I/O application"); //NOSONAR - justification = Intentionally as we want to exit the application
-        System.exit(1); //NOSONAR - justification = Intentionally as we want to exit the application
+        System.out.print("Failed to start mangoo I/O application"); //NOSONAR Intentionally as we want to exit the application at this point
+        System.exit(1); //NOSONAR Intentionally as we want to exit the application at this point
     }
 }

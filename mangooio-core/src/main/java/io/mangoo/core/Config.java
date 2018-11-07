@@ -49,7 +49,7 @@ public class Config {
         
         if (StringUtils.isNotBlank(configPath)) {
             try {
-                this.props.load(new File(configPath)); //NOSONAR - justification = ConfigPath can intentionally come from user input
+                this.props.load(new File(configPath)); //NOSONAR ConfigPath can intentionally come from user input
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
@@ -104,7 +104,7 @@ public class Config {
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR - justification = KeyFile can intentionally come from user input
+            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     PrivateKey privateKey = crypto.getPrivateKeyFromString(key);

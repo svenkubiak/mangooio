@@ -29,7 +29,6 @@ public class FormController {
     }
     
     public Response singlefile(Form form) {
-        System.out.println("HERE");
         String content = "";
         Optional<InputStream> formFile = form.getFile();
         if (formFile.isPresent()) {

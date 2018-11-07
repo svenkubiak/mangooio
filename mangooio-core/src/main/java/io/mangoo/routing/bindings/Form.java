@@ -21,7 +21,7 @@ import io.mangoo.utils.MangooUtils;
  */
 public class Form extends Validator {
     private static final long serialVersionUID = -5815141142864033904L;
-    private List<InputStream> files = new ArrayList<>();
+    private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean flash;
@@ -225,7 +225,7 @@ public class Form extends Validator {
      * Discards the complete form
      */
     public void discard() {
-        this.files.forEach((InputStream inputStream) -> MangooUtils.closeQuietly(inputStream));
+        this.files.forEach(MangooUtils::closeQuietly);
         this.valueMap = new HashMap<>();
     }
     
