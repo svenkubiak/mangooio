@@ -53,34 +53,33 @@ public class FormHandler implements HttpHandler {
         if (RequestUtils.isPostPutPatch(exchange)) {
             final Builder builder = FormParserFactory.builder();
             builder.setDefaultCharset(Charsets.UTF_8.name());
-
-            final FormDataParser formDataParser = builder.build().createParser(exchange);
-            if (formDataParser != null) {
-                exchange.startBlocking();
-                
-                final FormData formData = formDataParser.parseBlocking();
-                for (String data : formData) {
-                    Deque<FormValue> deque = formData.get(data);
-                    if (deque != null) {
-                        FormValue formValue = deque.element();
-                        if (formValue != null) {
-                            if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
-                                form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
-                            } else {
-                                if (data.contains("[]")) {
-                                    String key = StringUtils.replace(data, "[]", "");
-                                    for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
-                                        form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
-                                    }
+            try (final FormDataParser formDataParser = builder.build().createParser(exchange)) {
+                if (formDataParser != null) {
+                    exchange.startBlocking();
+                    final FormData formData = formDataParser.parseBlocking();
+                    for (String data : formData) {
+                        Deque<FormValue> deque = formData.get(data);
+                        if (deque != null) {
+                            FormValue formValue = deque.element();
+                            if (formValue != null) {
+                                if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
+                                    form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
                                 } else {
-                                    form.addValue(new HttpString(data).toString(), formValue.getValue());
-                                }
-                            }    
+                                    if (data.contains("[]")) {
+                                        String key = StringUtils.replace(data, "[]", "");
+                                        for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
+                                            form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
+                                        }
+                                    } else {
+                                        form.addValue(new HttpString(data).toString(), formValue.getValue());
+                                    }
+                                }    
+                            }
                         }
                     }
                 }
-                formDataParser.close();
             }
+            
             form.setSubmitted(true);
         }
 
