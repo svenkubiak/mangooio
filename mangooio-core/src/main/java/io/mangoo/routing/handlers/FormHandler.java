@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -58,13 +59,13 @@ public class FormHandler implements HttpHandler {
                 exchange.startBlocking();
                 
                 final FormData formData = formDataParser.parseBlocking();
-                formData.forEach((String data) -> {
+                for (String data : formData) {
                     Deque<FormValue> deque = formData.get(data);
                     if (deque != null) {
                         FormValue formValue = deque.element();
                         if (formValue != null) {
                             if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
-                                form.addFile(formValue.getFileItem().getFile().toFile());
+                                form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
                             } else {
                                 if (data.contains("[]")) {
                                     String key = StringUtils.replace(data, "[]", "");
@@ -77,9 +78,9 @@ public class FormHandler implements HttpHandler {
                             }    
                         }
                     }
-                });
+                }
+                formDataParser.close();
             }
-
             form.setSubmitted(true);
         }
 

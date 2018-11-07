@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ import io.mangoo.enums.Required;
  */
 public class Form extends Validator {
     private static final long serialVersionUID = -5815141142864033904L;
-    private final List<File> files = new ArrayList<>();
+    private final List<InputStream> files = new ArrayList<>();
     private final Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean flash;
@@ -134,7 +134,7 @@ public class Form extends Validator {
      *
      * @return List of files or an empty list
      */
-    public List<File> getFiles() {
+    public List<InputStream> getFiles() {
         return new ArrayList<>(this.files);
     }
 
@@ -144,7 +144,7 @@ public class Form extends Validator {
      *
      * @return File or null if no file is present
      */
-    public Optional<File> getFile() {
+    public Optional<InputStream> getFile() {
         if (!this.files.isEmpty()) {
             return Optional.of(this.files.get(0));
         }
@@ -215,8 +215,8 @@ public class Form extends Validator {
         return submitted;
     }
 
-    public void addFile(File file) {
-        this.files.add(file);
+    public void addFile(InputStream inputStream) {
+        this.files.add(inputStream);
     }
 
     public void setSubmitted(boolean submitted) {

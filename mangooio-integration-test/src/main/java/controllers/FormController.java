@@ -1,17 +1,16 @@
 package controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.io.Files;
-
+import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
     
@@ -30,27 +29,28 @@ public class FormController {
     }
     
     public Response singlefile(Form form) {
+        System.out.println("HERE");
         String content = "";
-        Optional<File> formFile = form.getFile();
+        Optional<InputStream> formFile = form.getFile();
         if (formFile.isPresent()) {
-            File file = formFile.get();
+            InputStream file = formFile.get();
             try {
-                content = Files.asCharSource(file, Charset.defaultCharset()).readFirstLine();
+                content = IOUtils.toString(file, Default.ENCODING.toString());
             } catch (IOException e) {
                 LOG.error("Failed to read single file", e);
             }
         }
-        
+
         return Response.withOk().andTextBody(content);
     }
     
     @SuppressWarnings("all")
     public Response multifile(Form form) {
         String content = "";
-        List<File> files = form.getFiles();
-        for (File file : files) {
+        List<InputStream> files = form.getFiles();
+        for (InputStream file : files) {
             try {
-                content = content + Files.asCharSource(file, Charset.defaultCharset()).readFirstLine();
+                content = content + IOUtils.toString(file, Default.ENCODING.toString());
             } catch (IOException e) {
                 LOG.error("Failed to one of multiple files", e);
             }

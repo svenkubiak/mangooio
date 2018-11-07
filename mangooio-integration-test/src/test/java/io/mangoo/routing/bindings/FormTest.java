@@ -6,6 +6,9 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -400,13 +403,15 @@ public class FormTest {
     }
     
     @Test
-    public void testFile() {
+    public void testFile() throws IOException {
         //given
         Form form = getNewForm();
         File file = new File(UUID.randomUUID().toString());
+        file.createNewFile();
         
         //when
-        form.addFile(file);
+        InputStream stream = new FileInputStream(file);
+        form.addFile(stream);
         
         //then
         assertThat(form.getFile(), not(nullValue()));

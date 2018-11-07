@@ -63,7 +63,6 @@ public class AdminController {
     private static final String LOGGER = "logger";
     private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
-    private static final String SCHEDULER = "scheduler";    
     private static final String SPACE = "space";
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
@@ -260,7 +259,7 @@ public class AdminController {
         }
 
         return Response.withOk()
-                .andContent(SPACE, SCHEDULER)
+                .andContent(SPACE, "scheduler")
                 .andContent(VERSION, VERSION_TAG)
                 .andContent(JOBS, jobs)
                 .andTemplate(Template.DEFAULT.schedulerPath());
