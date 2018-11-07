@@ -11,6 +11,7 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -42,7 +43,10 @@ public class ResponseHandler implements HttpHandler {
             handleRenderedResponse(exchange, response);
         }
         
-        attachment.getForm().discard();
+        Form form = attachment.getForm();
+        if (form != null) {
+            form.discard();
+        }
     }
 
     /**

@@ -225,7 +225,9 @@ public class Form extends Validator {
      * Discards the complete form
      */
     public void discard() {
-        this.files.forEach(MangooUtils::closeQuietly);
+        if (this.files != null) {
+            this.files.forEach(MangooUtils::closeQuietly);            
+        }
         this.valueMap = new HashMap<>();
     }
     
