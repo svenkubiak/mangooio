@@ -15,6 +15,7 @@ import org.casbin.jcasbin.util.Util;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooAuthorizationService;
 import io.mangoo.utils.MangooUtils;
@@ -29,6 +30,7 @@ public class AuthorizationService implements MangooAuthorizationService {
     private static final Logger LOG = LogManager.getLogger(AuthorizationService.class);
     private Enforcer enforcer;
     
+    @SuppressFBWarnings(justification = "This instance is a Singleton and writes a boolean value to org.casbin.jcasbin.util.Util", value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
     public AuthorizationService () {
         Util.enableLog = false;
         

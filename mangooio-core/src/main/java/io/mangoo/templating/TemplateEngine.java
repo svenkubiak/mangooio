@@ -93,7 +93,7 @@ public class TemplateEngine {
         content.put("templateException", templateException);
 
         if (templateException) {
-            content.put("exceptions", cause.getMessage().split(REGEX));
+            content.put("exceptions", cause.getMessage().split(REGEX)); //NOSONAR Method is only used in development mode
         } else {
             StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
             String sourceCodePath = getSourceCodePath(stackTraceElement);
