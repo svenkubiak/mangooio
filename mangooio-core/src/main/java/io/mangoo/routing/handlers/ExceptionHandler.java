@@ -60,7 +60,7 @@ public class ExceptionHandler implements HttpHandler {
             } else {
                 exchange.getResponseSender().send(Template.DEFAULT.serverError());
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // NOSONAR Intentionally catching Exception
             LOG.error("Failed to pass an exception to the frontend", e); 
         }
     }

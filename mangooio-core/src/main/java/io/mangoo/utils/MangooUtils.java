@@ -121,7 +121,7 @@ public final class MangooUtils {
         URL resource = null;
         try {
             resource = Resources.getResource(name);            
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { // NOSONAR Intentionally not logging or throwing this exception
            // Intentionally left blank
         }
         

@@ -47,15 +47,10 @@ public class Identity implements IdentityManager {
         return account;
     }
 
-    private Account getAccount(String username) {
+    private static Account getAccount(String username) {
         return new Account() {
             private static final long serialVersionUID = 5311970975103831035L;
-            private transient Principal principal = new Principal() {
-                @Override
-                public String getName() {
-                    return username;
-                }
-            };
+            private transient Principal principal = () -> username;
 
             @Override
             public Principal getPrincipal() {
