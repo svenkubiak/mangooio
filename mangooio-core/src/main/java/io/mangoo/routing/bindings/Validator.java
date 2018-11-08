@@ -28,7 +28,7 @@ import io.mangoo.i18n.Messages;
 public class Validator implements Serializable {
     private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
-    protected Map<String, String> values = new HashMap<>();
+    protected transient Map<String, String> values = new HashMap<>();
     
     @Inject
     private Messages messages;
@@ -449,6 +449,7 @@ public class Validator implements Serializable {
      * @param name The name of the field to display the error message
      * @param message A custom error message instead of the default one
      */
+    @SuppressWarnings("all")
     public void validateFalse(boolean value, String name, String message) {
         if (value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.name(), name)));
