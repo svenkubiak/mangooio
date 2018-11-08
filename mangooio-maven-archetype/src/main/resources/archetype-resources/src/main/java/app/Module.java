@@ -7,8 +7,8 @@ import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton
 public class Module extends AbstractModule {
-	@Override
+    @Override
     protected void configure() {
-	    bind(MangooBootstrap.class).to(Bootstrap.class);
+        bind(MangooBootstrap.class).to(Bootstrap.class);
     }
 }
