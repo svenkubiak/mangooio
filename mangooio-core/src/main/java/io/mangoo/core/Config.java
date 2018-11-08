@@ -572,11 +572,6 @@ public class Config {
      * @return jvm property http.host or connector.http.host or null if undefined
      */
     public String getConnectorHttpHost() {
-        String httpHost = System.getProperty(Key.CONNECTOR_HTTP_HOST.toString());
-        if (StringUtils.isNotBlank(httpHost)) {
-            return httpHost;
-        }
-        
         return getString(Key.CONNECTOR_HTTP_HOST, null);
     }
 
@@ -584,11 +579,6 @@ public class Config {
      * @return jvm property http.port or connector.http.port or 0 if undefined
      */
     public int getConnectorHttpPort() {
-        String httpPort = System.getProperty(Key.CONNECTOR_HTTP_PORT.toString());
-        if (StringUtils.isNotBlank(httpPort)) {
-            return Integer.parseInt(httpPort);
-        }
-        
         return getInt(Key.CONNECTOR_HTTP_PORT, 0);
     }
 
@@ -596,11 +586,6 @@ public class Config {
      * @return jvm property ajp.host or connector.ajp.host or null if undefined
      */
     public String getConnectorAjpHost() {
-        String ajpHost = System.getProperty(Key.CONNECTOR_AJP_HOST.toString());
-        if (StringUtils.isNotBlank(ajpHost)) {
-            return ajpHost;
-        }
-        
         return getString(Key.CONNECTOR_AJP_HOST, null);
     }
 
@@ -608,11 +593,6 @@ public class Config {
      * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
      */
     public int getConnectorAjpPort() {
-        String ajpPort = System.getProperty(Key.CONNECTOR_AJP_PORT.toString());
-        if (StringUtils.isNotBlank(ajpPort)) {
-            return Integer.parseInt(ajpPort);
-        }
-        
         return getInt(Key.CONNECTOR_AJP_PORT, 0);
     }
 
