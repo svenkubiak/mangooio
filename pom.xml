@@ -27,7 +27,6 @@
 		<log4j.version>2.11.1</log4j.version>
 		<maven.version>3.6.0</maven.version>
 		<httpcomponents.version>4.5.6</httpcomponents.version>
-		<fluentlenium.version>3.7.0</fluentlenium.version>
 		<jersey.version>2.27</jersey.version>
 		<junit.version>5.3.1</junit.version>
 		<junit.platform.version>1.3.1</junit.platform.version>
@@ -395,11 +394,6 @@
 				<version>${jersey.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.seleniumhq.selenium</groupId>
-				<artifactId>selenium-java</artifactId>
-				<version>3.141.5</version>
-			</dependency>
-			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
 				<version>2.23.0</version>
@@ -512,16 +506,6 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.fluentlenium</groupId>
-				<artifactId>fluentlenium-junit-jupiter</artifactId>
-				<version>${fluentlenium.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.fluentlenium</groupId>
-				<artifactId>fluentlenium-assertj</artifactId>
-				<version>${fluentlenium.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>javax.xml.bind</groupId>
 				<artifactId>jaxb-api</artifactId>
 				<version>2.4.0-b180830.0359</version>
@@ -550,21 +534,6 @@
 				<groupId>com.google.zxing</groupId>
 				<artifactId>core</artifactId>
 				<version>3.3.3</version>
-			</dependency>
-			<dependency>
-				<groupId>org.seleniumhq.selenium</groupId>
-				<artifactId>htmlunit-driver</artifactId>
-				<version>2.33.1</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.seleniumhq.selenium</groupId>
-						<artifactId>selenium-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.seleniumhq.selenium</groupId>
-						<artifactId>selenium-support</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
