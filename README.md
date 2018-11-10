@@ -7,9 +7,7 @@ mangoo I/O
 
 mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-mangoo I/O is a classic (M)VC-Framework - model in parenthesis as data sotrage is not partr of the core but extendable. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever.
-
-mangoo I/O is constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1100 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
+It is a classic (M)VC-Framework - model in parenthesis as data sotrage is not partr of the core but extendable. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1100 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
 
 mangoo I/O focuses on having a developer friendly, fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
 
