@@ -2,6 +2,7 @@ package io.mangoo.routing;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,7 +37,7 @@ public class Response {
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
     private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-    private String charset = Charsets.UTF_8.name();
+    private String charset = StandardCharsets.UTF_8.name();
     private String body = "";
     private String template;
     private String binaryFileName;

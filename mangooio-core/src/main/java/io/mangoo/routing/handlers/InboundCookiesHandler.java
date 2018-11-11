@@ -1,5 +1,6 @@
 package io.mangoo.routing.handlers;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 
-import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
@@ -87,7 +87,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                        .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)))
+                        .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)))
                         .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                         .build();
                 
@@ -130,7 +130,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setRequireSubject()
-                        .setVerificationKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)))
+                        .setVerificationKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
                         .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                         .build();
                 
@@ -172,7 +172,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                    .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)))
+                    .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)))
                     .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                     .build();
                 

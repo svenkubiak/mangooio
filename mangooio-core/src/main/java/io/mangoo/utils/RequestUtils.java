@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 
-import com.google.common.base.Charsets;
 import com.google.common.net.MediaType;
 
 import io.mangoo.core.Application;
@@ -138,7 +138,7 @@ public final class RequestUtils {
                 JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                         .setRequireExpirationTime()
                         .setRequireSubject()
-                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)))
+                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
                         .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
                         .build();
                 try {

@@ -1,6 +1,7 @@
 package io.mangoo.utils;
     
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,8 +12,6 @@ import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.common.base.Charsets;
 
 import io.mangoo.crypto.totp.TOTP;
 import io.mangoo.enums.HmacShaAlgorithm;
@@ -69,7 +68,7 @@ public class TotpUtils {
         
         String value = null;
         try {
-            TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
+            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
                     .timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
                     .digits(DIGITS)
                     .hmacSha(hmacShaAlgorithm)
@@ -99,7 +98,7 @@ public class TotpUtils {
         
         String value = null;
         try {
-            TOTP builder = TOTP.key(secret.getBytes(Charsets.US_ASCII.toString()))
+            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
                 .timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
                 .digits(DIGITS)
                 .hmacSha(hmacShaAlgorithm)
@@ -152,7 +151,7 @@ public class TotpUtils {
         buffer.append("otpauth://totp/")
             .append(name)
             .append("?secret=")
-            .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(Charsets.UTF_8)), "=", ""))
+            .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(StandardCharsets.UTF_8)), "=", ""))
                 .append("&algorithm=")
                 .append(hmacShaAlgorithm.getAlgorithm())
                 .append("&issuer=")

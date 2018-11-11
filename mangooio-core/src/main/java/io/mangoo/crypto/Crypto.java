@@ -1,6 +1,6 @@
 package io.mangoo.crypto;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -33,7 +33,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Config;
@@ -51,7 +50,6 @@ public class Crypto {
     private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
-    private static final String ENCODING = "UTF8";
     private static final String ENCRYPTION = "RSA/ECB/OAEPWithSHA512AndMGF1Padding";
     private static final String ALGORITHM = "RSA";
     private static final int KEYLENGTH = 2048;
@@ -87,10 +85,10 @@ public class Crypto {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(Charsets.UTF_8)));
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
         this.paddedBufferedBlockCipher.init(false, cipherParameters);
         
-        return new String(cipherData(base64Decoder.decode(encrytedText)), Charsets.UTF_8);
+        return new String(cipherData(base64Decoder.decode(encrytedText)), StandardCharsets.UTF_8);
     }
 
     /**
@@ -120,10 +118,10 @@ public class Crypto {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(Charsets.UTF_8)));
+        CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
         this.paddedBufferedBlockCipher.init(true, cipherParameters);
         
-        return new String(base64Encoder.encode(cipherData(plainText.getBytes(Charsets.UTF_8))), Charsets.UTF_8);
+        return new String(base64Encoder.encode(cipherData(plainText.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
     }
 
     /**
@@ -214,9 +212,9 @@ public class Crypto {
         
         String encrypt = null;
         try {
-            byte[] cipherText = encrypt(text.getBytes(ENCODING), key);
+            byte[] cipherText = encrypt(text.getBytes(StandardCharsets.UTF_8), key);
             encrypt = encodeBase64(cipherText);
-        } catch (UnsupportedEncodingException | MangooEncryptionException e) {
+        } catch (MangooEncryptionException e) {
             throw new MangooEncryptionException("Failed to encrypt clear text with public key", e);
         }
         
@@ -264,8 +262,8 @@ public class Crypto {
         String decrypt = null;
         try {
             byte[] dectyptedText = decrypt(decodeBase64(text), key);
-            decrypt = new String(dectyptedText, ENCODING);
-        } catch (MangooEncryptionException | UnsupportedEncodingException e) {
+            decrypt = new String(dectyptedText, StandardCharsets.UTF_8);
+        } catch (MangooEncryptionException e) {
             throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
 

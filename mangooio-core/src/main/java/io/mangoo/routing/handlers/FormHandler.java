@@ -1,13 +1,12 @@
 package io.mangoo.routing.handlers;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Deque;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.Charsets;
 
 import io.mangoo.core.Application;
 import io.mangoo.routing.Attachment;
@@ -52,7 +51,7 @@ public class FormHandler implements HttpHandler {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostPutPatch(exchange)) {
             final Builder builder = FormParserFactory.builder();
-            builder.setDefaultCharset(Charsets.UTF_8.name());
+            builder.setDefaultCharset(StandardCharsets.UTF_8.name());
             try (final FormDataParser formDataParser = builder.build().createParser(exchange)) {
                 if (formDataParser != null) {
                     exchange.startBlocking();

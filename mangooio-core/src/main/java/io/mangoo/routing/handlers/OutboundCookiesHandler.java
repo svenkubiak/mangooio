@@ -1,5 +1,6 @@
 package io.mangoo.routing.handlers;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,7 +12,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 
-import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
@@ -90,7 +90,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             }
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
-            jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(Charsets.UTF_8)));
+            jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)));
             jsonWebSignature.setPayload(jwtClaims.toJson());
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
@@ -151,7 +151,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             }
             
             JsonWebSignature jsonWebSignature = new JsonWebSignature();
-            jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
+            jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)));
             jsonWebSignature.setPayload(jwtClaims.toJson());
             jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
@@ -212,7 +212,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), expires.format(DateUtils.formatter));
                 
                 JsonWebSignature jsonWebSignature = new JsonWebSignature();
-                jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(Charsets.UTF_8)));
+                jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)));
                 jsonWebSignature.setPayload(jwtClaims.toJson());
                 jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
                 
