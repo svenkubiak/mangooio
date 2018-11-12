@@ -83,17 +83,17 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
-    private static volatile String httpHost;
-    private static volatile String ajpHost;
-    private static volatile Undertow undertow;
-    private static volatile Mode mode;
-    private static volatile Injector injector;
-    private static volatile LocalDateTime start = LocalDateTime.now();
-    private static volatile PathHandler pathHandler;
-    private static volatile boolean started;
-    private static volatile int httpPort;
-    private static volatile int ajpPort;
-    private static volatile ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
+    private static String httpHost;
+    private static String ajpHost;
+    private static Undertow undertow;
+    private static Mode mode;
+    private static Injector injector;
+    private static LocalDateTime start = LocalDateTime.now();
+    private static PathHandler pathHandler;
+    private static boolean started;
+    private static int httpPort;
+    private static int ajpPort;
+    private static ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
             Thread.currentThread().getContextClassLoader(),
             Default.FILES_FOLDER.toString() + '/'));
     

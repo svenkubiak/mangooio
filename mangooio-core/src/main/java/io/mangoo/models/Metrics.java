@@ -25,12 +25,12 @@ public class Metrics {
     private AtomicLongFieldUpdater<Metrics> totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
     private AtomicLongFieldUpdater<Metrics> totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
     private Map<Integer, LongAdder> responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-    private volatile AtomicLong dataSend = new AtomicLong();
-    private volatile long avgRequestTime;
-    private volatile long totalRequestTime;
-    private volatile long totalRequests;
-    private volatile int maxRequestTime;
-    private volatile int minRequestTime;
+    private AtomicLong dataSend = new AtomicLong();
+    private long avgRequestTime;
+    private long totalRequestTime;
+    private long totalRequests;
+    private int maxRequestTime;
+    private int minRequestTime;
 
     public Metrics() {
         //Empty constructor for Google Guice
