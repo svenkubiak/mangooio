@@ -72,6 +72,6 @@ dependencies:
 owasp:
   stage: owasp
   script:
-  - mvn $MAVEN_CLI_OPTS dependency-check:check
+  - mvn $MAVEN_CLI_OPTS clean install dependency-check:check
   only:
   - /^feature.*$/
