@@ -6,4 +6,9 @@
 		<gav regex="true">^org\.slf4j:slf4j-api:.*$</gav>
 		<cve>CVE-2018-8088</cve>
 	</suppress>
+	<suppress>
+		<notes><![CDATA[file name: quartz-2.3.0.jar]]></notes>
+		<gav regex="true">^org\.quartz-scheduler:quartz:.*$</gav>
+		<cpe>cpe:/a:jenkins:jenkins</cpe>
+	</suppress>
 </suppressions>
