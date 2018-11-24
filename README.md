@@ -7,7 +7,7 @@ mangoo I/O
 
 mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-It is a classic (M)VC-Framework - model in parenthesis as data sotrage is not partr of the core but extendable. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1100 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
+It is a classic MVC-Framework. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1100 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
 
 mangoo I/O focuses on having a developer friendly, fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
 
@@ -59,11 +59,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.203 Sonar rules
-* 9.134 Lines of code
-* 2.325 Commits
+* 1.243 Sonar rules
+* 9.057 Lines of code
+* 2.346 Commits
 * 538 Unit tests
-* 3 years maturity
+* 3 years development maturity
+* 243 cups of coffee (estimated)
 
 ## Resources
 **Homepage**   
@@ -75,8 +76,14 @@ Here are some used libraries and their purpose in mangoo I/O.
 **Changelog**   
 [https://github.com/svenkubiak/mangooio/wiki/Changelog](https://github.com/svenkubiak/mangooio/wiki/Changelog)  
 
+**Q&A**   
+[https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)  
+
 **Apidocs**   
 [http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)
 
 **Twitter**  
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
+
+**Contact**  
+sk@svenkubiak.de
