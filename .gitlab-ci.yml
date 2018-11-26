@@ -81,6 +81,8 @@ javadocs:
    - rm -r /tmp/build/mangooio/*
    - mv /tmp/javadoc/* /tmp/build/mangooio
    - cd /tmp/build/mangooio
+   - git config --global user.email "sk@svenkubiak.de"
+   - git config --global user.name "Sven Kubiak"
    - git add -A && git commit -m "Updated JavaDoc"
    - git push -f -q https://svenkubiak:$GITHUB_API_KEY@github.com/svenkubiak/mangooio-gh-pages gh-pages &>/dev/null
   stage: javadocs
