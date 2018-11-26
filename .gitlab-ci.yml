@@ -80,7 +80,7 @@ javadocs:
    - git clone -b gh-pages --single-branch https://github.com/svenkubiak/mangooio.git
    - rm -r /tmp/build/mangooio/*
    - mv /tmp/javadoc/* /tmp/build/mangooio
-   - git add -A && git commit -m "Updated JavaDoc
+   - git add -A && git commit -m "Updated JavaDoc"
    - git push -f -q https://svenkubiak:$GITHUB_API_KEY@github.com/svenkubiak/mangooio-gh-pages gh-pages &>/dev/null
   stage: javadocs
   only:
