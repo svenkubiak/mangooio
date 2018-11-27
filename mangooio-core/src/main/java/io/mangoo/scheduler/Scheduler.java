@@ -174,7 +174,8 @@ public class Scheduler {
                 List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
                 Trigger trigger = triggers.get(0);  
                 TriggerState triggerState = quartzScheduler.getTriggerState(trigger.getKey());
-                jobs.add(new io.mangoo.models.Job(TriggerState.PAUSED == triggerState, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
+                boolean active = (TriggerState.NORMAL == triggerState) ? true : false;
+                jobs.add(new io.mangoo.models.Job(active, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
             }
         } catch (SchedulerException e) {
             throw new MangooSchedulerException(e);
