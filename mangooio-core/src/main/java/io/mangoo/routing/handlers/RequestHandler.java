@@ -160,7 +160,7 @@ public class RequestHandler implements HttpHandler {
             invokedResponse.andBody(this.attachment.getTemplateEngine().renderTemplate(templateContext));
         } else if (invokedResponse.isUnrendered()) {
             Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
-            String path = "templates/" + this.attachment.getControllerClassName() + "/" + this.attachment.getControllerMethodName() + ".body";
+            String path = "templates/" + this.attachment.getControllerClassName() + '/' + this.attachment.getControllerMethodName() + ".body";
             String body = "";
             
             if (cache.get(path) == null) {
@@ -171,13 +171,11 @@ public class RequestHandler implements HttpHandler {
             }
             
             invokedResponse.andBody(body);
+        } else {
+            //ignore anything else
         }
 
         return invokedResponse;
-    }
-
-    public void filelist() {
-       
     }
 
     /**
