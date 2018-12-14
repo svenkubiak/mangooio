@@ -148,7 +148,8 @@ public class Bootstrap implements MangooBootstrap {
                 On.put().to("/jsonpathput").respondeWith("jsonPathPut"),
                 On.post().to("/jsonboonpost").respondeWith("jsonBoonPost"),
                 On.put().to("/jsonboonput").respondeWith("jsonBoonPut"),
-                On.get().to("/freemarker").respondeWith("freemarker")
+                On.get().to("/freemarker").respondeWith("freemarker"),
+                On.get().to("/unrendered/text").respondeWith("unrenderedText")
          );
          
          // SubController

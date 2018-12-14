@@ -10,6 +10,7 @@ public enum CacheName {
     APPLICATION("mangooio-application"),
     AUTH("mangooio-auth"),
     REQUEST("mangooio-request"),
+    RESPONSE("mangooio-response"),
     SSE("mangooio-sse"),
     WSS("mangooio-wss");
 

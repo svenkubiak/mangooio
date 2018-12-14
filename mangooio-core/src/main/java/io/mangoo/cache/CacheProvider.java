@@ -57,6 +57,7 @@ public class CacheProvider implements Provider<Cache> {
         initApplicationCache();
         initAuthenticationCache();
         initRequestCache();
+        initResponseCache();
         initServerEventCache();
         initWebSocketCache();
     }
@@ -85,6 +86,14 @@ public class CacheProvider implements Provider<Cache> {
                 .build();
 
         registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
+    }
+    
+    private final void initResponseCache() {
+        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
+                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
+                .build();
+
+        registerCacheConfiguration(CacheName.RESPONSE.toString(), configuration);
     }
 
     private final void initServerEventCache() {

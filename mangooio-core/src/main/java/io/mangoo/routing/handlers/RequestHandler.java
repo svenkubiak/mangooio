@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,11 +14,16 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.io.Resources;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
+import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.MangooRequestFilter;
@@ -86,7 +92,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      * @throws MangooTemplateEngineException 
      */
-    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
         //execute global request filter
         Response response = Response.withOk();
         if (this.attachment.hasRequestFilter()) {
@@ -126,7 +132,7 @@ public class RequestHandler implements HttpHandler {
      * @throws TemplateException
      * @throws MangooTemplateEngineException 
      */
-    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
         Response invokedResponse;
 
         if (this.attachment.getMethodParameters().isEmpty()) {
@@ -139,7 +145,7 @@ public class RequestHandler implements HttpHandler {
         invokedResponse.andContent(response.getContent());
         invokedResponse.andHeaders(response.getHeaders());
         
-        if (!invokedResponse.isRendered()) {
+        if (invokedResponse.isRendered()) {
             TemplateContext templateContext = new TemplateContext(invokedResponse.getContent())
                     .withFlash(this.attachment.getFlash())
                     .withSession(this.attachment.getSession())
@@ -152,9 +158,26 @@ public class RequestHandler implements HttpHandler {
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
             invokedResponse.andBody(this.attachment.getTemplateEngine().renderTemplate(templateContext));
+        } else if (invokedResponse.isUnrendered()) {
+            Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
+            String path = "templates/" + this.attachment.getControllerClassName() + "/" + this.attachment.getControllerMethodName() + ".body";
+            String body = "";
+            
+            if (cache.get(path) == null) {
+                body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
+                cache.put(path, body);
+            } else {
+                body = cache.get(path);
+            }
+            
+            invokedResponse.andBody(body);
         }
 
         return invokedResponse;
+    }
+
+    public void filelist() {
+       
     }
 
     /**

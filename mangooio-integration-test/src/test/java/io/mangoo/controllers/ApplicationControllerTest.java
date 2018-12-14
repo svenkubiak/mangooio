@@ -351,6 +351,18 @@ public class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), equalTo(JSON_PLAIN));
     }
+
+    @Test
+    public void testUnrenderedText() {
+        //given
+        final TestResponse response = TestRequest.get("/unrendered/text")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("This is unrendered"));
+    }
     
     @Test
     public void testFreemarkerConfiguration() {
