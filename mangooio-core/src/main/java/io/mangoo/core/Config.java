@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -21,6 +22,7 @@ import com.google.inject.Singleton;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
 
@@ -36,15 +38,21 @@ public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private static final String CRYPTEX_TAG = "cryptex{";
     private static final String ARG_TAG = "arg{}";
+    private String mode;
     private Props props = Props.create();
     private boolean decrypted = true;
     
     public Config() {
+        this.mode = Application.getMode().toString();
         load();
     }
-
+    
+    public Config(String mode) {
+        this.mode = Objects.requireNonNull(mode, Required.MODE.toString());
+    }
+    
     private final void load() {
-        this.props.setActiveProfiles(Application.getMode().toString());
+        this.props.setActiveProfiles(this.mode);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         
         if (StringUtils.isNotBlank(configPath)) {
@@ -67,7 +75,7 @@ public class Config {
 
         System.setProperty(Key.APPLICATION_SECRET.toString(), "");
     }
-
+    
     /**
      * Parses a given property key and value and checks if the value comes from
      * a system property and maybe decrypts the value

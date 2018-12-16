@@ -121,7 +121,7 @@ public class ResponseTest {
         
         //then
         assertThat(response.getStatusCode(), equalTo(200));
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.isRedirect(), equalTo(true));
         assertThat(response.getRedirectTo(), equalTo("/foo"));
     }
@@ -197,7 +197,7 @@ public class ResponseTest {
         
         //then
         assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo("[\"foo\",\"bar\"]"));
     }
     
@@ -215,7 +215,7 @@ public class ResponseTest {
         //then
         assertThat(response.getBinaryFileName(), equalTo(file.getFileName().toString()));
         assertThat(response.isBinary(), equalTo(true));
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInpuStream)));
         fileInpuStream.close();
         Files.delete(file);
@@ -234,7 +234,7 @@ public class ResponseTest {
         
         //then
         assertThat(response.isBinary(), equalTo(true));
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInputStream)));
         fileInputStream.close();
         assertThat(file.delete(), equalTo(true));
@@ -249,7 +249,7 @@ public class ResponseTest {
         response.andTextBody("This is a text body!");
         
         //then
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo("This is a text body!"));
         assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
     }
@@ -263,7 +263,7 @@ public class ResponseTest {
         response.andEmptyBody();
         
         //then
-        assertThat(response.isRendered(), equalTo(true));
+        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo(""));
         assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
     }
@@ -290,5 +290,23 @@ public class ResponseTest {
         
         //then
         assertThat(response.isEndResponse(), equalTo(true));
+    }
+    
+    @Test
+    public void testAndUnrenderedText() {
+        //given
+        Response response = Response.withOk().andUnrenderedBody();
+        
+        //then
+        assertThat(response.isRendered(), equalTo(false));
+    }
+    
+    @Test
+    public void testAndUnrenderedHtml() {
+        //given
+        Response response = Response.withOk().andUnrenderedBody();
+        
+        //then
+        assertThat(response.isRendered(), equalTo(false));
     }
 }

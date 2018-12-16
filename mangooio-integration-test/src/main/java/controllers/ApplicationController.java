@@ -52,7 +52,11 @@ public class ApplicationController {
     public Response forbidden() {
         return Response.withForbidden().andEmptyBody();
     }
-
+    
+    public Response unrenderedText() {
+        return Response.withOk().andUnrenderedBody();
+    }
+    
     public Response badrequest() {
         return Response.withBadRequest().andEmptyBody();
     }

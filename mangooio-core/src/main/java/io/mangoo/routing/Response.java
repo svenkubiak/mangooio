@@ -36,7 +36,7 @@ public class Response {
     private final Map<String, Object> content = new HashMap<>();
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
-    private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+    private String contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
     private String charset = StandardCharsets.UTF_8.name();
     private String body = "";
     private String template;
@@ -46,6 +46,7 @@ public class Response {
     private boolean binary;
     private boolean rendered;
     private boolean redirect;
+    private boolean unrendered;
     private int statusCode = StatusCodes.OK;
 
     public Response() {
@@ -54,13 +55,14 @@ public class Response {
 
     private Response(int statusCode) {
         this.statusCode = statusCode;
+        this.rendered = true;
     }
 
     private Response(String redirectTo) {
         Objects.requireNonNull(redirectTo, Required.REDIRECT_TO.toString());
         
         this.redirect = true;
-        this.rendered = true;
+        this.rendered = false;
         this.redirectTo = redirectTo;
     }
 
@@ -114,6 +116,10 @@ public class Response {
 
     public boolean isEndResponse() {
         return this.endResponse;
+    }
+    
+    public boolean isUnrendered() {
+        return this.unrendered;
     }
 
     public String getRedirectTo() {
@@ -277,8 +283,21 @@ public class Response {
      */
     public Response andBody(String body) {
         this.body = body;
-        this.rendered = true;
-        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
+        this.rendered = false;
+
+        return this;
+    }
+    
+    /**
+     * Sets the content of a given file placed in the templates folder
+     * in /templates/CONTROLLER_NAME/METHOD_NAME.body as body without rendering the
+     * file in the template engine
+     * 
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
+    public Response andUnrenderedBody() {
+        this.rendered = false;
+        this.unrendered = true;
 
         return this;
     }
@@ -309,7 +328,7 @@ public class Response {
 
         this.contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         this.body = JsonUtils.toJson(jsonObject);
-        this.rendered = true;
+        this.rendered = false;
 
         return this;
     }
@@ -328,7 +347,7 @@ public class Response {
             this.binaryFileName = file.getFileName().toString();
             this.binaryContent = IOUtils.toByteArray(inputStream);
             this.binary = true;
-            this.rendered = true;
+            this.rendered = false;
         } catch (final IOException e) {
             LOG.error("Failed to handle binary file", e);
         }
@@ -347,7 +366,7 @@ public class Response {
 
         this.binaryContent = content.clone();
         this.binary = true;
-        this.rendered = true;
+        this.rendered = false;
 
         return this;
     }
@@ -363,7 +382,7 @@ public class Response {
     public Response andTextBody(String text) {
         this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         this.body = text;
-        this.rendered = true;
+        this.rendered = false;
 
         return this;
     }
@@ -375,7 +394,7 @@ public class Response {
      */
     public Response andEmptyBody() {
         this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-        this.rendered = true;
+        this.rendered = false;
 
         return this;
     }

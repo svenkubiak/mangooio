@@ -76,8 +76,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 **Changelog**   
 [https://github.com/svenkubiak/mangooio/wiki/Changelog](https://github.com/svenkubiak/mangooio/wiki/Changelog)  
 
-**Q&A**   
+**Support**   
 [https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)  
+
+or
+
+[https://stackoverflow.com](https://stackoverflow.com) - use the tag "mangooio"
 
 **Apidocs**   
 [http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)
@@ -86,4 +90,4 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
 
 **Contact**  
-sk@svenkubiak.de
+Security, Support, etc.: sk@svenkubiak.de

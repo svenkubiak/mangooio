@@ -20,6 +20,7 @@ import io.bit3.jsass.Output;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
 import io.mangoo.enums.Suffix;
 import io.mangoo.utils.MangooUtils;
 import net.jawr.web.minification.CSSMinifier;
@@ -79,7 +80,7 @@ public final class Minification {
 
         if (config == null) {
             System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config();
+            config = new Config(Mode.DEV.toString());
         }
 
         if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
