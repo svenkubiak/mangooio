@@ -5,14 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import biz.gabrys.lesscss.compiler.CompilerException;
-import biz.gabrys.lesscss.compiler.LessCompiler;
-import biz.gabrys.lesscss.compiler.LessCompilerImpl;
+import biz.gabrys.lesscss.compiler2.CompilerException;
+import biz.gabrys.lesscss.compiler2.LessCompiler;
 import io.bit3.jsass.CompilationException;
 import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
@@ -113,13 +113,12 @@ public final class Minification {
     }
 
     private static void lessify(File lessFile) {
-        LessCompiler compiler = new LessCompilerImpl();
+        final LessCompiler compiler = new LessCompiler();
         final File outputFile = getOutputFile(lessFile, Suffix.CSS);
         try {
-            String css = compiler.compile(lessFile);
-            FileUtils.writeStringToFile(outputFile, css, Default.ENCODING.toString());
+            compiler.compile(lessFile, outputFile, Charset.forName(Default.ENCODING.toString()));
             logPreprocess(lessFile, outputFile);
-        } catch (IOException | CompilerException e) {
+        } catch (final CompilerException e) {
             LOG.error("Failed to preprocess LESS file", e);
         }
     }
