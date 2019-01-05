@@ -2,9 +2,10 @@ package io.mangoo.routing.handlers;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.inject.Inject;
 
-import biz.gabrys.lesscss.compiler.StringUtils;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
