@@ -605,49 +605,6 @@ public class Config {
     }
 
     /**
-     * 
-     * @return application.headers.xssprotection or default value if undefined
-     */
-    public String getApplicationHeaderXssProection() {
-        return getString(Key.APPLICATION_HEADERS_XSSPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toString());
-    }
-
-    /**
-     * @return application.headers.xcontenttypeoptions or default value if undefined
-     */
-    public String getApplicationHeadersXContentTypeOptions() {
-        return getString(Key.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString());
-    }
-    
-    /**
-     * @return application.headers.featurepolicy or default value if undefined
-     */
-    public String getApplicationHeadersFeaturePolicy() {
-        return getString(Key.APPLICATION_HEADERS_FEATUREPOLICY, Default.APPLICATION_HEADERS_FEATUREPOLICY.toString());
-    }
-
-    /**
-     * @return application.headers.xframeoptions or default value if undefined
-     */
-    public String getApplicationHeadersXFrameOptions() {
-        return getString(Key.APPLICATION_HEADERS_XFRAMEOPTIONS, Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString());
-    }
-
-    /**
-     * @return application.headers.server or default value if undefined
-     */
-    public String getApplicationHeadersServer() {
-        return getString(Key.APPLICATION_HEADERS_SERVER, Default.APPLICATION_HEADERS_SERVER.toString());
-    }
-
-    /**
-     * @return application.headers.contentsecuritypolicy or default value if undefined
-     */
-    public String getApplicationHeadersContentSecurityPolicy() {
-        return getString(Key.APPLICATION_HEADERS_CONTENTSECURITYPOLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString());
-    }
-
-    /**
      * @return cache.cluster.enable or default value if undefined
      */
     public boolean isCacheCluserEnable() {
@@ -673,13 +630,6 @@ public class Config {
      */
     public String getCacheClusterUrl() {
         return getString(Key.CACHE_CLUSTER_URL, null);
-    }
-
-    /**
-     * @return application.headers.refererpolicy or default value if undefined
-     */
-    public String getApplicationHeadersRefererPolicy() {
-        return getString(Key.APPLICATION_HEADERS_REFERERPOLICY, Default.APPLICATION_HEADERS_REFERERPOLICY.toString());
     }
 
     /**

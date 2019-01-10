@@ -1,17 +1,14 @@
 package io.mangoo.routing.handlers;
 
-import java.util.Objects;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.net.MediaType;
-import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
-import io.mangoo.core.Config;
+import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.templating.TemplateEngine;
 import io.undertow.server.HttpHandler;
@@ -25,27 +22,22 @@ import io.undertow.util.StatusCodes;
  */
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
-    private Config config;
-    
-    @Inject
-    public ExceptionHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-    }
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Throwable throwable = exchange.getAttachment(io.undertow.server.handlers.ExceptionHandler.THROWABLE);
         if (throwable != null) {
-            LOG.error("Internal server exception", throwable);
+            LOG.error("Internal Server Exception", throwable);
         }
         
         try {
+            Server.headers()
+                .entrySet()
+                .stream()
+                .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+                .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+
             exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), MediaType.HTML_UTF_8.withoutParameters().toString());
-            exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getApplicationHeaderXssProection());
-            exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getApplicationHeadersXContentTypeOptions());
-            exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getApplicationHeadersXFrameOptions());
-            exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
-            exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
             exchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
 
             if (Application.inDevMode()) {

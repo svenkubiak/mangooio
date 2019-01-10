@@ -1,17 +1,12 @@
 package io.mangoo.routing.handlers;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.inject.Inject;
-
 import io.mangoo.core.Application;
-import io.mangoo.core.Config;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
@@ -26,12 +21,6 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class ResponseHandler implements HttpHandler {
-    private Config config;
-    
-    @Inject
-    public ResponseHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-    }
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
@@ -73,8 +62,14 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleRedirectResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(StatusCodes.FOUND);
+        
+        Server.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+
         exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), response.getRedirectTo());
-        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.endExchange();
     }
@@ -95,7 +90,6 @@ public class ResponseHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
-        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getResponseSender().send(response.getBody());
     }

@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
@@ -60,8 +61,14 @@ public class AuthenticationHandler implements HttpHandler {
      */
     private void endRequest(HttpServerExchange exchange, String redirect) {
         exchange.setStatusCode(StatusCodes.FOUND);
+        
+        Server.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+        
         exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), redirect);
-        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
         exchange.endExchange();
     }
     
@@ -71,7 +78,13 @@ public class AuthenticationHandler implements HttpHandler {
      */
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.FORBIDDEN);
-        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
+        
+        Server.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+        
         exchange.getResponseSender().send(Template.DEFAULT.forbidden());
     }
     

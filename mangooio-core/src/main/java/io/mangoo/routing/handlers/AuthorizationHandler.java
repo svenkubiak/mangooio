@@ -7,8 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.inject.Inject;
 
 import io.mangoo.core.Application;
-import io.mangoo.core.Config;
-import io.mangoo.enums.Header;
+import io.mangoo.core.Server;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooAuthorizationService;
 import io.mangoo.routing.Attachment;
@@ -24,12 +23,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class AuthorizationHandler implements HttpHandler {
-    private Config config;
     private MangooAuthorizationService authorizationService;
     
     @Inject
-    public AuthorizationHandler(Config config, MangooAuthorizationService authorizationService) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    public AuthorizationHandler(MangooAuthorizationService authorizationService) {
         this.authorizationService = Objects.requireNonNull(authorizationService, Required.AUTHORIZATION_SERVICE.toString());
     }
     
@@ -77,7 +74,13 @@ public class AuthorizationHandler implements HttpHandler {
      */
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.UNAUTHORIZED);
-        exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
+        
+        Server.headers()
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+        
         exchange.endExchange();
     }
     

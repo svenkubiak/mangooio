@@ -28,7 +28,6 @@ public enum Default {
     APPLICATION_PREPROCESS_SASS(Constants.FALSE),
     APPLICATION_SECRET_MIN_LENGTH("32"),
     APPLICATION_TEMPLATEENGINE("io.mangoo.templating.TemplateEngineFreemarker"),
-    APPLICATION_TEST_MASTERKEY("f8%q8G6Px8vxn7Tl%2P40vyT9e8KeTJ9"),
     APPLICATION_THREADPOOL("10"),
     ASSETS_PATH("src/main/resources/files/assets/"),
     AUTHENTICATION_COOKIE_EXPIRES("0"),
