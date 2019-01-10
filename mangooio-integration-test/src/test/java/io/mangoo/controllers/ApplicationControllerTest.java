@@ -384,11 +384,12 @@ public class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
         assertThat(response.getHeader(Header.X_XSS_PPROTECTION.toString()), equalTo("1"));
         assertThat(response.getHeader(Header.X_CONTENT_TYPE_OPTIONS.toString()), equalTo("nosniff"));
         assertThat(response.getHeader(Header.X_FRAME_OPTIONS.toString()), equalTo("DENY"));
-        assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
         assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));
+        assertThat(response.getHeader(Header.FEATURE_POLICY.toString()), equalTo(""));
         assertThat(response.getHeader(Header.REFERER_POLICY.toString()), equalTo("no-referrer"));
     }
 }

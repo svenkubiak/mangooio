@@ -608,8 +608,8 @@ public class Config {
      * 
      * @return application.headers.xssprotection or default value if undefined
      */
-    public int getApplicationHeaderXssProection() {
-        return getInt(Key.APPLICATION_HEADERS_XSSPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toInt());
+    public String getApplicationHeaderXssProection() {
+        return getString(Key.APPLICATION_HEADERS_XSSPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toString());
     }
 
     /**

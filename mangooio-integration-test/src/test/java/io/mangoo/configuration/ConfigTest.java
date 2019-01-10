@@ -1092,7 +1092,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getApplicationHeaderXssProection(), equalTo(Integer.valueOf(xss)));
+        assertThat(config.getApplicationHeaderXssProection(), equalTo(xss));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1107,7 +1107,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getApplicationHeaderXssProection(), equalTo(Default.APPLICATION_HEADERS_XSSPROTECTION.toInt()));
+        assertThat(config.getApplicationHeaderXssProection(), equalTo(Default.APPLICATION_HEADERS_XSSPROTECTION.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
