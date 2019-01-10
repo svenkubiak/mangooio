@@ -618,6 +618,13 @@ public class Config {
     public String getApplicationHeadersXContentTypeOptions() {
         return getString(Key.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString());
     }
+    
+    /**
+     * @return application.headers.featurepolicy or default value if undefined
+     */
+    public String getApplicationHeadersFeaturePolicy() {
+        return getString(Key.APPLICATION_HEADERS_FEATUREPOLICY, Default.APPLICATION_HEADERS_FEATUREPOLICY.toString());
+    }
 
     /**
      * @return application.headers.xframeoptions or default value if undefined

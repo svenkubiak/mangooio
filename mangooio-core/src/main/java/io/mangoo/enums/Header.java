@@ -16,6 +16,7 @@ public enum Header {
     CONTENT_TYPE("Content-Type", new HttpString("Content-Type")),
     COOKIE("Cookie", new HttpString("Cookie")),
     ETAG("ETag", new HttpString("ETag")),
+    FEATURE_POLICY("Feature-Policy", new HttpString("Feature-Policy")),
     IF_NONE_MATCH("If-None-Match", new HttpString("If-None-Match")),
     LOCATION("Location", new HttpString("Location")),
     REFERER_POLICY("Referrer-Policy", new HttpString("Referrer-Policy")),

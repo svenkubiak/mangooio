@@ -18,6 +18,7 @@ public enum Key {
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("application.headers.xcontenttypeoptions"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("application.headers.xframeoptions"),
     APPLICATION_HEADERS_XSSPROTECTION("application.headers.xssprotection"),
+    APPLICATION_HEADERS_FEATUREPOLICY("application.headers.featurepolicy"),
     APPLICATION_LANGUAGE("application.language"),
     APPLICATION_LOG("application.log"),
     APPLICATION_MINIFY_CSS("application.minify.css"),

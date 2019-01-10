@@ -84,12 +84,12 @@ public class ResponseHandler implements HttpHandler {
      */
     protected void handleRenderedResponse(HttpServerExchange exchange, Response response) {
         exchange.setStatusCode(response.getStatusCode());
-        exchange.getResponseHeaders().put(Header.X_XSS_PPROTECTION.toHttpString(), this.config.getApplicationHeaderXssProection());
         exchange.getResponseHeaders().put(Header.X_CONTENT_TYPE_OPTIONS.toHttpString(), this.config.getApplicationHeadersXContentTypeOptions());
         exchange.getResponseHeaders().put(Header.X_FRAME_OPTIONS.toHttpString(), this.config.getApplicationHeadersXFrameOptions());
         exchange.getResponseHeaders().put(Header.REFERER_POLICY.toHttpString(), this.config.getApplicationHeadersRefererPolicy());
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
         exchange.getResponseHeaders().put(Header.SERVER.toHttpString(), this.config.getApplicationHeadersServer());
+        exchange.getResponseHeaders().put(Header.FEATURE_POLICY.toHttpString(), this.config.getApplicationHeadersFeaturePolicy());
         exchange.getResponseHeaders().put(Header.CONTENT_SECURITY_POLICY.toHttpString(), this.config.getApplicationHeadersContentSecurityPolicy());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getResponseSender().send(response.getBody());
