@@ -31,8 +31,14 @@ public final class Server {
         return headers;
     }
     
-    public static void header(HttpString name, String value) {
+    /**
+     * Sets a custom header that is used globally on server responses
+     * 
+     * @param name The name of the header
+     * @param value The value of the header
+     */
+    public static void header(Header name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
-        headers.put(name, value);
+        headers.put(name.toHttpString(), value);
     }
 }
