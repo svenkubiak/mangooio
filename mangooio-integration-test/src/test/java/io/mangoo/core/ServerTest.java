@@ -26,9 +26,6 @@ public class ServerTest {
     
     @Test
     public void testAdditionalHeader() {
-        //when
-        Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
-
         //then
         List<Entry<HttpString, String>> collect = Server.headers()
                 .entrySet()

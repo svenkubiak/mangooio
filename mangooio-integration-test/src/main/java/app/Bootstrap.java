@@ -14,6 +14,8 @@ import controllers.ParameterController;
 import controllers.SessionController;
 import controllers.WebSocketController;
 import controllers.subcontrollers.SubController;
+import io.mangoo.core.Server;
+import io.mangoo.enums.Header;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
@@ -23,6 +25,9 @@ public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void initializeRoutes() {
+        //when
+        Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
+        
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),
