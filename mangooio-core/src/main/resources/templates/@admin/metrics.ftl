@@ -141,5 +141,4 @@
 </section>
 </#if>
 </section>
-
 <#include "footer.ftl">

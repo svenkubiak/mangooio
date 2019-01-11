@@ -444,6 +444,11 @@ public final class Application {
             pathHandler.addPrefixPath(pathRoute.getUrl(),
                     new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())))
         );
+        
+        Config config = getInstance(Config.class);
+        if (config.isApplicationAdminEnable()) {
+            pathHandler.addPrefixPath("/@admin/assets/", new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "templates/@admin/assets/")));            
+        }
     }
 
     private static RoutingHandler getRoutingHandler() {

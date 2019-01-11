@@ -15,18 +15,18 @@ import com.google.common.io.Resources;
  */
 public enum Template {
     DEFAULT;
-    private static final String ADMIN_TEMPLATE_PATH = "admin/index.ftl";
+    private static final String ADMIN_TEMPLATE_PATH = "@admin/index.ftl";
     private static final String BAD_REQUEST_TEMPLATE_PATH = "defaults/400.html";
-    private static final String CACHE_TEMPLATE_PATH = "admin/cache.ftl";
+    private static final String CACHE_TEMPLATE_PATH = "@admin/cache.ftl";
     private static final String FORBIDDEN_TAMPLTE_PATH = "defaults/403.html";
     private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
-    private static final String LOGGER_TEMPLATE_PATH = "admin/logger.ftl";
-    private static final String METRICS_TEMPLARE_PATH = "admin/metrics.ftl";
+    private static final String LOGGER_TEMPLATE_PATH = "@admin/logger.ftl";
+    private static final String METRICS_TEMPLARE_PATH = "@admin/metrics.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
-    private static final String ROUTES_TEMPLATE_PATH = "admin/routes.ftl";
-    private static final String SCHEDULER_TEMPLATE_PATH = "admin/scheduler.ftl";
+    private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
+    private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
-    private static final String TOOLS_TEMPLATE_PATH = "admin/tools.ftl";
+    private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
     private String badRequestContent;
     private String forbiddenContent;
