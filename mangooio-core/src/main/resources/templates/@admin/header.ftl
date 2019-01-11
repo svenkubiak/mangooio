@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/@admin/assets/css/font-awesome.min.css">
   <link rel="stylesheet" href="/@admin/assets/css/ionicons.min.css">
   <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
+  <link rel="stylesheet" href="/@admin/assets/css/styles.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">

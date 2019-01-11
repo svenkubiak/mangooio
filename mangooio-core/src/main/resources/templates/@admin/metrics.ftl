@@ -1,6 +1,6 @@
 <#include "header.ftl">
 <#if enabled>
-<div class="content-wrapper" style="min-height: 846px;">
+<div class="content-wrapper">
 <section class="content-header">
 	<div class="container-fluid">
 		<div class="row mb-2">
@@ -38,7 +38,7 @@
           <div class="col-lg-4 col-6">
           	<div class="small-box bg-danger">
             	<div class="inner">
-                	<h3>${errorRate} <sup style="font-size: 20px">%</sup></h3>
+                	<h3>${errorRate} <sup id="percentage">%</sup></h3>
                 	<p>Error rate</p>
               	</div>
               	<div class="icon">

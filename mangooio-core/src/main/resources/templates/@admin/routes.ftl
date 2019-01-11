@@ -1,5 +1,5 @@
 <#include "header.ftl">
-<div class="content-wrapper" style="min-height: 846px;">
+<div class="content-wrapper">
 <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
