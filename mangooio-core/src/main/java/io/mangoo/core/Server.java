@@ -1,5 +1,6 @@
 package io.mangoo.core;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,6 +40,9 @@ public final class Server {
      */
     public static void header(Header name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
-        headers.put(name.toHttpString(), value);
+        
+        Map<HttpString, String> newHeaders = new HashMap<HttpString, String>(headers);
+        newHeaders.put(name.toHttpString(), value);
+        headers = newHeaders;
     }
 }

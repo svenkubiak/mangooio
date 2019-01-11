@@ -389,7 +389,7 @@ public class ApplicationControllerTest {
         assertThat(response.getHeader(Header.X_CONTENT_TYPE_OPTIONS.toString()), equalTo("nosniff"));
         assertThat(response.getHeader(Header.X_FRAME_OPTIONS.toString()), equalTo("DENY"));
         assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));
-        assertThat(response.getHeader(Header.FEATURE_POLICY.toString()), equalTo(""));
+        assertThat(response.getHeader(Header.FEATURE_POLICY.toString()), equalTo("myFeaturePolicy"));
         assertThat(response.getHeader(Header.REFERER_POLICY.toString()), equalTo("no-referrer"));
     }
 }
