@@ -41,7 +41,7 @@ public final class Server {
     public static void header(Header name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
         
-        Map<HttpString, String> newHeaders = new HashMap<HttpString, String>(headers);
+        Map<HttpString, String> newHeaders = new HashMap<>(headers);
         newHeaders.put(name.toHttpString(), value);
         headers = newHeaders;
     }
