@@ -87,4 +87,6 @@ javadocs:
    - git push -f "https://svenkubiak:$GITHUB_API_KEY@github.com/svenkubiak/mangooio" gh-pages &>/dev/null
   stage: javadocs
   only:
-  - master
+    - tags
+  except:
+    - branches
