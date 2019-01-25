@@ -152,7 +152,7 @@ public class TotpUtils {
         
         String url = "";
         try {
-            url = URLEncoder.encode(buffer.toString(), "UTF-8");
+            url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             LOG.error("Failed to encode otpauth url", e);
         }
