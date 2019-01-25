@@ -226,6 +226,20 @@ public class AdminControllerTest {
     }
     
     @Test
+    public void testTwoFactor() {
+        //given
+        TestResponse response = TestRequest.get("/@admin/tools")
+                .withBasicAuthentication(ADMIN, ADMIN)
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("Two Factor Authentication"));
+    }
+    
+    @Test
     public void testToolsUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/tools").execute();

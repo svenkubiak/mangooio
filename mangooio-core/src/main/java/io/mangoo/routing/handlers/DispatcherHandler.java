@@ -51,7 +51,8 @@ public class DispatcherHandler implements HttpHandler {
     private String controllerClassName;
     private String controllerMethodName;
     private String username;
-    private String password;    
+    private String password;
+    private String secret;
     private int limit;
     private int methodParametersCount;
     private boolean requestFilter;
@@ -100,9 +101,10 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
     
-    public DispatcherHandler withBasicAuthentication(String username, String password) {
+    public DispatcherHandler withBasicAuthentication(String username, String password, String secret) {
         this.username = username;
         this.password = password;
+        this.secret = secret;
         
         return this;
     }
@@ -145,7 +147,7 @@ public class DispatcherHandler implements HttpHandler {
             .withLimit(this.limit)
             .withAuthentication(this.authentication)
             .withAuthorization(this.authorization)
-            .withBasicAuthentication(this.username, this.password)
+            .withBasicAuthentication(this.username, this.password, this.secret)
             .withTemplateEngine(this.templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);

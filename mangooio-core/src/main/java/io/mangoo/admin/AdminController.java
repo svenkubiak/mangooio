@@ -46,6 +46,7 @@ import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.TotpUtils;
 import net.minidev.json.JSONObject;
 
 /**
@@ -316,7 +317,17 @@ public class AdminController {
     }
     
     public Response tools() {
+        String secret = this.config.getApplicationAdminSecret();
+        String qrCode = null;
+        
+        if (StringUtils.isBlank(secret)) {
+            secret = TotpUtils.createSecret();
+            qrCode = TotpUtils.getQRCode(this.config.getApplicationName(), "mangoo admin", secret);
+        }
+        
         return Response.withOk()
+                .andContent("qrcode", qrCode)
+                .andContent("secret", secret)
                 .andContent(SPACE, TOOLS)
                 .andContent(VERSION, VERSION_TAG)
                 .andTemplate(Template.DEFAULT.toolsPath());

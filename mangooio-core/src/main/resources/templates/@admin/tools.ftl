@@ -59,6 +59,25 @@
               </form>
             </div>
           </div>
+          <#if qrcode?has_content && secret?has_content>
+          <div class="row">
+			<div class="col-md-12">
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">Two Factor Authentication</h3>
+              </div>
+                <div class="card-body">
+                  <div class="form-group">
+					<img src="${qrcode}">
+                  </div>
+                  <div class="form-group">
+                  	<label>Secret</label>
+                    <textarea class="form-control" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
+                  </div>
+                </div>
+            </div>
+            </#if>
+          </div>
        </div>
 </section>
 </div>

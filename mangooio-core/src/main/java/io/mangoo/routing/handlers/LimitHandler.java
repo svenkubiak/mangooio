@@ -16,6 +16,7 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.TotpUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -113,11 +114,25 @@ public class LimitHandler implements HttpHandler {
             HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
                     Application.getInstance(LocaleHandler.class),
                     this.attachment.getUsername(),
-                    this.attachment.getPassword());
+                    getPassword());
             
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
         }
+    }
+
+    /**
+     * @return The password for basic authentication with optional 2FA attached to it
+     */
+    private String getPassword() {
+        String password = this.attachment.getPassword();
+        String secret = this.attachment.getSecret();
+        
+        if (StringUtils.isNotBlank(secret)) {
+            password = password + TotpUtils.getTotp(secret);
+        }
+        
+        return password;
     }
 }

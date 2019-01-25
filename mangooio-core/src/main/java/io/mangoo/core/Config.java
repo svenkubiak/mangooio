@@ -681,7 +681,17 @@ public class Config {
         return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
     }
 
+    /**
+     * @return scheduler.enable
+     */
     public boolean isSchedulerEnabled() {
         return getBoolean(Key.SCHEDULER_ENABLE, Default.SCHEDULER_ENABLE.toBoolean());
+    }
+
+    /**
+     * @return application.admin.secret
+     */
+    public String getApplicationAdminSecret() {
+        return getString(Key.APPLICATION_ADMIN_SECRET, null);
     }
 }

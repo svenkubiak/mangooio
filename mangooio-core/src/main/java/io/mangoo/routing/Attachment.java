@@ -32,6 +32,7 @@ public class Attachment {
     private String body;
     private String username;
     private String password;
+    private String secret;
     private List<Annotation> classAnnotations;
     private Class<?> controllerClass;
     private Object controllerInstance;
@@ -127,6 +128,10 @@ public class Attachment {
     
     public String getPassword() {
         return this.password;
+    }
+    
+    public String getSecret() {
+        return this.secret;
     }
 
     public Request getRequest() {
@@ -261,9 +266,10 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withBasicAuthentication(String username, String password) {
+    public Attachment withBasicAuthentication(String username, String password, String secret) {
         this.username = username;
         this.password = password;
+        this.secret = secret;
         
         return this;
     }

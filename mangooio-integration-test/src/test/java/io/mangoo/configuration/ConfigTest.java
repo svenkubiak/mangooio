@@ -403,6 +403,37 @@ public class ConfigTest {
         // then
         assertThat(config.getApplicationAdminUsername(), equalTo(username));
         assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationAdminSecret() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String secret = UUID.randomUUID().toString();
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.admin.secret", secret);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getApplicationAdminSecret(), equalTo(secret));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationAdminSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getApplicationAdminSecret(), equalTo(null));
+        assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test

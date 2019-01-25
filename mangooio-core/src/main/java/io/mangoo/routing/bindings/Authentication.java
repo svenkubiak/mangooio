@@ -11,7 +11,6 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
-import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.TotpUtils;
@@ -197,7 +196,7 @@ public class Authentication {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         Objects.requireNonNull(number, Required.TOTP.toString());
         
-        return TotpUtils.verifiedTotp(secret, number, HmacShaAlgorithm.HMAC_SHA_512);
+        return TotpUtils.verifiedTotp(secret, number);
     }
 
     /**

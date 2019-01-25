@@ -12,4 +12,8 @@ public class BasicAuthenticationController {
     public Response basicauth() {
         return Response.withOk().andTextBody("authenticated");
     }
+    
+    public Response basicauth2fa() {
+        return Response.withOk().andTextBody("authenticated");
+    }
 }

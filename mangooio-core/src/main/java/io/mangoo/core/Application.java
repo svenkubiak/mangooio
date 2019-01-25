@@ -458,7 +458,7 @@ public final class Application {
         Config config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class)
-                .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+                .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword(), config.getApplicationAdminSecret())
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
                         On.get().to("/@admin/health").respondeWith("health"),
@@ -480,7 +480,7 @@ public final class Application {
             DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
-                    .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
+                    .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword(), requestRoute.getSecret())
                     .withAuthentication(requestRoute.hasAuthentication())
                     .withAuthorization(requestRoute.hasAuthorization())
                     .withLimit(requestRoute.getLimit());

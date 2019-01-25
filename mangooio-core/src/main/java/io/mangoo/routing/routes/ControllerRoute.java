@@ -18,6 +18,7 @@ public class ControllerRoute {
     private Class<?> controllerClass;
     private String username;
     private String password;
+    private String secret;
     private boolean authentication;
     private boolean authorization;
     private boolean blocking;
@@ -47,7 +48,7 @@ public class ControllerRoute {
             requestRoute.withControllerClass(this.controllerClass);
 
             if (hasBasicAuthentication()) {
-                requestRoute.withBasicAuthentication(this.username, this.password);
+                requestRoute.withBasicAuthentication(this.username, this.password, this.secret);
             }
             
             if (hasAuthentication()) {
@@ -91,6 +92,26 @@ public class ControllerRoute {
         
         this.username = username;
         this.password = password;
+        
+        return this;
+    }
+    
+    /**
+     * Sets Basic HTTP authentication to all method on the given controller class
+     * 
+     * @param username The username for basic authentication in clear text
+     * @param password The password for basic authentication in clear text
+     * 
+     * @return controller route instance
+     */
+    public ControllerRoute withBasicAuthentication(String username, String password, String secret) {
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(password, Required.SECRET.toString());
+        
+        this.username = username;
+        this.password = password;
+        this.secret = secret;
         
         return this;
     }
@@ -166,6 +187,10 @@ public class ControllerRoute {
 
     public String getPassword() {
         return this.password;
+    }
+    
+    public String getSecret() {
+        return this.secret;
     }
 
     public int getLimit() {

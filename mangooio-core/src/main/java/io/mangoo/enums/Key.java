@@ -10,6 +10,7 @@ public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),
+    APPLICATION_ADMIN_SECRET("application.admin.secret"),
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_LANGUAGE("application.language"),
