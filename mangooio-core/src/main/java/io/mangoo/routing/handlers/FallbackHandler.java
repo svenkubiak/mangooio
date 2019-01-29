@@ -22,7 +22,7 @@ public class FallbackHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), Default.CONTENT_TYPE.toString());
         exchange.setStatusCode(StatusCodes.NOT_FOUND);

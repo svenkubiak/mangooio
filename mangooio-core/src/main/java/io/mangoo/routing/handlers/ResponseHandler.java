@@ -67,7 +67,7 @@ public class ResponseHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
 
         exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), response.getRedirectTo());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
@@ -87,7 +87,7 @@ public class ResponseHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));

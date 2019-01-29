@@ -66,7 +66,7 @@ public class AuthenticationHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), redirect);
         exchange.endExchange();
@@ -83,7 +83,7 @@ public class AuthenticationHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
         
         exchange.getResponseSender().send(Template.DEFAULT.forbidden());
     }
