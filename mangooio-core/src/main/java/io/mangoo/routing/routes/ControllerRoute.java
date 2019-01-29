@@ -101,6 +101,7 @@ public class ControllerRoute {
      * 
      * @param username The username for basic authentication in clear text
      * @param password The password for basic authentication in clear text
+     * @param secret The secret used for 2FA
      * 
      * @return controller route instance
      */

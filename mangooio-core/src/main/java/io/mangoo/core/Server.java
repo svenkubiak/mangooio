@@ -34,7 +34,7 @@ public final class Server {
     /**
      * Sets a custom header that is used globally on server responses
      * 
-     * @param name The name of the header
+     * @param header The name of the header
      * @param value The value of the header
      */
     public static void header(Header header, String value) {
