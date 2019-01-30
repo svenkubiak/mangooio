@@ -73,7 +73,7 @@ public class MangooMojo extends AbstractMojo {
     @Parameter(property = "mangoo.skip", defaultValue="false", required = true)
     private boolean skip;
 
-    @Parameter(property = "mangoo.jpdaPort", defaultValue="8000", required = true)
+    @Parameter(property = "mangoo.jpdaPort", defaultValue="0", required = true)
     private int jpdaPort;
 
     @Parameter(property = "mangoo.jvmArgs", required = false)
