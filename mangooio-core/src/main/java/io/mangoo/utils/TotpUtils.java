@@ -145,10 +145,10 @@ public class TotpUtils {
             .append(name)
             .append("?secret=")
             .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(StandardCharsets.UTF_8)), "=", ""))
-                .append("&algorithm=")
-                .append(HmacShaAlgorithm.HMAC_SHA_512.getAlgorithm())
-                .append("&issuer=")
-                .append(issuer);
+            .append("&algorithm=")
+            .append(HmacShaAlgorithm.HMAC_SHA_512.getAlgorithm())
+            .append("&issuer=")
+            .append(issuer);
         
         String url = "";
         try {

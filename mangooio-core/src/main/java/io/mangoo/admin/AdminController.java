@@ -322,7 +322,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode(this.config.getApplicationName(), "mangoo admin", secret);
+            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret);
         }
         
         return Response.withOk()
