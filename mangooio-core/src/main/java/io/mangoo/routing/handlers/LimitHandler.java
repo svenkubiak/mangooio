@@ -13,6 +13,7 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Header;
+import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
@@ -130,7 +131,7 @@ public class LimitHandler implements HttpHandler {
         String secret = this.attachment.getSecret();
         
         if (StringUtils.isNotBlank(secret)) {
-            password = password + TotpUtils.getTotp(secret);
+            password = password + TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512, 6, 300);
         }
         
         return password;

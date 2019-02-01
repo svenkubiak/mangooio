@@ -28,6 +28,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
@@ -322,7 +323,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret);
+            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "300");
         }
         
         return Response.withOk()

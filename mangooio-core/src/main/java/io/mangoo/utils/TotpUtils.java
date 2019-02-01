@@ -25,9 +25,10 @@ import io.mangoo.enums.Required;
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
     private static final Base32 base32 = new Base32();
+    private static final HmacShaAlgorithm ALGORITHM = HmacShaAlgorithm.HMAC_SHA_512;
     private static final int DIGITS = 6;
     private static final int MAX_CHARACTERS = 32;
-    private static final int THIRTY_SECONDS = 30;
+    private static final int PERIOD = 30;
     private static final int ITERATIONS = 26;
     private static final int BYTES_SECRET = 64;
     
@@ -55,7 +56,8 @@ public class TotpUtils {
     }
     
     /**
-     * Creates the current TOTP based on the given secret and HMAC algorithm
+     * Creates the current TOTP based on the following default values:
+     * SHA512 algorithm, 6 digits, 30 seconds time period
      * 
      * @param secret The secret to use
      * 
@@ -67,9 +69,9 @@ public class TotpUtils {
         String value = null;
         try {
             TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
-                    .timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
+                    .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
                     .digits(DIGITS)
-                    .hmacSha(HmacShaAlgorithm.HMAC_SHA_512)
+                    .hmacSha(ALGORITHM)
                     .build();
             
             value = builder.value();
@@ -81,7 +83,38 @@ public class TotpUtils {
     }
     
     /**
-     * Verifies a given TOTP based on a given secret and HMAC algorithm
+     * Creates the current TOTP based on the given parameters
+     * 
+     * @param secret The secret to use
+     * @param algorithm The algorithm to use
+     * @param digits The digits to use (6 or 8)
+     * @param period The time period in seconds
+     * 
+     * @return The totp value or null if generation failed
+     */
+    public static String getTotp(String secret, HmacShaAlgorithm algorithm, int digits, int period) {
+        Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
+        
+        String value = null;
+        try {
+            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
+                    .timeStep(TimeUnit.SECONDS.toMillis(period))
+                    .digits(digits)
+                    .hmacSha(algorithm)
+                    .build();
+            
+            value = builder.value();
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Failed to create TOTP",  e);
+        }
+        
+        return value;
+    }
+    
+    /**
+     * Verifies a given TOTP based on the following default values:
+     * SHA512 algorithm, 6 digits, 30 seconds time period
      * 
      * @param secret The secret to use
      * @param totp The TOTP to verify
@@ -95,9 +128,9 @@ public class TotpUtils {
         String value = null;
         try {
             TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
-                .timeStep(TimeUnit.SECONDS.toMillis(THIRTY_SECONDS))
+                .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
                 .digits(DIGITS)
-                .hmacSha(HmacShaAlgorithm.HMAC_SHA_512)
+                .hmacSha(ALGORITHM)
                 .build();
             
             value = builder.value();
@@ -115,17 +148,19 @@ public class TotpUtils {
      * @param issuer The name of the issuer
      * @param secret The secret to use
      * 
-     * @return An URL to google charts API with the QR code
+     * @return An URL to Google charts API with the QR code
      */
-    public static String getQRCode(String name, String issuer, String secret) {
+    public static String getQRCode(String name, String issuer, String secret, HmacShaAlgorithm algorithm, String digits, String period) {
         Objects.requireNonNull(name, Required.ACCOUNT_NAME.toString());
         Objects.requireNonNull(secret, Required.SECRET.toString());
         Objects.requireNonNull(issuer, Required.ISSUER.toString());
+        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
+        Objects.requireNonNull(digits, Required.DIGITS.toString());
+        Objects.requireNonNull(period, Required.PERIOD.toString());
         
-        final StringBuilder buffer = new StringBuilder();
-        buffer.append("https://chart.googleapis.com/chart")
-            .append("?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
-            .append(getOtpauthURL(name, issuer, secret));
+        var buffer = new StringBuilder();
+        buffer.append("https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=")
+            .append(getOtpauthURL(name, issuer, secret, algorithm, digits, period));
         
         return buffer.toString();
     }
@@ -139,16 +174,27 @@ public class TotpUtils {
      * 
      * @return An otpauth url
      */
-    public static String getOtpauthURL(String name, String issuer, String secret) {
-        final StringBuilder buffer = new StringBuilder();
+    public static String getOtpauthURL(String name, String issuer, String secret, HmacShaAlgorithm algorithm, String digits, String period) {
+        Objects.requireNonNull(name, Required.ACCOUNT_NAME.toString());
+        Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(issuer, Required.ISSUER.toString());
+        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
+        Objects.requireNonNull(digits, Required.DIGITS.toString());
+        Objects.requireNonNull(period, Required.PERIOD.toString());
+        
+        var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")
             .append(name)
             .append("?secret=")
             .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(StandardCharsets.UTF_8)), "=", ""))
             .append("&algorithm=")
-            .append(HmacShaAlgorithm.HMAC_SHA_512.getAlgorithm())
+            .append(algorithm.getAlgorithm())
             .append("&issuer=")
-            .append(issuer);
+            .append(issuer)
+            .append("&digits=")
+            .append(digits)
+            .append("&period=")
+            .append(period);
         
         String url = "";
         try {

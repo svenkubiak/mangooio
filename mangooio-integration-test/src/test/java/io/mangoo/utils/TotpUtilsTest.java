@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
+import io.mangoo.enums.HmacShaAlgorithm;
 
 /**
  * 
@@ -97,7 +98,7 @@ public class TotpUtilsTest {
 	public void testGetQRCode() {
         //given
 		String secret = TotpUtils.createSecret();
-		String qr = TotpUtils.getQRCode("test", "issuer", secret);
+		String qr = TotpUtils.getQRCode("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
 		
         //then
 		assertThat(qr, not(nullValue()));
@@ -108,11 +109,11 @@ public class TotpUtilsTest {
 	public void testGetTotpURL() {
         //given
 		String secret = "foo";
-		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret);
+		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
 
         //then
 		assertThat(qr, not(nullValue()));
-        assertThat(qr, equalTo("otpauth%3A%2F%2Ftotp%2Ftest%3Fsecret%3DMZXW6%26algorithm%3DSHA512%26issuer%3Dissuer"));
+        assertThat(qr, equalTo("otpauth%3A%2F%2Ftotp%2Ftest%3Fsecret%3DMZXW6%26algorithm%3DSHA512%26issuer%3Dissuer%26digits%3D6%26period%3D30"));
 	}
 	
 	@Test
@@ -120,10 +121,10 @@ public class TotpUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = "foo";
-            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret);
+            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
         
             // then
-            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret));
+            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30"));
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 }
