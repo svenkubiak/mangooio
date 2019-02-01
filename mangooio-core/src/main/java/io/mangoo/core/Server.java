@@ -1,6 +1,6 @@
 package io.mangoo.core;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public final class Server {
     public static void header(Header header, String value) {
         Objects.requireNonNull(header, Required.HEADER.toString());
         
-        Map<Header, String> newHeaders = new HashMap<>(headers);
+        Map<Header, String> newHeaders = new EnumMap<>(headers);
         newHeaders.put(header, value);
         headers = newHeaders;
     }
