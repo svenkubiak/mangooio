@@ -27,8 +27,8 @@
 		<log4j.version>2.11.1</log4j.version>
 		<maven.version>3.6.0</maven.version>
 		<jersey.version>2.28</jersey.version>
-		<junit.version>5.4.0-RC1</junit.version>
-		<junit.platform.version>1.4.0-RC1</junit.platform.version>
+		<junit.version>5.4.0-RC2</junit.version>
+		<junit.platform.version>1.4.0-RC2</junit.platform.version>
 		<enforcer.version>1.1</enforcer.version>
 	</properties>
 	<modules>
@@ -400,7 +400,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.6.27</version>
+				<version>4.6.29</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
