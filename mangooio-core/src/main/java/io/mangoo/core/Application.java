@@ -461,7 +461,6 @@ public final class Application {
                 .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword(), config.getApplicationAdminSecret())
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
-                        On.get().to("/@admin/health").respondeWith("health"),
                         On.get().to("/@admin/scheduler").respondeWith("scheduler"),
                         On.get().to("/@admin/logger").respondeWith("logger"),
                         On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
@@ -474,6 +473,12 @@ public final class Application {
                         On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
                         On.get().to("/@admin/scheduler/state/{name}").respondeWith("state")
                  );
+            
+            Bind.controller(AdminController.class)
+            .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+            .withRoutes(
+                    On.get().to("/@admin/health").respondeWith("health")
+             );
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
