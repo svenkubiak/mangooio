@@ -58,6 +58,8 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String PERIOD = "300";
+    private static final String DIGITS = "6";
     private static final String URL = "url";
     private static final String METHOD = "method";
     private static final String CACHE_ADMINROUTES = "cache_adminroutes";
@@ -323,7 +325,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "300");
+            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return Response.withOk()
