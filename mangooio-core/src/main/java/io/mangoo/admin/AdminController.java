@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,7 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String PERIOD = "300";
     private static final String DIGITS = "6";
     private static final String URL = "url";
@@ -325,7 +327,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangooAdmin", this.config.getApplicationName().replaceAll("[^a-zA-Z0-9]", ""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+            qrCode = TotpUtils.getQRCode("mangooAdmin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return Response.withOk()
@@ -352,15 +354,15 @@ public class AdminController {
             } else if (("encrypt").equalsIgnoreCase(function)) {
                 String cleartext = body.get("cleartext").toString();
                 String key = body.get("key").toString();
+                
                 try {
                     PublicKey publicKey = this.crypto.getPublicKeyFromString(key);
                     value = this.crypto.encrypt(cleartext, publicKey);
                 } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);
                 }
-
             } else {
-                LOG.warn("Invalid or no function selected for AJAX request. Either choose 'keypair' order 'encrypt'.");
+                LOG.warn("Invalid or no function selected for AJAX request.");
             }
         }
         

@@ -30,6 +30,8 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class LimitHandler implements HttpHandler {
+    private static final int PERIOD = 300;
+    private static final int DIGITS = 6;
     private Attachment attachment;
     private Cache cache;
     
@@ -131,7 +133,7 @@ public class LimitHandler implements HttpHandler {
         String secret = this.attachment.getSecret();
         
         if (StringUtils.isNotBlank(secret)) {
-            password = password + TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512, 6, 300);
+            password = password + TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return password;
