@@ -217,12 +217,12 @@
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-props</artifactId>
-				<version>5.0.6</version>
+				<version>5.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-mail</artifactId>
-				<version>5.0.6</version>
+				<version>5.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
