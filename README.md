@@ -59,14 +59,15 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.243 Sonar rules
-* 9.057 Lines of code
-* 2.346 Commits
-* 538 Unit tests
-* 3 years development maturity
+* 1.235 Sonar rules
+* 9.212 Lines of code
+* 2.441 Commits
+* 533 Unit tests
+* 3+ years development maturity
 * 243 cups of coffee (estimated)
 
 ## Resources
+
 **Homepage**   
 [https://github.com/svenkubiak/mangooio](https://github.com/svenkubiak/mangooio)
 
