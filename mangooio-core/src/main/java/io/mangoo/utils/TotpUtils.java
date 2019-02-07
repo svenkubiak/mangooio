@@ -147,6 +147,9 @@ public class TotpUtils {
      * @param name The name of the account
      * @param issuer The name of the issuer
      * @param secret The secret to use
+     * @param algorithm The algorithm to use
+     * @param digits The number of digits to use
+     * @param period The period to use
      * 
      * @return An URL to Google charts API with the QR code
      */
@@ -171,6 +174,9 @@ public class TotpUtils {
      * @param name The name of the account
      * @param issuer The name of the issuer
      * @param secret The secret to use
+     * @param algorithm The algorithm to use
+     * @param digits The number of digits to use
+     * @param period The period to use
      * 
      * @return An otpauth url
      */

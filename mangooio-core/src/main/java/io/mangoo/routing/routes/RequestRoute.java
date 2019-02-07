@@ -123,7 +123,7 @@ public class RequestRoute implements MangooRoute {
      * 
      * @param username The username for basic authentication in cleartext
      * @param password The password for basic authentication in cleartext
-     * @param password The secret used for 2FA in cleartext
+     * @param secret The secret used for 2FA in cleartext
      * 
      * @return RequestRoute instance
      */
