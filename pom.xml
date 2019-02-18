@@ -30,6 +30,7 @@
 		<junit.version>5.4.0</junit.version>
 		<junit.platform.version>1.4.0</junit.platform.version>
 		<enforcer.version>1.1</enforcer.version>
+		<jodd.version>5.0.8</jodd.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -217,12 +218,12 @@
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-props</artifactId>
-				<version>5.0.7</version>
+				<version>${jodd.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-mail</artifactId>
-				<version>5.0.7</version>
+				<version>${jodd.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
