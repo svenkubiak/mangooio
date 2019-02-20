@@ -306,7 +306,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.8.0-beta2</version>
+				<version>1.8.0-beta4</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
@@ -401,7 +401,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.2</version>
+				<version>4.8.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
