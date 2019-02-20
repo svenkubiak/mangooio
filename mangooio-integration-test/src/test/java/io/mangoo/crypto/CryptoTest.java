@@ -77,7 +77,7 @@ public class CryptoTest {
     public void testShortKey() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Application.getInstance(Crypto.class).encrypt(plainText, key31);
-          });
+        }, "Failed to add a key that is short than required");
     }
     
     @Test

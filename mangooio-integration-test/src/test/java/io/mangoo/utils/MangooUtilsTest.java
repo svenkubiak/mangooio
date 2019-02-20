@@ -96,14 +96,14 @@ public class MangooUtilsTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             //given
             MangooUtils.randomString(0);
-          });
+        }, "Failed to test invalid min number of random string");
     }
     
     @Test()
     public void testInvalidMaxRandomString() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             MangooUtils.randomString(257);
-          });
+        }, "Failed to test invalid max number of random string");
     }
     
     @Test

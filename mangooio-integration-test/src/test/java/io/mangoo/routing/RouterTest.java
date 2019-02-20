@@ -40,7 +40,7 @@ public class RouterTest {
                         On.get().to("/foo").respondeWith("index")
                 );
             }
-          });
+          }, "Failed to add max number of routes");
         
         Router.reset();
         Application.getInstance(MangooBootstrap.class).initializeRoutes();
