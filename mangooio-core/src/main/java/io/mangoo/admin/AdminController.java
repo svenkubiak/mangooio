@@ -157,9 +157,9 @@ public class AdminController {
             }
             
             if (errorRequests > 0) {
-                errorRate = totalRequests / (double) errorRequests;
+                errorRate = (100 / totalRequests) * (double) errorRequests;
             }
-
+            
             EventBusService eventBusService = Application.getInstance(EventBusService.class);
             
             return Response.withOk()

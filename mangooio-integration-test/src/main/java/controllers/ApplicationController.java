@@ -15,6 +15,8 @@ import io.undertow.util.HttpString;
 public class ApplicationController {
     
     public Response index() {
+        String foo = null;
+        foo.length();
         return Response.withOk();
     }
     
