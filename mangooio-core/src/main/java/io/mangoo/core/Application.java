@@ -475,10 +475,10 @@ public final class Application {
                  );
             
             Bind.controller(AdminController.class)
-            .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
-            .withRoutes(
-                    On.get().to("/@admin/health").respondeWith("health")
-             );
+                .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword())
+                .withRoutes(
+                        On.get().to("/@admin/health").respondeWith("health")
+                 );
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
