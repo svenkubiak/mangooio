@@ -93,9 +93,6 @@ public final class Application {
     private static boolean started;
     private static int httpPort;
     private static int ajpPort;
-    private static ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
-            Thread.currentThread().getContextClassLoader(),
-            Default.FILES_FOLDER.toString() + '/'));
     
     private Application() {
     }
@@ -467,7 +464,6 @@ public final class Application {
                         On.get().to("/@admin/routes").respondeWith("routes"),
                         On.get().to("/@admin/metrics").respondeWith("metrics"),
                         On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
-                        On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
                         On.get().to("/@admin/tools").respondeWith("tools"),
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax"),
                         On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
@@ -492,6 +488,10 @@ public final class Application {
             
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
+        
+        ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
+                Thread.currentThread().getContextClassLoader(),
+                Default.FILES_FOLDER.toString() + '/'));
         
         Router.getFileRoutes().forEach((FileRoute fileRoute) -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
         
