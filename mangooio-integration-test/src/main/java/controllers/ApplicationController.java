@@ -18,6 +18,14 @@ public class ApplicationController {
         return Response.withOk();
     }
     
+    @SuppressWarnings("all")
+    public Response error() {
+        String foo = null;
+        foo.length();
+        
+        return Response.withOk();
+    }
+    
     public Response route() {
         return Response.withOk();
     }
