@@ -147,7 +147,6 @@ public class AdminController {
             Metrics metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
             long errorRequests = 0;
-            double errorRate = 0;
             
             for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
                 if (String.valueOf(entry.getKey()).charAt(0) == '5') {
@@ -155,9 +154,10 @@ public class AdminController {
                 }
                 totalRequests = totalRequests + entry.getValue().longValue();
             }
-            
+
+            double errorRate = 0;
             if (errorRequests > 0) {
-                errorRate = (100 / totalRequests) * (double) errorRequests;
+                errorRate = (100.0 / totalRequests) * errorRequests;
             }
             
             EventBusService eventBusService = Application.getInstance(EventBusService.class);
