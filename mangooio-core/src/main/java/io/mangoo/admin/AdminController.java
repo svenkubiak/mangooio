@@ -73,6 +73,7 @@ public class AdminController {
     private static final String TOOLS = "tools";
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
+    private static final double HUNDRED_PERCENT = 100.0;
     private final Cache cache;
     private final Config config;
     private final Crypto crypto;
@@ -157,7 +158,7 @@ public class AdminController {
 
             double errorRate = 0;
             if (errorRequests > 0) {
-                errorRate = (100.0 / totalRequests) * errorRequests;
+                errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
             }
             
             EventBusService eventBusService = Application.getInstance(EventBusService.class);
