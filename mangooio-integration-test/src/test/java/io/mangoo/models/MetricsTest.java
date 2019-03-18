@@ -22,9 +22,9 @@ public class MetricsTest {
     public void testAddStatusCode() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.reset();
         
         //when
+        metrics.reset();
         metrics.addStatusCode(418);
         metrics.addStatusCode(418);
         metrics.addStatusCode(420);
@@ -39,9 +39,9 @@ public class MetricsTest {
     public void testIncrementContentLength() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.reset();
         
         //when
+        metrics.reset();
         metrics.incrementDataSend(42);
         metrics.incrementDataSend(12);
         metrics.incrementDataSend(23);
@@ -54,9 +54,9 @@ public class MetricsTest {
     public void testReset() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.reset();
         
         //when
+        metrics.reset();
         metrics.addStatusCode(418);
         metrics.addStatusCode(418);
         metrics.addStatusCode(420);
@@ -79,6 +79,7 @@ public class MetricsTest {
         Metrics metrics = Application.getInstance(Metrics.class);
         
         //when
+        metrics.reset();
         metrics.update(2000);
         metrics.update(1000);
         
@@ -86,5 +87,53 @@ public class MetricsTest {
         assertThat(metrics.getMaxRequestTime(), equalTo(2000));
         assertThat(metrics.getMinRequestTime(), lessThan(2000));
         assertThat(metrics.getAvgRequestTime(), lessThan(2000L));
+    }
+    
+    @Test
+    public void testMinCount() {
+        //given
+        Metrics metrics = Application.getInstance(Metrics.class);
+        
+        //when
+        metrics.reset();
+        metrics.update(0);
+        metrics.update(2000);
+        metrics.update(1000);
+        metrics.update(3000);
+        
+        //then
+        assertThat(metrics.getMinRequestTime(), equalTo(1000));
+    }
+    
+    @Test
+    public void testMaxCount() {
+        //given
+        Metrics metrics = Application.getInstance(Metrics.class);
+        
+        //when
+        metrics.reset();
+        metrics.update(0);
+        metrics.update(2000);
+        metrics.update(1000);
+        metrics.update(3000);
+        
+        //then
+        assertThat(metrics.getMaxRequestTime(), equalTo(3000));
+    }
+    
+    @Test
+    public void testAvgCount() {
+        //given
+        Metrics metrics = Application.getInstance(Metrics.class);
+        
+        //when
+        metrics.reset();
+        metrics.update(0);
+        metrics.update(2000);
+        metrics.update(1000);
+        metrics.update(3000);
+        
+        //then
+        assertThat(metrics.getAvgRequestTime(), equalTo(1500L));
     }
 }

@@ -29,8 +29,8 @@ public class Metrics {
     private volatile long avgRequestTime;
     private volatile long totalRequestTime;
     private volatile long totalRequests;
-    private volatile int maxRequestTime;
-    private volatile int minRequestTime;
+    private volatile int maxRequestTime = -1;
+    private volatile int minRequestTime = -1;
 
     public Metrics() {
         //Empty constructor for Google Guice
@@ -58,13 +58,15 @@ public class Metrics {
             }
         } while (!this.maxRequestTimeUpdater.compareAndSet(this, tempMaxRequestTime, requestTime));
 
-        int tempMinRequestTime;
-        do {
-            tempMinRequestTime = this.minRequestTime;
-            if (requestTime > tempMinRequestTime && tempMinRequestTime != -1) {
-                break;
-            }
-        } while (!this.minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime));
+        if (requestTime > 0) {
+            int tempMinRequestTime;
+            do {
+                tempMinRequestTime = this.minRequestTime;
+                if (requestTime > tempMinRequestTime && tempMinRequestTime != -1) {
+                    break;
+                }
+            } while (!this.minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime)); 
+        }
         
         this.totalRequestsUpdater.incrementAndGet(this);
         this.avgRequestTime = this.totalRequestTime / this.totalRequests;
@@ -104,7 +106,7 @@ public class Metrics {
         this.avgRequestTime = 0;
         this.totalRequestTime = 0;
         this.totalRequests = 0;
-        this.maxRequestTime = 0;
-        this.minRequestTime = 0;
+        this.maxRequestTime = -1;
+        this.minRequestTime = -1;
     }
 }
