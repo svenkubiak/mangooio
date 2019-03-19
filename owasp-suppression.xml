@@ -11,4 +11,9 @@
 		<gav regex="true">^org\.quartz-scheduler:quartz:.*$</gav>
 		<cpe>cpe:/a:jenkins:jenkins</cpe>
 	</suppress>
+	<suppress>
+   		<notes><![CDATA[file name: jose4j-0.6.5.jar]]></notes>
+   		<gav regex="true">^org\.bitbucket\.b_c:jose4j:.*$</gav>
+   		<cve>CVE-2018-1000539</cve>
+	</suppress>
 </suppressions>
