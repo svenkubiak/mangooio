@@ -5,13 +5,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +23,7 @@ import org.apache.http.util.EntityUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -128,7 +129,7 @@ public class FormControllerTest {
     }
 
 	@Test
-	public void testSingleFileUpload() throws IOException {
+	public void testSingleFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given
 	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
 	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
@@ -137,10 +138,10 @@ public class FormControllerTest {
 	    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
 	    // when
-        File file = new File(UUID.randomUUID().toString());
+        Path path = tempDir.resolve(UUID.randomUUID().toString());
         InputStream attachment = Resources.getResource("attachment.txt").openStream();
-        FileUtils.copyInputStreamToFile(attachment, file);
-        multipartEntityBuilder.addPart("attachment", new FileBody(file));
+        Files.copy(attachment, path);
+        multipartEntityBuilder.addPart("attachment", new FileBody(path.toFile()));
         HttpPost httpPost = new HttpPost("http://" + host + ":" + port + "/singlefile");
         httpPost.setEntity(multipartEntityBuilder.build());
 
@@ -157,11 +158,10 @@ public class FormControllerTest {
 		assertThat(response, not(nullValue()));
 		assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
 		assertThat(response, equalTo("This is an attachment"));
-		file.delete();
 	}
 	
 	@Test
-	public void testMultiFileUpload() throws IOException {
+	public void testMultiFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given
 	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
 	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
@@ -170,14 +170,14 @@ public class FormControllerTest {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
         // when
-        File file1 = new File(UUID.randomUUID().toString());
-        File file2 = new File(UUID.randomUUID().toString());
+        Path path1 = tempDir.resolve(UUID.randomUUID().toString());
+        Path path2 = tempDir.resolve(UUID.randomUUID().toString());
         InputStream attachment1 = Resources.getResource("attachment.txt").openStream();
         InputStream attachment2 = Resources.getResource("attachment.txt").openStream();
-        FileUtils.copyInputStreamToFile(attachment1, file1);
-        FileUtils.copyInputStreamToFile(attachment2, file2);
-        multipartEntityBuilder.addPart("attachment1", new FileBody(file1));
-        multipartEntityBuilder.addPart("attachment2", new FileBody(file2));
+        Files.copy(attachment1, path1);
+        Files.copy(attachment2, path2);
+        multipartEntityBuilder.addPart("attachment1", new FileBody(path1.toFile()));
+        multipartEntityBuilder.addPart("attachment2", new FileBody(path2.toFile()));
         HttpPost httpPost = new HttpPost("http://" + host + ":" + port + "/multifile");
         httpPost.setEntity(multipartEntityBuilder.build());
 
@@ -194,8 +194,6 @@ public class FormControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(httpResponse.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response, equalTo("This is an attachmentThis is an attachment2"));
-        file1.delete();
-        file2.delete();
 	}
 
 	@Test

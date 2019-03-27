@@ -6,12 +6,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -19,11 +19,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
@@ -234,13 +234,13 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testBinaryDownload() throws IOException {
+    public void testBinaryDownload(@TempDir Path tempDir) throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);
         final String host = config.getConnectorHttpHost();
         final int port = config.getConnectorHttpPort();
-        final File file = new File(UUID.randomUUID().toString());
-        final FileOutputStream fileOutputStream = new FileOutputStream(file);
+        final Path path = tempDir.resolve(UUID.randomUUID().toString());
+        final OutputStream fileOutputStream = Files.newOutputStream(path);
 
         //when
         final CloseableHttpClient httpclient = HttpClients.custom().build();
@@ -252,8 +252,7 @@ public class ApplicationControllerTest {
 
         //then
         assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(FileUtils.readFileToString(file, Default.ENCODING.toString()), equalTo("This is an attachment"));
-        assertThat(file.delete(), equalTo(true));
+        assertThat(Files.readString(path), equalTo("This is an attachment"));
     }
 
     @Test
