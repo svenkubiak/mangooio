@@ -367,7 +367,7 @@
 			<dependency>
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
-				<version>3.7.0</version>
+				<version>3.7.1</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
