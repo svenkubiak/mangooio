@@ -549,7 +549,7 @@ public final class Application {
             .append(MangooUtils.getVersion())
             .append('\n');
 
-        LOG.log(Level.INFO, buffer.toString());
+        LOG.log(Level.INFO, () -> buffer.toString());
         
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
