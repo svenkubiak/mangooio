@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.CronExpression;
@@ -548,7 +549,7 @@ public final class Application {
             .append(MangooUtils.getVersion())
             .append('\n');
 
-        LOG.info(buffer.toString());
+        LOG.log(Level.INFO, buffer.toString());
         
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
@@ -558,7 +559,7 @@ public final class Application {
             LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
         }
         
-        LOG.info("mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
+        LOG.log(Level.INFO, "mangoo I/O application started in {} ms in {} mode. Enjoy.", ChronoUnit.MILLIS.between(start, LocalDateTime.now()), mode.toString());
     }
 
     /**
