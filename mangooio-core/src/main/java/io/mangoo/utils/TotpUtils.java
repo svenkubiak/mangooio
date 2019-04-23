@@ -142,7 +142,7 @@ public class TotpUtils {
     }
     
     /**
-     * Generates a QR code to share a secret with a user
+     * Generates a QR code link from google charts API to share a secret with a user
      * 
      * @param name The name of the account
      * @param issuer The name of the issuer
