@@ -27,8 +27,8 @@
 		<log4j.version>2.11.2</log4j.version>
 		<maven.version>3.6.1</maven.version>
 		<jersey.version>2.28</jersey.version>
-		<junit.version>5.5.0-M1</junit.version>
-		<junit.platform.version>1.5.0-M1</junit.platform.version>
+		<junit.version>5.5.0-RC1</junit.version>
+		<junit.platform.version>1.5.0-RC1</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
 		<jodd.version>5.0.13</jodd.version>
 	</properties>
@@ -386,7 +386,7 @@
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.16</version>
+				<version>0.17</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -396,7 +396,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>27.1-jre</version>
+				<version>28.0-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>biz.gabrys.lesscss</groupId>
@@ -406,7 +406,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.37</version>
+				<version>4.8.38</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -476,12 +476,12 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpmime</artifactId>
-				<version>4.5.8</version>
+				<version>4.5.9</version>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
-				<version>1.61</version>
+				<version>1.62</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
