@@ -58,6 +58,7 @@
 						<compilerArgument>-parameters</compilerArgument>
 						<optimize>true</optimize>
 						<debug>false</debug>
+						<showDeprecation>true</showDeprecation>
 					</configuration>
 				</plugin>
 				<plugin>
