@@ -2,7 +2,7 @@ package io.mangoo.routing.bindings;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -33,7 +33,7 @@ public class FlashTest {
         flash.setSuccess(SUCCESS_MESSAGE);
 
         //then
-        assertThat(flash.get("success"), equalToIgnoringWhiteSpace(SUCCESS_MESSAGE));
+        assertThat(flash.get("success"), equalToCompressingWhiteSpace(SUCCESS_MESSAGE));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class FlashTest {
         flash.setWarning(WARNING_MESSAGE);
 
         //then
-        assertThat(flash.get("warning"), equalToIgnoringWhiteSpace(WARNING_MESSAGE));
+        assertThat(flash.get("warning"), equalToCompressingWhiteSpace(WARNING_MESSAGE));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class FlashTest {
         flash.setError(ERROR_MESSAGE);
 
         //then
-        assertThat(flash.get("error"), equalToIgnoringWhiteSpace(ERROR_MESSAGE));
+        assertThat(flash.get("error"), equalToCompressingWhiteSpace(ERROR_MESSAGE));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FlashTest {
 
         //then
         assertThat(flash.hasContent(), equalTo(true));
-        assertThat(flash.get(MYMESSAGE), equalToIgnoringWhiteSpace(CUSTOM_MESSAGE));
+        assertThat(flash.get(MYMESSAGE), equalToCompressingWhiteSpace(CUSTOM_MESSAGE));
     }
 
     @Test
