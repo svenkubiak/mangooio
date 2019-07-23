@@ -46,7 +46,7 @@ public class CacheProvider implements Provider<Cache> {
         if (config.isCacheCluserEnable()) {
             CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder() 
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
-                    .autoCreate());
+                    .autoCreate(b -> b));
 
             this.cacheManager = clusteredCacheManagerBuilder.build(true);
         } else {
