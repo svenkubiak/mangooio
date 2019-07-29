@@ -68,7 +68,7 @@ public class TemplateEngine {
         }
     }
 
-    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "TEMPLATE_INJECTION_FREEMARKER")
+    @SuppressFBWarnings(value = "TEMPLATE_INJECTION_FREEMARKER")
     public String renderTemplate(TemplateContext context) throws MangooTemplateEngineException {
         Template template;
         try {
@@ -87,7 +87,7 @@ public class TemplateEngine {
         return buffer.toString();
     }
 
-    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN, TEMPLATE_INJECTION_FREEMARKER")
+    @SuppressFBWarnings({"PATH_TRAVERSAL_IN, TEMPLATE_INJECTION_FREEMARKER"})
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
@@ -143,7 +143,7 @@ public class TemplateEngine {
      *
      * @throws IOException If an IO exception occurs
      */
-    @SuppressFBWarnings(justification = "SourcePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN")
+    @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
