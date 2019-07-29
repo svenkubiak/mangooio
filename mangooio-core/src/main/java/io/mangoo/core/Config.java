@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -51,6 +52,7 @@ public class Config {
         this.mode = Objects.requireNonNull(mode, Required.MODE.toString());
     }
     
+    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private final void load() {
         this.props.setActiveProfiles(this.mode);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());

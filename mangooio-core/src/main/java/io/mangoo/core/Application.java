@@ -569,6 +569,7 @@ public final class Application {
      * 
      * @return The mangoo I/O logo string
      */
+    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     public static String getLogo() {
         String logo = "";
         try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {

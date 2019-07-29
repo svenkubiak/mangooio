@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
@@ -42,6 +43,7 @@ public final class MangooUtils {
      *
      * @return Current mangoo I/O version
      */
+    @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {
         String version = Default.VERSION_UNKNOW.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {

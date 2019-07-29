@@ -54,6 +54,7 @@ public class AuthorizationService implements MangooAuthorizationService {
         return enforcer.enforce(subject, resource, operation);
     }
     
+    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private static class AuthorizationAdapter implements Adapter {
         @Override
         public void loadPolicy(Model model) {
