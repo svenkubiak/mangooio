@@ -16,7 +16,7 @@ import io.mangoo.services.executors.TestRunnable;
 
 /**
  * 
- * @author Kubiak
+ * @author svenkubiak
  *
  */
 @ExtendWith({TestExtension.class})
@@ -37,7 +37,7 @@ public class ConcurrentServicesTest {
     @Test
     public void testRunnableWithResult() throws InterruptedException, ExecutionException {
         //given
-    		ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
+    	ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
         
         //when
         String success = "SUCCESS";
@@ -45,14 +45,5 @@ public class ConcurrentServicesTest {
         
         //then
         assertThat(future.get(), equalTo("SUCCESS"));
-    }
-    
-    @Test
-    public void testRunnableExecute() {
-        //given
-    		ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
-        
-        //then
-    		concurrentService.execute(new TestRunnable());
     }
 }

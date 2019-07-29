@@ -84,20 +84,31 @@ public class SchedulerTest {
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Test
-    public void testExecuteJob() throws MangooSchedulerException {
+    public void testExecuteJob() throws SchedulerException, MangooSchedulerException {
+        //given
+        JobKey jobKey = scheduler.getJobKey(JOB_NAME);
+        
         //when
         scheduler.executeJob(JOB_NAME);
+        
+        //then
+        List<Trigger> triggers = (List<Trigger>) scheduler.getQuartzScheduler().getTriggersOfJob(jobKey);
+        Trigger trigger = triggers.get(0);  
+        TriggerState triggerState = scheduler.getQuartzScheduler().getTriggerState(trigger.getKey());
+        
+        assertThat(triggerState, equalTo(TriggerState.NORMAL));
     }
     
     @Test
     @SuppressWarnings("unchecked")
     public void testPauseJob() throws MangooSchedulerException, SchedulerException {
         //given
-        JobKey jobKey = scheduler.getJobKey("jobs.InfoJob");
+        JobKey jobKey = scheduler.getJobKey(JOB_NAME);
         
         //when
-        scheduler.pauseJob("jobs.InfoJob");
+        scheduler.pauseJob(JOB_NAME);
         
         //then
         List<Trigger> triggers = (List<Trigger>) scheduler.getQuartzScheduler().getTriggersOfJob(jobKey);
