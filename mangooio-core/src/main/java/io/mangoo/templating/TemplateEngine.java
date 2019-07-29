@@ -87,7 +87,7 @@ public class TemplateEngine {
         return buffer.toString();
     }
 
-    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN")
+    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "PATH_TRAVERSAL_IN, TEMPLATE_INJECTION_FREEMARKER")
     public String renderException(HttpServerExchange exchange, Throwable cause, boolean templateException) throws MangooTemplateEngineException {
         Map<String, Object> content = new HashMap<>();
         content.put("templateException", templateException);
