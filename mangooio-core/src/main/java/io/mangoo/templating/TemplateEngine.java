@@ -68,6 +68,7 @@ public class TemplateEngine {
         }
     }
 
+    @SuppressFBWarnings(justification = "SourceCodePath should intentionally come from user file path", value = "TEMPLATE_INJECTION_FREEMARKER")
     public String renderTemplate(TemplateContext context) throws MangooTemplateEngineException {
         Template template;
         try {
