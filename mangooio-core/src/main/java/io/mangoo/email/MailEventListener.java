@@ -25,7 +25,7 @@ public class MailEventListener {
     
     @Inject
     public MailEventListener(Config config) {
-        Objects.requireNonNull(config,  Required.CONFIG.toString());
+        Objects.requireNonNull(config, Required.CONFIG.toString());
         
         Builder builder = MailServer.create()
                 .host(config.getSmtpHost())
