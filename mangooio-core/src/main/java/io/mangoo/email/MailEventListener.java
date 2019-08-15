@@ -1,8 +1,10 @@
 package io.mangoo.email;
 
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -26,7 +28,9 @@ import jodd.mail.SmtpSslServer;
 public class MailEventListener {
     private SmtpServer smtpServer;
     private SmtpSslServer smtpSslServer;
-    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+    private ExecutorService executor = 
+            new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>(1000));
     
     @Inject
     public MailEventListener(Config config) {
@@ -41,6 +45,7 @@ public class MailEventListener {
             builder.auth(config.getSmtpUsername(), config.getSmtpPassword());
         }
         
+        
         if (config.isSmtpSSL()) {
             builder.ssl(true);
             this.smtpSslServer = new SmtpSslServer(builder);
@@ -54,6 +59,6 @@ public class MailEventListener {
     @Subscribe
     public void listen(Email email) {
         Objects.requireNonNull(email, Required.EMAIL.toString());
-        executor.execute(new MailExecutor(this.smtpSslServer, this.smtpServer, email));
+        this.executor.execute(new MailExecutor(this.smtpSslServer, this.smtpServer, email));
     }
 }

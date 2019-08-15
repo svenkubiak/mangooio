@@ -32,11 +32,13 @@ public class MailExecutor implements Runnable {
             session = this.smtpServer.createSession();
         }
         
-        try {
-            session.open();
-            session.sendMail(this.mail);
-        } finally {
-            session.close();             
+        if (session != null) {
+            try {
+                session.open();
+                session.sendMail(this.mail);
+            } finally {
+                session.close();             
+            } 
         }
     }
 }
