@@ -30,7 +30,7 @@ public class MailEventListener {
     private SmtpSslServer smtpSslServer;
     private ExecutorService executor = 
             new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>(1000));
+            new LinkedBlockingQueue<Runnable>(500));
     
     @Inject
     public MailEventListener(Config config) {
