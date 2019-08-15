@@ -684,16 +684,37 @@ public class Config {
     }
 
     /**
-     * @return scheduler.enable
+     * @return scheduler.enable or default value if undefined
      */
     public boolean isSchedulerEnabled() {
         return getBoolean(Key.SCHEDULER_ENABLE, Default.SCHEDULER_ENABLE.toBoolean());
     }
 
     /**
-     * @return application.admin.secret
+     * @return application.admin.secret or null if undefined
      */
     public String getApplicationAdminSecret() {
         return getString(Key.APPLICATION_ADMIN_SECRET, null);
+    }
+
+    /**
+     * @return smtp.debug or default value if undefined
+     */
+    public boolean isSmtpDebug() {
+        return getBoolean(Key.SMTP_DEBUG, Default.SMTP_DEBUG.toBoolean());
+    }
+
+    /**
+     * @return smtp.plaintexttls or default value if undefined
+     */
+    public boolean isSmtpPlaintextOverTLS() {
+        return getBoolean(Key.SMTP_PLAINTEXTTLS, Default.SMTP_PLAINTEXTTLS.toBoolean());
+    }
+
+    /**
+     * @return smtp.starttls or default value if undefined
+     */
+    public boolean isSmtpStartTlsRequired() {
+        return getBoolean(Key.SMTP_STARTTLS, Default.SMTP_STARTTLS.toBoolean());
     }
 }

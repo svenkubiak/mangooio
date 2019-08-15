@@ -29,7 +29,6 @@
 	host = localhost
 	port = 25
     username = foo
-    password = bar
     ssl = false
 []
 

@@ -23,7 +23,7 @@ import io.mangoo.exceptions.MangooEventBusException;
 public class EventBusServiceTest {
 
     @Test
-    public void testEventBus() throws MangooEventBusException  {
+    public void testEventBus() throws MangooEventBusException, InterruptedException  {
         //given
         EventBusService busManager = Application.getInstance(EventBusService.class);
         TestListener testListener = new TestListener();
@@ -35,6 +35,7 @@ public class EventBusServiceTest {
         busManager.publish("This is a test");
         
         //then
+        Thread.sleep(2000);
         assertThat(testListener.getCount(), equalTo(3));
         assertThat(busManager.getNumListeners(), equalTo(2L));
         

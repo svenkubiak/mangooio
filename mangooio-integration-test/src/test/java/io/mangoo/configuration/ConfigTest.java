@@ -1568,4 +1568,97 @@ public class ConfigTest {
         
         return configTestFile;
     }
+    
+    @Test
+    public void testIsSmtpDebug() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String debug = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("smtp.debug", debug);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isSmtpDebug(), equalTo(Boolean.valueOf(debug)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSmtpDebugDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSmtpPlaintextOverTLS() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String tls = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("smtp.plaintexttls", tls);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isSmtpPlaintextOverTLS(), equalTo(Boolean.valueOf(tls)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSmtpPlaintextOverTLSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_PLAINTEXTTLS.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSmtpStartTLS() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String tls = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("smtp.starttls", tls);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isSmtpStartTlsRequired(), equalTo(Boolean.valueOf(tls)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testIsSmtpStartTLSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isSmtpStartTlsRequired(), equalTo(Default.SMTP_STARTTLS.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
 }

@@ -14,11 +14,11 @@ public enum Default {
     APPLICATION_ADMIN_ENABLE(Constants.FALSE),
     APPLICATION_CONTROLLER("controllers."),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
+    APPLICATION_HEADERS_FEATUREPOLICY(""),
     APPLICATION_HEADERS_REFERERPOLICY("no-referrer"),
     APPLICATION_HEADERS_SERVER("Undertow"),
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("nosniff"),
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
-    APPLICATION_HEADERS_FEATUREPOLICY(""),
     APPLICATION_HEADERS_XSSPROTECTION("1"),
     APPLICATION_JWT_ENCRYPT(Constants.FALSE),
     APPLICATION_LANGUAGE("en"),
@@ -72,20 +72,31 @@ public enum Default {
     SESSION_COOKIE_EXPIRES("0"),
     SESSION_COOKIE_NAME("MANGOOIO-SESSION"),
     SESSION_COOKIE_SECURE(Constants.FALSE),
+    SMTP_DEBUG(Constants.FALSE),
     SMTP_FROM("mangoo I/O <noreply@example.com>"),
     SMTP_HOST("localhost"),
+    SMTP_PLAINTEXTTLS(Constants.FALSE),
     SMTP_PORT("25"),
     SMTP_SERVER_NAME("smtp"),
     SMTP_SSL(Constants.FALSE),
+    SMTP_STARTTLS(Constants.TRUE),
     SSE_CACHE_PREFIX("MANGOOIO-SSE-"),
     STYLESHEET_FOLDER("stylesheet"),
     TEMPLATES_FOLDER("/templates/"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
-    VERSION_UNKNOW("unknown"),
     VERSION_PROPERTIES("version.properties"),
+    VERSION_UNKNOW("unknown"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
+    private static class Constants {
+        public static final String FALSE = "false";
+        public static final String TRUE = "true";
+        
+        private Constants() {
+        }
+    }
     private static Map<String, String> messages = new HashMap<>();
+    
     static {
         messages.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
         messages.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
@@ -103,13 +114,10 @@ public enum Default {
         messages.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
     }
     
-    private static class Constants {
-        public static final String FALSE = "false";
-        
-        private Constants() {
-        }
+    public static Map<String, String> getMessages() {
+        return messages;
     }
-    
+
     private final String value;
 
     Default (String value) {
@@ -123,13 +131,9 @@ public enum Default {
     public int toInt() {
         return Integer.parseInt(this.value);
     }
-
+    
     public long toLong() {
         return Long.parseLong(this.value);
-    }
-    
-    public static Map<String, String> getMessages() {
-        return messages;
     }
     
     @Override
