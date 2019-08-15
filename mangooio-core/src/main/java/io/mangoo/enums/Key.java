@@ -9,8 +9,8 @@ package io.mangoo.enums;
 public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
-    APPLICATION_ADMIN_USERNAME("application.admin.username"),
     APPLICATION_ADMIN_SECRET("application.admin.secret"),
+    APPLICATION_ADMIN_USERNAME("application.admin.username"),
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_LANGUAGE("application.language"),
@@ -55,11 +55,14 @@ public enum Key {
     SESSION_COOKIE_NAME("session.cookie.name"),
     SESSION_COOKIE_SECURE("session.cookie.secure"),
     SESSION_COOKIE_SIGNKEY("session.cookie.signkey"),
+    SMTP_DEBUG("smtp.debug"),
     SMTP_FROM("smtp.from"),
     SMTP_HOST("smtp.host"),
     SMTP_PASSWORD("smtp.password"),
+    SMTP_PLAINTEXTTLS("smtp.plaintexttls"),
     SMTP_PORT("smtp.port"),
     SMTP_SSL("smtp.ssl"),
+    SMTP_STARTTLS("smtp.starttls"),
     SMTP_USERNAME("smtp.username"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 

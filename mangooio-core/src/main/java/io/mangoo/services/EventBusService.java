@@ -1,9 +1,10 @@
 package io.mangoo.services;
 
 import java.util.Objects;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.inject.Singleton;
 
 import io.mangoo.enums.Required;
@@ -16,12 +17,12 @@ import io.mangoo.exceptions.MangooEventBusException;
 */
 @Singleton
 public class EventBusService {
-    private EventBus eventBus;
+    private AsyncEventBus asyncEventBus;
     private AtomicLong listeners = new AtomicLong();
     private AtomicLong events = new AtomicLong();
     
     public EventBusService() {
-        this.eventBus = new EventBus();
+        this.asyncEventBus = new AsyncEventBus(Executors.newCachedThreadPool());
     }
     
     /**
@@ -32,7 +33,7 @@ public class EventBusService {
     public void register(Object eventListener) {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
-        this.eventBus.register(eventListener);
+        this.asyncEventBus.register(eventListener);
         this.listeners.getAndIncrement();
     }
     
@@ -46,7 +47,7 @@ public class EventBusService {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
         try {
-            this.eventBus.unregister(eventListener);
+            this.asyncEventBus.unregister(eventListener);
         } catch (IllegalArgumentException e) {
             throw new MangooEventBusException(e);
         }
@@ -64,7 +65,7 @@ public class EventBusService {
     public void publish(Object event) {
         Objects.requireNonNull(event, Required.EVENT.toString());
         
-        this.eventBus.post(event);
+        this.asyncEventBus.post(event);
         this.events.getAndIncrement();
     }
     
