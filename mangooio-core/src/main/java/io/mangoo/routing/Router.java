@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.google.common.base.Preconditions;
 import com.tc.text.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.routes.FileRoute;
@@ -25,6 +26,7 @@ import io.mangoo.routing.routes.WebSocketRoute;
  * @author svenkubiak
  *
  */
+@SuppressFBWarnings(value = "PMB_POSSIBLE_MEMORY_BLOAT", justification = "Route size is limited")
 public final class Router {
     private static Set<MangooRoute> routes = ConcurrentHashMap.newKeySet();
     private static Map<String, RequestRoute> reverseRoutes = new ConcurrentHashMap<>();
