@@ -23,6 +23,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
@@ -186,6 +187,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.metricsPath());
     }
     
+    @SuppressFBWarnings(value = "CE_CLASS_ENVY", justification = "JSONObject creation as intended")
     public Response routes() {
         List<JSONObject> routes = getRoutes();
         

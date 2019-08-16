@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
@@ -40,6 +41,7 @@ public class CacheProvider implements Provider<Cache> {
     private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
 
     @Inject
+    @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
     public CacheProvider(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         

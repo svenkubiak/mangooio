@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
@@ -52,10 +54,13 @@ public class Messages implements Serializable {
      * @return The localized value or null value if the given key is not configured
      */
     public String get(String key, Object... arguments) {
-        if (this.bundle.containsKey(key)) {
-            return MessageFormat.format(this.bundle.getString(key), arguments);
-        } else if (this.defaults.containsKey(key)) {
-            return MessageFormat.format(this.defaults.get(key), arguments);
+        String bundle = this.bundle.getString(key);
+        String defaults = this.defaults.get(key);
+        
+        if (StringUtils.isNotBlank(bundle)) {
+            return MessageFormat.format(bundle, arguments);
+        } else if (StringUtils.isNotBlank(defaults)) {
+            return MessageFormat.format(defaults, arguments);
         } else {
             // Ignore anything else
         }
