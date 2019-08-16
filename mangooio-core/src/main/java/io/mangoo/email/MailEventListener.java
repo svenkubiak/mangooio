@@ -61,4 +61,8 @@ public class MailEventListener {
         Objects.requireNonNull(email, Required.EMAIL.toString());
         this.executor.execute(new MailExecutor(this.smtpSslServer, this.smtpServer, email));
     }
+    
+    public void shutdown() {
+        this.executor.shutdown();
+    }
 }

@@ -11,6 +11,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.build.Minification;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Suffix;
@@ -36,6 +37,7 @@ public class MinifyMojo extends AbstractMojo {
         minifyFiles(baseDir);
     }
     
+    @SuppressFBWarnings(value = "ISB_TOSTRING_APPENDING", justification = "toString is called on an enum")
     public void minifyFiles(String directoryName){
         StringBuilder buffer = new StringBuilder();
         buffer.append(directoryName).append('/').append(Default.FILES_PATH.toString());
