@@ -26,11 +26,12 @@ import jodd.mail.SmtpSslServer;
  */
 @Singleton
 public class MailEventListener {
+    private static final int QUEUE_SIZE = 100;
     private SmtpServer smtpServer;
     private SmtpSslServer smtpSslServer;
     private ExecutorService executor = 
             new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>(500));
+            new LinkedBlockingQueue<Runnable>(QUEUE_SIZE));
     
     @Inject
     public MailEventListener(Config config) {
@@ -44,7 +45,6 @@ public class MailEventListener {
         if (StringUtils.isNotBlank(config.getSmtpUsername()) && StringUtils.isNotBlank(config.getSmtpPassword())) {
             builder.auth(config.getSmtpUsername(), config.getSmtpPassword());
         }
-        
         
         if (config.isSmtpSSL()) {
             builder.ssl(true);

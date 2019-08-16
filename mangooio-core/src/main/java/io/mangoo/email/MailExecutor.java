@@ -30,6 +30,8 @@ public class MailExecutor implements Runnable {
             session = this.smtpSslServer.createSession();
         } else if (this.smtpServer != null) {
             session = this.smtpServer.createSession();
+        } else {
+            //do nothing
         }
         
         if (session != null) {
