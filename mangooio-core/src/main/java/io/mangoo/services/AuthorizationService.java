@@ -30,7 +30,9 @@ public class AuthorizationService implements MangooAuthorizationService {
     private static final Logger LOG = LogManager.getLogger(AuthorizationService.class);
     private Enforcer enforcer;
     
-    @SuppressFBWarnings(justification = "This instance is a Singleton and writes a boolean value to org.casbin.jcasbin.util.Util", value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD, URLCONNECTION_SSRF_FD")
+    @SuppressFBWarnings(
+            value={"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD, URLCONNECTION_SSRF_FD"},
+            justification="File Path is never accessed directly by application")
     public AuthorizationService () {
         Util.enableLog = false;
         
