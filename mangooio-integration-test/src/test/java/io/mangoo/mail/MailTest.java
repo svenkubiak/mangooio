@@ -1,5 +1,6 @@
 package io.mangoo.mail;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.MessagingException;
 
@@ -47,7 +49,7 @@ public class MailTest {
     }
     
     @Test
-    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException, MangooTemplateEngineException, InterruptedException {
+    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(0));
@@ -63,15 +65,13 @@ public class MailTest {
             .templateMessage("emails/simple.ftl", content)
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey"));
-        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1));
+        await().atMost(8, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey")));
+        await().atMost(8, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1)));
     }
     
     @Test
-    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException, MangooTemplateEngineException, InterruptedException {
+    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(0));
@@ -87,15 +87,13 @@ public class MailTest {
             .templateMessage("emails/html.ftl", content)
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(1));
-        assertThat(greenMail.getReceivedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong"));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(1)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong")));
     }
 
     @Test
-    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException, MangooTemplateEngineException, InterruptedException {
+    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -117,11 +115,9 @@ public class MailTest {
             .templateMessage("emails/multipart.ftl", content)
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(file.delete(), equalTo(true));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
     }
     
     @Test
@@ -139,15 +135,13 @@ public class MailTest {
                     .textMessage("what is dead may never die"))
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die"));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die")));
     }
     
     @Test
-    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException, MessagingException, InterruptedException {
+    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException, MessagingException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -161,16 +155,14 @@ public class MailTest {
                     .textMessage("This is a body with üäö"))
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), equalTo("This is a body with üäö\r\n"));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ")));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), equalTo("This is a body with üäö\r\n")));
     }
     
     @Test
-    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException, InterruptedException {
+    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -184,12 +176,10 @@ public class MailTest {
                     .htmlMessage("This is a body with üäö"))
             .send();
         
-        Thread.sleep(2000);
-        
         //then
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1));
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ"));
-        assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n"));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getSubject().toString(), equalTo("ÄÜÖ")));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat((greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent()), equalTo("This is a body with üäö\r\n")));
     }
     
     @AfterAll
