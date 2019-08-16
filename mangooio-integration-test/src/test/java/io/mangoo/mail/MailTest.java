@@ -66,8 +66,8 @@ public class MailTest {
             .send();
         
         //then
-        await().atMost(8, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey")));
-        await().atMost(8, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1)));
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey")));
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1)));
     }
     
     @Test
