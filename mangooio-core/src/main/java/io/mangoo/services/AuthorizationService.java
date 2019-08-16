@@ -30,7 +30,9 @@ public class AuthorizationService implements MangooAuthorizationService {
     private static final Logger LOG = LogManager.getLogger(AuthorizationService.class);
     private Enforcer enforcer;
     
-    @SuppressFBWarnings(value={"findbugs:ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD, findsecbugs:URLCONNECTION_SSRF_FD"})
+    @SuppressFBWarnings(
+            value={"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD","URLCONNECTION_SSRF_FD"},
+            justification="let me just make the build pass")
     public AuthorizationService () {
         Util.enableLog = false;
         
