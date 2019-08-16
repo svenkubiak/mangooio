@@ -49,28 +49,6 @@ public class MailTest {
     }
     
     @Test
-    public void testSimpleEmail() throws MangooMailerException, MessagingException, IOException, FolderException, MangooTemplateEngineException {
-        //given
-        greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(0));
-        Map<String, Object> content = new HashMap<>();
-        content.put("king", "geofrey");
-        
-        //when
-        Mail.build()
-            .withBuilder(Email.create()
-                    .from("Jon Snow <jon.snow@winterfell.com>")
-                    .to("sansa.stark@winterfell.com")
-                    .subject("Lord of light"))
-            .templateMessage("emails/simple.ftl", content)
-            .send();
-        
-        //then
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com")[0].getContent().toString(), containsString("geofrey")));
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("winterfell.com").length, equalTo(1)));
-    }
-    
-    @Test
     public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MessagingException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
