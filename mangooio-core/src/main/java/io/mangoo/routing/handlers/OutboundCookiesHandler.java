@@ -242,6 +242,10 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(CorsHandler.class).handleRequest(exchange);
+        if (this.config.isCorsEnable()) {
+            Application.getInstance(CorsHandler.class).handleRequest(exchange);            
+        } else {
+            Application.getInstance(ResponseHandler.class).handleRequest(exchange);  
+        }
     }
 }
