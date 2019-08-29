@@ -29,6 +29,10 @@ public class ApplicationController {
     public Response route() {
         return Response.withOk();
     }
+    
+    public Response api() {
+        return Response.withOk().andEmptyBody();
+    }
 
     public Response redirect() {
         return Response.withRedirect("/");

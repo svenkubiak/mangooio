@@ -50,6 +50,15 @@
 [smtp<test>]
 	port = 3025
 	username = bla
+[cors<test>]
+	enable = true
+	alloworigin = ^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$
+	urlpattern = ^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$	
+	headers.allowcredentials = true
+	headers.allowheaders = Content-Range,ETag
+	headers.allowmethods = GET,POST,PATCH
+	headers.exposeheaders = Authorization,Content-Type
+	headers.maxage = 86400
 []
 
 [application<dev>]

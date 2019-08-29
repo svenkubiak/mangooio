@@ -379,4 +379,22 @@ public class ApplicationControllerTest {
         assertThat(response.getHeader(Header.FEATURE_POLICY.toString()), equalTo("myFeaturePolicy"));
         assertThat(response.getHeader(Header.REFERER_POLICY.toString()), equalTo("no-referrer"));
     }
+    
+    @Test
+    public void testCorsHeaders() {
+        //given
+        final TestResponse response = TestRequest.options("/api")
+                .withHeader("Origin", "localhost")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("localhost"));
+        assertThat(response.getHeader("Access-Control-Allow-Credentials"), equalTo("true"));
+        assertThat(response.getHeader("Access-Control-Allow-Headers"), equalTo("Content-Range,ETag"));
+        assertThat(response.getHeader("Access-Control-Allow-Methods"), equalTo("GET,POST,PATCH"));
+        assertThat(response.getHeader("Access-Control-Expose-Headers"), equalTo("Authorization,Content-Type"));
+        assertThat(response.getHeader("Access-Control-Max-Age"), equalTo("86400"));
+    }
 }

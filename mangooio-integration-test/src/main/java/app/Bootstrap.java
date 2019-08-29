@@ -131,6 +131,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/route").respondeWith("route"),
                 On.post().to("/").respondeWith("index"),
                 On.put().to("/put").respondeWith("put"),
+                On.options().to("/api").respondeWith("api"),
                 On.patch().to("/").respondeWith("index"),
                 On.head().to("/").respondeWith("index"),
                 On.delete().to("/").respondeWith("index"),

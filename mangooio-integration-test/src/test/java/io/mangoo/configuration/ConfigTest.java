@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -1659,6 +1660,254 @@ public class ConfigTest {
 
         // then
         assertThat(config.isSmtpStartTlsRequired(), equalTo(Default.SMTP_STARTTLS.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testCorsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String cors = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.enable", cors);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isCorsEnable(), equalTo(Boolean.valueOf(cors)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testCorsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsAllowOrigin() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String origin = "^http(s)?://(www.)?example.(com|org)$";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.alloworigin", origin);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(origin).toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsAllowOriginDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOWORIGIN.toString()).toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowCredentials() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String credentials = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.headers.allowcredentials", credentials);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(credentials));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowCredentialsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOWCREDENTIALS.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String headers = "Authorization,Content-Type";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.headers.allowheaders", headers);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(headers));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOWHEADERS.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowMethods() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String headers = "GET,POST";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.headers.allowmethods", headers);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsHeadersAllowMethods(), equalTo(headers));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersAllowMethodsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOWMETHODS.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersExposeHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String headers = "Accept-Ranges,Content-Length";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.headers.exposeheaders", headers);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(headers));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersExposeHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSEHEADERS.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersMaxAge() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String maxage = "86400";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.headers.maxage", maxage);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsHeadersMaxAge(), equalTo(maxage));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsHeadersMaxAgeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAXAGE.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsUrlPattern() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String pattern = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("cors.urlpattern", pattern);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(pattern).toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetCorsUrlPatternDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URLPATTERN.toString()).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 }
