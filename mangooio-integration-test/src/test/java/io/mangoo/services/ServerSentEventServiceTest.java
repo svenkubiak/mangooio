@@ -123,48 +123,6 @@ public class ServerSentEventServiceTest {
         sseEventSource.close();
         client.close();
 	}
-// FIXME: Test is currently failing
-//    @Test
-//    public void testSendDataWithValidAuthentication() throws InterruptedException, IllegalArgumentException, JoseException {
-//        //given
-//        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
-//        final Config config = Application.getInstance(Config.class);
-//        final String data = "Server sent data with authentication FTW!";
-//        
-//        JwtClaims jwtClaims = new JwtClaims();
-//        jwtClaims.setSubject("foo");
-//        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
-//        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-//        
-//        JsonWebSignature jsonWebSignature = new JsonWebSignature();
-//        jsonWebSignature.setKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
-//        jsonWebSignature.setPayload(jwtClaims.toJson());
-//        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
-//        
-//        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
-//        
-//        //when
-//        final WebTarget target = ClientBuilder.newBuilder()
-//                .register(SseFeature.class)
-//                .build()
-//                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-//        
-//        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), jwt));
-//        final EventSource eventSource = EventSource.target(customWebTarget).build();
-//        final EventListener listener = new EventListener() {
-//            @Override
-//            public void onEvent(InboundEvent inboundEvent) {
-//                eventData = inboundEvent.readData(String.class);
-//            }
-//        };
-//        eventSource.register(listener);
-//        eventSource.open();
-//        serverSentEventService.send("/sseauth", data);
-//
-//        //then
-//        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
-//        eventSource.close();
-//    }
 
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, JoseException {

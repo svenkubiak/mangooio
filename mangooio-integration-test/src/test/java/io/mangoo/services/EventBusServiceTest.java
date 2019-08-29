@@ -1,8 +1,10 @@
 package io.mangoo.services;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
@@ -35,15 +37,14 @@ public class EventBusServiceTest {
         busManager.publish("This is a test");
         
         //then
-        Thread.sleep(2000);
-        assertThat(testListener.getCount(), equalTo(3));
-        assertThat(busManager.getNumListeners(), equalTo(2L));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(testListener.getCount(), equalTo(3)));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(2L)));
         
         //when
         busManager.unregister(testListener);
         
         //then
-        assertThat(busManager.getNumListeners(), equalTo(1L));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(1L)));
         
         MatcherAssert.assertThat(t -> {
             //given
