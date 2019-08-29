@@ -96,6 +96,12 @@ public enum Default {
     VERSION_UNKNOW("unknown"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
+    Default (String value) {
+        this.value = value;
+    }
+
+    private final String value;
+    
     private static class Constants {
         public static final String FALSE = "false";
         public static final String TRUE = "true";
@@ -124,12 +130,6 @@ public enum Default {
     
     public static Map<String, String> getMessages() {
         return messages;
-    }
-
-    private final String value;
-
-    Default (String value) {
-        this.value = value;
     }
 
     public boolean toBoolean() {

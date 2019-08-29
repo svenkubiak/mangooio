@@ -45,7 +45,6 @@ public class CorsHandler implements HttpHandler {
         String origin = getOrigin(exchange);
         if (StringUtils.isNotBlank(origin) && this.config.getCorsAllowOrigin().matcher(origin).matches()) {
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_ORIGIN, exchange)) {
-                System.out.println("aDDING HEADER");
                 addHeader(exchange, ACCESS_CONTROL_ALLOW_ORIGIN, origin);
             }
             
@@ -72,7 +71,7 @@ public class CorsHandler implements HttpHandler {
     }
 
     private String getOrigin(HttpServerExchange exchange) {
-        HeaderValues headers = ((HttpServerExchange) exchange).getRequestHeaders().get("Origin");
+        HeaderValues headers = exchange.getRequestHeaders().get("Origin");
         return headers == null ? null : headers.peekFirst();
     }
     
