@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
@@ -51,6 +52,7 @@ public class Messages implements Serializable {
      * @param arguments The arguments to use
      * @return The localized value or null value if the given key is not configured
      */
+    @SuppressFBWarnings(justification = "Key access as intended", value = "MUI_CONTAINSKEY_BEFORE_GET")
     public String get(String key, Object... arguments) {
         if (this.bundle.containsKey(key)) {
             return MessageFormat.format(this.bundle.getString(key), arguments);
