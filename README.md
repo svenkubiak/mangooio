@@ -33,9 +33,9 @@ Here are some key features of mangoo I/O in a nutshell:
 * Strong cryptography and enforced security
 * Build-in EventBus for asynchronous tasks
 * Administrative interface
+* Supports CORS
 * Build-in asset minification
 * Flexible testing tools
-* Supports CORS
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
