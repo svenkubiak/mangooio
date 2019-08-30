@@ -35,6 +35,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Administrative interface
 * Build-in asset minification
 * Flexible testing tools
+* Supports CORS
 * Simple Deployment and CI-Integration
 * Preprocessor for LESS and SASS
 * i18N Internationalization
@@ -59,12 +60,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.235 Sonar rules
-* 9.212 Lines of code
-* 2.441 Commits
-* 533 Unit tests
-* 3+ years development maturity
-* 243 cups of coffee (estimated)
+* 1.335 Sonar rules
+* 9.472 Lines of code
+* 2.566 Commits
+* 554 Unit tests
+* 4+ years development maturity
+* 283 cups of coffee (estimated)
 
 ## Resources
 
