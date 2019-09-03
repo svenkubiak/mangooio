@@ -25,7 +25,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		<log4j.version>2.12.1</log4j.version>
-		<maven.version>3.6.1</maven.version>
+		<maven.version>3.6.2</maven.version>
 		<jersey.version>2.29</jersey.version>
 		<junit.version>5.5.1</junit.version>
 		<junit.platform.version>1.5.1</junit.platform.version>
