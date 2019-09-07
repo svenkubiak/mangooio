@@ -26,7 +26,7 @@
               <span class="info-box-icon bg-success"><i class="fa fa-battery-half"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Free memory</span>
-                <span class="info-box-number">${freeMemory}</span>
+                <span class="info-box-number"><div id="freememory">${freeMemory}</div></span>
               </div>
             </div>
           </div>
@@ -35,7 +35,7 @@
               <span class="info-box-icon bg-warning"><i class="fa fa-battery-full"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Allocated memory</span>
-                <span class="info-box-number">${allocatedMemory}</span>
+                <span class="info-box-number"><div id="allocatedmemory">${allocatedMemory}</div></span>
               </div>
             </div>
           </div>

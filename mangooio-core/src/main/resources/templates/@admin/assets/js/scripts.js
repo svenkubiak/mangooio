@@ -61,3 +61,10 @@ $(document).ready(function(){
 		});
     }); 
 });
+
+window.setInterval(function(){
+	$.getJSON( "/@admin/health", function( data ) {
+		$("#freememory").text(data.freeMemory);
+		$("#allocatedmemory").text(data.allocatedMemory);
+	}); 
+}, 1000);
