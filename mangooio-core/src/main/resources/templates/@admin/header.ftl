@@ -8,7 +8,6 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>mangoo I/O | Admin Dashboard</title>
   <link rel="stylesheet" href="/@admin/assets/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/@admin/assets/css/ionicons.min.css">
   <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
   <link rel="stylesheet" href="/@admin/assets/css/styles.css">
 </head>
@@ -62,7 +61,7 @@
             </a>   
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/health" class="nav-link">
+            <a href="/@admin/health" target="_blank" class="nav-link">
               <i class="nav-icon fa fa-heartbeat"></i>
               <p>Health</p>
             </a>                                                             

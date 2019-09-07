@@ -19,9 +19,6 @@
                 		<h3>${totalRequests}</h3>
                 		<p>Total requests</p>
               		</div>
-              		<div class="icon">
-                		<i class="ion ion-checkmark-circled"></i>
-              		</div>
             	</div>
           </div>
           <div class="col-lg-4 col-6">
@@ -30,9 +27,6 @@
 					<h3>${dataSend}</h3>
               		<p>Data send</p>
 				</div>
-              	<div class="icon">
-                	<i class="ion ion-stats-bars"></i>
-              	</div>
 			</div>
           </div>
           <div class="col-lg-4 col-6">
@@ -40,9 +34,6 @@
             	<div class="inner">
                 	<h3>${errorRate} <sup id="percentage">%</sup></h3>
                 	<p>Error rate</p>
-              	</div>
-              	<div class="icon">
-                	<i class="ion ion-close-circled"></i>
               	</div>
             </div>
           </div>
@@ -54,9 +45,6 @@
                 <h3>${minRequestTime} ms</h3>
                 <p>Min process time</p>
               </div>
-              <div class="icon">
-                <i class="ion ion-arrow-graph-up-right"></i>
-              </div>
             </div>
           </div>
           <div class="col-lg-4 col-6">
@@ -65,9 +53,6 @@
                 <h3>${avgRequestTime} ms</h3>
                 <p>Avg process time</p>
               </div>
-              <div class="icon">
-                <i class="ion ion-log-in"></i>
-              </div>
             </div>
           </div>
           <div class="col-lg-4 col-6">
@@ -75,9 +60,6 @@
               <div class="inner">
                 <h3>${maxRequestTime} ms</h3>
                 <p>Max process time</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-arrow-graph-down-right"></i>
               </div>
             </div>
           </div>
@@ -89,9 +71,6 @@
                 <h3>${events}</h3>
                 <p>EventBus events</p>
               </div>
-              <div class="icon">
-                <i class="ion ion-android-bus"></i>
-              </div>
             </div>
           </div>
           <div class="col-lg-4 col-6">
@@ -99,9 +78,6 @@
               <div class="inner">
                 <h3>${listeners}</h3>
                 <p>EventBus listeners</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-ios-telephone"></i>
               </div>
             </div>
           </div>
