@@ -28,7 +28,7 @@
                     <textarea class="form-control" rows="9" disabled="" name="privatekey" id="privatekey"></textarea>
                   </div>
                 <div class="card-footer">
-                  <button type="button" class="btn btn-block btn-primary" id="keypair">Generate</button>
+                  <button type="button" class="btn btn-block btn-primary btn-lg" id="keypair">Generate</button>
                 </div>
               </form>
             </div>
@@ -54,7 +54,7 @@
                     <textarea class="form-control" rows="5" id="encryptedvalue" name="encryptedvalue" disabled=""></textarea>
                   </div>
                 <div class="card-footer">
-                  <button type="button" class="btn btn-block btn-primary" id="encrypt">Encrypt</button>
+                  <button type="button" class="btn btn-block btn-primary btn-lg" id="encrypt">Encrypt</button>
                 </div>
               </form>
             </div>

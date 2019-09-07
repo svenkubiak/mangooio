@@ -40,17 +40,6 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="fa fa-file-code-o"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">mangoo I/O version</span>
-                <span class="info-box-number">${version}</span>
-              </div>
-            </div>
-          </div>          
-        </div>
       </div>
     </section>
   </div>

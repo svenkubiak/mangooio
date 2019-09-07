@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
   <link rel="stylesheet" href="/@admin/assets/css/styles.css">
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
   <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
     <ul class="navbar-nav">
