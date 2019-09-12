@@ -84,7 +84,6 @@ javadocs:
    - git config --global user.name "Sven Kubiak"
    - git add -A && git commit -m "Updated JavaDoc"
    - git push -f "https://svenkubiak:$GITHUB_API_KEY@github.com/svenkubiak/mangooio" gh-pages &>/dev/null
-  stage: javadocs
   only:
     - tags
   except:
