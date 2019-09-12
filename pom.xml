@@ -61,6 +61,7 @@
 						<optimize>true</optimize>
 						<debug>false</debug>
 						<showDeprecation>true</showDeprecation>
+						<fork>true</fork>
 					</configuration>
 				</plugin>
 				<plugin>
