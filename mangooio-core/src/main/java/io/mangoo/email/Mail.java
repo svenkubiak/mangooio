@@ -67,6 +67,28 @@ public class Mail {
     }
     
     /**
+     * Sets a template to be rendered for the email. Using a template
+     * will make it a HTML Email by default.
+     *
+     * @param template The template to use
+     * @return A mail object instance
+     * @throws MangooTemplateEngineException if rendering of template fails
+     */
+    public Mail templateMessage(String template) throws MangooTemplateEngineException {
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
+
+        if (template.charAt(0) == '/' || template.startsWith("\\")) {
+            template = template.substring(1, template.length());
+        } 
+        
+        this.email.htmlMessage(
+                Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext().withTemplatePath(template)),
+                Default.ENCODING.toString());
+
+        return this;
+    }    
+    
+    /**
      * Sends the mail
      * 
      * @throws MangooMailerException when sending the mail failed

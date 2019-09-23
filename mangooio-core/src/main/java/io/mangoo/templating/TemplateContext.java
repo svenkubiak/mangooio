@@ -24,6 +24,10 @@ public class TemplateContext {
     private String templatePath;
     private Map<String, Object> content = new HashMap<>();
     
+    public TemplateContext() {
+        this.content.put("route", new RouteMethod());
+    }
+    
     public TemplateContext(Map<String, Object> content) {
         this.content = content;
         this.content.put("route", new RouteMethod());
