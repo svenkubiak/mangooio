@@ -399,7 +399,7 @@
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.17</version>
+				<version>0.18</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -480,7 +480,7 @@
 			<dependency>
 				<groupId>io.bit3</groupId>
 				<artifactId>jsass</artifactId>
-				<version>5.9.2</version>
+				<version>5.10.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
