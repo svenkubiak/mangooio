@@ -100,7 +100,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>5.2.1</version>
+					<version>5.2.2</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -108,6 +108,11 @@
 							<suppressionFile>${maven.multiModuleProjectDirectory}/owasp-suppression.xml</suppressionFile>
 						</suppressionFiles>
 						<assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+						<composerAnalyzerEnabled>false</composerAnalyzerEnabled>
+						<nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
+						<nuspecAnalyzerEnabled>false</nuspecAnalyzerEnabled>
+						<cocoapodsAnalyzerEnabled>false</cocoapodsAnalyzerEnabled>
+						<golangDepEnabled>false</golangDepEnabled>
 					</configuration>
 					<executions>
 						<execution>
@@ -120,7 +125,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.6.1.1688</version>
+					<version>3.7.0.1746</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -235,7 +240,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-utils</artifactId>
-				<version>3.2.1</version>
+				<version>3.3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
