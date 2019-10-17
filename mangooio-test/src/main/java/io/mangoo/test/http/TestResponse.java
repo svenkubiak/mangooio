@@ -31,6 +31,7 @@ import com.google.common.collect.Multimap;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
 import io.undertow.util.Methods;
 
 /**
@@ -43,29 +44,24 @@ public class TestResponse {
     private static final String CONTENT_TYPE = "Content-Type";
     private static final int TWO_SECONDS = 2;
     private CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
-    private Authenticator authenticator;
-    private HttpRequest.Builder httpRequest = HttpRequest.newBuilder();
+    private HttpRequest.Builder httpRequest = HttpRequest.newBuilder().timeout(Duration.of(TWO_SECONDS, ChronoUnit.SECONDS));
     private BodyPublisher body = BodyPublishers.noBody();
-    private HttpClient.Builder httpClient = HttpClient.newBuilder();
+    private HttpClient.Builder httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).cookieHandler(this.cookieManager);
+    private Authenticator authenticator;
     private HttpResponse<String> httpResponse;
     private String uri;
     private String url;
     private String method;
-    
-    public TestResponse (String uri, String method) {
-        this.uri = uri;
-        this.method = method;
-        init();
-    }
 
     public TestResponse() {
-        init();
     }
-
-    private final void init() {
-        this.httpRequest.timeout(Duration.of(TWO_SECONDS, ChronoUnit.SECONDS));
-        this.httpClient.followRedirects(HttpClient.Redirect.ALWAYS);
-        this.httpClient.cookieHandler(this.cookieManager);
+    
+    public TestResponse (String uri, String method) {
+        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        
+        this.uri = uri;
+        this.method = method;
     }
     
     /**
@@ -76,8 +72,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHeader(String name, String value) {
-        Objects.requireNonNull(name, "name can not be null");
-        Objects.requireNonNull(value, "value can not be null");
+        Objects.requireNonNull(name, Required.NAME.toString());
+        Objects.requireNonNull(value, Required.VALUE.toString());
         
         this.httpRequest.header(name, value);
         
@@ -92,7 +88,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHTTPMethod(String method) {
-        Objects.requireNonNull(method, "method can not be null");
+        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
         
         this.method = method;
         
@@ -110,7 +106,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withTimeout(long amount, TemporalUnit unit) {
-        Objects.requireNonNull(method, "method can not be null");
+        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(method, Required.UNIT.toString());
 
         this.httpRequest.timeout(Duration.of(amount, unit));
         
@@ -126,8 +123,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, "username can not be null");
-        Objects.requireNonNull(password, "password can not be null");
+        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
 
         this.authenticator = new Authenticator() {
             @Override
@@ -149,7 +146,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse to(String uri) {
-        Objects.requireNonNull(uri, "uri can not be null");
+        Objects.requireNonNull(uri, Required.URI.toString());
 
         this.uri = uri;
         return this;
@@ -163,7 +160,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withCookie(HttpCookie cookie) {
-        Objects.requireNonNull(cookie, "cookie can not be null");
+        Objects.requireNonNull(cookie, Required.COOKIE.toString());
 
         this.cookieManager.getCookieStore().add(null, cookie);
         
@@ -193,7 +190,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withContentType(String contentType) {
-        Objects.requireNonNull(contentType, "contentType can not be null");
+        Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
 
         this.httpRequest.header(CONTENT_TYPE, contentType);
         

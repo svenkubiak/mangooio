@@ -100,6 +100,7 @@ public enum Required {
     TRIGGER("trigger can not be null"),
     TRIGGER_FIRE_BUNDLE("trigger fire bundle can not be null"),
     TWO_FACTOR_HELPER("twofactorhelper can not be null"),
+    UNIT("unit can not be null"),
     URI("uri can not be null"),
     URI_CONNECTIONS("uri connections can not be null"),
     URL("url can not be null"),

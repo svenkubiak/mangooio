@@ -2,6 +2,7 @@ package io.mangoo.test.http;
 
 import java.util.Objects;
 
+import io.mangoo.enums.Required;
 import io.undertow.util.Methods;
 
 /**
@@ -10,11 +11,16 @@ import io.undertow.util.Methods;
  *
  */
 public final class TestRequest {
-    private static final String URI_ERROR = "URI can not be null";
-
     private TestRequest() {
     }
 
+    public static TestResponse create(String uri, String method) {
+        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        
+        return new TestResponse(uri, method);
+    }
+    
     /**
      * Creates a new HTTP GET request to the given URI
      * 
@@ -22,7 +28,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse get(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.GET.toString());
     }
@@ -34,7 +40,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse post(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.POST.toString());
     }
@@ -46,7 +52,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse put(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.PUT.toString());
     }
@@ -58,7 +64,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse delete(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.DELETE.toString());
     }
@@ -70,7 +76,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse head(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.HEAD.toString());
     }
@@ -82,7 +88,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse patch(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.PATCH.toString());
     }
@@ -94,7 +100,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse options(String uri) {
-        Objects.requireNonNull(uri, URI_ERROR);
+        Objects.requireNonNull(uri, Required.URI.toString());
         
         return new TestResponse(uri, Methods.OPTIONS.toString());
     }
