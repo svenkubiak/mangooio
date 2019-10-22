@@ -14,7 +14,7 @@
         <div class="row">
           <div class="col-md-4 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="fa fa-clock-o"></i></span>
+              <span class="info-box-icon bg-info"><i class="far fa-clock"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Application started</span>
                 <span class="info-box-number">${prettytime(uptime)}</span>
@@ -23,7 +23,7 @@
           </div>
           <div class="col-md-4 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-success"><i class="fa fa-battery-half"></i></span>
+              <span class="info-box-icon bg-success"><i class="fas fa-battery-half"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Free memory</span>
                 <span class="info-box-number"><div id="freememory">${freeMemory}</div></span>
@@ -32,7 +32,7 @@
           </div>
           <div class="col-md-4 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-warning"><i class="fa fa-battery-full"></i></span>
+              <span class="info-box-icon bg-warning"><i class="fas fa-battery-full"></i></span>
               <div class="info-box-content">
                 <span class="info-box-text">Allocated memory</span>
                 <span class="info-box-number"><div id="allocatedmemory">${allocatedMemory}</div></span>
