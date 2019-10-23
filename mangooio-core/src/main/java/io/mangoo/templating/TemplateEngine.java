@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,7 @@ public class TemplateEngine {
         if (templateException) {
             content.put("exceptions", cause.getMessage().split(REGEX)); //NOSONAR Method is only used in development mode
         } else {
-            StackTraceElement stackTraceElement = Arrays.asList(cause.getStackTrace()).get(0);
+            StackTraceElement stackTraceElement = cause.getStackTrace()[0];
             String sourceCodePath = getSourceCodePath(stackTraceElement);
 
             List<Source> sources;

@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
@@ -366,7 +366,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue("foo", "bar");
-        validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bar"));
+        validator.expectMatch("foo", List.of("foobar", "bla", "bar"));
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -380,7 +380,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue("foo", "bar");
-        validator.expectMatch("foo", Arrays.asList("foobar", "bla", "bra"));
+        validator.expectMatch("foo", List.of("foobar", "bla", "bra"));
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));

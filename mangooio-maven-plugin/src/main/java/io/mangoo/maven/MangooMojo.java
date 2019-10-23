@@ -22,7 +22,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -193,7 +192,7 @@ public class MangooMojo extends AbstractMojo {
 
     private void initMojo() {
         if (useDefaultExcludes) {
-            excludes.addAll(Arrays.asList(DEFAULT_EXCLUDE_PATTERNS));
+            excludes.addAll(List.of(DEFAULT_EXCLUDE_PATTERNS));
         }
     }
 

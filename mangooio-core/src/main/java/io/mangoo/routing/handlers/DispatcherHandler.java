@@ -163,7 +163,7 @@ public class DispatcherHandler implements HttpHandler {
         final Map<String, Class<?>> parameters = new LinkedHashMap<>();
         for (final Method declaredMethod : this.controllerClass.getDeclaredMethods()) {
             if (declaredMethod.getName().equals(this.controllerMethodName) && declaredMethod.getParameterCount() > 0) {
-                Arrays.asList(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
+                Arrays.stream(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
                 break;
             }
         }

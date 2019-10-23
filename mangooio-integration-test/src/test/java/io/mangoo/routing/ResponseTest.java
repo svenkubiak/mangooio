@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -193,7 +193,7 @@ public class ResponseTest {
         Response response = Response.withOk();
         
         //when
-        response.andJsonBody(Arrays.asList("foo", "bar"));
+        response.andJsonBody(List.of("foo", "bar"));
         
         //then
         assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
