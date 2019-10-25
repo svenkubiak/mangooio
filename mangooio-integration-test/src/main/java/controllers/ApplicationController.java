@@ -8,11 +8,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.undertow.util.HttpString;
 
 public class ApplicationController {
+    
+    @Inject
+    @Named("application.named")
+    private String named;
     
     public Response index() {
         return Response.withOk();
@@ -40,6 +47,10 @@ public class ApplicationController {
     
     public Response text() {
         return Response.withOk().andTextBody("foo");
+    }
+    
+    public Response named() {
+        return Response.withOk().andTextBody(named);
     }
     
     public Response limit() {

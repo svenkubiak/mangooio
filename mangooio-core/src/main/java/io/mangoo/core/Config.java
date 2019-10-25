@@ -9,6 +9,7 @@ import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -140,6 +141,21 @@ public class Config {
         }
         
         return "";
+    }
+    
+    /**
+     * Converts config values to standard java properties
+     * 
+     * @return Properties instance with config values
+     */
+    public Properties toProperties() {
+        var map = new HashMap<>();
+        this.props.extractProps(map);
+        
+        Properties properties = new Properties();
+        properties.putAll(map);
+        
+        return properties;
     }
     
     /**

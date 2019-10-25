@@ -8,6 +8,7 @@
 	preprocess.js = true
 	preprocess.css = true
 	encrypted = arg{}
+	named = injected
 [connector]
 	http.host = localhost
 	http.port = 9898

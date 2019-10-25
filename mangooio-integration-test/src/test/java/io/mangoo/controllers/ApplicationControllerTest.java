@@ -66,6 +66,17 @@ public class ApplicationControllerTest {
     }
     
     @Test
+    public void testNamed() {
+        //given
+        final TestResponse response = TestRequest.get("/named").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("injected"));
+    }
+    
+    @Test
     public void testReverse() {
         //given
         final TestResponse response = TestRequest.get("/reverse").execute();
