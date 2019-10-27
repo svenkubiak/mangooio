@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -625,18 +626,46 @@ public final class Application {
                 
                 for (Class<?> clazz : jobs) {
                     final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
-                    if (CronExpression.isValidExpression(schedule.cron())) {
-                        final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                        final Trigger trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                    String scheduled = schedule.cron();
+                    
+                    Trigger trigger = null;
+                    final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
+                    if (scheduled != null) {
+                        scheduled = scheduled.trim();
+                        if (scheduled.contains("every")) {
+                            scheduled = scheduled.replace("every", "").trim();
+                            String timespan = scheduled.substring(0, scheduled.length() - 1);
+                            String duration = scheduled.substring(scheduled.length() - 1);
+                            
+                            switch(duration) {
+                            case "s":
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.SECONDS);
+                              break;
+                            case "m":
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.MINUTES);
+                              break;
+                            case "h":
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.HOURS);
+                              break;  
+                            case "d":
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.DAYS);
+                              break;                                 
+                          }
+                        } else {
+                            if (CronExpression.isValidExpression(schedule.cron())) {
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
+                            } else {
+                                LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
+                                failsafe();
+                            }
+                        }
+                        
                         try {
                             mangooScheduler.schedule(jobDetail, trigger);
+                            LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
                         } catch (MangooSchedulerException e) {
                             LOG.error("Failed to add a job to the scheduler", e);
                         }
-                        LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
-                    } else {
-                        LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
-                        failsafe();
                     }
                 }
 

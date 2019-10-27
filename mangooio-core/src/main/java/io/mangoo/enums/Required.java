@@ -96,6 +96,8 @@ public enum Required {
     TEMPLATE("template can not be null"),
     TEMPLATE_ENGINE("tempalte engine can not be null"),
     TEMPLATE_NAME("template name can not be null"),
+    TIMEPSAN("timepsan can not be null"),
+    TIMEUNIT("timeunit can not be null"),
     TOTP("totp can not be null"),
     TRIGGER("trigger can not be null"),
     TRIGGER_FIRE_BUNDLE("trigger fire bundle can not be null"),
