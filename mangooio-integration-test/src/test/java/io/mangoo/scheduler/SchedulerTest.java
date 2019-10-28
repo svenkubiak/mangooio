@@ -43,7 +43,7 @@ public class SchedulerTest {
         
         //then
         assertThat(jobs, not(nullValue()));
-        assertThat(jobs.size(), equalTo(1));
+        assertThat(jobs.size(), equalTo(5));
     }
     
     @SuppressWarnings("unchecked")
@@ -152,6 +152,6 @@ public class SchedulerTest {
         
         //then
         assertThat(jobKeys, not(nullValue()));
-        assertThat(jobKeys.size(), equalTo(1));
+        assertThat(jobKeys.size(), equalTo(5));
     }
 }
