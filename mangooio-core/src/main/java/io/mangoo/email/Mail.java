@@ -1,5 +1,6 @@
 package io.mangoo.email;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
@@ -197,9 +198,22 @@ public class Mail {
     }
     
     /**
+     * Adds a file as attachment to the mail
+     *
+     * @param file The File to attach
+     * @return A mail object instance
+     */
+    public Mail attachment(File file) {
+        Objects.requireNonNull(file, Required.FILE.toString());
+        this.email.attachment(EmailAttachment.with().content(file));
+        
+        return this;
+    }
+
+    /**
      * Adds {@link EmailAttachment}. Content ID will be set to {@code null}.
      *
-     * @param builder {@link EmailAttachmentBuilder}
+     * @param builder {@link EmailAttachment} to add.
      * @return A mail object instance
      */
     public Mail attachment(EmailAttachmentBuilder builder) {
@@ -207,21 +221,8 @@ public class Mail {
         this.email.attachment(builder);
         
         return this;
-    }
-    
-    /**
-     * Attaches the embedded attachment: Content ID will be set if missing from attachment's file name.
-     *
-     * @param builder {@link EmailAttachmentBuilder}
-     * @return A mail object instance
-     */
-    public Mail embeddedAttachment(EmailAttachmentBuilder builder) {
-        Objects.requireNonNull(builder, Required.BUILDER.toString());
-        this.email.embeddedAttachment(builder);
-        
-        return this;
-    }
-    
+    } 
+
     /**
      * Adds plain message text
      *
@@ -293,8 +294,7 @@ public class Mail {
         } 
         
         TemplateContext templateContext = new TemplateContext(content).withTemplatePath(template);
-        Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
-        return template;
+        return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
     }
     
     /**
@@ -375,5 +375,5 @@ public class Mail {
                 Default.ENCODING.toString());
 
         return this;
-    }    
+    }
 }
