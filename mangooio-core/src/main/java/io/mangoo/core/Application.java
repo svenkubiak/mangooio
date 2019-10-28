@@ -640,16 +640,16 @@ public final class Application {
                             
                             switch(duration) {
                             case "s":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.SECONDS);
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.SECONDS);
                               break;
                             case "m":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.MINUTES);
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.MINUTES);
                               break;
                             case "h":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.HOURS);
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.HOURS);
                               break;  
                             case "d":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.valueOf(timespan), TimeUnit.DAYS);
+                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.DAYS);
                               break;                                 
                           }
                         } else {

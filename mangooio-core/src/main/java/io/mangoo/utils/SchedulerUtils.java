@@ -74,13 +74,13 @@ public final class SchedulerUtils {
                 .withDescription(description)
                 .withIdentity(identity, groupName);
         
-        if (timeUnit.equals(TimeUnit.SECONDS)) {
+        if (timeUnit == TimeUnit.SECONDS) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(timespan));
-        } else if (timeUnit.equals(TimeUnit.MINUTES)) {
+        } else if (timeUnit == TimeUnit.MINUTES) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatMinutelyForever(timespan));
-        } else if (timeUnit.equals(TimeUnit.HOURS)) {
+        } else if (timeUnit == TimeUnit.HOURS) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatHourlyForever(timespan));
-        } else if (timeUnit.equals(TimeUnit.DAYS)) {
+        } else if (timeUnit == TimeUnit.DAYS) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatHourlyForever(timespan * 24));
         }
 

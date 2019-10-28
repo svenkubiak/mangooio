@@ -36,6 +36,12 @@
 			<artifactId>core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.maven.resolver</groupId>
+			<artifactId>maven-resolver</artifactId>
+			<version>1.4.1</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 		</dependency>
