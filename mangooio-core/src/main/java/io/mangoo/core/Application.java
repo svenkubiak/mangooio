@@ -637,19 +637,23 @@ public final class Application {
                             scheduled = scheduled.replace("every", "").trim();
                             String timespan = scheduled.substring(0, scheduled.length() - 1);
                             String duration = scheduled.substring(scheduled.length() - 1);
+                            String triggerName = clazz.getName() + "-trigger";
+                            String description = schedule.description();
+                            String triggerGroup = Default.SCHEDULER_TRIGGER_GROUP.toString();
+                            int time = Integer.parseInt(timespan);
                             
                             switch(duration) {
                             case "s":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.SECONDS);
+                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.SECONDS);
                               break;
                             case "m":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.MINUTES);
+                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.MINUTES);
                               break;
                             case "h":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.HOURS);
+                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.HOURS);
                               break;  
                             case "d":
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), Integer.parseInt(timespan), TimeUnit.DAYS);
+                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.DAYS);
                               break;                                 
                           }
                         } else {
