@@ -5,6 +5,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import org.exparity.hamcrest.date.DateMatchers;
 import org.junit.jupiter.api.Test;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -20,7 +24,7 @@ import jobs.InfoJob;
 public class SchedulerUtilsTest {
 
     @Test
-    public void testCreateTrigger() {
+    public void testCreateTriggerCron() {
         //given
         String identity = "foo";
         String groupName = "bar";
@@ -33,6 +37,60 @@ public class SchedulerUtilsTest {
         //then
         assertThat(trigger, not(nullValue()));
         assertThat(trigger.getDescription(), equalTo(description));
+    }
+    
+    @Test
+    public void testCreateTriggerEverySecond() {
+        //given
+        String identity = "foo";
+        String groupName = "bar";
+        String description = "description";
+        int timespan = 3;
+        TimeUnit timeUnit = TimeUnit.SECONDS;
+        
+        //when
+        Trigger trigger = SchedulerUtils.createTrigger(identity, groupName, description, timespan, timeUnit);
+        
+        //then
+        assertThat(trigger, not(nullValue()));
+        assertThat(trigger.getDescription(), equalTo(description));
+        assertThat(trigger.getStartTime(), DateMatchers.sameMinuteOfHour(new Date()));
+    }
+    
+    @Test
+    public void testCreateTriggerEveryMinutes() {
+        //given
+        String identity = "foo";
+        String groupName = "bar";
+        String description = "description";
+        int timespan = 3;
+        TimeUnit timeUnit = TimeUnit.MINUTES;
+        
+        //when
+        Trigger trigger = SchedulerUtils.createTrigger(identity, groupName, description, timespan, timeUnit);
+        
+        //then
+        assertThat(trigger, not(nullValue()));
+        assertThat(trigger.getDescription(), equalTo(description));
+        assertThat(trigger.getStartTime(), DateMatchers.sameHourOfDay(new Date()));
+    }
+    
+    @Test
+    public void testCreateTriggerEveryDay() {
+        //given
+        String identity = "foo";
+        String groupName = "bar";
+        String description = "description";
+        int timespan = 3;
+        TimeUnit timeUnit = TimeUnit.DAYS;
+        
+        //when
+        Trigger trigger = SchedulerUtils.createTrigger(identity, groupName, description, timespan, timeUnit);
+        
+        //then
+        assertThat(trigger, not(nullValue()));
+        assertThat(trigger.getDescription(), equalTo(description));
+        assertThat(trigger.getStartTime(), DateMatchers.sameDayOfMonth(new Date()));
     }
     
     @Test

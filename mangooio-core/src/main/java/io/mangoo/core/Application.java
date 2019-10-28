@@ -631,7 +631,8 @@ public final class Application {
                     Trigger trigger = null;
                     final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
                     if (scheduled != null) {
-                        scheduled = scheduled.trim();
+                        scheduled = scheduled.toLowerCase(Locale.ENGLISH).trim();
+                        
                         if (scheduled.contains("every")) {
                             scheduled = scheduled.replace("every", "").trim();
                             String timespan = scheduled.substring(0, scheduled.length() - 1);
