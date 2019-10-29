@@ -120,6 +120,15 @@
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
 				<version>5.11.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>dependencies</id>
+						<goals>
+							<goal>dependencies</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
