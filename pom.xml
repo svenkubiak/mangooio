@@ -40,6 +40,7 @@
 		<module>mangooio-integration-test</module>
 		<module>mangooio-test</module>
 		<module>mangooio-maven-plugin</module>
+		<module>mangooio-dependencies</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
@@ -259,6 +260,11 @@
 						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.plexus</groupId>
+				<artifactId>plexus-archiver</artifactId>
+				<version>4.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
