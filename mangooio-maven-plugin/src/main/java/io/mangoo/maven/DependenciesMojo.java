@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+@SuppressWarnings("all")
 @Mojo(name = "dependencies", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.NONE, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DependenciesMojo extends AbstractMojo {
     private static final String BOMS = "boms.";

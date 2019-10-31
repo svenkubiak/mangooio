@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 
 import io.mangoo.core.Application;
@@ -258,7 +257,7 @@ public class Mail {
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.textMessage(render(template, content), Charsets.UTF_8.toString());
+        this.email.textMessage(render(template, content), Default.ENCODING.toString());
         
         return this;
     }
@@ -274,7 +273,7 @@ public class Mail {
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.htmlMessage(render(template, content), Charsets.UTF_8.toString());
+        this.email.htmlMessage(render(template, content), Default.ENCODING.toString());
         
         return this;
     }

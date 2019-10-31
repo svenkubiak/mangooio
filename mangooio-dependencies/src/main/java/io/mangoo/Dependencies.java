@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@SuppressWarnings("all")
 public class Dependencies {
     private static final String REPO = "https://repo.maven.apache.org/maven2/";
     private static final String WORKDIR = System.getProperty("user.dir");
