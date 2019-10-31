@@ -654,7 +654,9 @@ public final class Application {
                               break;  
                             case "d":
                                 trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.DAYS);
-                              break;                                 
+                              break;
+                            default:
+                              break;
                           }
                         } else {
                             if (CronExpression.isValidExpression(schedule.cron())) {

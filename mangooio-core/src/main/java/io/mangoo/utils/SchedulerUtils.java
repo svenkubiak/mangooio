@@ -24,7 +24,8 @@ import io.mangoo.enums.Required;
  *
  */
 public final class SchedulerUtils {
-    
+    private static final int TWENTYFOUR_HORS = 24;
+
     private SchedulerUtils() {
     }
     
@@ -81,7 +82,9 @@ public final class SchedulerUtils {
         } else if (timeUnit == TimeUnit.HOURS) {
             triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatHourlyForever(timespan));
         } else if (timeUnit == TimeUnit.DAYS) {
-            triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatHourlyForever(timespan * 24));
+            triggerBuilder.withSchedule(SimpleScheduleBuilder.repeatHourlyForever(timespan * TWENTYFOUR_HORS));
+        } else {
+            //do nothing
         }
 
         return triggerBuilder.build();

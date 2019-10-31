@@ -24,6 +24,8 @@ import jodd.mail.EmailAttachmentBuilder;
  *
  */
 public class Mail {
+    private static final int LOWEST_PRIORITY = 5;
+    private static final int HIGHEST_PRIORITY = 1;
     private Email email = Email.create();
 
     /**
@@ -190,7 +192,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail priority(int priority) {
-        Preconditions.checkArgument(priority >= 1 && priority <= 5, Required.PRIORITY.toString());
+        Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY.toString());
         this.email.priority(priority);
         
         return this;
@@ -302,7 +304,7 @@ public class Mail {
      * Creates a new mail instance
      * @return A mail object instance
      */
-    @Deprecated
+    @Deprecated(since = "5.12.0", forRemoval = true)
     public static Mail build() {
         return new Mail();
     }
@@ -316,7 +318,7 @@ public class Mail {
      * @param email The Email instance
      * @return A mail object instance
      */
-    @Deprecated
+    @Deprecated(since = "5.12.0", forRemoval = true)
     public Mail withBuilder(Email email) {
         Objects.requireNonNull(email, Required.EMAIL.toString());
         this.email = email;
@@ -335,7 +337,7 @@ public class Mail {
      * @return A mail object instance
      * @throws MangooTemplateEngineException if rendering of template fails
      */
-    @Deprecated
+    @Deprecated(since = "5.12.0", forRemoval = true)
     public Mail templateMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
         Objects.requireNonNull(content, Required.CONTENT.toString());
@@ -361,7 +363,7 @@ public class Mail {
      * @return A mail object instance
      * @throws MangooTemplateEngineException if rendering of template fails
      */
-    @Deprecated
+    @Deprecated(since = "5.12.0", forRemoval = true)
     public Mail templateMessage(String template) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
 
