@@ -1,6 +1,6 @@
 package io.mangoo;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Dependencies {
     private static final String REPO = "https://repo.maven.apache.org/maven2/";
@@ -20,7 +21,7 @@ public class Dependencies {
     
     public static void main(String[] args) {
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream(DEPENDENCIES_FILE)){
+        try (InputStream inputStream = Files.newInputStream(new File(DEPENDENCIES_FILE).toPath())){
             properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,16 +53,15 @@ public class Dependencies {
     }
 
     private static void deletePreviousVersion(String artifact) {
-        try {
-            Files.list(Paths.get(LIB_FOLDER))
-                .filter(path -> path.toFile().getName().contains(artifact))
-                .forEach(c -> {
-                    try {
-                        Files.delete(c);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+        try (Stream<Path> stream = Files.list(Paths.get(LIB_FOLDER))) {
+            stream.filter(path -> path.toFile().getName().contains(artifact))
+                  .forEach(c -> {
+                  try {
+                      Files.delete(c);
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

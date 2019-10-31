@@ -2,7 +2,10 @@ package io.mangoo.maven;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
@@ -53,7 +56,12 @@ public class DependenciesMojo extends AbstractMojo {
         try {
             File target = new File(outputDirectory, "dependencies.properties");
             if (target.exists()) {
-                props.load(new FileInputStream(target));
+                Properties properties = new Properties();
+                try (InputStream inputStream = Files.newInputStream(target.toPath())){
+                    properties.load(new FileInputStream(target));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             
             for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
@@ -86,9 +94,11 @@ public class DependenciesMojo extends AbstractMojo {
                 }
             }
             
-            props.store(new FileOutputStream(target),"");
-            
-            
+            try (OutputStream outputStream = Files.newOutputStream(target.toPath())){
+                props.store(outputStream, "");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             
             LOG.info("Dependencies file succesfully created");
         }
@@ -144,7 +154,7 @@ public class DependenciesMojo extends AbstractMojo {
     private String coordinates(Artifact artifact, boolean withVersion) {
         String classifier = artifact.getClassifier();
         String extension = artifact.getType();
-        String version = snapshotStyle.equals(SnapshotStyle.SNAPSHOT) ? artifact.getBaseVersion() : artifact.getVersion();
+        String version = snapshotStyle == SnapshotStyle.SNAPSHOT ? artifact.getBaseVersion() : artifact.getVersion();
         
         return artifact.getGroupId() + ":" + artifact.getArtifactId()
                 + (hasText(extension)
