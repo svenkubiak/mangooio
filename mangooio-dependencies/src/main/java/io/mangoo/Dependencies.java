@@ -31,7 +31,7 @@ public class Dependencies {
             String dependency = (String) entry.getValue();
             String[] parts = dependency.split(":");
 
-            String groupId = parts[0].replace(".", "/");
+            String groupId = parts[0].replace('.', '/');
             String artifact = parts[1];
             String version = parts [2];
             String jar = artifact + "-" + version + ".jar";

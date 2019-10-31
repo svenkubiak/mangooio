@@ -1,10 +1,11 @@
 package io.mangoo.maven;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
@@ -28,12 +29,6 @@ public class DependenciesMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
-    @Parameter(defaultValue = "target", required = true, property = "dependencies.properties")
-    private File outputDirectory;
-
-    @Parameter(property = "dependencies.compute", defaultValue = "true", required = true)
-    private boolean compute;
-
     @Parameter(property = "dependencies.snapshotStyle", defaultValue = "TIMESTAMP")
     private SnapshotStyle snapshotStyle;
     
@@ -51,12 +46,11 @@ public class DependenciesMojo extends AbstractMojo {
         }
         
         Properties props = new Properties();
-        outputDirectory.mkdirs();
         try {
-            File target = new File(outputDirectory, "dependencies.properties");
-            if (target.exists()) {
+            Path target = Paths.get("dependencies.properties");
+            if (Files.exists(target)) {
                 Properties properties = new Properties();
-                try (InputStream inputStream = Files.newInputStream(target.toPath())){
+                try (InputStream inputStream = Files.newInputStream(target)){
                     properties.load(inputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -75,7 +69,7 @@ public class DependenciesMojo extends AbstractMojo {
             }
 
             boms(project, props);
-            Set<Artifact> artifacts = this.compute ? project.getArtifacts() : project.getArtifacts();
+            Set<Artifact> artifacts = project.getArtifacts();
             for (Artifact artifact : artifacts) {
                 if ("runtime".equals(artifact.getScope()) || "compile".equals(artifact.getScope())) {
                     props.setProperty(key(artifact, props), coordinates(artifact));
@@ -93,7 +87,7 @@ public class DependenciesMojo extends AbstractMojo {
                 }
             }
             
-            try (OutputStream outputStream = Files.newOutputStream(target.toPath())){
+            try (OutputStream outputStream = Files.newOutputStream(target)){
                 props.store(outputStream, "");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -124,8 +118,7 @@ public class DependenciesMojo extends AbstractMojo {
         while (project != null) {
             String artifactId = project.getArtifactId();
             if (isBom(artifactId)) {
-                props.setProperty(BOMS + artifactId,
-                        coordinates(project.getArtifact(), true));
+                props.setProperty(BOMS + artifactId, coordinates(project.getArtifact()));
             }
             if (project.getDependencyManagement() != null) {
                 for (Dependency dependency : project.getDependencyManagement().getDependencies()) {
@@ -146,11 +139,7 @@ public class DependenciesMojo extends AbstractMojo {
         return dependency.getGroupId() + "|" + dependency.getArtifactId() + "|" + dependency.getVersion();
     }
 
-    private String coordinates(Artifact dependency) {
-        return coordinates(dependency, this.compute);
-    }
-
-    private String coordinates(Artifact artifact, boolean withVersion) {
+    private String coordinates(Artifact artifact) {
         String classifier = artifact.getClassifier();
         String extension = artifact.getType();
         String version = snapshotStyle == SnapshotStyle.SNAPSHOT ? artifact.getBaseVersion() : artifact.getVersion();
@@ -161,7 +150,7 @@ public class DependenciesMojo extends AbstractMojo {
                                 ? ":" + extension
                                 : "")
                 + (hasText(classifier) ? ":" + classifier : "")
-                + (withVersion ? ":" + version : "");
+                + ":" + version;
     }
     
     public boolean hasText (String str) {
