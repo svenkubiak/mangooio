@@ -1,7 +1,6 @@
 package io.mangoo.maven;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,7 +57,7 @@ public class DependenciesMojo extends AbstractMojo {
             if (target.exists()) {
                 Properties properties = new Properties();
                 try (InputStream inputStream = Files.newInputStream(target.toPath())){
-                    properties.load(new FileInputStream(target));
+                    properties.load(inputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

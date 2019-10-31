@@ -1,6 +1,5 @@
 package io.mangoo;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,7 +20,7 @@ public class Dependencies {
     
     public static void main(String[] args) {
         Properties properties = new Properties();
-        try (InputStream inputStream = Files.newInputStream(new File(DEPENDENCIES_FILE).toPath())){
+        try (InputStream inputStream = Files.newInputStream(Paths.get(DEPENDENCIES_FILE))){
             properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
