@@ -48,7 +48,7 @@ public class DependenciesMojo extends AbstractMojo {
         
         Properties props = new Properties();
         try {
-            Path target = Paths.get("dependencies.properties");
+            Path target = Paths.get("target/dependencies.properties");
             if (Files.exists(target)) {
                 Properties properties = new Properties();
                 try (InputStream inputStream = Files.newInputStream(target)){
