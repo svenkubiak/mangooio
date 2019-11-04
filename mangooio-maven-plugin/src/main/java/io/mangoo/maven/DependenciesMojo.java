@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "dependencies", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.NONE, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DependenciesMojo extends AbstractMojo {
     private static final String BOMS = "boms.";
+    private static final List BLACKLIST = List.of("rhino", "junit", "hamcrest");
     
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
@@ -42,7 +44,7 @@ public class DependenciesMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         if (this.project.getPackaging().equals("pom")) {
-            LOG.error("Thin properties goal could not be applied to pom project.");
+            LOG.error("Depenciess goal could not be applied to pom project.");
             return;
         }
         
@@ -79,11 +81,7 @@ public class DependenciesMojo extends AbstractMojo {
             
             for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
                 String key = (String) keys.nextElement();
-                if (key.equals("rhino")) {
-                    props.remove(key);
-                }
-                
-                if (key.equals("junit")) {
+                if (BLACKLIST.contains(key)) {
                     props.remove(key);
                 }
             }
@@ -94,7 +92,7 @@ public class DependenciesMojo extends AbstractMojo {
                 e.printStackTrace();
             }
             
-            LOG.info("Dependencies file succesfully created");
+            LOG.info("dependencies.properties succesfully created");
         }
         catch (Exception e) {
             throw new MojoExecutionException("Cannot calculate dependencies for: " + this.project.getArtifact(),e);
