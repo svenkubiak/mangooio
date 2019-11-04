@@ -21,6 +21,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Easy to use template engine
 * Super minimal use of Annotations
 * Dependency Injection
+* Deploy as FatJAR or ThinJAR
 * Simplified Caching
 * Build-in asynchronous email handling
 * Support for Web Sockets and Server-Sent Events
