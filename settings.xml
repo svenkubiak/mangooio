@@ -12,7 +12,7 @@
                 <sonar.host.url>${env.SONAR_URL}</sonar.host.url>
 		<sonar.login>${env.SONAR_USER}</sonar.login>
 		<sonar.password>${env.SONAR_PASSWORD}</sonar.password>
-		<sonar.java.libraries>**/target/classes</sonar.java.libraries>
+		<sonar.java.libraries>target</sonar.java.libraries>
             </properties>
         </profile>
      </profiles>
