@@ -1,5 +1,6 @@
 package io.mangoo.enums;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.util.HttpString;
 
 /**
@@ -32,6 +33,7 @@ public enum Header {
     private final HttpString httpString;
     private final String value;
 
+    @SuppressFBWarnings(value = "squid:UnusedPrivateMethod")
     Header (String value, HttpString httpString) {
         this.value = value;
         this.httpString = httpString;
