@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.inject.Inject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
@@ -68,9 +67,8 @@ public class LimitHandler implements HttpHandler {
      * @param exchange The HttpServerExchange
      * @return The key url + host
      */
-    @SuppressFBWarnings("squid:S2259")
     private String getCacheKey(HttpServerExchange exchange) {
-        String host = null;
+        String host = "";
 
         HeaderMap headerMap = exchange.getRequestHeaders();
         if (headerMap != null) {

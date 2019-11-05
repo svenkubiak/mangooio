@@ -132,7 +132,7 @@ public class Mail {
     /**
      * Sets the FROM address.
      *
-     * @param from Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
+     * @param from Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}
      * @return A mail object instance
      */
     public Mail from(String from) {
@@ -185,7 +185,7 @@ public class Mail {
     }
     
     /**
-     * Sets email priority
+     * Sets the email priority
      *
      * @param priority - 1 being the highest priority, 3 = normal and 5 = lowest priority.
      *                 
@@ -212,9 +212,9 @@ public class Mail {
     }
 
     /**
-     * Adds {@link EmailAttachment}. Content ID will be set to {@code null}.
+     * Adds {@link EmailAttachment}. Content ID will be set to {@code null}
      *
-     * @param builder {@link EmailAttachment} to add.
+     * @param builder {@link EmailAttachment} to add
      * @return A mail object instance
      */
     public Mail attachment(EmailAttachmentBuilder builder) {
