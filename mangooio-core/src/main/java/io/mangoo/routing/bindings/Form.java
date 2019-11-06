@@ -24,7 +24,7 @@ public class Form extends Validator {
     private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
-    private boolean flash;
+    private boolean keep;
     
     public Form() {
         //Empty constructor for google guice
@@ -45,6 +45,23 @@ public class Form extends Validator {
         }
 
         return Optional.empty();
+    }
+    
+    /**
+     * Retrieves a string value corresponding to the name of the form element
+     *
+     * @param key The name of the form element
+     * @return String with the value of the form element or an empty value if blank
+     */
+    public String getValue(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+
+        String value = this.values.get(key);
+        if (StringUtils.isNotBlank(value)) {
+            return value;
+        }
+
+        return "";
     }
 
     /**
@@ -177,7 +194,7 @@ public class Form extends Validator {
      * Adds the form values to the flash scope
      */
     public void keep() {
-        this.flash = true;
+        this.keep = true;
     }
     
     /**
@@ -217,8 +234,19 @@ public class Form extends Validator {
      * Checks if the form values are to put in the flash scope
      * @return True if form values should be put into flash scope, false otherwise
      */
+    public boolean isKept() {
+        return this.keep;
+    }
+    
+    /**
+     * @deprecated Use {@link #isKept()} instead 
+     * 
+     * Checks if the form values are to put in the flash scope
+     * @return True if form values should be put into flash scope, false otherwise
+     */
+    @Deprecated(since = "5.12.0", forRemoval = true)
     public boolean flashify() {
-        return this.flash;
+        return this.keep;
     }
     
     /**

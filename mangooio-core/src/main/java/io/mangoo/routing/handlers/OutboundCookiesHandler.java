@@ -199,12 +199,12 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setMaxAge(0);
 
             exchange.setResponseCookie(cookie);
-        } else if (flash.hasContent() || form.flashify()) {
+        } else if (flash.hasContent() || form.isKept()) {
             try {
                 JwtClaims jwtClaims = new JwtClaims();
                 jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
                 
-                if (form.flashify()) {
+                if (form.isKept()) {
                     jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
                 }
                 
