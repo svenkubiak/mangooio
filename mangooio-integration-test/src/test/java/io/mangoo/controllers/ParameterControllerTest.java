@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
@@ -113,26 +115,16 @@ public class ParameterControllerTest {
         assertThat(response.getContent(), equalTo("isNull"));
     }
     
-    @Test
-    public void testUmlautParameter() {
+    @ParameterizedTest(name = "#{index} - Run test with args={0}")
+    @ValueSource(strings = {"äöü", "tüsätö-$ß_"})
+    public void testUmlautParameter(String arg) {
         //given
-        TestResponse response = TestRequest.get("/string/äöü").execute();
+        TestResponse response = TestRequest.get("/string/" + arg).execute();
 
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("äöü"));
-    }
-    
-    @Test
-    public void testStringParameterWithSpecialCharacters() {
-        //given
-        TestResponse response = TestRequest.get("/string/tüsätö-$ß_").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("tüsätö-$ß_"));
+        assertThat(response.getContent(), equalTo(arg));
     }
 
     @Test
