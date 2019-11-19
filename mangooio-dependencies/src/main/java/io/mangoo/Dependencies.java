@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Stream;
 
 @SuppressWarnings("all")
@@ -27,8 +26,7 @@ public class Dependencies {
             e.printStackTrace();
         }
         
-        Set<Entry<Object, Object>> entries = properties.entrySet();
-        for (Entry<Object, Object> entry : entries) {
+        for (Entry<Object, Object> entry : properties.entrySet()) {
             String dependency = (String) entry.getValue();
             String[] parts = dependency.split(":");
 
@@ -43,7 +41,7 @@ public class Dependencies {
             if (!Files.exists(file)) {
                 deletePreviousVersion(artifact);
                 
-                try (InputStream inputstream = new URL(url).openStream();){
+                try (InputStream inputstream = new URL(url).openStream()){
                     Files.copy(inputstream, Paths.get(LIB_FOLDER + jar), StandardCopyOption.REPLACE_EXISTING);   
                 } catch (IOException e) {
                     e.printStackTrace();
