@@ -1,7 +1,7 @@
 package io.mangoo.enums;
 
 /**
- * Key strings for reading configuration properties
+ * Key strings for reading configuration properties of application
  *
  * @author svenkubiak
  *
