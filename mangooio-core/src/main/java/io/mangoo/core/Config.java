@@ -59,6 +59,7 @@ public class Config {
     @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private final void load() {
         this.props.setActiveProfiles(this.mode);
+        this.props.setSkipEmptyProps(false);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         
         if (StringUtils.isNotBlank(configPath)) {
