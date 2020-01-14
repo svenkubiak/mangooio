@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>5.13.0-RC2-SNAPSHOT</version>
+		<version>5.13.0</version>
 	</parent>
 	<artifactId>mangooio-test</artifactId>
 	<packaging>jar</packaging>
@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-			<version>5.13.0-RC2-SNAPSHOT</version>
+			<version>5.13.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
