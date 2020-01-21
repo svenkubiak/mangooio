@@ -1,6 +1,7 @@
 package io.mangoo.models;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -20,11 +21,11 @@ import io.undertow.security.idm.PasswordCredential;
  */
 public class Identity implements IdentityManager {
     private String username;
-    private String password;
+    private char[] password;
     
     public Identity(String username, String password) {
         this.username = Objects.requireNonNull(username, Required.USERNAME.toString());
-        this.password = Objects.requireNonNull(password, Required.PASSWORD.toString());
+        this.password = Objects.requireNonNull(password.toCharArray(), Required.PASSWORD.toString());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class Identity implements IdentityManager {
 
     private boolean verifyCredential(Credential credential) {
         if (credential instanceof PasswordCredential) {
-            return ((PasswordCredential) credential).getPassword().equals(this.password.toCharArray());
+            return Arrays.equals(((PasswordCredential) credential).getPassword(), this.password); 
         }
         
         return false;
