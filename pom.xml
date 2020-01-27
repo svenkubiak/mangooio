@@ -216,7 +216,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>4.0.2.Final</version>
+				<version>4.0.3.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
