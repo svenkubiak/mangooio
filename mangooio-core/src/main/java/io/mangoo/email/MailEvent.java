@@ -3,6 +3,7 @@ package io.mangoo.email;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.simplejavamail.MailException;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
@@ -14,6 +15,7 @@ import com.google.inject.Singleton;
 
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooMailerException;
 
 /**
  * 
@@ -50,7 +52,11 @@ public class MailEvent {
         this.mailer = mailerBuilder.buildMailer();
     }
 
-    public void send(Email email) {
-        this.mailer.sendMail(email, true);
+    public void send(Email email) throws MangooMailerException {
+        try {
+            this.mailer.sendMail(email, true); 
+        } catch (MailException e) {
+            throw new MangooMailerException(e);
+        }
     }
 }
