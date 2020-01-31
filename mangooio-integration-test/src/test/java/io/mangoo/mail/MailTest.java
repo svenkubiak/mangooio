@@ -56,7 +56,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("jon.snow@winterfell.com")
+            .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@thewall.com")
             .subject("Lord of light")
             .htmlMessage("emails/html.ftl", content)
@@ -80,7 +80,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("jon.snow@winterfell.com")
+            .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
             .attachment(file)
@@ -100,7 +100,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("jon.snow@winterfell.com")
+            .from("Jon snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
             .textMessage("what is dead may never die")
@@ -119,7 +119,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("jon.snow@winterfell.com")
+            .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")
             .textMessage("This is a body with üäö")
@@ -139,7 +139,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("jon.snow@winterfell.com")
+            .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")
             .htmlMessage("This is a body with üäö")
