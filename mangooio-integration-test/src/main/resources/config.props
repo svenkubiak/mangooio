@@ -31,6 +31,7 @@
 	port = 25
     username = foo
     ssl = false
+    starttls = false
 []
 
 [application<test>]
