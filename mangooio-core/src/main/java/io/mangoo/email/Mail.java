@@ -132,7 +132,7 @@ public class Mail {
     /**
      * Sets the FROM address.
      * 
-     * @deprecated As of release 5.14.0, {@link #from(String, from)} instead
+     * @deprecated As of release 5.14.0, {@link #from(String, String)} instead
      *
      * @param from Address may be specified with personal name like this: {@code email@foo.com}
      * @return A mail object instance
@@ -150,7 +150,7 @@ public class Mail {
      * 
      * @param fromName The name of the sender e.g. Peter Parker
      * @param fromAddress Address may be specified with personal name like this: {@code email@foo.com}
-     * @return
+     * @return A mail object instance
      */
     public Mail from(String fromName, String fromAddress) {
         Objects.requireNonNull(fromName, Required.FROM.toString());
