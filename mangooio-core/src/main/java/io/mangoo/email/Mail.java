@@ -131,13 +131,31 @@ public class Mail {
     
     /**
      * Sets the FROM address.
+     * 
+     * @deprecated As of release 5.14.0, {@link #from(String, from)} instead
      *
-     * @param from Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}
+     * @param from Address may be specified with personal name like this: {@code email@foo.com}
      * @return A mail object instance
      */
+    @Deprecated(since = "5.14.0", forRemoval = true)
     public Mail from(String from) {
         Objects.requireNonNull(from, Required.FROM.toString());
         this.email.from(from);
+        
+        return this;
+    }
+    
+    /**
+     * Sets the FROM address and name
+     * 
+     * @param fromName The name of the sender e.g. Peter Parker
+     * @param fromAddress Address may be specified with personal name like this: {@code email@foo.com}
+     * @return
+     */
+    public Mail from(String fromName, String fromAddress) {
+        Objects.requireNonNull(fromName, Required.FROM.toString());
+        Objects.requireNonNull(fromAddress, Required.NAME.toString());
+        this.email.from(fromName, fromAddress);
         
         return this;
     }
