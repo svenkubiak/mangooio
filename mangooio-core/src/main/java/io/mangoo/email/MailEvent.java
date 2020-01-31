@@ -41,10 +41,11 @@ public class MailEvent {
             mailerBuilder.withSMTPServerPassword(config.getSmtpPassword());
         }
         
-        //FIX ME: refactor to different SMTP strategies
+        //FIX ME: refactor to different SMTP strategies from config
         if (config.isSmtpSSL()) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTPS);
-            //FIX ME: Missing SMTP_TLS
+        } else if (config.isSmtpStartTlsRequired()) {
+            mailerBuilder.withTransportStrategy(TransportStrategy.SMTP_TLS);
         } else {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);
         }
