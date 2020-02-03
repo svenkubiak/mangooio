@@ -30,6 +30,7 @@
 		<junit.version>5.6.0</junit.version>
 		<junit.platform.version>1.6.0</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
+		<simplemail.version>6.0.2</simplemail.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -245,12 +246,12 @@
 			<dependency>
 				<groupId>org.simplejavamail</groupId>
 				<artifactId>simple-java-mail</artifactId>
-				<version>6.0.1</version>
+				<version>${simplemail.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.simplejavamail</groupId>
 				<artifactId>batch-module</artifactId>
-				<version>6.0.1</version>
+				<version>${simplemail.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.bitbucket.b_c</groupId>
