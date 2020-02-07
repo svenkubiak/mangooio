@@ -30,7 +30,7 @@
 		<junit.version>5.6.0</junit.version>
 		<junit.platform.version>1.6.0</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
-		<simplemail.version>6.0.2</simplemail.version>
+		<simplemail.version>6.0.3</simplemail.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
