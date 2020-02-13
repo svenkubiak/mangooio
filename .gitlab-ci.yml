@@ -49,8 +49,8 @@ smoke:
     expire_in: 10m
   script:
     - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true clean verify    
-    - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
-    - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'    
+    - $LOADER_DEPLOY
+    - $LOADER_EXECUTE
   only:
   - loader
 
