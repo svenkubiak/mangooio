@@ -4,19 +4,19 @@ import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.activation.FileDataSource;
+
+import org.simplejavamail.api.email.EmailPopulatingBuilder;
+import org.simplejavamail.email.EmailBuilder;
+
 import com.google.common.base.Preconditions;
 
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.services.EventBusService;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
-import jodd.mail.Email;
-import jodd.mail.EmailAttachment;
-import jodd.mail.EmailAttachmentBuilder;
 
 /**
  * 
@@ -26,7 +26,7 @@ import jodd.mail.EmailAttachmentBuilder;
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
-    private Email email = Email.create();
+    private EmailPopulatingBuilder email = EmailBuilder.startingBlank();
 
     /**
      * Creates a new mail instance
@@ -44,7 +44,7 @@ public class Mail {
      */
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS.toString());
-        this.email.to(tos);
+        this.email.toMultiple(tos);
         
         return this;
     }
@@ -70,7 +70,7 @@ public class Mail {
      */
     public Mail cc(String... ccs) {
         Objects.requireNonNull(ccs, Required.CCS.toString());
-        this.email.cc(ccs);
+        this.email.ccMultiple(ccs);
         
         return this;
     }
@@ -96,7 +96,7 @@ public class Mail {
      */
     public Mail bcc(String... bccs) {
         Objects.requireNonNull(bccs, Required.BCCS.toString());
-        this.email.bcc(bccs);
+        this.email.bccMultiple(bccs);
         
         return this;
     }
@@ -124,20 +124,38 @@ public class Mail {
      */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT.toString());
-        this.email.subject(subject, Default.ENCODING.toString());
+        this.email.withSubject(subject);
         
         return this;
     }
     
     /**
      * Sets the FROM address.
+     * 
+     * @deprecated As of release 5.14.0, {@link #from(String, String)} instead
      *
-     * @param from Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}
+     * @param from Address may be specified with personal name like this: {@code email@foo.com}
      * @return A mail object instance
      */
+    @Deprecated(since = "5.14.0", forRemoval = true)
     public Mail from(String from) {
         Objects.requireNonNull(from, Required.FROM.toString());
         this.email.from(from);
+        
+        return this;
+    }
+    
+    /**
+     * Sets the FROM address and name
+     * 
+     * @param fromName The name of the sender e.g. Peter Parker
+     * @param fromAddress Address may be specified with personal name like this: {@code email@foo.com}
+     * @return A mail object instance
+     */
+    public Mail from(String fromName, String fromAddress) {
+        Objects.requireNonNull(fromName, Required.FROM.toString());
+        Objects.requireNonNull(fromAddress, Required.NAME.toString());
+        this.email.from(fromName, fromAddress);
         
         return this;
     }
@@ -152,8 +170,7 @@ public class Mail {
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
-        
-        this.email.header(name, value);
+        this.email.withHeader(name, value);
         
         return this;
     }
@@ -166,20 +183,26 @@ public class Mail {
      */
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO.toString());
-        this.email.replyTo(replyTo);
+        this.email.withReplyTo(replyTo);
         
         return this;
     }
     
     /**
      * Appends one or more REPLY-TO address
+     * 
+     * @deprecated As of release 5.14.0, will be removed 6.0.0
      *
      * @param replyTos array of {@link String}s to set
      * @return A mail object instance
      */
+    @Deprecated(since = "5.14.0", forRemoval = true)
     public Mail replyTo(String... replyTos) {
         Objects.requireNonNull(replyTos, Required.REPLY_TOS.toString());
-        this.email.replyTo(replyTos);
+        
+        for (String replyTo : replyTos) {
+            this.email.withReplyTo(replyTo);
+        }
         
         return this;
     }
@@ -193,7 +216,7 @@ public class Mail {
      */
     public Mail priority(int priority) {
         Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY.toString());
-        this.email.priority(priority);
+        this.email.withHeader("X-Priority", priority);
         
         return this;
     }
@@ -206,23 +229,10 @@ public class Mail {
      */
     public Mail attachment(File file) {
         Objects.requireNonNull(file, Required.FILE.toString());
-        this.email.attachment(EmailAttachment.with().content(file));
+        this.email.withAttachment(file.getName(), new FileDataSource(file));
         
         return this;
     }
-
-    /**
-     * Adds {@link EmailAttachment}. Content ID will be set to {@code null}
-     *
-     * @param builder {@link EmailAttachment} to add
-     * @return A mail object instance
-     */
-    public Mail attachment(EmailAttachmentBuilder builder) {
-        Objects.requireNonNull(builder, Required.BUILDER.toString());
-        this.email.attachment(builder);
-        
-        return this;
-    } 
 
     /**
      * Adds plain message text
@@ -231,7 +241,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail textMessage(String message) {
-        this.email.textMessage(message, Default.ENCODING.toString());
+        this.email.appendText(message);
         
         return this;
     }
@@ -243,7 +253,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail htmlMessage(String message) {
-        this.email.htmlMessage(message, Default.ENCODING.toString());
+        this.email.appendTextHTML(message);
         
         return this;
     }
@@ -259,7 +269,7 @@ public class Mail {
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.textMessage(render(template, content), Default.ENCODING.toString());
+        this.email.appendText(render(template, content));
         
         return this;
     }
@@ -275,7 +285,7 @@ public class Mail {
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.htmlMessage(render(template, content), Default.ENCODING.toString());
+        this.email.appendTextHTML(render(template, content));
         
         return this;
     }
@@ -286,7 +296,7 @@ public class Mail {
      * @throws MangooMailerException when sending the mail failed
      */
     public void send() throws MangooMailerException {
-        Application.getInstance(EventBusService.class).publish(this.email);
+        Application.getInstance(MailEvent.class).send(this.email.buildEmail());
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {
@@ -310,23 +320,6 @@ public class Mail {
     }
 
     /**
-     *  @deprecated No need to wrap an Email instance anymore
-     *  us specific (e.g. to(), cc(), etc.) methods directly
-     * 
-     * Sets the org.Jodd.Email instance that the email is based on
-     * 
-     * @param email The Email instance
-     * @return A mail object instance
-     */
-    @Deprecated(since = "5.12.0", forRemoval = true)
-    public Mail withBuilder(Email email) {
-        Objects.requireNonNull(email, Required.EMAIL.toString());
-        this.email = email;
-        
-        return this;
-    }
-
-    /**
      * @deprecated Use {@link #textMessage(String, Map)} or {@link #htmlMessage(String, Map)} instead
      * 
      * Sets a template to be rendered for the email. Using a template
@@ -346,10 +339,8 @@ public class Mail {
             template = template.substring(1, template.length());
         } 
         
-        this.email.htmlMessage(
-                Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext(content).withTemplatePath(template)),
-                Default.ENCODING.toString());
-
+        this.email.withHTMLText(Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext(content).withTemplatePath(template)));
+        
         return this;
     }
     
@@ -371,9 +362,7 @@ public class Mail {
             template = template.substring(1, template.length());
         } 
         
-        this.email.htmlMessage(
-                Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext().withTemplatePath(template)),
-                Default.ENCODING.toString());
+        this.email.withHTMLText(Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext().withTemplatePath(template)));
 
         return this;
     }

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.inject.Singleton;
 
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.email.MailEventListener;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.scheduler.Scheduler;
@@ -31,7 +30,6 @@ public class Shutdown extends Thread {
         stopUndertow();
         stopScheduler();
         stopExecutionManager();
-        stopMailListener();
         closeCaches();
     }
 
@@ -60,9 +58,5 @@ public class Shutdown extends Thread {
 
     private static void closeCaches() {
         Application.getInstance(CacheProvider.class).close();
-    }
-
-    private static void stopMailListener() {
-        Application.getInstance(MailEventListener.class).shutdown();
     }
 }

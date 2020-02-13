@@ -46,7 +46,7 @@ public class TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 28);
+    private static final Version VERSION = new Version(2, 3, 29);
     
     public TemplateEngine() {
         this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());

@@ -28,7 +28,6 @@ import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.email.SmtpMock;
-import jodd.mail.EmailAttachment;
 
 /**
  * 
@@ -57,7 +56,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
+            .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@thewall.com")
             .subject("Lord of light")
             .htmlMessage("emails/html.ftl", content)
@@ -66,33 +65,6 @@ public class MailTest {
         //then
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(1)));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("thewall.com")[0].getContent().toString(), containsString("kong")));
-    }
-
-    @Test
-    public void testMultiPartEmail() throws MangooMailerException, IOException, FolderException, MessagingException, MangooTemplateEngineException {
-        //given
-        greenMail.purgeEmailFromAllMailboxes();
-        assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-        File file = new File(UUID.randomUUID().toString());
-        file.createNewFile();
-        Map<String, Object> content = new HashMap<>();
-        content.put("name", "raven");
-        content.put("king", "none");
-        
-        //when
-        Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
-            .to("sansa.stark@westeros.com")
-            .subject("Lord of light")
-            .attachment(EmailAttachment.with()
-                            .name("some name")
-                            .content(file))
-            .htmlMessage("emails/multipart.ftl", content)
-            .send();
-        
-        //then
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file.delete(), equalTo(true)));
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
     }
     
     @Test
@@ -108,7 +80,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
+            .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
             .attachment(file)
@@ -128,7 +100,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
+            .from("Jon snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
             .textMessage("what is dead may never die")
@@ -147,7 +119,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
+            .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")
             .textMessage("This is a body with üäö")
@@ -167,7 +139,7 @@ public class MailTest {
         
         //when
         Mail.create()
-            .from("Jon Snow <jon.snow@winterfell.com>")
+            .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")
             .htmlMessage("This is a body with üäö")
