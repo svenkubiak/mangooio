@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 import org.mockito.Mockito;
 
@@ -27,11 +28,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class RequestUtilsTest {
 
     @Test

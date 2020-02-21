@@ -10,17 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.exparity.hamcrest.date.DateMatchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 
+import io.mangoo.TestExtension;
 import jobs.InfoJob;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class SchedulerUtilsTest {
 
     @Test

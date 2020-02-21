@@ -4,7 +4,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import io.mangoo.TestExtension;
+
+@ExtendWith({TestExtension.class})
 public class ByteUtilsTest {
     
     @Test

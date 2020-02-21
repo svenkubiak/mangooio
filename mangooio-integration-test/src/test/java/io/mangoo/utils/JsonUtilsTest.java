@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.jayway.jsonpath.ReadContext;
@@ -17,11 +18,7 @@ import com.jayway.jsonpath.ReadContext;
 import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class JsonUtilsTest {
     private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 

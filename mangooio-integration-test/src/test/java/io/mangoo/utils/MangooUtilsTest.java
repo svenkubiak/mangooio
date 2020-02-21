@@ -17,16 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Default;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class MangooUtilsTest {
     @Test
     public void testGetVersion() throws InterruptedException {

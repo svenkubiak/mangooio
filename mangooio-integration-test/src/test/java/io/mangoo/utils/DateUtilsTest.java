@@ -11,15 +11,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class DateUtilsTest {
     
     @Test

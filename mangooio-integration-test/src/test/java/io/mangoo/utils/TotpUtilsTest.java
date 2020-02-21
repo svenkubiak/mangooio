@@ -10,16 +10,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.HmacShaAlgorithm;
 
-/**
- * 
- * @author svenkubiak
- *
- */
+@ExtendWith({TestExtension.class})
 public class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;
