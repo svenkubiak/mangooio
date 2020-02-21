@@ -112,7 +112,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentSerialize() throws InterruptedException {
+    public void testConcurrentSerialize() throws Exception {
         MatcherAssert.assertThat(t -> {
             //given
             Form form = Application.getInstance(Form.class);
