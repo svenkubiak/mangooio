@@ -125,7 +125,8 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), containsString("gerade"));
+        assertThat(response.getContent(), containsString("vor"));
+        assertThat(response.getContent(), containsString("Stunden"));
     }
     
     @Test

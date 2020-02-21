@@ -25,7 +25,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -106,29 +105,6 @@ public class FormControllerTest {
         assertThat(response.getContent(), Matchers.anyOf(equalTo("1\n2\n3\n"), equalTo("1\r\n2\r\n3\r\n")));
     }
     
-    @Test
-    public void testMultiValueConcurrent() {
-        MatcherAssert.assertThat(t -> {
-            // given
-            String uuid1 = UUID.randomUUID().toString();
-            String uuid2 = UUID.randomUUID().toString();
-            String uuid3 = UUID.randomUUID().toString();
-            Multimap<String, String> parameter = ArrayListMultimap.create();
-            parameter.put("foo[]", uuid1);
-            parameter.put("foo[]", uuid2);
-            parameter.put("foo[]", uuid3);
-            
-            // when
-            TestResponse response = TestRequest.post("/multivalued")
-                    .withContentType(MediaType.FORM_DATA.withoutParameters().toString())
-                    .withForm(parameter)
-                    .execute();
-            
-            // then
-            return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid1 + "\n" + uuid2 + "\n" + uuid3 + "\n");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-
 	@Test
 	public void testSingleFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given
