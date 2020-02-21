@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -84,7 +85,8 @@ public class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("/string\n/int/23\n/multiple/11/42"));
+        assertThat(response.getContent(), Matchers.anyOf(equalTo("/string\n/int/23\n/multiple/11/42"), equalTo("/string\r\n/int/23\r\n/multiple/11/42")));
+        
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
