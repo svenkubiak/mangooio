@@ -1,7 +1,9 @@
 package io.mangoo.core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -104,6 +107,7 @@ public final class Application {
         Objects.requireNonNull(mode, Required.MODE.toString());
         
         if (!started) {
+            userCheck();
             prepareMode(mode);
             prepareInjector();
             applicationInitialized();
@@ -118,6 +122,31 @@ public final class Application {
             
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             started = true;
+        }
+    }
+
+    /**
+     * Checks if application is run as root
+     * There is no need to run as root
+     */
+    private static void userCheck() {
+        String osName = System.getProperty("os.name");
+        if (StringUtils.isNotBlank(osName) && !osName.startsWith("Windows")) {
+            Process exec;
+            try {
+                exec = Runtime.getRuntime().exec("id -u");
+                BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+                String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
+                
+                input.close();
+                
+                if (("0").equals(output)) {
+                    LOG.error("Can not run application as root");
+                    failsafe();
+                }
+            } catch (IOException e) {
+                LOG.error("Failed to check user running application", e);
+            }
         }
     }
 
