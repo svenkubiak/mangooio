@@ -140,7 +140,7 @@ public final class Application {
                 
                 input.close();
                 
-                if (("0").equals(output)) {
+                if (("0").equals(output) && inProdMode()) {
                     LOG.error("Can not run application as root");
                     failsafe();
                 }
