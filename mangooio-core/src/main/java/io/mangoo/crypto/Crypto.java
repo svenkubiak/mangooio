@@ -50,7 +50,7 @@ public class Crypto {
     private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
-    private static final String TRANSFORMATION = "RSA/None/OAEPWithSHA512AndMGF1Padding";
+    private static final String TRANSFORMATION = "RSA/None/OAEPWITHSHA-512ANDMGF1PADDING";
     private static final String ALGORITHM = "RSA";
     private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
