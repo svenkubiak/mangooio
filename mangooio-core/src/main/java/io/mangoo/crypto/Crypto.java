@@ -35,7 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.google.inject.Inject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
@@ -46,7 +45,6 @@ import io.mangoo.exceptions.MangooEncryptionException;
  * @author svenkubiak
  *
  */
-@SuppressFBWarnings(value = "java:S5542", justification = "Compliant is SHA-256, SHA-512 is used")
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
