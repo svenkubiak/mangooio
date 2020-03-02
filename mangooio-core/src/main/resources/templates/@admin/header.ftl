@@ -61,7 +61,7 @@
             </a>   
                       </li>
                       <li class="nav-item">
-            <a href="/@admin/health" target="_blank" class="nav-link">
+            <a href="/@admin/health" target="_blank" rel="noopener" class="nav-link">
               <i class="nav-icon fas fa-heartbeat"></i>
               <p>Health</p>
             </a>                                                             
