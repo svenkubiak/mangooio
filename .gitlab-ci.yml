@@ -57,7 +57,7 @@ smoke:
 javadocs:
   stage: javadocs
   script:
-   - mvn $MAVEN_CLI_OPTS clean install javadoc:javadoc
+   - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true clean install javadoc:javadoc
    - mkdir /tmp/javadoc
    - mv /builds/svenkubiak/mangooio/mangooio-core/target/site/apidocs/* /tmp/javadoc
    - mkdir /tmp/build
