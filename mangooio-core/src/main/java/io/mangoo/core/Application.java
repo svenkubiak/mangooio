@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -135,7 +136,7 @@ public final class Application {
             Process exec;
             try {
                 exec = Runtime.getRuntime().exec("id -u");
-                BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+                BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream(), Charset.forName("UTF-8")));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
                 
                 input.close();
