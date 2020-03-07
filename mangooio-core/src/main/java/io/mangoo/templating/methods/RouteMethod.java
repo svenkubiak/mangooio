@@ -1,10 +1,11 @@
 package io.mangoo.templating.methods;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.re2j.Matcher;
+import com.google.re2j.Pattern;
 
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;

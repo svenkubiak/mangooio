@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
 import com.google.inject.Inject;
+import com.google.re2j.Pattern;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.cache.Cache;

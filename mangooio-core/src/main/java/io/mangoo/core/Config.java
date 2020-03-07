@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
+import com.google.re2j.Pattern;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.crypto.Crypto;

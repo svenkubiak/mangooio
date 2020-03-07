@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
@@ -15,6 +14,7 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import com.google.inject.Inject;
+import com.google.re2j.Pattern;
 
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Validation;

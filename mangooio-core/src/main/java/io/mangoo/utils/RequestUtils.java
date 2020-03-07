@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +21,7 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 
 import com.google.common.net.MediaType;
+import com.google.re2j.Pattern;
 
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;

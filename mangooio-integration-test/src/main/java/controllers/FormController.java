@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.re2j.Pattern;
 
 import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;

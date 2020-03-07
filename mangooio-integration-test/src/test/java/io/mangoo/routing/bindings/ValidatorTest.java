@@ -5,10 +5,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import com.google.re2j.Pattern;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
