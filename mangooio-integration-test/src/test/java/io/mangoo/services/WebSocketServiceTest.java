@@ -164,7 +164,9 @@ public class WebSocketServiceTest {
                 return null;
             }
         };
-        httpClient.newWebSocketBuilder().header("Cookie", config.getAuthenticationCookieName() + "=" + jwt).buildAsync(new URI(url), listener);
+        httpClient.newWebSocketBuilder()
+            .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
+            .buildAsync(new URI(url), listener);
         
         Thread.sleep(2000);
         
@@ -211,7 +213,9 @@ public class WebSocketServiceTest {
                 return null;
             }
         };
-        httpClient.newWebSocketBuilder().header("Cookie", config.getAuthenticationCookieName() + "=" + jwt).buildAsync(new URI(url), listener);
+        httpClient.newWebSocketBuilder()
+            .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
+            .buildAsync(new URI(url), listener);
         
         Thread.sleep(2000);
         
@@ -226,6 +230,6 @@ public class WebSocketServiceTest {
          });
         
         // then
-        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data)))); 
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data)))); 
     }
 }
