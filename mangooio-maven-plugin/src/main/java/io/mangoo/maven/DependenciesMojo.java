@@ -56,46 +56,45 @@ public class DependenciesMojo extends AbstractMojo {
                 try (InputStream inputStream = Files.newInputStream(target)){
                     properties.load(inputStream);
                 } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            
-            for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
-                String key = (String) keys.nextElement();
-                if (key.startsWith("dependencies.")) {
-                    props.remove(key);
+                    LOG.error("Failed to load dependies.properties file", e);
                 }
                 
-                if (key.startsWith(BOMS)) {
-                    props.remove(key);
+                for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
+                    String key = (String) keys.nextElement();
+                    if (key.startsWith("dependencies.")) {
+                        props.remove(key);
+                    }
+                    
+                    if (key.startsWith(BOMS)) {
+                        props.remove(key);
+                    }
                 }
-            }
 
-            boms(project, props);
-            Set<Artifact> artifacts = project.getArtifacts();
-            for (Artifact artifact : artifacts) {
-                if ("runtime".equals(artifact.getScope()) || "compile".equals(artifact.getScope())) {
-                    props.setProperty(key(artifact, props), coordinates(artifact));
+                boms(project, props);
+                Set<Artifact> artifacts = project.getArtifacts();
+                for (Artifact artifact : artifacts) {
+                    if ("runtime".equals(artifact.getScope()) || "compile".equals(artifact.getScope())) {
+                        props.setProperty(key(artifact, props), coordinates(artifact));
+                    }
+                }
+                
+                for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
+                    String key = (String) keys.nextElement();
+                    if (BLACKLIST.contains(key)) {
+                        props.remove(key);
+                    }
+                }
+                
+                try (OutputStream outputStream = Files.newOutputStream(target)){
+                    props.store(outputStream, "");
+                    LOG.info("dependencies.properties succesfully created");
+                } catch (IOException e) {
+                    LOG.error("Failed to create dependies.properties file", e);
                 }
             }
-            
-            for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
-                String key = (String) keys.nextElement();
-                if (BLACKLIST.contains(key)) {
-                    props.remove(key);
-                }
-            }
-            
-            try (OutputStream outputStream = Files.newOutputStream(target)){
-                props.store(outputStream, "");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            
-            LOG.info("dependencies.properties succesfully created");
         }
         catch (Exception e) {
-            throw new MojoExecutionException("Cannot calculate dependencies for: " + this.project.getArtifact(),e);
+            throw new MojoExecutionException("Can not calculate dependencies for: " + this.project.getArtifact(),e);
         }
     }
 
