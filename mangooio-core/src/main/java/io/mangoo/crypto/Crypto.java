@@ -181,7 +181,6 @@ public class Crypto {
      * @return Encrypted text
      * @throws MangooEncryptionException if encryption fails
      */
-    @SuppressWarnings("java:S5542")
     public byte[] encrypt(byte[] text, PublicKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
@@ -231,7 +230,6 @@ public class Crypto {
      * @return The unencrypted text
      * @throws MangooEncryptionException if decryption fails
      */
-    @SuppressWarnings("java:S5542")
     public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
