@@ -35,7 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.google.inject.Inject;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
@@ -231,9 +230,6 @@ public class Crypto {
      * @return The unencrypted text
      * @throws MangooEncryptionException if decryption fails
      */
-    @SuppressFBWarnings(
-            value = "java:S5542",
-            justification = "Why you choose to ignore it")
     public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
