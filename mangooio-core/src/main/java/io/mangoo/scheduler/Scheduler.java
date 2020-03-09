@@ -18,7 +18,6 @@ import org.quartz.impl.matchers.GroupMatcher;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
@@ -166,7 +165,6 @@ public class Scheduler {
      * @throws MangooSchedulerException if an error occurs during access to the Quartz Scheduler
      */
     @SuppressWarnings("unchecked")
-    @SuppressFBWarnings(value = "S1125", justification = "active state function as intended")
     public List<io.mangoo.models.Job> getAllJobs() throws MangooSchedulerException {
         Objects.requireNonNull(this.quartzScheduler, Required.SCHEDULER.toString());
         
@@ -176,7 +174,7 @@ public class Scheduler {
                 List<Trigger> triggers = (List<Trigger>) this.quartzScheduler.getTriggersOfJob(jobKey);
                 Trigger trigger = triggers.get(0);  
                 TriggerState triggerState = quartzScheduler.getTriggerState(trigger.getKey());
-                boolean active = (TriggerState.NORMAL == triggerState) ? true : false;
+                boolean active = TriggerState.NORMAL == triggerState;
                 jobs.add(new io.mangoo.models.Job(active, jobKey.getName(), trigger.getDescription(), trigger.getNextFireTime(), trigger.getPreviousFireTime()));
             }
         } catch (SchedulerException e) {

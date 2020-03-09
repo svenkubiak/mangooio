@@ -168,7 +168,7 @@ public class WebSocketServiceTest {
             .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
             .buildAsync(new URI(url), listener);
         
-        Thread.sleep(2000);
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
         
         Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
             try {
@@ -217,7 +217,7 @@ public class WebSocketServiceTest {
             .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
             .buildAsync(new URI(url), listener);
         
-        Thread.sleep(2000);
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
         
         Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
             try {
