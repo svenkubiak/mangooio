@@ -187,7 +187,7 @@ public class Crypto {
         
         byte[] encrypt = null;
         try {
-            Cipher cipher = Cipher.getInstance("RSA/None/OAEPWITHSHA-512ANDMGF1PADDING");
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypt = cipher.doFinal(text);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
