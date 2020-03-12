@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>5.15.0-Beta4-SNAPSHOT</version>
+		<version>5.15.0</version>
 	</parent>
 	<artifactId>mangooio-dependencies</artifactId>
 	<packaging>jar</packaging>
