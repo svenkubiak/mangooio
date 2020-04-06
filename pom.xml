@@ -345,7 +345,7 @@
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
-				<version>1.5.11</version>
+				<version>1.5.12</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.commons</groupId>
@@ -444,7 +444,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.67</version>
+				<version>4.8.68</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
@@ -538,7 +538,7 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
-				<version>1.64</version>
+				<version>1.65</version>
 			</dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
