@@ -3,6 +3,7 @@ package io.mangoo.routing;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -206,7 +207,7 @@ public class Attachment {
         this.session = session;
     }
 
-    public Attachment withClassAnnotations(List<Annotation> classAnnotations) {
+    public Attachment withClassAnnotations(Collection<Annotation> classAnnotations) {
         this.classAnnotations = new ArrayList<>(classAnnotations);
         return this;
     }
@@ -251,7 +252,7 @@ public class Attachment {
         return this;
     }
     
-    public Attachment withMethodAnnotations(List<Annotation> methodAnnotations) {
+    public Attachment withMethodAnnotations(Collection<Annotation> methodAnnotations) {
         this.methodAnnotations = new ArrayList<>(methodAnnotations);
         return this;
     }
