@@ -61,6 +61,7 @@
 						<debug>false</debug>
 						<showDeprecation>true</showDeprecation>
 						<fork>true</fork>
+						<useIncrementalCompilation>true</useIncrementalCompilation>
 					</configuration>
 				</plugin>
 				<plugin>
