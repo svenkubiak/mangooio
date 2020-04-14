@@ -27,8 +27,8 @@
 		<log4j.version>2.13.1</log4j.version>
 		<maven.version>3.6.3</maven.version>
 		<jersey.version>2.30.1</jersey.version>
-		<junit.version>5.6.1</junit.version>
-		<junit.platform.version>1.6.1</junit.platform.version>
+		<junit.version>5.6.2</junit.version>
+		<junit.platform.version>1.6.2</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
 		<simplemail.version>6.0.3</simplemail.version>
 	</properties>
@@ -346,7 +346,7 @@
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
-				<version>1.5.12</version>
+				<version>1.5.13</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.commons</groupId>
@@ -435,7 +435,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>28.2-jre</version>
+				<version>29.0-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>biz.gabrys.lesscss</groupId>
@@ -445,7 +445,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.68</version>
+				<version>4.8.69</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
