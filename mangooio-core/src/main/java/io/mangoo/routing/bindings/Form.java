@@ -239,17 +239,6 @@ public class Form extends Validator {
     }
     
     /**
-     * @deprecated Use {@link #isKept()} instead 
-     * 
-     * Checks if the form values are to put in the flash scope
-     * @return True if form values should be put into flash scope, false otherwise
-     */
-    @Deprecated(since = "5.12.0", forRemoval = true)
-    public boolean flashify() {
-        return this.keep;
-    }
-    
-    /**
      * Discards the complete form
      */
     public void discard() {

@@ -130,22 +130,6 @@ public class Mail {
     }
     
     /**
-     * Sets the FROM address.
-     * 
-     * @deprecated As of release 5.14.0, {@link #from(String, String)} instead
-     *
-     * @param from Address may be specified with personal name like this: {@code email@foo.com}
-     * @return A mail object instance
-     */
-    @Deprecated(since = "5.14.0", forRemoval = true)
-    public Mail from(String from) {
-        Objects.requireNonNull(from, Required.FROM.toString());
-        this.email.from(from);
-        
-        return this;
-    }
-    
-    /**
      * Sets the FROM address and name
      * 
      * @param fromName The name of the sender e.g. Peter Parker
@@ -184,25 +168,6 @@ public class Mail {
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO.toString());
         this.email.withReplyTo(replyTo);
-        
-        return this;
-    }
-    
-    /**
-     * Appends one or more REPLY-TO address
-     * 
-     * @deprecated As of release 5.14.0, will be removed 6.0.0
-     *
-     * @param replyTos array of {@link String}s to set
-     * @return A mail object instance
-     */
-    @Deprecated(since = "5.14.0", forRemoval = true)
-    public Mail replyTo(String... replyTos) {
-        Objects.requireNonNull(replyTos, Required.REPLY_TOS.toString());
-        
-        for (String replyTo : replyTos) {
-            this.email.withReplyTo(replyTo);
-        }
         
         return this;
     }
@@ -306,64 +271,5 @@ public class Mail {
         
         TemplateContext templateContext = new TemplateContext(content).withTemplatePath(template);
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
-    }
-    
-    /**
-     * @deprecated use {@link #create()} instead. 
-     * 
-     * Creates a new mail instance
-     * @return A mail object instance
-     */
-    @Deprecated(since = "5.12.0", forRemoval = true)
-    public static Mail build() {
-        return new Mail();
-    }
-
-    /**
-     * @deprecated Use {@link #textMessage(String, Map)} or {@link #htmlMessage(String, Map)} instead
-     * 
-     * Sets a template to be rendered for the email. Using a template
-     * will make it a HTML Email by default.
-     *
-     * @param template The template to use
-     * @param content The content for the template
-     * @return A mail object instance
-     * @throws MangooTemplateEngineException if rendering of template fails
-     */
-    @Deprecated(since = "5.12.0", forRemoval = true)
-    public Mail templateMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
-        Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        Objects.requireNonNull(content, Required.CONTENT.toString());
-
-        if (template.charAt(0) == '/' || template.startsWith("\\")) {
-            template = template.substring(1, template.length());
-        } 
-        
-        this.email.withHTMLText(Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext(content).withTemplatePath(template)));
-        
-        return this;
-    }
-    
-    /**
-     * @deprecated Use {@link #textMessage(String, Map)} or {@link #htmlMessage(String, Map)} instead
-     * 
-     * Sets a template to be rendered for the email. Using a template
-     * will make it a HTML Email by default.
-     *
-     * @param template The template to use
-     * @return A mail object instance
-     * @throws MangooTemplateEngineException if rendering of template fails
-     */
-    @Deprecated(since = "5.12.0", forRemoval = true)
-    public Mail templateMessage(String template) throws MangooTemplateEngineException {
-        Objects.requireNonNull(template, Required.TEMPLATE.toString());
-
-        if (template.charAt(0) == '/' || template.startsWith("\\")) {
-            template = template.substring(1, template.length());
-        } 
-        
-        this.email.withHTMLText(Application.getInstance(TemplateEngine.class).renderTemplate(new TemplateContext().withTemplatePath(template)));
-
-        return this;
     }
 }
