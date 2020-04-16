@@ -4,19 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import biz.gabrys.lesscss.compiler2.CompilerException;
-import biz.gabrys.lesscss.compiler2.LessCompiler;
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -103,39 +95,6 @@ public final class Minification {
         if (config == null) {
             System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
             config = new Config();
-        }
-
-        if (config.isApplicationPreprocessLess() && absolutePath.endsWith(LESS)) {
-            lessify(new File(absolutePath));
-        } else if (config.isApplicationPreprocessSass() && absolutePath.endsWith(SASS)) {
-            sassify(new File(absolutePath));
-        }
-    }
-
-    private static void lessify(File lessFile) {
-        final LessCompiler compiler = new LessCompiler();
-        final File outputFile = getOutputFile(lessFile, Suffix.CSS);
-        try {
-            compiler.compile(lessFile, outputFile, Charset.forName(Default.ENCODING.toString()));
-            logPreprocess(lessFile, outputFile);
-        } catch (final CompilerException e) {
-            LOG.error("Failed to preprocess LESS file", e);
-        }
-    }
-
-    private static void sassify(File sassFile) {
-        final File outputFile = getOutputFile(sassFile, Suffix.CSS);
-
-        final URI inputURI = sassFile.toURI();
-        final URI outputURI = outputFile.toURI();
-
-        final Compiler compiler = new Compiler();
-        try {
-          final Output output = compiler.compileFile(inputURI, outputURI, new Options());
-          FileUtils.writeStringToFile(outputFile, output.getCss(), Default.ENCODING.toString());
-          logPreprocess(sassFile, outputFile);
-        } catch (CompilationException | IOException e) {
-            LOG.error("Failed to preprocess SASS file", e);
         }
     }
 

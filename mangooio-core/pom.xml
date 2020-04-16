@@ -51,10 +51,6 @@
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>biz.gabrys.lesscss</groupId>
-			<artifactId>lesscss-compiler2</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.jodd</groupId>
 			<artifactId>jodd-props</artifactId>
 		</dependency>
@@ -93,10 +89,6 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.bit3</groupId>
-			<artifactId>jsass</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

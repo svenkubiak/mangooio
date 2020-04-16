@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.Mockito.when;
@@ -25,8 +24,6 @@ import io.mangoo.enums.Default;
  *
  */
 public class MinificationTest {
-    private static final String COMPILED_LESS = "background-color: #143352;";
-    private static final String COMPILED_SASS = "font: 100% Helvetica, sans-serif;";
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String JS = "$(document).ready(function(){$('#username').focus();});$('.btn-success').click(function(){var btn=$(this);btn.button('loading');});";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
@@ -38,8 +35,6 @@ public class MinificationTest {
         config = Mockito.mock(Config.class);
         when(config.isApplicationMinifyCSS()).thenReturn(true);
         when(config.isApplicationMinifyJS()).thenReturn(true);
-        when(config.isApplicationPreprocessLess()).thenReturn(true);
-        when(config.isApplicationPreprocessSass()).thenReturn(true);
         Minification.setConfig(config);
         Minification.setAssetPath(ASSET_PATH);
         Minification.setBasePath(TEMP);
@@ -100,59 +95,6 @@ public class MinificationTest {
         assertThat(outputfile.exists(), equalTo(true));
         assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(JS));
         assertThat(outputfile.length(), lessThan(file.length()));
-        assertThat(file.delete(), equalTo(true));
-        assertThat(outputfile.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testPreprocessLess() throws IOException {
-        //given
-        String uuid = UUID.randomUUID().toString();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("@meineFarbe: #143352;");
-        buffer.append("    ");
-        buffer.append("#header {");
-        buffer.append("  background-color: @meineFarbe;");
-        buffer.append("}");
-        buffer.append("h2 {");
-        buffer.append("  color: @meineFarbe;");
-        buffer.append("}");
-        
-        //when
-        File file = new File(TEMP + uuid + ".less");
-        FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        Minification.preprocess(file.getAbsolutePath());
-        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
-
-        //then
-        assertThat(outputfile.exists(), equalTo(true));
-        assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), containsString(COMPILED_LESS));
-        assertThat(file.delete(), equalTo(true));
-        assertThat(outputfile.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testPreprocessSass() throws IOException {
-        //given
-        String uuid = UUID.randomUUID().toString();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("$font-stack: Helvetica, sans-serif;");
-        buffer.append("$primary-color: #333;");
-        buffer.append("    ");
-        buffer.append("body {");
-        buffer.append("  font: 100% $font-stack;");
-        buffer.append("  color: $primary-color;");
-        buffer.append("}");
-        
-        //when
-        File file = new File(TEMP + uuid + ".sass");
-        FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        Minification.preprocess(file.getAbsolutePath());
-        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".css");
-
-        //then
-        assertThat(outputfile.exists(), equalTo(true));
-        assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), containsString(COMPILED_SASS));
         assertThat(file.delete(), equalTo(true));
         assertThat(outputfile.delete(), equalTo(true));
     }

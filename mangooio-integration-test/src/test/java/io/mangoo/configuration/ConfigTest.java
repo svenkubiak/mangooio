@@ -706,68 +706,6 @@ public class ConfigTest {
         assertThat(config.isApplicationMinifyCSS(), equalTo(Default.APPLICATION_MINIFY_CSS.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
-   
-    @Test
-    public void testIsApplicationPreprocessSass() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String preprocess = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.preprocess.sass", preprocess);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isApplicationPreprocessSass(), equalTo(Boolean.valueOf(preprocess)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsApplicationPreprocessSassDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationPreprocessSass(), equalTo(Default.APPLICATION_PREPROCESS_SASS.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    } 
-    
-    @Test
-    public void testIsApplicationPreprocessLess() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String preprocess = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.preprocess.less", preprocess);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isApplicationPreprocessLess(), equalTo(Boolean.valueOf(preprocess)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsApplicationPreprocessLessDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationPreprocessLess(), equalTo(Default.APPLICATION_PREPROCESS_LESS.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
     
     @Test
     public void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {

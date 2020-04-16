@@ -536,20 +536,6 @@ public class Config {
     }
 
     /**
-     * @return application.preprocess.sass or default value if undefined
-     */
-    public boolean isApplicationPreprocessSass() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_SASS, Default.APPLICATION_PREPROCESS_SASS.toBoolean());
-    }
-
-    /**
-     * @return application.preprocess.less or default value if undefined
-     */
-    public boolean isApplicationPreprocessLess() {
-        return getBoolean(Key.APPLICATION_PREPROCESS_LESS, Default.APPLICATION_PREPROCESS_LESS.toBoolean());
-    }
-
-    /**
      * @return application.admin.enable or default value if undefined
      */
     public boolean isApplicationAdminEnable() {

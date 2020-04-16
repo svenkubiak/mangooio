@@ -19,8 +19,6 @@ public enum Key {
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MODE("application.mode"),
     APPLICATION_NAME("application.name"),
-    APPLICATION_PREPROCESS_LESS("application.preprocess.less"),
-    APPLICATION_PREPROCESS_SASS("application.preprocess.sass"),   
     APPLICATION_PRIVATEKEY("application.privatekey"),
     APPLICATION_PUBLICKEY("application.publickey"),
     APPLICATION_SECRET("application.secret"),
