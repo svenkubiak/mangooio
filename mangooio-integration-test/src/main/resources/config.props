@@ -62,6 +62,11 @@
 	headers.allowmethods = GET,POST,PATCH
 	headers.exposeheaders = Authorization,Content-Type
 	headers.maxage = 86400
+[persistence<test>]
+    mongo.embedded = true
+	mongo.host = localhost
+	mongo.port = 29019
+	mongo.package = models
 []
 
 [application<dev>]

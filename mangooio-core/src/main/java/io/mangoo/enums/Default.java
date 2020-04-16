@@ -68,6 +68,12 @@ public enum Default {
     MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),
     NUMBER_FORMAT("0.######"),
+    PERSISTENCE_MONGO_AUTH(Constants.FALSE),
+    PERSISTENCE_MONGO_DBNAME("mangoo-io-mongodb"),
+    PERSISTENCE_MONGO_EMBEDDED(Constants.FALSE),
+    PERSISTENCE_MONGO_HOST("localhost"),
+    PERSISTENCE_MONGO_PACKAGE("models"),
+    PERSISTENCE_MONGO_PORT("27017"),
     POLICY_CSV("policy.csv"),
     ROUTES_FILE("routes.yaml"),
     SCHEDULER_ANNOTATION("io.mangoo.annotations.Schedule"),
@@ -96,12 +102,6 @@ public enum Default {
     VERSION_UNKNOW("unknown"),
     WSS_CACHE_PREFIX("MANGOOIO-WSS-");
 
-    Default (String value) {
-        this.value = value;
-    }
-
-    private final String value;
-    
     private static class Constants {
         public static final String FALSE = "false";
         public static final String TRUE = "true";
@@ -109,6 +109,7 @@ public enum Default {
         private Constants() {
         }
     }
+
     private static Map<String, String> messages = new HashMap<>();
     
     static {
@@ -127,9 +128,14 @@ public enum Default {
         messages.put(Validation.NUMERIC_KEY.name(), Validation.NUMERIC.toString());
         messages.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
     }
-    
     public static Map<String, String> getMessages() {
         return messages;
+    }
+    
+    private final String value;
+    
+    Default (String value) {
+        this.value = value;
     }
 
     public boolean toBoolean() {
