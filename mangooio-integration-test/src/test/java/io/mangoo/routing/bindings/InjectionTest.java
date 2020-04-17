@@ -16,7 +16,7 @@ import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
@@ -290,7 +290,7 @@ public class InjectionTest {
     @Test
     public void testMangooRequestFilter() {
         //given
-        MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
+        OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
         
         //then
         assertThat(mangooRequestFilter, not(nullValue()));

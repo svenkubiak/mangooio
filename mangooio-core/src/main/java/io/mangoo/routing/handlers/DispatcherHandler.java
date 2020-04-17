@@ -16,7 +16,7 @@ import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
-import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
@@ -71,7 +71,7 @@ public class DispatcherHandler implements HttpHandler {
         this.controllerClassName = controllerClass.getSimpleName();
         this.methodParameters = getMethodParameters();
         this.methodParametersCount = this.methodParameters.size();
-        this.requestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(MangooRequestFilter.class));
+        this.requestFilter = Application.getInjector().getAllBindings().containsKey(com.google.inject.Key.get(OncePerRequestFilter.class));
 
         try {
             this.method = Application.getInstance(this.controllerClass)

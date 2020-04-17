@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.mangoo.interfaces.MangooFilter;
+import io.mangoo.interfaces.filters.PerRequestFilter;
 
 /**
  * Filter annotation for request and controller filter
@@ -16,5 +16,5 @@ import io.mangoo.interfaces.MangooFilter;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface FilterWith {
-    Class<? extends MangooFilter>[] value();
+    Class<? extends PerRequestFilter>[] value();
 }

@@ -1,4 +1,4 @@
-package io.mangoo.interfaces;
+package io.mangoo.interfaces.filters;
 
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -9,6 +9,6 @@ import io.mangoo.routing.bindings.Request;
  *
  */
 @FunctionalInterface
-public interface MangooFilter {
+public interface OncePerRequestFilter {
     Response execute(Request request, Response response);
 }

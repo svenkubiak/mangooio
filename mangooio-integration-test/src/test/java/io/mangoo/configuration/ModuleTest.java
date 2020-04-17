@@ -18,7 +18,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.templating.TemplateEngine;
 
 /**
@@ -41,7 +41,7 @@ public class ModuleTest {
 		Binding<JobFactory> jobFactory = guice.getBinding(JobFactory.class);
 		Binding<Cache> cache = guice.getBinding(Cache.class);
 		Binding<TemplateEngine> templateEngine = guice.getBinding(TemplateEngine.class);		
-		Binding<MangooRequestFilter> mangooRequestFilter = guice.getBinding(MangooRequestFilter.class);
+		Binding<OncePerRequestFilter> mangooRequestFilter = guice.getBinding(OncePerRequestFilter.class);
 		Binding<MangooBootstrap> mangooBootstrap = guice.getBinding(MangooBootstrap.class);
 		
 		//then

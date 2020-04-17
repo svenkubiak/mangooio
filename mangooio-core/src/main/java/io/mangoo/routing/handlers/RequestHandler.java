@@ -26,7 +26,7 @@ import io.mangoo.enums.Binding;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.interfaces.MangooRequestFilter;
+import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -96,7 +96,7 @@ public class RequestHandler implements HttpHandler {
         //execute global request filter
         Response response = Response.withOk();
         if (this.attachment.hasRequestFilter()) {
-            final MangooRequestFilter mangooRequestFilter = Application.getInstance(MangooRequestFilter.class);
+            final OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
             response = mangooRequestFilter.execute(this.attachment.getRequest(), response);
         }
 
