@@ -4,17 +4,14 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -162,6 +159,14 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.loginPath());
     }
     
+    public Response authenticate() {
+        return Response.withOk();
+    }
+    
+    public Response verify() {
+        return Response.withOk();
+    }
+    
     public Response twofactor() {
         return Response.withOk()
                 .andTemplate(Template.DEFAULT.twofactorPath());
@@ -269,46 +274,6 @@ public class AdminController {
         }
         
         return Response.withRedirect("/@admin/scheduler");
-    }
-
-    public Response health() {
-        if (this.config.isMetricsEnable()) {
-            Runtime runtime = Runtime.getRuntime();
-            long maxMemory = runtime.maxMemory();
-            long allocatedMemory = runtime.totalMemory();
-            long freeMemory = runtime.freeMemory();
-            
-            Metrics metrics = Application.getInstance(Metrics.class);
-            long totalRequests = 0;
-            long errorRequests = 0;
-            double errorRate = 0;
-            
-            for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
-                if (String.valueOf(entry.getKey()).charAt(0) == '5') {
-                    errorRequests = errorRequests + entry.getValue().longValue();
-                }
-                totalRequests = totalRequests + entry.getValue().longValue();
-            }
-            
-            if (errorRequests > 0) {
-                errorRate = totalRequests / (double) errorRequests;
-            }
-            
-            Map<String, Object> json = new HashMap<>();
-            json.put("started", Application.getStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            json.put("uptime in seconds", Application.getUptime().getSeconds());
-            json.put("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory));
-            json.put("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory));
-            json.put("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory));
-            json.put("totalFreeMemory", FileUtils.byteCountToDisplaySize(freeMemory + (maxMemory - allocatedMemory)));
-            json.put(METRICS, metrics);
-            json.put("totalRequests", totalRequests);
-            json.put("errorRate", errorRate);
-            
-            return Response.withOk().andJsonBody(json);
-        }
-        
-        return Response.withNotFound();
     }
     
     public Response tools() {
