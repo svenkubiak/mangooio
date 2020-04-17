@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.models.Metrics;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
@@ -26,7 +24,6 @@ public class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
-    private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
     private static final String TOOLS = "tools";
     private static final String ADMIN = "admin";
@@ -119,71 +116,6 @@ public class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
         assertThat(response.getContent(), not(containsString(ROUTES)));
-    }
-
-    @Test
-    public void testMetricsAuthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/metrics")
-                .withBasicAuthentication(ADMIN, ADMIN)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(METRICS));
-    }
-    
-    @Test
-    public void testResetMetricsAuthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/metrics/reset")
-                .withBasicAuthentication(ADMIN, ADMIN)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(METRICS));
-        
-        //given
-        TestRequest.get("/").execute();
-        TestRequest.get("/").execute();
-        TestRequest.get("/").execute();
-        Metrics metrics = Application.getInstance(Metrics.class);
-        metrics.reset();
-        
-        //then
-        assertThat(metrics.getAvgRequestTime(), equalTo(0L));
-        assertThat(metrics.getMaxRequestTime(), equalTo(-1));
-        assertThat(metrics.getMinRequestTime(), equalTo(-1));
-        assertThat(metrics.getResponseMetrics().size(), equalTo(0));
-        assertThat(metrics.getDataSend(), equalTo(0L));
-    }
-    
-    @Test
-    public void testResetMetricsUnauthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/metrics/reset")
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContent(), not(containsString(ROUTES)));
-    }
-    
-    @Test
-    public void testMetricsUnauthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/metrics").execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContent(), not(containsString(METRICS)));
     }
     
     @Test

@@ -479,12 +479,12 @@ public final class Application {
                 .withBasicAuthentication(config.getApplicationAdminUsername(), config.getApplicationAdminPassword(), config.getApplicationAdminSecret())
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
+                        On.get().to("/@admin/login").respondeWith("login"),
+                        On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                         On.get().to("/@admin/scheduler").respondeWith("scheduler"),
                         On.get().to("/@admin/logger").respondeWith("logger"),
                         On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
                         On.get().to("/@admin/routes").respondeWith("routes"),
-                        On.get().to("/@admin/metrics").respondeWith("metrics"),
-                        On.get().to("/@admin/metrics/reset").respondeWith("resetMetrics"),
                         On.get().to("/@admin/tools").respondeWith("tools"),
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax"),
                         On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),

@@ -21,9 +21,10 @@ public enum Template {
     private static final String FORBIDDEN_TAMPLTE_PATH = "defaults/403.html";
     private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
     private static final String LOGGER_TEMPLATE_PATH = "@admin/logger.ftl";
-    private static final String METRICS_TEMPLARE_PATH = "@admin/metrics.ftl";
+    private static final String LOGIN_TEMPLARE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
+    private static final String TWOFACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
     private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
@@ -94,12 +95,19 @@ public enum Template {
     public String loggerPath() {
         return LOGGER_TEMPLATE_PATH;
     }
+    
+    /**
+     * @return The relative path of the cache template
+     */
+    public String twofactorPath() {
+        return TWOFACTOR_TEMPLATE_PATH;
+    }
 
     /**
-     * @return The relative path of the metrics template
+     * @return The relative path of the login template
      */
-    public String metricsPath() {
-        return METRICS_TEMPLARE_PATH;
+    public String loginPath() {
+        return LOGIN_TEMPLARE_PATH;
     }
 
     /**

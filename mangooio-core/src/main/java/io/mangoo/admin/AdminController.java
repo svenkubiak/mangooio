@@ -157,6 +157,16 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.loggerPath());
     }
     
+    public Response login() {
+        return Response.withOk()
+                .andTemplate(Template.DEFAULT.loginPath());
+    }
+    
+    public Response twofactor() {
+        return Response.withOk()
+                .andTemplate(Template.DEFAULT.twofactorPath());
+    }
+    
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         if (body != null && body.size() > 0) {
@@ -173,50 +183,6 @@ public class AdminController {
         
         return Response.withOk()
                 .andEmptyBody();
-    }
-    
-    public Response metrics() {
-        boolean enabled = this.config.isMetricsEnable();
-        if (enabled) {
-            Metrics metrics = Application.getInstance(Metrics.class);
-            long totalRequests = 0;
-            long errorRequests = 0;
-            
-            for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
-                if (String.valueOf(entry.getKey()).charAt(0) == '5') {
-                    errorRequests = errorRequests + entry.getValue().longValue();
-                }
-                totalRequests = totalRequests + entry.getValue().longValue();
-            }
-
-            double errorRate = 0;
-            if (errorRequests > 0) {
-                errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
-            }
-            
-            EventBusService eventBusService = Application.getInstance(EventBusService.class);
-            
-            return Response.withOk()
-                    .andContent(SPACE, METRICS)
-                    .andContent(VERSION, VERSION_TAG)
-                    .andContent(METRICS, metrics.getResponseMetrics())
-                    .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
-                    .andContent("totalRequests", totalRequests)
-                    .andContent("minRequestTime", metrics.getMinRequestTime())
-                    .andContent("avgRequestTime", metrics.getAvgRequestTime())
-                    .andContent("maxRequestTime", metrics.getMaxRequestTime())
-                    .andContent("errorRate", errorRate)
-                    .andContent("events", eventBusService.getNumEvents())
-                    .andContent("listeners", eventBusService.getNumListeners())
-                    .andContent("enabled", enabled)
-                    .andTemplate(Template.DEFAULT.metricsPath());
-        }
-        
-        return Response.withOk()
-                .andContent(SPACE, METRICS)
-                .andContent(VERSION, VERSION_TAG)
-                .andContent("enabled", enabled)
-                .andTemplate(Template.DEFAULT.metricsPath());
     }
     
     @SuppressFBWarnings(value = "CE_CLASS_ENVY", justification = "JSONObject creation as intended")
@@ -276,17 +242,6 @@ public class AdminController {
                 .andContent(VERSION, VERSION_TAG)
                 .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
-    }
-    
-    private List<JSONObject> getRoutes() {
-        List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
-        
-        return (routes == null) ? new ArrayList<>() : routes;
-    }
-
-    public Response resetMetrics() {
-        Application.getInstance(Metrics.class).reset();
-        return Response.withRedirect("/@admin/metrics");
     }
     
     public Response scheduler()  {
@@ -403,5 +358,11 @@ public class AdminController {
         
         return Response.withOk()
                .andJsonBody(value);
+    }
+    
+    private List<JSONObject> getRoutes() {
+        List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
+        
+        return (routes == null) ? new ArrayList<>() : routes;
     }
 }
