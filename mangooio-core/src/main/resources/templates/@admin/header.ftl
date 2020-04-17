@@ -28,7 +28,6 @@
                 <a class="navbar-item" href="/@admin/routes">Routes</a>
                 <a class="navbar-item" href="/@admin/scheduler">Scheduler</a>
                 <a class="navbar-item" href="/@admin/tools">Config tools</a>  
-                <a class="navbar-item" href="/@admin/health">Health</a>                   
             </div>
         </div>
     </div>
