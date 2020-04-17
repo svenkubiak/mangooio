@@ -1,72 +1,35 @@
 <#setting number_format=",##0">
 <#setting locale="en_US">
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>mangoo I/O | Admin Dashboard</title>
-  <link rel="stylesheet" href="/@admin/assets/css/all.min.css">
-  <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
-  <link rel="stylesheet" href="/@admin/assets/css/styles.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mangoo I/O Admin</title>
+    <link rel="stylesheet" href="/@admin/assets/css/bulma.min.css">
+    <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
+    <link rel="stylesheet" href="/@admin/assets/css/styles.min.css">    
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
-  <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-      </li>
-    </ul>
-    </nav>
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <div class="sidebar">
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/@admin" class="nav-link<#if !space??> active</#if>">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>Dashboard</p>
-            </a>
-          </li>  
-          <li class="nav-item">
-            <a href="/@admin/logger" class="nav-link<#if space?? && space == "logger"> active</#if>">
-              <i class="nav-icon far fa-file-alt"></i>
-              <p>Logger</p>
-            </a> 
-                      </li>
-                      <li class="nav-item">
-            <a href="/@admin/routes" class="nav-link<#if space?? && space == "routes"> active</#if>">
-              <i class="nav-icon fas fa-arrows-alt"></i>
-              <p>Routes</p>
-            </a>  
-                      </li>
-                      <li class="nav-item">
-            <a href="/@admin/scheduler" class="nav-link<#if space?? && space == "scheduler"> active</#if>">
-              <i class="nav-icon fas fa-calendar"></i>
-              <p>Scheduler</p>
-            </a>  
-                      </li>
-                      <li class="nav-item">
-            <a href="/@admin/metrics" class="nav-link<#if space?? && space == "metrics"> active</#if>">
-              <i class="nav-icon far fa-chart-bar"></i>
-              <p>Metrics</p>
-            </a>   
-                      </li>
-                      <li class="nav-item">
-            <a href="/@admin/tools" class="nav-link<#if space?? && space == "tools"> active</#if>">
-              <i class="nav-icon fas fa-wrench"></i>
-              <p>Config tools</p>
-            </a>   
-                      </li>
-                      <li class="nav-item">
-            <a href="/@admin/health" target="_blank" rel="noopener" class="nav-link">
-              <i class="nav-icon fas fa-heartbeat"></i>
-              <p>Health</p>
-            </a>                                                             
-          </li>
-        </ul>
-      </nav>
+<body>
+<nav class="navbar is-white">
+    <div class="container">
+        <div class="navbar-brand">
+            <div class="navbar-burger burger" data-target="navMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/@admin">Dashboard</a>
+                <a class="navbar-item" href="/@admin/logger">Logger</a>
+                <a class="navbar-item" href="/@admin/routes">Routes</a>
+                <a class="navbar-item" href="/@admin/scheduler">Scheduler</a>
+                <a class="navbar-item" href="/@admin/tools">Config tools</a>  
+                <a class="navbar-item" href="/@admin/health">Health</a>                   
+            </div>
+        </div>
     </div>
-  </aside>
+</nav>

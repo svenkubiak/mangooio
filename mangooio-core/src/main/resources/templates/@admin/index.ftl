@@ -1,47 +1,88 @@
 <#include "header.ftl">
-<div class="content-wrapper">
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-12">
-            <h1>Dashboard</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-4 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="far fa-clock"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">Application started</span>
-                <span class="info-box-number">${prettytime(uptime)}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-success"><i class="fas fa-battery-half"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">Free memory</span>
-                <span class="info-box-number"><div id="freememory">${freeMemory}</div></span>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4 col-sm-6 col-12">
-            <div class="info-box">
-              <span class="info-box-icon bg-warning"><i class="fas fa-battery-full"></i></span>
-              <div class="info-box-content">
-                <span class="info-box-text">Allocated memory</span>
-                <span class="info-box-number"><div id="allocatedmemory">${allocatedMemory}</div></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</div>
+		<div class="container">
+	        <div class="columns">
+	            <div class="column is-12">
+	                <section class="hero is-info welcome is-small">
+	                    <div class="hero-body">
+	                        <div class="container">
+	                            <h1 class="title">
+	                                Dashboard
+	                            </h1>
+	                        </div>
+	                    </div>
+	                </section>
+	                <section class="info-tiles">
+	                			<#list warnings as warning>
+				<div class="notification is-warning">
+				  ${warning}
+				</div>
+			</#list>
+	                    <div class="tile is-ancestor has-text-centered">
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child is-primary box">
+	                                <p class="title">${totalRequests}</p>
+	                                <p class="subtitle">Total requests</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${dataSend}</p>
+	                                <p class="subtitle">Data send</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${errorRate} %</p>
+	                                <p class="subtitle">Error rate</p>
+	                            </article>
+	                        </div>
+	                    </div>
+	                </section>
+	                <section class="info-tiles">
+	                    <div class="tile is-ancestor has-text-centered">
+	                        <div class="tile is-parent is-primary">
+	                            <article class="tile is-child box">
+	                                <p class="title">${minRequestTime} ms</p>
+	                                <p class="subtitle">Min process time</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${avgRequestTime} ms</p>
+	                                <p class="subtitle">Avg process time</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${maxRequestTime} ms</p>
+	                                <p class="subtitle">Max process time</p>
+	                            </article>
+	                        </div>
+	                    </div>
+	                </section>
+	                <section class="info-tiles">
+	                    <div class="tile is-ancestor has-text-centered">
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${prettytime(uptime)}</p>
+	                                <p class="subtitle">Application started</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${events}</p>
+	                                <p class="subtitle">EventBus events</p>
+	                            </article>
+	                        </div>
+	                        <div class="tile is-parent">
+	                            <article class="tile is-child box">
+	                                <p class="title">${listeners}</p>
+	                                <p class="subtitle">EventBus listeners</p>
+	                            </article>
+	                        </div>
+	                    </div>
+	                </section>                                
+	            </div>
+	        </div>
+	    </div>
 <#include "footer.ftl">

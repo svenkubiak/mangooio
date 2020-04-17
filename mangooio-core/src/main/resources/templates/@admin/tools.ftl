@@ -1,84 +1,100 @@
 <#include "header.ftl">
-<div class="content-wrapper">
-<section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Config tools</h1>
-          </div>
-        </div>
+<div class="container">
+  <div class="columns">
+      <div class="column is-12">
+          <section class="hero is-info welcome is-small">
+              <div class="hero-body">
+                  <div class="container">
+                      <h1 class="title">
+                          Config tools
+                      </h1>
+                  </div>
+              </div>
+          </section>
+          <section class="info-tiles">
+           	<div class="tile is-ancestor">
+		          <div class="tile is-parent">
+		          	<article class="tile is-child is-primary box">
+		        		<p class="title">Generate key pair</p>
+		        		<div class="content">
+			           		<form>
+			                <div class="field">
+			                  	<label class="label">Public key</label>
+			                  	<div class="control">
+			                    	<textarea class="textarea" rows="3" disabled="" name="publickey" id="publickey"></textarea>
+			                    </div>
+			                  </div>
+			                  <div class="field">
+			                    <label class="label">Private key</label>
+			                    <div class="control">
+			                    <textarea class="textarea" rows="9" disabled="" name="privatekey" id="privatekey"></textarea>
+			                    </div>
+			                  </div>
+			                  <button type="button" class="button is-fullwidth is-primary" id="keypair">Generate</button>
+				              </form>
+			              </div>
+		              </article>
+		      		</div>
+             </div>
+          </section>
+          <section class="info-tiles">
+           	<div class="tile is-ancestor">
+		          <div class="tile is-parent">
+		          	<article class="tile is-child is-primary box">
+		        		<p class="title">Encrypt a config value</p>
+		        		<div class="content">
+							<form>
+				               <div class="field">
+				                 <label class="label">Cleartext</label>
+				                 <div class="control">
+				                   <input type="text" class="input" id="cleartext" name="cleartext">
+				                 </div>
+				               </div>
+				               <div class="field">
+				                 <label class="label">Public key</label>
+				                 <div class="control">
+				                   <textarea class="textarea" rows="3" name="pubkey" id="pubkey"></textarea>
+				                 </div>
+				               </div>
+				               <div class="field">
+				                  <label class="label">Encrypted value</label>
+				                  <div class="control">
+				                 <textarea class="textarea" rows="5" id="encryptedvalue" name="encryptedvalue" disabled=""></textarea>
+				                 </div>
+				               </div>
+				               <button type="button" class="button is-fullwidth is-primary" id="encrypt">Encrypt</button>
+				           </form>
+			              </div>
+		              </article>
+		      		</div>
+             </div>
+          </section>
+          <section class="info-tiles">
+           	<div class="tile is-ancestor">
+		          <div class="tile is-parent">
+		          	<article class="tile is-child is-primary box">
+		        		<p class="title">Two Factor Authentication</p>
+		        		<div class="content">
+				            <#if qrcode?has_content && secret?has_content>
+				            <form>
+				       <div class="field">
+				       <img src="${qrcode}">
+				               </div>
+				               <div class="field">
+				                 <label class="label">Secret</label>
+				                 <div class="control">
+				                   <textarea class="textarea" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
+				                 </div>
+				               </div>
+				             </form>
+				         </div>
+				         </#if>
+			              </div>
+		              </article>
+		      		</div>
+             </div>
+          </section>          
       </div>
-    </section>
-<section class="content">
-     <div class="container-fluid">
-               <div class="row">
-			<div class="col-md-12">
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Generate key pair</h3>
-              </div>
-              <form role="form">
-                <div class="card-body">
-                  <div class="form-group">
-                  	<label>Public key</label>
-                    <textarea class="form-control" rows="3" disabled="" name="publickey" id="publickey"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label>Private key</label>
-                    <textarea class="form-control" rows="9" disabled="" name="privatekey" id="privatekey"></textarea>
-                  </div>
-                <div class="card-footer">
-                  <button type="button" class="btn btn-block btn-primary btn-lg" id="keypair">Generate</button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="row">
-			<div class="col-md-12">
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Encrypt a config value</h3>
-              </div>
-              <form role="form">
-                <div class="card-body">
-                  <div class="form-group">
-                    <label>Cleartext</label>
-                    <input type="text" class="form-control" id="cleartext" name="cleartext">
-                  </div>
-                  <div class="form-group">
-                  	<label>Public key</label>
-                    <textarea class="form-control" rows="3" name="pubkey" id="pubkey"></textarea>
-                  </div>
-                   <div class="form-group">
-                     <label>Encrypted value</label>
-                    <textarea class="form-control" rows="5" id="encryptedvalue" name="encryptedvalue" disabled=""></textarea>
-                  </div>
-                <div class="card-footer">
-                  <button type="button" class="btn btn-block btn-primary btn-lg" id="encrypt">Encrypt</button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <#if qrcode?has_content && secret?has_content>
-          <div class="row">
-			<div class="col-md-12">
-            <div class="card card-warning">
-              <div class="card-header">
-                <h3 class="card-title">Two Factor Authentication</h3>
-              </div>
-                <div class="card-body">
-                  <div class="form-group">
-					<img src="${qrcode}">
-                  </div>
-                  <div class="form-group">
-                  	<label>Secret</label>
-                    <textarea class="form-control" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
-                  </div>
-                </div>
-            </div>
-            </#if>
-          </div>
-       </div>
-</section>
+  </div>
 </div>
 <#include "footer.ftl">

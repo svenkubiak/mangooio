@@ -1,25 +1,21 @@
 <#include "header.ftl">
-<div class="content-wrapper">
-<section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Scheduler</h1>
-          </div>
-        </div>
-      </div>
-    </section>
-<section class="content">
-<#if jobs?size gt 0>
-      <div class="container-fluid">
-<div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <input id="filter" type="text" name="table_search" class="form-control float-left form-control-lg" placeholder="Start typing what you are looking for...">
+<div class="container">
+  <div class="columns">
+      <div class="column is-12">
+          <section class="hero is-info welcome is-small">
+              <div class="hero-body">
+                  <div class="container">
+                      <h1 class="title">
+                          Scheduler
+                      </h1>
+                  </div>
               </div>
-              <div class="card-body table-responsive p-0">
-                <table class="table table-hover">
+          </section>
+          <div class="field">
+	      	<input id="filter" type="text" name="table_search" class="input" placeholder="Start typing what you are looking for...">
+		  </div>
+		  		  	<div class="table-container">
+                <table class="table is-fullwidth">
                   		<thead>
 	                  		<tr>	
 								<th data-sort="string"><b>Job name</b></th>
@@ -41,39 +37,22 @@
 									<td>
 										<a href="/@admin/scheduler/state/${job.name}" class="btn btn-app" onclick="return confirm('Are you sure you want to change the state of the job?');" class="simpletooltip">
 											<#if job.active>
-												<i class="fa fa-pause"></i> Deactivate
+												Deactivate
 											<#else>
-												<i class="fa fa-play"></i> Activate
+												Activate
 											</#if>
 										</a>
 										&nbsp;&nbsp;
 										<a href="/@admin/scheduler/execute/${job.name}" class="btn btn-app"onclick="return confirm('Are you sure you want to exectue the job?');" class="simpletooltip">
-											<i class="fa fa-fire"></i> Run now
+											Run now
 										</a>
 									</td>
 								</tr>
 							</#list>
                 		</tbody>
                 </table>
-              </div>
-            </div>
-          </div>
-        </div>
-</div>
-<#else>
-      <div class="container-fluid">
-		<div class="row">
-	          <div class="col-12">
-	            <div class="card">
-	              <div class="card-header">
-	                <h3 class="card-title">No jobs are scheduled in this application.</h3>
-	              </div>
-	            </div>
-	          </div>
-	        </div>
-		</div>
-</div>
-</#if>
-</section>
+                		  	<div class="table-container">             
+      </div>
+  </div>
 </div>
 <#include "footer.ftl">

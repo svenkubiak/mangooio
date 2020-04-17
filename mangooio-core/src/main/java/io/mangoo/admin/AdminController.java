@@ -99,19 +99,51 @@ public class AdminController {
     }
     
     public Response index() {
-        Runtime runtime = Runtime.getRuntime();
-        long allocatedMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
+        boolean enabled = this.config.isMetricsEnable();
+        if (enabled) {
+            Metrics metrics = Application.getInstance(Metrics.class);
+            long totalRequests = 0;
+            long errorRequests = 0;
+            
+            for (Entry<Integer, LongAdder> entry :  metrics.getResponseMetrics().entrySet()) {
+                if (String.valueOf(entry.getKey()).charAt(0) == '5') {
+                    errorRequests = errorRequests + entry.getValue().longValue();
+                }
+                totalRequests = totalRequests + entry.getValue().longValue();
+            }
+
+            double errorRate = 0;
+            if (errorRequests > 0) {
+                errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
+            }
+            
+            EventBusService eventBusService = Application.getInstance(EventBusService.class);
+            
+            return Response.withOk()
+                    .andContent(VERSION, MangooUtils.getVersion())
+                    .andContent(SPACE, null)
+                    .andContent("enabled", enabled)
+                    .andContent("uptime", Date.from(instant))
+                    .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
+                    .andContent(METRICS, metrics.getResponseMetrics())
+                    .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
+                    .andContent("totalRequests", totalRequests)
+                    .andContent("minRequestTime", metrics.getMinRequestTime())
+                    .andContent("avgRequestTime", metrics.getAvgRequestTime())
+                    .andContent("maxRequestTime", metrics.getMaxRequestTime())
+                    .andContent("errorRate", errorRate)
+                    .andContent("events", eventBusService.getNumEvents())
+                    .andContent("listeners", eventBusService.getNumListeners())
+                    .andContent("enabled", enabled)
+                    .andTemplate(Template.DEFAULT.adminPath());
+        }
         
         return Response.withOk()
                 .andContent(VERSION, MangooUtils.getVersion())
                 .andContent(SPACE, null)
+                .andContent("enabled", enabled)
                 .andContent("uptime", Date.from(instant))
-                .andContent("started", Application.getStart())
-                .andContent("allocatedMemory", FileUtils.byteCountToDisplaySize(allocatedMemory))
-                .andContent("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
                 .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
