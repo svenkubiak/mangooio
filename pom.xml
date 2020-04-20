@@ -33,6 +33,7 @@
 		<junit.platform.version>1.6.2</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
 		<simplemail.version>6.0.3</simplemail.version>
+		<jpasteo.version>0.4.0</jpasteo.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -278,15 +279,21 @@
 				<version>${simplemail.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.bitbucket.b_c</groupId>
-				<artifactId>jose4j</artifactId>
-				<version>0.7.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
+				<groupId>dev.paseto</groupId>
+				<artifactId>jpaseto-api</artifactId>
+				<version>${jpasteo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>dev.paseto</groupId>
+				<artifactId>jpaseto-impl</artifactId>
+				<version>${jpasteo.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>dev.paseto</groupId>
+				<artifactId>jpaseto-sodium</artifactId>
+				<version>${jpasteo.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
