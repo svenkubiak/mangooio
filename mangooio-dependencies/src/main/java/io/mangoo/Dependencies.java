@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -36,13 +37,14 @@ public class Dependencies {
             String jar = artifact + "-" + version + ".jar";
             
             String url = REPO + groupId + "/" + artifact + "/" + version + "/" + jar;
+            String hash = hash256(groupId + artifact);
             
-            Path file = Paths.get(LIB_FOLDER + jar);
+            Path file = Paths.get(LIB_FOLDER + hash + "-" + version + "-" + jar);
             if (!Files.exists(file)) {
-                deletePreviousVersion(artifact);
+                deletePreviousVersion(hash, version);
                 
                 try (InputStream inputstream = new URL(url).openStream()){
-                    Files.copy(inputstream, Paths.get(LIB_FOLDER + jar), StandardCopyOption.REPLACE_EXISTING);   
+                    Files.copy(inputstream, Paths.get(LIB_FOLDER + hash + "-" + version + "-" + jar), StandardCopyOption.REPLACE_EXISTING);   
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -50,9 +52,9 @@ public class Dependencies {
         }
     }
 
-    private static void deletePreviousVersion(String artifact) {
+    private static void deletePreviousVersion(String hash, String version) {
         try (Stream<Path> stream = Files.list(Paths.get(LIB_FOLDER))) {
-            stream.filter(path -> path.toFile().getName().contains(artifact))
+            stream.filter(path -> path.toFile().getName().startsWith(hash) && !path.toFile().getName().startsWith(hash + "-" + version))
                   .forEach(c -> {
                   try {
                       Files.delete(c);
@@ -63,5 +65,25 @@ public class Dependencies {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    private static String hash256(String text) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(text.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        return "";
     }
 }
