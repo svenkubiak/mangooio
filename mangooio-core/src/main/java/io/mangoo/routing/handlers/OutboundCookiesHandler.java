@@ -4,19 +4,17 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.keys.HmacKey;
-import org.jose4j.lang.JoseException;
 
 import com.google.inject.Inject;
 
+import dev.paseto.jpaseto.PasetoV2LocalBuilder;
+import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
@@ -79,25 +77,32 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanges()) {
-            JwtClaims jwtClaims = new JwtClaims();
-            jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
-            jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
+            
+
+        PasetoV2LocalBuilder token = Pasetos.V2.LOCAL.builder()
+            .claim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity())
+            .claim(ClaimKey.DATA.toString(), session.getValues())
+            .setSharedSecret(new SecretKeySpec(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8), "AES"));
+            
+//            JwtClaims jwtClaims = new JwtClaims();
+//            jwtClaims.setClaim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity());
+//            jwtClaims.setClaim(ClaimKey.DATA.toString(), session.getValues());
             
             if (session.getExpires() == null) {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");
+                token.claim(ClaimKey.EXPIRES.toString(), "-1");
             } else {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));        
+                token.claim(ClaimKey.EXPIRES.toString(), session.getExpires().format(DateUtils.formatter));        
             }
             
-            JsonWebSignature jsonWebSignature = new JsonWebSignature();
-            jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)));
-            jsonWebSignature.setPayload(jwtClaims.toJson());
-            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+//            JsonWebSignature jsonWebSignature = new JsonWebSignature();
+//            jsonWebSignature.setKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)));
+//            jsonWebSignature.setPayload(jwtClaims.toJson());
+//            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
             try {
-                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
+                //String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getSessionCookieEncryptionKey());
                 Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
-                        .setValue(encryptedValue)
+                        .setValue(token.compact())
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
@@ -140,25 +145,29 @@ public class OutboundCookiesHandler implements HttpHandler {
                 authentication.withExpires(LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()));
             } 
             
-            JwtClaims jwtClaims = new JwtClaims();
-            jwtClaims.setSubject(authentication.getSubject());
-            jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
+//            JwtClaims jwtClaims = new JwtClaims();
+//            jwtClaims.setSubject(authentication.getSubject());
+//            jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor());
+            
+            PasetoV2LocalBuilder token = Pasetos.V2.LOCAL.builder()
+                    .setSubject(authentication.getSubject())
+                    .claim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor())
+                    .setSharedSecret(new SecretKeySpec(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8), "AES"));
             
             if (authentication.getExpires() == null) {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), "-1");    
+                token.claim(ClaimKey.EXPIRES.toString(), "-1");    
             } else {
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));   
+                token.claim(ClaimKey.EXPIRES.toString(), authentication.getExpires().format(DateUtils.formatter));   
             }
             
-            JsonWebSignature jsonWebSignature = new JsonWebSignature();
-            jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)));
-            jsonWebSignature.setPayload(jwtClaims.toJson());
-            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+//            JsonWebSignature jsonWebSignature = new JsonWebSignature();
+//            jsonWebSignature.setKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)));
+//            jsonWebSignature.setPayload(jwtClaims.toJson());
+//            jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
             
-            try {
-                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
+//                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getAuthenticationCookieEncryptionKey());
                 final Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
-                        .setValue(encryptedValue)
+                        .setValue(token.compact())
                         .setSecure(this.config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
@@ -170,9 +179,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                 } 
                 
                 exchange.setResponseCookie(cookie);
-            } catch (JoseException e) {
-                LOG.error("Failed to generate authentication cookie", e);
-            }
         } else {
             //Ignore and send no cookie to the client
         }
@@ -201,24 +207,29 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (flash.hasContent() || form.isKept()) {
             try {
-                JwtClaims jwtClaims = new JwtClaims();
-                jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
+                PasetoV2LocalBuilder token = Pasetos.V2.LOCAL.builder()
+                        .claim(ClaimKey.DATA.toString(), flash.getValues())
+                        .setSharedSecret(new SecretKeySpec(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8), "AES"));
+                
+                
+//                JwtClaims jwtClaims = new JwtClaims();
+//                jwtClaims.setClaim(ClaimKey.DATA.toString(), flash.getValues());
                 
                 if (form.isKept()) {
-                    jwtClaims.setClaim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
+                    token.claim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
                 }
                 
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                jwtClaims.setClaim(ClaimKey.EXPIRES.toString(), expires.format(DateUtils.formatter));
+                token.claim(ClaimKey.EXPIRES.toString(), expires.format(DateUtils.formatter));
                 
-                JsonWebSignature jsonWebSignature = new JsonWebSignature();
-                jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)));
-                jsonWebSignature.setPayload(jwtClaims.toJson());
-                jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
+//                JsonWebSignature jsonWebSignature = new JsonWebSignature();
+//                jsonWebSignature.setKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)));
+//                jsonWebSignature.setPayload(jwtClaims.toJson());
+//                jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
                 
-                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
+//                String encryptedValue = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), this.config.getFlashCookieEncryptionKey());
                 final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
-                        .setValue(encryptedValue)
+                        .setValue(token.compact())
                         .setSecure(this.config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)

@@ -2,6 +2,7 @@ package io.mangoo.routing.handlers;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -9,21 +10,14 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.MalformedClaimException;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.keys.HmacKey;
 
 import com.google.inject.Inject;
 
+import dev.paseto.jpaseto.Paseto;
+import dev.paseto.jpaseto.PasetoException;
+import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
@@ -32,7 +26,6 @@ import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -85,28 +78,33 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, this.config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
-                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                        .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)))
-                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-                        .build();
+                Paseto paseto = Pasetos.parserBuilder()
+                        .setSharedSecret(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8))
+                        .build()
+                        .parse(cookieValue);
                 
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-                String expiresClaim = jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class);
+//                String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getSessionCookieEncryptionKey());
+//                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+//                        .setVerificationKey(new HmacKey(this.config.getSessionCookieSignKey().getBytes(StandardCharsets.UTF_8)))
+//                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+//                        .build();
+                
+//                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+                String expiresClaim = paseto.getClaims().getExpiration().toString();//pasteo.getClaims.jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class);
                 
                 if (("-1").equals(expiresClaim)) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
-                            .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class));
-                } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withAuthenticity(paseto.getClaims().get(ClaimKey.AUTHENTICITY.toString(), String.class));
+                } else if (LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC).isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class)))
-                            .withAuthenticity(jwtClaims.getClaimValue(ClaimKey.AUTHENTICITY.toString(), String.class))
-                            .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter));
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withAuthenticity(paseto.getClaims().get(ClaimKey.AUTHENTICITY.toString(), String.class))
+                            .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC));
                 } else {
                     //Ignore this and use default session
                 }
-            } catch (MalformedClaimException | InvalidJwtException e) {
+            } catch (PasetoException e) {
                 LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
@@ -126,30 +124,36 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getAuthenticationCookieEncryptionKey());
+                //String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getAuthenticationCookieEncryptionKey());
                 
-                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                        .setRequireSubject()
-                        .setVerificationKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
-                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-                        .build();
+                Paseto paseto = Pasetos.parserBuilder()
+                        .setSharedSecret(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8))
+                        .build()
+                        .parse(cookieValue);
                 
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-                String expiresClaim = jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class);
+                
+//                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+//                        .setRequireSubject()
+//                        .setVerificationKey(new HmacKey(this.config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
+//                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+//                        .build();
+                
+//                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+                String expiresClaim = paseto.getClaims().getExpiration().toString();
                 
                 if (("-1").equals(expiresClaim)) {
                     authentication = Authentication.create()
-                            .withSubject(jwtClaims.getSubject())
-                            .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
-                } else if (LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter).isAfter(LocalDateTime.now())) {
+                            .withSubject(paseto.getClaims().getSubject())
+                            .twoFactorAuthentication(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
+                } else if (LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC).isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
-                            .withExpires(LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter))
-                            .withSubject(jwtClaims.getSubject())
-                            .twoFactorAuthentication(jwtClaims.getClaimValue(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
+                            .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC))
+                            .withSubject(paseto.getClaims().getSubject())
+                            .twoFactorAuthentication(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
                 } else {
                     //Ignore this and use default authentication
                 }
-            } catch (MalformedClaimException | InvalidJwtException  e) {
+            } catch (PasetoException e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
@@ -170,24 +174,29 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, this.config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
-                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                    .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)))
-                    .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-                    .build();
+                //String decryptedValue = Application.getInstance(Crypto.class).decrypt(cookieValue, this.config.getFlashCookieEncryptionKey());
+//                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+//                    .setVerificationKey(new HmacKey(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8)))
+//                    .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+//                    .build();
                 
-                JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
-                LocalDateTime expires = LocalDateTime.parse(jwtClaims.getClaimValue(ClaimKey.EXPIRES.toString(), String.class), DateUtils.formatter);
+                Paseto paseto = Pasetos.parserBuilder()
+                        .setSharedSecret(this.config.getFlashCookieSignKey().getBytes(StandardCharsets.UTF_8))
+                        .build()
+                        .parse(cookieValue);
+                
+                //JwtClaims jwtClaims = jwtConsumer.processToClaims(decryptedValue);
+                LocalDateTime expires = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC);
                 
                 if (expires.isAfter(LocalDateTime.now())) {
-                    if (jwtClaims.hasClaim(ClaimKey.FORM.toString())) {
-                        this.form = CodecUtils.deserializeFromBase64(jwtClaims.getClaimValue(ClaimKey.FORM.toString(), String.class));
+                    if (paseto.getClaims().containsKey(ClaimKey.FORM.toString())) {
+                        this.form = CodecUtils.deserializeFromBase64(paseto.getClaims().get(ClaimKey.FORM.toString(), String.class));
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(jwtClaims.getClaimValue(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class))).setDiscard(true);
                 }
-            } catch (MalformedClaimException | InvalidJwtException  e) {
+            } catch (PasetoException e) {
                 LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
             } 

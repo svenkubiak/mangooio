@@ -12,20 +12,14 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwa.AlgorithmConstraints.ConstraintType;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.keys.HmacKey;
 
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
 
+import dev.paseto.jpaseto.PasetoException;
+import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.models.Identity;
@@ -133,18 +127,23 @@ public final class RequestUtils {
             }
             
             if (StringUtils.isNotBlank(value)) {
-                String jwt = Application.getInstance(Crypto.class).decrypt(value, config.getAuthenticationCookieEncryptionKey());
+                //String jwt = Application.getInstance(Crypto.class).decrypt(value, config.getAuthenticationCookieEncryptionKey());
                 
-                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                        .setRequireExpirationTime()
-                        .setRequireSubject()
-                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
-                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-                        .build();
+                
+//                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+//                        .setRequireExpirationTime()
+//                        .setRequireSubject()
+//                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
+//                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
+//                        .build();
                 try {
-                    jwtConsumer.processToClaims(jwt);
+                    Pasetos.parserBuilder()
+                            .setSharedSecret(config.getAuthenticationCookieEncryptionKey().getBytes(StandardCharsets.UTF_8))
+                            .build()
+                            .parse(value);
+                    
                     valid = true;
-                } catch (InvalidJwtException e) {
+                } catch (PasetoException e) {
                     LOG.error("Failed to parse authentication cookie", e);
                 }
             }
