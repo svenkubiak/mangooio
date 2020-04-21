@@ -127,18 +127,9 @@ public final class RequestUtils {
             }
             
             if (StringUtils.isNotBlank(value)) {
-                //String jwt = Application.getInstance(Crypto.class).decrypt(value, config.getAuthenticationCookieEncryptionKey());
-                
-                
-//                JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-//                        .setRequireExpirationTime()
-//                        .setRequireSubject()
-//                        .setVerificationKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(StandardCharsets.UTF_8)))
-//                        .setJwsAlgorithmConstraints(new AlgorithmConstraints(ConstraintType.WHITELIST, AlgorithmIdentifiers.HMAC_SHA512))
-//                        .build();
                 try {
                     Pasetos.parserBuilder()
-                            .setSharedSecret(config.getAuthenticationCookieEncryptionKey().getBytes(StandardCharsets.UTF_8))
+                            .setSharedSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
                             .build()
                             .parse(value);
                     

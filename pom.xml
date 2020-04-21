@@ -311,24 +311,25 @@
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
-				<artifactId>jpaseto-sodium</artifactId>
+				<artifactId>jpaseto-bouncy-castle</artifactId>
+				<version>${jpasteo.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>dev.paseto</groupId>
+				<artifactId>jpaseto-jackson</artifactId>
 				<version>${jpasteo.version}</version>
 				<scope>runtime</scope>
 				<exclusions>
 					<exclusion>
-						<groupId>org.ow2.asm</groupId>
-						<artifactId>asm</artifactId>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-core</artifactId>
 					</exclusion>
 					<exclusion>
-						<groupId>com.github.jnr</groupId>
-						<artifactId>jffi</artifactId>
+						<groupId>com.fasterxml.jackson.core</groupId>
+						<artifactId>jackson-annotations</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.github.jnr</groupId>
-				<artifactId>jffi</artifactId>
-				<version>1.2.17</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>

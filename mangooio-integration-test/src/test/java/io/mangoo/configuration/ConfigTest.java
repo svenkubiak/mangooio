@@ -136,7 +136,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getAuthenticationCookieExpires(), equalTo(Long.valueOf(expires)));
+        assertThat(config.isAuthenticationCookieExpires(), equalTo(Boolean.valueOf(expires)));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -151,7 +151,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES.toLong()));
+        assertThat(config.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -168,7 +168,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getSessionCookieExpires(), equalTo(Long.valueOf(expires)));
+        assertThat(config.getSessionCookieTokenExpires(), equalTo(Long.valueOf(expires)));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -183,7 +183,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSessionCookieExpires(), equalTo(Default.SESSION_COOKIE_EXPIRES.toLong()));
+        assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES.toLong()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1204,25 +1204,25 @@ public class ConfigTest {
         assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
-    
+
     @Test
-    public void testGetSessionCookieSignKey() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetSessionCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("session.cookie.signkey", key);
+        Map<String, String> configValues = ImmutableMap.of("session.cookie.secret", key);
         File tempConfig = createTempConfig(configValues);
         Config config = new Config();
         
         // then
-        assertThat(config.getSessionCookieSignKey(), equalTo(key));
+        assertThat(config.getSessionCookieSecret(), equalTo(key));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    public void testGetSessionCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetSessionCookieeSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1233,55 +1233,23 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSessionCookieSignKey(), equalTo(secret));
+        assertThat(config.getSessionCookieSecret(), equalTo(secret));
         assertThat(tempConfig.delete(), equalTo(true));
     }
-
+    
     @Test
-    public void testGetSessionCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetFlashCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("session.cookie.encryptionkey", key);
+        Map<String, String> configValues = ImmutableMap.of("flash.cookie.secret", key);
         File tempConfig = createTempConfig(configValues);
         Config config = new Config();
         
         // then
-        assertThat(config.getSessionCookieEncryptionKey(), equalTo(key));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetSessionCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String secret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getSessionCookieEncryptionKey(), equalTo(secret));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetFlashCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String key = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("flash.cookie.encryptionkey", key);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getFlashCookieEncryptionKey(), equalTo(key));
+        assertThat(config.getFlashCookieSecret(), equalTo(key));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1297,23 +1265,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getFlashCookieEncryptionKey(), equalTo(secret));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetAuthenticationCookieSignKey() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String key = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("authentication.cookie.signkey", key);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getAuthenticationCookieSignKey(), equalTo(key));
+        assertThat(config.getFlashCookieSecret(), equalTo(secret));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1329,27 +1281,27 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieSignKey(), equalTo(secret));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    public void testGetAuthenticationCookieEncryptionKey() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetAuthenticationCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("authentication.cookie.encryptionkey", key);
+        Map<String, String> configValues = ImmutableMap.of("authentication.cookie.secret", key);
         File tempConfig = createTempConfig(configValues);
         Config config = new Config();
         
         // then
-        assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(key));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(key));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    public void testGetAuthenticationCookieEncryptionKeyKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetAuthenticationCookieSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1360,7 +1312,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieEncryptionKey(), equalTo(secret));
+        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
         assertThat(tempConfig.delete(), equalTo(true));
     }     
     

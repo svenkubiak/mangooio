@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
@@ -85,6 +86,7 @@ public class AdminController {
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
     }
     
+    @FilterWith(AdminFilter.class)
     public Response execute(String name) {
         try {
             this.scheduler.executeJob(name);
@@ -95,6 +97,7 @@ public class AdminController {
         return Response.withRedirect("/@admin/scheduler");
     }
     
+    @FilterWith(AdminFilter.class)
     public Response index() {
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = this.config.isMetricsEnable();
@@ -145,6 +148,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
+    @FilterWith(AdminFilter.class)
     public Response logger() {
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         return Response.withOk()
@@ -172,6 +176,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.twofactorPath());
     }
     
+    @FilterWith(AdminFilter.class)
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         if (body != null && body.size() > 0) {
@@ -190,6 +195,7 @@ public class AdminController {
                 .andEmptyBody();
     }
     
+    @FilterWith(AdminFilter.class)
     @SuppressFBWarnings(value = "CE_CLASS_ENVY", justification = "JSONObject creation as intended")
     public Response routes() {
         List<JSONObject> routes = getRoutes();
@@ -249,6 +255,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.routesPath());
     }
     
+    @FilterWith(AdminFilter.class)
     public Response scheduler()  {
         List<Job> jobs = new ArrayList<>();
         if (this.scheduler.isInitialize()) {
@@ -266,6 +273,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.schedulerPath());
     }
     
+    @FilterWith(AdminFilter.class)
     public Response state(String name) {
         try {
             this.scheduler.changeState(name);
@@ -276,6 +284,7 @@ public class AdminController {
         return Response.withRedirect("/@admin/scheduler");
     }
     
+    @FilterWith(AdminFilter.class)
     public Response tools() {
         String secret = this.config.getApplicationAdminSecret();
         String qrCode = null;
@@ -293,6 +302,7 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.toolsPath());
     }
 
+    @FilterWith(AdminFilter.class)
     public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         String value = "";

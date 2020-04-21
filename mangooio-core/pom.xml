@@ -31,10 +31,6 @@
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.jnr</groupId>
-			<artifactId>jffi</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
 		</dependency>
@@ -120,7 +116,11 @@
 		</dependency>
 		<dependency>
 			<groupId>dev.paseto</groupId>
-			<artifactId>jpaseto-sodium</artifactId>
+			<artifactId>jpaseto-bouncy-castle</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>dev.paseto</groupId>
+			<artifactId>jpaseto-jackson</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -200,6 +200,7 @@
 			</resource>
 		</resources>
 		<plugins>
+		<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -252,6 +253,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

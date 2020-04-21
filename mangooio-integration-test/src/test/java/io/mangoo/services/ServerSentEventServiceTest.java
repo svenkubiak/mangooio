@@ -126,7 +126,7 @@ public class ServerSentEventServiceTest {
         final Config config = Application.getInstance(Config.class);
         final String data = "Server sent data with authentication FTW!";
         
-        String token = Pasetos.V2.LOCAL.builder()
+        String token = Pasetos.V1.LOCAL.builder()
                 .setSubject("foo")
                 .claim(ClaimKey.TWO_FACTOR.toString(), false)
                 .setExpiration(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.UTC))

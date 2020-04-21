@@ -72,6 +72,7 @@ public class Authentication {
      * @return A LocalDateTime object or null if not set
      */
     public LocalDateTime getExpires() {
+        //FIX ME : CAN NOT BE NULL
         return this.expires;
     }
 

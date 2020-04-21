@@ -16,7 +16,7 @@
 	ajp.port = 9899
 [session]
 	cookie.name = test-session
-	cookie.signkey = o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
+	cookie.secret = o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
 [flash]
 	cookie.name = test-flash
 	cookie.signkey = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
@@ -25,7 +25,7 @@
 [authentication]
 	redirect = /login
 	cookie.name = test-authentication
-	cookie.signkey = oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
+	cookie.secret = oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
 [smtp]
 	host = localhost
 	port = 25

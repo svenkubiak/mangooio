@@ -7,7 +7,6 @@ import io.mangoo.routing.bindings.Request;
 public class AdminFilter implements PerRequestFilter {
     @Override
     public Response execute(Request request, Response response) {
-        // TODO Auto-generated method stub
-        return null;
+        return Response.withRedirect("/@admin/login").end();
     }
 }

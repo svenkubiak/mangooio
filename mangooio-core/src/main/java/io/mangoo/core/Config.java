@@ -417,17 +417,10 @@ public class Config {
     }
 
     /**
-     * @return authentication.cookie.expires from config.props or default value if undefined
+     * @return session.cookie.tooken.expires from config.props or default value if undefined
      */
-    public long getAuthenticationCookieExpires() {
-        return getLong(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toLong());
-    }
-
-    /**
-     * @return session.cookie.expires from config.props or default value if undefined
-     */
-    public long getSessionCookieExpires() {
-        return getLong(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toLong());
+    public long getSessionCookieTokenExpires() {
+        return getLong(Key.SESSION_COOKIE_TOKEN_EXPIRES, Default.SESSION_COOKIE_TOKEN_EXPIRES.toLong());
     }
 
     /**
@@ -648,45 +641,24 @@ public class Config {
     }
 
     /**
-     * @return session.cookie.signkey or application secret if undefined
+     * @return session.cookie.secret or application secret if undefined
      */
-    public String getSessionCookieSignKey() {
-        return getString(Key.SESSION_COOKIE_SIGNKEY, getApplicationSecret());
+    public String getSessionCookieSecret() {
+        return getString(Key.SESSION_COOKIE_SECRET, getApplicationSecret());
     }
 
     /**
-     * @return session.cookie.encryptionkey or application secret if undefined
+     * @return authentication.cookie.secret or application secret if undefined
      */
-    public String getSessionCookieEncryptionKey() {
-        return getString(Key.SESSION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    public String getAuthenticationCookieSecret() {
+        return getString(Key.AUTHENTICATION_COOKIE_SECRET, getApplicationSecret());
     }
 
     /**
-     * @return authentication.cookie.signkey or application secret if undefined
+     * @return flash.cookie.secret or application secret if undefined
      */
-    public String getAuthenticationCookieSignKey() {
-        return getString(Key.AUTHENTICATION_COOKIE_SIGNKEY, getApplicationSecret());
-    }
-
-    /**
-     * @return authentication.cookie.encryptionkey or application secret if undefined
-     */
-    public String getAuthenticationCookieEncryptionKey() {
-        return getString(Key.AUTHENTICATION_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
-    }
-
-    /**
-     * @return flash.cookie.signkey or application secret if undefined
-     */
-    public String getFlashCookieSignKey() {
-        return getString(Key.FLASH_COOKIE_SIGNKEY, getApplicationSecret());
-    }
-
-    /**
-     * @return flash.cookie.encryptionkey or application secret if undefined
-     */
-    public String getFlashCookieEncryptionKey() {
-        return getString(Key.FLASH_COOKIE_ENCRYPTIONKEY, getApplicationSecret());
+    public String getFlashCookieSecret() {
+        return getString(Key.FLASH_COOKIE_SECRET, getApplicationSecret());
     }
 
     /**
@@ -848,5 +820,26 @@ public class Config {
      */
     public boolean isMongoEmbedded() {
         return getBoolean(Key.PERSISTENCE_MONGO_EMBEDDED, Default.PERSISTENCE_MONGO_EMBEDDED.toBoolean());
+    }
+
+    /**
+     * @return session.cookie.expires or default value if undefined
+     */
+    public boolean isSessionCookieExpires() {
+        return getBoolean(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES.toBoolean());
+    }
+
+    /**
+     * @return authentication.cookie.expires or default value if undefined
+     */
+    public boolean isAuthenticationCookieExpires() {
+        return getBoolean(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES.toBoolean());
+    }
+
+    /**
+     * @return authentication.cookie.expires or default value if undefined
+     */
+    public long getAuthenticationCookieTokenExpires() {
+        return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES.toLong());
     }    
 }
