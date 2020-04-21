@@ -15,11 +15,12 @@
                     <h3 class="title has-text-black">Two-Step Verification</h3>
                     <hr class="login-hr">
                     <p class="subtitle has-text-black">Please enter your OTP.</p>
+                    <#if form.hasErrors()><p class="has-text-danger has-text-weight-bold">Invalid Code. <a href="/@admin/logout">Logout?</a></p></#if>
                     <div class="box">
-                        <form>
+                        <form action="/@admin/verify" method="post">
                             <div class="field">
                                 <div class="control">
-                                    <input class="input is-large" type="text" placeholder="6 digit code" autofocus="">
+                                    <input class="input is-large" type="text" maxlength="6" name="code" placeholder="6 digit code" autofocus="">
                                 </div>
                             </div>
                             <button class="button is-block is-info is-large is-fullwidth">Verify <i class="fa fa-sign-in" aria-hidden="true"></i></button>

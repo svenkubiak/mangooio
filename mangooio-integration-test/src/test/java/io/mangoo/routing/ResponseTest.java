@@ -286,7 +286,7 @@ public class ResponseTest {
         Response response = Response.withOk();
         
         //when
-        response.end();
+        response.andEndResponse();
         
         //then
         assertThat(response.isEndResponse(), equalTo(true));

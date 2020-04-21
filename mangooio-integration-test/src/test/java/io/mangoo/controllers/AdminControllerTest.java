@@ -6,13 +6,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
+import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
 
 /**
@@ -44,12 +49,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
     }
     
-    @Disabled
     @Test
     public void testDashboardAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -73,12 +77,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(LOGGER)));
     }
     
-    @Disabled
     @Test
     public void testLoggerAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/logger")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/logger")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -88,12 +91,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), containsString(LOGGER));
     }
 
-    @Disabled
     @Test
     public void testRoutesAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/routes")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/routes")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -129,12 +131,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(ROUTES)));
     }
     
-    @Disabled
     @Test
     public void testSchedulerAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/scheduler")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/scheduler")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -158,12 +159,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
     
-    @Disabled
     @Test
     public void testToolsAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/tools")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/tools")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -173,12 +173,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), containsString(TOOLS));
     }
     
-    @Disabled
     @Test
     public void testToolsTwoFactorAuthorized() {
         //given
-        TestResponse response = TestRequest.get("/@admin/tools")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/tools")
+                .withHTTPMethod(Methods.GET.toString())
                 .execute();
         
         //then
@@ -202,12 +201,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(TOOLS)));
     }
     
-    @Disabled
     @Test
     public void testToolsAjaxAuthorized() {
         //given
-        TestResponse response = TestRequest.post("/@admin/tools/ajax")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/tools/ajax")
+                .withHTTPMethod(Methods.POST.toString())
                 .execute();
         
         //then
@@ -230,12 +228,11 @@ public class AdminControllerTest {
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
     
-    @Disabled
     @Test
     public void testLoggerAjaxAuthorized() {
         //given
-        TestResponse response = TestRequest.post("/@admin/logger/ajax")
-                .withBasicAuthentication(ADMIN, ADMIN)
+        TestResponse response = login().to("/@admin/logger/ajax")
+                .withHTTPMethod(Methods.POST.toString())
                 .execute();
         
         //then
@@ -267,5 +264,16 @@ public class AdminControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), containsString("login"));
+    }
+    
+    private TestResponse login() {
+        Multimap<String, String> parameters = ArrayListMultimap.create();
+        parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
+        parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
+        TestResponse response = TestRequest.post("/@admin/authenticate")
+                .withForm(parameters)
+                .execute();
+        
+        return response;
     }
 }

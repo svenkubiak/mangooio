@@ -29,6 +29,9 @@
                 <a class="navbar-item" href="/@admin/scheduler">Scheduler</a>
                 <a class="navbar-item" href="/@admin/tools">Config tools</a>  
             </div>
+            <div class="navbar-end">
+                <a class="navbar-item" href="/@admin/logout">Logout</a> 
+            </div>            
         </div>
     </div>
 </nav>

@@ -19,7 +19,7 @@
 	cookie.secret = o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
 [flash]
 	cookie.name = test-flash
-	cookie.signkey = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
+	cookie.secret = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
 [metrics]
 	enable = true
 [authentication]

@@ -450,7 +450,7 @@ public class Response {
      *
      * @return A response object {@link io.mangoo.routing.Response}
      */
-    public Response end() {
+    public Response andEndResponse() {
         this.endResponse = true;
 
         return this;

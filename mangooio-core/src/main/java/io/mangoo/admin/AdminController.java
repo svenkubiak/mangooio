@@ -1,9 +1,12 @@
 package io.mangoo.admin;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -20,6 +25,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
+import dev.paseto.jpaseto.PasetoV1LocalBuilder;
+import dev.paseto.jpaseto.Pasetos;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
@@ -28,6 +35,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
@@ -38,6 +46,7 @@ import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
+import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
@@ -48,6 +57,8 @@ import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 import net.minidev.json.JSONObject;
 
 /**
@@ -59,7 +70,7 @@ import net.minidev.json.JSONObject;
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
-    private static final String PERIOD = "300";
+    private static final String PERIOD = "30";
     private static final String DIGITS = "6";
     private static final String URL = "url";
     private static final String METHOD = "method";
@@ -163,12 +174,49 @@ public class AdminController {
                 .andTemplate(Template.DEFAULT.loginPath());
     }
     
-    public Response authenticate() {
-        return Response.withOk();
+    public Response logout() {
+        Cookie cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+                .setValue("")
+                .setHttpOnly(true)
+                .setSecure(Application.inProdMode() ? true : false)
+                .setPath("/")
+                .setDiscard(true)
+                .setExpires(new Date())
+                .setSameSite(true)
+                .setSameSiteMode("Strict");
+        
+        return Response.withRedirect("/@admin").andCookie(cookie);
     }
     
-    public Response verify() {
-        return Response.withOk();
+    public Response authenticate(Form form) {
+        form.expectValue("username");
+        form.expectValue("password");
+        
+        if (form.isValid()) {
+            if (isValidAuthentication(form)) {
+                return Response.withRedirect("/@admin").andCookie(getAdminCookie(true));
+            } else {
+                form.invalidate();
+            }
+        }
+        form.keep();
+        
+        return Response.withRedirect("/@admin/login");
+    }
+    
+    public Response verify(Form form) {
+        form.expectValue("code");
+        
+        if (form.isValid()) {
+            if (TotpUtils.verifiedTotp(this.config.getApplicationAdminSecret(), form.get("code"))) {
+                return Response.withRedirect("/@admin").andCookie(getAdminCookie(false));
+            } else {
+                form.invalidate();
+            }
+        }
+        form.keep();
+        
+        return Response.withRedirect("/@admin/twofactor");
     }
     
     public Response twofactor() {
@@ -291,7 +339,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangooAdmin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+            qrCode = TotpUtils.getQRCode("mangooIOAdmin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return Response.withOk()
@@ -331,13 +379,48 @@ public class AdminController {
             }
         }
         
-        return Response.withOk()
-               .andJsonBody(value);
+        return Response.withOk().andJsonBody(value);
     }
     
     private List<JSONObject> getRoutes() {
         List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
         
         return (routes == null) ? new ArrayList<>() : routes;
+    }
+    
+    private boolean isValidAuthentication(Form form) {
+        boolean valid = false;
+
+        String username = this.config.getApplicationAdminUsername();
+        String password = this.config.getApplicationAdminPassword();
+        
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            if (username.equals(form.get("username")) && password.equals(form.get("password"))) {
+                valid = true;
+            }
+        }
+        
+        return valid;
+    }
+
+    private Cookie getAdminCookie(boolean includeTwoFactor) {
+        PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
+                .setSharedSecret(new SecretKeySpec(this.config.getApplicationSecret().getBytes(StandardCharsets.UTF_8), "AES"))
+                .setExpiration(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC))
+                .claim("uuid", MangooUtils.randomString(32));
+        
+        if (includeTwoFactor && StringUtils.isNotBlank(this.config.getApplicationAdminSecret())) {
+            token.claim("twofactor", true);
+        }
+    
+        Cookie cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+                .setValue(token.compact())
+                .setHttpOnly(true)
+                .setSecure(Application.inProdMode() ? true : false)
+                .setPath("/")
+                .setSameSite(true)
+                .setSameSiteMode("Strict");
+        
+        return cookie;
     }
 }

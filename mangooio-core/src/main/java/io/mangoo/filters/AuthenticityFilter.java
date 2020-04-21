@@ -17,7 +17,7 @@ public class AuthenticityFilter implements PerRequestFilter {
         if (!request.authenticityMatches()) {
             return Response.withForbidden()
                     .andBody(Template.DEFAULT.forbidden())
-                    .end();
+                    .andEndResponse();
         }
 
         return response;
