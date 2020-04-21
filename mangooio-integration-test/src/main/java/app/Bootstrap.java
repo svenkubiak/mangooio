@@ -167,8 +167,7 @@ public class Bootstrap implements MangooBootstrap {
          
          // BasicAuthenticationController
          Bind.controller(BasicAuthenticationController.class).withRoutes(
-                 On.get().to("/basicauth").respondeWith("basicauth").withBasicAuthentication("foo", "bar"),
-                 On.get().to("/basicauth2fa").respondeWith("basicauth2fa").withBasicAuthentication("foo", "bar", "ODZ4DBS4ZAMQBKKHROILUES6CYPZMCGIOVZTFEXSOVSDK2NS54ZNPJDNKVJH7EME")
+                 On.get().to("/basicauth").respondeWith("basicauth").withBasicAuthentication("foo", "bar")
          );
          
          Bind.serverSentEvent().to("/sse");

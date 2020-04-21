@@ -13,11 +13,9 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.TotpUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -30,8 +28,6 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class LimitHandler implements HttpHandler {
-    private static final int PERIOD = 300;
-    private static final int DIGITS = 6;
     private Attachment attachment;
     private Cache cache;
     
@@ -117,25 +113,11 @@ public class LimitHandler implements HttpHandler {
             HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
                     Application.getInstance(LocaleHandler.class),
                     this.attachment.getUsername(),
-                    getPassword());
+                    this.attachment.getPassword());
             
             httpHandler.handleRequest(exchange);
         } else {
             Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
         }
-    }
-
-    /**
-     * @return The password for basic authentication with optional 2FA attached to it
-     */
-    private String getPassword() {
-        String password = this.attachment.getPassword();
-        String secret = this.attachment.getSecret();
-        
-        if (StringUtils.isNotBlank(secret)) {
-            password = password + TotpUtils.getTotp(secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
-        }
-        
-        return password;
     }
 }

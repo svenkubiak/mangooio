@@ -22,7 +22,6 @@ public class RequestRoute implements MangooRoute {
     private String controllerMethod;
     private String username;
     private String password;
-    private String secret;
     private int limit;
     private boolean blocking;
     private boolean authentication;
@@ -117,27 +116,6 @@ public class RequestRoute implements MangooRoute {
         
         return this;
     }
-    
-    /**
-     * Sets HTTP Basic authentication including 2FA to this request on the defined controller class
-     * 
-     * @param username The username for basic authentication in cleartext
-     * @param password The password for basic authentication in cleartext
-     * @param secret The secret used for 2FA in cleartext
-     * 
-     * @return RequestRoute instance
-     */
-    public RequestRoute withBasicAuthentication(String username, String password, String secret) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
-        Objects.requireNonNull(password, Required.SECRET.toString());
-        
-        this.username = username;
-        this.password = password;
-        this.secret = secret;
-        
-        return this;
-    }
 
     /**
      * Sets authentication to true for this route, default is false
@@ -196,10 +174,6 @@ public class RequestRoute implements MangooRoute {
 
     public String getPassword() {
         return password;
-    }
-    
-    public String getSecret() {
-        return secret;
     }
 
     public boolean hasMultipleMethods() {
