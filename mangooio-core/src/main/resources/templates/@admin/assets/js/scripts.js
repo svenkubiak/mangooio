@@ -9,8 +9,6 @@
     });
 })();
 
-$('.notification').delay(5000).fadeOut('slow');
-
 $(document).ready(function(){
   var $table = $("table").stupidtable();
 	var $th_to_sort = $table.find("thead th").eq(0);

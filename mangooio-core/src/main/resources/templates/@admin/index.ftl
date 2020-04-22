@@ -12,11 +12,6 @@
 	                    </div>
 	                </section>
 	                <section class="info-tiles">
-	                			<#list warnings as warning>
-				<div class="notification is-warning">
-				  ${warning}
-				</div>
-			</#list>
 	                    <div class="tile is-ancestor has-text-centered">
 	                        <div class="tile is-parent">
 	                            <article class="tile is-child is-primary box">
@@ -81,7 +76,12 @@
 	                            </article>
 	                        </div>
 	                    </div>
-	                </section>                                
+	                </section>    
+	                <#list warnings as warning>
+						<div class="notification is-warning">
+					  		${warning}
+						</div>
+					</#list>                            
 	            </div>
 	        </div>
 	    </div>

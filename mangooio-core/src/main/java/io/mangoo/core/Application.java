@@ -350,12 +350,6 @@ public final class Application {
         }
         
         if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Authentication cookie sign key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.signkey.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-        
-        if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
             String warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -374,12 +368,6 @@ public final class Application {
         }
         
         if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Session cookie sign key is using application secret. It is highly recommended to set a dedicated value to session.cookie.signkey.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-        
-        if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
             String warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -392,13 +380,7 @@ public final class Application {
         }
         
         if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie sign key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.signkey.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-        
-        if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie encryption key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
+            String warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
