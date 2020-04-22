@@ -206,26 +206,6 @@
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
 				<version>2.1.0.Final</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.jboss.logging</groupId>
-						<artifactId>jboss-logging</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.wildfly.common</groupId>
-						<artifactId>wildfly-common</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.wildfly.common</groupId>
-				<artifactId>wildfly-common</artifactId>
-				<version>1.5.2.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jboss.logging</groupId>
-				<artifactId>jboss-logging</artifactId>
-				<version>3.4.1.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
@@ -276,12 +256,6 @@
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>core</artifactId>
 				<version>1.5.8</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.mongodb</groupId>
-						<artifactId>mongo-java-driver</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
@@ -307,29 +281,16 @@
 				<groupId>dev.paseto</groupId>
 				<artifactId>jpaseto-impl</artifactId>
 				<version>${jpasteo.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
 				<artifactId>jpaseto-bouncy-castle</artifactId>
 				<version>${jpasteo.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
 				<artifactId>jpaseto-jackson</artifactId>
 				<version>${jpasteo.version}</version>
-				<scope>runtime</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>com.fasterxml.jackson.core</groupId>
-						<artifactId>jackson-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.fasterxml.jackson.core</groupId>
-						<artifactId>jackson-annotations</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -350,12 +311,6 @@
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
 				<version>1.4.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-beanutils</groupId>
-						<artifactId>commons-beanutils</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -366,12 +321,6 @@
 				<groupId>com.jayway.jsonpath</groupId>
 				<artifactId>json-path</artifactId>
 				<version>2.4.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
@@ -392,17 +341,32 @@
 				<groupId>com.google.code.findbugs</groupId>
 				<artifactId>annotations</artifactId>
 				<version>3.0.1u2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.google.code.findbugs</groupId>
-						<artifactId>jsr305</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest</artifactId>
 				<version>2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.wildfly.common</groupId>
+				<artifactId>wildfly-common</artifactId>
+				<version>1.5.4.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mchange</groupId>
+				<artifactId>mchange-commons-java</artifactId>
+				<version>0.2.20</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.resolver</groupId>
+				<artifactId>maven-resolver</artifactId>
+				<version>1.4.1</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.logging</groupId>
+				<artifactId>jboss-logging</artifactId>
+				<version>3.4.1.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hamcrest</groupId>
@@ -418,24 +382,6 @@
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
 				<version>1.5.13</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.commons</groupId>
-						<artifactId>commons-lang3</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.sun.mail</groupId>
-						<artifactId>javax.mail</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>junit</groupId>
-						<artifactId>junit</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -481,12 +427,6 @@
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
 				<version>3.8.1</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.cactoos</groupId>
@@ -532,16 +472,6 @@
 				<groupId>org.glassfish.jersey.inject</groupId>
 				<artifactId>jersey-hk2</artifactId>
 				<version>${jersey.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>jakarta.annotation</groupId>
-						<artifactId>jakarta.annotation-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
@@ -552,16 +482,6 @@
 				<groupId>org.quartz-scheduler</groupId>
 				<artifactId>quartz</artifactId>
 				<version>2.3.2</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.mchange</groupId>
-						<artifactId>c3p0</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.mchange</groupId>
@@ -582,12 +502,6 @@
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpmime</artifactId>
 				<version>4.5.12</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-codec</groupId>
-						<artifactId>commons-codec</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
@@ -623,27 +537,11 @@
 				<groupId>net.jawr</groupId>
 				<artifactId>jawr-core</artifactId>
 				<version>3.9</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
 				<version>1.6</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>commons-beanutils</groupId>
-						<artifactId>commons-beanutils</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>javax.xml.bind</groupId>
