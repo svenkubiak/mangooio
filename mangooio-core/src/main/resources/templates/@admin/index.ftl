@@ -81,7 +81,15 @@
 						<div class="notification is-warning">
 					  		${warning}
 						</div>
-					</#list>                            
+					</#list>      
+					<nav class="breadcrumb" aria-label="breadcrumbs">
+					  <ul>
+					    <li><a href="#" aria-current="page">mangoo I/O</a></li>
+					    <li><a href="#" aria-current="page">version</a></li>
+					    <li><a href="#" aria-current="page">${version}</a></li>
+					  </ul>
+					</nav>
+					                      
 	            </div>
 	        </div>
 	    </div>
