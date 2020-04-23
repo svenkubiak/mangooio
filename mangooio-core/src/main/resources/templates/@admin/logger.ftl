@@ -2,6 +2,9 @@
 <div class="container">
   <div class="columns">
       <div class="column is-12">
+     	<div class="notification is-success logger-notification">
+	  		Logger settings have been updated!
+		</div>
           <section class="hero is-info welcome is-small">
               <div class="hero-body">
                   <div class="container">

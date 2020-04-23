@@ -68,7 +68,10 @@ $(document).ready(function(){
 	  			url: "/@admin/logger/ajax",
 	  			data: JSON.stringify({ "class": clazz, "level" : level }),
 	  			dataType: "text",
-	  			success: function(data){}
+	  			success: function(data){
+	  				$(".logger-notification").show();
+	  				$(".logger-notification").delay(5000).fadeOut("slow");
+	  			}
 		});
     });
 });
