@@ -338,7 +338,7 @@ public final class Application {
         List<String> warnings = new ArrayList<>();
         
         if (!config.isAuthenticationCookieSecure()) {
-            String warning = "Authentication cookie has secure flag set to false. It is highly recommended to set authentication.cookie.secure to true in an production environment.";
+            String warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -356,7 +356,7 @@ public final class Application {
         }
         
         if (!config.isSessionCookieSecure()) {
-            String warning = "Session cookie has secure flag set to false. It is highly recommended to set session.cookie.secure to true in an production environment.";
+            String warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -469,8 +469,8 @@ public final class Application {
                         On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
                         On.get().to("/@admin/scheduler/state/{name}").respondeWith("state"),   
                         On.get().to("/@admin/logout").respondeWith("logout"),
-                        On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                        On.post().to("/@admin/verify").respondeWith("verify"),
+                        On.post().to("/@admin/authenticate").respondeWith("authenticate").withRequestLimit(5),
+                        On.post().to("/@admin/verify").respondeWith("verify").withRequestLimit(5),
                         On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
                  );

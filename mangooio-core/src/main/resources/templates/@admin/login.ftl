@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Free Bulma template</title>
+    <title>mangoo I/O Admin</title>
     <link rel="stylesheet" href="/@admin/assets/css/bulma.min.css">
 </head>
 <body>

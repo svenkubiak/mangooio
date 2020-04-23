@@ -69,16 +69,16 @@
 		      		</div>
              </div>
           </section>
+          <#if qrcode?has_content && secret?has_content>
           <section class="info-tiles">
            	<div class="tile is-ancestor">
 		          <div class="tile is-parent">
 		          	<article class="tile is-child is-primary box">
 		        		<p class="title">Two Factor Authentication</p>
 		        		<div class="content">
-				            <#if qrcode?has_content && secret?has_content>
 				            <form>
-				       <div class="field">
-				       <img src="${qrcode}">
+				       		<div class="field">
+				       			<img src="${qrcode}">
 				               </div>
 				               <div class="field">
 				                 <label class="label">Secret</label>
@@ -88,12 +88,12 @@
 				               </div>
 				             </form>
 				         </div>
-				         </#if>
 			              </div>
 		              </article>
 		      		</div>
              </div>
           </section>          
+	      </#if>
       </div>
   </div>
 </div>

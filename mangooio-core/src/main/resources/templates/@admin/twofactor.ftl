@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Free Bulma template</title>
+    <title>mangoo I/O Admin</title>
     <link rel="stylesheet" href="/@admin/assets/css/bulma.min.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
                     <h3 class="title has-text-black">Two-Step Verification</h3>
                     <hr class="login-hr">
                     <p class="subtitle has-text-black">Please enter your OTP.</p>
-                    <#if form.hasErrors()><p class="has-text-danger has-text-weight-bold">Invalid Code. <a href="/@admin/logout">Logout?</a></p></#if>
+                    <#if form.hasErrors()><p class="has-text-danger has-text-weight-bold">Invalid Code. <a href="/@admin/logout">Cancel?</a></p></#if>
                     <div class="box">
                         <form action="/@admin/verify" method="post">
                             <div class="field">

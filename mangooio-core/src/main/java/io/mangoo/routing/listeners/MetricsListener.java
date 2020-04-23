@@ -3,6 +3,8 @@ package io.mangoo.routing.listeners;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
 import io.undertow.server.ExchangeCompletionListener;
@@ -30,7 +32,7 @@ public class MetricsListener implements ExchangeCompletionListener {
                 .orElse("")
                 .toLowerCase(Locale.ENGLISH);
         
-        if (!uri.contains("@admin")) {
+        if (StringUtils.isNotBlank(uri) && !uri.contains("@admin")) {
             int processTime = (int) (System.currentTimeMillis() - this.start);
             
             Metrics metrics = Application.getInstance(Metrics.class);
