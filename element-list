@@ -10,7 +10,9 @@ io.mangoo.exceptions
 io.mangoo.filters
 io.mangoo.i18n
 io.mangoo.interfaces
+io.mangoo.interfaces.filters
 io.mangoo.models
+io.mangoo.persistence
 io.mangoo.routing
 io.mangoo.routing.bindings
 io.mangoo.routing.handlers
