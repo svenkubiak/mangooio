@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -69,6 +70,8 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
+    private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String PERIOD = "30";
     private static final String DIGITS = "6";
@@ -84,6 +87,7 @@ public class AdminController {
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final double HUNDRED_PERCENT = 100.0;
+    private static final int ADMIN_LOGIN_MAX_RETRIES = 3;
     private final Cache cache;
     private final Config config;
     private final Crypto crypto;
@@ -192,18 +196,35 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (form.isValid()) {
+        boolean locked = false;
+        LocalDateTime lockedUntil = this.cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
+        if (lockedUntil != null && lockedUntil.isAfter(LocalDateTime.now())) {
+            locked = true;
+        }
+        
+        if (!locked && form.isValid()) {
             if (isValidAuthentication(form)) {
+                this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, 0);
                 return Response.withRedirect("/@admin").andCookie(getAdminCookie(true));
             } else {
-                form.invalidate();
+                invalidAuthentication();
             }
         }
+        form.invalidate();
         form.keep();
         
         return Response.withRedirect("/@admin/login");
     }
     
+    private void invalidAuthentication() {
+        AtomicInteger counter = this.cache.increment(MANGOOIO_ADMIN_LOCK_COUNT);
+        if (counter.intValue() > ADMIN_LOGIN_MAX_RETRIES) {
+            this.cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
+        }
+        
+        this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
+    }
+
     public Response verify(Form form) {
         form.expectValue("code");
         
