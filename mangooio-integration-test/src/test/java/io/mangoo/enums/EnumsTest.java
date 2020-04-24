@@ -20,7 +20,6 @@ public class EnumsTest {
     public void testBinding() {
         //then
         assertThat(Binding.fromString("io.mangoo.routing.bindings.Authentication"), equalTo(Binding.AUTHENTICATION));
-        assertThat(Binding.fromString("io.mangoo.routing.bindings.Body"), equalTo(Binding.BODY));
         assertThat(Binding.fromString("java.lang.Double"), equalTo(Binding.DOUBLE));
         assertThat(Binding.fromString("double"), equalTo(Binding.DOUBLE_PRIMITIVE));
         assertThat(Binding.fromString("io.mangoo.routing.bindings.Flash"), equalTo(Binding.FLASH));

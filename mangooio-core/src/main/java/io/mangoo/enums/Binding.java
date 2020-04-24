@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
  */
 public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
-    BODY("io.mangoo.routing.bindings.Body"),
     DOUBLE("java.lang.Double"),
     DOUBLE_PRIMITIVE("double"),    
     FLASH("io.mangoo.routing.bindings.Flash"),

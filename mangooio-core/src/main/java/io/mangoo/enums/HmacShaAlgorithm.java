@@ -6,7 +6,6 @@ package io.mangoo.enums;
  *
  */
 public enum HmacShaAlgorithm {
-    HMAC_SHA_1("SHA1"),
     HMAC_SHA_256("SHA256"),
     HMAC_SHA_512("SHA512");
 

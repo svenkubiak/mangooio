@@ -83,9 +83,9 @@ public final class TOTPBuilder {
 
     /**
      * The HMAC-SHA algorithm used in generating the TOTP value (defaults to
-     * {@code HMAC-SHA-1}).
+     * {@code HMAC-SHA-256}).
      */
-    private HmacShaAlgorithm hmacShaAlgorithm = HmacShaAlgorithm.HMAC_SHA_1;
+    private HmacShaAlgorithm hmacShaAlgorithm = HmacShaAlgorithm.HMAC_SHA_256;
 
     /**
      * Creates a new instance of {@code TOTPBuilder} initialized with a shared
@@ -162,17 +162,6 @@ public final class TOTPBuilder {
         Preconditions.checkNotNull(algorithm);
         this.hmacShaAlgorithm = algorithm;
         return this;
-    }
-
-    /**
-     * Returns this {@code TOTPBuilder} instance initialized with the
-     * {@link HmacShaAlgorithm#HMAC_SHA_1}.
-     * 
-     * @return this {@code TOTPBuilder} instance initialized with the
-     *         {@link HmacShaAlgorithm#HMAC_SHA_1}.
-     */
-    public TOTPBuilder hmacSha1() {
-        return hmacSha(HmacShaAlgorithm.HMAC_SHA_1);
     }
 
     /**
