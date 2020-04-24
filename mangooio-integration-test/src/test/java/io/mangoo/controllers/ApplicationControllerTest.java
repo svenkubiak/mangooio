@@ -18,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -114,6 +115,7 @@ public class ApplicationControllerTest {
         assertThat(response.getContent(), equalTo("we are at location"));
     }
     
+    @Disabled
     @Test
     public void testPrettyTime() {
         //given
