@@ -23,6 +23,7 @@ public enum Template {
     private static final String LOGGER_TEMPLATE_PATH = "@admin/logger.ftl";
     private static final String LOGIN_TEMPLARE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
+    private static final String TOO_MANY_REQUESTS_TEMPLATE_PATH = "defaults/429.html";
     private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
     private static final String TWOFACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
     private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
@@ -34,6 +35,7 @@ public enum Template {
     private String notFoundContent;
     private String serverErrorContent;
     private String unauthorizedContent;
+    private String tooManyRequests;;
     
     Template () {
         try {
@@ -42,6 +44,7 @@ public enum Template {
             this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH), StandardCharsets.UTF_8);
             this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH), StandardCharsets.UTF_8);
             this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH), StandardCharsets.UTF_8);
+            this.tooManyRequests = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LogManager.getLogger(Template.class).error("Failed to load default templates", e);
         }
@@ -144,6 +147,13 @@ public enum Template {
     public String serverError() {
         return this.serverErrorContent;
     }
+    
+    /**
+     * @return The content of the default too many requests error template
+     */
+    public String tooManyRequests() {
+        return this.tooManyRequests;
+    }    
     
     /**
      * @return The relative path of the internal server error template

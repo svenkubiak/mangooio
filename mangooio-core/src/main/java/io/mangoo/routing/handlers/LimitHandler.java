@@ -14,6 +14,7 @@ import io.mangoo.core.Application;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
+import io.mangoo.enums.Template;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -43,7 +44,7 @@ public class LimitHandler implements HttpHandler {
         if (this.attachment.hasLimit()) {
             String key = getCacheKey(exchange);
             if (StringUtils.isNotBlank(key)) {
-                if (this.cache.increment(key).get() > this.attachment.getLimit()) {
+                if (this.cache.getAndIncrement(key).get() > this.attachment.getLimit()) {
                     endRequest(exchange); 
                 } else {
                     nextHandler(exchange);
@@ -99,6 +100,7 @@ public class LimitHandler implements HttpHandler {
      */
     private void endRequest(HttpServerExchange exchange) {
         exchange.setStatusCode(StatusCodes.TOO_MANY_REQUESTS);
+        exchange.getResponseSender().send(Template.DEFAULT.tooManyRequests());
         exchange.endExchange(); 
     }
 

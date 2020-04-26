@@ -135,7 +135,7 @@ public class ApplicationControllerTest {
         TestResponse response = null;
 
         //then
-        for (int i=0; i <= 10; i++) {
+        for (int i=0; i < 10; i++) {
             response = TestRequest.get("/limit").execute();   
             assertThat(response, not(nullValue()));
             assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));

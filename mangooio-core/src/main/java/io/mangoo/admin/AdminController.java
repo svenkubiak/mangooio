@@ -87,7 +87,7 @@ public class AdminController {
     private static final String VERSION = "version";
     private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final double HUNDRED_PERCENT = 100.0;
-    private static final int ADMIN_LOGIN_MAX_RETRIES = 3;
+    private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
     private final Cache cache;
     private final Config config;
     private final Crypto crypto;
@@ -204,7 +204,7 @@ public class AdminController {
         
         if (!locked && form.isValid()) {
             if (isValidAuthentication(form)) {
-                this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, 0);
+                this.cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
                 return Response.withRedirect("/@admin").andCookie(getAdminCookie(true));
             } else {
                 invalidAuthentication();
@@ -215,15 +215,6 @@ public class AdminController {
         
         return Response.withRedirect("/@admin/login");
     }
-    
-    private void invalidAuthentication() {
-        AtomicInteger counter = this.cache.increment(MANGOOIO_ADMIN_LOCK_COUNT);
-        if (counter.intValue() > ADMIN_LOGIN_MAX_RETRIES) {
-            this.cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
-        }
-        
-        this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
-    }
 
     public Response verify(Form form) {
         form.expectValue("code");
@@ -232,9 +223,10 @@ public class AdminController {
             if (TotpUtils.verifiedTotp(this.config.getApplicationAdminSecret(), form.get("code"))) {
                 return Response.withRedirect("/@admin").andCookie(getAdminCookie(false));
             } else {
-                form.invalidate();
+                invalidAuthentication();
             }
         }
+        form.invalidate();
         form.keep();
         
         return Response.withRedirect("/@admin/twofactor");
@@ -443,5 +435,14 @@ public class AdminController {
                 .setSameSiteMode("Strict");
         
         return cookie;
+    }
+    
+    private void invalidAuthentication() {
+        AtomicInteger counter = this.cache.getAndIncrement(MANGOOIO_ADMIN_LOCK_COUNT);
+        if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
+            this.cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
+        }
+        
+        this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
     }
 }

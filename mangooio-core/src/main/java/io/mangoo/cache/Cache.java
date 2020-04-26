@@ -50,24 +50,38 @@ public interface Cache {
     /**
      * Increments a cache counter with a given key
      * 
+     * If the counter does not exists, it will be
+     * created and the incremented
+     * 
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    AtomicInteger increment(String key);
+    AtomicInteger getAndIncrement(String key);
     
     /**
-     * Decrements a cache counter with a given key
+     * Decrements a counter with a given key
+     * 
+     * If the counter does not exists, it will be
+     * created and the decremented
      * 
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    AtomicInteger decrement(String key);
+    AtomicInteger getAndDecrement(String key);
 
     /**
-     * Retrieves the current counter for a given key
+     * Retrieves the counter for a given key
      * 
-     * @param key The key for the cached value
+     * @param key The key for the counter
      * @return A counter based on AtomicInteger or null if none found
      */
     AtomicInteger getCounter(String key);
+
+    /**
+     * Resets the counter for a given key
+     * 
+     * @param key The key for the counter
+     * @return A counter based on AtomicInteger
+     */
+    AtomicInteger resetCounter(String key);
 }

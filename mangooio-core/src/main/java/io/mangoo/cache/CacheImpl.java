@@ -7,9 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.mangoo.enums.Required;
 
 /**
- * EhCache implementation 
  * 
- * @author sven.kubiak
+ * @author svenkubiak
  *
  */
 public class CacheImpl implements Cache {
@@ -23,18 +22,18 @@ public class CacheImpl implements Cache {
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        ehCache.put(key, value);
+        this.ehCache.put(key, value);
     }
 
     @Override
     public void remove(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        ehCache.remove(key);
+        this.ehCache.remove(key);
     }
 
     @Override
     public void clear() {
-        ehCache.clear();
+        this.ehCache.clear();
     }
 
     @Override
@@ -47,19 +46,19 @@ public class CacheImpl implements Cache {
     @Override
     public void putAll(Map<String, Object> map) {
         Objects.requireNonNull(map, Required.MAP.toString());
-        ehCache.putAll(map);
+        this.ehCache.putAll(map);
     }
 
     @Override
-    public AtomicInteger increment(String key) {
+    public AtomicInteger getAndIncrement(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
         AtomicInteger counter = get(key);
         if (counter == null) {
-            counter = new AtomicInteger(-1);
+            counter = new AtomicInteger(0);
         }
         counter.incrementAndGet();
-        put(key, counter);
+        this.put(key, counter);
         
         return counter;
     }
@@ -69,17 +68,30 @@ public class CacheImpl implements Cache {
         Objects.requireNonNull(key, Required.KEY.toString());
         return get(key);
     }
+    
+    @Override
+    public AtomicInteger resetCounter(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        
+        AtomicInteger counter = get(key);
+        if (counter == null) {
+            counter = new AtomicInteger(0);
+        }
+        this.put(key, counter);
+        
+        return counter;
+    }
 
     @Override
-    public AtomicInteger decrement(String key) {
+    public AtomicInteger getAndDecrement(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         AtomicInteger counter = get(key);
         if (counter == null) {
-            counter = new AtomicInteger(1);
+            counter = new AtomicInteger(0);
         }
         counter.decrementAndGet();
-        put(key, counter);
+        this.put(key, counter);
         
         return counter;
     }

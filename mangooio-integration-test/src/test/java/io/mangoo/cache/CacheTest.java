@@ -84,16 +84,16 @@ public class CacheTest {
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        AtomicInteger increment = cache.increment("increment");
-        
-        //then
-        assertThat(increment.get(), equalTo(0));
-        
-        //when
-        increment = cache.increment("increment");
+        AtomicInteger increment = cache.getAndIncrement("increment");
         
         //then
         assertThat(increment.get(), equalTo(1));
+        
+        //when
+        increment = cache.getAndIncrement("increment");
+        
+        //then
+        assertThat(increment.get(), equalTo(2));
     }
     
     @Test
@@ -102,15 +102,15 @@ public class CacheTest {
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        AtomicInteger decrement = cache.decrement("decrement");
-        
-        //then
-        assertThat(decrement.get(), equalTo(0));
-        
-        //when
-        decrement = cache.decrement("decrement");
+        AtomicInteger decrement = cache.getAndDecrement("decrement");
         
         //then
         assertThat(decrement.get(), equalTo(-1));
+        
+        //when
+        decrement = cache.getAndDecrement("decrement");
+        
+        //then
+        assertThat(decrement.get(), equalTo(-2));
     }
 }
