@@ -50,7 +50,7 @@ public class CacheImpl implements Cache {
     }
 
     @Override
-    public AtomicInteger getAndIncrement(String key) {
+    public AtomicInteger getAndIncrementCounter(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
         AtomicInteger counter = get(key);
@@ -83,7 +83,7 @@ public class CacheImpl implements Cache {
     }
 
     @Override
-    public AtomicInteger getAndDecrement(String key) {
+    public AtomicInteger getAndDecrementCounter(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         AtomicInteger counter = get(key);

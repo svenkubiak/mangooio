@@ -44,7 +44,7 @@ public class LimitHandler implements HttpHandler {
         if (this.attachment.hasLimit()) {
             String key = getCacheKey(exchange);
             if (StringUtils.isNotBlank(key)) {
-                if (this.cache.getAndIncrement(key).get() > this.attachment.getLimit()) {
+                if (this.cache.getAndIncrementCounter(key).get() > this.attachment.getLimit()) {
                     endRequest(exchange); 
                 } else {
                     nextHandler(exchange);

@@ -84,13 +84,13 @@ public class CacheTest {
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        AtomicInteger increment = cache.getAndIncrement("increment");
+        AtomicInteger increment = cache.getAndIncrementCounter("increment");
         
         //then
         assertThat(increment.get(), equalTo(1));
         
         //when
-        increment = cache.getAndIncrement("increment");
+        increment = cache.getAndIncrementCounter("increment");
         
         //then
         assertThat(increment.get(), equalTo(2));
@@ -102,13 +102,13 @@ public class CacheTest {
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        AtomicInteger decrement = cache.getAndDecrement("decrement");
+        AtomicInteger decrement = cache.getAndDecrementCounter("decrement");
         
         //then
         assertThat(decrement.get(), equalTo(-1));
         
         //when
-        decrement = cache.getAndDecrement("decrement");
+        decrement = cache.getAndDecrementCounter("decrement");
         
         //then
         assertThat(decrement.get(), equalTo(-2));

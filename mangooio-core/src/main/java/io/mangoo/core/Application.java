@@ -469,8 +469,8 @@ public final class Application {
                         On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
                         On.get().to("/@admin/scheduler/state/{name}").respondeWith("state"),   
                         On.get().to("/@admin/logout").respondeWith("logout"),
-                        On.post().to("/@admin/authenticate").respondeWith("authenticate").withRequestLimit(10),
-                        On.post().to("/@admin/verify").respondeWith("verify").withRequestLimit(10),
+                        On.post().to("/@admin/authenticate").respondeWith("authenticate"),
+                        On.post().to("/@admin/verify").respondeWith("verify"),
                         On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
                  );

@@ -117,7 +117,7 @@ public class Authentication {
         if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
             authenticated = true;
         } else {
-            cache.getAndIncrement(identifier);
+            cache.getAndIncrementCounter(identifier);
         }
 
         return authenticated;

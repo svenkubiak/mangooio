@@ -196,13 +196,7 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        boolean locked = false;
-        LocalDateTime lockedUntil = this.cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
-        if (lockedUntil != null && lockedUntil.isAfter(LocalDateTime.now())) {
-            locked = true;
-        }
-        
-        if (!locked && form.isValid()) {
+        if (isNotLocked() && form.isValid()) {
             if (isValidAuthentication(form)) {
                 this.cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
                 return Response.withRedirect("/@admin").andCookie(getAdminCookie(true));
@@ -219,7 +213,7 @@ public class AdminController {
     public Response verify(Form form) {
         form.expectValue("code");
         
-        if (form.isValid()) {
+        if (isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(this.config.getApplicationAdminSecret(), form.get("code"))) {
                 return Response.withRedirect("/@admin").andCookie(getAdminCookie(false));
             } else {
@@ -438,11 +432,16 @@ public class AdminController {
     }
     
     private void invalidAuthentication() {
-        AtomicInteger counter = this.cache.getAndIncrement(MANGOOIO_ADMIN_LOCK_COUNT);
+        AtomicInteger counter = this.cache.getAndIncrementCounter(MANGOOIO_ADMIN_LOCK_COUNT);
         if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
             this.cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
         }
         
         this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
+    }
+    
+    private boolean isNotLocked() {
+        LocalDateTime lockedUntil = this.cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
+        return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
     }
 }

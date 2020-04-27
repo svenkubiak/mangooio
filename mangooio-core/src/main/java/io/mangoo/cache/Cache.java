@@ -56,7 +56,7 @@ public interface Cache {
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    AtomicInteger getAndIncrement(String key);
+    AtomicInteger getAndIncrementCounter(String key);
     
     /**
      * Decrements a counter with a given key
@@ -67,7 +67,7 @@ public interface Cache {
      * @param key The key for the cached value
      * @return A counter based on AtomicInteger
      */
-    AtomicInteger getAndDecrement(String key);
+    AtomicInteger getAndDecrementCounter(String key);
 
     /**
      * Retrieves the counter for a given key
