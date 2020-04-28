@@ -87,6 +87,7 @@ public final class Minification {
         FileOutputStream fileOutputStream = null;
         try {
             final File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
+            outputFile.createNewFile();
             
             fileInputStream = new FileInputStream(inputFile);
             fileOutputStream = new FileOutputStream(outputFile);
@@ -148,8 +149,6 @@ public final class Minification {
         } else if (Suffix.JS.equals(targetSuffix) || Suffix.JS_MIN.equals(targetSuffix)) {
             subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
         }
-        
-        System.out.println("writing to " + basePath + assetPath + subpath);
 
         return new File(basePath + assetPath + subpath);
     }
