@@ -1,56 +1,92 @@
+##################################################
+### mangoo I/O main application configuration  ###
+##################################################
+### This configuration is splitted into three  ###
+### sections. One default or production        ###
+### configuration which is always loaded, one  ###
+### test configuration and one dev 	        ###
+### configuration. If a config value is set in ###
+### either the dev or test configuration and   ###
+### dev or test is the active profile, it will ###
+### overwrite the default/production value.    ###
+##################################################
+
+##################################################
+### default / production configuration         ###
+##################################################
+
 [application]
 	name = ${application-name}
 	secret = application.secret
 	language = en
-	
+
 [connector]
 	http.host = localhost
 	http.port = 8080
-	
-[connector<test>]
-	http.port = 9090
-
-[connector<dev>]
-	http.port = 9090	
 
 [session]
 	cookie.name = ${application-name}-session
-	cookie.signkey = session.cookie.signkey
-	cookie.encryptionkey = session.cookie.encryptionkey
+	cookie.secret = session.cookie.secret
 	cookie.secure = true
-
-[session<test>]
-	cookie.secure = false
-	
-[session<dev>]
-	cookie.secure = false	
 
 [authentication]
 	redirect = /login
 	cookie.name = ${application-name}-authentication
-	cookie.signkey = authentication.cookie.signkey
-	cookie.encryptionkey = authentication.cookie.encryptionkey
+	cookie.secret = authentication.cookie.secret
 	cookie.secure = true
-	
-[authentication<test>]
-	cookie.secure = false
-	
-[authentication<dev>]
-	cookie.secure = false		
 
 [flash]
 	cookie.name = ${application-name}-flash
-	cookie.signkey = flash.cookie.signkey
-	cookie.encryptionkey = flash.cookie.encryptionkey 
-	cookie.secure = true	
-
-[flash<test>]
-	cookie.secure = false
-	
-[flash<dev>]
-	cookie.secure = false
+	cookie.encryptionkey = flash.cookie.secret
+	cookie.secure = true
 
 [smtp]
 	host = localhost
 	port = 25
+[]
+
+##################################################
+### test configuration         				   ###
+##################################################
+
+[connector<test>]
+	http.port = 9090
+
+[session<test>]
+	cookie.secure = false
+
+[flash<test>]
+	cookie.secure = false
+
+[authentication<test>]
+	cookie.secure = false
+
+[persistence<test>]
+    mongo.embedded = true
+	mongo.host = localhost
+	mongo.port = 29019
+	mongo.package = models
+[]
+
+##################################################
+### dev configuration         				   ###
+##################################################
+
+[connector<dev>]
+	http.port = 9090
+
+[authentication<dev>]
+	cookie.secure = false
+
+[session<dev>]
+	cookie.secure = false
+
+[flash<dev>]
+	cookie.secure = false
+
+[persistence<dev>]
+    mongo.embedded = true
+	mongo.host = localhost
+	mongo.port = 29019
+	mongo.package = models
 []

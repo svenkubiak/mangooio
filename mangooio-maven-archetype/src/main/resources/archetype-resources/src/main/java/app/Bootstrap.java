@@ -1,18 +1,31 @@
 package app;
 
-import controllers.ApplicationController;
+import java.util.Objects;
+
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import controllers.ApplicationController;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.persistence.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
+import models.Person;
 
 @Singleton
 public class Bootstrap implements MangooBootstrap {
-
+    private Datastore datastore;
+    
+    @Inject
+    public Bootstrap(Datastore datastore) {
+        this.datastore = Objects.requireNonNull(datastore, "datastore can not be null");
+    }
+    
     @Override
     public void initializeRoutes() {
         Bind.controller(ApplicationController.class).withRoutes(
-                On.get().to("/").respondeWith("index")
+                On.get().to("/").respondeWith("index"),
+                On.get().to("/persons").respondeWith("persons")
         );
         
         Bind.pathResource().to("/assets/");
@@ -26,7 +39,10 @@ public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void applicationStarted() {
-        // TODO Auto-generated method stub
+        // Load initial data
+        this.datastore.save(new Person("Richard M.", "Whittaker", 33));
+        this.datastore.save(new Person("Kitty D.", "Glenn", 45));
+        this.datastore.save(new Person("Raul E.", "Kuhn", 46));
     }
 
     @Override

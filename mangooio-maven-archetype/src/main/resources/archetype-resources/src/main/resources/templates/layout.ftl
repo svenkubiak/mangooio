@@ -16,8 +16,8 @@
 	    <div class="row">
 	        <div class="twelve columns">
 	            <div class="error-template">
-                    <h1><${symbol_pound}nested/></h1>
-                </div>
+                <h1><${symbol_pound}nested/></h1>
+              </div>
 	        </div>
 	    </div>
 	</div>
