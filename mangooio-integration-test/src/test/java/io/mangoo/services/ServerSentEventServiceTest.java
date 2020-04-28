@@ -7,22 +7,33 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.sse.SseEventSource;
 
-import org.junit.jupiter.api.Disabled;
+import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.media.sse.EventListener;
+import org.glassfish.jersey.media.sse.EventSource;
+import org.glassfish.jersey.media.sse.InboundEvent;
+import org.glassfish.jersey.media.sse.SseFeature;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.enums.ClaimKey;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
 /**
@@ -67,7 +78,6 @@ public class ServerSentEventServiceTest {
     }
 
 	@Test
-	@Disabled
 	public void testCloseConnection() throws InterruptedException {
 		//given
 		ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
@@ -89,7 +99,6 @@ public class ServerSentEventServiceTest {
 	}
 
 	@Test
-	@Disabled
 	public void testSendData() throws InterruptedException {
 		//given
 		Config config = Application.getInstance(Config.class);
@@ -109,43 +118,42 @@ public class ServerSentEventServiceTest {
         client.close();
 	}
 
-	@Disabled
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException {
-//        //given
-//        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
-//        final Config config = Application.getInstance(Config.class);
-//        final String data = "Server sent data with authentication FTW!";
-//        
-//        String token = Pasetos.V1.LOCAL.builder()
-//                .setSubject("foo")
-//                .claim(ClaimKey.TWO_FACTOR.toString(), false)
-//                .setExpiration(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.UTC))
-//                .setSharedSecret(new SecretKeySpec("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8), "AES"))
-//                .compact();
-//
-//        //when
-//        final WebTarget target = ClientBuilder.newBuilder()
-//                .register(SseFeature.class)
-//                .build()
-//                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-//
-//        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), token));
-//        final EventSource eventSource = EventSource.target(customWebTarget).build();
-//        final EventListener listener = new EventListener() {
-//            @Override
-//            public void onEvent(InboundEvent inboundEvent) {
-//                if (StringUtils.isBlank(eventData)) {
-//                    eventData = inboundEvent.readData(String.class);
-//                }
-//            }
-//        };
-//        eventSource.register(listener);
-//        eventSource.open();
-//        serverSentEventService.send("/sseauth", data);
-//
-//        //then
-//        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
-//        eventSource.close();
+        //given
+        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
+        final Config config = Application.getInstance(Config.class);
+        final String data = "Server sent data with authentication FTW!";
+        
+        String token = Pasetos.V1.LOCAL.builder()
+                .setSubject("foo")
+                .claim(ClaimKey.TWO_FACTOR.toString(), false)
+                .setExpiration(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.UTC))
+                .setSharedSecret(new SecretKeySpec("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(StandardCharsets.UTF_8), "AES"))
+                .compact();
+
+        //when
+        final WebTarget target = ClientBuilder.newBuilder()
+                .register(SseFeature.class)
+                .build()
+                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
+
+        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), token));
+        final EventSource eventSource = EventSource.target(customWebTarget).build();
+        final EventListener listener = new EventListener() {
+            @Override
+            public void onEvent(InboundEvent inboundEvent) {
+                if (StringUtils.isBlank(eventData)) {
+                    eventData = inboundEvent.readData(String.class);
+                }
+            }
+        };
+        eventSource.register(listener);
+        eventSource.open();
+        serverSentEventService.send("/sseauth", data);
+
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
+        eventSource.close();
     }
 }
