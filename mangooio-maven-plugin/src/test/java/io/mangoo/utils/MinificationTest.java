@@ -94,7 +94,7 @@ public class MinificationTest {
         File outputfile = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
 
         //then
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(outputfile.exists(), equalTo(true)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(outputfile.exists(), equalTo(true)));
         assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(JS));
         assertThat(outputfile.length(), lessThan(file.length()));
         assertThat(file.delete(), equalTo(true));
