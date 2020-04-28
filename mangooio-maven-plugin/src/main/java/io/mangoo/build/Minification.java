@@ -103,6 +103,7 @@ public final class Minification {
         FileOutputStream fileOutputStream = null;
         try {
             final File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
+            
             fileInputStream = new FileInputStream(inputFile);
             fileOutputStream = new FileOutputStream(outputFile);
 

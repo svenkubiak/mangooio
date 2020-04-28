@@ -5,8 +5,6 @@
 	language = en
 	minify.js = true
 	minify.css = true
-	preprocess.js = true
-	preprocess.css = true
 	encrypted = arg{}
 	named = shouldnotbedisplayed
 [connector]

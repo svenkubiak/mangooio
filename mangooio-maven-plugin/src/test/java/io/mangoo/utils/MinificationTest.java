@@ -7,9 +7,12 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -59,17 +62,16 @@ public class MinificationTest {
         buffer.append("}");
         
         //when
-        File file = new File(TEMP + uuid + ".css");
-        FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        Minification.minify(file.getAbsolutePath());
-        File outputfile = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".min.css");
-
+        Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".css"));
+        Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
+        Minification.minify(inputFile.toAbsolutePath().toString());
+        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".min.css");
+        
         //then
-        assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(CSS));
-        assertThat(outputfile.exists(), equalTo(true));
-        assertThat(outputfile.length(), lessThan(file.length()));
-        assertThat(file.delete(), equalTo(true));
-        assertThat(outputfile.delete(), equalTo(true));
+        assertThat(Files.readString(outputFile), equalTo(CSS));
+        assertThat(Files.size(outputFile), lessThan(Files.size(inputFile)));
+        assertThat(Files.deleteIfExists(inputFile), equalTo(true));
+        assertThat(Files.deleteIfExists(outputFile), equalTo(true));
     }
     
     @Test
@@ -86,15 +88,15 @@ public class MinificationTest {
         buffer.append(" });");
         
         //when
-        File file = new File(TEMP + uuid + ".js");
-        FileUtils.writeStringToFile(file, buffer.toString(), Default.ENCODING.toString());
-        Minification.minify(file.getAbsolutePath());
-        File outputfile = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
-
+        Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".js"));
+        Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
+        Minification.minify(inputFile.toAbsolutePath().toString());
+        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
+        
         //then
-        assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(JS));
-        assertThat(outputfile.length(), lessThan(file.length()));
-        assertThat(file.delete(), equalTo(true));
-        assertThat(outputfile.delete(), equalTo(true));
+        assertThat(Files.readString(outputFile), equalTo(JS));
+        assertThat(Files.size(outputFile), lessThan(Files.size(inputFile)));
+        assertThat(Files.deleteIfExists(inputFile), equalTo(true));
+        assertThat(Files.deleteIfExists(outputFile), equalTo(true));
     }
 }
