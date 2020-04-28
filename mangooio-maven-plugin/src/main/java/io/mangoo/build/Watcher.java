@@ -174,7 +174,6 @@ public class Watcher implements Runnable {
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
         if (isPreprocess(absolutePath)){
-            Minification.preprocess(absolutePath);
             String [] tempPath = absolutePath.split(PATTERN);
             Minification.minify(tempPath[0] + "files" + SEPARATOR + "assets" + SEPARATOR + "stylesheet" + SEPARATOR + StringUtils.substringAfterLast(absolutePath, "/")
                 .replace(Suffix.SASS.toString(), Suffix.CSS.toString())

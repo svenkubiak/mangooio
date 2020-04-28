@@ -82,22 +82,6 @@ public final class Minification {
         }
     }
 
-    /**
-     * Compiles a LESS or SASS file to a corresponding CSS file
-     *
-     * @param absolutePath The absolute path to the file
-     */
-    public static void preprocess(String absolutePath) {
-        if (absolutePath == null) {
-            return;
-        }
-
-        if (config == null) {
-            System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config();
-        }
-    }
-
     private static void minifyJS(File inputFile) {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
@@ -121,10 +105,6 @@ public final class Minification {
 
     private static void logMinification(File inputFile, File outputFile) {
         LOG.info(String.format("Minified asset %s (%db) -> %s (%db) [compressed to %d%% of original size]", inputFile.getName(), inputFile.length(), outputFile.getName(), outputFile.length(), ratioOfSize(inputFile, outputFile)));
-    }
-
-    private static void logPreprocess(File inputFile, File outputFile) {
-        LOG.info(String.format("Preprocessed asset %s -> %s", inputFile.getName(), outputFile.getName()));
     }
 
     private static void minifyCSS(File inputFile) {
@@ -168,6 +148,8 @@ public final class Minification {
         } else if (Suffix.JS.equals(targetSuffix) || Suffix.JS_MIN.equals(targetSuffix)) {
             subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
         }
+        
+        System.out.println("writing to " + basePath + assetPath + subpath);
 
         return new File(basePath + assetPath + subpath);
     }
