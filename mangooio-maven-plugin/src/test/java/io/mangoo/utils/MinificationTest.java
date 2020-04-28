@@ -1,6 +1,5 @@
 package io.mangoo.utils;
 
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +92,6 @@ public class MinificationTest {
         File outputfile = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
 
         //then
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(outputfile.exists(), equalTo(true)));
         assertThat(FileUtils.readFileToString(outputfile, Default.ENCODING.toString()), equalTo(JS));
         assertThat(outputfile.length(), lessThan(file.length()));
         assertThat(file.delete(), equalTo(true));
