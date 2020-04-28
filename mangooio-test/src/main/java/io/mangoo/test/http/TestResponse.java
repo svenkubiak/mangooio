@@ -42,11 +42,14 @@ import io.undertow.util.Methods;
 public class TestResponse {
     private static final Logger LOG = LogManager.getLogger(TestResponse.class);
     private static final String CONTENT_TYPE = "Content-Type";
-    private static final int TWO_SECONDS = 2;
+    private static final int FIVE_SECONDS = 5;
     private CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
-    private HttpRequest.Builder httpRequest = HttpRequest.newBuilder().timeout(Duration.of(TWO_SECONDS, ChronoUnit.SECONDS));
+    private HttpRequest.Builder httpRequest = HttpRequest.newBuilder().timeout(Duration.of(FIVE_SECONDS, ChronoUnit.SECONDS));
     private BodyPublisher body = BodyPublishers.noBody();
-    private HttpClient.Builder httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).cookieHandler(this.cookieManager);
+    private HttpClient.Builder httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(FIVE_SECONDS))
+            .followRedirects(HttpClient.Redirect.ALWAYS)
+            .cookieHandler(this.cookieManager);
     private Authenticator authenticator;
     private HttpResponse<String> httpResponse;
     private String uri;
