@@ -31,7 +31,7 @@
 		<junit.platform.version>1.7.0-M1</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
 		<simplemail.version>6.0.3</simplemail.version>
-		<jpasteo.version>0.4.0</jpasteo.version>
+		<jpasteo.version>0.5.0</jpasteo.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -358,7 +358,7 @@
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>
-				<version>1.4.1</version>
+				<version>1.4.2</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>

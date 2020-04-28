@@ -70,9 +70,9 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
-    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String PERIOD = "30";
     private static final String DIGITS = "6";
     private static final String URL = "url";
@@ -346,7 +346,7 @@ public class AdminController {
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangooIOAdmin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return Response.withOk()
