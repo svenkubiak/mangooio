@@ -35,11 +35,9 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
             Object temporal = null;
             Object object = arguments.get(0);
             
-            if (object != null) {
-                if (object instanceof TemporalDialerAdapter) {
-                    TemporalDialerAdapter temporalDialerAdapter = (TemporalDialerAdapter) object;
-                    temporal = temporalDialerAdapter.getObject();   
-                }
+            if (object instanceof TemporalDialerAdapter) {
+                TemporalDialerAdapter temporalDialerAdapter = (TemporalDialerAdapter) object;
+                temporal = temporalDialerAdapter.getObject();   
             }
 
             if (temporal != null) {
@@ -66,7 +64,6 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
             } else {
                 throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }
-
             
         } else if (arguments != null && arguments.size() > NUM_ARGUMENTS) {
             throw new TemplateModelException("Too many arguments for prettytime function. Allowed arguments: " + NUM_ARGUMENTS);

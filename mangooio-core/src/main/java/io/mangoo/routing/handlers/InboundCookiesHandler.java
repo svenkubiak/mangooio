@@ -124,7 +124,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     authentication = Authentication.create()
                             .withExpires(expiration)
                             .withSubject(paseto.getClaims().getSubject())
-                            .twoFactorAuthentication(Boolean.valueOf(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), String.class)));
+                            .twoFactorAuthentication(Boolean.parseBoolean(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), String.class)));
                 }
             } catch (PasetoException e) {
                 LOG.error("Failed to parse authentication cookie", e);

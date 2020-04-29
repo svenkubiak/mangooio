@@ -3,6 +3,7 @@ package io.mangoo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -70,7 +71,7 @@ public class Dependencies {
     private static String hash256(String text) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(text.getBytes("UTF-8"));
+            byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
             StringBuffer hexString = new StringBuffer();
 
             for (int i = 0; i < hash.length; i++) {
