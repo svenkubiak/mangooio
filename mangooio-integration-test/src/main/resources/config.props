@@ -27,9 +27,7 @@
 [smtp]
 	host = localhost
 	port = 25
-    username = foo
-    ssl = false
-    starttls = false
+    protocol = smtp
 []
 
 [application<test>]

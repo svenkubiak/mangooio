@@ -32,7 +32,7 @@ public class Mail {
      * Creates a new mail instance
      * @return A mail object instance
      */
-    public static Mail create() {
+    public static Mail newMail() {
         return new Mail();
     }
     

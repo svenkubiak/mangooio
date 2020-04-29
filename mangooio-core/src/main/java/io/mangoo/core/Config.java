@@ -550,13 +550,6 @@ public class Config {
     }
 
     /**
-     * @return smtp.ssl or default value if undefined
-     */
-    public boolean isSmtpSSL() {
-        return getBoolean(Key.SMTP_SSL, Default.SMTP_SSL.toBoolean());
-    }
-
-    /**
      * @return smtp.username or null value if undefined
      */
     public String getSmtpUsername() {
@@ -680,20 +673,6 @@ public class Config {
      */
     public boolean isSmtpDebug() {
         return getBoolean(Key.SMTP_DEBUG, Default.SMTP_DEBUG.toBoolean());
-    }
-
-    /**
-     * @return smtp.plaintexttls or default value if undefined
-     */
-    public boolean isSmtpPlaintextOverTLS() {
-        return getBoolean(Key.SMTP_PLAINTEXTTLS, Default.SMTP_PLAINTEXTTLS.toBoolean());
-    }
-
-    /**
-     * @return smtp.starttls or default value if undefined
-     */
-    public boolean isSmtpStartTlsRequired() {
-        return getBoolean(Key.SMTP_STARTTLS, Default.SMTP_STARTTLS.toBoolean());
     }
     
     /**
@@ -841,5 +820,19 @@ public class Config {
      */
     public long getAuthenticationCookieTokenExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES.toLong());
+    }
+
+    /**
+     * @return smtp.authentication
+     */
+    public boolean isSmtpAuthentication() {
+        return getBoolean(Key.SMTP_AUTHENTICATION, Default.SMTP_AUTHENTICATION.toBoolean());
+    }
+
+    /**
+     * @return smtp.protocol
+     */
+    public String getSmtpProtocol() {
+        return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL.toString());
     }    
 }

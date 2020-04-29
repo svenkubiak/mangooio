@@ -54,7 +54,7 @@ public class MailTest {
         content.put("king", "kong");
         
         //when
-        Mail.create()
+        Mail.newMail()
             .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@thewall.com")
             .subject("Lord of light")
@@ -78,7 +78,7 @@ public class MailTest {
         content.put("king", "none");
         
         //when
-        Mail.create()
+        Mail.newMail()
             .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
@@ -98,7 +98,7 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.create()
+        Mail.newMail()
             .from("Jon snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
@@ -117,7 +117,7 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.create()
+        Mail.newMail()
             .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")
@@ -137,7 +137,7 @@ public class MailTest {
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
         
         //when
-        Mail.create()
+        Mail.newMail()
             .from("John Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("ÄÜÖ")

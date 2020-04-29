@@ -801,23 +801,23 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSmptSSL() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testIsAuthentication() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String ssl = "true";
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("smtp.ssl", ssl);
+        Map<String, String> configValues = ImmutableMap.of("smtp.authentication", ssl);
         File tempConfig = createTempConfig(configValues);
         Config config = new Config();
         
         // then
-        assertThat(config.isSmtpSSL(), equalTo(Boolean.valueOf(ssl)));
+        assertThat(config.isSmtpAuthentication(), equalTo(Boolean.valueOf(ssl)));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    public void testIsSmptSSLDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testIsSmptAuthenticationDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -827,7 +827,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSmtpSSL(), equalTo(Default.SMTP_SSL.toBoolean()));
+        assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
@@ -1492,23 +1492,23 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSmtpPlaintextOverTLS() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetSmtpProtocol() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String tls = "true";
+        String protocol = "smtptls";
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("smtp.plaintexttls", tls);
+        Map<String, String> configValues = ImmutableMap.of("smtp.protocol", protocol);
         File tempConfig = createTempConfig(configValues);
         Config config = new Config();
         
         // then
-        assertThat(config.isSmtpPlaintextOverTLS(), equalTo(Boolean.valueOf(tls)));
+        assertThat(config.getSmtpProtocol(), equalTo(protocol));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    public void testIsSmtpPlaintextOverTLSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetSmtpProtocolValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1518,38 +1518,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_PLAINTEXTTLS.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsSmtpStartTLS() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String tls = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("smtp.starttls", tls);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isSmtpStartTlsRequired(), equalTo(Boolean.valueOf(tls)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsSmtpStartTLSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSmtpStartTlsRequired(), equalTo(Default.SMTP_STARTTLS.toBoolean()));
+        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     

@@ -67,14 +67,13 @@ public enum Key {
     SESSION_COOKIE_SECRET("session.cookie.secret"),
     SESSION_COOKIE_SECURE("session.cookie.secure"),
     SESSION_COOKIE_TOKEN_EXPIRES("session.cookie.expires"),
+    SMTP_AUTHENTICATION("smtp.authentication"),
     SMTP_DEBUG("smtp.debug"),
     SMTP_FROM("smtp.from"),
     SMTP_HOST("smtp.host"),
     SMTP_PASSWORD("smtp.password"),
-    SMTP_PLAINTEXTTLS("smtp.plaintexttls"),
     SMTP_PORT("smtp.port"),
-    SMTP_SSL("smtp.ssl"),
-    SMTP_STARTTLS("smtp.starttls"),
+    SMTP_PROTOCOL("smtp.protocol"),
     SMTP_USERNAME("smtp.username"),
     UNDERTOW_MAX_ENTITY_SIZE("undertow.maxentitysize");
 

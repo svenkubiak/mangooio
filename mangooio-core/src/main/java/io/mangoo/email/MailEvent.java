@@ -2,7 +2,6 @@ package io.mangoo.email;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.simplejavamail.MailException;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
@@ -35,16 +34,14 @@ public class MailEvent {
             .withSMTPServerHost(config.getSmtpHost())
             .withSMTPServerPort(config.getSmtpPort());
         
-        //FIX ME: refactor to config.isSMTPAuthentication()
-        if (StringUtils.isNotBlank(config.getSmtpUsername()) && StringUtils.isNotBlank(config.getSmtpPassword())) {
+        if (config.isSmtpAuthentication()) {
             mailerBuilder.withSMTPServerUsername(config.getSmtpUsername());
             mailerBuilder.withSMTPServerPassword(config.getSmtpPassword());
         }
         
-        //FIX ME: refactor to different SMTP strategies from config
-        if (config.isSmtpSSL()) {
+        if (config.getSmtpProtocol().equalsIgnoreCase("smtps")) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTPS);
-        } else if (config.isSmtpStartTlsRequired()) {
+        } else if (config.getSmtpProtocol().equalsIgnoreCase("smtptls")) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP_TLS);
         } else {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);

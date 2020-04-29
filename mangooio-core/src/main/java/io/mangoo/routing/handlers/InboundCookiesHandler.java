@@ -87,7 +87,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 if (expiration.isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class))) // FIX ME
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
                             .withAuthenticity(paseto.getClaims().get(ClaimKey.AUTHENTICITY.toString(), String.class))
                             .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET)); 
                 }
@@ -160,7 +160,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class))) //FIX ME
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
                             .setDiscard(true);
                 }
             } catch (PasetoException e) {
