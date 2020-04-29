@@ -87,7 +87,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 if (expiration.isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class))) // FIX ME
                             .withAuthenticity(paseto.getClaims().get(ClaimKey.AUTHENTICITY.toString(), String.class))
                             .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET)); 
                 }
@@ -122,9 +122,9 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 if (expiration.isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
-                            .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET))
+                            .withExpires(expiration)
                             .withSubject(paseto.getClaims().getSubject())
-                            .twoFactorAuthentication(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), Boolean.class));
+                            .twoFactorAuthentication(Boolean.valueOf(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), String.class)));
                 }
             } catch (PasetoException e) {
                 LOG.error("Failed to parse authentication cookie", e);
@@ -160,7 +160,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class))) //FIX ME
                             .setDiscard(true);
                 }
             } catch (PasetoException e) {

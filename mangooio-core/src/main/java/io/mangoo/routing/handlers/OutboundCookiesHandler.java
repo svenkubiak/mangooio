@@ -137,7 +137,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder().setSubject(authentication.getSubject())
                     .setExpiration(authentication.getExpires().toInstant(ZONE_OFFSET))
-                    .claim(ClaimKey.TWO_FACTOR.toString(), authentication.isTwoFactor())
+                    .claim(ClaimKey.TWO_FACTOR.toString(), String.valueOf(authentication.isTwoFactor()))
                     .setSharedSecret(new SecretKeySpec(this.config.getAuthenticationCookieSecret().getBytes(CHARSET), ALGORITHM));
             
             final Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
