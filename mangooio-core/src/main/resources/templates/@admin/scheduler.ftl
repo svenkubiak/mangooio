@@ -35,7 +35,7 @@
 									<td><#if job.previousFireTime??>${job.previousFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
 									<td><#if job.nextFireTime??>${job.nextFireTime?string('dd.MM.yyyy HH:mm:ss')}<#else>-</#if></td>
 									<td>
-										<a href="/@admin/scheduler/state/${job.name}" class="btn btn-app" onclick="return confirm('Are you sure you want to change the state of the job?');" class="simpletooltip">
+										<a href="/@admin/scheduler/state/${job.name}" class="btn btn-app confirmation" confirm-data="${job.active?string('deactivate', 'activate')} job '${job.name}'">
 											<#if job.active>
 												Deactivate
 											<#else>
@@ -43,7 +43,7 @@
 											</#if>
 										</a>
 										&nbsp;&nbsp;
-										<a href="/@admin/scheduler/execute/${job.name}" class="btn btn-app"onclick="return confirm('Are you sure you want to exectue the job?');" class="simpletooltip">
+										<a href="/@admin/scheduler/execute/${job.name}" class="btn btn-app confirmation" confirm-data="execute job '${job.name}'">
 											Run now
 										</a>
 									</td>
