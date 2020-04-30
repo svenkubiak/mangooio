@@ -25,7 +25,7 @@ public class Dependencies {
         try (InputStream inputStream = Files.newInputStream(Paths.get(DEPENDENCIES_FILE))){
             properties.load(inputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //NOSONAR
         }
         
         for (Entry<Object, Object> entry : properties.entrySet()) {

@@ -21,7 +21,7 @@ import io.mangoo.core.Config;
 @Singleton
 public class Datastore {
     private static final Logger LOG = LogManager.getLogger(Datastore.class);
-    private dev.morphia.Datastore datastore;
+    private dev.morphia.Datastore datastore; //NOSONAR
     private Morphia morphia;
     private MongoClient mongoClient;
     private Config config;
