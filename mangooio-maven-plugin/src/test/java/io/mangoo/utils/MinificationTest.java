@@ -14,7 +14,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -29,7 +28,6 @@ import io.mangoo.enums.Default;
  */
 public class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
-    private static final String JS = "$(document).ready(function(){$('#username').focus();});$('.btn-success').click(function(){var btn=$(this);btn.button('loading');});";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
     private static final String ASSET_PATH = "assets/";
     private Config config;
@@ -70,33 +68,6 @@ public class MinificationTest {
         
         //then
         assertThat(Files.readString(outputFile), equalTo(CSS));
-        assertThat(Files.size(outputFile), lessThan(Files.size(inputFile)));
-        assertThat(Files.deleteIfExists(inputFile), equalTo(true));
-        assertThat(Files.deleteIfExists(outputFile), equalTo(true));
-    }
-    
-    @Test
-    @Disabled
-    public void testMinifyJS() throws IOException {
-        //given
-        String uuid = UUID.randomUUID().toString();
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("$(document).ready(function() {");
-        buffer.append("    $('#username').focus();");
-        buffer.append("});");
-        buffer.append("$('.btn-success').click(function() {");
-        buffer.append("    var btn = $(this);");
-        buffer.append("    btn.button('loading');");
-        buffer.append(" });");
-        
-        //when
-        Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".js"));
-        Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
-        Minification.minify(inputFile.toAbsolutePath().toString());
-        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString() + "/" + uuid + ".min.js");
-        
-        //then
-        assertThat(Files.readString(outputFile), equalTo(JS));
         assertThat(Files.size(outputFile), lessThan(Files.size(inputFile)));
         assertThat(Files.deleteIfExists(inputFile), equalTo(true));
         assertThat(Files.deleteIfExists(outputFile), equalTo(true));

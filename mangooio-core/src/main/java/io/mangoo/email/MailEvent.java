@@ -39,11 +39,11 @@ public class MailEvent {
             mailerBuilder.withSMTPServerPassword(config.getSmtpPassword());
         }
         
-        if (config.getSmtpProtocol().equalsIgnoreCase("smtps")) {
+        if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTPS);
-        } else if (config.getSmtpProtocol().equalsIgnoreCase("smtptls")) {
+        } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP_TLS);
-        } else if (config.getSmtpProtocol().equalsIgnoreCase("smtp")) {
+        } else if (("smtp").equalsIgnoreCase(config.getSmtpProtocol())) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);
         } else {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);

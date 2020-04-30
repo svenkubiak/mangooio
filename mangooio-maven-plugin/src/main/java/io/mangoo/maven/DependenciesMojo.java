@@ -43,7 +43,7 @@ public class DependenciesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        if (this.project.getPackaging().equals("pom")) {
+        if (("pom").equalsIgnoreCase(this.project.getPackaging())) {
             LOG.error("Depenciess goal could not be applied to pom project.");
             return;
         }

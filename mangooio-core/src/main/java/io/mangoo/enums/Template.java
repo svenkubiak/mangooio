@@ -35,7 +35,7 @@ public enum Template {
     private String notFoundContent;
     private String serverErrorContent;
     private String unauthorizedContent;
-    private String tooManyRequests;;
+    private String tooManyRequests;
     
     Template () {
         try {
