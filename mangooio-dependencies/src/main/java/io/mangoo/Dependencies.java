@@ -47,7 +47,7 @@ public class Dependencies {
                 try (InputStream inputstream = new URL(url).openStream()){
                     Files.copy(inputstream, Paths.get(LIB_FOLDER + hash + "-" + version + "-" + jar), StandardCopyOption.REPLACE_EXISTING);   
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    e.printStackTrace(); //NOSONAR
                 }
             }
         }
@@ -60,11 +60,11 @@ public class Dependencies {
                   try {
                       Files.delete(c);
                   } catch (IOException e) {
-                      e.printStackTrace();
+                      e.printStackTrace(); //NOSONAR
                   }
             });
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //NOSONAR
         }
     }
     
@@ -82,7 +82,7 @@ public class Dependencies {
 
             return hexString.toString();
         } catch(Exception e){
-            e.printStackTrace();
+            e.printStackTrace(); //NOSONAR
         }
         
         return "";
