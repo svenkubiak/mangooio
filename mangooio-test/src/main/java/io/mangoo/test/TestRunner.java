@@ -13,7 +13,7 @@ import io.mangoo.enums.Mode;
  */ 
 @SuppressWarnings("all")
 public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
-    private static boolean started = false;
+    private boolean started = false;
     
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {

@@ -70,6 +70,7 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String ADMIN_INDEX = "/@admin";
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
@@ -182,14 +183,14 @@ public class AdminController {
         Cookie cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
                 .setValue("")
                 .setHttpOnly(true)
-                .setSecure(Application.inProdMode() ? true : false)
+                .setSecure(Application.inProdMode())
                 .setPath("/")
                 .setDiscard(true)
                 .setExpires(new Date())
                 .setSameSite(true)
                 .setSameSiteMode("Strict");
         
-        return Response.withRedirect("/@admin").andCookie(cookie);
+        return Response.withRedirect(ADMIN_INDEX).andCookie(cookie);
     }
     
     public Response authenticate(Form form) {
@@ -199,7 +200,7 @@ public class AdminController {
         if (isNotLocked() && form.isValid()) {
             if (isValidAuthentication(form)) {
                 this.cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
-                return Response.withRedirect("/@admin").andCookie(getAdminCookie(true));
+                return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(true));
             } else {
                 invalidAuthentication();
             }
@@ -215,7 +216,7 @@ public class AdminController {
         
         if (isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(this.config.getApplicationAdminSecret(), form.get("code"))) {
-                return Response.withRedirect("/@admin").andCookie(getAdminCookie(false));
+                return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(false));
             } else {
                 invalidAuthentication();
             }
@@ -401,13 +402,16 @@ public class AdminController {
         String username = this.config.getApplicationAdminUsername();
         String password = this.config.getApplicationAdminPassword();
         
-        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
-            if (username.equals(form.get("username")) && password.equals(form.get("password"))) {
-                valid = true;
-            }
+        if (checkAuthentication(form, username, password)) {
+            valid = true;
         }
         
         return valid;
+    }
+
+    private boolean checkAuthentication(Form form, String username, String password) {
+        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) &&
+               username.equals(form.get("username")) && password.equals(form.get("password"));
     }
 
     private Cookie getAdminCookie(boolean includeTwoFactor) {
@@ -417,18 +421,16 @@ public class AdminController {
                 .claim("uuid", MangooUtils.randomString(32));
         
         if (includeTwoFactor && StringUtils.isNotBlank(this.config.getApplicationAdminSecret())) {
-            token.claim("twofactor", true);
+            token.claim("twofactor", Boolean.TRUE);
         }
     
-        Cookie cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+        return new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
                 .setValue(token.compact())
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode() ? true : false)
                 .setPath("/")
                 .setSameSite(true)
                 .setSameSiteMode("Strict");
-        
-        return cookie;
     }
     
     private void invalidAuthentication() {

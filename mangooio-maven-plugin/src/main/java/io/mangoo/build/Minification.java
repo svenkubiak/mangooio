@@ -1,9 +1,10 @@
 package io.mangoo.build;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -83,13 +84,13 @@ public final class Minification {
     }
 
     private static void minifyJS(File inputFile) {
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
+        InputStream fileInputStream = null;
+        OutputStream fileOutputStream = null;
         try {
             final File outputFile = getOutputFile(inputFile, Suffix.JS_MIN);
             
-            fileInputStream = new FileInputStream(inputFile);
-            fileOutputStream = new FileOutputStream(outputFile);
+            fileInputStream = Files.newInputStream(inputFile.toPath());
+            fileOutputStream = Files.newOutputStream(outputFile.toPath());
 
             final JSMin jsMin = new JSMin(fileInputStream, fileOutputStream);
             jsMin.jsmin();
@@ -143,9 +144,9 @@ public final class Minification {
         }
 
         String subpath = null;
-        if (Suffix.CSS.equals(targetSuffix) || Suffix.CSS_MIN.equals(targetSuffix)) {
+        if (Suffix.CSS == targetSuffix || Suffix.CSS_MIN == targetSuffix) {
             subpath = Default.STYLESHEET_FOLDER.toString() + "/" + fileName;
-        } else if (Suffix.JS.equals(targetSuffix) || Suffix.JS_MIN.equals(targetSuffix)) {
+        } else if (Suffix.JS == targetSuffix || Suffix.JS_MIN == targetSuffix) {
             subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
         }
 

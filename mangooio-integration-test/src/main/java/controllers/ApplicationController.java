@@ -28,7 +28,7 @@ public class ApplicationController {
     @SuppressWarnings("all")
     public Response error() {
         String foo = null;
-        foo.length();
+        foo.length(); //NOSONAR
         
         return Response.withOk();
     }

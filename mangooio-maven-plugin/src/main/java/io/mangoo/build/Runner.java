@@ -123,7 +123,7 @@ public class Runner {
         commandLine.add("-noverify");
         
         if (StringUtils.isNotBlank(jvmArgs)){
-            Arrays.stream(jvmArgs.split(" "))
+            Arrays.stream(jvmArgs.split(" ")) //NOSONAR
                     .filter(arg -> arg.length() > 0)
                     .forEach(arg -> commandLine.add(arg));
         }
