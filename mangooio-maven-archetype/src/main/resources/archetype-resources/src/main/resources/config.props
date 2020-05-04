@@ -1,19 +1,19 @@
-##################################################
-### mangoo I/O main application configuration  ###
-##################################################
-### This configuration is splitted into three  ###
-### sections. One default or production        ###
-### configuration which is always loaded, one  ###
-### test configuration and one dev 	        ###
-### configuration. If a config value is set in ###
-### either the dev or test configuration and   ###
-### dev or test is the active profile, it will ###
-### overwrite the default/production value.    ###
-##################################################
+#------------------------------------------------
+#-- mangoo I/O main application configuration  --
+#------------------------------------------------
+#-- This configuration is splitted into three  --
+#-- sections. One default or production        --
+#-- configuration which is always loaded, one  --
+#-- test configuration and one dev 	           --
+#-- configuration. If a config value is set in --
+#-- either the dev or test configuration and   --
+#-- dev or test is the active profile, it will --
+#-- overwrite the default/production value.    --
+#------------------------------------------------
 
-##################################################
-### default / production configuration         ###
-##################################################
+#------------------------------------------------
+#-- default / production configuration         --
+#------------------------------------------------
 
 [application]
 	name = ${application-name}
@@ -45,9 +45,9 @@
 	port = 25
 []
 
-##################################################
-### test configuration         				   ###
-##################################################
+#------------------------------------------------
+#-- test configuration         				   --
+#------------------------------------------------
 
 [connector<test>]
 	http.port = 9090
@@ -68,9 +68,9 @@
 	mongo.package = models
 []
 
-##################################################
-### dev configuration         				   ###
-##################################################
+#------------------------------------------------
+#-- dev configuration         				   --
+#------------------------------------------------
 
 [connector<dev>]
 	http.port = 9090
