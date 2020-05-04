@@ -77,9 +77,9 @@ public final class Minification {
         }
 
         if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
-            minifyJS(new File(absolutePath));
+            minifyJS(new File(absolutePath)); //NOSONAR
         } else if (config.isApplicationMinifyJS() && absolutePath.endsWith(CSS)) {
-            minifyCSS(new File(absolutePath));
+            minifyCSS(new File(absolutePath)); //NOSONAR
         }
     }
 
@@ -150,7 +150,7 @@ public final class Minification {
             subpath = Default.JAVASCRIPT_FOLDER.toString() + "/" + fileName;
         }
 
-        return new File(basePath + assetPath + subpath);
+        return new File(basePath + assetPath + subpath); //NOSONAR
     }
 
     private static long ratioOfSize(File inputFile, File outputFile) {
