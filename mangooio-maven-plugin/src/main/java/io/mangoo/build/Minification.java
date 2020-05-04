@@ -136,7 +136,7 @@ public final class Minification {
         }
 
         if (assetPath.startsWith("/")) {
-            assetPath = assetPath.substring(1);
+            assetPath = assetPath.substring(1); //NOSONAR
         }
 
         if (!assetPath.endsWith("/")) {

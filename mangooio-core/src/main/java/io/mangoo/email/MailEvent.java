@@ -43,8 +43,6 @@ public class MailEvent {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTPS);
         } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP_TLS);
-        } else if (("smtp").equalsIgnoreCase(config.getSmtpProtocol())) {
-            mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);
         } else {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);
         }
