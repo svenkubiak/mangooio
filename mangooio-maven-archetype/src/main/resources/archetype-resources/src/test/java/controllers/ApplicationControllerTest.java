@@ -19,7 +19,7 @@ public class ApplicationControllerTest {
 
     @Test
     public void testIndexPage() {
-        //given
+        //when
         TestResponse response = TestRequest.get("/").execute();
 
         //then
