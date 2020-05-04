@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,7 +46,7 @@ public class Dependencies {
             if (!Files.exists(file)) {
                 deletePreviousVersion(hash, version);
                 
-                try (InputStream inputstream = new URL(url).openStream()){
+                try (InputStream inputstream = new URL(url).openStream()) { //NOSONAR
                     Files.copy(inputstream, Paths.get(LIB_FOLDER + hash + "-" + version + "-" + jar), StandardCopyOption.REPLACE_EXISTING); //NOSONAR    
                 } catch (IOException e) {
                     e.printStackTrace(); //NOSONAR
@@ -73,16 +74,16 @@ public class Dependencies {
         String hash = "";
         try { 
             MessageDigest md = MessageDigest.getInstance("SHA-256"); 
-            byte[] messageDigest = md.digest(input.getBytes()); 
+            byte[] messageDigest = md.digest(input.getBytes(StandardCharsets.UTF_8)); 
             BigInteger no = new BigInteger(1, messageDigest); 
             hash = no.toString(16); 
             while (hash.length() < 32) { 
                 hash = "0" + hash; 
             } 
         } catch (NoSuchAlgorithmException e) { 
-            e.printStackTrace();
+            e.printStackTrace(); //NOSONAR
         } 
         
-        return "";
+        return hash;
     }
 }
