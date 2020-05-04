@@ -25,7 +25,7 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "dependencies", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true, requiresDependencyResolution = ResolutionScope.NONE, requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DependenciesMojo extends AbstractMojo {
     private static final String BOMS = "boms.";
-    private static final Set BLACKLIST = Set.of("rhino", "junit", "hamcrest");
+    private static final Set IGNORE = Set.of("rhino", "junit", "hamcrest");
     
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
@@ -78,7 +78,7 @@ public class DependenciesMojo extends AbstractMojo {
         
         for (Enumeration<?> keys = props.propertyNames(); keys.hasMoreElements();) {
             String key = (String) keys.nextElement();
-            if (BLACKLIST.contains(key)) {
+            if (IGNORE.contains(key)) {
                 props.remove(key);
             }
         }

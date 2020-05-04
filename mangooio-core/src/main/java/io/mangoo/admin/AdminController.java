@@ -70,6 +70,7 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
@@ -139,7 +140,7 @@ public class AdminController {
             return Response.withOk()
                     .andContent(VERSION, MangooUtils.getVersion())
                     .andContent(SPACE, null)
-                    .andContent("enabled", enabled)
+                    .andContent(ENABLED, enabled)
                     .andContent("uptime", Date.from(instant))
                     .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
                     .andContent(METRICS, metrics.getResponseMetrics())
@@ -151,14 +152,14 @@ public class AdminController {
                     .andContent("errorRate", errorRate)
                     .andContent("events", eventBusService.getNumEvents())
                     .andContent("listeners", eventBusService.getNumListeners())
-                    .andContent("enabled", enabled)
+                    .andContent(ENABLED, enabled)
                     .andTemplate(Template.DEFAULT.adminPath());
         }
         
         return Response.withOk()
                 .andContent(VERSION, MangooUtils.getVersion())
                 .andContent(SPACE, null)
-                .andContent("enabled", enabled)
+                .andContent(ENABLED, enabled)
                 .andContent("uptime", Date.from(instant))
                 .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
@@ -427,7 +428,7 @@ public class AdminController {
         return new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
                 .setValue(token.compact())
                 .setHttpOnly(true)
-                .setSecure(Application.inProdMode() ? true : false)
+                .setSecure(Application.inProdMode())
                 .setPath("/")
                 .setSameSite(true)
                 .setSameSiteMode("Strict");
