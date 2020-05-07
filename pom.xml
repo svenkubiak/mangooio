@@ -257,7 +257,7 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongo-java-driver</artifactId>
-				<version>3.12.3</version>
+				<version>3.12.4</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -428,7 +428,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.44</version>
+				<version>0.46</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
