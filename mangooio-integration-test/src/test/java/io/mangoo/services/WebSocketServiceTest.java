@@ -12,17 +12,25 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
+import dev.paseto.jpaseto.PasetoV1LocalBuilder;
+import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.enums.ClaimKey;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 
@@ -124,101 +132,86 @@ public class WebSocketServiceTest {
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
     }
 
-//    @Test
-//    public void testSendDataWithValidAuthentication() throws Exception {
-//        // given
-//        final HttpClient httpClient = HttpClient.newHttpClient();
-//        final Config config = Application.getInstance(Config.class);
-//        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
-//        final String data = UUID.randomUUID().toString();
-//        eventData = null;
-//
-//        // then
-//        JwtClaims jwtClaims = new JwtClaims();
-//        jwtClaims.setSubject("foo");
-//        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
-//        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-//        
-//        JsonWebSignature jsonWebSignature = new JsonWebSignature();
-//        jsonWebSignature.setKey(new HmacKey(config.getAuthenticationCookieSignKey().getBytes(Charsets.UTF_8)));
-//        jsonWebSignature.setPayload(jwtClaims.toJson());
-//        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
-//        
-//        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
-//        
-//        Listener listener = new Listener() {
-//            @Override
-//            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
-//                eventData = message.toString();
-//                return null;
-//            }
-//        };
-//        httpClient.newWebSocketBuilder()
-//            .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
-//            .buildAsync(new URI(url), listener);
-//        
-//        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
-//        
-//        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
-//            try {
-//                if (channel.isOpen()) {
-//                    WebSockets.sendTextBlocking(data, channel);
-//                }
-//            } catch (final IOException e) {
-//                e.printStackTrace();
-//            }
-//         });
-//        
-//        // then
-//        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
-//    }
-//
-//    @Test
-//    public void testSendDataWithInvalidAuthentication() throws Exception {
-//        // given
-//        final HttpClient httpClient = HttpClient.newHttpClient();
-//        final Config config = Application.getInstance(Config.class);
-//        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
-//        final String data = UUID.randomUUID().toString();
-//        eventData = null;
-//
-//        // then
-//        JwtClaims jwtClaims = new JwtClaims();
-//        jwtClaims.setSubject("foo");
-//        jwtClaims.setClaim(ClaimKey.TWO_FACTOR.toString(), false);
-//        jwtClaims.setExpirationTime(NumericDate.fromMilliseconds(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-//        
-//        JsonWebSignature jsonWebSignature = new JsonWebSignature();
-//        jsonWebSignature.setKey(new HmacKey("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(Charsets.UTF_8)));
-//        jsonWebSignature.setPayload(jwtClaims.toJson());
-//        jsonWebSignature.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA512);
-//        
-//        String jwt = Application.getInstance(Crypto.class).encrypt(jsonWebSignature.getCompactSerialization(), config.getAuthenticationCookieEncryptionKey());
-//        
-//        Listener listener = new Listener() {
-//            @Override
-//            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
-//                eventData = message.toString();
-//                return null;
-//            }
-//        };
-//        httpClient.newWebSocketBuilder()
-//            .header("Cookie", config.getAuthenticationCookieName() + "=" + jwt)
-//            .buildAsync(new URI(url), listener);
-//        
-//        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
-//        
-//        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
-//            try {
-//                if (channel.isOpen()) {
-//                    WebSockets.sendTextBlocking(data, channel);
-//                }
-//            } catch (final IOException e) {
-//                e.printStackTrace();
-//            }
-//         });
-//        
-//        // then
-//        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data)))); 
-//    }
+    @Test
+    public void testSendDataWithValidAuthentication() throws Exception {
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
+        final Config config = Application.getInstance(Config.class);
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
+        final String data = UUID.randomUUID().toString();
+        eventData = null;
+
+        // then
+        PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder().setSubject("foo")
+                .setExpiration(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant())
+                .claim(ClaimKey.TWO_FACTOR.toString(), "false")
+                .setSharedSecret(new SecretKeySpec(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8), "AES"));
+        
+        Listener listener = new Listener() {
+            @Override
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
+                eventData = message.toString();
+                return null;
+            }
+        };
+        httpClient.newWebSocketBuilder()
+            .header("Cookie", config.getAuthenticationCookieName() + "=" + token.compact())
+            .buildAsync(new URI(url), listener);
+        
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
+        
+        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
+            try {
+                if (channel.isOpen()) {
+                    WebSockets.sendTextBlocking(data, channel);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+         });
+        
+        // then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
+    }
+
+    @Test
+    public void testSendDataWithInvalidAuthentication() throws Exception {
+        // given
+        final HttpClient httpClient = HttpClient.newHttpClient();
+        final Config config = Application.getInstance(Config.class);
+        final String url = "ws://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/websocketauth";
+        final String data = UUID.randomUUID().toString();
+        eventData = null;
+        
+        PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder().setSubject("foo")
+                .setExpiration(LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant())
+                .claim(ClaimKey.TWO_FACTOR.toString(), "false")
+                .setSharedSecret(new SecretKeySpec("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(StandardCharsets.UTF_8), "AES"));
+        
+        Listener listener = new Listener() {
+            @Override
+            public CompletionStage<?> onText(WebSocket webSocket, CharSequence message, boolean last) {
+                eventData = message.toString();
+                return null;
+            }
+        };
+        httpClient.newWebSocketBuilder()
+            .header("Cookie", config.getAuthenticationCookieName() + "=" + token.compact())
+            .buildAsync(new URI(url), listener);
+        
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
+        
+        Application.getInstance(WebSocketService.class).getChannels("/websocketauth").forEach(channel -> {
+            try {
+                if (channel.isOpen()) {
+                    WebSockets.sendTextBlocking(data, channel);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+         });
+        
+        // then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data)))); 
+    }
 }
