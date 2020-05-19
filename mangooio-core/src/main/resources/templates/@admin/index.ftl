@@ -84,12 +84,9 @@
 					</#list>      
 					<nav class="breadcrumb" aria-label="breadcrumbs">
 					  <ul>
-					    <li><a href="#" aria-current="page">mangoo I/O</a></li>
-					    <li><a href="#" aria-current="page">version</a></li>
-					    <li><a href="#" aria-current="page">${version}</a></li>
+					    <li><a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a></li>
 					  </ul>
 					</nav>
-					                      
 	            </div>
 	        </div>
 	    </div>
