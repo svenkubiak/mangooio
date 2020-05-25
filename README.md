@@ -7,7 +7,7 @@ mangoo I/O
 
 mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-It is a classic MVC-Framework. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1100 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
+It is a classic MVC-Framework. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1200 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
 
 mangoo I/O focuses on having a developer friendly, fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
 
@@ -18,6 +18,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Intuitive convention-over-configuration
 * Highly scalable using a share-nothing stateless architecture
 * Hot-Compiling development mode for high productivity
+* Straightforward persistence integration
 * Easy to use template engine
 * Super minimal use of Annotations
 * Dependency Injection
@@ -38,7 +39,6 @@ Here are some key features of mangoo I/O in a nutshell:
 * Build-in asset minification
 * Flexible testing tools
 * Simple Deployment and CI-Integration
-* Preprocessor for LESS and SASS
 * i18N Internationalization
 * And many more...
 
@@ -48,6 +48,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * [Maven](https://maven.apache.org/) – Dependency management, built-system, packaging
 * [Undertow](http://undertow.io/) – Web Server
+* [mongoDB](https://www.mongodb.com/) – Persistence
 * [Google Guice](https://github.com/google/guice) – Dependency injection
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
 * [Ehcache](http://www.ehcache.org/) – Cacheing
@@ -61,11 +62,11 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.231 Sonar rules
-* 9.859 Lines of code
-* 2.775 Commits
-* 561 Unit tests
-* 4+ years development maturity
+* 1.233 Sonar rules
+* 8.959 Lines of code
+* 2.843 Commits
+* 549 Unit tests
+* 5+ years development maturity
 * 294 cups of coffee (estimated)
 
 ## Resources
