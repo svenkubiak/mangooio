@@ -1,6 +1,7 @@
 package io.mangoo.persistence;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
 import dev.morphia.query.experimental.filters.Filters;
 import io.mangoo.core.Config;
+import io.mangoo.enums.Required;
 
 @Singleton
 public class Datastore {
@@ -25,7 +27,7 @@ public class Datastore {
 
     @Inject
     public Datastore(Config config) {
-        this.config = config;
+        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         connect();
     }
 
@@ -48,7 +50,7 @@ public class Datastore {
             LOG.info("Successfully created MongoClient @ {}:{} with authentication", this.config.getMongoHost(), this.config.getMongoPort());
         } else {
             this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
-            LOG.info("Successfully created MongoClient @ {}:{} ***without**** authentication", this.config.getMongoHost(), this.config.getMongoPort());
+            LOG.info("Successfully created MongoClient @ {}:{} ***without*** authentication", this.config.getMongoHost(), this.config.getMongoPort());
         }
         
         this.datastore.getMapper().mapPackage(this.config.getMongoPackage());
