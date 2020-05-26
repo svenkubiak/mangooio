@@ -2,36 +2,31 @@ package io.mangoo.persistence;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.types.ObjectId;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
+import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
+import dev.morphia.query.experimental.filters.Filters;
 import io.mangoo.core.Config;
 
 @Singleton
 public class Datastore {
     private static final Logger LOG = LogManager.getLogger(Datastore.class);
     private dev.morphia.Datastore datastore; //NOSONAR
-    private Morphia morphia;
     private MongoClient mongoClient;
     private Config config;
 
     @Inject
     public Datastore(Config config) {
         this.config = config;
-
         connect();
-        morphify();
     }
 
     public dev.morphia.Datastore getDatastore() {
@@ -42,42 +37,45 @@ public class Datastore {
         return this.datastore;
     }
 
-    public Morphia getMorphia() {
-        return this.morphia;
-    }
-
     public MongoClient getMongoClient() {
         return this.mongoClient;
     }
 
     private void connect() {
-        String host = this.config.getMongoHost();
-        int port = this.config.getMongoPort();
-
-        String username = this.config.getMongoUsername();
-        String password = this.config.getMongoPassword();
-        String authdb = this.config.getMongoAuthDB();
-
-        if (this.config.isMongoAuth() && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) && StringUtils.isNotBlank(authdb)) {
-            MongoClientOptions mongoClientOptions = MongoClientOptions.builder().build();
-            MongoCredential mongoCredential = MongoCredential.createScramSha1Credential(username, authdb, password.toCharArray());
-            
-            this.mongoClient = new MongoClient(new ServerAddress(host, port), mongoCredential, mongoClientOptions);
-            LOG.info("Successfully created MongoClient @ {}:{} with authentication", host, port);
+       this.mongoClient = MongoClients.create(getConnectionString());
+        if (this.config.isMongoAuth()) {
+            this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
+            LOG.info("Successfully created MongoClient @ {}:{} with authentication", this.config.getMongoHost(), this.config.getMongoPort());
         } else {
-            this.mongoClient = new MongoClient(host, port);
-            LOG.info("Successfully created MongoClient @ {}:{} ***without**** authentication", host, port);
+            this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
+            LOG.info("Successfully created MongoClient @ {}:{} ***without**** authentication", this.config.getMongoHost(), this.config.getMongoPort());
         }
+        
+        this.datastore.getMapper().mapPackage(this.config.getMongoPackage());
+        LOG.info("Mapped Morphia models of package '" + this.config.getMongoPackage() + "' and created Morphia Datastore with database '" + this.config.getMongoDbName() + "'");
     }
 
-    private void morphify() {
-        String packageName = this.config.getMongoPackage();
-        String dbName = this.config.getMongoDbName();
-
-        this.morphia = new Morphia().mapPackage(packageName);
-        this.datastore = this.morphia.createDatastore(this.mongoClient, dbName);
-
-        LOG.info("Mapped Morphia models of package '" + packageName + "' and created Morphia Datastore with database '" + dbName + "'");
+    private String getConnectionString() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("mongodb://");
+        
+        if (this.config.isMongoAuth()) {
+            buffer
+                .append(this.config.getMongoUsername())
+                .append(":")
+                .append(this.config.getMongoPassword()).append("@");
+        }
+        
+        buffer
+            .append(this.config.getMongoHost())
+            .append(":")
+            .append(this.config.getMongoPort());
+        
+        if (this.config.isMongoAuth()) {
+            buffer.append("/?authSource=").append(this.config.getMongoAuthDB());
+        }
+        
+        return buffer.toString();
     }
 
     /**
@@ -108,7 +106,7 @@ public class Datastore {
         Preconditions.checkNotNull(clazz, "Tryed to find an object by id, but given class is null");
         Preconditions.checkNotNull(id, "Tryed to find an object by id, but given id is null");
         
-        return this.datastore.createQuery(clazz).field("_id").equal((id instanceof ObjectId) ? id : new ObjectId(String.valueOf(id))).first();
+        return this.datastore.find(clazz).filter(Filters.eq("_id", id)).first();
     }
 
     /**
@@ -122,7 +120,7 @@ public class Datastore {
     public <T extends Object> List<T> findAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to get all morphia objects of a given object, but given object is null");
         
-        return this.datastore.find(clazz).find().toList();
+        return this.datastore.find(clazz).iterator().toList();
     }
 
     /**
@@ -170,7 +168,7 @@ public class Datastore {
     public <T extends Object> void deleteAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to delete list of mapped morphia objects, but given class is null");
 
-        this.datastore.delete(this.datastore.createQuery(clazz));
+        this.datastore.find(clazz).delete(new DeleteOptions().multi(true));
     }
 
     /**

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
+import dev.morphia.query.experimental.filters.Filters;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
@@ -30,7 +31,6 @@ public class DatastoreTest {
     @Test
     public void testInit() {
         assertThat(datastore.getMongoClient(), not(nullValue()));
-        assertThat(datastore.getMorphia(), not(nullValue()));
         assertThat(datastore.getDatastore(), not(nullValue()));
         assertThat(datastore.query(), not(nullValue()));
     }
@@ -46,7 +46,7 @@ public class DatastoreTest {
             datastore.save(model);
             
             // then
-            return datastore.query().find(TestModel.class).field("name").equal(id).first() != null;
+            return datastore.query().find(TestModel.class).filter(Filters.eq("name", id)).first() != null;
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
@@ -79,8 +79,7 @@ public class DatastoreTest {
         datastore.save(model);
         TestModel storedModel = datastore.getDatastore()
             .find(TestModel.class)
-            .field("name")
-            .equal("foo")
+            .filter(Filters.eq("name", "foo"))
             .first();
 
         assertThat(storedModel, not(nullValue()));
