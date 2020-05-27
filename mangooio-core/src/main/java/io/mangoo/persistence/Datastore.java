@@ -59,14 +59,14 @@ public class Datastore {
         if (this.config.isMongoAuth()) {
             buffer
                 .append(this.config.getMongoUsername())
-                .append(":")
+                .append(':')
                 .append(this.config.getMongoPassword())
-                .append("@");
+                .append('@');
         }
         
         buffer
             .append(this.config.getMongoHost())
-            .append(":")
+            .append(':')
             .append(this.config.getMongoPort());
         
         if (this.config.isMongoAuth()) {
