@@ -83,7 +83,7 @@ public class DatastoreTest {
             .first();
 
         assertThat(storedModel, not(nullValue()));
-        assertThat(datastore.findById(storedModel.getId(), TestModel.class), not(nullValue()));
+        assertThat(datastore.findById(storedModel.getId().toString(), TestModel.class), not(nullValue()));
     }
 
     @Test

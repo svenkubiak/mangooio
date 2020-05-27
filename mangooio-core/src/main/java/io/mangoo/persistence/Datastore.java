@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -102,11 +103,11 @@ public class Datastore {
      *
      * @return The requested class from MongoDB or null if none found
      */
-    public <T extends Object> T findById(Object id, Class<T> clazz) {
+    public <T extends Object> T findById(String id, Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to find an object by id, but given class is null");
         Preconditions.checkNotNull(id, "Tryed to find an object by id, but given id is null");
         
-        return this.datastore.find(clazz).filter(Filters.eq("_id", id)).first();
+        return this.datastore.find(clazz).filter(Filters.eq("_id", new ObjectId(id))).first();
     }
 
     /**
