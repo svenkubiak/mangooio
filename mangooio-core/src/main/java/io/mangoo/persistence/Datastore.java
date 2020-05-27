@@ -45,27 +45,23 @@ public class Datastore {
 
     private void connect() {
        this.mongoClient = MongoClients.create(getConnectionString());
-        if (this.config.isMongoAuth()) {
-            this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
-            LOG.info("Successfully created MongoClient @ {}:{} with authentication", this.config.getMongoHost(), this.config.getMongoPort());
-        } else {
-            this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
-            LOG.info("Successfully created MongoClient @ {}:{} ***without*** authentication", this.config.getMongoHost(), this.config.getMongoPort());
-        }
-        
-        this.datastore.getMapper().mapPackage(this.config.getMongoPackage());
-        LOG.info("Mapped Morphia models of package '" + this.config.getMongoPackage() + "' and created Morphia Datastore with database '" + this.config.getMongoDbName() + "'");
+       this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName());
+       this.datastore.getMapper().mapPackage(this.config.getMongoPackage());
+ 
+       LOG.info("Created MongoClient connected to {}:{} with credentials = {}", this.config.getMongoHost(), this.config.getMongoPort(), this.config.isMongoAuth());
+       LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore conntected to database '{}'", this.config.getMongoPackage(), this.config.getMongoDbName());
     }
 
     private String getConnectionString() {
-        StringBuilder buffer = new StringBuilder();
+        var buffer = new StringBuilder();
         buffer.append("mongodb://");
         
         if (this.config.isMongoAuth()) {
             buffer
                 .append(this.config.getMongoUsername())
                 .append(":")
-                .append(this.config.getMongoPassword()).append("@");
+                .append(this.config.getMongoPassword())
+                .append("@");
         }
         
         buffer
@@ -74,7 +70,9 @@ public class Datastore {
             .append(this.config.getMongoPort());
         
         if (this.config.isMongoAuth()) {
-            buffer.append("/?authSource=").append(this.config.getMongoAuthDB());
+            buffer
+                .append("/?authSource=")
+                .append(this.config.getMongoAuthDB());
         }
         
         return buffer.toString();
