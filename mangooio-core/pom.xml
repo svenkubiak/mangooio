@@ -63,12 +63,6 @@
 		<dependency>
 			<groupId>dev.morphia.morphia</groupId>
 			<artifactId>morphia-core</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>net.bytebuddy</groupId>
-					<artifactId>byte-buddy</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.svenkubiak</groupId>
