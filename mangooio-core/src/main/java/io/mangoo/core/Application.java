@@ -460,6 +460,7 @@ public final class Application {
             Bind.controller(AdminController.class)
                 .withRoutes(
                         On.get().to("/@admin").respondeWith("index"),
+                        On.get().to("/@admin/cache").respondeWith("cache"),
                         On.get().to("/@admin/login").respondeWith("login"),
                         On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                         On.get().to("/@admin/scheduler").respondeWith("scheduler"),

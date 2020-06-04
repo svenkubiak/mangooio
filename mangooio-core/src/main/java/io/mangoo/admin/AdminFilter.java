@@ -15,6 +15,7 @@ import io.mangoo.enums.Default;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.utils.MangooUtils;
 import io.undertow.server.handlers.Cookie;
 
 /**
@@ -23,6 +24,7 @@ import io.undertow.server.handlers.Cookie;
  *
  */
 public class AdminFilter implements PerRequestFilter {
+    private static final String VERSION_TAG = MangooUtils.getVersion();
     
     @Override
     public Response execute(Request request, Response response) {
@@ -45,6 +47,7 @@ public class AdminFilter implements PerRequestFilter {
                             return Response.withRedirect("/@admin/twofactor").andEndResponse();
                         }
                         
+                        response.andContent("version", VERSION_TAG);
                         return response;
                     }
                 } catch (PasetoException e) {

@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.ehcache.CacheManager;
@@ -15,6 +16,9 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.core.spi.service.StatisticsService;
+import org.ehcache.core.statistics.CacheStatistics;
+import org.ehcache.core.statistics.DefaultStatisticsService;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -32,6 +36,7 @@ import io.mangoo.enums.Required;
  */
 @Singleton
 public class CacheProvider implements Provider<Cache> {
+    private StatisticsService statisticsService = new DefaultStatisticsService();
     private Map<String, Cache> caches = new HashMap<>();
     private CacheManager cacheManager;
     private Cache cache;
@@ -46,16 +51,19 @@ public class CacheProvider implements Provider<Cache> {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         
         if (config.isCacheCluserEnable()) {
-            CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder() 
+            CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder()
+                    .using(statisticsService)
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
                     .autoCreate(b -> b));
 
             this.cacheManager = clusteredCacheManagerBuilder.build(true);
         } else {
-            this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build();
+            this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+                    .using(statisticsService)
+                    .build();
             this.cacheManager.init();
         }
-
+        
         initApplicationCache();
         initAuthenticationCache();
         initRequestCache();
@@ -116,16 +124,33 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
     }
 
+    /**
+     * Registers a new cache with custom configuration
+     * 
+     * @param name The name of the cache
+     * @param configuration The configuration for the cache to use
+     * @return The cache instance
+     */
     public Cache registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
         cache = new CacheImpl(cacheManager.createCache(name, configuration));
         this.caches.put(name, cache);
-
+        
         return cache;
     }
+    
+    /**
+     * Returns a map containing cache names and cache statistics
+     * 
+     * @return Map of cache statistics
+     */
+    public Map<String, CacheStatistics> getCacheStatistics() {
+        Map<String, CacheStatistics> statistics = new HashMap<>();
+        for (Entry<String, Cache> entry : caches.entrySet()) {
+            String cacheName = entry.getKey();
+            statistics.put(cacheName, statisticsService.getCacheStatistics(cacheName));
+        }
 
-    @Override
-    public Cache get() {
-        return this.cache;
+        return statistics;
     }
 
     /**
@@ -153,5 +178,10 @@ public class CacheProvider implements Provider<Cache> {
      */
     public void close() {
         cacheManager.close();
+    }
+
+    @Override
+    public Cache get() {
+        return this.cache;
     }
 }

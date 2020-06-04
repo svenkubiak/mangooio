@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.ehcache.core.statistics.CacheStatistics;
 
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
@@ -70,9 +71,9 @@ import net.minidev.json.JSONObject;
  */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
-    private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String PERIOD = "30";
@@ -81,26 +82,23 @@ public class AdminController {
     private static final String METHOD = "method";
     private static final String CACHE_ADMINROUTES = "cache_adminroutes";
     private static final String JOBS = "jobs";
-    private static final String LOGGER = "logger";
     private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
-    private static final String SPACE = "space";
-    private static final String TOOLS = "tools";
-    private static final String VERSION = "version";
-    private static final String VERSION_TAG = MangooUtils.getVersion();
     private static final double HUNDRED_PERCENT = 100.0;
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
     private final Cache cache;
+    private final CacheProvider cacheProvider;
     private final Config config;
     private final Crypto crypto;
     private final Scheduler scheduler;
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto, Config config, CacheProvider cacheProvider) {
+    public AdminController(Scheduler scheduler, Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
+        this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
     }
     
     @FilterWith(AdminFilter.class)
@@ -138,12 +136,10 @@ public class AdminController {
             EventBusService eventBusService = Application.getInstance(EventBusService.class);
             
             return Response.withOk()
-                    .andContent(VERSION, MangooUtils.getVersion())
-                    .andContent(SPACE, null)
                     .andContent(ENABLED, enabled)
+                    .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("uptime", Date.from(instant))
                     .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
-                    .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
                     .andContent("totalRequests", totalRequests)
                     .andContent("minRequestTime", metrics.getMinRequestTime())
@@ -152,13 +148,10 @@ public class AdminController {
                     .andContent("errorRate", errorRate)
                     .andContent("events", eventBusService.getNumEvents())
                     .andContent("listeners", eventBusService.getNumListeners())
-                    .andContent(ENABLED, enabled)
                     .andTemplate(Template.DEFAULT.adminPath());
         }
         
         return Response.withOk()
-                .andContent(VERSION, MangooUtils.getVersion())
-                .andContent(SPACE, null)
                 .andContent(ENABLED, enabled)
                 .andContent("uptime", Date.from(instant))
                 .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
@@ -167,12 +160,20 @@ public class AdminController {
     
     @FilterWith(AdminFilter.class)
     public Response logger() {
-        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        var loggerContext = (LoggerContext) LogManager.getContext(false);
+        
         return Response.withOk()
-                .andContent(SPACE, LOGGER)
-                .andContent(VERSION, VERSION_TAG)
                 .andContent("loggers", loggerContext.getLoggers())
                 .andTemplate(Template.DEFAULT.loggerPath());
+    }
+    
+    @FilterWith(AdminFilter.class)
+    public Response cache() {
+        Map<String, CacheStatistics> statistics = this.cacheProvider.getCacheStatistics();
+        
+        return Response.withOk()
+                .andContent("statistics", statistics)
+                .andTemplate(Template.DEFAULT.cachePath());
     }
     
     public Response login() {
@@ -306,8 +307,6 @@ public class AdminController {
         }
 
         return Response.withOk()
-                .andContent(SPACE, ROUTES)
-                .andContent(VERSION, VERSION_TAG)
                 .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
     }
@@ -324,8 +323,6 @@ public class AdminController {
         }
 
         return Response.withOk()
-                .andContent(SPACE, "scheduler")
-                .andContent(VERSION, VERSION_TAG)
                 .andContent(JOBS, jobs)
                 .andTemplate(Template.DEFAULT.schedulerPath());
     }
@@ -354,8 +351,6 @@ public class AdminController {
         return Response.withOk()
                 .andContent("qrcode", qrCode)
                 .andContent("secret", secret)
-                .andContent(SPACE, TOOLS)
-                .andContent(VERSION, VERSION_TAG)
                 .andTemplate(Template.DEFAULT.toolsPath());
     }
 

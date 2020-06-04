@@ -28,10 +28,12 @@ import io.undertow.util.StatusCodes;
 @ExtendWith({TestExtension.class})
 public class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
+    private static final String EVICTIONS = "Evictions";
     private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
     private static final String ROUTES = "routes";
     private static final String TOOLS = "tools";
+    private static final String CACHE = "cache";
     private static final String ADMIN = "admin";
     private static final String CONTROL_PANEL = "Dashboard";
     
@@ -39,6 +41,35 @@ public class AdminControllerTest {
     public void testDashboardUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin")
+                .withDisabledRedirects()
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
+        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
+        assertThat(response.getContent(), not(containsString(CONTROL_PANEL)));
+    }
+    
+    @Test
+    public void testCacheAuthorized() {
+        //given
+        TestResponse response = login().to("/@admin/cache")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString(CACHE));
+        assertThat(response.getContent(), containsString(EVICTIONS));
+    }
+    
+    @Test
+    public void testCacheUnauthorized() {
+        //given
+        TestResponse response = TestRequest.get("/@admin/cache")
                 .withDisabledRedirects()
                 .execute();
         

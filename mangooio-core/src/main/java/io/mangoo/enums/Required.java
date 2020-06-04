@@ -13,6 +13,7 @@ public enum Required {
     BCC("bcc can not be null"),
     BCCS("bccs can not be null"),
     BYTES("bytes can not be null"),
+    CACHE("cache can not be null"),
     CACHE_PROVIDER("cacheProvider can not be null"),
     CC("cc can not be null"),
     CCS("ccs can not be null"),
