@@ -70,6 +70,7 @@ public class CacheProvider implements Provider<Cache> {
         initResponseCache();
         initServerEventCache();
         initWebSocketCache();
+        setDefaultApplicationCache();
     }
 
     private final void initApplicationCache() {
@@ -77,7 +78,7 @@ public class CacheProvider implements Provider<Cache> {
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .build();
 
-        this.cache = registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
+        registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
     }
 
     private final void initAuthenticationCache() {
@@ -123,6 +124,9 @@ public class CacheProvider implements Provider<Cache> {
 
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
     }
+    private final void setDefaultApplicationCache() {
+        this.cache = getCache(CacheName.APPLICATION);
+    }
 
     /**
      * Registers a new cache with custom configuration
@@ -131,11 +135,8 @@ public class CacheProvider implements Provider<Cache> {
      * @param configuration The configuration for the cache to use
      * @return The cache instance
      */
-    public Cache registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
-        cache = new CacheImpl(cacheManager.createCache(name, configuration));
-        this.caches.put(name, cache);
-        
-        return cache;
+    public void registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
+        this.caches.put(name, new CacheImpl(cacheManager.createCache(name, configuration)));
     }
     
     /**
