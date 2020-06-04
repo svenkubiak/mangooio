@@ -133,7 +133,6 @@ public class CacheProvider implements Provider<Cache> {
      * 
      * @param name The name of the cache
      * @param configuration The configuration for the cache to use
-     * @return The cache instance
      */
     public void registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
         this.caches.put(name, new CacheImpl(cacheManager.createCache(name, configuration)));
