@@ -56,12 +56,12 @@ public class CacheProvider implements Provider<Cache> {
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
                     .autoCreate(b -> b));
 
-            this.cacheManager = clusteredCacheManagerBuilder.build(true);
+            this.cacheManager = clusteredCacheManagerBuilder
+                    .build(true);
         } else {
             this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                     .using(statisticsService)
-                    .build();
-            this.cacheManager.init();
+                    .build(true);
         }
         
         initApplicationCache();
@@ -124,6 +124,7 @@ public class CacheProvider implements Provider<Cache> {
 
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
     }
+    
     private final void setDefaultApplicationCache() {
         this.cache = getCache(CacheName.APPLICATION);
     }

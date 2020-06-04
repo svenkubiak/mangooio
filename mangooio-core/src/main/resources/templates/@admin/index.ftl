@@ -77,11 +77,13 @@
 	                        </div>
 	                    </div>
 	                </section>    
-	                <#list warnings as warning>
-						<div class="notification is-warning">
-					  		${warning}
-						</div>
-					</#list>      
+	                <#if warnings?has_content>
+		                <#list warnings as warning>
+							<div class="notification is-warning">
+						  		${warning}
+							</div>
+						</#list>  
+					</#if>    
 					<nav class="breadcrumb" aria-label="breadcrumbs">
 					  <ul>
 					    <li><a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a></li>
