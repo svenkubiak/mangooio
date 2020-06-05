@@ -1508,7 +1508,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmtpProtocolValue() throws JsonGenerationException, JsonMappingException, IOException {
+    public void testGetSmtpProtocolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1522,6 +1522,178 @@ public class ConfigTest {
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
+    @Test
+    public void testGetMongoAuthDB() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String authDb = "admin";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.authdb", authDb);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoAuthDB(), equalTo(authDb));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoDBName() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String mongodb = "mongodb";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.dbname", mongodb);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoDbName(), equalTo(mongodb));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoDBNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getMongoDbName(), equalTo(Default.PERSISTENCE_MONGO_DBNAME.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoHost() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String host = "127.0.0.5";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.host", host);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoHost(), equalTo(host));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getMongoHost(), equalTo(Default.PERSISTENCE_MONGO_HOST.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetMongoPort() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String port = "47235";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.port", port);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoPort(), equalTo(Integer.parseInt(port)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getMongoPort(), equalTo(Default.PERSISTENCE_MONGO_PORT.toInt()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    } 
+    
+    @Test
+    public void testGetMongoPackage() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String pack = "my.package.models";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.package", pack);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoPackage(), equalTo(pack));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoPackageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.getMongoPackage(), equalTo(Default.PERSISTENCE_MONGO_PACKAGE.toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoPassword() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String password = "thisismypassword";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.password", password);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoPassword(), equalTo(password));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetMongoUsername() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String username = "thisismyusername";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.username", username);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getMongoUsername(), equalTo(username));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+
     @Test
     public void testCorsEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
