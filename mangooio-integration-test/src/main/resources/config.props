@@ -68,6 +68,7 @@
 
 [application<dev>]
 	admin.enable = true
+	admin.health = true
 	admin.username = admin
 	admin.password = admin
 [connector<dev>]
