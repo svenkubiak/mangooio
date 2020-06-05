@@ -67,6 +67,20 @@ public class AdminControllerTest {
     }
     
     @Test
+    public void testHealth() {
+        //given
+        TestResponse response = login().to("/@admin/health")
+                .withHTTPMethod(Methods.GET.toString())
+                .execute();
+        
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo("application/json; charset=UTF-8"));
+        assertThat(response.getContent(), containsString("cpu"));
+    }
+    
+    @Test
     public void testCacheUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/cache")

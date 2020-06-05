@@ -475,6 +475,13 @@ public final class Application {
                         On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
                  );
+            
+            if (config.isApplicationAdminHealth()) {
+                Bind.controller(AdminController.class)
+                    .withRoutes(
+                            On.get().to("/@admin/health").respondeWith("health")
+                    );
+            }
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {

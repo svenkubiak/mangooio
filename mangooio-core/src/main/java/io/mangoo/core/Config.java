@@ -834,5 +834,12 @@ public class Config {
      */
     public String getSmtpProtocol() {
         return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL.toString());
+    }
+
+    /**
+     * @return application.admin.health
+     */
+    public boolean isApplicationAdminHealth() {
+        return getBoolean(Key.APPLICATION_ADMIN_HEALTH, Default.APPLICATION_ADMIN_HEALTH.toBoolean());
     }    
 }

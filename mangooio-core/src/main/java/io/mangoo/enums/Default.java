@@ -13,6 +13,7 @@ import java.util.Map;
 public enum Default {
     ADMIN_COOKIE_NAME("mangooio-admin"),
     APPLICATION_ADMIN_ENABLE(Constants.FALSE),
+    APPLICATION_ADMIN_HEALTH(Constants.FALSE),
     APPLICATION_CONTROLLER("controllers."),
     APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
     APPLICATION_HEADERS_FEATUREPOLICY(""),

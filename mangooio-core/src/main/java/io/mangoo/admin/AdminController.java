@@ -1,5 +1,7 @@
 package io.mangoo.admin;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.PublicKey;
@@ -9,14 +11,20 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -86,6 +94,7 @@ public class AdminController {
     private static final String ROUTES = "routes";
     private static final double HUNDRED_PERCENT = 100.0;
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
+    private static final long  MEGABYTE = 1048576L;
     private final Cache cache;
     private final CacheProvider cacheProvider;
     private final Config config;
@@ -159,7 +168,7 @@ public class AdminController {
     }
     
     @FilterWith(AdminFilter.class)
-    public Response logger() {
+    public Response logger() throws InterruptedException {
         var loggerContext = (LoggerContext) LogManager.getContext(false);
         
         return Response.withOk()
@@ -386,6 +395,19 @@ public class AdminController {
         return Response.withOk().andJsonBody(value);
     }
     
+    public Response health()  {
+        Map<String, Double> memory = getMemory();
+        JSONObject json = new JSONObject();
+
+        json.put("cpu", getCpu());
+        for (Entry<String, Double> entry : memory.entrySet()) {
+            json.put(entry.getKey(), entry.getValue());
+        }
+        
+        return Response.withOk()
+                .andJsonBody(json);
+    }
+    
     private List<JSONObject> getRoutes() {
         List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
         
@@ -441,5 +463,35 @@ public class AdminController {
     private boolean isNotLocked() {
         LocalDateTime lockedUntil = this.cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
         return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
+    }
+    
+    private Map<String, Double> getMemory() {
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        return Map.of("initialMemory", (double) memoryMXBean.getHeapMemoryUsage().getInit() / MEGABYTE,
+                      "usedMemory", (double) memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE,
+                      "maxHeapMemory", (double) memoryMXBean.getHeapMemoryUsage().getMax() /MEGABYTE,
+                      "committedMemory", (double) memoryMXBean.getHeapMemoryUsage().getCommitted() / MEGABYTE);
+    }
+
+    private Double getCpu() {
+        try {
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
+
+            return Optional.ofNullable(list)
+                    .map(l -> l.isEmpty() ? null : l)
+                    .map(List::iterator)
+                    .map(Iterator::next)
+                    .map(Attribute.class::cast)
+                    .map(Attribute::getValue)
+                    .map(Double.class::cast)
+                    .orElse(null);
+
+        } catch (Exception e) {
+            LOG.error("Failed to get process CPU load", e);
+        }
+        
+        return Double.valueOf(0);
     }
 }
