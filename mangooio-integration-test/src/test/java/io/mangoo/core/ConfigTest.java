@@ -1,4 +1,4 @@
-package io.mangoo.configuration;
+package io.mangoo.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,8 +28,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 
 import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
@@ -1939,6 +1937,53 @@ public class ConfigTest {
 
         // then
         assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URLPATTERN.toString()).toString()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationAdminHealthToken() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String token = UUID.randomUUID().toString();
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.admin.health.token", token);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.getApplicationAdminHealthToken(), equalTo(token));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationAdminHealthEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        String enable = "true";
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("application.admin.health.enable", enable);
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+        
+        // then
+        assertThat(config.isApplicationAdminHealthEnable(), equalTo(Boolean.parseBoolean(enable)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+    
+    @Test
+    public void testGetApplicationAdminHealthEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isApplicationAdminHealthEnable(), equalTo(Default.APPLICATION_ADMIN_HEALTH_ENABLE.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 }

@@ -823,23 +823,30 @@ public class Config {
     }
 
     /**
-     * @return smtp.authentication
+     * @return smtp.authentication or default value if undefined
      */
     public boolean isSmtpAuthentication() {
         return getBoolean(Key.SMTP_AUTHENTICATION, Default.SMTP_AUTHENTICATION.toBoolean());
     }
 
     /**
-     * @return smtp.protocol
+     * @return smtp.protocol or default value if undefined
      */
     public String getSmtpProtocol() {
         return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL.toString());
     }
 
     /**
-     * @return application.admin.health
+     * @return application.admin.health.enable or default value if undefined
      */
-    public boolean isApplicationAdminHealth() {
-        return getBoolean(Key.APPLICATION_ADMIN_HEALTH, Default.APPLICATION_ADMIN_HEALTH.toBoolean());
+    public boolean isApplicationAdminHealthEnable() {
+        return getBoolean(Key.APPLICATION_ADMIN_HEALTH_ENABLE, Default.APPLICATION_ADMIN_HEALTH_ENABLE.toBoolean());
+    }
+
+    /**
+     * @return application.admin.health.token or null if undefined
+     */
+    public String getApplicationAdminHealthToken() {
+        return getString(Key.APPLICATION_ADMIN_HEALTH_TOKEN, null);
     }    
 }

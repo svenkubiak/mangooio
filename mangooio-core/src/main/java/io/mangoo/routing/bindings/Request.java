@@ -159,6 +159,7 @@ public class Request extends Validator {
     public String getAcceptLanguage() {
         return this.getHeader(Header.ACCEPT_LANGUAGE.toHttpString());
     }
+    
     /**
      * Retrieves a specific header value by its name
      *
@@ -168,6 +169,16 @@ public class Request extends Validator {
     public String getHeader(HttpString headerName) {
         return (this.httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : this.httpServerExchange.getRequestHeaders().get(headerName).element();
     }
+    
+    /**
+     * Retrieves a specific header value by its name
+     *
+     * @param headerName The name of the header to retrieve
+     * @return The value of the header or null if none found
+     */
+    public String getHeader(String headerName) {
+        return getHeader(new HttpString(headerName));
+    }    
 
     /**
      * The original request URI. This will include the host name, protocol etc

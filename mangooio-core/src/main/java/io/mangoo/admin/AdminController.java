@@ -395,19 +395,34 @@ public class AdminController {
         return Response.withOk().andJsonBody(value);
     }
     
-    public Response health()  {
-        Map<String, Double> memory = getMemory();
-        JSONObject json = new JSONObject();
+    public Response health(Request request)  {
+        if (isValidHeaderToken(request)) {
+            JSONObject json = new JSONObject();
+            json.put("cpu", getCpu());
 
-        json.put("cpu", getCpu());
-        for (Entry<String, Double> entry : memory.entrySet()) {
-            json.put(entry.getKey(), entry.getValue());
+            Map<String, Double> memory = getMemory();
+            for (Entry<String, Double> entry : memory.entrySet()) {
+                json.put(entry.getKey(), entry.getValue());
+            }
+            
+            return Response.withOk().andJsonBody(json);
         }
         
-        return Response.withOk()
-                .andJsonBody(json);
+        return Response.withNotFound().andEmptyBody();
     }
     
+    private boolean isValidHeaderToken(Request request) {
+        boolean valid = false;
+        String token = this.config.getApplicationAdminHealthToken();
+        String header = request.getHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString());
+        
+        if (StringUtils.isNotBlank(token) && StringUtils.isNotBlank(header) && token.equals(header)) {
+            valid = true;
+        }
+        
+        return valid;
+    }
+
     private List<JSONObject> getRoutes() {
         List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
         

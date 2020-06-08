@@ -1,4 +1,4 @@
-package io.mangoo.configuration;
+package io.mangoo.core;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -15,8 +15,6 @@ import com.google.inject.Stage;
 
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.templating.TemplateEngine;

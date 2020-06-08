@@ -476,7 +476,7 @@ public final class Application {
                         On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
                  );
             
-            if (config.isApplicationAdminHealth()) {
+            if (config.isApplicationAdminHealthEnable()) {
                 Bind.controller(AdminController.class)
                     .withRoutes(
                             On.get().to("/@admin/health").respondeWith("health")
