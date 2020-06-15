@@ -621,7 +621,7 @@ public final class Application {
                     new ClassGraph()
                         .enableAnnotationInfo()
                         .enableClassInfo()
-                        .whitelistPackages(config.getSchedulerPackage())
+                        .acceptPackages(config.getSchedulerPackage())
                         .scan()) {
                 scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
             }

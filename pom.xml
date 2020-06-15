@@ -30,7 +30,7 @@
 		<junit.version>5.7.0-M1</junit.version>
 		<junit.platform.version>1.7.0-M1</junit.platform.version>
 		<enforcer.version>1.2</enforcer.version>
-		<simplemail.version>6.0.4</simplemail.version>
+		<simplemail.version>6.0.5</simplemail.version>
 		<jpasteo.version>0.5.0</jpasteo.version>
 	</properties>
 	<modules>
@@ -443,7 +443,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.85</version>
+				<version>4.8.86</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
