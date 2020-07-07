@@ -70,6 +70,7 @@ public enum Required {
     PATH("path can not be null"),
     PERIOD("period can not be null"),
     PLAIN_TEXT("plan text can not be null"),
+    PREFIX("prefix can not be null"),
     PRIORITY("Priority of 1 through 5 are acceptable, with 1 being the highest priority, 3 = normal and 5 = lowest priority"),
     PRIVATE_KEY("private key can not be null"),
     PUBLIC_KEY("public key can not be null"),

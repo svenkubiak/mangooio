@@ -65,6 +65,13 @@
 	mongo.host = localhost
 	mongo.port = 29019
 	mongo.package = models
+	mongo.dbname = test
+	
+	mongo.myprefix.embedded = true
+	mongo.myprefix.host = localhost
+	mongo.myprefix.port = 29019
+	mongo.myprefix.package = models
+	mongo.myprefix.dbname = test
 []
 
 [application<dev>]

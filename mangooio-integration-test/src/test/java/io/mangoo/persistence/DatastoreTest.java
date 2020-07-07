@@ -138,4 +138,13 @@ public class DatastoreTest {
         //then
         assertThat(datastore.countAll(TestModel.class), equalTo(0L));
     }
+    
+    @Test
+    public void testPrefix() {
+        //given
+        Datastore datastore = Application.getInstance(DatastoreProvider.class).getDatastore("myprefix");
+        
+        //then
+        assertThat(datastore, not(nullValue()));
+    }
 }
