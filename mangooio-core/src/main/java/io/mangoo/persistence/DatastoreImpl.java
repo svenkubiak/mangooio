@@ -24,7 +24,7 @@ import io.mangoo.enums.Required;
  *
  */
 public class DatastoreImpl implements Datastore {
-    private static final Logger LOG = LogManager.getLogger(Datastore.class);
+    private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
     private dev.morphia.Datastore datastore; //NOSONAR
     private MongoClient mongoClient;
     private Config config;
