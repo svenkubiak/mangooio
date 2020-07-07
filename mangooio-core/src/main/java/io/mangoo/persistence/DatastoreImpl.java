@@ -40,6 +40,7 @@ public class DatastoreImpl implements Datastore {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.prefix = Objects.requireNonNull(prefix, Required.PREFIX.toString());
         this.prefix = "persistence." + prefix + ".";
+        connect();
     }
 
     @Override
