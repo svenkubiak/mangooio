@@ -67,11 +67,11 @@
 	mongo.package = models
 	mongo.dbname = test
 	
-	mongo.myprefix.embedded = true
-	mongo.myprefix.host = localhost
-	mongo.myprefix.port = 29019
-	mongo.myprefix.package = models
-	mongo.myprefix.dbname = test
+	myprefix.mongo.embedded = true
+	myprefix.mongo.host = localhost
+	myprefix.mongo.port = 29019
+	myprefix.mongo.package = models
+	myprefix.mongo.dbname = test
 []
 
 [application<dev>]
