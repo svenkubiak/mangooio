@@ -39,7 +39,7 @@ public class DatastoreImpl implements Datastore {
     public DatastoreImpl(Config config, String prefix) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
         this.prefix = Objects.requireNonNull(prefix, Required.PREFIX.toString());
-        this.prefix = prefix + ".";
+        this.prefix = "persistence." + prefix + ".";
     }
 
     @Override
