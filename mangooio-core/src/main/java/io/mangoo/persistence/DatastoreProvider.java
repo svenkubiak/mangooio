@@ -27,14 +27,8 @@ public class DatastoreProvider implements Provider<Datastore> {
     
     public Datastore getDatastore(String prefix) {
         Objects.requireNonNull(prefix, Required.PREFIX.toString());
-        
-        DatastoreImpl datastore = this.datastores.get(prefix);
-        if (datastore == null) {
-            datastore = new DatastoreImpl(prefix);
-            this.datastores.put(prefix, datastore);
-        }
-        
-        return datastore;
+
+        return this.datastores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
     }
     
     @Override

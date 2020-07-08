@@ -22,9 +22,9 @@ import io.mangoo.services.AuthorizationService;
  */
 public class Module extends AbstractModule {
     private Config config = new Config();
-    private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     public Module() {
+        var prefix = Default.PERSISTENCE_PREFIX.toString();
         if (config.isMongoEmbedded(prefix)) {
             EmbeddedMongoDB.create()
                 .withHost(config.getMongoHost(prefix))
