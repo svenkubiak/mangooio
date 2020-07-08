@@ -8,6 +8,7 @@ import com.google.inject.name.Names;
 import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.enums.Default;
 import io.mangoo.interfaces.MangooAuthorizationService;
 import io.mangoo.persistence.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
@@ -21,12 +22,13 @@ import io.mangoo.services.AuthorizationService;
  */
 public class Module extends AbstractModule {
     private Config config = new Config();
+    private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     public Module() {
-        if (config.isMongoEmbedded("")) {
+        if (config.isMongoEmbedded(prefix)) {
             EmbeddedMongoDB.create()
-                .withHost(config.getMongoHost(""))
-                .withPort(config.getMongoPort(""))
+                .withHost(config.getMongoHost(prefix))
+                .withPort(config.getMongoPort(prefix))
                 .start();
         }
     }

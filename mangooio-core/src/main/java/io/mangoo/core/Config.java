@@ -740,6 +740,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.host or default value if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoHost(String prefix) {
         return getString(prefix + "mongo.host", Default.PERSISTENCE_MONGO_HOST.toString());
@@ -747,6 +748,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.port or default value if undefined
+     * @param prefix The prefix to use
      */
     public int getMongoPort(String prefix) {
         return getInt(prefix + "mongo.port", Default.PERSISTENCE_MONGO_PORT.toInt());
@@ -754,6 +756,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.username or null if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoUsername(String prefix) {
         return getString(prefix + "mongo.username", null);
@@ -761,6 +764,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.password or null if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoPassword(String prefix) {
         return getString(prefix + "mongo.password", null);
@@ -768,6 +772,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.authdb or null if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoAuthDB(String prefix) {
         return getString(prefix + "mongo.authdb", null);
@@ -775,6 +780,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.auth or default value if undefined
+     * @param prefix The prefix to use
      */
     public boolean isMongoAuth(String prefix) {
         return getBoolean(prefix + "mongo.auth", Default.PERSISTENCE_MONGO_AUTH.toBoolean());
@@ -782,6 +788,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.package or default value if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoPackage(String prefix) {
         return getString(prefix + "mongo.package", Default.PERSISTENCE_MONGO_PACKAGE.toString());
@@ -789,6 +796,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.dbname or default value if undefined
+     * @param prefix The prefix to use
      */
     public String getMongoDbName(String prefix) {
         return getString(prefix + "mongo.dbname", Default.PERSISTENCE_MONGO_DBNAME.toString());
@@ -796,6 +804,7 @@ public class Config {
 
     /**
      * @return persistence.mongo.embedded or default value if undefined
+     * @param prefix The prefix to use
      */
     public boolean isMongoEmbedded(String prefix) {
         return getBoolean(prefix + "mongo.embedded", Default.PERSISTENCE_MONGO_EMBEDDED.toBoolean());

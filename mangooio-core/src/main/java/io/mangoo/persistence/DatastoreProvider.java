@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 
 /**
@@ -20,7 +19,6 @@ import io.mangoo.enums.Required;
 public class DatastoreProvider implements Provider<Datastore> {
     private Map<String, DatastoreImpl> datastores = new HashMap<>();
     private DatastoreImpl defaultDatastore;
-    private Config config;
 
     @Inject
     private DatastoreProvider(DatastoreImpl defaultDatastore) {
@@ -32,7 +30,7 @@ public class DatastoreProvider implements Provider<Datastore> {
         
         DatastoreImpl datastore = this.datastores.get(prefix);
         if (datastore == null) {
-            datastore = new DatastoreImpl(this.config, prefix);
+            datastore = new DatastoreImpl(prefix);
             this.datastores.put(prefix, datastore);
         }
         

@@ -15,7 +15,9 @@ import com.mongodb.client.MongoClients;
 import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
 import dev.morphia.query.experimental.filters.Filters;
+import io.mangoo.core.Application;
 import io.mangoo.core.Config;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
 /**
@@ -28,7 +30,7 @@ public class DatastoreImpl implements Datastore {
     private dev.morphia.Datastore datastore; //NOSONAR
     private MongoClient mongoClient;
     private Config config;
-    private String prefix = "persistence.";
+    private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     @Inject
     public DatastoreImpl(Config config) {
@@ -36,10 +38,10 @@ public class DatastoreImpl implements Datastore {
         connect();
     }
 
-    public DatastoreImpl(Config config, String prefix) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+    public DatastoreImpl(String prefix) {
+        this.config = Application.getInstance(Config.class);
         this.prefix = Objects.requireNonNull(prefix, Required.PREFIX.toString());
-        this.prefix = "persistence." + prefix + ".";
+        this.prefix = Default.PERSISTENCE_PREFIX.toString() + prefix + ".";
         connect();
     }
 

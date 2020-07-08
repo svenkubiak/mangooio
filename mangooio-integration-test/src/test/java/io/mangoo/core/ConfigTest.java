@@ -1532,7 +1532,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoAuthDB(), equalTo(authDb));
+        assertThat(config.getMongoAuthDB("persistence."), equalTo(authDb));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1548,7 +1548,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoDbName(), equalTo(mongodb));
+        assertThat(config.getMongoDbName("persistence."), equalTo(mongodb));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1563,7 +1563,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoDbName(), equalTo(Default.PERSISTENCE_MONGO_DBNAME.toString()));
+        assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1579,7 +1579,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoHost(), equalTo(host));
+        assertThat(config.getMongoHost("persistence."), equalTo(host));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1594,7 +1594,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoHost(), equalTo(Default.PERSISTENCE_MONGO_HOST.toString()));
+        assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
@@ -1610,7 +1610,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoPort(), equalTo(Integer.parseInt(port)));
+        assertThat(config.getMongoPort("persistence."), equalTo(Integer.parseInt(port)));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1625,7 +1625,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoPort(), equalTo(Default.PERSISTENCE_MONGO_PORT.toInt()));
+        assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT.toInt()));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
@@ -1641,7 +1641,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoPackage(), equalTo(pack));
+        assertThat(config.getMongoPackage("persistence."), equalTo(pack));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1656,7 +1656,7 @@ public class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoPackage(), equalTo(Default.PERSISTENCE_MONGO_PACKAGE.toString()));
+        assertThat(config.getMongoPackage("persistence."), equalTo(Default.PERSISTENCE_MONGO_PACKAGE.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1672,7 +1672,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoPassword(), equalTo(password));
+        assertThat(config.getMongoPassword("persistence."), equalTo(password));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1688,7 +1688,7 @@ public class ConfigTest {
         Config config = new Config();
         
         // then
-        assertThat(config.getMongoUsername(), equalTo(username));
+        assertThat(config.getMongoUsername("persistence."), equalTo(username));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 
