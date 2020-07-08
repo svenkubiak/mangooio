@@ -60,40 +60,40 @@ public class DatastoreImpl implements Datastore {
 
     private void connect() {
        this.mongoClient = MongoClients.create(getConnectionString());
-       this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getString(prefix + "mongo.dbname"));
-       this.datastore.getMapper().mapPackage(this.config.getString(prefix + "mongo.package"));
+       this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName(prefix));
+       this.datastore.getMapper().mapPackage(this.config.getMongoPackage(prefix));
  
        LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
-               this.config.getString(prefix + "mongo.host"),
-               this.config.getString(prefix + "mongo.port"),
-               this.config.getBoolean(prefix + "mongo.auth"));
+               this.config.getMongoHost(prefix),
+               this.config.getMongoPort(prefix),
+               this.config.isMongoAuth(prefix));
        
        LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore conntected to database '{}'",
-               this.config.getString(prefix + "mongo.package"),
-               this.config.getString(prefix + "mongo.dbname"));
+               this.config.getMongoPackage(prefix),
+               this.config.getMongoDbName(prefix));
     }
-
+    
     private String getConnectionString() {
         var buffer = new StringBuilder();
         buffer.append("mongodb://");
         
-        if (this.config.isMongoAuth()) {
+        if (this.config.isMongoAuth(prefix)) {
             buffer
-                .append(this.config.getString(prefix + "mongo.username"))
+                .append(this.config.getMongoUsername(prefix))
                 .append(':')
-                .append(this.config.getString(prefix + "mongo.password"))
+                .append(this.config.getMongoPassword(prefix))
                 .append('@');
         }
         
         buffer
-            .append(this.config.getString(prefix + "mongo.host"))
+            .append(this.config.getMongoHost(prefix))
             .append(':')
-            .append(this.config.getString(prefix + "mongo.port"));
+            .append(this.config.getMongoPort(prefix));
         
-        if (this.config.getBoolean(prefix + "mongo.auth")) {
+        if (this.config.isMongoAuth(prefix)) {
             buffer
                 .append("/?authSource=")
-                .append(this.config.getString(prefix + "mongo.authdb"));
+                .append(this.config.getMongoAuthDB(prefix));
         }
         
         return buffer.toString();

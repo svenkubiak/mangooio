@@ -23,10 +23,10 @@ public class Module extends AbstractModule {
     private Config config = new Config();
     
     public Module() {
-        if (config.isMongoEmbedded()) {
+        if (config.isMongoEmbedded("")) {
             EmbeddedMongoDB.create()
-                .withHost(config.getMongoHost())
-                .withPort(config.getMongoPort())
+                .withHost(config.getMongoHost(""))
+                .withPort(config.getMongoPort(""))
                 .start();
         }
     }

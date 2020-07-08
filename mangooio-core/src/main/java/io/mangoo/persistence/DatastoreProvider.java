@@ -23,9 +23,8 @@ public class DatastoreProvider implements Provider<Datastore> {
     private Config config;
 
     @Inject
-    private DatastoreProvider(DatastoreImpl defaultDatastore, Config config) {
+    private DatastoreProvider(DatastoreImpl defaultDatastore) {
         this.defaultDatastore = Objects.requireNonNull(defaultDatastore, "defaultDatastore can not be null");
-        this.config = Objects.requireNonNull(config, "config can not be null");
     }
     
     public Datastore getDatastore(String prefix) {

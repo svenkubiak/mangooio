@@ -741,64 +741,64 @@ public class Config {
     /**
      * @return persistence.mongo.host or default value if undefined
      */
-    public String getMongoHost() {
-        return getString(Key.PERSISTENCE_MONGO_HOST, Default.PERSISTENCE_MONGO_HOST.toString());
+    public String getMongoHost(String prefix) {
+        return getString(prefix + "mongo.host", Default.PERSISTENCE_MONGO_HOST.toString());
     }
 
     /**
      * @return persistence.mongo.port or default value if undefined
      */
-    public int getMongoPort() {
-        return getInt(Key.PERSISTENCE_MONGO_PORT, Default.PERSISTENCE_MONGO_PORT.toInt());
+    public int getMongoPort(String prefix) {
+        return getInt(prefix + "mongo.port", Default.PERSISTENCE_MONGO_PORT.toInt());
     }
 
     /**
      * @return persistence.mongo.username or null if undefined
      */
-    public String getMongoUsername() {
-        return getString(Key.PERSISTENCE_MONGO_USERNAME, null);
+    public String getMongoUsername(String prefix) {
+        return getString(prefix + "mongo.username", null);
     }
 
     /**
      * @return persistence.mongo.password or null if undefined
      */
-    public String getMongoPassword() {
-        return getString(Key.PERSISTENCE_MONGO_PASSWORD, null);
+    public String getMongoPassword(String prefix) {
+        return getString(prefix + "mongo.password", null);
     }
 
     /**
      * @return persistence.mongo.authdb or null if undefined
      */
-    public String getMongoAuthDB() {
-        return getString(Key.PERSISTENCE_MONGO_AUTHDB, null);
+    public String getMongoAuthDB(String prefix) {
+        return getString(prefix + "mongo.authdb", null);
     }
 
     /**
      * @return persistence.mongo.auth or default value if undefined
      */
-    public boolean isMongoAuth() {
-        return getBoolean(Key.PERSISTENCE_MONGO_AUTH, Default.PERSISTENCE_MONGO_AUTH.toBoolean());
+    public boolean isMongoAuth(String prefix) {
+        return getBoolean(prefix + "mongo.auth", Default.PERSISTENCE_MONGO_AUTH.toBoolean());
     }
 
     /**
      * @return persistence.mongo.package or default value if undefined
      */
-    public String getMongoPackage() {
-        return getString(Key.PERSISTENCE_MONGO_PACKAGE, Default.PERSISTENCE_MONGO_PACKAGE.toString());
+    public String getMongoPackage(String prefix) {
+        return getString(prefix + "mongo.package", Default.PERSISTENCE_MONGO_PACKAGE.toString());
     }
 
     /**
      * @return persistence.mongo.dbname or default value if undefined
      */
-    public String getMongoDbName() {
-        return getString(Key.PERSISTENCE_MONGO_DBNAME, Default.PERSISTENCE_MONGO_DBNAME.toString());
+    public String getMongoDbName(String prefix) {
+        return getString(prefix + "mongo.dbname", Default.PERSISTENCE_MONGO_DBNAME.toString());
     }
 
     /**
      * @return persistence.mongo.embedded or default value if undefined
      */
-    public boolean isMongoEmbedded() {
-        return getBoolean(Key.PERSISTENCE_MONGO_EMBEDDED, Default.PERSISTENCE_MONGO_EMBEDDED.toBoolean());
+    public boolean isMongoEmbedded(String prefix) {
+        return getBoolean(prefix + "mongo.embedded", Default.PERSISTENCE_MONGO_EMBEDDED.toBoolean());
     }
 
     /**
