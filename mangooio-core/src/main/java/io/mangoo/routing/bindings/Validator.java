@@ -40,7 +40,7 @@ public class Validator implements Serializable {
      * @return True if the field has a validation error, false otherwise
      */
     public boolean hasError(String name) {
-        return this.errors.containsKey(name);
+        return errors.containsKey(name);
     }
 
     /**
@@ -50,7 +50,7 @@ public class Validator implements Serializable {
      * @return The error message for the field, or an empty string if no error is found
      */
     public String getError(String name) {
-        return hasError(name) ? this.errors.get(name) : "";
+        return hasError(name) ? errors.get(name) : "";
     }
 
     /**
@@ -518,7 +518,7 @@ public class Validator implements Serializable {
      * @return True if at least one field has an error, false otherwise
      */
     public boolean hasErrors() {
-        return this.errors.size() > 0;
+        return errors.size() > 0;
     }
 
     /**
@@ -530,20 +530,20 @@ public class Validator implements Serializable {
     public String get(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        return this.values.get(key);
+        return values.get(key);
     }
 
     private void addError(String name, String message) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(message, Required.MESSAGE.toString());
         
-        if (!this.errors.containsKey(name)) {
-            this.errors.put(name, message);            
+        if (!errors.containsKey(name)) {
+            errors.put(name, message);            
         }
     }
 
     public Map<String, String> getErrors() {
-        return this.errors;
+        return errors;
     }
 
     public void setValues(Map<String, String> values) {
@@ -551,7 +551,7 @@ public class Validator implements Serializable {
     }
     
     public void addValue(String key, String value) {
-        this.values.put(key, value);
+        values.put(key, value);
     }
     
     public boolean isValid() {
@@ -559,6 +559,6 @@ public class Validator implements Serializable {
     }
     
     public void invalidate() {
-        this.errors.put("", "");
+        errors.put("", "");
     }
 }

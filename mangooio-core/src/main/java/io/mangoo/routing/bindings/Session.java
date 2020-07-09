@@ -54,7 +54,7 @@ public class Session {
      * Invalidates the session by sending expiring the client cookie
      */
     public void invalidate() {
-        this.invalid = true;
+        invalid = true;
     }
 
     /**
@@ -63,7 +63,7 @@ public class Session {
      * @return True if the session has at least one entry, false otherwise
      */
     public boolean hasContent() {
-        return !this.values.isEmpty();
+        return !values.isEmpty();
     }
 
     /**
@@ -73,21 +73,21 @@ public class Session {
      * @return The value or null if none present
      */
     public String get(String key) {
-        return this.values.get(key);
+        return values.get(key);
     }
 
     /**
      * @return All values of the session
      */
     public Map<String, String> getValues() {
-        return this.values;
+        return values;
     }
 
     /**
      * @return The expire date of the session
      */
     public LocalDateTime getExpires() {
-        return this.expires;
+        return expires;
     }
 
     /**
@@ -100,8 +100,8 @@ public class Session {
         if (INVALID_CHRACTERTS.contains(key) || INVALID_CHRACTERTS.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
-            this.changed = true;
-            this.values.put(key, value);
+            changed = true;
+            values.put(key, value);
         }
     }
 
@@ -111,34 +111,34 @@ public class Session {
      * @param key The key to remove
      */
     public void remove(String key) {
-        this.changed = true;
-        this.values.remove(key);
+        changed = true;
+        values.remove(key);
     }
 
     /**
      * Clears the complete session
      */
     public void clear() {
-        this.changed = true;
-        this.values = new HashMap<>();
+        changed = true;
+        values = new HashMap<>();
     }
 
     /**
      * @return True if a session values has change, be removed or the session has been cleared, false otherwise
      */
     public boolean hasChanges() {
-        return this.changed;
+        return changed;
     }
     
     public boolean isInvalid() {
-        return this.invalid;
+        return invalid;
     }
 
     /**
      * @return The current authenticity token and marks the session as changed
      */
     public String getAuthenticity() {
-        this.changed = true;
-        return this.authenticity;
+        changed = true;
+        return authenticity;
     }
 }

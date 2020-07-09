@@ -113,7 +113,7 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response execute(String name) {
         try {
-            this.scheduler.executeJob(name);
+            scheduler.executeJob(name);
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to execute job with name: " + name, e);
         }
@@ -124,7 +124,7 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response index() {
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
-        boolean enabled = this.config.isMetricsEnable();
+        boolean enabled = config.isMetricsEnable();
         if (enabled) {
             Metrics metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
@@ -148,7 +148,7 @@ public class AdminController {
                     .andContent(ENABLED, enabled)
                     .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("uptime", Date.from(instant))
-                    .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
+                    .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
                     .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
                     .andContent("totalRequests", totalRequests)
                     .andContent("minRequestTime", metrics.getMinRequestTime())
@@ -163,7 +163,7 @@ public class AdminController {
         return Response.withOk()
                 .andContent(ENABLED, enabled)
                 .andContent("uptime", Date.from(instant))
-                .andContent("warnings", this.cache.get(Key.MANGOOIO_WARNINGS.toString()))
+                .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
     
@@ -178,7 +178,7 @@ public class AdminController {
     
     @FilterWith(AdminFilter.class)
     public Response cache() {
-        Map<String, CacheStatistics> statistics = this.cacheProvider.getCacheStatistics();
+        Map<String, CacheStatistics> statistics = cacheProvider.getCacheStatistics();
         
         return Response.withOk()
                 .andContent("statistics", statistics)
@@ -210,7 +210,7 @@ public class AdminController {
         
         if (isNotLocked() && form.isValid()) {
             if (isValidAuthentication(form)) {
-                this.cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
+                cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
                 return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(true));
             } else {
                 invalidAuthentication();
@@ -226,7 +226,7 @@ public class AdminController {
         form.expectValue("code");
         
         if (isNotLocked() && form.isValid()) {
-            if (TotpUtils.verifiedTotp(this.config.getApplicationAdminSecret(), form.get("code"))) {
+            if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
                 return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(false));
             } else {
                 invalidAuthentication();
@@ -312,7 +312,7 @@ public class AdminController {
                         routes.add(json);
                     });
             
-            this.cache.put(CACHE_ADMINROUTES, routes);
+            cache.put(CACHE_ADMINROUTES, routes);
         }
 
         return Response.withOk()
@@ -323,9 +323,9 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response scheduler()  {
         List<Job> jobs = new ArrayList<>();
-        if (this.scheduler.isInitialize()) {
+        if (scheduler.isInitialize()) {
             try {
-                jobs = this.scheduler.getAllJobs();
+                jobs = scheduler.getAllJobs();
             } catch (MangooSchedulerException e) {
                 LOG.error("Failed to retrieve jobs from scheduler", e);
             }   
@@ -339,7 +339,7 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response state(String name) {
         try {
-            this.scheduler.changeState(name);
+            scheduler.changeState(name);
         } catch (MangooSchedulerException e) {
             LOG.error("Failed to change the state of job with name: " + name, e);
         }
@@ -349,12 +349,12 @@ public class AdminController {
     
     @FilterWith(AdminFilter.class)
     public Response tools() {
-        String secret = this.config.getApplicationAdminSecret();
+        String secret = config.getApplicationAdminSecret();
         String qrCode = null;
         
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(this.config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
         }
         
         return Response.withOk()
@@ -372,9 +372,9 @@ public class AdminController {
             String function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {
-                KeyPair keyPair = this.crypto.generateKeyPair();
-                String publickey = this.crypto.getKeyAsString(keyPair.getPublic());
-                String privatekey = this.crypto.getKeyAsString(keyPair.getPrivate());
+                KeyPair keyPair = crypto.generateKeyPair();
+                String publickey = crypto.getKeyAsString(keyPair.getPublic());
+                String privatekey = crypto.getKeyAsString(keyPair.getPrivate());
                 
                 value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
             } else if (("encrypt").equalsIgnoreCase(function)) {
@@ -382,8 +382,8 @@ public class AdminController {
                 String key = body.get("key").toString();
                 
                 try {
-                    PublicKey publicKey = this.crypto.getPublicKeyFromString(key);
-                    value = this.crypto.encrypt(cleartext, publicKey);
+                    PublicKey publicKey = crypto.getPublicKeyFromString(key);
+                    value = crypto.encrypt(cleartext, publicKey);
                 } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);
                 }
@@ -413,7 +413,7 @@ public class AdminController {
     
     private boolean isValidHeaderToken(Request request) {
         boolean valid = false;
-        String token = this.config.getApplicationAdminHealthToken();
+        String token = config.getApplicationAdminHealthToken();
         String header = request.getHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString());
         
         if (StringUtils.isNotBlank(token) && StringUtils.isNotBlank(header) && token.equals(header)) {
@@ -424,7 +424,7 @@ public class AdminController {
     }
 
     private List<JSONObject> getRoutes() {
-        List<JSONObject> routes = this.cache.get(CACHE_ADMINROUTES);
+        List<JSONObject> routes = cache.get(CACHE_ADMINROUTES);
         
         return (routes == null) ? new ArrayList<>() : routes;
     }
@@ -432,8 +432,8 @@ public class AdminController {
     private boolean isValidAuthentication(Form form) {
         boolean valid = false;
 
-        String username = this.config.getApplicationAdminUsername();
-        String password = this.config.getApplicationAdminPassword();
+        String username = config.getApplicationAdminUsername();
+        String password = config.getApplicationAdminPassword();
         
         if (checkAuthentication(form, username, password)) {
             valid = true;
@@ -449,11 +449,11 @@ public class AdminController {
 
     private Cookie getAdminCookie(boolean includeTwoFactor) {
         PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
-                .setSharedSecret(new SecretKeySpec(this.config.getApplicationSecret().getBytes(StandardCharsets.UTF_8), "AES"))
+                .setSharedSecret(new SecretKeySpec(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8), "AES"))
                 .setExpiration(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC))
                 .claim("uuid", MangooUtils.randomString(32));
         
-        if (includeTwoFactor && StringUtils.isNotBlank(this.config.getApplicationAdminSecret())) {
+        if (includeTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
             token.claim("twofactor", Boolean.TRUE);
         }
     
@@ -467,16 +467,16 @@ public class AdminController {
     }
     
     private void invalidAuthentication() {
-        AtomicInteger counter = this.cache.getAndIncrementCounter(MANGOOIO_ADMIN_LOCK_COUNT);
+        AtomicInteger counter = cache.getAndIncrementCounter(MANGOOIO_ADMIN_LOCK_COUNT);
         if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
-            this.cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
+            cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
         }
         
-        this.cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
+        cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
     }
     
     private boolean isNotLocked() {
-        LocalDateTime lockedUntil = this.cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
+        LocalDateTime lockedUntil = cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
         return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
     }
     

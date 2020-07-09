@@ -44,7 +44,7 @@ public class Mail {
      */
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS.toString());
-        this.email.toMultiple(tos);
+        email.toMultiple(tos);
         
         return this;
     }
@@ -57,7 +57,7 @@ public class Mail {
      */
     public Mail to(String to) {
         Objects.requireNonNull(to, Required.TO.toString());
-        this.email.to(to);
+        email.to(to);
         
         return this;
     }
@@ -70,7 +70,7 @@ public class Mail {
      */
     public Mail cc(String... ccs) {
         Objects.requireNonNull(ccs, Required.CCS.toString());
-        this.email.ccMultiple(ccs);
+        email.ccMultiple(ccs);
         
         return this;
     }
@@ -83,7 +83,7 @@ public class Mail {
      */
     public Mail cc(String cc) {
         Objects.requireNonNull(cc, Required.CC.toString());
-        this.email.cc(cc);
+        email.cc(cc);
         
         return this;
     }
@@ -96,7 +96,7 @@ public class Mail {
      */
     public Mail bcc(String... bccs) {
         Objects.requireNonNull(bccs, Required.BCCS.toString());
-        this.email.bccMultiple(bccs);
+        email.bccMultiple(bccs);
         
         return this;
     }
@@ -109,7 +109,7 @@ public class Mail {
      */
     public Mail bcc(String bcc) {
         Objects.requireNonNull(bcc, Required.BCC.toString());
-        this.email.bcc(bcc);
+        email.bcc(bcc);
         
         return this;
     }
@@ -124,7 +124,7 @@ public class Mail {
      */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT.toString());
-        this.email.withSubject(subject);
+        email.withSubject(subject);
         
         return this;
     }
@@ -139,7 +139,7 @@ public class Mail {
     public Mail from(String fromName, String fromAddress) {
         Objects.requireNonNull(fromName, Required.FROM.toString());
         Objects.requireNonNull(fromAddress, Required.NAME.toString());
-        this.email.from(fromName, fromAddress);
+        email.from(fromName, fromAddress);
         
         return this;
     }
@@ -154,7 +154,7 @@ public class Mail {
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
-        this.email.withHeader(name, value);
+        email.withHeader(name, value);
         
         return this;
     }
@@ -167,7 +167,7 @@ public class Mail {
      */
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO.toString());
-        this.email.withReplyTo(replyTo);
+        email.withReplyTo(replyTo);
         
         return this;
     }
@@ -181,7 +181,7 @@ public class Mail {
      */
     public Mail priority(int priority) {
         Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY.toString());
-        this.email.withHeader("X-Priority", priority);
+        email.withHeader("X-Priority", priority);
         
         return this;
     }
@@ -194,7 +194,7 @@ public class Mail {
      */
     public Mail attachment(File file) {
         Objects.requireNonNull(file, Required.FILE.toString());
-        this.email.withAttachment(file.getName(), new FileDataSource(file));
+        email.withAttachment(file.getName(), new FileDataSource(file));
         
         return this;
     }
@@ -206,7 +206,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail textMessage(String message) {
-        this.email.appendText(message);
+        email.appendText(message);
         
         return this;
     }
@@ -218,7 +218,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail htmlMessage(String message) {
-        this.email.appendTextHTML(message);
+        email.appendTextHTML(message);
         
         return this;
     }
@@ -234,7 +234,7 @@ public class Mail {
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.appendText(render(template, content));
+        email.appendText(render(template, content));
         
         return this;
     }
@@ -250,7 +250,7 @@ public class Mail {
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        this.email.appendTextHTML(render(template, content));
+        email.appendTextHTML(render(template, content));
         
         return this;
     }
@@ -261,7 +261,7 @@ public class Mail {
      * @throws MangooMailerException when sending the mail failed
      */
     public void send() throws MangooMailerException {
-        Application.getInstance(MailEvent.class).send(this.email.buildEmail());
+        Application.getInstance(MailEvent.class).send(email.buildEmail());
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {

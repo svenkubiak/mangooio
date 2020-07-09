@@ -28,11 +28,11 @@ public class DatastoreProvider implements Provider<Datastore> {
     public Datastore getDatastore(String prefix) {
         Objects.requireNonNull(prefix, Required.PREFIX.toString());
 
-        return this.datastores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
+        return datastores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
     }
     
     @Override
     public Datastore get() {
-        return this.defaultDatastore;
+        return defaultDatastore;
     }
 }

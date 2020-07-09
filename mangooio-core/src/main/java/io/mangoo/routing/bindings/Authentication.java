@@ -56,14 +56,14 @@ public class Authentication {
      * @return The subject of the current authentication or null if not set
      */
     public String getSubject() {
-        return this.subject;
+        return subject;
     }
     
     /**
      * Invalidates the authentication by sending expiring the client cookie
      */
     public void invalidate() {
-        this.invalid = true;
+        invalid = true;
     }
 
     /**
@@ -72,15 +72,14 @@ public class Authentication {
      * @return A LocalDateTime object or null if not set
      */
     public LocalDateTime getExpires() {
-        //FIX ME : CAN NOT BE NULL
-        return this.expires;
+        return expires;
     }
 
     /**
      * @return True if the user wants to logout, false otherwise
      */
     public boolean isLogout() {
-        return this.loggedOut;
+        return loggedOut;
     }
 
     /**
@@ -88,14 +87,14 @@ public class Authentication {
      * @return True if the user wants to stay logged in, false otherwise
      */
     public boolean isRememberMe() {
-        return this.remember;
+        return remember;
     }
     
     /**
      * @return True if two factor authentication is enabled for this user
      */
     public boolean isTwoFactor() {
-        return this.twoFactor;
+        return twoFactor;
     }
     
     /**
@@ -204,7 +203,7 @@ public class Authentication {
      * Performs a logout of the currently authenticated user
      */
     public void logout() {
-        this.loggedOut = true;
+        loggedOut = true;
     }
     
     /**
@@ -213,10 +212,10 @@ public class Authentication {
      * @return True if authentication contains an authentication, false otherwise
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.subject);
+        return StringUtils.isNotBlank(subject);
     }
     
     public boolean isInvalid() {
-        return this.invalid;
+        return invalid;
     }
 }

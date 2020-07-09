@@ -58,26 +58,26 @@ public class Config {
     
     @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private final void load() {
-        this.props.setActiveProfiles(this.mode);
-        this.props.setSkipEmptyProps(false);
+        props.setActiveProfiles(mode);
+        props.setSkipEmptyProps(false);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
         
         if (StringUtils.isNotBlank(configPath)) {
             try {
-                this.props.load(new File(configPath)); //NOSONAR ConfigPath can intentionally come from user input
+                props.load(new File(configPath)); //NOSONAR ConfigPath can intentionally come from user input
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
         } else {
             try (InputStream inputStream = Resources.getResource(Default.CONFIGURATION_FILE.toString()).openStream()){
-                this.props.load(inputStream);
+                props.load(inputStream);
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from /src/main/resources/config.props", e);
             }
         } 
         
         Map<String, String> profileProps = new HashMap<>();
-        this.props.extractProps(profileProps, Application.getMode().toString());
+        props.extractProps(profileProps, Application.getMode().toString());
         profileProps.forEach(this::parse);
 
         System.setProperty(Key.APPLICATION_SECRET.toString(), "");
@@ -99,12 +99,12 @@ public class Config {
             }
 
             if (StringUtils.isNotBlank(value)) {
-                this.props.setValue(propKey, value, Application.getMode().toString());
+                props.setValue(propKey, value, Application.getMode().toString());
             }
         }
 
         if (propValue.startsWith(CRYPTEX_TAG)) {
-            this.props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
+            props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
         }
     }
 
@@ -129,16 +129,16 @@ public class Config {
                         return crypto.decrypt(cryptex, privateKey);
                     } else {
                         LOG.error("Failed to decrypt an encrypted config value");
-                        this.decrypted = false;
+                        decrypted = false;
                     }
                 }
             } catch (IOException | SecurityException | MangooEncryptionException e) {
                 LOG.error("Failed to decrypt an encrypted config value", e);
-                this.decrypted = false;
+                decrypted = false;
             }
         } else {
             LOG.error("Found an encrypted value in config file but private key for decryption is missing");
-            this.decrypted = false;
+            decrypted = false;
         }
         
         return "";
@@ -151,7 +151,7 @@ public class Config {
      */
     public Properties toProperties() {
         var map = new HashMap<>();
-        this.props.extractProps(map);
+        props.extractProps(map);
         
         Properties properties = new Properties();
         properties.putAll(map);
@@ -163,7 +163,7 @@ public class Config {
      * @return True if decryption of config values was successful, false otherwise
      */
     public boolean isDecrypted() {
-        return this.decrypted;
+        return decrypted;
     }
 
     /**
@@ -173,7 +173,7 @@ public class Config {
      * @return The configured value as String or null if the key is not configured
      */
     public String getString(String key) {
-        return this.props.getValue(key);
+        return props.getValue(key);
     }
 
     /**
@@ -184,7 +184,7 @@ public class Config {
      * @return The configured value as String or the passed defautlValue if the key is not configured
      */
     public String getString(String key, String defaultValue) {
-        return this.props.getValueOrDefault(key, defaultValue);
+        return props.getValueOrDefault(key, defaultValue);
     }
 
     /**
@@ -194,7 +194,7 @@ public class Config {
      * @return The configured value as int or 0 if the key is not configured
      */
     public int getInt(String key) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -209,7 +209,7 @@ public class Config {
      * @return The configured value as long or 0 if the key is not configured
      */
     public long getLong(String key) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -225,7 +225,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public long getLong(String key, long defaultValue) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -241,7 +241,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public int getInt(String key, int defaultValue) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -256,7 +256,7 @@ public class Config {
      * @return The configured value as boolean or false if the key is not configured
      */
     public boolean getBoolean(String key) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return false;
         }
@@ -272,7 +272,7 @@ public class Config {
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
      */
     public boolean getBoolean(String key, boolean defaultValue) {
-        final String value = this.props.getValue(key);
+        final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -369,7 +369,7 @@ public class Config {
      */
     public Map<String, String> getAllConfigurations() {
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();        
-        this.props.entries().forEach(entry -> map.put(entry.getKey(), entry.getValue()));
+        props.entries().forEach(entry -> map.put(entry.getKey(), entry.getValue()));
         
         return map;
     }
@@ -686,21 +686,21 @@ public class Config {
      * @return cors.urlpattern as compiled pattern or default value if undefined
      */
     public Pattern getCorsUrlPattern() {
-        if (this.corsUrl == null) {
-            this.corsUrl = Pattern.compile(getString(Key.CORS_URLPATTERN, Default.CORS_URLPATTERN.toString()));
+        if (corsUrl == null) {
+            corsUrl = Pattern.compile(getString(Key.CORS_URLPATTERN, Default.CORS_URLPATTERN.toString()));
         }
-        return this.corsUrl;
+        return corsUrl;
     }
     
     /**
      * @return cors.policyclass as compiled pattern or default value if undefined
      */
     public Pattern getCorsAllowOrigin() {
-        if (this.corsAllowOrigin == null) {
-            this.corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOWORIGIN, Default.CORS_ALLOWORIGIN.toString()));
+        if (corsAllowOrigin == null) {
+            corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOWORIGIN, Default.CORS_ALLOWORIGIN.toString()));
         }
         
-        return this.corsAllowOrigin;
+        return corsAllowOrigin;
     }
     
     /**

@@ -18,6 +18,6 @@ public class BaseModel implements Serializable {
     protected ObjectId objectId;
 
     public ObjectId getId() {
-        return this.objectId;
+        return objectId;
     }
 }

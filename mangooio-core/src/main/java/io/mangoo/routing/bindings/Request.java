@@ -75,7 +75,7 @@ public class Request extends Validator {
      * @return The current session
      */
     public Session getSession() {
-        return this.session;
+        return session;
     }
 
     /**
@@ -83,7 +83,7 @@ public class Request extends Validator {
      * @return The request body
      */
     public String getBody() {
-        return this.body;
+        return body;
     }
 
     /**
@@ -92,8 +92,8 @@ public class Request extends Validator {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
-        if (StringUtils.isNotBlank(this.body)) {
-            return JsonUtils.fromJson(this.body, Map.class);
+        if (StringUtils.isNotBlank(body)) {
+            return JsonUtils.fromJson(body, Map.class);
         }
         
         return new HashMap<>();
@@ -104,7 +104,7 @@ public class Request extends Validator {
      * @return The request body as JsonPath object
      */
     public ReadContext getBodyAsJsonPath() {
-        return JsonPath.parse(this.body);
+        return JsonPath.parse(body);
     }
 
     /**
@@ -114,7 +114,7 @@ public class Request extends Validator {
      * @return True if the token matches, false otherwise
      */
     public boolean authenticityMatches() {
-        return this.session.getAuthenticity().equals(this.authenticity);
+        return session.getAuthenticity().equals(this.authenticity);
     }
 
     /**
@@ -131,7 +131,7 @@ public class Request extends Validator {
      * @return The value for the given or null if none found
      */
     public String getParameter(String key) {
-        return this.parameter.get(key);
+        return parameter.get(key);
     }
 
     /**
@@ -140,7 +140,7 @@ public class Request extends Validator {
      * @return Map of request and query parameter
      */
     public Map<String, String> getParameter() {
-        return this.parameter;
+        return parameter;
     }
 
     /**
@@ -149,7 +149,7 @@ public class Request extends Validator {
      * @return A HeaderMap of client sent headers
      */
     public HeaderMap getHeaders() {
-        return this.httpServerExchange.getRequestHeaders();
+        return httpServerExchange.getRequestHeaders();
     }
 
     /**
@@ -157,7 +157,7 @@ public class Request extends Validator {
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
-        return this.getHeader(Header.ACCEPT_LANGUAGE.toHttpString());
+        return getHeader(Header.ACCEPT_LANGUAGE.toHttpString());
     }
     
     /**
@@ -167,7 +167,7 @@ public class Request extends Validator {
      * @return The value of the header or null if none found
      */
     public String getHeader(HttpString headerName) {
-        return (this.httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : this.httpServerExchange.getRequestHeaders().get(headerName).element();
+        return (httpServerExchange.getRequestHeaders().get(headerName) == null) ? null : httpServerExchange.getRequestHeaders().get(headerName).element();
     }
     
     /**
@@ -193,7 +193,7 @@ public class Request extends Validator {
      * @return The request URI
      */
     public String getURI() {
-        return this.httpServerExchange.getRequestURI();
+        return httpServerExchange.getRequestURI();
     }
 
     /**
@@ -205,14 +205,14 @@ public class Request extends Validator {
      * @return The request URL
      */
     public String getURL() {
-        return this.httpServerExchange.getRequestURL();
+        return httpServerExchange.getRequestURL();
     }
 
     /**
      * @return An immutable map of request cookies
      */
     public Map<String, Cookie> getCookies() {
-        return this.cookies;
+        return cookies;
     }
 
     /**
@@ -222,7 +222,7 @@ public class Request extends Validator {
      * @return The Cookie
      */
     public Cookie getCookie(String name) {
-        return this.cookies.get(name);
+        return cookies.get(name);
     }
 
     /**
@@ -231,7 +231,7 @@ public class Request extends Validator {
      * @return the request URI scheme
      */
     public String getScheme() {
-        return this.httpServerExchange.getRequestScheme();
+        return httpServerExchange.getRequestScheme();
     }
 
     /**
@@ -241,7 +241,7 @@ public class Request extends Validator {
      * @return The character encoding
      */
     public String getCharset() {
-        return this.httpServerExchange.getRequestCharset();
+        return httpServerExchange.getRequestCharset();
     }
     
     /**
@@ -252,14 +252,14 @@ public class Request extends Validator {
      */
     public void addAttribute(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        this.attributes.put(key, value);
+        attributes.put(key, value);
     }
 
     /**
      * @return The content length of the request, or <code>-1</code> if it has not been set
      */
     public long getContentLength() {
-        return this.httpServerExchange.getRequestContentLength();
+        return httpServerExchange.getRequestContentLength();
     }
 
     /**
@@ -268,7 +268,7 @@ public class Request extends Validator {
      * @return the HTTP request method
      */
     public HttpString getMethod() {
-        return this.httpServerExchange.getRequestMethod();
+        return httpServerExchange.getRequestMethod();
     }
 
     /**
@@ -283,7 +283,7 @@ public class Request extends Validator {
      * @return The request path
      */
     public String getPath() {
-        return this.httpServerExchange.getRequestPath();
+        return httpServerExchange.getRequestPath();
     }
     
     /**
@@ -294,13 +294,13 @@ public class Request extends Validator {
      */
     public Object getAttribute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return this.attributes.get(key);
+        return attributes.get(key);
     }
     
     /**
      * @return All attributes of the request
      */
     public Map<String, Object> getAttributes() {
-        return this.attributes;
+        return attributes;
     }
 }

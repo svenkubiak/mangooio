@@ -44,36 +44,36 @@ public class Metrics {
     }
     
     public void addStatusCode(int responseCode) {
-        this.responseCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
+        responseCount.computeIfAbsent(responseCode, (Integer integer) -> new LongAdder()).increment();
     }
     
     public void update(final int requestTime) {
-        this.totalRequestTimeUpdater.addAndGet(this, requestTime);        
+        totalRequestTimeUpdater.addAndGet(this, requestTime);        
         
         int tempMaxRequestTime;
         do {
-            tempMaxRequestTime = this.maxRequestTime;
+            tempMaxRequestTime = maxRequestTime;
             if (requestTime < tempMaxRequestTime) {
                 break;
             }
-        } while (!this.maxRequestTimeUpdater.compareAndSet(this, tempMaxRequestTime, requestTime));
+        } while (!maxRequestTimeUpdater.compareAndSet(this, tempMaxRequestTime, requestTime));
 
         if (requestTime > 0) {
             int tempMinRequestTime;
             do {
-                tempMinRequestTime = this.minRequestTime;
+                tempMinRequestTime = minRequestTime;
                 if (requestTime > tempMinRequestTime && tempMinRequestTime != -1) {
                     break;
                 }
-            } while (!this.minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime)); 
+            } while (!minRequestTimeUpdater.compareAndSet(this, tempMinRequestTime, requestTime)); 
         }
         
-        this.totalRequestsUpdater.incrementAndGet(this);
-        this.avgRequestTime = this.totalRequestTime / this.totalRequests;
+        totalRequestsUpdater.incrementAndGet(this);
+        avgRequestTime = totalRequestTime / totalRequests;
     }
 
     public Map<Integer, LongAdder> getResponseMetrics() {
-        return this.responseCount;
+        return responseCount;
     }
 
     public int getMaxRequestTime() {
@@ -89,24 +89,24 @@ public class Metrics {
     }
 
     public void incrementDataSend(long length) {
-        this.dataSend.addAndGet(length);
+        dataSend.addAndGet(length);
     }
     
     public long getDataSend() {
-        return this.dataSend.longValue();
+        return dataSend.longValue();
     }
 
     public void reset() {
-        this.maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
-        this.minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
-        this.totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
-        this.totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
-        this.responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
-        this.dataSend = new AtomicLong();
-        this.avgRequestTime = 0;
-        this.totalRequestTime = 0;
-        this.totalRequests = 0;
-        this.maxRequestTime = -1;
-        this.minRequestTime = -1;
+        maxRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "maxRequestTime");
+        minRequestTimeUpdater = AtomicIntegerFieldUpdater.newUpdater(Metrics.class, "minRequestTime");
+        totalRequestTimeUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequestTime");
+        totalRequestsUpdater = AtomicLongFieldUpdater.newUpdater(Metrics.class, "totalRequests");
+        responseCount = new ConcurrentHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, CONCURRENCY_LEVEL);
+        dataSend = new AtomicLong();
+        avgRequestTime = 0;
+        totalRequestTime = 0;
+        totalRequests = 0;
+        maxRequestTime = -1;
+        minRequestTime = -1;
     }
 }

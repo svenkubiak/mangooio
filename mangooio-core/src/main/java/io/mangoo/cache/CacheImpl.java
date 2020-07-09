@@ -22,18 +22,18 @@ public class CacheImpl implements Cache {
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        this.ehCache.put(key, value);
+        ehCache.put(key, value);
     }
 
     @Override
     public void remove(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        this.ehCache.remove(key);
+        ehCache.remove(key);
     }
 
     @Override
     public void clear() {
-        this.ehCache.clear();
+        ehCache.clear();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class CacheImpl implements Cache {
     @Override
     public void putAll(Map<String, Object> map) {
         Objects.requireNonNull(map, Required.MAP.toString());
-        this.ehCache.putAll(map);
+        ehCache.putAll(map);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CacheImpl implements Cache {
             counter = new AtomicInteger(0);
         }
         counter.incrementAndGet();
-        this.put(key, counter);
+        put(key, counter);
         
         return counter;
     }
@@ -77,7 +77,7 @@ public class CacheImpl implements Cache {
         if (counter == null) {
             counter = new AtomicInteger(0);
         }
-        this.put(key, counter);
+        put(key, counter);
         
         return counter;
     }
@@ -91,7 +91,7 @@ public class CacheImpl implements Cache {
             counter = new AtomicInteger(0);
         }
         counter.decrementAndGet();
-        this.put(key, counter);
+        put(key, counter);
         
         return counter;
     }

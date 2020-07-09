@@ -46,55 +46,55 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public dev.morphia.Datastore getDatastore() {
-        return this.datastore;
+        return datastore;
     }
     
     @Override
     public dev.morphia.Datastore query() {
-        return this.datastore;
+        return datastore;
     }
 
     @Override
     public MongoClient getMongoClient() {
-        return this.mongoClient;
+        return mongoClient;
     }
 
     private void connect() {
-       this.mongoClient = MongoClients.create(getConnectionString());
-       this.datastore = Morphia.createDatastore(this.mongoClient, this.config.getMongoDbName(prefix));
-       this.datastore.getMapper().mapPackage(this.config.getMongoPackage(prefix));
+       mongoClient = MongoClients.create(getConnectionString());
+       datastore = Morphia.createDatastore(mongoClient, config.getMongoDbName(prefix));
+       datastore.getMapper().mapPackage(config.getMongoPackage(prefix));
  
        LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
-               this.config.getMongoHost(prefix),
-               this.config.getMongoPort(prefix),
-               this.config.isMongoAuth(prefix));
+               config.getMongoHost(prefix),
+               config.getMongoPort(prefix),
+               config.isMongoAuth(prefix));
        
        LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore conntected to database '{}'",
-               this.config.getMongoPackage(prefix),
-               this.config.getMongoDbName(prefix));
+               config.getMongoPackage(prefix),
+               config.getMongoDbName(prefix));
     }
     
     private String getConnectionString() {
         var buffer = new StringBuilder();
         buffer.append("mongodb://");
         
-        if (this.config.isMongoAuth(prefix)) {
+        if (config.isMongoAuth(prefix)) {
             buffer
-                .append(this.config.getMongoUsername(prefix))
+                .append(config.getMongoUsername(prefix))
                 .append(':')
-                .append(this.config.getMongoPassword(prefix))
+                .append(config.getMongoPassword(prefix))
                 .append('@');
         }
         
         buffer
-            .append(this.config.getMongoHost(prefix))
+            .append(config.getMongoHost(prefix))
             .append(':')
-            .append(this.config.getMongoPort(prefix));
+            .append(config.getMongoPort(prefix));
         
-        if (this.config.isMongoAuth(prefix)) {
+        if (config.isMongoAuth(prefix)) {
             buffer
                 .append("/?authSource=")
-                .append(this.config.getMongoAuthDB(prefix));
+                .append(config.getMongoAuthDB(prefix));
         }
         
         return buffer.toString();
@@ -102,12 +102,12 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public void ensureIndexes() {
-        this.datastore.ensureIndexes();
+        datastore.ensureIndexes();
     }
 
     @Override
     public void ensureCaps() {
-        this.datastore.ensureCaps();
+        datastore.ensureCaps();
     }
 
     @Override
@@ -115,46 +115,46 @@ public class DatastoreImpl implements Datastore {
         Preconditions.checkNotNull(clazz, "Tryed to find an object by id, but given class is null");
         Preconditions.checkNotNull(id, "Tryed to find an object by id, but given id is null");
         
-        return this.datastore.find(clazz).filter(Filters.eq("_id", new ObjectId(id))).first();
+        return datastore.find(clazz).filter(Filters.eq("_id", new ObjectId(id))).first();
     }
 
     @Override
     public <T extends Object> List<T> findAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to get all morphia objects of a given object, but given object is null");
         
-        return this.datastore.find(clazz).iterator().toList();
+        return datastore.find(clazz).iterator().toList();
     }
 
     @Override
     public <T extends Object> long countAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to count all a morphia objects of a given object, but given object is null");
 
-        return this.datastore.find(clazz).count();
+        return datastore.find(clazz).count();
     }
 
     @Override
     public void save(Object object) {
         Preconditions.checkNotNull(object, "Tryed to save a morphia object, but a given object is null");
 
-        this.datastore.save(object);
+        datastore.save(object);
     }
 
     @Override
     public void delete(Object object) {
         Preconditions.checkNotNull(object, "Tryed to delete a morphia object, but given object is null");
 
-        this.datastore.delete(object);
+        datastore.delete(object);
     }
 
     @Override
     public <T extends Object> void deleteAll(Class<T> clazz) {
         Preconditions.checkNotNull(clazz, "Tryed to delete list of mapped morphia objects, but given class is null");
 
-        this.datastore.find(clazz).delete(new DeleteOptions().multi(true));
+        datastore.find(clazz).delete(new DeleteOptions().multi(true));
     }
 
     @Override
     public void dropDatabase() {
-        this.datastore.getDatabase().drop();
+        datastore.getDatabase().drop();
     }
 }

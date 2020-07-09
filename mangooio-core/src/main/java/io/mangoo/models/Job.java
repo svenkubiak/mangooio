@@ -24,22 +24,22 @@ public class Job {
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public Date getNextFireTime() {
-        return (this.nextFireTime == null) ? null : (Date) this.nextFireTime.clone();
+        return (nextFireTime == null) ? null : (Date) nextFireTime.clone();
     }
 
     public Date getPreviousFireTime() {
-        return (this.previousFireTime == null) ? null : (Date) this.previousFireTime.clone();
+        return (previousFireTime == null) ? null : (Date) previousFireTime.clone();
     }
 
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public boolean isActive() {
-        return this.active;
+        return active;
     }
 }

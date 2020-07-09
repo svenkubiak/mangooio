@@ -47,12 +47,12 @@ public class MailEvent {
             mailerBuilder.withTransportStrategy(TransportStrategy.SMTP);
         }
         
-        this.mailer = mailerBuilder.buildMailer();
+        mailer = mailerBuilder.buildMailer();
     }
 
     public void send(Email email) throws MangooMailerException {
         try {
-            this.mailer.sendMail(email, true); 
+            mailer.sendMail(email, true); 
         } catch (MailException e) {
             throw new MangooMailerException(e);
         }

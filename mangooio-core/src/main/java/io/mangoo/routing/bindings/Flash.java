@@ -48,7 +48,7 @@ public class Flash {
      */
     public void setError(String value) {
         if (validCharacters(value)) {
-            this.values.put(ERROR, value);
+            values.put(ERROR, value);
         }
     }
 
@@ -60,7 +60,7 @@ public class Flash {
      */
     public void setWarning(String value) {
         if (validCharacters(value)) {
-            this.values.put(WARNING, value);
+            values.put(WARNING, value);
         }
     }
 
@@ -72,7 +72,7 @@ public class Flash {
      */
     public void setSuccess(String value) {
         if (validCharacters(value)) {
-            this.values.put(SUCCESS, value);
+            values.put(SUCCESS, value);
         }
     }
 
@@ -85,7 +85,7 @@ public class Flash {
      */
     public void put(String key, String value) {
         if (validCharacters(key) && validCharacters(value)) {
-            this.values.put(key, value);
+            values.put(key, value);
         }
     }
     
@@ -93,7 +93,7 @@ public class Flash {
      * Invalidates the flash by sending expiring the client cookie
      */
     public void invalidate() {
-        this.invalid = true;
+        invalid = true;
     }
 
     /**
@@ -103,11 +103,11 @@ public class Flash {
      * @return The value or null if not found
      */
     public String get(String key) {
-        return this.values.get(key);
+        return values.get(key);
     }
 
     public Map<String, String> getValues() {
-        return this.values;
+        return values;
     }
 
     public boolean isDiscard() {
@@ -125,7 +125,7 @@ public class Flash {
     }
 
     public boolean hasContent() {
-        return !this.values.isEmpty();
+        return !values.isEmpty();
     }
 
     /**

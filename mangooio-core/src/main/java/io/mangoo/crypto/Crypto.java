@@ -71,7 +71,7 @@ public class Crypto {
      */
     public String decrypt(String encrytedText) {
         Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
-        return decrypt(encrytedText, getSizedSecret(this.config.getApplicationSecret()));
+        return decrypt(encrytedText, getSizedSecret(config.getApplicationSecret()));
     }
 
     /**
@@ -86,7 +86,7 @@ public class Crypto {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
-        this.paddedBufferedBlockCipher.init(false, cipherParameters);
+        paddedBufferedBlockCipher.init(false, cipherParameters);
         
         return new String(cipherData(base64Decoder.decode(encrytedText)), StandardCharsets.UTF_8);
     }
@@ -102,7 +102,7 @@ public class Crypto {
     public String encrypt(String plainText) {
         Objects.requireNonNull(plainText, Required.PLAIN_TEXT.toString());
 
-        return encrypt(plainText, getSizedSecret(this.config.getApplicationSecret()));
+        return encrypt(plainText, getSizedSecret(config.getApplicationSecret()));
     }
 
     /**
@@ -119,7 +119,7 @@ public class Crypto {
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
-        this.paddedBufferedBlockCipher.init(true, cipherParameters);
+        paddedBufferedBlockCipher.init(true, cipherParameters);
         
         return new String(base64Encoder.encode(cipherData(plainText.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
     }
@@ -133,10 +133,10 @@ public class Crypto {
     private byte[] cipherData(final byte[] data) {
         byte[] result = null;
         try {
-            final byte[] buffer = new byte[this.paddedBufferedBlockCipher.getOutputSize(data.length)];
+            final byte[] buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
 
-            final int processedBytes = this.paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
-            final int finalBytes = this.paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
+            final int processedBytes = paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
+            final int finalBytes = paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
 
             result = new byte[processedBytes + finalBytes];
             System.arraycopy(buffer, 0, result, 0, result.length);

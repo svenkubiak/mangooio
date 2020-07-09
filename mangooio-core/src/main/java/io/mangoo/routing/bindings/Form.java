@@ -39,7 +39,7 @@ public class Form extends Validator {
     public Optional<String> getString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
             return Optional.of(value);
         }
@@ -56,7 +56,7 @@ public class Form extends Validator {
     public String getValue(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
             return value;
         }
@@ -78,7 +78,7 @@ public class Form extends Validator {
     public Optional<Boolean> getBoolean(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
             if (("1").equals(value)) {
                 return Optional.of(Boolean.TRUE);
@@ -105,7 +105,7 @@ public class Form extends Validator {
     public Optional<Integer> getInteger(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Integer.valueOf(value));
         }
@@ -122,7 +122,7 @@ public class Form extends Validator {
     public Optional<Double> getDouble(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Double.valueOf(value));
         }
@@ -139,7 +139,7 @@ public class Form extends Validator {
     public Optional<Float> getFloat(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
-        String value = this.values.get(key);
+        String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
             return Optional.of(Float.valueOf(value));
         }
@@ -153,7 +153,7 @@ public class Form extends Validator {
      * @return List of files or an empty list
      */
     public List<InputStream> getFiles() {
-        return new ArrayList<>(this.files);
+        return new ArrayList<>(files);
     }
 
     /**
@@ -163,8 +163,8 @@ public class Form extends Validator {
      * @return File or null if no file is present
      */
     public Optional<InputStream> getFile() {
-        if (!this.files.isEmpty()) {
-            return Optional.of(this.files.get(0));
+        if (!files.isEmpty()) {
+            return Optional.of(files.get(0));
         }
 
         return Optional.empty();
@@ -178,7 +178,7 @@ public class Form extends Validator {
      * @return Map with Key-Value elements or empty map
      */
     public Map<String, String> getValues() {
-        return this.values;
+        return values;
     }
     
     /**
@@ -187,14 +187,14 @@ public class Form extends Validator {
      * @param inputStream The InputStream to add
      */
     public void addFile(InputStream inputStream) {
-        this.files.add(inputStream);
+        files.add(inputStream);
     }
  
     /**
      * Adds the form values to the flash scope
      */
     public void keep() {
-        this.keep = true;
+        keep = true;
     }
     
     /**
@@ -227,7 +227,7 @@ public class Form extends Validator {
     public List<String> getValueList(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
-        return this.valueMap.get(key);
+        return valueMap.get(key);
     }
     
     /**
@@ -235,17 +235,17 @@ public class Form extends Validator {
      * @return True if form values should be put into flash scope, false otherwise
      */
     public boolean isKept() {
-        return this.keep;
+        return keep;
     }
     
     /**
      * Discards the complete form
      */
     public void discard() {
-        if (this.files != null) {
-            this.files.forEach(MangooUtils::closeQuietly);            
+        if (files != null) {
+            files.forEach(MangooUtils::closeQuietly);            
         }
-        this.valueMap = new HashMap<>();
+        valueMap = new HashMap<>();
     }
     
     public boolean isSubmitted() {

@@ -56,10 +56,10 @@ public class CacheProvider implements Provider<Cache> {
                     .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
                     .autoCreate(b -> b));
 
-            this.cacheManager = clusteredCacheManagerBuilder
+            cacheManager = clusteredCacheManagerBuilder
                     .build(true);
         } else {
-            this.cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+            cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
                     .using(statisticsService)
                     .build(true);
         }
@@ -126,7 +126,7 @@ public class CacheProvider implements Provider<Cache> {
     }
     
     private final void setDefaultApplicationCache() {
-        this.cache = getCache(CacheName.APPLICATION);
+        cache = getCache(CacheName.APPLICATION);
     }
 
     /**
@@ -136,7 +136,7 @@ public class CacheProvider implements Provider<Cache> {
      * @param configuration The configuration for the cache to use
      */
     public void registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
-        this.caches.put(name, new CacheImpl(cacheManager.createCache(name, configuration)));
+        caches.put(name, new CacheImpl(cacheManager.createCache(name, configuration)));
     }
     
     /**
@@ -171,7 +171,7 @@ public class CacheProvider implements Provider<Cache> {
      * @return An Cache instance
      */
     public Cache getCache(String name) {
-        return this.caches.get(name);
+        return caches.get(name);
     }
 
     /**
@@ -183,6 +183,6 @@ public class CacheProvider implements Provider<Cache> {
 
     @Override
     public Cache get() {
-        return this.cache;
+        return cache;
     }
 }

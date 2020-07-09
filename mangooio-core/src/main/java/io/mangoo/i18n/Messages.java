@@ -22,7 +22,7 @@ public class Messages implements Serializable {
     private transient ResourceBundle bundle;
 
     public Messages() {
-        this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
+        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
     }
 
     /**
@@ -31,7 +31,7 @@ public class Messages implements Serializable {
      * @param locale The locale to use
      */
     public void reload(Locale locale) {
-        this.bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), locale);
+        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), locale);
     }
 
     /**
@@ -41,7 +41,7 @@ public class Messages implements Serializable {
      * @return The localized value or an empty value if the given key is not configured
      */
     public String get(String key) {
-        return this.bundle.getString(key);
+        return bundle.getString(key);
     }
 
     /**
@@ -54,10 +54,10 @@ public class Messages implements Serializable {
      */
     @SuppressFBWarnings(justification = "Key access as intended", value = "MUI_CONTAINSKEY_BEFORE_GET")
     public String get(String key, Object... arguments) {
-        if (this.bundle.containsKey(key)) {
-            return MessageFormat.format(this.bundle.getString(key), arguments);
-        } else if (this.defaults.containsKey(key)) {
-            return MessageFormat.format(this.defaults.get(key), arguments);
+        if (bundle.containsKey(key)) {
+            return MessageFormat.format(bundle.getString(key), arguments);
+        } else if (defaults.containsKey(key)) {
+            return MessageFormat.format(defaults.get(key), arguments);
         } else {
             // Ignore anything else
         }
