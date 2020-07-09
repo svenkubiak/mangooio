@@ -23,6 +23,6 @@ public class MetricsHandler implements HttpHandler {
         if (!exchange.isComplete()) {
             exchange.addExchangeCompleteListener(new MetricsListener(System.currentTimeMillis()));
         }
-        this.nextHandler.handleRequest(exchange);
+        nextHandler.handleRequest(exchange);
     }
 }

@@ -40,11 +40,11 @@ public class LimitHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        this.attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        if (this.attachment.hasLimit()) {
+        attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
+        if (attachment.hasLimit()) {
             String key = getCacheKey(exchange);
             if (StringUtils.isNotBlank(key)) {
-                if (this.cache.getAndIncrementCounter(key).get() > this.attachment.getLimit()) {
+                if (cache.getAndIncrementCounter(key).get() > attachment.getLimit()) {
                     endRequest(exchange); 
                 } else {
                     nextHandler(exchange);
@@ -111,11 +111,11 @@ public class LimitHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (this.attachment.hasBasicAuthentication()) {
+        if (attachment.hasBasicAuthentication()) {
             HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
                     Application.getInstance(LocaleHandler.class),
-                    this.attachment.getUsername(),
-                    this.attachment.getPassword());
+                    attachment.getUsername(),
+                    attachment.getPassword());
             
             httpHandler.handleRequest(exchange);
         } else {

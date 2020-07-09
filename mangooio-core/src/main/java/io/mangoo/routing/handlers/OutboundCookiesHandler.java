@@ -69,10 +69,10 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setSessionCookie(HttpServerExchange exchange) {
-        Session session = this.attachment.getSession();
+        Session session = attachment.getSession();
         if (session.isInvalid()) {
-            Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
-                    .setSecure(this.config.isSessionCookieSecure())
+            Cookie cookie = new CookieImpl(config.getSessionCookieName())
+                    .setSecure(config.isSessionCookieSecure())
                     .setValue("")
                     .setHttpOnly(true)
                     .setPath("/")
@@ -87,18 +87,18 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setExpiration(session.getExpires().toInstant(ZONE_OFFSET))
                     .claim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity())
                     .claim(ClaimKey.DATA.toString(), session.getValues())
-                    .setSharedSecret(new SecretKeySpec(this.config.getSessionCookieSecret().getBytes(CHARSET), ALGORITHM));
+                    .setSharedSecret(new SecretKeySpec(config.getSessionCookieSecret().getBytes(CHARSET), ALGORITHM));
         
             try {
-                final Cookie cookie = new CookieImpl(this.config.getSessionCookieName())
+                final Cookie cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token.compact())
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
                         .setPath("/")
-                        .setSecure(this.config.isSessionCookieSecure());
+                        .setSecure(config.isSessionCookieSecure());
                 
-                if (this.config.isSessionCookieExpires()) {
+                if (config.isSessionCookieExpires()) {
                     cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
                 }
 
@@ -119,8 +119,8 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = this.attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
-            Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
-                    .setSecure(this.config.isAuthenticationCookieSecure())
+            Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
+                    .setSecure(config.isAuthenticationCookieSecure())
                     .setValue("")
                     .setHttpOnly(true)
                     .setPath("/")
@@ -132,23 +132,23 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (authentication.isValid()) {
             if (authentication.isRememberMe()) {
-                authentication.withExpires(LocalDateTime.now().plusHours(this.config.getAuthenticationCookieRememberExpires()));
+                authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
             } 
             
             PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder().setSubject(authentication.getSubject())
                     .setExpiration(authentication.getExpires().toInstant(ZONE_OFFSET))
                     .claim(ClaimKey.TWO_FACTOR.toString(), String.valueOf(authentication.isTwoFactor()))
-                    .setSharedSecret(new SecretKeySpec(this.config.getAuthenticationCookieSecret().getBytes(CHARSET), ALGORITHM));
+                    .setSharedSecret(new SecretKeySpec(config.getAuthenticationCookieSecret().getBytes(CHARSET), ALGORITHM));
             
-            final Cookie cookie = new CookieImpl(this.config.getAuthenticationCookieName())
+            final Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
                     .setValue(token.compact())
-                    .setSecure(this.config.isAuthenticationCookieSecure())
+                    .setSecure(config.isAuthenticationCookieSecure())
                     .setHttpOnly(true)
                     .setSameSite(true)
                     .setPath("/")
                     .setSameSiteMode(SAME_SITE_MODE);
                         
-            if (this.config.isAuthenticationCookieExpires()) {
+            if (config.isAuthenticationCookieExpires()) {
                 cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
             } 
             
@@ -169,10 +169,10 @@ public class OutboundCookiesHandler implements HttpHandler {
         Form form = this.attachment.getForm();
         
         if (flash.isDiscard() || flash.isInvalid()) {
-            final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
+            final Cookie cookie = new CookieImpl(config.getFlashCookieName())
                     .setHttpOnly(true)
                     .setValue("")
-                    .setSecure(this.config.isFlashCookieSecure())
+                    .setSecure(config.isFlashCookieSecure())
                     .setPath("/")
                     .setSameSite(true)
                     .setSameSiteMode(SAME_SITE_MODE)
@@ -184,7 +184,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
                         .claim(ClaimKey.DATA.toString(), flash.getValues())
-                        .setSharedSecret(new SecretKeySpec(this.config.getFlashCookieSecret().getBytes(CHARSET), ALGORITHM));
+                        .setSharedSecret(new SecretKeySpec(config.getFlashCookieSecret().getBytes(CHARSET), ALGORITHM));
                 
                 if (form.isKept()) {
                     token.claim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
@@ -193,9 +193,9 @@ public class OutboundCookiesHandler implements HttpHandler {
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
                 token.setExpiration(expires.toInstant(ZONE_OFFSET));
 
-                final Cookie cookie = new CookieImpl(this.config.getFlashCookieName())
+                final Cookie cookie = new CookieImpl(config.getFlashCookieName())
                         .setValue(token.compact())
-                        .setSecure(this.config.isFlashCookieSecure())
+                        .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
                         .setPath("/")
@@ -218,7 +218,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (this.config.isCorsEnable()) {
+        if (config.isCorsEnable()) {
             Application.getInstance(CorsHandler.class).handleRequest(exchange);            
         } else {
             Application.getInstance(ResponseHandler.class).handleRequest(exchange);  

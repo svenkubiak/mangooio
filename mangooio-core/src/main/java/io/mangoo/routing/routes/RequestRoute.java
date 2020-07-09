@@ -157,15 +157,15 @@ public class RequestRoute implements MangooRoute {
     }
     
     public boolean hasAuthentication() {
-        return this.authentication;
+        return authentication;
     }
 
     public boolean hasAuthorization() {
-        return this.authorization;
+        return authorization;
     }
     
     public boolean hasBasicAuthentication() {
-        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
+        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password);
     }
 
     public String getUsername() {

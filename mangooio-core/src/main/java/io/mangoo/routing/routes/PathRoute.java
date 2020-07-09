@@ -37,6 +37,6 @@ public class PathRoute implements MangooRoute {
 
     @Override
     public String getUrl() {
-        return this.url;
+        return url;
     }
 }

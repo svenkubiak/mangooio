@@ -38,14 +38,14 @@ public class AuthorizationService implements MangooAuthorizationService {
             Model model = new Model();
             try {
                 model.loadModelFromText(IOUtils.toString(Resources.getResource(Default.MODEL_CONF.toString()).openStream(), Default.ENCODING.toString()));
-                this.enforcer = new Enforcer(model, new AuthorizationAdapter());
-                this.enforcer.enableLog(false);
+                enforcer = new Enforcer(model, new AuthorizationAdapter());
+                enforcer.enableLog(false);
             } catch (IOException e) {
                 LOG.error("Failed to load model configuration for authorization handling", e);
             }
         } else {
-            this.enforcer = new Enforcer();
-            this.enforcer.enableLog(false);   
+            enforcer = new Enforcer();
+            enforcer.enableLog(false);   
         }
     }
     

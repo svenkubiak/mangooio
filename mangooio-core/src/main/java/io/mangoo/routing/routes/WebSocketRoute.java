@@ -45,7 +45,7 @@ public class WebSocketRoute implements MangooRoute {
     public WebSocketRoute onController(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.URL.toString());
         
-        this.controllerClass = clazz;
+        controllerClass = clazz;
         return this;
     }
 
@@ -53,19 +53,19 @@ public class WebSocketRoute implements MangooRoute {
      * Sets authentication to true, default is false
      */
     public void withAuthentication() {
-        this.authentication = true;
+        authentication = true;
     }
 
     @Override
     public String getUrl() {
-        return this.url;
+        return url;
     }
     
     public boolean hasAuthentication() {
-        return this.authentication;
+        return authentication;
     }
 
     public Class<?> getControllerClass() {
-        return this.controllerClass;
+        return controllerClass;
     }
 }

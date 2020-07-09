@@ -30,7 +30,7 @@ public class ServerSentEventService {
     private ServerSentEventService(CacheProvider cacheProvider) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         
-        this.cache = cacheProvider.getCache(CacheName.SSE);
+        cache = cacheProvider.getCache(CacheName.SSE);
     }
 
     /**
@@ -119,7 +119,7 @@ public class ServerSentEventService {
     public Set<ServerSentEventConnection> getConnections(String uri) {
         Objects.requireNonNull(uri, Required.URI.toString());
 
-        final Set<ServerSentEventConnection> uriConnections = this.cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
+        final Set<ServerSentEventConnection> uriConnections = cache.get(Default.SSE_CACHE_PREFIX.toString() + uri);
 
         return (uriConnections == null) ? new HashSet<>() : uriConnections;
     }
@@ -134,7 +134,7 @@ public class ServerSentEventService {
         Objects.requireNonNull(uri, Required.URI.toString());
         Objects.requireNonNull(uriConnections, Required.URI_CONNECTIONS.toString());
 
-        this.cache.put(Default.SSE_CACHE_PREFIX.toString() + uri, uriConnections);
+        cache.put(Default.SSE_CACHE_PREFIX.toString() + uri, uriConnections);
     }
 
     /**
@@ -145,6 +145,6 @@ public class ServerSentEventService {
     public void removeConnections(String uri) {
         Objects.requireNonNull(uri, Required.URI.toString());
 
-        this.cache.remove(Default.SSE_CACHE_PREFIX.toString() + uri);
+        cache.remove(Default.SSE_CACHE_PREFIX.toString() + uri);
     }
 }

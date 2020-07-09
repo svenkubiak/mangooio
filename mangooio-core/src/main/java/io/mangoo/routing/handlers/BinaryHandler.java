@@ -32,7 +32,7 @@ public class BinaryHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         exchange.startBlocking();
-        exchange.setStatusCode(this.response.getStatusCode());
+        exchange.setStatusCode(response.getStatusCode());
 
         Server.headers()
             .entrySet()
@@ -41,7 +41,7 @@ public class BinaryHandler implements HttpHandler {
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
         
         exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), MediaType.OCTET_STREAM.withoutParameters().toString());
-        exchange.getResponseHeaders().put(Header.CONTENT_DISPOSITION.toHttpString(), "inline; filename=" + this.response.getBinaryFileName());        
+        exchange.getResponseHeaders().put(Header.CONTENT_DISPOSITION.toHttpString(), "inline; filename=" + response.getBinaryFileName());        
         this.response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getOutputStream().write(this.response.getBinaryContent());
     }

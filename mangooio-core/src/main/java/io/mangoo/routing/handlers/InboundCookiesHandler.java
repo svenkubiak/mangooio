@@ -73,13 +73,13 @@ public class InboundCookiesHandler implements HttpHandler {
         Session session = Session.create()
             .withContent(new HashMap<>())
             .withAuthenticity(MangooUtils.randomString(STRING_LENGTH))
-            .withExpires(LocalDateTime.now().plusMinutes(this.config.getSessionCookieTokenExpires()));
+            .withExpires(LocalDateTime.now().plusMinutes(config.getSessionCookieTokenExpires()));
         
-        String cookieValue = getCookieValue(exchange, this.config.getSessionCookieName());
+        String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(this.config.getSessionCookieSecret().getBytes(CHARSET))
+                        .setSharedSecret(config.getSessionCookieSecret().getBytes(CHARSET))
                         .build()
                         .parse(cookieValue);
 
@@ -108,13 +108,13 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
         Authentication authentication = Authentication.create()
                 .withSubject(null)
-                .withExpires(LocalDateTime.now().plusMinutes(this.config.getAuthenticationCookieTokenExpires()));
+                .withExpires(LocalDateTime.now().plusMinutes(config.getAuthenticationCookieTokenExpires()));
         
-        String cookieValue = getCookieValue(exchange, this.config.getAuthenticationCookieName());
+        String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(this.config.getAuthenticationCookieSecret().getBytes(CHARSET))
+                        .setSharedSecret(config.getAuthenticationCookieSecret().getBytes(CHARSET))
                         .build()
                         .parse(cookieValue);
                 
@@ -144,11 +144,11 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         Flash flash = Flash.create();
         
-        final String cookieValue = getCookieValue(exchange, this.config.getFlashCookieName());
+        final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
                 Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(this.config.getFlashCookieSecret().getBytes(CHARSET))
+                        .setSharedSecret(config.getFlashCookieSecret().getBytes(CHARSET))
                         .build()
                         .parse(cookieValue);
                 

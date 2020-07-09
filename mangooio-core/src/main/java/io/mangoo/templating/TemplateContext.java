@@ -25,69 +25,69 @@ public class TemplateContext {
     private Map<String, Object> content = new HashMap<>();
     
     public TemplateContext() {
-        this.content.put("route", new RouteMethod());
+        content.put("route", new RouteMethod());
     }
     
     public TemplateContext(Map<String, Object> content) {
         this.content = content;
-        this.content.put("route", new RouteMethod());
+        content.put("route", new RouteMethod());
     }
     
     public TemplateContext withForm(Form form) {
-        this.content.put("form", form);
+        content.put("form", form);
         return this;
     }
     
     public TemplateContext withFlash(Flash flash) {
-        this.content.put("flash", flash);
+        content.put("flash", flash);
         return this;
     }
     
     public TemplateContext withSession(Session session) {
-        this.content.put("session", session);
+        content.put("session", session);
         return this;
     }
     
     public TemplateContext withMessages(Messages messages) {
-        this.content.put("i18n", new I18nMethod(messages));
+        content.put("i18n", new I18nMethod(messages));
         return this;
     }
     
     public TemplateContext withController(String controller) {
-        this.content.put("location", new LocationMethod(controller));
+        content.put("location", new LocationMethod(controller));
         return this;
     }
     
     public TemplateContext withPrettyTime(Locale locale) {
-        this.content.put("prettytime", new PrettyTimeMethod(locale));
+        content.put("prettytime", new PrettyTimeMethod(locale));
         return this;
     }
     
     public TemplateContext withAuthenticity(Session session) {
-        this.content.put("authenticity", new TokenDirective(session));
+        content.put("authenticity", new TokenDirective(session));
         return this;
     }
     
     public TemplateContext withAuthenticityForm(Session session) {
-        this.content.put("authenticityForm", new FormDirective(session));
+        content.put("authenticityForm", new FormDirective(session));
         return this;
     }
     
     public TemplateContext withTemplatePath(String path) {
-        this.templatePath = path;
+        templatePath = path;
         return this;
     }
     
     public TemplateContext addContent(String name, Object object) {
-        this.content.put(name, object);
+        content.put(name, object);
         return this;
     }
     
     public String getTemplatePath() {
-        return this.templatePath;
+        return templatePath;
     }
 
     public Map<String, Object> getContent() {
-        return this.content;
+        return content;
     }
 }

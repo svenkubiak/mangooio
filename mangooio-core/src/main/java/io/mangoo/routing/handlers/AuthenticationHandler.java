@@ -41,7 +41,7 @@ public class AuthenticationHandler implements HttpHandler {
             Authentication authentication = attachment.getAuthentication();
             
             if (!authentication.isValid() || ( authentication.isValid() && authentication.isTwoFactor() )) {
-                String redirect = this.config.getString(Key.AUTHENTICATION_REDIRECT.toString());
+                String redirect = config.getString(Key.AUTHENTICATION_REDIRECT.toString());
                 if (StringUtils.isNotBlank(redirect)) {
                     endRequest(exchange, redirect);
                 } else {

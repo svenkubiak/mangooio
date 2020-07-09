@@ -49,21 +49,21 @@ public class TemplateEngine {
     private static final Version VERSION = new Version(2, 3, 30);
     
     public TemplateEngine() {
-        this.configuration.setClassForTemplateLoading(this.getClass(), Default.TEMPLATES_FOLDER.toString());
-        this.configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        this.configuration.setOutputEncoding(StandardCharsets.UTF_8.name());
-        this.configuration.setLocalizedLookup(false);
-        this.configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
-        this.configuration.setAPIBuiltinEnabled(true);
-        this.configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
-        this.configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
-        this.configuration.setRecognizeStandardFileExtensions(false);
+        configuration.setClassForTemplateLoading(getClass(), Default.TEMPLATES_FOLDER.toString());
+        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        configuration.setOutputEncoding(StandardCharsets.UTF_8.name());
+        configuration.setLocalizedLookup(false);
+        configuration.setNumberFormat(Default.NUMBER_FORMAT.toString());
+        configuration.setAPIBuiltinEnabled(true);
+        configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
+        configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
+        configuration.setRecognizeStandardFileExtensions(false);
 
         if (Application.inDevMode()) {
-            this.configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
+            configuration.setTemplateUpdateDelayMilliseconds(ONE_SECOND_MS);
         } else {
-            this.configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
-            this.configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
+            configuration.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE);
+            configuration.setCacheStorage(new MruCacheStorage(STRONG_SIZE_LIMIT, Integer.MAX_VALUE));
         }
     }
 
@@ -114,7 +114,7 @@ public class TemplateEngine {
         }
 
         Configuration config = new Configuration(VERSION);
-        config.setClassForTemplateLoading(this.getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
+        config.setClassForTemplateLoading(getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
 
         Writer writer = new StringWriter();
         Template template;

@@ -25,7 +25,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
 
     @Override
     public void connected(ServerSentEventConnection connection, String lastEventId) {
-        if (this.hasAuthentication) {
+        if (hasAuthentication) {
             String header = null;
             HeaderValues headerValues = connection.getRequestHeaders().get(Header.COOKIE.toHttpString());
             if (headerValues != null) {

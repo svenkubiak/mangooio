@@ -38,15 +38,15 @@ public class ServerSentEventRoute implements MangooRoute {
      * Sets authentication to true, default is false
      */
     public void withAuthentication() {
-        this.authentication = true;
+        authentication = true;
     }
     
     @Override
     public String getUrl() {
-        return this.url;
+        return url;
     }
     
     public boolean hasAuthentication() {
-        return this.authentication;
+        return authentication;
     }
 }

@@ -24,7 +24,7 @@ public class ConcurrentService {
     @Inject
     public ConcurrentService(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.executorService = Executors.newFixedThreadPool(config.getApplicationThreadpool());
+        executorService = Executors.newFixedThreadPool(config.getApplicationThreadpool());
     }
 
     /**
@@ -38,7 +38,7 @@ public class ConcurrentService {
      * @return a Future representing pending completion of the task
      */
     public <T> Future<T> submit(Callable<T> callable) {
-        return this.executorService.submit(callable);
+        return executorService.submit(callable);
     }
 
     /**
@@ -53,7 +53,7 @@ public class ConcurrentService {
      * @return a Future representing pending completion of the task
      */
     public <T> Future<T> submit(Runnable runnable, T result) {
-        return this.executorService.submit(runnable, result);
+        return executorService.submit(runnable, result);
     }
 
     /**
@@ -64,10 +64,10 @@ public class ConcurrentService {
      * @param runnable the runnable task
      */
     public void execute(Runnable runnable) {
-        this.executorService.execute(runnable);
+        executorService.execute(runnable);
     }
     
     public void shutdown() {
-        this.executorService.shutdown();
+        executorService.shutdown();
     }
 }

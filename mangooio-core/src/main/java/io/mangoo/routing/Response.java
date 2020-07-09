@@ -67,63 +67,63 @@ public class Response {
     }
 
     public int getStatusCode() {
-        return this.statusCode;
+        return statusCode;
     }
 
     public String getContentType() {
-        return this.contentType;
+        return contentType;
     }
 
     public String getCharset() {
-        return this.charset;
+        return charset;
     }
 
     public String getBody() {
-        return this.body;
+        return body;
     }
 
     public List<Cookie> getCookies() {
-        return new ArrayList<>(this.cookies);
+        return new ArrayList<>(cookies);
     }
 
     public byte[] getBinaryContent() {
-        return this.binaryContent.clone();
+        return binaryContent.clone();
     }
 
     public String getTemplate() {
-        return this.template;
+        return template;
     }
 
     public String getBinaryFileName() {
-        return this.binaryFileName;
+        return binaryFileName;
     }
 
     public Map<String, Object> getContent() {
-        return this.content;
+        return content;
     }
 
     public boolean isRedirect() {
-        return this.redirect;
+        return redirect;
     }
 
     public boolean isBinary() {
-        return this.binary;
+        return binary;
     }
 
     public boolean isRendered() {
-        return this.rendered;
+        return rendered;
     }
 
     public boolean isEndResponse() {
-        return this.endResponse;
+        return endResponse;
     }
     
     public boolean isUnrendered() {
-        return this.unrendered;
+        return unrendered;
     }
 
     public String getRedirectTo() {
-        return this.redirectTo;
+        return redirectTo;
     }
 
     public Map<HttpString, String> getHeaders() {
@@ -241,8 +241,9 @@ public class Response {
      */
     public Response andContentType(String contentType) {
         Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
+        
+        headers.put(Header.CONTENT_TYPE.toHttpString(), contentType);
         this.contentType = contentType;
-        this.headers.put(Header.CONTENT_TYPE.toHttpString(), contentType);
 
         return this;
     }
@@ -269,7 +270,7 @@ public class Response {
      */
     public Response andContent(String name, Object object) {
         Objects.requireNonNull(name, Required.NAME.toString());
-        this.content.put(name, object);
+        content.put(name, object);
 
         return this;
     }
@@ -283,7 +284,7 @@ public class Response {
      */
     public Response andBody(String body) {
         this.body = body;
-        this.rendered = false;
+        rendered = false;
 
         return this;
     }
@@ -296,8 +297,8 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andUnrenderedBody() {
-        this.rendered = false;
-        this.unrendered = true;
+        rendered = false;
+        unrendered = true;
 
         return this;
     }
@@ -310,7 +311,7 @@ public class Response {
      */
     public Response andCookie(Cookie cookie) {
         Objects.requireNonNull(cookie, Required.COOKIE.toString());
-        this.cookies.add(cookie);
+        cookies.add(cookie);
 
         return this;
     }
@@ -326,9 +327,9 @@ public class Response {
     public Response andJsonBody(Object jsonObject) {
         Objects.requireNonNull(jsonObject, Required.JSON_OBJECT.toString());
 
-        this.contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         this.body = JsonUtils.toJson(jsonObject);
-        this.rendered = false;
+        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -344,10 +345,10 @@ public class Response {
         Objects.requireNonNull(file, Required.FILE.toString());
 
         try (InputStream inputStream = Files.newInputStream(file)) {
-            this.binaryFileName = file.getFileName().toString();
-            this.binaryContent = IOUtils.toByteArray(inputStream);
-            this.binary = true;
-            this.rendered = false;
+            binaryFileName = file.getFileName().toString();
+            binaryContent = IOUtils.toByteArray(inputStream);
+            binary = true;
+            rendered = false;
         } catch (final IOException e) {
             LOG.error("Failed to handle binary file", e);
         }
@@ -364,9 +365,9 @@ public class Response {
     public Response andBinaryContent(byte [] content) {
         Objects.requireNonNull(content, Required.CONTENT.toString());
 
-        this.binaryContent = content.clone();
-        this.binary = true;
-        this.rendered = false;
+        binaryContent = content.clone();
+        binary = true;
+        rendered = false;
 
         return this;
     }
@@ -375,14 +376,14 @@ public class Response {
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The content type "text/plain" will be used.
      *
-     * @param text The text for the response
+     * @param body The text for the response
      *
      * @return A response object {@link io.mangoo.routing.Response}
      */
-    public Response andTextBody(String text) {
-        this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-        this.body = text;
-        this.rendered = false;
+    public Response andTextBody(String body) {
+        this.body = body;
+        contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -393,8 +394,8 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andEmptyBody() {
-        this.contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-        this.rendered = false;
+        contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -410,7 +411,7 @@ public class Response {
      */
     public Response andHeader(HttpString key, String value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        this.headers.put(key, value);
+        headers.put(key, value);
 
         return this;
     }
@@ -451,7 +452,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andEndResponse() {
-        this.endResponse = true;
+        endResponse = true;
 
         return this;
     }

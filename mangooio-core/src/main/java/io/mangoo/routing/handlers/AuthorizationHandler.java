@@ -42,7 +42,7 @@ public class AuthorizationHandler implements HttpHandler {
                 String resource = attachment.getControllerAndMethod();
                 String operation = RequestUtils.getOperation(exchange.getRequestMethod());
                 
-                if (isNotBlank(subject, resource, operation) && this.authorizationService.validAuthorization(subject, resource, operation)) {
+                if (isNotBlank(subject, resource, operation) && authorizationService.validAuthorization(subject, resource, operation)) {
                     nextHandler(exchange);
                 } else {
                     endRequest(exchange);

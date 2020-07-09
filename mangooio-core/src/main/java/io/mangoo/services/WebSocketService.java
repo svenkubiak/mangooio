@@ -29,7 +29,7 @@ public class WebSocketService {
     private WebSocketService(CacheProvider cacheProvider) {
         Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
         
-        this.cache = cacheProvider.getCache(CacheName.WSS);
+        cache = cacheProvider.getCache(CacheName.WSS);
     }
 
     /**
@@ -61,7 +61,7 @@ public class WebSocketService {
         Objects.requireNonNull(uri, Required.URI.toString());
         Objects.requireNonNull(channels, Required.URI_CONNECTIONS.toString());
 
-        this.cache.put(Default.WSS_CACHE_PREFIX.toString() + uri, channels);
+        cache.put(Default.WSS_CACHE_PREFIX.toString() + uri, channels);
     }
 
     /**
@@ -74,7 +74,7 @@ public class WebSocketService {
     public Set<WebSocketChannel> getChannels(String uri) {
         Objects.requireNonNull(uri, Required.URI.toString());
 
-        final Set<WebSocketChannel> channels = this.cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
+        final Set<WebSocketChannel> channels = cache.get(Default.WSS_CACHE_PREFIX.toString() + uri);
 
         return (channels == null) ? new HashSet<>() : channels;
     }
@@ -87,7 +87,7 @@ public class WebSocketService {
     public void removeChannels(String uri) {
         Objects.requireNonNull(uri, Required.URI.toString());
 
-        this.cache.remove(Default.WSS_CACHE_PREFIX.toString() + uri);
+        cache.remove(Default.WSS_CACHE_PREFIX.toString() + uri);
     }
 
     /**

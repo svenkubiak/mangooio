@@ -22,7 +22,7 @@ public class EventBusService {
     private AtomicLong events = new AtomicLong();
     
     public EventBusService() {
-        this.asyncEventBus = new AsyncEventBus(Executors.newCachedThreadPool());
+        asyncEventBus = new AsyncEventBus(Executors.newCachedThreadPool());
     }
     
     /**
@@ -33,8 +33,8 @@ public class EventBusService {
     public void register(Object eventListener) {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
-        this.asyncEventBus.register(eventListener);
-        this.listeners.getAndIncrement();
+        asyncEventBus.register(eventListener);
+        listeners.getAndIncrement();
     }
     
     /**
@@ -47,13 +47,13 @@ public class EventBusService {
         Objects.requireNonNull(eventListener, Required.EVENT_LISTENER.toString());
         
         try {
-            this.asyncEventBus.unregister(eventListener);
+            asyncEventBus.unregister(eventListener);
         } catch (IllegalArgumentException e) {
             throw new MangooEventBusException(e);
         }
 
-        if (this.listeners.get() > 0) {
-            this.listeners.getAndDecrement();            
+        if (listeners.get() > 0) {
+            listeners.getAndDecrement();            
         }
     }
     
@@ -65,21 +65,21 @@ public class EventBusService {
     public void publish(Object event) {
         Objects.requireNonNull(event, Required.EVENT.toString());
         
-        this.asyncEventBus.post(event);
-        this.events.getAndIncrement();
+        asyncEventBus.post(event);
+        events.getAndIncrement();
     }
     
     /**
      * @return The number of registered listeners
      */
     public long getNumListeners() {
-        return this.listeners.get();
+        return listeners.get();
     }
     
     /**
      * @return The number of published events to the event bus
      */
     public long getNumEvents() {
-        return this.events.get();
+        return events.get();
     }
 }

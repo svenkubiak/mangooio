@@ -35,7 +35,7 @@ public class CorsHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if (this.config.isCorsEnable() && config.getCorsUrlPattern().matcher(exchange.getRequestURL()).matches()) {
+        if (config.isCorsEnable() && config.getCorsUrlPattern().matcher(exchange.getRequestURL()).matches()) {
             applyHeader(exchange);
         }
         nextHandler(exchange);
@@ -43,29 +43,29 @@ public class CorsHandler implements HttpHandler {
     
     private void applyHeader(HttpServerExchange exchange) {
         String origin = getOrigin(exchange);
-        if (StringUtils.isNotBlank(origin) && this.config.getCorsAllowOrigin().matcher(origin).matches()) {
+        if (StringUtils.isNotBlank(origin) && config.getCorsAllowOrigin().matcher(origin).matches()) {
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_ORIGIN, exchange)) {
                 addHeader(exchange, ACCESS_CONTROL_ALLOW_ORIGIN, origin);
             }
             
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_HEADERS, exchange)) {
-                addHeader(exchange, ACCESS_CONTROL_ALLOW_HEADERS, this.config.getCorsHeadersAllowHeaders());
+                addHeader(exchange, ACCESS_CONTROL_ALLOW_HEADERS, config.getCorsHeadersAllowHeaders());
             }
             
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, exchange)) {
-                addHeader(exchange, ACCESS_CONTROL_ALLOW_CREDENTIALS, this.config.getCorsHeadersAllowCredentials());
+                addHeader(exchange, ACCESS_CONTROL_ALLOW_CREDENTIALS, config.getCorsHeadersAllowCredentials());
             }
             
             if (doesNotHaveHeader(ACCESS_CONTROL_ALLOW_METHODS, exchange)) {
-                addHeader(exchange, ACCESS_CONTROL_ALLOW_METHODS, this.config.getCorsHeadersAllowMethods());
+                addHeader(exchange, ACCESS_CONTROL_ALLOW_METHODS, config.getCorsHeadersAllowMethods());
             }
             
             if (doesNotHaveHeader(ACCESS_CONTROL_EXPOSE_HEADERS, exchange)) {
-                addHeader(exchange, ACCESS_CONTROL_EXPOSE_HEADERS, this.config.getCorsHeadersExposeHeaders());
+                addHeader(exchange, ACCESS_CONTROL_EXPOSE_HEADERS, config.getCorsHeadersExposeHeaders());
             }
             
             if (doesNotHaveHeader(ACCESS_CONTROL_MAX_AGE, exchange)) {
-                addHeader(exchange, ACCESS_CONTROL_MAX_AGE, this.config.getCorsHeadersMaxAge());
+                addHeader(exchange, ACCESS_CONTROL_MAX_AGE, config.getCorsHeadersMaxAge());
             }
         }
     }

@@ -39,14 +39,14 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
 
     @Override
     public void onConnect(WebSocketHttpExchange exchange, WebSocketChannel channel) {
-        if (this.hasAuthentication) {
+        if (hasAuthentication) {
             String header = null;
             if (exchange.getRequestHeader(Header.COOKIE.toString()) != null) {
                 header = exchange.getRequestHeader(Header.COOKIE.toString());
             }
             
             if (RequestUtils.hasValidAuthentication(header)) {
-                channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
+                channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(controllerClass));
                 channel.resumeReceives();
                 channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
                 Application.getInstance(WebSocketService.class).addChannel(channel);
@@ -54,7 +54,7 @@ public class WebSocketHandler implements WebSocketConnectionCallback {
                 MangooUtils.closeQuietly(channel);
             }
         } else {
-            channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(this.controllerClass));
+            channel.getReceiveSetter().set((ChannelListener<? super WebSocketChannel>) Application.getInstance(controllerClass));
             channel.resumeReceives();
             channel.addCloseTask(Application.getInstance(WebSocketCloseListener.class));
             Application.getInstance(WebSocketService.class).addChannel(channel);

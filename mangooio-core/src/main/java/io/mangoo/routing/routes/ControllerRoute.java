@@ -31,7 +31,7 @@ public class ControllerRoute {
     public ControllerRoute(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS.toString());
         
-        this.controllerClass = clazz;
+        controllerClass = clazz;
     }
 
     /**
@@ -44,10 +44,10 @@ public class ControllerRoute {
         
         for (MangooRoute route : routes) {
             RequestRoute requestRoute = (RequestRoute) route;
-            requestRoute.withControllerClass(this.controllerClass);
+            requestRoute.withControllerClass(controllerClass);
 
             if (hasBasicAuthentication()) {
-                requestRoute.withBasicAuthentication(this.username, this.password);
+                requestRoute.withBasicAuthentication(username, password);
             }
             
             if (hasAuthentication()) {
@@ -63,7 +63,7 @@ public class ControllerRoute {
             }
             
             if (requestRoute.getLimit() == 0) {
-                requestRoute.withRequestLimit(this.limit);
+                requestRoute.withRequestLimit(limit);
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -101,7 +101,7 @@ public class ControllerRoute {
      * @return controller route instance
      */
     public ControllerRoute withAuthentication() {
-        this.authentication = true;
+        authentication = true;
         return this;
     }
     
@@ -112,8 +112,8 @@ public class ControllerRoute {
      * @return controller route instance
      */
     public ControllerRoute withAuthorization() {
-        this.authorization = true;
-        this.authentication = true;
+        authorization = true;
+        authentication = true;
         return this;
     }
     
@@ -125,7 +125,7 @@ public class ControllerRoute {
      * @return ControllerRoute instance
      */
     public ControllerRoute withNonBlocking() {
-        this.blocking = true;
+        blocking = true;
         return this;
     }
     
@@ -136,36 +136,36 @@ public class ControllerRoute {
      * @return ControllerRoute instance
      */
     public ControllerRoute withRequestLimit(int requestsPerSecond) {
-        this.limit = requestsPerSecond;
+        limit = requestsPerSecond;
         return this;
     }
     
     public boolean hasAuthentication() {
-        return this.authentication;
+        return authentication;
     }
     
     public boolean hasAuthorization() {
-        return this.authorization;
+        return authorization;
     }
     
     public boolean hasBlocking() {
-        return this.blocking;
+        return blocking;
     }
     
     public boolean hasBasicAuthentication() {
-        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
+        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password);
     }
 
     public Class<?> getControllerClass() {
-        return this.controllerClass;
+        return controllerClass;
     }
 
     public String getUsername() {
-        return this.username;
+        return username;
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     public int getLimit() {
