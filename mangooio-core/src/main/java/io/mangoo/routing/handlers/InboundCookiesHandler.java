@@ -92,7 +92,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET)); 
                 }
             } catch (PasetoException e) {
-                LOG.error("Failed to parse session cookie", e);
+                LOG.debug("Failed to parse session cookie", e);
                 session.invalidate();
             }
         }
@@ -127,7 +127,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .twoFactorAuthentication(Boolean.parseBoolean(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), String.class)));
                 }
             } catch (PasetoException e) {
-                LOG.error("Failed to parse authentication cookie", e);
+                LOG.debug("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
         }
@@ -164,7 +164,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             .setDiscard(true);
                 }
             } catch (PasetoException e) {
-                LOG.error("Failed to parse flash cookie", e);
+                LOG.debug("Failed to parse flash cookie", e);
                 flash.invalidate();
             } 
         }
