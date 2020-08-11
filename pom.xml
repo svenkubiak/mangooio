@@ -227,7 +227,7 @@
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-props</artifactId>
-				<version>5.1.5</version>
+				<version>5.1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
