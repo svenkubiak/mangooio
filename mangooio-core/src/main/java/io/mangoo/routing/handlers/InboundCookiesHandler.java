@@ -182,13 +182,10 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     private String getCookieValue(HttpServerExchange exchange, String cookieName) {
         String value = null;
-        Map<String, Cookie> requestCookies = exchange.getRequestCookies();
-        if (requestCookies != null) {
-            Cookie cookie = exchange.getRequestCookies().get(cookieName);
-            if (cookie != null) {
-                value = cookie.getValue();
-            }  
-        }
+        Cookie cookie = exchange.getRequestCookie(cookieName);
+        if (cookie != null) {
+            value = cookie.getValue();
+        }  
 
         return value;
     }

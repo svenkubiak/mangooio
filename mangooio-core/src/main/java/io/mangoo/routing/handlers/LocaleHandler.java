@@ -38,7 +38,7 @@ public class LocaleHandler implements HttpHandler {
         Locale locale = Locale.forLanguageTag(config.getApplicationLanguage());
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
 
-        Cookie i18nCookie = exchange.getRequestCookies().get(config.getI18nCookieName());
+        Cookie i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
         if (i18nCookie == null) {
             final HeaderValues headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
             if (headerValues != null) {

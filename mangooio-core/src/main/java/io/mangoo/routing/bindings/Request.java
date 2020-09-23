@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.ImmutableMap;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -28,7 +27,7 @@ public class Request extends Validator {
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
     private transient Authentication authentication;
-    private transient Map<String, Cookie> cookies;
+    private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
     private String authenticity;
@@ -42,7 +41,7 @@ public class Request extends Validator {
         Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
         this.httpServerExchange = httpServerExchange;
-        this.cookies = (httpServerExchange.getRequestCookies() == null) ? new HashMap<>() : ImmutableMap.copyOf(httpServerExchange.getRequestCookies());
+        this.httpServerExchange.requestCookies().forEach(cookie -> this.cookies.put(cookie.getName(), cookie));
     }
 
     public Request withSession(Session session) {
