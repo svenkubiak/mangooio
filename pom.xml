@@ -217,7 +217,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>4.0.5.Final</version>
+				<version>4.0.6.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
@@ -428,7 +428,7 @@
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.19</version>
+				<version>0.21</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -453,7 +453,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>3.5.11</version>
+				<version>3.5.13</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.ws.rs</groupId>
