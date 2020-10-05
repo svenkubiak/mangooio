@@ -5,7 +5,7 @@ import java.io.Serializable;
 import dev.morphia.annotations.Entity;
 import io.mangoo.persistence.BaseModel;
 
-@Entity(value = "persons", noClassnameStored = true)
+@Entity(value = "persons", useDiscriminator = false)
 public class Person extends BaseModel implements Serializable {
     private static final long serialVersionUID = 4343854859740893649L;
     private final String firstname;
