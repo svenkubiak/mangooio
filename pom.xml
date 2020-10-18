@@ -227,7 +227,7 @@
 			<dependency>
 				<groupId>org.jodd</groupId>
 				<artifactId>jodd-props</artifactId>
-				<version>5.2.0</version>
+				<version>6.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
@@ -252,7 +252,7 @@
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
-				<version>2.0.1</version>
+				<version>2.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -292,7 +292,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-archiver</artifactId>
-				<version>4.2.2</version>
+				<version>4.2.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
@@ -438,7 +438,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>29.0-jre</version>
+				<version>30.0-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
