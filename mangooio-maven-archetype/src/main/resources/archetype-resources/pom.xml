@@ -11,7 +11,7 @@
 	<properties>
 		<mangooio.version>6.4.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java>11</java>
+		<java.version>11</java.version>
 	</properties>
 	<build>
 		<resources>
@@ -37,13 +37,12 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<source>${java}</source>
-					<target>${java}</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 					<optimize>true</optimize>
 					<debug>false</debug>
 					<showDeprecation>true</showDeprecation>
 					<fork>true</fork>
-					<useIncrementalCompilation>true</useIncrementalCompilation>
 				</configuration>
 			</plugin>
 			<plugin>
