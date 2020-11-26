@@ -289,11 +289,24 @@ public class Request extends Validator {
      * Returns an object attribute from a given key
      * 
      * @param key The key the attribute is stored
-     * @return Object the value from the attribues map
+     * @return Object the value from the attributes map
      */
     public Object getAttribute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         return attributes.get(key);
+    }
+    
+    /**
+     * Returns an object attribute from a given key
+     * 
+     * @param key The key the attribute is stored
+     * @return String the value from the attributes map
+     */
+    public String getAttributeAsString(String key) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Object object = attributes.get(key);
+        
+        return object != null ? (String) object : null;
     }
     
     /**
