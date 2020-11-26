@@ -205,7 +205,6 @@
 							</transformers>
 							<artifactSet>
 								<excludes>
-									<exclude>org.junit.jupiter:*</exclude>
 									<exclude>rhino:*</exclude>
 									<exclude>io.bit3:*</exclude>
 									<exclude>com.hazelcast:*</exclude>
