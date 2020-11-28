@@ -31,8 +31,9 @@ public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
     private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-    private static final int MAX_PASSWORD_LENGTH = 256;
-    private static final int MIN_PASSWORD_LENGTH = 0;
+    private static final char[] NUMBERS = "123456789".toCharArray();
+    private static final int MAX_LENGTH = 256;
+    private static final int MIN_LENGTH = 0;
     private static final int CONVERTION = 1024;
     
     private MangooUtils() {
@@ -74,18 +75,40 @@ public final class MangooUtils {
      * 
      * Based on commons-lang3 RandomStringUtils using SecureRandom
      * 
-     * Uses: uppercase letters, lowercase letters and numbers
+     * Uses: uppercase letters, lowercase letters and numbers 0-9
      * 
      * @param length The length of the random string
      * @return A random String
      */
     public static String randomString(int length) {
-        Preconditions.checkArgument(length > MIN_PASSWORD_LENGTH, "random string length must be at least 1 character");
-        Preconditions.checkArgument(length <= MAX_PASSWORD_LENGTH, "random string length must be at most 256 character");
+        Preconditions.checkArgument(length > MIN_LENGTH, "random string length must be at least 1 character");
+        Preconditions.checkArgument(length <= MAX_LENGTH, "random string length must be at most 256 character");
         
         return RandomStringUtils.random(length, 0, CHARACTERS.length-1, false, false, CHARACTERS, new SecureRandom());
     }
+    
+    /**
+     * Generates a random number with the given length.
+     * 
+     * Based on commons-lang3 RandomStringUtils using SecureRandom
+     * 
+     * Uses: numbers 1-9
+     * 
+     * @param length The length of the random string
+     * @return A random String
+     */
+    public static String randomNumber(int length) {
+        Preconditions.checkArgument(length > MIN_LENGTH, "random number length must be at least 1 character");
+        Preconditions.checkArgument(length <= MAX_LENGTH, "random number length must be at most 256 character");
+        
+        return RandomStringUtils.random(length, 0, NUMBERS.length-1, false, false, NUMBERS, new SecureRandom());
+    }
 
+    /**
+     * Closes a closeable without throwing an exception
+     * 
+     * @param closeable The closeable
+     */
     public static void closeQuietly(final Closeable closeable) {
         try {
             if (closeable != null) {

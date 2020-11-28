@@ -77,6 +77,16 @@ public class MangooUtilsTest {
     }
     
     @Test
+    public void testRandomNumber() {
+        //given
+        String string = MangooUtils.randomNumber(16);
+        
+        //then
+        assertThat(string, not(nullValue()));
+        assertThat(string.length(), equalTo(16));
+    }
+    
+    @Test
     public void testConcurrentRandomString() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             // given
