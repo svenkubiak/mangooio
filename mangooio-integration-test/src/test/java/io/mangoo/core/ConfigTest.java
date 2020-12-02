@@ -157,7 +157,7 @@ public class ConfigTest {
     public void testGetSessionCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String expires = "24";
+        String expires = "60";
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
