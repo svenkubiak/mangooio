@@ -59,7 +59,7 @@ public enum Key {
     SESSION_COOKIE_NAME("session.cookie.name"),
     SESSION_COOKIE_SECRET("session.cookie.secret"),
     SESSION_COOKIE_SECURE("session.cookie.secure"),
-    SESSION_COOKIE_TOKEN_EXPIRES("session.cookie.expires"),
+    SESSION_COOKIE_TOKEN_EXPIRES("session.cookie.token.expires"),
     SMTP_AUTHENTICATION("smtp.authentication"),
     SMTP_DEBUG("smtp.debug"),
     SMTP_FROM("smtp.from"),

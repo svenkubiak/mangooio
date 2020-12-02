@@ -37,7 +37,7 @@
 
 [flash]
 	cookie.name = ${application-name}-flash
-	cookie.encryptionkey = flash.cookie.secret
+	cookie.secret = flash.cookie.secret
 	cookie.secure = true
 
 [smtp]
