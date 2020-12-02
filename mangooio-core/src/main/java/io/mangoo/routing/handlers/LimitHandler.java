@@ -43,15 +43,11 @@ public class LimitHandler implements HttpHandler {
         attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         if (attachment.hasLimit()) {
             String key = getCacheKey(exchange);
-            if (StringUtils.isNotBlank(key)) {
-                if (cache.getAndIncrementCounter(key).get() > attachment.getLimit()) {
-                    endRequest(exchange); 
-                } else {
-                    nextHandler(exchange);
-                } 
+            if (cache.getAndIncrementCounter(key).get() > attachment.getLimit()) {
+                endRequest(exchange); 
             } else {
-                endRequest(exchange);                 
-            }
+                nextHandler(exchange);
+            } 
         } else {
             nextHandler(exchange);
         }
