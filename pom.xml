@@ -252,7 +252,7 @@
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
-				<version>2.1.0</version>
+				<version>2.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -443,7 +443,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.92</version>
+				<version>4.8.93</version>
 			</dependency>
 			<dependency>
 				<groupId>org.glassfish.jersey.media</groupId>
