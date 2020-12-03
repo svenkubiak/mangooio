@@ -19,7 +19,7 @@
 	cookie.name = test-flash
 	cookie.secret = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
 [metrics]
-	enable = true
+	enable = false
 [authentication]
 	redirect = /login
 	cookie.name = test-authentication

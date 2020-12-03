@@ -125,6 +125,8 @@ public class AdminController {
     public Response index() {
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
+        EventBusService eventBusService = Application.getInstance(EventBusService.class);
+        
         if (enabled) {
             Metrics metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
@@ -141,8 +143,6 @@ public class AdminController {
             if (errorRequests > 0) {
                 errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
             }
-            
-            EventBusService eventBusService = Application.getInstance(EventBusService.class);
             
             return Response.withOk()
                     .andContent(ENABLED, enabled)
@@ -163,6 +163,8 @@ public class AdminController {
         return Response.withOk()
                 .andContent(ENABLED, enabled)
                 .andContent("uptime", Date.from(instant))
+                .andContent("events", eventBusService.getNumEvents())
+                .andContent("listeners", eventBusService.getNumListeners())
                 .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }

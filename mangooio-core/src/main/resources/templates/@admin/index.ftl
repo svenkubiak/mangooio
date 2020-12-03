@@ -11,6 +11,7 @@
 	                        </div>
 	                    </div>
 	                </section>
+	                <#if enabled>
 	                <section class="info-tiles">
 	                    <div class="tile is-ancestor has-text-centered">
 	                        <div class="tile is-parent">
@@ -55,6 +56,7 @@
 	                        </div>
 	                    </div>
 	                </section>
+	                </#if>
 	                <section class="info-tiles">
 	                    <div class="tile is-ancestor has-text-centered">
 	                        <div class="tile is-parent">
