@@ -7,27 +7,23 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.sse.SseEventSource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.glassfish.jersey.media.sse.EventListener;
-import org.glassfish.jersey.media.sse.EventSource;
-import org.glassfish.jersey.media.sse.InboundEvent;
-import org.glassfish.jersey.media.sse.SseFeature;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+
+import com.launchdarkly.eventsource.EventHandler;
+import com.launchdarkly.eventsource.EventSource;
+import com.launchdarkly.eventsource.ReadyState;
 
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.TestExtension;
@@ -35,6 +31,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import okhttp3.Headers;
 
 /**
  *
@@ -43,8 +40,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
  */
 @ExtendWith({TestExtension.class})
 public class ServerSentEventServiceTest {
-    private static String eventData;
-    
     @Test
     public void testAddConnection() {
         //given
@@ -80,80 +75,118 @@ public class ServerSentEventServiceTest {
 	@Test
 	public void testCloseConnection() throws InterruptedException {
 		//given
-		ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
+		ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
 		Config config = Application.getInstance(Config.class);
-		Client client = ClientBuilder.newClient();
-
-		//when
-		WebTarget webTarget = client.target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
-		SseEventSource sseEventSource = SseEventSource.target(webTarget).build();
-		sseEventSource.register((sseEvent) -> {eventData = sseEvent.readData();}, (e) -> e.printStackTrace());
-		sseEventSource.open();
-		ServerSentEventService.close("/sse");
-		sseEventSource.close();
-		client.close();
-
-		//then
-		assertThat(ServerSentEventService.getConnections("/sse"), not(nullValue()));
-		assertThat(ServerSentEventService.getConnections("/sse").size(), equalTo(0));
+		
+		String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
+		EventHandler eventHandler = new SimpleEventHandler();
+		EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(Duration.ofMillis(3000));
+		
+		try (EventSource eventSource = builder.build()) {
+		      eventSource.start();
+		      
+		      await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.OPEN)));
+		      
+		      //then
+		      assertThat(serverSentEventService.getConnections("/sse"), not(nullValue()));
+		      assertThat(serverSentEventService.getConnections("/sse").size(), equalTo(1));
+		      
+		      serverSentEventService.close("/sse");
+		      
+		      await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.CLOSED)));
+		      
+		      //then
+		      assertThat(serverSentEventService.getConnections("/sse"), not(nullValue()));
+		      assertThat(serverSentEventService.getConnections("/sse").size(), equalTo(0));
+		} 
 	}
 
 	@Test
 	public void testSendData() throws InterruptedException {
-		//given
-		Config config = Application.getInstance(Config.class);
-		Client client = ClientBuilder.newClient();
-		String data = UUID.randomUUID().toString();
-		
-		//when
-		WebTarget webTarget = client.target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
-		SseEventSource sseEventSource = SseEventSource.target(webTarget).build();
-		sseEventSource.register((sseEvent) -> {eventData = sseEvent.readData();}, (e) -> e.printStackTrace());
-		sseEventSource.open();
+        //given
+	    String data = UUID.randomUUID().toString();
+        ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
+        Config config = Application.getInstance(Config.class);
         
-        //then
-        Application.getInstance(ServerSentEventService.class).send("/sse", data);
-        await().atMost(2,  TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, equalTo(data)));
-        sseEventSource.close();
-        client.close();
+        String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
+        EventHandler eventHandler = new SimpleEventHandler();
+        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(Duration.ofMillis(3000));
+        
+        try (EventSource eventSource = builder.build()) {
+              eventSource.start();
+              
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.OPEN)));
+              
+              //then
+              assertThat(serverSentEventService.getConnections("/sse"), not(nullValue()));
+              assertThat(serverSentEventService.getConnections("/sse").size(), equalTo(1));
+              
+              Application.getInstance(ServerSentEventService.class).send("/sse", data);
+              
+              //then
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(EventData.data, equalTo(data)));
+              
+              serverSentEventService.close("/sse");
+              
+              //then
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.CLOSED)));
+              
+              //then
+              assertThat(serverSentEventService.getConnections("/sse"), not(nullValue()));
+              assertThat(serverSentEventService.getConnections("/sse").size(), equalTo(0));
+        } 	    
 	}
 
     @Test
     public void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException {
         //given
-        final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
-        final Config config = Application.getInstance(Config.class);
-        final String data = "Server sent data with authentication FTW!";
+        String data = UUID.randomUUID().toString();
+        ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
+        Config config = Application.getInstance(Config.class);
+        
         
         String token = Pasetos.V1.LOCAL.builder()
                 .setSubject("foo")
                 .claim(ClaimKey.TWO_FACTOR.toString(), false)
                 .setExpiration(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.UTC))
                 .setSharedSecret(new SecretKeySpec("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(StandardCharsets.UTF_8), "AES"))
-                .compact();
-
-        //when
-        final WebTarget target = ClientBuilder.newBuilder()
-                .register(SseFeature.class)
-                .build()
-                .target("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-
-        final CustomWebTarget customWebTarget = new CustomWebTarget(target, new Cookie(config.getAuthenticationCookieName(), token));
-        final EventSource eventSource = EventSource.target(customWebTarget).build();
-        final EventListener listener = new EventListener() {
-            @Override
-            public void onEvent(InboundEvent inboundEvent) {
-                if (StringUtils.isBlank(eventData)) {
-                    eventData = inboundEvent.readData(String.class);
-                }
-            }
-        };
-        eventSource.register(listener);
-        eventSource.open();
-        serverSentEventService.send("/sseauth", data);
-
-        //then
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventData, not(equalTo(data))));
-        eventSource.close();
+                .compact();    
+        
+        String cookie = config.getAuthenticationCookieName() + "=" + token;
+        
+        String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
+        EventHandler eventHandler = new SimpleEventHandler();
+        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(Duration.ofMillis(3000));
+        Headers headers = new Headers.Builder()
+            .add("Accept", "text/event-stream")
+            .add("Cache-Control", "no-cache")
+            .add("Set-Cookie", cookie)
+            .build();
+        
+        builder.headers(headers);
+        
+        try (EventSource eventSource = builder.build()) {
+              eventSource.start();
+              
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.CLOSED)));
+              
+              //then
+              assertThat(serverSentEventService.getConnections("/sseauth"), not(nullValue()));
+              assertThat(serverSentEventService.getConnections("/sseauth").size(), equalTo(0));
+              
+              Application.getInstance(ServerSentEventService.class).send("/sseauth", data);
+              
+              //then
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(EventData.data, not(equalTo(data))));
+              
+              serverSentEventService.close("/sseauth");
+              
+              //then
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.CLOSED)));
+              
+              //then
+              assertThat(serverSentEventService.getConnections("/sseauth"), not(nullValue()));
+              assertThat(serverSentEventService.getConnections("/sseauth").size(), equalTo(0));
+        } 
     }
 }
