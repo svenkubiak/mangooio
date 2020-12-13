@@ -33,8 +33,6 @@ public final class Minification {
     private static final int HUNDRED_PERCENT = 100;
     private static final String JS = "js";
     private static final String CSS = "css";
-    private static final String LESS = "less";
-    private static final String SASS = "sass";
     private static final String MIN = "min";
     private static String basePath;
     private static String assetPath;
@@ -76,10 +74,10 @@ public final class Minification {
             config = new Config(Mode.DEV.toString());
         }
 
-        if (config.isApplicationMinifyCSS() && absolutePath.endsWith(JS)) {
-            minifyJS(new File(absolutePath)); //NOSONAR
-        } else if (config.isApplicationMinifyJS() && absolutePath.endsWith(CSS)) {
+        if (config.isApplicationMinifyCSS() && absolutePath.endsWith(CSS)) {
             minifyCSS(new File(absolutePath)); //NOSONAR
+        } else if (config.isApplicationMinifyJS() && absolutePath.endsWith(JS)) {
+            minifyJS(new File(absolutePath)); //NOSONAR
         }
     }
 
