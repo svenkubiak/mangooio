@@ -139,6 +139,7 @@ public class Bootstrap implements MangooBootstrap {
                 On.options().to("/").respondeWith("index"),
                 On.get().to("/reverse").respondeWith("reverse"),
                 On.get().to("/location").respondeWith("location"),
+                On.get().to("/location/controller").respondeWith("controller"),
                 On.get().to("/prettytime").respondeWith("prettytime"),
                 On.get().to("/location/{myloca}").respondeWith("location"),
                 On.get().to("/redirect").respondeWith("redirect"),

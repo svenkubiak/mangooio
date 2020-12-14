@@ -36,6 +36,15 @@ public class LocationMethod implements TemplateMethodModelEx {
     }
     
     private boolean matches(List arguments) {
-        return this.controller.equalsIgnoreCase(((SimpleScalar) arguments.get(0)).getAsString().toLowerCase(Locale.ENGLISH));
+        String route = ((SimpleScalar) arguments.get(0)).getAsString().toLowerCase(Locale.ENGLISH);
+        boolean equals = this.controller.equalsIgnoreCase(route);
+        
+        if (equals) {
+            return true;
+        } else if (!route.contains(":")){
+            return route.equalsIgnoreCase(StringUtils.substringBefore(this.controller, ":"));
+        }
+        
+        return false;
     }
 }

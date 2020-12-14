@@ -132,6 +132,10 @@ public class ApplicationController {
         return Response.withOk().andContent("myloc", myloc);
     }
     
+    public Response controller() {
+        return Response.withOk().andTemplate("/ApplicationController/location.ftl");
+    }
+    
     public Response freemarker() {
         return Response.withOk();
     }

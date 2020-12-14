@@ -99,7 +99,19 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("we are at location"));
+        assertThat(response.getContent(), equalTo("we are at locationwe are at application controller"));
+    }
+    
+    @Test
+    public void testLocationControllerOnly() {
+        //given
+        final TestResponse response = TestRequest.get("/location/controller").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("we are at application controller"));
     }
     
     @Test
@@ -111,7 +123,7 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("we are at location"));
+        assertThat(response.getContent(), equalTo("we are at locationwe are at application controller"));
     }
     
     @Test

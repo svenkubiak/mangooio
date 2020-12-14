@@ -1,1 +1,1 @@
-<#if location("ApplicationController:location")>we are at location</#if><#if location("ApplicationController:mylocation")>we are at mylocation</#if>
+<#if location("ApplicationController:location")>we are at location</#if><#if location("ApplicationController:mylocation")>we are at mylocation</#if><#if location("ApplicationController")>we are at application controller</#if>
