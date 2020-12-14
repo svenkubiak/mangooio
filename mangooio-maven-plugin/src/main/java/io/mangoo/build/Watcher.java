@@ -41,8 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.enums.Suffix;
-
 /**
  * This is a refactored version of
  * WatchAndRestartMachine.java from the Ninja Web Framework
@@ -56,8 +54,6 @@ import io.mangoo.enums.Suffix;
 @SuppressWarnings({"unchecked"})
 public class Watcher implements Runnable {
     private static final Logger LOG = LogManager.getLogger(Watcher.class);
-    private static final String PATTERN = "files";
-    private static final String SEPARATOR = System.getProperty("file.separator");
     private final Trigger trigger;
     private final Set<String> includes;
     private final Set<String> excludes;
@@ -173,12 +169,6 @@ public class Watcher implements Runnable {
     @SuppressWarnings("all")
     public void handleNewOrModifiedFile(Path path) {
         String absolutePath = path.toFile().getAbsolutePath();
-        if (isPreprocess(absolutePath)){
-            String [] tempPath = absolutePath.split(PATTERN);
-            Minification.minify(tempPath[0] + "files" + SEPARATOR + "assets" + SEPARATOR + "stylesheet" + SEPARATOR + StringUtils.substringAfterLast(absolutePath, "/")
-                .replace(Suffix.SASS.toString(), Suffix.CSS.toString())
-                .replace(Suffix.LESS.toString(), Suffix.CSS.toString()));
-        }
         
         if (isAsset(absolutePath)) {
             Minification.minify(absolutePath);
@@ -196,14 +186,6 @@ public class Watcher implements Runnable {
         }
 
         return !absolutePath.contains("min") && ( absolutePath.endsWith("css") || absolutePath.endsWith("js") );
-    }
-    
-    private boolean isPreprocess(String absolutePath) {
-        if (StringUtils.isBlank(absolutePath)) {
-            return false;
-        }
-
-        return absolutePath.endsWith("sass") || absolutePath.endsWith("less");
     }
 
     public enum RuleType {
