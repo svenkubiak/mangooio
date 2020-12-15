@@ -486,6 +486,7 @@ public final class Application {
             DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
+                    .withMaxEntitySize(requestRoute.getMaxEntitySize())
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                     .withAuthentication(requestRoute.hasAuthentication())
                     .withAuthorization(requestRoute.hasAuthorization())

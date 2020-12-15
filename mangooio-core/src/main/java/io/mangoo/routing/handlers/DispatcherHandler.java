@@ -54,6 +54,7 @@ public class DispatcherHandler implements HttpHandler {
     private String password;
     private int limit;
     private int methodParametersCount;
+    private long maxEntitySize;
     private boolean requestFilter;
     private boolean blocking;
     private boolean authentication;
@@ -111,6 +112,11 @@ public class DispatcherHandler implements HttpHandler {
         this.authentication = authentication;
         return this;
     }
+
+    public DispatcherHandler withMaxEntitySize(long maxEntitySize) {
+        this.maxEntitySize = maxEntitySize;
+        return this;
+    }
     
     public DispatcherHandler withAuthorization(boolean authorization) {
         this.authorization = authorization;
@@ -124,6 +130,10 @@ public class DispatcherHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
+        if (this.maxEntitySize > 0) {
+            exchange.setMaxEntitySize(maxEntitySize);
+        }
+        
         if ( (RequestUtils.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
