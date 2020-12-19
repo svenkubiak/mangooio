@@ -619,7 +619,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.validateTrue(true, NUMERIC);
+        validator.expectTrue(true, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -633,7 +633,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.validateTrue(false, NUMERIC);
+        validator.expectTrue(false, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -647,7 +647,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.validateFalse(false, NUMERIC);
+        validator.expectFalse(false, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -661,7 +661,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.validateFalse(true, NUMERIC);
+        validator.expectFalse(true, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -676,7 +676,7 @@ public class ValidatorTest {
         // when
         String foo = "kfkfkf";
         validator.addValue(NUMERIC, "2342");
-        validator.validateNotNull(foo, NUMERIC);
+        validator.expectNotNull(foo, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -691,7 +691,7 @@ public class ValidatorTest {
         // when
         String foo = null;
         validator.addValue(NUMERIC, "2342");
-        validator.validateNotNull(foo, NUMERIC);
+        validator.expectNotNull(foo, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -706,7 +706,7 @@ public class ValidatorTest {
         // when
         String foo = null;
         validator.addValue(NUMERIC, "2342");
-        validator.validateNull(foo, NUMERIC);
+        validator.expectNull(foo, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -721,7 +721,7 @@ public class ValidatorTest {
         // when
         String foo = "fdfdsfd";
         validator.addValue(NUMERIC, "2342");
-        validator.validateNull(foo, NUMERIC);
+        validator.expectNull(foo, NUMERIC);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
