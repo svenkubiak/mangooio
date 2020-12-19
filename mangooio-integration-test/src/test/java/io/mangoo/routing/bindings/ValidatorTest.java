@@ -114,7 +114,7 @@ public class ValidatorTest {
         validator.expectEmail(EMAIL, CUSTOM_ERROR_MESSAGE);
         validator.expectMatch(MATCH, MATCH2, CUSTOM_ERROR_MESSAGE);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2, CUSTOM_ERROR_MESSAGE);
-        validator.expectMax(MAX, 1, CUSTOM_ERROR_MESSAGE);
+        validator.expectMaxValue(MAX, 1, CUSTOM_ERROR_MESSAGE);
         validator.expectMinValue(MIN, 42, CUSTOM_ERROR_MESSAGE);
         validator.expectValue(REQUIRED, CUSTOM_ERROR_MESSAGE);
         validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);

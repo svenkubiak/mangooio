@@ -230,10 +230,14 @@ public class Validator implements Serializable {
     /**
      * Validates a given field to have a maximum length
      *
+     * @deprecated
+     * Use {@link #expectMaxLength(String, double, String)} or {@link #expectMaxValue(String, double, String)} instead
+     * 
      * @param name The field to check
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public void expectMax(String name, double maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
