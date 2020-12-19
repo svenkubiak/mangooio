@@ -101,7 +101,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>5.3.2</version>
+					<version>6.0.3</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -447,7 +447,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.95</version>
+				<version>4.8.97</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
