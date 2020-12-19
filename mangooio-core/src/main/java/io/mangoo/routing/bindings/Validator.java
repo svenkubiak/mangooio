@@ -79,20 +79,28 @@ public class Validator implements Serializable {
     /**
      * Validates a given field to have a minimum length
      * 
+     * @deprecated
+     * Use {@link #expectMinValue(String, double)} or {@link #expectMinLength(String, double)} instead
+     * 
      * @param name The field to check
      * @param minLength The minimum length
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public void expectMin(String name, double minLength) {
         expectMin(name, minLength, messages.get(Validation.MIN_KEY.name(), name, minLength));
     }
 
     /**
      * Validates a given field to have a minimum length
+     * 
+     * @deprecated
+     * Use {@link #expectMinValue(String, double, String)} or {@link #expectMinLength(String, double, String)} instead
      *
      * @param name The field to check
      * @param minLength The minimum length
      * @param message A custom error message instead of the default one
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public void expectMin(String name, double minLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
@@ -106,15 +114,93 @@ public class Validator implements Serializable {
             }
         }
     }
+    
+    /**
+     * Validates a given field to have a minimum value
+     * 
+     * @param name The field to check
+     * @param minValue The minimum value
+     */
+    public void expectMinValue(String name, double minValue) {
+        expectMinValue(name, minValue, messages.get(Validation.MIN_KEY.name(), name, minValue));
+    }
+
+    /**
+     * Validates a given field to have a minimum value
+     * 
+     * @param name The field to check
+     * @param minValue The minimum value
+     * @param message A custom error message instead of the default one
+     */
+    public void expectMinValue(String name, double minValue, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (StringUtils.isNumeric(value)) {
+            if (Double.parseDouble(value) < minValue) {
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_KEY.name(), name, minValue)));
+            }
+        } else {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_KEY.name(), name, minValue)));
+        }
+    }
+    
+    /**
+     * Validates a given field to have a minimum length
+     * 
+     * @param name The field to check
+     * @param minLength The minimum length
+     */
+    public void expectMinLength(String name, double minLength) {
+        expectMinLength(name, minLength, messages.get(Validation.MIN_KEY.name(), name, minLength));
+    }
+
+    /**
+     * Validates a given field to have a minimum length
+     * 
+     * @param name The field to check
+     * @param minLength The minimum length
+     * @param message A custom error message instead of the default one
+     */
+    public void expectMinLength(String name, double minLength, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (value.length() < minLength) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_KEY.name(), name, minLength)));
+        }
+    }
 
     /**
      * Validates a given field to have a maximum length
+     * 
+     * @deprecated
+     * Use {@link #expectMaxLength(String, double)} or {@link #expectMaxValue(String, double)} instead
      *
      * @param maxLength The maximum length
      * @param name The field to check
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public void expectMax(String name, double maxLength) {
         expectMax(name, maxLength, messages.get(Validation.MAX_KEY.name(), name, maxLength));
+    }
+    
+    /**
+     * Validates a given field to have a maximum value
+     * 
+     * @param maxValue The maximum value
+     * @param name The field to check
+     */
+    public void expectMaxValue(String name, double maxValue) {
+        expectMaxValue(name, maxValue, messages.get(Validation.MAX_KEY.name(), name, maxValue));
+    }
+    
+    /**
+     * Validates a given field to have a maximum length
+     * 
+     * @param maxLength The maximum length
+     * @param name The field to check
+     */
+    public void expectMaxLength(String name, double maxLength) {
+        expectMaxLength(name, maxLength, messages.get(Validation.MAX_KEY.name(), name, maxLength));
     }
     
     /**
@@ -159,6 +245,40 @@ public class Validator implements Serializable {
             if (value.length() > maxLength) {
                 addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.name(), name, maxLength)));
             }
+        }
+    }
+    
+    /**
+     * Validates a given field to have a maximum length
+     *
+     * @param name The field to check
+     * @param maxLength The maximum length
+     * @param message A custom error message instead of the default one
+     */
+    public void expectMaxLength(String name, double maxLength, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (value.length() > maxLength) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.name(), name, maxLength)));
+        }
+    }
+    
+    /**
+     * Validates a given field to have a maximum value
+     *
+     * @param name The field to check
+     * @param maxValue The maximum value
+     * @param message A custom error message instead of the default one
+     */
+    public void expectMaxValue(String name, double maxValue, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (StringUtils.isNumeric(value)) {
+            if (Double.parseDouble(value) > maxValue) {
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.name(), name, maxValue)));
+            }
+        } else {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.name(), name, maxValue)));
         }
     }
 
@@ -333,23 +453,90 @@ public class Validator implements Serializable {
 
     /**
      * Validates a field to be in a certain range
+     * 
+     * @deprecated
+     * Use {@link #expectRangeLength(String, int, int)} or {@link #expectRangeValue(String, int, int)} instead
      *
      * @param name The field to check
      * @param minLength The minimum length
      * @param maxLength The maximum length
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)    
     public void expectRange(String name, int minLength, int maxLength) {
         expectRange(name, minLength, maxLength, messages.get(Validation.RANGE_KEY.name(), name, minLength, maxLength));
     }
     
     /**
+     * Validates a field to be in a certain range length
+     *
+     * @param name The field to check
+     * @param minLength The minimum length
+     * @param maxLength The maximum length
+     */
+    public void expectRangeLength(String name, int minLength, int maxLength) {
+        expectRangeLength(name, minLength, maxLength, messages.get(Validation.RANGE_KEY.name(), name, minLength, maxLength));
+    }
+    
+    /**
+     * Validates a field to be in a certain range value
+     *
+     * @param name The field to check
+     * @param minValue The minimum value
+     * @param maxValue The maximum value
+     */
+    public void expectRangeValue(String name, int minValue, int maxValue) {
+        expectRangeValue(name, minValue, maxValue, messages.get(Validation.RANGE_KEY.name(), name, minValue, maxValue));
+    } 
+    
+    /**
+     * Validates a field to be in a certain range value
+     * 
+     * @param name The field to check
+     * @param minValue The minimum value
+     * @param maxValue The maximum value
+     * @param message A custom error message instead of the default one
+     */
+    public void expectRangeValue(String name, int minValue, int maxValue, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (StringUtils.isNumeric(value)) {
+            double doubleValue = Double.parseDouble(value);
+            if (doubleValue < minValue || doubleValue > maxValue) {
+                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_KEY.name(), name, minValue, maxValue)));
+            }
+        } else {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_KEY.name(), name, minValue, maxValue)));
+        }
+    }
+    
+    /**
+     * Validates a field to be in a certain range length
+     * 
+     * @param name The field to check
+     * @param minLength The minimum length
+     * @param maxLength The maximum length
+     * @param message A custom error message instead of the default one
+     */
+    public void expectRangeLength(String name, int minLength, int maxLength, String message) {
+        String value = Optional.ofNullable(get(name)).orElse("");
+
+        if (value.length() < minLength || value.length() > maxLength) {
+            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_KEY.name(), name, minLength, maxLength)));
+        }
+    }
+    
+    /**
      * Validates a field to be in a certain range
+     * 
+     * @deprecated
+     * Use {@link #expectRangeLength(String, int, int, String)} or {@link #expectRangeValue(String, int, int, String)} instead
      *
      * @param name The field to check
      * @param minLength The minimum length
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)    
     public void expectRange(String name, int minLength, int maxLength, String message) {
         String value = Optional.ofNullable(get(name)).orElse("");
 
@@ -454,7 +641,7 @@ public class Validator implements Serializable {
      * Validates a given value to be false
      * 
      * @deprecated
-     * Use {@link #expectFalse(String, boolean, String)} instead.
+     * Use {@link #expectFalse(String, boolean, String)} instead
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -472,7 +659,7 @@ public class Validator implements Serializable {
      * Validates a given value to be false
      * 
      * @deprecated
-     * Use {@link #expectFalse(String, boolean)} instead.
+     * Use {@link #expectFalse(String, boolean)} instead
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -486,7 +673,7 @@ public class Validator implements Serializable {
      * Validates a given object to be not null
      * 
      * @deprecated
-     * Use {@link #expectNotNull(String, Object, String)} instead.
+     * Use {@link #expectNotNull(String, Object, String)} instead
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -503,7 +690,7 @@ public class Validator implements Serializable {
      * Validates a given object to be not null
      * 
      * @deprecated
-     * Use {@link #expectNotNull(String, Object)} instead.
+     * Use {@link #expectNotNull(String, Object)} instead
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -517,7 +704,7 @@ public class Validator implements Serializable {
      * Validates a given object to be null
      * 
      * @deprecated
-     * Use {@link #expectNull(String, Object, String)} instead.
+     * Use {@link #expectNull(String, Object, String)} instead
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -534,7 +721,7 @@ public class Validator implements Serializable {
      * Validates a given object to be null
      * 
      * @deprecated
-     * Use {@link #expectNull(String, Object)} instead.
+     * Use {@link #expectNull(String, Object)} instead
      *
      * @param object The object to check
      * @param name The name of the field to display the error message

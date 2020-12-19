@@ -59,14 +59,14 @@ public class ValidatorTest {
         validator.addValue(NUMERIC, "");
         validator.expectUrl(URL);
         validator.expectRegex(REGEX, PATTERN);
-        validator.expectRange(RANGE, 23, 42);
+        validator.expectRangeValue(RANGE, 23, 42);
         validator.expectIpv6(IPV6);
         validator.expectIpv4(IPV4);
         validator.expectEmail(EMAIL);
         validator.expectMatch(MATCH, MATCH2);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2);
-        validator.expectMax(MAX, 1);
-        validator.expectMin(MIN, 42);
+        validator.expectMaxValue(MAX, 1);
+        validator.expectMinValue(MIN, 42);
         validator.expectValue(REQUIRED);
         validator.expectUrl(URL);
         validator.expectNumeric(NUMERIC);
@@ -108,14 +108,14 @@ public class ValidatorTest {
         validator.addValue(NUMERIC, "");
         validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
         validator.expectValue(REGEX, CUSTOM_ERROR_MESSAGE);
-        validator.expectRange(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
+        validator.expectRangeValue(RANGE, 23, 42, CUSTOM_ERROR_MESSAGE);
         validator.expectIpv6(IPV6, CUSTOM_ERROR_MESSAGE);
         validator.expectIpv4(IPV4, CUSTOM_ERROR_MESSAGE);
         validator.expectEmail(EMAIL, CUSTOM_ERROR_MESSAGE);
         validator.expectMatch(MATCH, MATCH2, CUSTOM_ERROR_MESSAGE);
         validator.expectExactMatch(EXACT_MATCH, EXACT_MATCH2, CUSTOM_ERROR_MESSAGE);
         validator.expectMax(MAX, 1, CUSTOM_ERROR_MESSAGE);
-        validator.expectMin(MIN, 42, CUSTOM_ERROR_MESSAGE);
+        validator.expectMinValue(MIN, 42, CUSTOM_ERROR_MESSAGE);
         validator.expectValue(REQUIRED, CUSTOM_ERROR_MESSAGE);
         validator.expectUrl(URL, CUSTOM_ERROR_MESSAGE);
         validator.expectNumeric(NUMERIC, CUSTOM_ERROR_MESSAGE);
@@ -169,7 +169,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MIN, "abcdef");
-        validator.expectMin(MIN, 4);
+        validator.expectMinLength(MIN, 4);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -183,7 +183,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MIN, "abcdef");
-        validator.expectMin(MIN, 8);
+        validator.expectMinLength(MIN, 8);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -197,7 +197,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MIN, "6");
-        validator.expectMin(MIN, 4);
+        validator.expectMinValue(MIN, 4);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -211,7 +211,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MIN, "4");
-        validator.expectMin(MIN, 8);
+        validator.expectMinValue(MIN, 8);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -225,7 +225,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MAX, "abcdef");
-        validator.expectMax(MAX, 10);
+        validator.expectMaxLength(MAX, 10);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -239,7 +239,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MAX, "abcdef");
-        validator.expectMax(MAX, 3);
+        validator.expectMaxLength(MAX, 3);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -253,7 +253,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MAX, "3");
-        validator.expectMax(MAX, 4);
+        validator.expectMaxValue(MAX, 4);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -267,7 +267,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(MAX, "4");
-        validator.expectMax(MAX, 2);
+        validator.expectMaxValue(MAX, 2);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -479,7 +479,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(RANGE, "abcdefg");
-        validator.expectRange(RANGE, 4, 10);
+        validator.expectRangeLength(RANGE, 4, 10);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -493,7 +493,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(RANGE, "abcdef");
-        validator.expectRange(RANGE, 8, 12);
+        validator.expectRangeLength(RANGE, 8, 12);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -507,7 +507,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(RANGE, "6");
-        validator.expectRange(RANGE, 4, 10);
+        validator.expectRangeValue(RANGE, 4, 10);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -521,7 +521,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(RANGE, "4");
-        validator.expectRange(RANGE, 8, 12);
+        validator.expectRangeValue(RANGE, 8, 12);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));

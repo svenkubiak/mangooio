@@ -129,7 +129,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.expectMin(FOO, 3);
+        form.expectMinLength(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -142,7 +142,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "ba");
-        form.expectMin(FOO, 4);
+        form.expectMinLength(FOO, 4);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -155,7 +155,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.expectMax(FOO, 3);
+        form.expectMaxLength(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -168,7 +168,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "bars");
-        form.expectMax(FOO, 3);
+        form.expectMaxLength(FOO, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
@@ -291,7 +291,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, BAR);
-        form.expectRange(FOO, 1, 3);
+        form.expectRangeLength(FOO, 1, 3);
 
         //then
         assertThat(form.hasErrors(), equalTo(false));
@@ -304,7 +304,7 @@ public class FormTest {
         
         //when
         form.addValue(FOO, "barddddd");
-        form.expectRange(FOO, 1, 4);
+        form.expectRangeLength(FOO, 1, 4);
 
         //then
         assertThat(form.hasErrors(), equalTo(true));
