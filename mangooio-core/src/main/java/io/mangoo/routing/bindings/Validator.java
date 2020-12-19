@@ -423,7 +423,7 @@ public class Validator implements Serializable {
      * Validates a given value to be true
      * 
      * @deprecated
-     * Use {@link #expectTrue(boolean, String, String)} instead
+     * Use {@link #expectTrue(String, boolean, String)} instead
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -440,7 +440,7 @@ public class Validator implements Serializable {
      * Validates a given value to be true
      * 
      * @deprecated
-     * Use {@link #expectTrue(boolean, String)} instead
+     * Use {@link #expectTrue(String, boolean)} instead
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -454,7 +454,7 @@ public class Validator implements Serializable {
      * Validates a given value to be false
      * 
      * @deprecated
-     * Use {@link #expectFalse(boolean, String, String)} instead.
+     * Use {@link #expectFalse(String, boolean, String)} instead.
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -472,7 +472,7 @@ public class Validator implements Serializable {
      * Validates a given value to be false
      * 
      * @deprecated
-     * Use {@link #expectFalse(boolean, String)} instead.
+     * Use {@link #expectFalse(String, boolean)} instead.
      *
      * @param value The value to check
      * @param name The name of the field to display the error message
@@ -486,7 +486,7 @@ public class Validator implements Serializable {
      * Validates a given object to be not null
      * 
      * @deprecated
-     * Use {@link #expectNotNull(Object, String, String)} instead.
+     * Use {@link #expectNotNull(String, Object, String)} instead.
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -503,7 +503,7 @@ public class Validator implements Serializable {
      * Validates a given object to be not null
      * 
      * @deprecated
-     * Use {@link #expectNotNull(Object, String)} instead.
+     * Use {@link #expectNotNull(String, Object)} instead.
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -517,7 +517,7 @@ public class Validator implements Serializable {
      * Validates a given object to be null
      * 
      * @deprecated
-     * Use {@link #expectNull(Object, String, String)} instead.
+     * Use {@link #expectNull(String, Object, String)} instead.
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -534,7 +534,7 @@ public class Validator implements Serializable {
      * Validates a given object to be null
      * 
      * @deprecated
-     * Use {@link #expectNull(Object, String)} instead.
+     * Use {@link #expectNull(String, Object)} instead.
      *
      * @param object The object to check
      * @param name The name of the field to display the error message
@@ -547,11 +547,11 @@ public class Validator implements Serializable {
     /**
      * Validates a given value to be true
      *
-     * @param value The value to check
      * @param name The name of the field to display the error message
+     * @param value The value to check
      * @param message A custom error message instead of the default one
      */
-    public void expectTrue(boolean value, String name, String message) {
+    public void expectTrue(String name, boolean value, String message) {
         if (!value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.TRUE_KEY.name(), name)));
         }
@@ -560,22 +560,22 @@ public class Validator implements Serializable {
     /**
      * Validates a given value to be true
      *
-     * @param value The value to check
      * @param name The name of the field to display the error message
+     * @param value The value to check
      */
-    public void expectTrue(boolean value, String name) {
-        expectTrue(value, name, messages.get(Validation.TRUE_KEY.name(), name));
+    public void expectTrue(String name, boolean value) {
+        expectTrue(name, value, messages.get(Validation.TRUE_KEY.name(), name));
     }
     
     /**
      * Validates a given value to be false
      *
-     * @param value The value to check
      * @param name The name of the field to display the error message
+     * @param value The value to check
      * @param message A custom error message instead of the default one
      */
     @SuppressWarnings("all")
-    public void expectFalse(boolean value, String name, String message) {
+    public void expectFalse(String name, boolean value, String message) {
         if (value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.name(), name)));
         }
@@ -584,21 +584,21 @@ public class Validator implements Serializable {
     /**
      * Validates a given value to be false
      *
-     * @param value The value to check
      * @param name The name of the field to display the error message
+     * @param value The value to check
      */
-    public void expectFalse(boolean value, String name) {
-        expectFalse(value, name, messages.get(Validation.FALSE_KEY.name(), name));
+    public void expectFalse(String name, boolean value) {
+        expectFalse(name, value, messages.get(Validation.FALSE_KEY.name(), name));
     }
     
     /**
      * Validates a given object to be not null
      *
-     * @param object The object to check
      * @param name The name of the field to display the error message
+     * @param object The object to check
      * @param message A custom error message instead of the default one
      */
-    public void expectNotNull(Object object, String name, String message) {
+    public void expectNotNull(String name, Object object, String message) {
         if (object == null) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NOTNULL_KEY.name(), name)));
         }
@@ -607,21 +607,21 @@ public class Validator implements Serializable {
     /**
      * Validates a given object to be not null
      *
-     * @param object The object to check
      * @param name The name of the field to display the error message
+     * @param object The object to check
      */
-    public void expectNotNull(Object object, String name) {
-        expectNotNull(object, name, messages.get(Validation.NOTNULL_KEY.name(), name));
+    public void expectNotNull(String name, Object object) {
+        expectNotNull(name, object, messages.get(Validation.NOTNULL_KEY.name(), name));
     }
     
     /**
      * Validates a given object to be null
      *
-     * @param object The object to check
      * @param name The name of the field to display the error message
+     * @param object The object to check
      * @param message A custom error message instead of the default one 
      */
-    public void expectNull(Object object, String name, String message) {
+    public void expectNull(String name, Object object, String message) {
         if (object != null) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NULL_KEY.name(), name)));
         }
@@ -630,13 +630,12 @@ public class Validator implements Serializable {
     /**
      * Validates a given object to be null
      *
-     * @param object The object to check
      * @param name The name of the field to display the error message
+     * @param object The object to check
      */
-    public void expectNull(Object object, String name) {
-        validateNull(object, name, messages.get(Validation.NULL_KEY.name(), name));
+    public void expectNull(String name, Object object) {
+        expectNull(name, object, messages.get(Validation.NULL_KEY.name(), name));
     }
-   
     
     /**
      * Checks if any field in the validation has an error

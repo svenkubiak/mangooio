@@ -619,7 +619,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.expectTrue(true, NUMERIC);
+        validator.expectTrue(NUMERIC, true);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -633,7 +633,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.expectTrue(false, NUMERIC);
+        validator.expectTrue(NUMERIC, false);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -647,7 +647,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.expectFalse(false, NUMERIC);
+        validator.expectFalse(NUMERIC, false);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -661,7 +661,7 @@ public class ValidatorTest {
 
         // when
         validator.addValue(NUMERIC, "2342");
-        validator.expectFalse(true, NUMERIC);
+        validator.expectFalse(NUMERIC, true);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -691,7 +691,7 @@ public class ValidatorTest {
         // when
         String foo = null;
         validator.addValue(NUMERIC, "2342");
-        validator.expectNotNull(foo, NUMERIC);
+        validator.expectNotNull(NUMERIC, foo);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
@@ -706,7 +706,7 @@ public class ValidatorTest {
         // when
         String foo = null;
         validator.addValue(NUMERIC, "2342");
-        validator.expectNull(foo, NUMERIC);
+        validator.expectNull(NUMERIC, foo);
 
         // then
         assertThat(validator.hasErrors(), equalTo(false));
@@ -721,7 +721,7 @@ public class ValidatorTest {
         // when
         String foo = "fdfdsfd";
         validator.addValue(NUMERIC, "2342");
-        validator.expectNull(foo, NUMERIC);
+        validator.expectNull(NUMERIC, foo);
 
         // then
         assertThat(validator.hasErrors(), equalTo(true));
