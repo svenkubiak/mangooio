@@ -26,8 +26,8 @@ import io.undertow.util.FileUtils;
  */
 public class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
-    private static final String TEMP = System.getProperty("java.io.tmpdir") + "/stylesheet/";
-    private static final String ASSET_PATH = "assets/";
+    private static final String TEMP = System.getProperty("java.io.tmpdir") + File.separator + "stylesheet" + File.separator;
+    private static final String ASSET_PATH = "assets" + File.separator;
     
     @BeforeEach
     public void init() {
@@ -61,7 +61,7 @@ public class MinificationTest {
         Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".css"));
         Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
         Minification.minify(inputFile.toAbsolutePath().toString());
-        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + "/" + uuid + ".min.css");
+        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + File.separator + uuid + ".min.css");
         
         //then
         assertThat(Files.readString(outputFile), equalTo(CSS));

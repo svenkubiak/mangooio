@@ -31,7 +31,9 @@ public final class Minification {
     private static final String JS = "js";
     private static final String CSS = "css";
     private static final String MIN = "min";
-    private static String assetPath = "src/main/resources/files/assets/";
+    private static String assetPath = "src" + File.separator
+                                       + "main" + File.separator + "resources" 
+                                       + File.separator + "files" + File.separator + "assets" + File.separator;
     private static String basePath;
 
     private Minification() {
@@ -59,7 +61,8 @@ public final class Minification {
             return;
         }
         
-        if (!absolutePath.contains("/stylesheet/") && !absolutePath.contains("/javascript/")) {
+        if (!absolutePath.contains(File.separator + "stylesheet" + File.separator)
+                && !absolutePath.contains(File.separator + "javascript" + File.separator)) {
             return;
         }
 
