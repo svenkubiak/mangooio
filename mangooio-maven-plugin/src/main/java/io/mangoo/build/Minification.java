@@ -42,6 +42,12 @@ public final class Minification {
             basePath = path;
         }
     }
+    
+    public static void setAssetPath(String path) {
+        synchronized (Minification.class) {
+            assetPath = path;
+        }
+    }
 
     /**
      * Minifies a JS or CSS file to a corresponding JS or CSS file

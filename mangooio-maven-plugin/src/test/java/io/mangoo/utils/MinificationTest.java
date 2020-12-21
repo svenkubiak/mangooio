@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import io.mangoo.build.Minification;
 import io.mangoo.enums.Default;
+import io.undertow.util.FileUtils;
 
 /**
  * 
@@ -25,12 +26,13 @@ import io.mangoo.enums.Default;
  */
 public class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
-    private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
+    private static final String TEMP = System.getProperty("java.io.tmpdir") + "/stylesheet/";
     private static final String ASSET_PATH = "assets/";
     
     @BeforeEach
     public void init() {
         Minification.setBasePath(TEMP);
+        Minification.setAssetPath(ASSET_PATH);
         
         File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());
         File dir2 = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString());
@@ -52,6 +54,10 @@ public class MinificationTest {
         buffer.append("}");
         
         //when
+        if (!Files.exists(Paths.get(TEMP))) {
+            Files.createDirectory(Paths.get(TEMP));   
+        }
+        
         Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".css"));
         Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
         Minification.minify(inputFile.toAbsolutePath().toString());
@@ -62,5 +68,6 @@ public class MinificationTest {
         assertThat(Files.size(outputFile), lessThan(Files.size(inputFile)));
         assertThat(Files.deleteIfExists(inputFile), equalTo(true));
         assertThat(Files.deleteIfExists(outputFile), equalTo(true));
+        FileUtils.deleteRecursive(Paths.get(TEMP));
     }
 }
