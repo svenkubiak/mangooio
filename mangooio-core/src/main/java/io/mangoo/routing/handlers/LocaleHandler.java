@@ -36,21 +36,21 @@ public class LocaleHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Locale locale = Locale.forLanguageTag(config.getApplicationLanguage());
-        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-
+        
         Cookie i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
-        if (i18nCookie == null) {
-            final HeaderValues headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
+        if (i18nCookie != null) {
+            locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
+        } else {
+            HeaderValues headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {
                     locale = LocaleUtils.getLocaleFromString(acceptLanguage);
                 }
             }
-        } else {
-            locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
         }
 
+        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         attachment.getMessages().reload(locale);
         attachment.withLocale(locale);
         
