@@ -10,10 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
 import io.mangoo.enums.Suffix;
 import io.mangoo.utils.MangooUtils;
 import net.jawr.web.minification.CSSMinifier;
@@ -34,9 +31,8 @@ public final class Minification {
     private static final String JS = "js";
     private static final String CSS = "css";
     private static final String MIN = "min";
+    private static String assetPath = "src/main/resources/files/assets/";
     private static String basePath;
-    private static String assetPath;
-    private static volatile Config config; //NOSONAR
 
     private Minification() {
     }
@@ -44,18 +40,6 @@ public final class Minification {
     public static void setBasePath(String path) {
         synchronized (Minification.class) {
             basePath = path;
-        }
-    }
-    
-    public static void setAssetPath(String path) {
-        synchronized (Minification.class) {
-            assetPath = path;
-        }
-    }
-
-    public static void setConfig(Config configuration) {
-        synchronized (Config.class) {
-            config = configuration;
         }
     }
 
@@ -68,15 +52,14 @@ public final class Minification {
         if (absolutePath == null || absolutePath.contains(MIN)) {
             return;
         }
-
-        if (config == null) {
-            System.setProperty(Key.APPLICATION_CONFIG.toString(), basePath + Default.CONFIG_PATH.toString());
-            config = new Config(Mode.DEV.toString());
+        
+        if (!absolutePath.contains("/stylesheet/") && !absolutePath.contains("/javascript/")) {
+            return;
         }
 
-        if (config.isApplicationMinifyCSS() && absolutePath.endsWith(CSS)) {
+        if (absolutePath.endsWith(CSS)) {
             minifyCSS(new File(absolutePath)); //NOSONAR
-        } else if (config.isApplicationMinifyJS() && absolutePath.endsWith(JS)) {
+        } else if (absolutePath.endsWith(JS)) {
             minifyJS(new File(absolutePath)); //NOSONAR
         }
     }
@@ -100,10 +83,6 @@ public final class Minification {
             MangooUtils.closeQuietly(fileInputStream);
             MangooUtils.closeQuietly(fileOutputStream);
         }
-    }
-
-    private static void logMinification(File inputFile, File outputFile) {
-        LOG.info(String.format("Minified asset %s (%db) -> %s (%db) [compressed to %d%% of original size]", inputFile.getName(), inputFile.length(), outputFile.getName(), outputFile.length(), ratioOfSize(inputFile, outputFile)));
     }
 
     private static void minifyCSS(File inputFile) {
@@ -149,6 +128,10 @@ public final class Minification {
         }
 
         return new File(basePath + assetPath + subpath); //NOSONAR
+    }
+
+    private static void logMinification(File inputFile, File outputFile) {
+        LOG.info(String.format("Minified asset %s (%db) -> %s (%db) [compressed to %d%% of original size]", inputFile.getName(), inputFile.length(), outputFile.getName(), outputFile.length(), ratioOfSize(inputFile, outputFile)));
     }
 
     private static long ratioOfSize(File inputFile, File outputFile) {

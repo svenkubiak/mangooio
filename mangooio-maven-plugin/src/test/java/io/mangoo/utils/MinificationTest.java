@@ -3,7 +3,6 @@ package io.mangoo.utils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +14,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import io.mangoo.build.Minification;
-import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 
 /**
@@ -30,15 +27,9 @@ public class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
     private static final String ASSET_PATH = "assets/";
-    private Config config;
     
     @BeforeEach
     public void init() {
-        config = Mockito.mock(Config.class);
-        when(config.isApplicationMinifyCSS()).thenReturn(true);
-        when(config.isApplicationMinifyJS()).thenReturn(true);
-        Minification.setConfig(config);
-        Minification.setAssetPath(ASSET_PATH);
         Minification.setBasePath(TEMP);
         
         File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());

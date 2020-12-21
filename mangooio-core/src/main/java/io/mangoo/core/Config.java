@@ -517,6 +517,7 @@ public class Config {
     /**
      * @return application.minify.js or default value if undefined
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public boolean isApplicationMinifyJS() {
         return getBoolean(Key.APPLICATION_MINIFY_JS, Default.APPLICATION_MINIFY_JS.toBoolean());
     }
@@ -524,6 +525,7 @@ public class Config {
     /**
      * @return application.minify.css or default value if undefined
      */
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public boolean isApplicationMinifyCSS() {
         return getBoolean(Key.APPLICATION_MINIFY_CSS, Default.APPLICATION_MINIFY_CSS.toBoolean());
     }

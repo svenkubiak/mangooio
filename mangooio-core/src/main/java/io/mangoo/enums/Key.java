@@ -16,7 +16,9 @@ public enum Key {
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_LANGUAGE("application.language"),
+    @Deprecated(since = "6.7.0", forRemoval = true)
     APPLICATION_MINIFY_CSS("application.minify.css"),
+    @Deprecated(since = "6.7.0", forRemoval = true)
     APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MODE("application.mode"),
     APPLICATION_NAME("application.name"),

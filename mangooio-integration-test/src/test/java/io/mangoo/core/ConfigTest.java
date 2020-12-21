@@ -592,22 +592,6 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testIsApplicationMinifyJS() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String minify = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.minify.js", minify);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isApplicationMinifyJS(), equalTo(Boolean.valueOf(minify)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
     public void testValueFromSystemPropertyInProfile() {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -658,52 +642,6 @@ public class ConfigTest {
         // then
         assertThat(value, equalTo("admin"));
     }
-    
-    @Test
-    public void testIsApplicationMinifyJSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationMinifyJS(), equalTo(Default.APPLICATION_MINIFY_JS.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    } 
-    
-    @Test
-    public void testIsApplicationMinifyCSS() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String minify = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.minify.css", minify);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isApplicationMinifyCSS(), equalTo(Boolean.valueOf(minify)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsApplicationMinifyCSSDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationMinifyCSS(), equalTo(Default.APPLICATION_MINIFY_CSS.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    } 
     
     @Test
     public void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {

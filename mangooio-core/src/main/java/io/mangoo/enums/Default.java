@@ -24,7 +24,9 @@ public enum Default {
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
     APPLICATION_HEADERS_XSSPROTECTION("1"),
     APPLICATION_LANGUAGE("en"),
+    @Deprecated(since = "6.7.0", forRemoval = true)
     APPLICATION_MINIFY_CSS(Constants.FALSE),
+    @Deprecated(since = "6.7.0", forRemoval = true)
     APPLICATION_MINIFY_JS(Constants.FALSE),
     APPLICATION_TEMPLATEENGINE("io.mangoo.templating.TemplateEngineFreemarker"),
     APPLICATION_THREADPOOL("10"),
