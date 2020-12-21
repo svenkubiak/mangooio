@@ -54,11 +54,10 @@ public class LimitHandler implements HttpHandler {
     }
 
     /**
-     * Creates a key for used for limit an request containing the
-     * requested url and the source host
+     * Creates a key used for limiting a request containing the requested URL and the source host
      * 
      * @param exchange The HttpServerExchange
-     * @return The key url + host
+     * @return The key (URL + host)
      */
     private String getCacheKey(HttpServerExchange exchange) {
         String host = "";

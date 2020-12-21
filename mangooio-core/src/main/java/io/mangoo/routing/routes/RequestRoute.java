@@ -72,11 +72,11 @@ public class RequestRoute implements MangooRoute {
     /**
      * Sets a request limit to the request
      * 
-     * @param requestsPerSecond Number of requests per second
+     * @param limit Maximum numbers of request in a 60 seconds window
      * @return RequestRoute instance
      */
-    public RequestRoute withRequestLimit(int requestsPerSecond) {
-        this.limit = requestsPerSecond;
+    public RequestRoute withRequestLimit(int limit) {
+        this.limit = limit;
         return this;
     }
     
