@@ -73,16 +73,16 @@ public class ValidatorTest {
 
         // then
         assertThat(validator.getError(URL), containsString("must be a valid URL"));
-        assertThat(validator.getError(REGEX), containsString("is invalid"));
-        assertThat(validator.getError(RANGE), containsString("must have a size between"));
+        assertThat(validator.getError(REGEX), containsString("regex is an invalid value"));
+        assertThat(validator.getError(RANGE), containsString("range must be value between 23 and 42"));
         assertThat(validator.getError(IPV6), containsString("must be a valid IPv6 address"));
         assertThat(validator.getError(IPV4), containsString("must be a valid IPv4 address"));
         assertThat(validator.getError(EMAIL), containsString("must be a valid eMail address"));
         assertThat(validator.getError(MATCH), containsString("must match"));
         assertThat(validator.getError(EXACT_MATCH), containsString("must exactly match"));
-        assertThat(validator.getError(MAX), containsString("must have a size of max"));
-        assertThat(validator.getError(MIN), containsString("must have a least a size of"));
-        assertThat(validator.getError(REQUIRED), containsString("is required"));
+        assertThat(validator.getError(MAX), containsString("max must be a value not greater than 1"));
+        assertThat(validator.getError(MIN), containsString("min must be a value not less thatn 42"));
+        assertThat(validator.getError(REQUIRED), containsString("required is a required value"));
         assertThat(validator.getError(NUMERIC), containsString("must be a numeric value"));
     }
 

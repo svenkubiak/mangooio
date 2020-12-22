@@ -210,15 +210,15 @@ public class FormControllerTest {
 		assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
 
 		String[] lines = response.getContent().split(System.getProperty("line.separator"));
-		assertThat(lines[0], equalTo("name is required"));
+		assertThat(lines[0], equalTo("name is a required value"));
 		assertThat(lines[1], equalTo("email must be a valid eMail address"));
 		assertThat(lines[2], equalTo("email2 must match email2confirm"));
 		assertThat(lines[3], equalTo("password must exactly match passwordconfirm"));
 		assertThat(lines[4], equalTo("ipv4 must be a valid IPv4 address"));
 		assertThat(lines[5], equalTo("ipv6 must be a valid IPv6 address"));
-		assertThat(lines[6], equalTo("phone must have a size of max 12"));
-		assertThat(lines[7], equalTo("fax must have a least a size of 11"));
-		assertThat(lines[8], equalTo("regex is invalid"));
+		assertThat(lines[6], equalTo("phone must be a value with a max length of 12"));
+		assertThat(lines[7], equalTo("fax must be a value with a min length of 11"));
+		assertThat(lines[8], equalTo("regex is an invalid value"));
 	}
 
 	@Test

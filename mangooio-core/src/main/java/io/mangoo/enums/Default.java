@@ -109,20 +109,26 @@ public enum Default {
     private static Map<String, String> messages = new HashMap<>();
     
     static {
-        messages.put(Validation.REQUIRED_KEY.name(), Validation.REQUIRED.toString());
-        messages.put(Validation.MIN_KEY.name(), Validation.MIN.toString());
-        messages.put(Validation.MAX_KEY.name(), Validation.MAX.toString());
-        messages.put(Validation.EXACT_MATCH_KEY.name(), Validation.EXACT_MATCH.toString());
-        messages.put(Validation.MATCH_KEY.name(), Validation.MATCH.toString());
-        messages.put(Validation.EMAIL_KEY.name(), Validation.EMAIL.toString());
-        messages.put(Validation.IPV4_KEY.name(), Validation.IPV4.toString());
-        messages.put(Validation.IPV6_KEY.name(), Validation.IPV6.toString());
-        messages.put(Validation.RANGE_KEY.name(), Validation.RANGE.toString());
-        messages.put(Validation.URL_KEY.name(), Validation.URL.toString());
-        messages.put(Validation.MATCH_VALUES_KEY.name(), Validation.MATCH_VALUES.toString());
-        messages.put(Validation.REGEX_KEY.name(), Validation.REGEX.toString());
-        messages.put(Validation.NUMERIC_KEY.name(), Validation.NUMERIC.toString());
-        messages.put(Validation.DOMAIN_NAME_KEY.name(), Validation.DOMAIN_NAME.toString());
+        messages.put(Validation.REQUIRED_KEY.toString(), Validation.REQUIRED.toString());
+        messages.put(Validation.MIN_LENGTH_KEY.toString(), Validation.MIN_LENGTH.toString());
+        messages.put(Validation.MIN_VALUE_KEY.toString(), Validation.MIN_VALUE.toString());
+        messages.put(Validation.MAX_LENGTH_KEY.toString(), Validation.MAX_LENGTH.toString());
+        messages.put(Validation.MAX_VALUE_KEY.toString(), Validation.MAX_VALUE.toString());        
+        messages.put(Validation.MIN_KEY.toString(), Validation.MIN.toString());
+        messages.put(Validation.MAX_KEY.toString(), Validation.MAX.toString());
+        messages.put(Validation.EXACT_MATCH_KEY.toString(), Validation.EXACT_MATCH.toString());
+        messages.put(Validation.MATCH_KEY.toString(), Validation.MATCH.toString());
+        messages.put(Validation.EMAIL_KEY.toString(), Validation.EMAIL.toString());
+        messages.put(Validation.IPV4_KEY.toString(), Validation.IPV4.toString());
+        messages.put(Validation.IPV6_KEY.toString(), Validation.IPV6.toString());
+        messages.put(Validation.RANGE_LENGTH_KEY.toString(), Validation.RANGE_LENGTH.toString());
+        messages.put(Validation.RANGE_VALUE_KEY.toString(), Validation.RANGE_VALUE.toString());
+        messages.put(Validation.RANGE_KEY.toString(), Validation.RANGE.toString());
+        messages.put(Validation.URL_KEY.toString(), Validation.URL.toString());
+        messages.put(Validation.MATCH_VALUES_KEY.toString(), Validation.MATCH_VALUES.toString());
+        messages.put(Validation.REGEX_KEY.toString(), Validation.REGEX.toString());
+        messages.put(Validation.NUMERIC_KEY.toString(), Validation.NUMERIC.toString());
+        messages.put(Validation.DOMAIN_NAME_KEY.toString(), Validation.DOMAIN_NAME.toString());
     }
     public static Map<String, String> getMessages() {
         return messages;

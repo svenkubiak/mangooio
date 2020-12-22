@@ -55,6 +55,6 @@ public class MessagesTest {
         messages.reload(Locale.ENGLISH);
         
         //then
-        assertThat(messages.get(Validation.EMAIL_KEY.name(), "foo"), equalTo("foo must be a valid eMail address"));
+        assertThat(messages.get(Validation.EMAIL_KEY.toString(), "foo"), equalTo("foo must be a valid eMail address"));
     }
 }
