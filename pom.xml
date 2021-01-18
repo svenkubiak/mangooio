@@ -306,7 +306,7 @@
 			<dependency>
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
-				<version>1.6.2</version>
+				<version>1.6.3</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -422,12 +422,12 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.48</version>
+				<version>0.49</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.22</version>
+				<version>0.23</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -447,7 +447,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>3.7.0</version>
+				<version>3.7.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
