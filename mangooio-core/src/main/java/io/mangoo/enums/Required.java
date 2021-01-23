@@ -36,6 +36,7 @@ public enum Required {
     EHCACHE("ehCache can not be null"),
     ENCRYPTED_TEXT("encrypted text can not be null"),
     EVENT("event can not be null"),
+    EVENT_BUS_SERVICE("event bus service can not be null"),
     EVENT_CALLBACK("event callback can not be null"),
     EVENT_LISTENER("eventListener can not be null"),
     EXPIRES("expires can not be null"),

@@ -47,6 +47,7 @@ import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.persistence.DatastoreListener;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -62,6 +63,7 @@ import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.SchedulerUtils;
@@ -115,6 +117,7 @@ public final class Application {
             prepareConfig();
             prepareRoutes();
             createRoutes();
+            prepareDatastore();
             prepareScheduler();
             prepareUndertow();
             sanityChecks();
@@ -124,6 +127,10 @@ public final class Application {
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             started = true;
         }
+    }
+
+    private static void prepareDatastore() {
+        getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
     }
 
     /**

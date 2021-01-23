@@ -85,5 +85,18 @@ public interface Datastore {
      * Drops all data in MongoDB on the connected database
      */
     void dropDatabase();
+    
+    /**
+     * Saves a mapped Morphia object to MongoDB asynchronously
+     *
+     * @param object The object to save
+     */
+    void saveAsync(Object object);
 
+    /**
+     * Deletes a mapped Morphia object to MongoDB asynchronously
+     *
+     * @param object The object to delete
+     */
+    void deleteAsync(Object object);
 }

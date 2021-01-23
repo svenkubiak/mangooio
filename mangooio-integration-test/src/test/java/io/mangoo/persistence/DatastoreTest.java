@@ -1,11 +1,13 @@
 package io.mangoo.persistence;
 
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
@@ -51,7 +53,7 @@ public class DatastoreTest {
     }
 
     @Test
-    public void testInsertAndDrop() {
+    public void testSaveAndDrop() {
         //given
         datastore.dropDatabase();
         TestModel model = new TestModel("foo");
@@ -67,6 +69,22 @@ public class DatastoreTest {
         
         //then
         assertThat(datastore.findAll(TestModel.class).size(), equalTo(0));
+    }
+    
+    @Test
+    public void testSaveAsync() {
+        //given
+        datastore.dropDatabase();
+        TestModel model = new TestModel("foo");
+        
+        //then
+        assertThat(datastore.findAll(TestModel.class).size(), equalTo(0));
+        
+        //when
+        datastore.save(model);
+        
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(1L)));
     }
 
     @Test
@@ -137,6 +155,25 @@ public class DatastoreTest {
         
         //then
         assertThat(datastore.countAll(TestModel.class), equalTo(0L));
+    }
+    
+    @Test
+    public void testDeleteAsync() {
+        //given
+        TestModel testModel = new TestModel("foo");
+        datastore.dropDatabase();
+        
+        //when
+        datastore.save(testModel);
+
+        //then
+        assertThat(datastore.countAll(TestModel.class), equalTo(1L));
+
+        //when
+        datastore.deleteAsync(testModel);
+        
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(0L)));
     }
     
     @Test
