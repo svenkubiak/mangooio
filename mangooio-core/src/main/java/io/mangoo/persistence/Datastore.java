@@ -28,10 +28,9 @@ public interface Datastore {
     void ensureCaps();
 
     /**
-     * Retrieves a mapped Morphia object from MongoDB. If the id is not of
-     * type ObjectId, it will be converted to ObjectId
+     * Retrieves a mapped Morphia object from MongoDB.
      *
-     * @param id The id of the object
+     * @param id The mongodb id of the object
      * @param clazz The mapped Morphia class
      * @param <T> JavaDoc requires this - please ignore
      *

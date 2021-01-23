@@ -22,7 +22,7 @@ public class DatastoreProvider implements Provider<Datastore> {
 
     @Inject
     private DatastoreProvider(DatastoreImpl defaultDatastore) {
-        this.defaultDatastore = Objects.requireNonNull(defaultDatastore, "defaultDatastore can not be null");
+        this.defaultDatastore = Objects.requireNonNull(defaultDatastore, Required.DATASTORE.toString());
     }
     
     public Datastore getDatastore(String prefix) {

@@ -32,6 +32,7 @@ public enum Required {
     CRON("cron can no be null"),
     CRYPTO("crypto can not be null"),
     DATA("data can not be null"),
+    DATASTORE("datastore can not be null"),
     DIGITS("digits can not be null"),
     EHCACHE("ehCache can not be null"),
     ENCRYPTED_TEXT("encrypted text can not be null"),

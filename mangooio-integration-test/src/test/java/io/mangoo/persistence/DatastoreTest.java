@@ -86,6 +86,28 @@ public class DatastoreTest {
         //then
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(1L)));
     }
+    
+    @Test
+    public void testConcurrentSaveAsync() {
+        //given
+        datastore.dropDatabase();
+        
+        MatcherAssert.assertThat(t -> {
+            //given
+            String id = UUID.randomUUID().toString();
+            TestModel model = new TestModel(id);
+            
+            //when
+            datastore.saveAsync(model);
+            
+            // then
+            return true;
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        
+        //then
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(100L)));
+    }
+
 
     @Test
     public void testFindById() {
@@ -102,6 +124,24 @@ public class DatastoreTest {
 
         assertThat(storedModel, not(nullValue()));
         assertThat(datastore.findById(storedModel.getId().toString(), TestModel.class), not(nullValue()));
+    }
+    
+    @Test
+    public void testConcurrentFindById() {
+        //given
+        datastore.dropDatabase();
+        
+        MatcherAssert.assertThat(t -> {
+            //given
+            String id = UUID.randomUUID().toString();
+            TestModel model = new TestModel(id);
+            
+            //when
+            datastore.save(model);
+            
+            // then
+            return datastore.findById(model.getId().toString(), TestModel.class) != null;
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test

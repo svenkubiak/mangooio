@@ -4,15 +4,21 @@ import java.util.Objects;
 
 import com.google.inject.Inject;
 
+import io.mangoo.enums.Required;
 import io.mangoo.persistence.Datastore;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 public class SaveEvent {
     private Datastore datastore;
     private Object object;
     
     @Inject
     public SaveEvent(Datastore datastore) {
-        this.datastore = Objects.requireNonNull(datastore, "datastore can not be null");
+        this.datastore = Objects.requireNonNull(datastore, Required.DATASTORE.toString());
     }
 
     public void save() {
@@ -20,7 +26,7 @@ public class SaveEvent {
     }
     
     public SaveEvent withObject(Object object) {
-        this.object = Objects.requireNonNull(object, "object can not be null");
+        this.object = Objects.requireNonNull(object, Required.OBJECT.toString());
         return this;
     }
 }
