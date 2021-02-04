@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>6.7.1-SNAPSHOT</version>
+		<version>6.8.0-RC1</version>
 	</parent>
 	<artifactId>mangooio-integration-test</artifactId>
 	<packaging>jar</packaging>
@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-			<version>6.7.1-SNAPSHOT</version>
+			<version>6.8.0-RC1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.glassfish.jaxb</groupId>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-test</artifactId>
-			<version>6.7.1-SNAPSHOT</version>
+			<version>6.8.0-RC1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -146,7 +146,7 @@
 			<plugin>
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
-				<version>6.7.1-SNAPSHOT</version>
+				<version>6.8.0-RC1</version>
 				<executions>
 					<execution>
 						<id>dependencies</id>
