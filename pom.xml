@@ -29,7 +29,7 @@
 		<junit.version>5.8.0-M1</junit.version>
 		<junit.platform.version>1.8.0-M1</junit.platform.version>
 		<enforcer.version>1.3</enforcer.version>
-		<simplemail.version>6.4.5</simplemail.version>
+		<simplemail.version>6.5.0</simplemail.version>
 		<jpasteo.version>0.6.0</jpasteo.version>
 	</properties>
 	<modules>
@@ -452,7 +452,7 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.30</version>
+				<version>2.3.31</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
