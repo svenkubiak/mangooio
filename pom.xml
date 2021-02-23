@@ -427,7 +427,7 @@
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.23</version>
+				<version>0.24</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
@@ -447,7 +447,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>3.7.7</version>
+				<version>3.8.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
