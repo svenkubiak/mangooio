@@ -306,7 +306,7 @@
 			<dependency>
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
-				<version>1.7.1</version>
+				<version>1.7.2</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -412,7 +412,7 @@
 			<dependency>
 				<groupId>com.google.re2j</groupId>
 				<artifactId>re2j</artifactId>
-				<version>1.5</version>
+				<version>1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.ehcache</groupId>
