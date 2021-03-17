@@ -24,7 +24,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
-		<log4j.version>2.14.0</log4j.version>
+		<log4j.version>2.14.1</log4j.version>
 		<maven.version>3.6.3</maven.version>
 		<junit.version>5.8.0-M1</junit.version>
 		<junit.platform.version>1.8.0-M1</junit.platform.version>
@@ -306,7 +306,7 @@
 			<dependency>
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
-				<version>1.7.2</version>
+				<version>1.7.4</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
