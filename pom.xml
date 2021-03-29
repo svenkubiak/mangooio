@@ -250,11 +250,22 @@
 				<groupId>org.simplejavamail</groupId>
 				<artifactId>simple-java-mail</artifactId>
 				<version>${simplemail.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun.mail</groupId>
+						<artifactId>jakarta.mail</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
 				<version>2.1.4</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>jakarta.mail</artifactId>
+				<version>1.6.6</version>
 			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
@@ -265,6 +276,12 @@
 				<groupId>org.simplejavamail</groupId>
 				<artifactId>batch-module</artifactId>
 				<version>${simplemail.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun.mail</groupId>
+						<artifactId>jakarta.mail</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
@@ -385,7 +402,13 @@
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail</artifactId>
-				<version>1.6.2</version>
+				<version>1.6.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.sun.mail</groupId>
+						<artifactId>jakarta.mail</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
