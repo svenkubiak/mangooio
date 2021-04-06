@@ -47,10 +47,6 @@
 			<artifactId>hamcrest-date</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.cactoos</groupId>
 			<artifactId>cactoos</artifactId>
 		</dependency>
