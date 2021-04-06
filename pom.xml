@@ -400,7 +400,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
-				<artifactId>greenmail</artifactId>
+				<artifactId>greenmail-standalone</artifactId>
 				<version>1.6.3</version>
 				<exclusions>
 					<exclusion>
