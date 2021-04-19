@@ -308,7 +308,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-archiver</artifactId>
-				<version>4.2.4</version>
+				<version>4.2.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
@@ -318,7 +318,7 @@
 			<dependency>
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
-				<version>1.7.4</version>
+				<version>1.8.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
