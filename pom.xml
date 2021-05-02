@@ -218,7 +218,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>5.0.0.Final</version>
+				<version>5.0.1.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
@@ -454,7 +454,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.104</version>
+				<version>4.8.105</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
