@@ -439,7 +439,7 @@
 			<dependency>
 				<groupId>org.llorllale</groupId>
 				<artifactId>cactoos-matchers</artifactId>
-				<version>0.24</version>
+				<version>0.25</version>
 			</dependency>
 			<dependency>
 				<groupId>org.awaitility</groupId>
