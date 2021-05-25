@@ -108,7 +108,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>6.1.5</version>
+					<version>6.1.6</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -133,7 +133,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.8.0.2131</version>
+					<version>3.9.0.2155</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -151,7 +151,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.3.0</version>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
@@ -193,7 +193,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.6.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
