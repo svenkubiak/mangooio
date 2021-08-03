@@ -241,7 +241,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-utils</artifactId>
-				<version>3.3.0</version>
+				<version>3.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
@@ -321,7 +321,7 @@
 			<dependency>
 				<groupId>org.casbin</groupId>
 				<artifactId>jcasbin</artifactId>
-				<version>1.13.0</version>
+				<version>1.13.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-beanutils</groupId>
@@ -432,7 +432,7 @@
 			<dependency>
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
-				<version>3.9.4</version>
+				<version>3.9.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.cactoos</groupId>
