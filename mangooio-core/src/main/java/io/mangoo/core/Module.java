@@ -9,11 +9,9 @@ import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Default;
-import io.mangoo.interfaces.MangooAuthorizationService;
 import io.mangoo.persistence.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.scheduler.SchedulerFactory;
-import io.mangoo.services.AuthorizationService;
 
 /**
  * 
@@ -40,6 +38,5 @@ public class Module extends AbstractModule {
         bind(JobFactory.class).to(SchedulerFactory.class);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);
-        bind(MangooAuthorizationService.class).to(AuthorizationService.class);
     }
 }

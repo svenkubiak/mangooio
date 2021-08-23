@@ -95,6 +95,7 @@ public class AuthenticationHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(AuthorizationHandler.class).handleRequest(exchange);
+        Application.getInstance(FormHandler.class).handleRequest(exchange);
+
     }
 }
