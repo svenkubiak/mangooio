@@ -24,10 +24,6 @@ public enum Default {
     APPLICATION_HEADERS_XFRAMEOPTIONS("DENY"),
     APPLICATION_HEADERS_XSSPROTECTION("1"),
     APPLICATION_LANGUAGE("en"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    APPLICATION_MINIFY_CSS(Constants.FALSE),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    APPLICATION_MINIFY_JS(Constants.FALSE),
     APPLICATION_TEMPLATEENGINE("io.mangoo.templating.TemplateEngineFreemarker"),
     APPLICATION_THREADPOOL("10"),
     AUTHENTICATION_COOKIE_EXPIRES(Constants.FALSE),
@@ -114,8 +110,6 @@ public enum Default {
         messages.put(Validation.MIN_VALUE_KEY.toString(), Validation.MIN_VALUE.toString());
         messages.put(Validation.MAX_LENGTH_KEY.toString(), Validation.MAX_LENGTH.toString());
         messages.put(Validation.MAX_VALUE_KEY.toString(), Validation.MAX_VALUE.toString());        
-        messages.put(Validation.MIN_KEY.toString(), Validation.MIN.toString());
-        messages.put(Validation.MAX_KEY.toString(), Validation.MAX.toString());
         messages.put(Validation.EXACT_MATCH_KEY.toString(), Validation.EXACT_MATCH.toString());
         messages.put(Validation.MATCH_KEY.toString(), Validation.MATCH.toString());
         messages.put(Validation.EMAIL_KEY.toString(), Validation.EMAIL.toString());
@@ -123,7 +117,6 @@ public enum Default {
         messages.put(Validation.IPV6_KEY.toString(), Validation.IPV6.toString());
         messages.put(Validation.RANGE_LENGTH_KEY.toString(), Validation.RANGE_LENGTH.toString());
         messages.put(Validation.RANGE_VALUE_KEY.toString(), Validation.RANGE_VALUE.toString());
-        messages.put(Validation.RANGE_KEY.toString(), Validation.RANGE.toString());
         messages.put(Validation.URL_KEY.toString(), Validation.URL.toString());
         messages.put(Validation.MATCH_VALUES_KEY.toString(), Validation.MATCH_VALUES.toString());
         messages.put(Validation.REGEX_KEY.toString(), Validation.REGEX.toString());
