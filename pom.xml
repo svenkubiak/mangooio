@@ -40,7 +40,6 @@
 		<module>mangooio-integration-test</module>
 		<module>mangooio-test</module>
 		<module>mangooio-maven-plugin</module>
-		<module>mangooio-dependencies</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
