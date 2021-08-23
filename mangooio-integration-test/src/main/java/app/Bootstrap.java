@@ -135,7 +135,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/prettytime").respondeWith("prettytime"),
                 On.get().to("/location/{myloca}").respondeWith("location"),
                 On.get().to("/redirect").respondeWith("redirect"),
-                On.get().to("/limit").respondeWith("limit").withRequestLimit(10),
                 On.get().to("/text").respondeWith("text"),
                 On.get().to("/forbidden").respondeWith("forbidden"),
                 On.get().to("/badrequest").respondeWith("badrequest"),

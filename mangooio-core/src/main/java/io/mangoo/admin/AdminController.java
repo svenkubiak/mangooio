@@ -309,7 +309,6 @@ public class AdminController {
                         json.put("limit", route.getLimit());
                         json.put("basicAuthentication", route.hasBasicAuthentication());
                         json.put("authentication", route.hasAuthentication());
-                        json.put("authorization", route.hasAuthorization());
                         json.put("blocking", route.isBlocking());
                         routes.add(json);
                     });

@@ -406,11 +406,6 @@ public final class Application {
                 LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                 failsafe();
             }
-            
-            if (requestRoute.hasAuthorization() && (!MangooUtils.resourceExists(Default.MODEL_CONF.toString()) || !MangooUtils.resourceExists(Default.POLICY_CSV.toString()))) {
-                LOG.error("Route on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
-                failsafe();
-            } 
         });
     }
     
@@ -496,7 +491,6 @@ public final class Application {
                     .withMaxEntitySize(requestRoute.getMaxEntitySize())
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                     .withAuthentication(requestRoute.hasAuthentication())
-                    .withAuthorization(requestRoute.hasAuthorization())
                     .withLimit(requestRoute.getLimit());
             
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  

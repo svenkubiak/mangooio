@@ -54,16 +54,8 @@ public class ControllerRoute {
                 requestRoute.withAuthentication();
             }
             
-            if (hasAuthorization()) {
-                requestRoute.withAuthorization();
-            }
-            
             if (hasBlocking()) {
                 requestRoute.withNonBlocking();
-            }
-            
-            if (requestRoute.getLimit() == 0) {
-                requestRoute.withRequestLimit(limit);
             }
             
             if (requestRoute.hasMultipleMethods()) {

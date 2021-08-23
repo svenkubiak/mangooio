@@ -113,7 +113,6 @@ public class ControllerRouteTest {
         RequestRoute requestRoute = collectedRoutes.iterator().next();
         
         assertThat(requestRoute.hasAuthentication(), equalTo(true));
-        assertThat(requestRoute.hasAuthorization(), equalTo(true));
     }
     
     @Test
@@ -157,26 +156,5 @@ public class ControllerRouteTest {
         RequestRoute requestRoute = collectedRoutes.iterator().next();
         
         assertThat(requestRoute.getUrl(), equalTo("/" + url));
-    }
-    
-    @Test
-    public void testWithLimit() {
-        //given
-        String route1 = UUID.randomUUID().toString();
-        
-        //when
-        ControllerRoute route = new ControllerRoute(ApplicationController.class);
-        route.withRequestLimit(42).withRoutes(
-                On.get().to("/route1").respondeWith(route1)
-        );
-        
-        //then
-        Set<RequestRoute> collectedRoutes = Router.getRequestRoutes()
-                .filter(r -> r.getControllerMethod().equals(route1))
-                .collect(Collectors.toSet());
-        
-        RequestRoute requestRoute = collectedRoutes.iterator().next();
-        
-        assertThat(requestRoute.getLimit(), equalTo(42));
     }
 }

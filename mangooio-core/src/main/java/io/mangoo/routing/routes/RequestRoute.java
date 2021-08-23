@@ -26,7 +26,6 @@ public class RequestRoute implements MangooRoute {
     private long maxEntitySize;
     private boolean blocking;
     private boolean authentication;
-    private boolean authorization;
 
     public RequestRoute(Http method) {
         Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
@@ -66,17 +65,6 @@ public class RequestRoute implements MangooRoute {
     public RequestRoute respondeWith(String method) {
         Objects.requireNonNull(method, Required.CONTROLLER_METHOD.toString());
         this.controllerMethod = method;
-        return this;
-    }
-    
-    /**
-     * Sets a request limit to the request
-     * 
-     * @param limit Maximum numbers of request in a 60 seconds window
-     * @return RequestRoute instance
-     */
-    public RequestRoute withRequestLimit(int limit) {
-        this.limit = limit;
         return this;
     }
     
@@ -129,18 +117,6 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Sets authorization to true for this route, default is false
-     * Also sets authentication to true, default is false
-     * 
-     * @return RequestRoute instance
-     */
-    public RequestRoute withAuthorization() {
-        this.authentication = true;
-        this.authorization = true;
-        return this;
-    }
-    
-    /**
      * Configures this request as long running request that is
      * executed in a different thread pool to not block the
      * non blocking I/O request
@@ -174,10 +150,6 @@ public class RequestRoute implements MangooRoute {
     
     public boolean hasAuthentication() {
         return authentication;
-    }
-
-    public boolean hasAuthorization() {
-        return authorization;
     }
     
     public boolean hasBasicAuthentication() {

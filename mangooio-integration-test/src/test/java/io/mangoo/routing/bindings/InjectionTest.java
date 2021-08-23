@@ -22,7 +22,6 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.InboundCookiesHandler;
-import io.mangoo.routing.handlers.LimitHandler;
 import io.mangoo.routing.handlers.LocaleHandler;
 import io.mangoo.routing.handlers.OutboundCookiesHandler;
 import io.mangoo.routing.handlers.ResponseHandler;
@@ -241,16 +240,7 @@ public class InjectionTest {
         //then
         assertThat(validator, not(nullValue()));
     }
-    
-    @Test
-    public void testLimitHandler() {
-        //given
-        LimitHandler limitHandler = Application.getInstance(LimitHandler.class);
-        
-        //then
-        assertThat(limitHandler, not(nullValue()));
-    }
-    
+
     @Test
     public void testLocaleHandler() {
         //given

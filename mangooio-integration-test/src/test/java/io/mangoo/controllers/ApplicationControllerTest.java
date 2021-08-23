@@ -140,22 +140,6 @@ public class ApplicationControllerTest {
         assertThat(response.getContent(), containsString("vor"));
         assertThat(response.getContent(), containsString("Stunden"));
     }
-    
-    @Test
-    public void testLimit() {
-        //given
-        TestResponse response = null;
-
-        //then
-        for (int i=0; i < 10; i++) {
-            response = TestRequest.get("/limit").execute();   
-            assertThat(response, not(nullValue()));
-            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        }
-        response = TestRequest.get("/limit").execute();   
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
-    }
 
     @Test
     public void testRequest() {
