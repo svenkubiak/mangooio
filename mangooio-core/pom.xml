@@ -201,10 +201,6 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.svenkubiak</groupId>
-			<artifactId>jBCrypt</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.simplejavamail</groupId>
 			<artifactId>simple-java-mail</artifactId>
 		</dependency>

@@ -27,12 +27,20 @@ public final class CodecUtils {
     private CodecUtils() {
     }
     
+    /**
+     * Hashes a given clear text password with salt using Argon2Id password hashing
+     * 
+     * @param password The clear text password
+     * @param salt The salt
+     * 
+     * @return The hashed password
+     */
     public static String hashArgon2(String password, String salt) {
-        Objects.requireNonNull(password, "password can not be null");
-        Objects.requireNonNull(salt, "salt can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(salt, Required.SALT.toString());
         
-        Argon2Parameters.Builder builder = (new Argon2Parameters.Builder()).
-                withVersion(Argon2Parameters.ARGON2_id)
+        Argon2Parameters.Builder builder = (new Argon2Parameters.Builder())
+                .withVersion(Argon2Parameters.ARGON2_id)
                 .withIterations(ITERATIONS)
                 .withMemoryAsKB(MEMORY)
                 .withParallelism(PARALLELISM)
@@ -48,21 +56,30 @@ public final class CodecUtils {
         return base64Encoder.encodeToString(passwdHash);
     }
     
+    /**
+     * Matches a given clear text password with salt using Argon2Id against an already
+     * Argon2Id hashed password
+     * 
+     * @param password The clear text password
+     * @param salt The salt
+     * @param hashedPassword The already hashed password
+     * 
+     * @return True if hashes match, false otherwise
+     */
     public static boolean matchArgon2(String password, String salt, String hashedPassword) {
-        Objects.requireNonNull(password, "password can not be null");
-        Objects.requireNonNull(salt, "salt can not be null");
-        Objects.requireNonNull(hashedPassword, "hashedPassword can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(salt, Required.SALT.toString());
+        Objects.requireNonNull(hashedPassword, Required.PASSWORD.toString());
         
-        String hash = hashArgon2(password, salt);
-        return Arrays.areEqual(hash.getBytes(), hashedPassword.getBytes());
+        return Arrays.areEqual(hashArgon2(password, salt).getBytes(), hashedPassword.getBytes());
     }
     
     /**
-     * Hashes a given cleartext data with SHA512
+     * Hashes a given clear text data with SHA512
      * For simple hashing tasks
      * Use {@link #hashArgon2(String, String) hashArgon2} for password hashing
      * 
-     * @param data The cleartext data
+     * @param data The clear text data
      * @return SHA512 hashed value
      */
     public static String hexSHA512(String data) {
@@ -85,7 +102,7 @@ public final class CodecUtils {
     }
     
     /**
-     * Deserialize a given Base64 encoded data string into an object
+     * Deserializes a given Base64 encoded data string into an object
      * 
      * @param data The base64 encoded data string
      * @param <T> Just for JavaDoc can be ignored
