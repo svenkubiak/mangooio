@@ -106,14 +106,15 @@ public class Authentication {
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String identifier, String password, String hash) {
+    public boolean validLogin(String identifier, String password, String salt, String hash) {
         Objects.requireNonNull(identifier, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(password, Required.SALT.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
         Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         boolean authenticated = false;
-        if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
+        if (!userHasLock(identifier) && CodecUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
         } else {
             cache.getAndIncrementCounter(identifier);

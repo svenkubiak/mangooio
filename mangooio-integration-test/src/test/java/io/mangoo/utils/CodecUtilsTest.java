@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,16 +22,6 @@ import io.mangoo.routing.bindings.Form;
 public class CodecUtilsTest {
     private static final String SERIALIZED = "rO0ABXNyAB9pby5tYW5nb28ucm91dGluZy5iaW5kaW5ncy5Gb3Jtr0x38MTUh5ACAANaAARrZWVwWgAJc3VibWl0dGVkTAAIdmFsdWVNYXB0AA9MamF2YS91dGlsL01hcDt4cgAkaW8ubWFuZ29vLnJvdXRpbmcuYmluZGluZ3MuVmFsaWRhdG9y3cEYQhBJCTwCAANMAAZlcnJvcnNxAH4AAUwACG1lc3NhZ2VzdAAZTGlvL21hbmdvby9pMThuL01lc3NhZ2VzO0wABnZhbHVlc3EAfgABeHBzcgARamF2YS51dGlsLkhhc2hNYXAFB9rBwxZg0QMAAkYACmxvYWRGYWN0b3JJAAl0aHJlc2hvbGR4cD9AAAAAAAAAdwgAAAAQAAAAAHhzcgAXaW8ubWFuZ29vLmkxOG4uTWVzc2FnZXNo6ui27qLkugIAAUwACGRlZmF1bHRzcQB+AAF4cHNxAH4ABT9AAAAAAAAYdwgAAAAgAAAAEXQAEHZhbGlkYXRpb24ubWF0Y2h0ABJ7MH0gbXVzdCBtYXRjaCB7MX10ABB2YWxpZGF0aW9uLmVtYWlsdAAhezB9IG11c3QgYmUgYSB2YWxpZCBlTWFpbCBhZGRyZXNzdAAPdmFsaWRhdGlvbi5pcHY0dAAgezB9IG11c3QgYmUgYSB2YWxpZCBJUHY0IGFkZHJlc3N0AA92YWxpZGF0aW9uLmlwdjZ0ACB7MH0gbXVzdCBiZSBhIHZhbGlkIElQdjYgYWRkcmVzc3QAF3ZhbGlkYXRpb24ucmFuZ2UubGVuZ3RodAAoezB9IG11c3QgYmUgYSBsZW5ndGggYmV0d2VlbiB7MX0gYW5kIHsyfXQAFXZhbGlkYXRpb24uZXhhY3RtYXRjaHQAGnswfSBtdXN0IGV4YWN0bHkgbWF0Y2ggezF9dAATdmFsaWRhdGlvbi5yZXF1aXJlZHQAF3swfSBpcyBhIHJlcXVpcmVkIHZhbHVldAAWdmFsaWRhdGlvbi5yYW5nZS52YWx1ZXQAJXswfSBtdXN0IGJlIHZhbHVlIGJldHdlZW4gezF9IGFuZCB7Mn10ABJ2YWxpZGF0aW9uLm51bWVyaWN0ABt7MH0gbXVzdCBiZSBhIG51bWVyaWMgdmFsdWV0ABB2YWxpZGF0aW9uLnJlZ2V4dAAXezB9IGlzIGFuIGludmFsaWQgdmFsdWV0ABR2YWxpZGF0aW9uLm1pbi52YWx1ZXQAJnswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGxlc3MgdGhhdG4gezF9dAAUdmFsaWRhdGlvbi5tYXgudmFsdWV0ACh7MH0gbXVzdCBiZSBhIHZhbHVlIG5vdCBncmVhdGVyIHRoYW4gezF9dAAVdmFsaWRhdGlvbi5kb21haW5uYW1ldAAfezB9IG11c3QgYmUgYSB2YWxpZCBkb21haW4gbmFtZXQAFXZhbGlkYXRpb24ubWluLmxlbmd0aHQALHswfSBtdXN0IGJlIGEgdmFsdWUgd2l0aCBhIG1pbiBsZW5ndGggb2YgezF9dAAOdmFsaWRhdGlvbi51cmx0ABd7MH0gbXVzdCBiZSBhIHZhbGlkIFVSTHQAFXZhbGlkYXRpb24ubWF4Lmxlbmd0aHQALHswfSBtdXN0IGJlIGEgdmFsdWUgd2l0aCBhIG1heCBsZW5ndGggb2YgezF9dAAWdmFsaWRhdGlvbi5tYXRjaHZhbHVlc3QAHlRoZSB2YWx1ZXMgb2YgezB9IGlzIG5vdCB2YWxpZHhzcQB+AAU/QAAAAAAADHcIAAAAEAAAAAF0AANmb290AANiYXJ4AABzcQB+AAU/QAAAAAAAAHcIAAAAEAAAAAB4";
     private static final String PLAIN = "this is a plain text";
-    private static final String JBCRYPT_HASH = "$2a$12$I.tRIbGLB82DDLUHTz.IUOSGeHCwUgX/MnGj67SRFvfzoNZzx2je6";
-
-    @Test
-    public void testHexJBcrypt() {
-        //given
-        String hex = CodecUtils.hexJBcrypt(PLAIN);
-        
-        //then
-        assertThat(hex, not(nullValue()));
-    }
     
     @Test
     public void testHexSHA512() {
@@ -54,42 +45,73 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testHexSHA512WithSalt() {
+    public void testHashArgon2() {
         //given
-        String salt = "this is a salt";
-        String hex = CodecUtils.hexSHA512(PLAIN, salt);
+        String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
         
         //then
-        assertThat(hex, not(nullValue()));
-        assertThat(hex, equalTo("e3558a2c97cecf01e7dbe39e5ec3156bf55b38dee69de17f2ef2fac60e1fc4e67b85413849c6b1d5b67adc94d10684f066127c444ac17830267fd816dd49bc8e"));
+        assertThat(hash, not(nullValue()));
     }
     
     @Test
-    public void testConcurrentHexSHA512WithSalt() throws InterruptedException {
+    public void testConcurrentHashArgon2() {
         MatcherAssert.assertThat(t -> {
             //given
-            String salt = "this is a salt";
-            String hex = CodecUtils.hexSHA512(PLAIN, salt);
+            String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
             
             // then
-            return hex.equals("e3558a2c97cecf01e7dbe39e5ec3156bf55b38dee69de17f2ef2fac60e1fc4e67b85413849c6b1d5b67adc94d10684f066127c444ac17830267fd816dd49bc8e");
+            return StringUtils.isNotBlank(hash);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
-    public void testCheckJBcrypt() {
+    public void testMatchArgon2() {
         //given
-        boolean valid = CodecUtils.checkJBCrypt(PLAIN, JBCRYPT_HASH);
+        String salt = MangooUtils.randomString(24);
+        String hash = CodecUtils.hashArgon2(PLAIN, salt);
+        
+        //when
+        boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
         
         //then
         assertThat(valid, equalTo(true));
     }
     
     @Test
-    public void testConcurrentCheckJBcrypt() throws InterruptedException {
+    public void testNonMatchSaltArgon2() {
+        //given
+        String salt = MangooUtils.randomString(24);
+        String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
+        
+        //when
+        boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
+        
+        //then
+        assertThat(valid, equalTo(false));
+    }
+    
+    @Test
+    public void testNonMatchHashArgon2() {
+        //given
+        String salt = MangooUtils.randomString(24);
+        String hash = CodecUtils.hashArgon2(PLAIN, salt);
+        
+        //when
+        boolean valid = CodecUtils.matchArgon2("foobar", salt, hash);
+        
+        //then
+        assertThat(valid, equalTo(false));
+    }
+    
+    @Test
+    public void testConcurrentMatchArgon2() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
-            boolean valid = CodecUtils.checkJBCrypt(PLAIN, JBCRYPT_HASH);
+            String salt = MangooUtils.randomString(24);
+            String hash = CodecUtils.hashArgon2(PLAIN, salt);
+            
+            //when
+            boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
             
             // then
             return valid;
