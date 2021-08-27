@@ -32,7 +32,7 @@ public class Task implements Runnable {
         try {
             instance.getClass().getMethod(methodName).invoke(instance, null);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOG.error("Failed to executed scheduled task on class '" + clazz.getName() + "' with annotated method '" + methodName, e);
+            LOG.error("Failed to execute scheduled task on class '" + clazz.getName() + "' with annotated method '" + methodName + "'", e);
         }
     }
 }

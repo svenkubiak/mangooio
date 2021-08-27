@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Schedule {
     String rate();
-    long initialDelay() default 0;
+    long delay() default 0;
 }

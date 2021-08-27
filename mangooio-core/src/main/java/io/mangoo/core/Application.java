@@ -36,8 +36,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.AnnotationInfo;
 import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
@@ -85,6 +83,7 @@ import io.undertow.util.Methods;
  */
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
     private static ScheduledExecutorService scheduledExecutorService;
@@ -140,29 +139,25 @@ public final class Application {
                         .enableAnnotationInfo()
                         .enableClassInfo()
                         .enableMethodInfo()
-                        .acceptPackages("*")
+                        .acceptPackages(ALL_PACKAGES)
                         .scan()) {
                 
-                for (int i = 0; i < scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).size(); i++) {
-                    ClassInfo classInfo = scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).get(i);
-                    for (int j = 0; j < classInfo.getMethodInfo().size(); j++) {
-                        MethodInfo methodInfo = classInfo.getMethodInfo().get(j);
-
+                scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> {
+                    classInfo.getMethodInfo().forEach(methodInfo -> {
                         long time = 0;
                         long delay = 0;
-                        String rate = "";
-                        for (int k = 0; k < methodInfo.getAnnotationInfo().size(); k++) {
-                            AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(k);
-                            for (int l = 0; l < annotationInfo.getParameterValues(true).size(); l++) {
-                                AnnotationParameterValue annotationParameterValue = annotationInfo.getParameterValues().get(l);
+                        String rate = null;
+                        
+                        for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
+                            AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                            for (var j = 0; j < annotationInfo.getParameterValues(true).size(); j++) {
+                                AnnotationParameterValue annotationParameterValue = annotationInfo.getParameterValues().get(j);
 
                                 if (annotationParameterValue.getName().equals("rate")) {
                                     rate = (String) annotationParameterValue.getValue();
                                     String scheduled = rate.toLowerCase(Locale.ENGLISH).replace("every", "").trim();
-                                    
                                     String timespan = scheduled.substring(0, scheduled.length() - 1);
                                     String duration = scheduled.substring(scheduled.length() - 1);
-
                                     time = Long.parseLong(timespan);
 
                                     switch(duration) {
@@ -177,18 +172,21 @@ public final class Application {
                                       break;
                                     default:
                                       break;
-                                  }
-                                } else if (annotationParameterValue.getName().equals("initialDelay")) {
+                                    }
+                                } else if (annotationParameterValue.getName().equals("delay")) {
                                     delay = (long) annotationParameterValue.getValue();
                                 }
                             }
                         }
                         
-                        Task task = new Task(classInfo.loadClass(), methodInfo.getName());
-                        scheduledExecutorService.scheduleAtFixedRate(task, delay, time, TimeUnit.SECONDS);
-                        LOG.info("Successfully scheduled task in class {} with method {} and rate {}", classInfo.getName(), methodInfo.getName(), rate);
-                    }
-                }
+                        if (time > 0) {
+                            scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), delay, time, TimeUnit.SECONDS);
+                            LOG.info("Successfully scheduled task from class {} with method {} and rate {} and initial delay {} seconds", classInfo.getName(), methodInfo.getName(), rate, delay);  
+                        } else {
+                            LOG.error("Scheduled task found, but unable to schedule it. Check class {} with method {} and rate {} and initial delay {} seconds", classInfo.getName(), methodInfo.getName(), rate, delay);
+                        }
+                    });
+                });
             } 
         }
     }
