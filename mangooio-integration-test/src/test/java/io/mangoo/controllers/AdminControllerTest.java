@@ -191,34 +191,6 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testSchedulerAuthorized() {
-        //given
-        TestResponse response = login().to("/@admin/scheduler")
-                .withHTTPMethod(Methods.GET.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(SCHEDULER));
-    }
-    
-    @Test
-    public void testSchedulerUnauthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/scheduler")
-                .withDisabledRedirects()
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(SCHEDULER)));
-    }
-    
-    @Test
     public void testToolsAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools")

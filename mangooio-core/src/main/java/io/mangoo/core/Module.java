@@ -1,7 +1,5 @@
 package io.mangoo.core;
 
-import org.quartz.spi.JobFactory;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
@@ -11,7 +9,6 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Default;
 import io.mangoo.persistence.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
-import io.mangoo.scheduler.SchedulerFactory;
 
 /**
  * 
@@ -35,7 +32,6 @@ public class Module extends AbstractModule {
     protected void configure() {
         Names.bindProperties(binder(), config.toProperties());
         
-        bind(JobFactory.class).to(SchedulerFactory.class);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);
     }

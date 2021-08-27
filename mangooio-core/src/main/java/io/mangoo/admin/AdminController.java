@@ -51,8 +51,6 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooEncryptionException;
-import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
@@ -63,7 +61,6 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
-import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
@@ -89,7 +86,6 @@ public class AdminController {
     private static final String URL = "url";
     private static final String METHOD = "method";
     private static final String CACHE_ADMINROUTES = "cache_adminroutes";
-    private static final String JOBS = "jobs";
     private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
     private static final double HUNDRED_PERCENT = 100.0;
@@ -99,28 +95,15 @@ public class AdminController {
     private final CacheProvider cacheProvider;
     private final Config config;
     private final Crypto crypto;
-    private final Scheduler scheduler;
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
+    public AdminController(Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
     }
-    
-    @FilterWith(AdminFilter.class)
-    public Response execute(String name) {
-        try {
-            scheduler.executeJob(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to execute job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
-    }
-    
+
     @FilterWith(AdminFilter.class)
     public Response index() {
         Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
@@ -319,33 +302,6 @@ public class AdminController {
         return Response.withOk()
                 .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
-    }
-    
-    @FilterWith(AdminFilter.class)
-    public Response scheduler()  {
-        List<Job> jobs = new ArrayList<>();
-        if (scheduler.isInitialize()) {
-            try {
-                jobs = scheduler.getAllJobs();
-            } catch (MangooSchedulerException e) {
-                LOG.error("Failed to retrieve jobs from scheduler", e);
-            }   
-        }
-
-        return Response.withOk()
-                .andContent(JOBS, jobs)
-                .andTemplate(Template.DEFAULT.schedulerPath());
-    }
-    
-    @FilterWith(AdminFilter.class)
-    public Response state(String name) {
-        try {
-            scheduler.changeState(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to change the state of job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
     }
     
     @FilterWith(AdminFilter.class)

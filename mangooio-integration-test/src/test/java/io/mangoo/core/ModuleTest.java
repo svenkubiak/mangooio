@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.quartz.spi.JobFactory;
 
 import com.google.inject.Binding;
 import com.google.inject.Injector;
@@ -36,7 +35,6 @@ public class ModuleTest {
 		Binding<Injector> injector = guice.getBinding(Injector.class);
 		Binding<Logger> logger = guice.getBinding(Logger.class);
 		Binding<Config> config = guice.getBinding(Config.class);
-		Binding<JobFactory> jobFactory = guice.getBinding(JobFactory.class);
 		Binding<Cache> cache = guice.getBinding(Cache.class);
 		Binding<TemplateEngine> templateEngine = guice.getBinding(TemplateEngine.class);		
 		Binding<OncePerRequestFilter> mangooRequestFilter = guice.getBinding(OncePerRequestFilter.class);
@@ -47,7 +45,6 @@ public class ModuleTest {
 		assertThat(injector.getKey().getTypeLiteral().getType().getTypeName(), equalTo("com.google.inject.Injector"));
 		assertThat(logger.getKey().getTypeLiteral().getType().getTypeName(), equalTo("java.util.logging.Logger"));
 		assertThat(config.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.core.Config"));
-		assertThat(jobFactory.getKey().getTypeLiteral().getType().getTypeName(), equalTo("org.quartz.spi.JobFactory"));
 		assertThat(cache.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.cache.Cache"));
 		assertThat(templateEngine.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.templating.TemplateEngine"));
 		assertThat(mangooRequestFilter.getKey().getTypeLiteral().getType().getTypeName(), equalTo("io.mangoo.interfaces.filters.OncePerRequestFilter"));

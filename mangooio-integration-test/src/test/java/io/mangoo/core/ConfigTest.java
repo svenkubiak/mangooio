@@ -326,38 +326,6 @@ public class ConfigTest {
     }  
     
     @Test
-    public void testIsSchedulerAutostart() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String autostart = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("scheduler.autostart", autostart);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isSchedulerAutostart(), equalTo(Boolean.valueOf(autostart)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsSchedulerAutostartDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSchedulerAutostart(), equalTo(Default.SCHEDULER_AUTOSTART.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    
-    @Test
     public void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -450,22 +418,6 @@ public class ConfigTest {
         assertThat(config.getApplicationAdminPassword(), equalTo(password));
         assertThat(tempConfig.delete(), equalTo(true));
     }   
-    
-    @Test
-    public void testGetSchedulerPackage() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String schedulerPackage = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("scheduler.package", schedulerPackage);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getSchedulerPackage(), equalTo(schedulerPackage));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }  
     
     @Test
     public void testAuthenticationCookieRememberExpires() throws JsonGenerationException, JsonMappingException, IOException {

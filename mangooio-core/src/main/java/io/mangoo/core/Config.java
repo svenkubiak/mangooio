@@ -459,13 +459,6 @@ public class Config {
     }
 
     /**
-     * @return scheduler.autostart from config.props or default value if undefined
-     */
-    public boolean isSchedulerAutostart() {
-        return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
-    }
-
-    /**
      * @return application.admin.username from config.props or null if undefined
      */
     public String getApplicationAdminUsername() {
@@ -480,10 +473,10 @@ public class Config {
     }
 
     /**
-     * @return scheduler.package from config.props or default value if undefined
+     * @return scheduler.poolsize from config.props or default value if undefined
      */
-    public String getSchedulerPackage() {
-        return getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
+    public int getSchedulerPoolsize() {
+        return getInt(Key.SCHEDULER_POOLSIZE, Default.SCHEDULER_POOSLIZE.toInt());
     }
 
     /**
@@ -843,5 +836,5 @@ public class Config {
      */
     public String getApplicationAdminHealthToken() {
         return getString(Key.APPLICATION_ADMIN_HEALTH_TOKEN, null);
-    }    
+    }
 }

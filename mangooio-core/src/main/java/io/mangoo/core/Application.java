@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -22,10 +24,6 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.CronExpression;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
 
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
@@ -35,17 +33,19 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.github.classgraph.AnnotationInfo;
+import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
-import io.mangoo.annotations.Schedule;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.DatastoreListener;
 import io.mangoo.routing.Bind;
@@ -62,11 +62,10 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
-import io.mangoo.scheduler.Scheduler;
+import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
@@ -88,6 +87,7 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
+    private static ScheduledExecutorService scheduledExecutorService;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
@@ -115,10 +115,10 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
+            prepareScheduler();
             prepareRoutes();
             createRoutes();
             prepareDatastore();
-            prepareScheduler();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -126,6 +126,70 @@ public final class Application {
             
             Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
             started = true;
+        }
+    }
+
+    private static void prepareScheduler() {
+        Config config = getInstance(Config.class);
+        
+        if (config.isSchedulerEnabled()) {
+            scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
+            
+            try (ScanResult scanResult =
+                    new ClassGraph()
+                        .enableAnnotationInfo()
+                        .enableClassInfo()
+                        .enableMethodInfo()
+                        .acceptPackages("*")
+                        .scan()) {
+                
+                for (int i = 0; i < scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).size(); i++) {
+                    ClassInfo classInfo = scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).get(i);
+                    for (int j = 0; j < classInfo.getMethodInfo().size(); j++) {
+                        MethodInfo methodInfo = classInfo.getMethodInfo().get(j);
+
+                        long time = 0;
+                        long delay = 0;
+                        String rate = "";
+                        for (int k = 0; k < methodInfo.getAnnotationInfo().size(); k++) {
+                            AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(k);
+                            for (int l = 0; l < annotationInfo.getParameterValues(true).size(); l++) {
+                                AnnotationParameterValue annotationParameterValue = annotationInfo.getParameterValues().get(l);
+
+                                if (annotationParameterValue.getName().equals("rate")) {
+                                    rate = (String) annotationParameterValue.getValue();
+                                    String scheduled = rate.toLowerCase(Locale.ENGLISH).replace("every", "").trim();
+                                    
+                                    String timespan = scheduled.substring(0, scheduled.length() - 1);
+                                    String duration = scheduled.substring(scheduled.length() - 1);
+
+                                    time = Long.parseLong(timespan);
+
+                                    switch(duration) {
+                                    case "m":
+                                        time = time * 60;
+                                      break;
+                                    case "h":
+                                        time = time * 60 * 60;
+                                      break;  
+                                    case "d":
+                                        time = time * 60 * 60 * 24;
+                                      break;
+                                    default:
+                                      break;
+                                  }
+                                } else if (annotationParameterValue.getName().equals("initialDelay")) {
+                                    delay = (long) annotationParameterValue.getValue();
+                                }
+                            }
+                        }
+                        
+                        Task task = new Task(classInfo.loadClass(), methodInfo.getName());
+                        scheduledExecutorService.scheduleAtFixedRate(task, delay, time, TimeUnit.SECONDS);
+                        LOG.info("Successfully scheduled task in class {} with method {} and rate {}", classInfo.getName(), methodInfo.getName(), rate);
+                    }
+                }
+            } 
         }
     }
 
@@ -192,6 +256,15 @@ public final class Application {
      */
     public static Mode getMode() {
         return mode;
+    }
+    
+    /**
+     * Returns the ScheduledExecutorService where all tasks are scheduled
+     * 
+     * @return ScheduledExecutorService
+     */
+    public static ScheduledExecutorService getScheduler() {
+        return scheduledExecutorService;
     }
 
     /**
@@ -463,12 +536,9 @@ public final class Application {
                         On.get().to("/@admin/cache").respondeWith("cache"),
                         On.get().to("/@admin/login").respondeWith("login"),
                         On.get().to("/@admin/twofactor").respondeWith("twofactor"),
-                        On.get().to("/@admin/scheduler").respondeWith("scheduler"),
                         On.get().to("/@admin/logger").respondeWith("logger"),
                         On.get().to("/@admin/routes").respondeWith("routes"),
                         On.get().to("/@admin/tools").respondeWith("tools"),
-                        On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
-                        On.get().to("/@admin/scheduler/state/{name}").respondeWith("state"),   
                         On.get().to("/@admin/logout").respondeWith("logout"),
                         On.post().to("/@admin/authenticate").respondeWith("authenticate"),
                         On.post().to("/@admin/verify").respondeWith("verify"),
@@ -610,86 +680,6 @@ public final class Application {
     
     private static void applicationStarted() {
         getInstance(MangooBootstrap.class).applicationStarted();            
-    }
-
-    private static void prepareScheduler() {
-        Config config = getInstance(Config.class);
-        
-        if (config.isSchedulerEnabled()) {
-            List<Class<?>> jobs = new ArrayList<>();
-            try (ScanResult scanResult =
-                    new ClassGraph()
-                        .enableAnnotationInfo()
-                        .enableClassInfo()
-                        .acceptPackages(config.getSchedulerPackage())
-                        .scan()) {
-                scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
-            }
-            
-            if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
-                final Scheduler mangooScheduler = getInstance(Scheduler.class);
-                mangooScheduler.initialize();
-                
-                for (Class<?> clazz : jobs) {
-                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
-                    String scheduled = schedule.cron();
-                    
-                    Trigger trigger = null;
-                    final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                    if (scheduled != null) {
-                        scheduled = scheduled.toLowerCase(Locale.ENGLISH).trim();
-                        
-                        if (scheduled.contains("every")) {
-                            scheduled = scheduled.replace("every", "").trim();
-                            String timespan = scheduled.substring(0, scheduled.length() - 1);
-                            String duration = scheduled.substring(scheduled.length() - 1);
-                            String triggerName = clazz.getName() + "-trigger";
-                            String description = schedule.description();
-                            String triggerGroup = Default.SCHEDULER_TRIGGER_GROUP.toString();
-                            int time = Integer.parseInt(timespan);
-                            
-                            switch(duration) {
-                            case "s":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.SECONDS);
-                              break;
-                            case "m":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.MINUTES);
-                              break;
-                            case "h":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.HOURS);
-                              break;  
-                            case "d":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.DAYS);
-                              break;
-                            default:
-                              break;
-                          }
-                        } else {
-                            if (CronExpression.isValidExpression(schedule.cron())) {
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
-                            } else {
-                                LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
-                                failsafe();
-                            }
-                        }
-                        
-                        try {
-                            mangooScheduler.schedule(jobDetail, trigger);
-                            LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
-                        } catch (MangooSchedulerException e) {
-                            LOG.error("Failed to add a job to the scheduler", e);
-                        }
-                    }
-                }
-
-                try {
-                    mangooScheduler.start();
-                } catch (MangooSchedulerException e) {
-                    LOG.error("Failed to start the scheduler", e);
-                    failsafe();
-                }
-            }            
-        }
     }
     
     /**

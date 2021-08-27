@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -33,6 +35,7 @@
 		<simplemail.version>6.6.1</simplemail.version>
 		<jpasteo.version>0.6.0</jpasteo.version>
 		<mongodb.version>4.3.1</mongodb.version>
+		<slf4j.version>1.7.32</slf4j.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -218,6 +221,16 @@
 				<version>5.0.1</version>
 			</dependency>
 			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-nop</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
 				<version>5.0.1.Final</version>
@@ -358,11 +371,6 @@
 				<version>1.5.4.Final-format-001</version>
 			</dependency>
 			<dependency>
-				<groupId>com.mchange</groupId>
-				<artifactId>mchange-commons-java</artifactId>
-				<version>0.2.20</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>
 				<version>1.7.1</version>
@@ -372,11 +380,6 @@
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
 				<version>3.4.2.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>2.0.0-alpha4</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
@@ -462,11 +465,6 @@
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>2.3.31</version>
-			</dependency>
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>2.3.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mchange</groupId>
