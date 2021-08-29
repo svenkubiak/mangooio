@@ -28,8 +28,8 @@ public class Task implements Runnable {
     @Override
     @SuppressWarnings("all")
     public void run() {
-        Object instance = Application.getInstance(clazz);
         try {
+            Object instance = Application.getInstance(clazz);
             instance.getClass().getMethod(methodName).invoke(instance, null);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOG.error("Failed to execute scheduled task on class '" + clazz.getName() + "' with annotated method '" + methodName + "'", e);

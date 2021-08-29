@@ -36,6 +36,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.AnnotationInfo;
 import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
@@ -60,6 +62,7 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
+import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
@@ -142,52 +145,68 @@ public final class Application {
                         .acceptPackages(ALL_PACKAGES)
                         .scan()) {
                 
-                scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> {
+                scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> 
                     classInfo.getMethodInfo().forEach(methodInfo -> {
+                        boolean isCron = false;
                         long time = 0;
                         long delay = 0;
-                        String rate = null;
+                        String at = null;
                         
                         for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
                             AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
                             for (var j = 0; j < annotationInfo.getParameterValues(true).size(); j++) {
                                 AnnotationParameterValue annotationParameterValue = annotationInfo.getParameterValues().get(j);
-
-                                if (annotationParameterValue.getName().equals("rate")) {
-                                    rate = (String) annotationParameterValue.getValue();
-                                    String scheduled = rate.toLowerCase(Locale.ENGLISH).replace("every", "").trim();
-                                    String timespan = scheduled.substring(0, scheduled.length() - 1);
-                                    String duration = scheduled.substring(scheduled.length() - 1);
-                                    time = Long.parseLong(timespan);
-
-                                    switch(duration) {
-                                    case "m":
-                                        time = time * 60;
-                                      break;
-                                    case "h":
-                                        time = time * 60 * 60;
-                                      break;  
-                                    case "d":
-                                        time = time * 60 * 60 * 24;
-                                      break;
-                                    default:
-                                      break;
+                                String annotation = annotationParameterValue.getName();
+                                
+                                if (("at").equals(annotation)) {
+                                    at = ((String) annotationParameterValue.getValue()).toLowerCase(Locale.ENGLISH).trim();
+                                    if (at.contains("every")) {
+                                        at = at.replace("every", "").trim();
+                                        String timespan = at.substring(0, at.length() - 1);
+                                        String duration = at.substring(at.length() - 1);
+                                        time = Long.parseLong(timespan);
+    
+                                        switch(duration) {
+                                        case "m":
+                                            time = time * 60;
+                                          break;
+                                        case "h":
+                                            time = time * 60 * 60;
+                                          break;  
+                                        case "d":
+                                            time = time * 60 * 60 * 24;
+                                          break;
+                                        default:
+                                          break;
+                                        }  
+                                    } else {
+                                        isCron = true;
                                     }
-                                } else if (annotationParameterValue.getName().equals("delay")) {
+                                } else if (("delay").equals(annotation)) {
                                     delay = (long) annotationParameterValue.getValue();
                                 }
                             }
                         }
                         
-                        if (time > 0) {
-                            scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), delay, time, TimeUnit.SECONDS);
-                            LOG.info("Successfully scheduled task from class {} with method {} and rate {} and initial delay {} seconds", classInfo.getName(), methodInfo.getName(), rate, delay);  
-                        } else {
-                            LOG.error("Scheduled task found, but unable to schedule it. Check class {} with method {} and rate {} and initial delay {} seconds", classInfo.getName(), methodInfo.getName(), rate, delay);
-                        }
-                    });
-                });
+                        schedule(classInfo, methodInfo, isCron, time, delay, at);
+                    })
+                );
             } 
+        }
+    }
+
+    private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, long delay, String at) {
+        if (isCron) {
+            scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), delay, TimeUnit.SECONDS);
+            LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
+        } else {
+            if (time > 0) {
+                scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), delay, time, TimeUnit.SECONDS);
+                
+                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
+            } else {
+                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);
+            }
         }
     }
 

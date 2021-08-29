@@ -42,9 +42,9 @@ public class TotpUtils {
      */
     public static String createSecret() {
         Random random = new SecureRandom();
-        StringBuilder buffer = new StringBuilder(BYTES_SECRET);
-        for (int i = 0; i < BYTES_SECRET; i++) {
-            int value = random.nextInt(MAX_CHARACTERS);
+        var buffer = new StringBuilder(BYTES_SECRET);
+        for (var i = 0; i < BYTES_SECRET; i++) {
+            var value = random.nextInt(MAX_CHARACTERS);
             if (value < ITERATIONS) {
                 buffer.append((char) ('A' + value));
             } else {
@@ -202,7 +202,7 @@ public class TotpUtils {
             .append("&period=")
             .append(period);
         
-        String url = "";
+        var url = "";
         try {
             url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
