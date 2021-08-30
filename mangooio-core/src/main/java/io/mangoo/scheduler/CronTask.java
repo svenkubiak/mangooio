@@ -38,6 +38,7 @@ public class CronTask implements Runnable {
     }
 
     @Override
+    @SuppressWarnings("all")
     public void run() {
         try {
             long delay = delay();

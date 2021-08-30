@@ -171,8 +171,12 @@ public final class Application {
                                     } else {
                                         isCron = true;
                                     }
+                                    
+                                    continue;
                                 } else if (("delay").equals(annotation)) {
                                     delay = (long) annotationParameterValue.getValue();
+                                    
+                                    continue;
                                 }
                             }
                         }
