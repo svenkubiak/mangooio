@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -44,14 +45,14 @@ public final class CodecUtils {
                 .withIterations(ITERATIONS)
                 .withMemoryAsKB(MEMORY)
                 .withParallelism(PARALLELISM)
-                .withSecret(password.getBytes())
-                .withSalt(salt.getBytes());
+                .withSecret(password.getBytes(StandardCharsets.UTF_8))
+                .withSalt(salt.getBytes(StandardCharsets.UTF_8));
 
         Argon2BytesGenerator generator = new Argon2BytesGenerator();
         generator.init(builder.build());
 
         byte[] passwdHash = new byte[32];
-        generator.generateBytes(password.getBytes(), passwdHash);
+        generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
         return base64Encoder.encodeToString(passwdHash);
     }
@@ -71,7 +72,7 @@ public final class CodecUtils {
         Objects.requireNonNull(salt, Required.SALT.toString());
         Objects.requireNonNull(hashedPassword, Required.PASSWORD.toString());
         
-        return Arrays.areEqual(hashArgon2(password, salt).getBytes(), hashedPassword.getBytes());
+        return Arrays.areEqual(hashArgon2(password, salt).getBytes(), hashedPassword.getBytes(StandardCharsets.UTF_8));
     }
     
     /**

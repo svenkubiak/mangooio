@@ -25,7 +25,7 @@ import io.mangoo.enums.Required;
  *
  */
 public class CronTask implements Runnable {
-    private static final Logger LOG = LogManager.getLogger(Task.class);
+    private static final Logger LOG = LogManager.getLogger(CronTask.class);
     private Class<?> clazz;
     private String methodName;
     private ExecutionTime executionTime;
