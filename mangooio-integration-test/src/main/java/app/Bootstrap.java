@@ -2,7 +2,6 @@ package app;
 
 import controllers.ApplicationController;
 import controllers.AuthenticationController;
-import controllers.AuthenticityController;
 import controllers.BasicAuthenticationController;
 import controllers.FilterController;
 import controllers.FlashController;
@@ -31,14 +30,6 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),
                 On.get().to("/session/valued/{uuid}").respondeWith("valued")
-        );
-    
-        // AuthenticityController
-        Bind.controller(AuthenticityController.class).withRoutes(
-                On.get().to("/authenticityform").respondeWith("form"),
-                On.get().to("/authenticitytoken").respondeWith("token"),
-                On.get().to("/valid").respondeWith("valid"),
-                On.get().to("/invalid").respondeWith("invalid")
         );
         
         // FilterController
