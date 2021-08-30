@@ -72,7 +72,7 @@ public final class CodecUtils {
         Objects.requireNonNull(salt, Required.SALT.toString());
         Objects.requireNonNull(hashedPassword, Required.PASSWORD.toString());
         
-        return Arrays.areEqual(hashArgon2(password, salt).getBytes(), hashedPassword.getBytes(StandardCharsets.UTF_8));
+        return Arrays.areEqual(hashArgon2(password, salt).getBytes(StandardCharsets.UTF_8), hashedPassword.getBytes(StandardCharsets.UTF_8));
     }
     
     /**

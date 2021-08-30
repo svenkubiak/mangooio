@@ -57,7 +57,7 @@ public class CronTask implements Runnable {
             Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
                 @Override
                 public void run() {}
-            } , 1, TimeUnit.SECONDS).get();
+            }, 1, TimeUnit.SECONDS).get();
         }
 
         return getDelay();

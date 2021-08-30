@@ -4,21 +4,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Objects;
 
 import io.mangoo.enums.Required;
 
 /**
- * Utility class for converting between Date and LocalDateTime, LocalDate and LocalTime
+ * Utility class for converting between Date, LocalDateTime and LocalDate
  * 
  * @author svenkubiak
  *
  */
 public final class DateUtils {
-    public static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    
     private DateUtils() {
     }
 
