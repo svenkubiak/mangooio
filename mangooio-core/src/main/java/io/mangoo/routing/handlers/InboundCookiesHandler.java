@@ -42,7 +42,6 @@ public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
-    private static final int STRING_LENGTH = 32;
     private Config config;
     private Form form;
 
@@ -72,7 +71,6 @@ public class InboundCookiesHandler implements HttpHandler {
     protected Session getSessionCookie(HttpServerExchange exchange) {
         Session session = Session.create()
             .withContent(new HashMap<>())
-            .withAuthenticity(MangooUtils.randomString(STRING_LENGTH))
             .withExpires(LocalDateTime.now().plusMinutes(config.getSessionCookieTokenExpires()));
         
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
@@ -88,7 +86,6 @@ public class InboundCookiesHandler implements HttpHandler {
                 if (expiration.isAfter(LocalDateTime.now())) {
                     session = Session.create()
                             .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
-                            .withAuthenticity(paseto.getClaims().get(ClaimKey.AUTHENTICITY.toString(), String.class))
                             .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET)); 
                 }
             } catch (PasetoException e) {

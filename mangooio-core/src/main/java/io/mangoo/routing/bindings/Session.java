@@ -36,13 +36,6 @@ public class Session {
         return this;
     }
     
-    public Session withAuthenticity(String authenticity) {
-        Objects.requireNonNull(authenticity, Required.AUTHENTICITY.toString());
-        
-        this.authenticity = authenticity;
-        return this;
-    }
-    
     public Session withExpires(LocalDateTime expires) {
         Objects.requireNonNull(expires, Required.EXPIRES.toString());
         

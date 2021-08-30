@@ -23,18 +23,10 @@ public enum Validation {
     MATCH_KEY("validation.match"),
     MATCH_VALUES("The values of {0} is not valid"),
     MATCH_VALUES_KEY("validation.matchvalues"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    MAX("{0} must have a size of max {1}"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    MAX_KEY("validation.max"),
     MAX_LENGTH("{0} must be a value with a max length of {1}"),
     MAX_LENGTH_KEY("validation.max.length"),
     MAX_VALUE("{0} must be a value not greater than {1}"),
     MAX_VALUE_KEY("validation.max.value"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    MIN("{0} must have a least a size of {1}"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    MIN_KEY("validation.min"),
     MIN_LENGTH("{0} must be a value with a min length of {1}"),
     MIN_LENGTH_KEY("validation.min.length"),
     MIN_VALUE("{0} must be a value not less thatn {1}"),
@@ -45,10 +37,6 @@ public enum Validation {
     NULL_KEY("validation.null"),
     NUMERIC("{0} must be a numeric value"),
     NUMERIC_KEY("validation.numeric"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    RANGE("{0} must have a size between {1} and {2}"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    RANGE_KEY("validation.range"),
     RANGE_LENGTH("{0} must be a length between {1} and {2}"),
     RANGE_LENGTH_KEY("validation.range.length"),
     RANGE_VALUE("{0} must be value between {1} and {2}"),
