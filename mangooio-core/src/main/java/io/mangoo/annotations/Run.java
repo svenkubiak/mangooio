@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Schedule {
+public @interface Run {
     /**
      * Schedules the method either at a given rate (e.g. Every 1s, Every 5m, Every 8h, Every 1d)
      * or a given UNIX cron (e.g. 0/1 * * * *)

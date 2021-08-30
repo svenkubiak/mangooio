@@ -89,13 +89,13 @@ public final class Application {
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
+    private static LocalDateTime start = LocalDateTime.now();
     private static ScheduledExecutorService scheduledExecutorService;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
     private static Mode mode;
     private static Injector injector;
-    private static LocalDateTime start = LocalDateTime.now();
     private static PathHandler pathHandler;
     private static boolean started;
     private static int httpPort;
@@ -131,6 +131,9 @@ public final class Application {
         }
     }
 
+    /**
+     * Schedules all tasks annotated with @Run
+     */
     private static void prepareScheduler() {
         Config config = getInstance(Config.class);
         
@@ -148,7 +151,7 @@ public final class Application {
                 scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> 
                     classInfo.getMethodInfo().forEach(methodInfo -> {
                         boolean isCron = false;
-                        long time = 0;
+                        long seconds = 0;
                         long delay = 0;
                         String at = null;
                         
@@ -164,21 +167,7 @@ public final class Application {
                                         at = at.replace("every", "").trim();
                                         String timespan = at.substring(0, at.length() - 1);
                                         String duration = at.substring(at.length() - 1);
-                                        time = Long.parseLong(timespan);
-    
-                                        switch(duration) {
-                                        case "m":
-                                            time = time * 60;
-                                          break;
-                                        case "h":
-                                            time = time * 60 * 60;
-                                          break;  
-                                        case "d":
-                                            time = time * 60 * 60 * 24;
-                                          break;
-                                        default:
-                                          break;
-                                        }  
+                                        seconds = getSeconds(timespan, duration);  
                                     } else {
                                         isCron = true;
                                     }
@@ -188,14 +177,60 @@ public final class Application {
                             }
                         }
                         
-                        schedule(classInfo, methodInfo, isCron, time, delay, at);
+                        schedule(classInfo, methodInfo, isCron, seconds, delay, at);
                     })
                 );
             } 
         }
     }
 
+    /**
+     * Parses a given time span and duration and returns the number of
+     * matching seconds to scheduled a task
+     * 
+     * @param timespan The timespan to use
+     * @param duration The duration to use for calculation
+     * 
+     * @return The duration in seconds
+     */
+    private static long getSeconds(String timespan, String duration) {
+        Objects.requireNonNull(timespan, "timespan can not be null");
+        Objects.requireNonNull(duration, "duration can not be null");
+        
+        var time = Long.parseLong(timespan);
+        
+        switch(duration) {
+            case "m":
+                time = time * 60;
+              break;
+            case "h":
+                time = time * 60 * 60;
+              break;  
+            case "d":
+                time = time * 60 * 60 * 24;
+              break;
+            default:
+              break;
+        }
+        
+        return time;
+    }
+
+    /**
+     * Schedules a task within the scheduler
+     * 
+     * @param classInfo The classInfo containing the class which holds the method to execute
+     * @param methodInfo The methodInfo containing the method to execute
+     * @param isCron True if Task is a cron or false if it has a fixed rate
+     * @param time The fixed rate for the scheduled task to be executed
+     * @param delay The initial delay before first execution
+     * @param at The cron expression to be used when scheduling a cron
+     */
     private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, long delay, String at) {
+        Objects.requireNonNull(classInfo, "classInfo can not be null");
+        Objects.requireNonNull(methodInfo, "methodInfo can not be null");
+        Objects.requireNonNull(at, "at can not be null");
+        
         if (isCron) {
             scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), delay, TimeUnit.SECONDS);
             LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
@@ -206,17 +241,22 @@ public final class Application {
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
             } else {
                 LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);
+                failsafe();
             }
         }
     }
 
+    /**
+     * Configures async persistence
+     */
     private static void prepareDatastore() {
         getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
     }
 
     /**
      * Checks if application is run as root
-     * There is no need to run as root
+     * 
+     * (Hint: There is no need to run as root)
      */
     private static void userCheck() {
         String osName = System.getProperty("os.name");

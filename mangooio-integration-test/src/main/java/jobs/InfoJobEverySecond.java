@@ -1,9 +1,9 @@
 package jobs;
 
-import io.mangoo.annotations.Schedule;
+import io.mangoo.annotations.Run;
 
 public class InfoJobEverySecond {
-    @Schedule(at = "Every 3s")
+    @Run(at = "Every 3s")
     public void execute() {
         //Do nothing for now
     }
