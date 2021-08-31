@@ -151,13 +151,10 @@ public final class Application {
                     classInfo.getMethodInfo().forEach(methodInfo -> {
                         boolean isCron = false;
                         long seconds = 0;
-                        long delay = 0;
                         String at = null;
                         
                         for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
                             AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                            delay = (long) annotationInfo.getParameterValues(true).get("delay").getValue();
-                            
                             at = ((String) annotationInfo.getParameterValues(true).get("at").getValue()).toLowerCase(Locale.ENGLISH).trim();
                             if (at.contains("every")) {
                                 at = at.replace("every", "").trim();
@@ -167,10 +164,9 @@ public final class Application {
                             } else {
                                 isCron = true;
                             }
-
                         }
                         
-                        schedule(classInfo, methodInfo, isCron, seconds, delay, at);
+                        schedule(classInfo, methodInfo, isCron, seconds, at);
                     })
                 );
             } 
@@ -219,21 +215,21 @@ public final class Application {
      * @param delay The initial delay before first execution
      * @param at The cron expression to be used when scheduling a cron
      */
-    private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, long delay, String at) {
+    private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, String at) {
         Objects.requireNonNull(classInfo, "classInfo can not be null");
         Objects.requireNonNull(methodInfo, "methodInfo can not be null");
         Objects.requireNonNull(at, "at can not be null");
         
         if (isCron) {
-            scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), delay, TimeUnit.SECONDS);
-            LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
+            scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
+            LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
         } else {
             if (time > 0) {
-                scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), delay, time, TimeUnit.SECONDS);
+                scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
                 
-                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);  
+                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);  
             } else {
-                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}' and initial delay of {} seconds", classInfo.getName(), methodInfo.getName(), at, delay);
+                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
                 failsafe();
             }
         }

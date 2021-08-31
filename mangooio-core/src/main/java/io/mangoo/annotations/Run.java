@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Run {
     /**
-     * Schedules the method either at a given rate (e.g. Every 1s, Every 5m, Every 8h, Every 1d)
+     * Schedules a method either at a given rate (e.g. Every 1s, Every 5m, Every 8h, Every 1d)
      * or a given UNIX cron (e.g. 0/1 * * * *)
      * 
      * @see <a href="https://en.wikipedia.org/wiki/Cron">https://en.wikipedia.org/wiki/Cron</a>
@@ -25,12 +25,4 @@ public @interface Run {
      * @return Rate or UNIX cron for execution
      */
     String at();
-    
-    /**
-     * The initial delay in seconds before the a scheduled method is first executed
-     * Default is 0
-     * 
-     * @return Delay in seconds before first execution
-     */
-    long delay() default 0;
 }
