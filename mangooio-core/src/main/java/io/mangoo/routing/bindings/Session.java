@@ -20,7 +20,6 @@ public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> INVALID_CHRACTERTS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
-    private String authenticity;
     private LocalDateTime expires;
     private boolean changed;
     private boolean invalid;
@@ -125,13 +124,5 @@ public class Session {
     
     public boolean isInvalid() {
         return invalid;
-    }
-
-    /**
-     * @return The current authenticity token and marks the session as changed
-     */
-    public String getAuthenticity() {
-        changed = true;
-        return authenticity;
     }
 }

@@ -66,13 +66,8 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Request getRequest(HttpServerExchange exchange) {
-        final String authenticity = Optional.ofNullable(attachment.getRequestParameter()
-                .get(Default.AUTHENTICITY.toString()))
-                .orElse(attachment.getForm().get(Default.AUTHENTICITY.toString()));
-        
         return new Request(exchange)
                 .withSession(attachment.getSession())
-                .withAuthenticity(authenticity)
                 .withAuthentication(attachment.getAuthentication())
                 .withParameter(attachment.getRequestParameter())
                 .withBody(attachment.getBody());
@@ -153,8 +148,6 @@ public class RequestHandler implements HttpHandler {
                     .withMessages(attachment.getMessages())
                     .withController(attachment.getControllerAndMethod())
                     .withPrettyTime(attachment.getLocale())
-                    .withAuthenticity(attachment.getSession())
-                    .withAuthenticityForm(attachment.getSession())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
             invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));

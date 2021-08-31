@@ -85,7 +85,6 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (session.hasChanges()) {
             PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
                     .setExpiration(session.getExpires().toInstant(ZONE_OFFSET))
-                    .claim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity())
                     .claim(ClaimKey.DATA.toString(), session.getValues())
                     .setSharedSecret(new SecretKeySpec(config.getSessionCookieSecret().getBytes(CHARSET), ALGORITHM));
         

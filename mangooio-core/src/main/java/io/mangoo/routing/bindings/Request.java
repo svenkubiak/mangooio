@@ -30,7 +30,6 @@ public class Request extends Validator {
     private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
-    private String authenticity;
     private Map<String, String> parameter;
 
     public Request(){
@@ -46,11 +45,6 @@ public class Request extends Validator {
 
     public Request withSession(Session session) {
         this.session = session;
-        return this;
-    }
-    
-    public Request withAuthenticity(String authenticity) {
-        this.authenticity = authenticity;
         return this;
     }
     
@@ -104,16 +98,6 @@ public class Request extends Validator {
      */
     public ReadContext getBodyAsJsonPath() {
         return JsonPath.parse(body);
-    }
-
-    /**
-     * Checks if the session bound authenticity token matches the client sent
-     * authenticity token
-     *
-     * @return True if the token matches, false otherwise
-     */
-    public boolean authenticityMatches() {
-        return session.getAuthenticity().equals(this.authenticity);
     }
 
     /**
