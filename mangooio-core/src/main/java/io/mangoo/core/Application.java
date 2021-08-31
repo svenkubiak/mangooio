@@ -34,7 +34,6 @@ import com.google.inject.Stage;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.AnnotationInfo;
-import io.github.classgraph.AnnotationParameterValue;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
@@ -157,28 +156,18 @@ public final class Application {
                         
                         for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
                             AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                            for (var j = 0; j < annotationInfo.getParameterValues(true).size(); j++) {
-                                AnnotationParameterValue annotationParameterValue = annotationInfo.getParameterValues().get(j);
-                                String annotation = annotationParameterValue.getName();
-                                
-                                if (("at").equals(annotation)) {
-                                    at = ((String) annotationParameterValue.getValue()).toLowerCase(Locale.ENGLISH).trim();
-                                    if (at.contains("every")) {
-                                        at = at.replace("every", "").trim();
-                                        String timespan = at.substring(0, at.length() - 1);
-                                        String duration = at.substring(at.length() - 1);
-                                        seconds = getSeconds(timespan, duration);  
-                                    } else {
-                                        isCron = true;
-                                    }
-                                    
-                                    continue;
-                                } else if (("delay").equals(annotation)) {
-                                    delay = (long) annotationParameterValue.getValue();
-                                    
-                                    continue;
-                                }
+                            delay = (long) annotationInfo.getParameterValues(true).get("delay").getValue();
+                            
+                            at = ((String) annotationInfo.getParameterValues(true).get("at").getValue()).toLowerCase(Locale.ENGLISH).trim();
+                            if (at.contains("every")) {
+                                at = at.replace("every", "").trim();
+                                String timespan = at.substring(0, at.length() - 1);
+                                String duration = at.substring(at.length() - 1);
+                                seconds = getSeconds(timespan, duration);  
+                            } else {
+                                isCron = true;
                             }
+
                         }
                         
                         schedule(classInfo, methodInfo, isCron, seconds, delay, at);
@@ -268,7 +257,7 @@ public final class Application {
             Process exec;
             try {
                 exec = Runtime.getRuntime().exec("id -u");
-                BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
+                var input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
                 
                 input.close();
@@ -421,7 +410,7 @@ public final class Application {
      * Checks for config failures that prevent the application from starting
      */
     private static void prepareConfig() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
@@ -475,53 +464,53 @@ public final class Application {
      * Do sanity checks on the configuration an warn about it in the log
      */
     private static void sanityChecks() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         List<String> warnings = new ArrayList<>();
         
         if (!config.isAuthenticationCookieSecure()) {
-            String warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
+            var warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-            String warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
+            var warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
+            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (!config.isSessionCookieSecure()) {
-            String warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
+            var warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-            String warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
+            var warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
+            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
-            String warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
+            var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
+            var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -589,7 +578,7 @@ public final class Application {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class)
                 .withRoutes(
@@ -616,7 +605,7 @@ public final class Application {
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
-            DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
+            var dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
                     .withMaxEntitySize(requestRoute.getMaxEntitySize())
@@ -637,7 +626,7 @@ public final class Application {
     }
 
     private static void prepareUndertow() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -657,7 +646,7 @@ public final class Application {
         ajpHost = config.getConnectorAjpHost();
         ajpPort = config.getConnectorAjpPort();
 
-        boolean hasConnector = false;
+        var hasConnector = false;
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             builder.addHttpListener(httpPort, httpHost);
             hasConnector = true;
