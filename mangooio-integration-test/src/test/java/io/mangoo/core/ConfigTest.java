@@ -451,37 +451,6 @@ public class ConfigTest {
     }   
     
     @Test
-    public void testGetApplicationThreadpool() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String threadpool = "555";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.threadpool", threadpool);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getApplicationThreadpool(), equalTo(Integer.valueOf(threadpool)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetApplicationThreadpoolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationThreadpool(), equalTo(Default.APPLICATION_THREADPOOL.toInt()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }  
-    
-    @Test
     public void testGetApplicationController() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());

@@ -487,13 +487,6 @@ public class Config {
     }
 
     /**
-     * @return application.threadpool from config.props or default value if undefined
-     */
-    public int getApplicationThreadpool() {
-        return getInt(Key.APPLICATION_THREADPOOL, Default.APPLICATION_THREADPOOL.toInt());
-    }
-
-    /**
      * @return application.controller from config.props or default value if undefined
      */
     public String getApplicationController() {

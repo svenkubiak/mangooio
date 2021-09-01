@@ -28,7 +28,6 @@ import io.mangoo.routing.handlers.ResponseHandler;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
-import io.mangoo.services.ConcurrentService;
 import io.mangoo.services.ServerSentEventService;
 import io.mangoo.services.WebSocketService;
 import io.mangoo.templating.TemplateEngine;
@@ -129,15 +128,6 @@ public class InjectionTest {
         
         //then
         assertThat(request, not(nullValue()));
-    }
-    
-    @Test
-    public void testExecutionManager() {
-        //given
-        ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
-        
-        //then
-        assertThat(concurrentService, not(nullValue()));
     }
     
     @Test
