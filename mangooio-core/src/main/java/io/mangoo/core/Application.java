@@ -25,6 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.parser.CronParser;
 import com.google.common.io.Resources;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -221,12 +225,20 @@ public final class Application {
         Objects.requireNonNull(at, "at can not be null");
         
         if (isCron) {
-            scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
-            LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
+            try {
+                CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+                Cron quartzCron = parser.parse(at);
+                quartzCron.validate();
+                
+                scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
+                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
+            } catch (IllegalArgumentException e) {
+                LOG.error("Scheduled cron task found, but the unix cron is invalid", e);
+                failsafe();
+            }
         } else {
             if (time > 0) {
-                scheduledExecutorService.scheduleAtFixedRate(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
-                
+                scheduledExecutorService.scheduleWithFixedDelay(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);  
             } else {
                 LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
