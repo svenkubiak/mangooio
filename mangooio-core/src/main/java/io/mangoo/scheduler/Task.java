@@ -26,11 +26,10 @@ public class Task implements Runnable {
     }
 
     @Override
-    @SuppressWarnings("all")
     public void run() {
         try {
             Object instance = Application.getInstance(clazz);
-            instance.getClass().getMethod(methodName).invoke(instance, null);
+            instance.getClass().getMethod(methodName).invoke(instance, (Class<?>) null);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             LOG.error("Failed to execute scheduled task on class '" + clazz.getName() + "' with annotated method '" + methodName + "'", e);
         }
