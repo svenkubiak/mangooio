@@ -103,6 +103,7 @@ public class Authentication {
      *
      * @param identifier The identifier to authenticate
      * @param password The clear text password
+     * @param salt The salt to use for hashing
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
