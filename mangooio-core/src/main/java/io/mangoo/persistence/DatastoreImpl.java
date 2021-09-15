@@ -1,8 +1,16 @@
 package io.mangoo.persistence;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
+
 import com.google.inject.Inject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+
 import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
 import dev.morphia.query.experimental.filters.Filters;
@@ -13,12 +21,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.persistence.events.DeleteEvent;
 import io.mangoo.persistence.events.SaveEvent;
 import io.mangoo.services.EventBusService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.types.ObjectId;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * 

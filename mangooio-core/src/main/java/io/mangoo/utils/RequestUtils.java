@@ -1,7 +1,21 @@
 package io.mangoo.utils;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
+
 import dev.paseto.jpaseto.PasetoException;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
@@ -23,13 +37,6 @@ import io.undertow.util.AttachmentKey;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 /**
  *

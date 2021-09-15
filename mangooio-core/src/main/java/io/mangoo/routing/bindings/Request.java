@@ -1,7 +1,14 @@
 package io.mangoo.routing.bindings;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
+
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -9,11 +16,6 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  *
@@ -81,6 +83,7 @@ public class Request extends Validator {
      *
      * @return The request body as Map object
      */
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
         if (StringUtils.isNotBlank(body)) {
             return JsonUtils.fromJson(body, Map.class);

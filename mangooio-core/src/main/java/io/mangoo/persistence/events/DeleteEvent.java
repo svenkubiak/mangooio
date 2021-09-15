@@ -1,10 +1,11 @@
 package io.mangoo.persistence.events;
 
+import java.util.Objects;
+
 import com.google.inject.Inject;
+
 import io.mangoo.enums.Required;
 import io.mangoo.persistence.Datastore;
-
-import java.util.Objects;
 
 /**
  * 

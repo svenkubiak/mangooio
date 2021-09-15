@@ -1,12 +1,13 @@
 package io.mangoo.cache;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.core.Config;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Required;
+import java.net.URI;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+
 import org.ehcache.CacheManager;
 import org.ehcache.PersistentCacheManager;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
@@ -19,13 +20,14 @@ import org.ehcache.core.internal.statistics.DefaultStatisticsService;
 import org.ehcache.core.spi.service.StatisticsService;
 import org.ehcache.core.statistics.CacheStatistics;
 
-import java.net.URI;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.core.Config;
+import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
 
 /**
  * 

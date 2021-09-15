@@ -1,13 +1,5 @@
 package io.mangoo.utils;
 
-import io.mangoo.crypto.totp.TOTP;
-import io.mangoo.enums.HmacShaAlgorithm;
-import io.mangoo.enums.Required;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.lang3.RegExUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +7,15 @@ import java.security.SecureRandom;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import io.mangoo.crypto.totp.TOTP;
+import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.enums.Required;
 
 /**
  * 

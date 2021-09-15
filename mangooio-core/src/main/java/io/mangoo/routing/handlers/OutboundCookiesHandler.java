@@ -1,6 +1,18 @@
 package io.mangoo.routing.handlers;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Objects;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.inject.Inject;
+
 import dev.paseto.jpaseto.PasetoV1LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
@@ -19,15 +31,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Objects;
 
 /**
  *

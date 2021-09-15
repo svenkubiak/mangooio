@@ -2,6 +2,7 @@ package io.mangoo.core;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+
 import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
