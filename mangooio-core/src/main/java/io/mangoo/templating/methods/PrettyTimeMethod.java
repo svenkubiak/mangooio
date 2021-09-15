@@ -1,14 +1,5 @@
 package io.mangoo.templating.methods;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import org.ocpsoft.prettytime.PrettyTime;
-
 import freemarker.template.SimpleDate;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
@@ -17,11 +8,18 @@ import io.mangoo.utils.DateUtils;
 import no.api.freemarker.java8.time.LocalDateAdapter;
 import no.api.freemarker.java8.time.LocalDateTimeAdapter;
 import no.api.freemarker.java8.time.TemporalDialerAdapter;
+import org.ocpsoft.prettytime.PrettyTime;
 
-@SuppressWarnings("rawtypes")
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 public class PrettyTimeMethod implements TemplateMethodModelEx {
     private static final int NUM_ARGUMENTS = 1;
-    private PrettyTime prettyTime;
+    private final PrettyTime prettyTime;
     
     public PrettyTimeMethod (Locale locale) {
         Objects.requireNonNull(locale, Required.LOCALE.toString());

@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
- * Main configuration class for all properties configured in config.props
+ * Main configuration class for all properties configured in 'config.props'
  *
  * @author svenkubiak
  * @author williamdunne
@@ -414,7 +414,7 @@ public class Config {
     }
 
     /**
-     * @return session.cookie.tooken.expires from config.props or default value if undefined
+     * @return session.cookie.token.expires from config.props or default value if undefined
      */
     public long getSessionCookieTokenExpires() {
         return getLong(Key.SESSION_COOKIE_TOKEN_EXPIRES, Default.SESSION_COOKIE_TOKEN_EXPIRES.toLong());

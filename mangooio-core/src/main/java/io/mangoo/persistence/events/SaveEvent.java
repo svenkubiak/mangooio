@@ -1,11 +1,10 @@
 package io.mangoo.persistence.events;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
-
 import io.mangoo.enums.Required;
 import io.mangoo.persistence.Datastore;
+
+import java.util.Objects;
 
 /**
  * 
@@ -13,7 +12,7 @@ import io.mangoo.persistence.Datastore;
  *
  */
 public class SaveEvent {
-    private Datastore datastore;
+    private final Datastore datastore;
     private Object object;
     
     @Inject

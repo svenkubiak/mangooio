@@ -1,14 +1,7 @@
 package io.mangoo.routing.bindings;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
-
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -16,6 +9,11 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -83,7 +81,6 @@ public class Request extends Validator {
      *
      * @return The request body as Map object
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
         if (StringUtils.isNotBlank(body)) {
             return JsonUtils.fromJson(body, Map.class);
@@ -257,7 +254,7 @@ public class Request extends Validator {
     /**
      * The request path. This will be decoded by the server, and does not include the query string.
      *
-     * This path is not canonicalized, so care must be taken to ensure that escape attacks are not possible.
+     * This path is not canonical, so care must be taken to ensure that escape attacks are not possible.
      *
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'

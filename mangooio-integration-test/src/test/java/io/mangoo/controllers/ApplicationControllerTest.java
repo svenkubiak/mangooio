@@ -1,17 +1,13 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
-
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
+import io.mangoo.enums.Header;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.Headers;
+import io.undertow.util.StatusCodes;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -22,14 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
-import io.mangoo.enums.Header;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
-import io.undertow.util.Headers;
-import io.undertow.util.StatusCodes;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  *
@@ -382,7 +378,7 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
-        assertThat(response.getHeader(Header.X_XSS_PPROTECTION.toString()), equalTo("1"));
+        assertThat(response.getHeader(Header.X_XSS_PROTECTION.toString()), equalTo("1"));
         assertThat(response.getHeader(Header.X_CONTENT_TYPE_OPTIONS.toString()), equalTo("nosniff"));
         assertThat(response.getHeader(Header.X_FRAME_OPTIONS.toString()), equalTo("DENY"));
         assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));

@@ -1,12 +1,7 @@
 package io.mangoo.services;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
@@ -16,6 +11,10 @@ import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnection.EventCallback;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -45,10 +44,8 @@ public class ServerSentEventService {
         Set<ServerSentEventConnection> uriConnections = getConnections(url);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();
-            uriConnections.add(connection);
-        } else {
-            uriConnections.add(connection);
         }
+        uriConnections.add(connection);
         setConnections(url, uriConnections);
     }
 

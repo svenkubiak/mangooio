@@ -1,22 +1,19 @@
 package io.mangoo.email;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.activation.FileDataSource;
-
-import org.simplejavamail.api.email.EmailPopulatingBuilder;
-import org.simplejavamail.email.EmailBuilder;
-
 import com.google.common.base.Preconditions;
-
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
+import org.simplejavamail.api.email.EmailPopulatingBuilder;
+import org.simplejavamail.email.EmailBuilder;
+
+import javax.activation.FileDataSource;
+import java.io.File;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 
@@ -175,7 +172,7 @@ public class Mail {
     /**
      * Sets the email priority
      *
-     * @param priority - 1 being the highest priority, 3 = normal and 5 = lowest priority.
+     * @param priority - 1 being the highest priority, 3 = normal priority and 5 = lowest priority
      *                 
      * @return A mail object instance
      */

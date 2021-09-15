@@ -154,7 +154,7 @@ public final class Application {
 
     /**
      * Parses a given time span and duration and returns the number of
-     * matching seconds to scheduled a task
+     * matching seconds to schedule a task
      * 
      * @param timespan The timespan to use
      * @param duration The duration to use for calculation
@@ -332,7 +332,7 @@ public final class Application {
     }
 
     /**
-     * Short form for getting an Goolge Guice injected class by
+     * Short form for getting a Google Guice injected class by
      * calling getInstance(...)
      *
      * @param clazz The class to retrieve from the injector
@@ -375,7 +375,7 @@ public final class Application {
     }
     
     /**
-     * Sets the injector wrapped through netflix Governator
+     * Sets the injector wrapped through Netflix Governator
      */
     private static void prepareInjector() {
         injector = Guice.createInjector(Stage.PRODUCTION, getModules());
@@ -443,7 +443,7 @@ public final class Application {
     }
     
     /**
-     * Do sanity checks on the configuration an warn about it in the log
+     * Do sanity check on the configuration and warn about it in the log
      */
     private static void sanityChecks() {
         var config = getInstance(Config.class);

@@ -14,13 +14,12 @@ import java.util.Objects;
  *
  */
 public class ControllerRoute {
-    private Class<?> controllerClass;
+    private final Class<?> controllerClass;
     private String username;
     private String password;
     private boolean authentication;
     private boolean authorization;
     private boolean blocking;
-    private int limit;
     
     /**
      * Creates a new set of routes bind to a given controller class
@@ -119,18 +118,7 @@ public class ControllerRoute {
         blocking = true;
         return this;
     }
-    
-    /**
-     * Sets a request limit to the request
-     * 
-     * @param requestsPerSecond Number of requests per second
-     * @return ControllerRoute instance
-     */
-    public ControllerRoute withRequestLimit(int requestsPerSecond) {
-        limit = requestsPerSecond;
-        return this;
-    }
-    
+
     public boolean hasAuthentication() {
         return authentication;
     }
@@ -157,9 +145,5 @@ public class ControllerRoute {
 
     public String getPassword() {
         return password;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 }

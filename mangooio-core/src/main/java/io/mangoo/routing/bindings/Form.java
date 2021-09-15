@@ -74,16 +74,16 @@ public class Form extends Validator {
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
-            if (("1").equals(value)) {
-                return Optional.of(Boolean.TRUE);
-            } else if (("true").equals(value)) {
-                return Optional.of(Boolean.TRUE);
-            } else if (("false").equals(value)) {
-                return Optional.of(Boolean.FALSE);
-            } else if (("0").equals(value)) {
-                return Optional.of(Boolean.FALSE);
-            } else {
-                // Ignore anything else
+            switch (value) {
+                case ("1"):
+                case ("true"):
+                    return Optional.of(Boolean.TRUE);
+                case ("false"):
+                case ("0"):
+                    return Optional.of(Boolean.FALSE);
+                default:
+                    // Ignore anything else
+                    break;
             }
         }
 
@@ -199,17 +199,15 @@ public class Form extends Validator {
     public void addValueList(String key, String value) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
+        List<String> values;
         if (!valueMap.containsKey(key)) {
-            List<String> values = new ArrayList<>();
-            values.add(value);
-
-            valueMap.put(key, values);
+            values = new ArrayList<>();
         } else {
-            List<String> values = valueMap.get(key);
-            values.add(value);
-
-            valueMap.put(key, values);
+            values = valueMap.get(key);
         }
+
+        values.add(value);
+        valueMap.put(key, values);
     }
     
     /**

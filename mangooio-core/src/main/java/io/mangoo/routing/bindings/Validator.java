@@ -1,24 +1,17 @@
 package io.mangoo.routing.bindings;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.google.re2j.Pattern;
+import io.mangoo.enums.Required;
+import io.mangoo.enums.Validation;
+import io.mangoo.i18n.Messages;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
-import com.google.inject.Inject;
-import com.google.re2j.Pattern;
-
-import io.mangoo.enums.Required;
-import io.mangoo.enums.Validation;
-import io.mangoo.i18n.Messages;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  *
@@ -29,9 +22,11 @@ public class Validator implements Serializable {
     private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
-    
-    @Inject
     private Messages messages;
+
+    public Validator(Messages messages) {
+        this.messages = Objects.requireNonNull(messages, Required.MESSAGE.toString());
+    }
 
     /**
      * Checks if a give field has a validation error
@@ -520,7 +515,6 @@ public class Validator implements Serializable {
      * @param value The value to check
      * @param message A custom error message instead of the default one
      */
-    @SuppressWarnings("all")
     public void expectFalse(String name, boolean value, String message) {
         if (value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.toString(), name)));

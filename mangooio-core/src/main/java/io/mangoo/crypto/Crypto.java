@@ -1,26 +1,9 @@
 package io.mangoo.crypto;
 
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
-import java.util.Objects;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
+import com.google.inject.Inject;
+import io.mangoo.core.Config;
+import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooEncryptionException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,11 +16,17 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import com.google.inject.Inject;
-
-import io.mangoo.core.Config;
-import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooEncryptionException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import java.util.Objects;
 
 /**
  * Convenient class for encryption and decryption
@@ -64,7 +53,7 @@ public class Crypto {
     }
     
     /**
-     * Decrypts an given encrypted text using the application secret property (application.secret) as key
+     * Decrypts a given encrypted text using the application secret property (application.secret) as key
      *
      * @param encrytedText The encrypted text
      * @return The clear text or null if decryption fails
@@ -75,7 +64,7 @@ public class Crypto {
     }
 
     /**
-     * Decrypts an given encrypted text using the given key
+     * Decrypts a given encrypted text using the given key
      *
      * @param encrytedText The encrypted text
      * @param key The encryption key
@@ -166,7 +155,7 @@ public class Crypto {
             keyPairGenerator.initialize(KEYLENGTH);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            LOG.error("Failed to create publi/private key pair", e);
+            LOG.error("Failed to create public/private key pair", e);
         }
         
         return keyPair;
@@ -261,8 +250,8 @@ public class Crypto {
         
         String decrypt = null;
         try {
-            byte[] dectyptedText = decrypt(decodeBase64(text), key);
-            decrypt = new String(dectyptedText, StandardCharsets.UTF_8);
+            byte[] decryptText = decrypt(decodeBase64(text), key);
+            decrypt = new String(decryptText, StandardCharsets.UTF_8);
         } catch (MangooEncryptionException e) {
             throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
@@ -314,7 +303,7 @@ public class Crypto {
         try {
             return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(decodeBase64(key)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new MangooEncryptionException("Failed to get pulbic key from string", e);
+            throw new MangooEncryptionException("Failed to get public key from string", e);
         }
     }
 

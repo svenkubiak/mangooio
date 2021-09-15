@@ -27,10 +27,10 @@ import java.util.Objects;
  */
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
+    private final Config config;
     private dev.morphia.Datastore datastore; //NOSONAR
     private MongoClient mongoClient;
     private EventBusService eventBus;
-    private Config config;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     @Inject
@@ -72,7 +72,7 @@ public class DatastoreImpl implements Datastore {
                config.getMongoPort(prefix),
                config.isMongoAuth(prefix));
        
-       LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore conntected to database '{}'",
+       LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore connected to database '{}'",
                config.getMongoPackage(prefix),
                config.getMongoDbName(prefix));
     }
@@ -115,57 +115,57 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public <T> T findById(String id, Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tryed to find an object by id, but given class is null");
-        Objects.requireNonNull(id, "Tryed to find an object by id, but given id is null");
+        Objects.requireNonNull(clazz, "Tried to find an object by id, but given class is null");
+        Objects.requireNonNull(id, "Tried to find an object by id, but given id is null");
         
         return datastore.find(clazz).filter(Filters.eq("_id", new ObjectId(id))).first();
     }
 
     @Override
     public <T> List<T> findAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tryed to get all morphia objects of a given object, but given object is null");
+        Objects.requireNonNull(clazz, "Tried to get all morphia objects of a given object, but given object is null");
         
         return datastore.find(clazz).iterator().toList();
     }
 
     @Override
     public <T> long countAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tryed to count all a morphia objects of a given object, but given object is null");
+        Objects.requireNonNull(clazz, "Tried to count all a morphia objects of a given object, but given object is null");
 
         return datastore.find(clazz).count();
     }
 
     @Override
     public void save(Object object) {
-        Objects.requireNonNull(object, "Tryed to save a morphia object, but a given object is null");
+        Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
 
         datastore.save(object);
     }
     
     @Override
     public void saveAsync(Object object) {
-        Objects.requireNonNull(object, "Tryed to save a morphia object, but a given object is null");
+        Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
         
         eventBus.publish(Application.getInstance(SaveEvent.class).withObject(object));
     }
 
     @Override
     public void delete(Object object) {
-        Objects.requireNonNull(object, "Tryed to delete a morphia object, but given object is null");
+        Objects.requireNonNull(object, "Tried to delete a morphia object, but given object is null");
 
         datastore.delete(object);
     }
     
     @Override
     public void deleteAsync(Object object) {
-        Objects.requireNonNull(object, "Tryed to delete a morphia object, but given object is null");
+        Objects.requireNonNull(object, "Tried to delete a morphia object, but given object is null");
 
         eventBus.publish(Application.getInstance(DeleteEvent.class).withObject(object));
     }
 
     @Override
     public <T> void deleteAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tryed to delete list of mapped morphia objects, but given class is null");
+        Objects.requireNonNull(clazz, "Tried to delete list of mapped morphia objects, but given class is null");
 
         datastore.find(clazz).delete(new DeleteOptions().multi(true));
     }

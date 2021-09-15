@@ -110,7 +110,7 @@ public class AdminController {
             }
             
             return Response.withOk()
-                    .andContent(ENABLED, enabled)
+                    .andContent(ENABLED, true)
                     .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("uptime", Date.from(instant))
                     .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
@@ -126,7 +126,7 @@ public class AdminController {
         }
         
         return Response.withOk()
-                .andContent(ENABLED, enabled)
+                .andContent(ENABLED, false)
                 .andContent("uptime", Date.from(instant))
                 .andContent("events", eventBusService.getNumEvents())
                 .andContent("listeners", eventBusService.getNumListeners())

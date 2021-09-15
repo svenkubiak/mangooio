@@ -1,12 +1,7 @@
 package io.mangoo.services;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
@@ -15,6 +10,10 @@ import io.mangoo.enums.Required;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.websockets.core.WebSocketChannel;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -44,10 +43,8 @@ public class WebSocketService {
         Set<WebSocketChannel> channels = getChannels(url);
         if (channels == null) {
             channels = new HashSet<>();
-            channels.add(channel);
-        } else {
-            channels.add(channel);
         }
+        channels.add(channel);
         setChannels(url, channels);
     }
 

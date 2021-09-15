@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final Set<String> INVALID_CHRACTERTS = Set.of("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
     private LocalDateTime expires;
     private boolean changed;
@@ -88,7 +88,7 @@ public class Session {
      * @param value The value to store
      */
     public void put(String key, String value) {
-        if (INVALID_CHRACTERTS.contains(key) || INVALID_CHRACTERTS.contains(value)) {
+        if (INVALID_CHARACTERS.contains(key) || INVALID_CHARACTERS.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
             changed = true;
