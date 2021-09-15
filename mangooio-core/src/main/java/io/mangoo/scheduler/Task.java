@@ -17,8 +17,8 @@ import io.mangoo.enums.Required;
  */
 public class Task implements Runnable {
     private static final Logger LOG = LogManager.getLogger(Task.class);
-    private Class<?> clazz;
-    private String methodName;
+    private final Class<?> clazz;
+    private final String methodName;
     
     public Task(Class<?> clazz, String methodName) {
         this.clazz = Objects.requireNonNull(clazz, Required.CLASS.toString());

@@ -1,40 +1,7 @@
 package io.mangoo.admin;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.ehcache.core.statistics.CacheStatistics;
-
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
-
 import dev.paseto.jpaseto.PasetoV1LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -44,29 +11,44 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.HmacShaAlgorithm;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Required;
-import io.mangoo.enums.Template;
+import io.mangoo.enums.*;
 import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
+import io.mangoo.routing.routes.*;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import net.minidev.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.ehcache.core.statistics.CacheStatistics;
+
+import javax.crypto.spec.SecretKeySpec;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Controller class for administrative area
@@ -289,7 +271,6 @@ public class AdminController {
                         json.put(URL, route.getUrl());
                         json.put("controllerClass", route.getControllerClass());
                         json.put("controllerMethod", route.getControllerMethod());
-                        json.put("limit", route.getLimit());
                         json.put("basicAuthentication", route.hasBasicAuthentication());
                         json.put("authentication", route.hasAuthentication());
                         json.put("blocking", route.isBlocking());
@@ -358,9 +339,7 @@ public class AdminController {
             json.put("cpu", getCpu());
 
             Map<String, Double> memory = getMemory();
-            for (Entry<String, Double> entry : memory.entrySet()) {
-                json.put(entry.getKey(), entry.getValue());
-            }
+            json.putAll(memory);
             
             return Response.withOk().andJsonBody(json);
         }
@@ -464,6 +443,6 @@ public class AdminController {
             LOG.error("Failed to get process CPU load", e);
         }
         
-        return Double.valueOf(0);
+        return (double) 0;
     }
 }

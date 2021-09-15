@@ -26,7 +26,7 @@ import io.undertow.util.LocaleUtils;
  *
  */
 public class LocaleHandler implements HttpHandler {
-    private Config config;
+    private final Config config;
     
     @Inject
     public LocaleHandler(Config config) {

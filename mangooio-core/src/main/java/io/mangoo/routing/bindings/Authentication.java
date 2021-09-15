@@ -76,7 +76,7 @@ public class Authentication {
     }
 
     /**
-     * @return True if the user wants to logout, false otherwise
+     * @return True if the user wants to log out, false otherwise
      */
     public boolean isLogout() {
         return loggedOut;
@@ -91,7 +91,7 @@ public class Authentication {
     }
     
     /**
-     * @return True if two factor authentication is enabled for this user
+     * @return True if two-factor authentication is enabled for this user
      */
     public boolean isTwoFactor() {
         return twoFactor;
@@ -137,7 +137,7 @@ public class Authentication {
     }
     
     /**
-     * Sets the remember me functionality, default is false
+     * Sets remember me functionality, default is false
      * 
      * @param remember The state of remember to set
      * @return Authentication object
@@ -148,7 +148,7 @@ public class Authentication {
     }
     
     /**
-     * Sets the remember me functionality to true, default is false
+     * Sets remember me functionality to true, default is false
      * @return Authentication object
      */
     public Authentication rememberMe() {
@@ -157,9 +157,9 @@ public class Authentication {
     }
     
     /**
-     * Sets the requirement of the two factor authentication, default is false
+     * Sets the requirement of the two-factor authentication, default is false
      * 
-     * @param twoFactor True for enabling two factor authentication, false otherwise
+     * @param twoFactor True for enabling two-factor authentication, false otherwise
      * @return Authentication object
      */
     public Authentication twoFactorAuthentication(boolean twoFactor) {

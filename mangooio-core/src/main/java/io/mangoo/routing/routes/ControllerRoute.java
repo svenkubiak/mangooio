@@ -1,13 +1,12 @@
 package io.mangoo.routing.routes;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.enums.Http;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * 
@@ -110,9 +109,9 @@ public class ControllerRoute {
     }
     
     /**
-     * Configures this request as long running request that is
+     * Configures this request as long-running request that is
      * executed in a different thread pool to not block the
-     * non blocking I/O request
+     * non-blocking I/O request
      * 
      * @return ControllerRoute instance
      */

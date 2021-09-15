@@ -1,8 +1,8 @@
 package io.mangoo.persistence;
 
-import java.util.List;
-
 import com.mongodb.client.MongoClient;
+
+import java.util.List;
 
 /**
  * 
@@ -36,7 +36,7 @@ public interface Datastore {
      *
      * @return The requested class from MongoDB or null if none found
      */
-    <T extends Object> T findById(String id, Class<T> clazz);
+    <T> T findById(String id, Class<T> clazz);
 
     /**
      * Retrieves a list of mapped Morphia objects from MongoDB
@@ -46,7 +46,7 @@ public interface Datastore {
      * 
      * @return A list of mapped Morphia objects or an empty list if none found
      */
-    <T extends Object> List<T> findAll(Class<T> clazz);
+    <T> List<T> findAll(Class<T> clazz);
 
     /**
      * Counts all objected of a mapped Morphia class
@@ -56,7 +56,7 @@ public interface Datastore {
      *      
      * @return The number of objects in MongoDB
      */
-    <T extends Object> long countAll(Class<T> clazz);
+    <T> long countAll(Class<T> clazz);
 
     /**
      * Saves a mapped Morphia object to MongoDB
@@ -78,7 +78,7 @@ public interface Datastore {
      * @param <T> JavaDoc requires this - please ignore
      * @param clazz The mapped Morphia class
      */
-    <T extends Object> void deleteAll(Class<T> clazz);
+    <T> void deleteAll(Class<T> clazz);
 
     /**
      * Drops all data in MongoDB on the connected database

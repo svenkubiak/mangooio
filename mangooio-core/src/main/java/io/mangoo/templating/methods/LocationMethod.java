@@ -1,17 +1,15 @@
 package io.mangoo.templating.methods;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import io.mangoo.enums.Required;
+import org.apache.commons.lang3.StringUtils;
 
-@SuppressWarnings("rawtypes")
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 public class LocationMethod implements TemplateMethodModelEx {
    private static final int NUM_ARGUMENTS = 1;
    private String controller;
@@ -23,12 +21,7 @@ public class LocationMethod implements TemplateMethodModelEx {
 
     @Override
     public Boolean exec(List arguments) throws TemplateModelException {
-        boolean valid = false;
-        if (validArguments(arguments) && matches(arguments)) {
-            valid = true;
-        }
-        
-        return Boolean.valueOf(valid);
+        return validArguments(arguments) && matches(arguments);
     }
     
     private boolean validArguments(List arguments) {

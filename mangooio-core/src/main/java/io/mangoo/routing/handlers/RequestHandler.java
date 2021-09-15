@@ -83,7 +83,6 @@ public class RequestHandler implements HttpHandler {
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
-     * @throws TemplateException
      * @throws IOException
      * @throws MangooTemplateEngineException 
      */
@@ -124,7 +123,6 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      * @throws IOException
-     * @throws TemplateException
      * @throws MangooTemplateEngineException 
      */
     protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
@@ -188,8 +186,6 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      * @return an array with the request controller method parameter and sets the appropriate values
-     *
-     * @throws IOException
      */
     @SuppressFBWarnings(justification = "Intentionally adding unrelated types", value = "UCC_UNRELATED_COLLECTION_CONTENTS")
     protected Object[] getConvertedParameters(HttpServerExchange exchange) {
@@ -274,7 +270,7 @@ public class RequestHandler implements HttpHandler {
      * Executes all filters on controller and method level
      *
      * @param annotations An array of @FilterWith annotated classes and methods
-     * @param response
+     * @param response The response to use
      * @return True if the request should continue after filter execution, false otherwise
      *
      * @throws NoSuchMethodException

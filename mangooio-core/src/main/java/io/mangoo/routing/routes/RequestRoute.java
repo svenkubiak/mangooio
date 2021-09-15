@@ -1,13 +1,12 @@
 package io.mangoo.routing.routes;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.enums.Http;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * 
@@ -22,7 +21,6 @@ public class RequestRoute implements MangooRoute {
     private String controllerMethod;
     private String username;
     private String password;
-    private int limit;
     private long maxEntitySize;
     private boolean blocking;
     private boolean authentication;
@@ -117,9 +115,9 @@ public class RequestRoute implements MangooRoute {
     }
     
     /**
-     * Configures this request as long running request that is
+     * Configures this request as long-running request that is
      * executed in a different thread pool to not block the
-     * non blocking I/O request
+     * non-blocking I/O request
      * 
      * @return RequestRoute instance
      */
@@ -178,10 +176,6 @@ public class RequestRoute implements MangooRoute {
 
     public String getControllerMethod() {
         return controllerMethod;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public Http getMethod() {

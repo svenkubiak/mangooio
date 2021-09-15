@@ -29,7 +29,7 @@ public enum Validation {
     MAX_VALUE_KEY("validation.max.value"),
     MIN_LENGTH("{0} must be a value with a min length of {1}"),
     MIN_LENGTH_KEY("validation.min.length"),
-    MIN_VALUE("{0} must be a value not less thatn {1}"),
+    MIN_VALUE("{0} must be a value not less than {1}"),
     MIN_VALUE_KEY("validation.min.value"),
     NOTNULL("{0} must be a value not that is null"),
     NOTNULL_KEY("validation.notnull"),

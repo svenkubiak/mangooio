@@ -11,8 +11,4 @@ public class MangooEncryptionException extends Exception {
     public MangooEncryptionException(String message, Exception e) {
         super(message, e);
     }
-
-    public MangooEncryptionException(String message) {
-        super(message);
-    }
 }

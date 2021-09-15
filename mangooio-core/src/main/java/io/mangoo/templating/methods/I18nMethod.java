@@ -1,24 +1,18 @@
 package io.mangoo.templating.methods;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import freemarker.template.*;
+import io.mangoo.i18n.Messages;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import freemarker.template.SimpleNumber;
-import freemarker.template.SimpleScalar;
-import freemarker.template.TemplateMethodModelEx;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import io.mangoo.i18n.Messages;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author svenkubiak
  *
  */
-@SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;

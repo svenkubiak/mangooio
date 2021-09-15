@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Deque;
-import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,9 +43,8 @@ public class FormHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      *
-     * @throws IOException
+     * @throws IOException If form parsing fails
      */
-    @SuppressWarnings("rawtypes")
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final Form form = Application.getInstance(Form.class);
         if (RequestUtils.isPostPutPatch(exchange)) {
@@ -66,8 +64,8 @@ public class FormHandler implements HttpHandler {
                                 } else {
                                     if (data.contains("[]")) {
                                         String key = StringUtils.replace(data, "[]", "");
-                                        for (Iterator iterator = deque.iterator(); iterator.hasNext();)  {
-                                            form.addValueList(new HttpString(key).toString(), ((FormValue) iterator.next()).getValue());
+                                        for (FormValue value : deque) {
+                                            form.addValueList(new HttpString(key).toString(), value.getValue());
                                         }
                                     } else {
                                         form.addValue(new HttpString(data).toString(), formValue.getValue());

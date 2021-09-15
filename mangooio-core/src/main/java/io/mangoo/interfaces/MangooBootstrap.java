@@ -23,7 +23,7 @@ public interface MangooBootstrap {
     void applicationStarted();
     
     /**
-     * Executed after forcible signal of JVM shutdown has been send
+     * Executed after forcible signal of JVM shutdown has been sent
      */
     void applicationStopped();
 }

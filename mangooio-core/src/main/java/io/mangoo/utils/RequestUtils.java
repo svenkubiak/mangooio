@@ -1,21 +1,7 @@
 package io.mangoo.utils;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
-
 import dev.paseto.jpaseto.PasetoException;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
@@ -24,7 +10,6 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
-import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.AuthenticationMode;
 import io.undertow.security.handlers.AuthenticationCallHandler;
 import io.undertow.security.handlers.AuthenticationConstraintHandler;
@@ -38,6 +23,13 @@ import io.undertow.util.AttachmentKey;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  *
@@ -72,7 +64,7 @@ public final class RequestUtils {
         final Map<String, String> requestParamater = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element()));
+        queryParameters.forEach((key, value) -> requestParamater.put(key, value.element()));
 
         return requestParamater;
     }
@@ -202,7 +194,7 @@ public final class RequestUtils {
         
         HttpHandler wrap = new AuthenticationCallHandler(httpHandler);
         wrap = new AuthenticationConstraintHandler(wrap);
-        wrap = new AuthenticationMechanismsHandler(wrap, Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required")));
+        wrap = new AuthenticationMechanismsHandler(wrap, Collections.singletonList(new BasicAuthenticationMechanism("Authentication required")));
         
         return new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), wrap);
     }

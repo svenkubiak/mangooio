@@ -55,7 +55,7 @@ public class Crypto {
     private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
-    private Config config;
+    private final Config config;
     
     @Inject
     public Crypto(Config config) {

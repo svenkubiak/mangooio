@@ -1,16 +1,8 @@
 package io.mangoo.persistence;
 
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.types.ObjectId;
-
 import com.google.inject.Inject;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
 import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
 import dev.morphia.query.experimental.filters.Filters;
@@ -21,6 +13,12 @@ import io.mangoo.enums.Required;
 import io.mangoo.persistence.events.DeleteEvent;
 import io.mangoo.persistence.events.SaveEvent;
 import io.mangoo.services.EventBusService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 
@@ -116,7 +114,7 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    public <T extends Object> T findById(String id, Class<T> clazz) {
+    public <T> T findById(String id, Class<T> clazz) {
         Objects.requireNonNull(clazz, "Tryed to find an object by id, but given class is null");
         Objects.requireNonNull(id, "Tryed to find an object by id, but given id is null");
         
@@ -124,14 +122,14 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    public <T extends Object> List<T> findAll(Class<T> clazz) {
+    public <T> List<T> findAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, "Tryed to get all morphia objects of a given object, but given object is null");
         
         return datastore.find(clazz).iterator().toList();
     }
 
     @Override
-    public <T extends Object> long countAll(Class<T> clazz) {
+    public <T> long countAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, "Tryed to count all a morphia objects of a given object, but given object is null");
 
         return datastore.find(clazz).count();
@@ -166,7 +164,7 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    public <T extends Object> void deleteAll(Class<T> clazz) {
+    public <T> void deleteAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, "Tryed to delete list of mapped morphia objects, but given class is null");
 
         datastore.find(clazz).delete(new DeleteOptions().multi(true));

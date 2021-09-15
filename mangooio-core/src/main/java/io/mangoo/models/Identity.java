@@ -20,8 +20,8 @@ import io.undertow.security.idm.PasswordCredential;
  *
  */
 public class Identity implements IdentityManager {
-    private String username;
-    private char[] password;
+    private final String username;
+    private final char[] password;
     
     public Identity(String username, String password) {
         this.username = Objects.requireNonNull(username, Required.USERNAME.toString());

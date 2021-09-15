@@ -161,7 +161,6 @@ public class OutboundCookiesHandler implements HttpHandler {
      * Sets the flash cookie to current HttpServerExchange
      *
      * @param exchange The Undertow HttpServerExchange
-     * @throws MangooCookieException 
      */
     protected void setFlashCookie(HttpServerExchange exchange) {
         Flash flash = this.attachment.getFlash();

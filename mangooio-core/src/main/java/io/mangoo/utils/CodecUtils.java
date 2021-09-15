@@ -90,7 +90,7 @@ public final class CodecUtils {
     }
     
     /**
-     * Serializes an object into an Base64 encoded data string
+     * Serializes an object into a Base64 encoded data string
      *
      * @param object The object to serialize
      * @return The base64 encoded data string

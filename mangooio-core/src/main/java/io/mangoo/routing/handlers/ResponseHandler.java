@@ -1,7 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.core.Application;
@@ -47,8 +45,6 @@ public class ResponseHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
-     *
-     * @throws IOException
      */
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));

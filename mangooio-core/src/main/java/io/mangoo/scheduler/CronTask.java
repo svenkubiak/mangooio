@@ -26,9 +26,9 @@ import io.mangoo.enums.Required;
  */
 public class CronTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(CronTask.class);
-    private Class<?> clazz;
-    private String methodName;
-    private ExecutionTime executionTime;
+    private final Class<?> clazz;
+    private final String methodName;
+    private final ExecutionTime executionTime;
     
     public CronTask(Class<?> clazz, String methodName, String cron) {
         Objects.requireNonNull(cron, Required.CRON.toString());
@@ -55,10 +55,7 @@ public class CronTask implements Runnable {
     
     private long delay() throws ExecutionException, InterruptedException {
         if (getDelay() == 0) {
-            Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
-                @Override
-                public void run() {}
-            }, 1, TimeUnit.SECONDS).get();
+            Executors.newSingleThreadScheduledExecutor().schedule(() -> {}, 1, TimeUnit.SECONDS).get();
         }
 
         return getDelay();

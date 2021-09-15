@@ -1,18 +1,12 @@
 package io.mangoo.routing.bindings;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import io.mangoo.enums.Required;
+import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import io.mangoo.enums.Required;
-import io.mangoo.utils.MangooUtils;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  *
@@ -27,7 +21,7 @@ public class Form extends Validator {
     private boolean keep;
     
     public Form() {
-        //Empty constructor for google guice
+        //Empty constructor for Google guice
     }
     
     /**
@@ -157,7 +151,7 @@ public class Form extends Validator {
     }
 
     /**
-     * Retrieves a single file of the form. If the the form
+     * Retrieves a single file of the form. If the form
      * has multiple files, the first will be returned
      *
      * @return File or null if no file is present
@@ -198,7 +192,7 @@ public class Form extends Validator {
     }
     
     /**
-     * Adds an additional item to the value list
+     * Adds an item to the value list
      * @param key The name of the form element
      * @param value The value to store
      */
@@ -208,12 +202,12 @@ public class Form extends Validator {
         if (!valueMap.containsKey(key)) {
             List<String> values = new ArrayList<>();
             values.add(value);
-            
+
             valueMap.put(key, values);
         } else {
             List<String> values = valueMap.get(key);
             values.add(value);
-            
+
             valueMap.put(key, values);
         }
     }

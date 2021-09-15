@@ -209,7 +209,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to exactly (case-sensitive) match
+     * Validates two fields to exactly (case-sensitive) match
      *
      * @param name The field to check
      * @param anotherName The other field to check against
@@ -219,7 +219,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to exactly (case-sensitive) match
+     * Validates two fields to exactly (case-sensitive) match
      *
      * @param name The field to check
      * @param anotherName The other field to check against
@@ -235,7 +235,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-insensitive) match
+     * Validates two fields to (case-insensitive) match
      *
      * @param name The field to check
      * @param anotherName The field to check against
@@ -245,7 +245,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-insensitive) match
+     * Validates two fields to (case-insensitive) match
      *
      * @param name The field to check
      * @param anotherName The field to check against
@@ -261,7 +261,7 @@ public class Validator implements Serializable {
     }
     
     /**
-     * Validates to list of given values to (case-sensitive) match
+     * Validates a list of given values to (case-sensitive) match
      *
      * @param name The field to check
      * @param values A list of given values to check against
@@ -271,7 +271,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-sensitive) match
+     * Validates a list of value to (case-sensitive) match
      *
      * @param name The field to check
      * @param message A custom error message instead of the default one

@@ -1,14 +1,7 @@
 package io.mangoo.routing.bindings;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
-
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -16,6 +9,11 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -33,7 +31,7 @@ public class Request extends Validator {
     private Map<String, String> parameter;
 
     public Request(){
-        //Empty constructor for google guice
+        //Empty constructor for Google guice
     }
 
     public Request(HttpServerExchange httpServerExchange) {
@@ -83,8 +81,7 @@ public class Request extends Validator {
      *
      * @return The request body as Map object
      */
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> getBodyAsJsonMap() {
+    public Map getBodyAsJsonMap() {
         if (StringUtils.isNotBlank(body)) {
             return JsonUtils.fromJson(body, Map.class);
         }
@@ -110,7 +107,7 @@ public class Request extends Validator {
     /**
      * Retrieves a request parameter (request or query parameter) by its name
      *
-     * @param key The key to lookup the parameter
+     * @param key The key to find the parameter
      * @return The value for the given or null if none found
      */
     public String getParameter(String key) {
@@ -136,7 +133,7 @@ public class Request extends Validator {
     }
 
     /**
-     * Retrieves a the clients accepted languages
+     * Retrieves the clients accepted languages
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
@@ -164,7 +161,7 @@ public class Request extends Validator {
     }    
 
     /**
-     * The original request URI. This will include the host name, protocol etc
+     * The original request URI. This will include the host name, protocol etc.
      * if it was specified by the client.
      *
      * This is not decoded in any way, and does not include the query string.
@@ -180,7 +177,7 @@ public class Request extends Validator {
     }
 
     /**
-     * Reconstructs the complete URL as seen by the user. This includes scheme, host name etc,
+     * Reconstructs the complete URL as seen by the user. This includes scheme, host name etc.
      * but does not include query string.
      *
      * This is not decoded.

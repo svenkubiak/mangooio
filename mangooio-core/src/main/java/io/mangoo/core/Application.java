@@ -1,70 +1,25 @@
 package io.mangoo.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.common.io.Resources;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Stage;
-
+import com.google.inject.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.github.classgraph.AnnotationInfo;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.MethodInfo;
-import io.github.classgraph.ScanResult;
+import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
-import io.mangoo.enums.Required;
+import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.DatastoreListener;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
-import io.mangoo.routing.handlers.DispatcherHandler;
-import io.mangoo.routing.handlers.ExceptionHandler;
-import io.mangoo.routing.handlers.FallbackHandler;
-import io.mangoo.routing.handlers.MetricsHandler;
-import io.mangoo.routing.handlers.ServerSentEventHandler;
-import io.mangoo.routing.handlers.WebSocketHandler;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
+import io.mangoo.routing.handlers.*;
+import io.mangoo.routing.routes.*;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
@@ -80,6 +35,26 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Main class that starts all components of a mangoo I/O application
@@ -92,7 +67,7 @@ public final class Application {
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
-    private static LocalDateTime start = LocalDateTime.now();
+    private static final LocalDateTime start = LocalDateTime.now();
     private static ScheduledExecutorService scheduledExecutorService;
     private static String httpHost;
     private static String ajpHost;
@@ -216,7 +191,6 @@ public final class Application {
      * @param methodInfo The methodInfo containing the method to execute
      * @param isCron True if Task is a cron or false if it has a fixed rate
      * @param time The fixed rate for the scheduled task to be executed
-     * @param delay The initial delay before first execution
      * @param at The cron expression to be used when scheduling a cron
      */
     private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, String at) {
@@ -618,9 +592,8 @@ public final class Application {
                     .isBlocking(requestRoute.isBlocking())
                     .withMaxEntitySize(requestRoute.getMaxEntitySize())
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
-                    .withAuthentication(requestRoute.hasAuthentication())
-                    .withLimit(requestRoute.getLimit());
-            
+                    .withAuthentication(requestRoute.hasAuthentication());
+
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
         

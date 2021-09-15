@@ -42,7 +42,7 @@ public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
-    private Config config;
+    private final Config config;
     private Form form;
 
     @Inject

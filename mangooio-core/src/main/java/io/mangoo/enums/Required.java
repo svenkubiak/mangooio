@@ -83,7 +83,7 @@ public enum Required {
     STRING("string can not be null"),
     SUBJECT("subject can not be null"),
     TEMPLATE("template can not be null"),
-    TEMPLATE_ENGINE("tempalte engine can not be null"),
+    TEMPLATE_ENGINE("template engine can not be null"),
     TEMPLATE_NAME("template name can not be null"),
     TO("to can not be null"),
     TOS("tos can not be null"),

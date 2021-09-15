@@ -290,7 +290,7 @@ public class Response {
     }
     
     /**
-     * Sets the content of a given file placed in the templates folder
+     * Sets the content of a given file placed in the template folder
      * in /templates/CONTROLLER_NAME/METHOD_NAME.body as body without rendering the
      * file in the template engine
      * 
@@ -304,7 +304,7 @@ public class Response {
     }
 
     /**
-     * Adds an additional Cookie to the response which is passed to the client
+     * Adds a Cookie to the response which is passed to the client
      *
      * @param cookie The cookie to add
      * @return A response object {@link io.mangoo.routing.Response}
@@ -359,7 +359,7 @@ public class Response {
     /**
      * Sends binary content to the client skipping rendering
      *
-     * @param content The content to to send
+     * @param content The content to send
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andBinaryContent(byte [] content) {
@@ -401,8 +401,8 @@ public class Response {
     }
 
     /**
-     * Adds an additional header to the request response. If an header
-     * key already exists, it will we overwritten with the latest value.
+     * Adds a header to the request response. If a header
+     * key already exists, it will be overwritten with the latest value.
      *
      * @param key The header constant from Headers class (e.g. Header.CONTENT_TYPE.toString())
      * @param value The header value
@@ -417,7 +417,7 @@ public class Response {
     }
 
     /**
-     * Adds an additional content map to the content rendered in the template.
+     * Adds a content map to the content rendered in the template.
      * Already existing values with the same key are overwritten.
      *
      * @param content The content map to add
@@ -431,7 +431,7 @@ public class Response {
     }
 
     /**
-     * Adds an additional header map to the response.
+     * Adds a header map to the response.
      * Already existing values with the same key are overwritten.
      *
      * @param headers The headers map to add
