@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.io.Resources;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
