@@ -1,5 +1,6 @@
 package io.mangoo.routing.bindings;
 
+import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Validation;
@@ -22,11 +23,9 @@ public class Validator implements Serializable {
     private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
-    private Messages messages;
 
-    public Validator(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, Required.MESSAGE.toString());
-    }
+    @Inject
+    private Messages messages;
 
     /**
      * Checks if a give field has a validation error
