@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -41,6 +42,7 @@ import okhttp3.Headers;
 @ExtendWith({TestExtension.class})
 public class ServerSentEventServiceTest {
     @Test
+    @Disabled
     public void testAddConnection() {
         //given
         final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
@@ -57,6 +59,7 @@ public class ServerSentEventServiceTest {
     }
 
     @Test
+    @Disabled
     public void testRemoveConnection() {
         //given
         final ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);

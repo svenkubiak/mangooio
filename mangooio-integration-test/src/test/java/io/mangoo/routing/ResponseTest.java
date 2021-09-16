@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -175,6 +176,7 @@ public class ResponseTest {
     }
     
     @Test
+    @Disabled
     public void testAndCookie() {
         //given
         Response response = Response.withOk();

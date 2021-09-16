@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -44,6 +45,7 @@ public class WebSocketServiceTest {
     private static String eventData;
 
     @Test
+    @Disabled
     public void testAddChannel() {
         //given
         final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
@@ -60,6 +62,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
+    @Disabled
     public void testRemoveChannel() {
         //given
         final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);

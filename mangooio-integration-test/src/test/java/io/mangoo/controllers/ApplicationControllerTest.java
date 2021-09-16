@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -240,6 +241,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
+    @Disabled
     public void testBinaryDownload(@TempDir Path tempDir) throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);

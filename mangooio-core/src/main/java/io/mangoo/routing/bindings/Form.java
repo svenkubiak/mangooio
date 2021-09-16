@@ -1,18 +1,15 @@
 package io.mangoo.routing.bindings;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.mangoo.enums.Required;
+import io.mangoo.models.Source;
+import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import io.mangoo.enums.Required;
-import io.mangoo.utils.MangooUtils;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  *
@@ -244,6 +241,31 @@ public class Form extends Validator {
             files.forEach(MangooUtils::closeQuietly);            
         }
         valueMap = new HashMap<>();
+
+        Optional s = this.toObject(Source.class);
+        Source f = (Source) s.get();
+    }
+
+    /**
+     * Converts the current form into a given object class
+     *
+     * @param clazz The class to convert to
+     * @param <T> Ignored
+     *
+     * @return The converted object or null if conversion fails
+     */
+    public <T> T toObject(Class clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        Object object = null;
+        try {
+            object = mapper.readValue(mapper.writeValueAsString(values), clazz);
+        } catch (JsonProcessingException e) {
+            //Intentionally left blank
+        }
+
+        return (T) object;
     }
     
     public boolean isSubmitted() {

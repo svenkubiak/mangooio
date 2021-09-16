@@ -196,68 +196,28 @@ public class RequestHandler implements HttpHandler {
             final Class<?> clazz = entry.getValue();
             final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
-            switch (binding) {
-            case FORM:
-                convertedParameters[index] = attachment.getForm();
-                break;
-            case AUTHENTICATION:
-                convertedParameters[index] = attachment.getAuthentication();
-                break;
-            case SESSION:
-                convertedParameters[index] = attachment.getSession();
-                break;
-            case FLASH:
-                convertedParameters[index] = attachment.getFlash();
-                break;
-            case REQUEST:
-                convertedParameters[index] = attachment.getRequest();
-                break;
-            case MESSAGES:
-                convertedParameters[index] = attachment.getMessages();
-                break;
-            case LOCALDATE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
-                break;
-            case LOCALDATETIME:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
-                break;
-            case STRING:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
-                break;
-            case INT_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
-                break;               
-            case INTEGER:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case DOUBLE_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Double.parseDouble(attachment.getRequestParameter().get(key));
-                break;
-            case DOUBLE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Double.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case FLOAT_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Float.parseFloat(attachment.getRequestParameter().get(key));
-                break;                
-            case FLOAT:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Float.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case LONG_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
-                break;
-            case LONG:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case OPTIONAL:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
-                break;                
-            case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(attachment.getBody(), clazz) : null;
-                break;
-            default:
-                convertedParameters[index] = null;
-                break;
-            }
+            convertedParameters[index] = switch (binding) {
+                case FORM -> attachment.getForm();
+                case AUTHENTICATION -> attachment.getAuthentication();
+                case SESSION -> attachment.getSession();
+                case FLASH -> attachment.getFlash();
+                case REQUEST -> attachment.getRequest();
+                case MESSAGES -> attachment.getMessages();
+                case LOCALDATE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
+                case LOCALDATETIME -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
+                case STRING -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
+                case INT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
+                case INTEGER -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));
+                case DOUBLE_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Double.parseDouble(attachment.getRequestParameter().get(key));
+                case DOUBLE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Double.valueOf(attachment.getRequestParameter().get(key));
+                case FLOAT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Float.parseFloat(attachment.getRequestParameter().get(key));
+                case FLOAT -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Float.valueOf(attachment.getRequestParameter().get(key));
+                case LONG_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
+                case LONG -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
+                case OPTIONAL -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
+                case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(attachment.getBody(), clazz) : null;
+                default -> null;
+            };
 
             index++;
         }
