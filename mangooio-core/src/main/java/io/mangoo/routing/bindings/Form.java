@@ -263,11 +263,12 @@ public class Form extends Validator {
         Object object = null;
         try {
             object = mapper.readValue(mapper.writeValueAsString(values), clazz);
+            return (T) object;
         } catch (JsonProcessingException e) {
-            //Intentionally left blank
+            //NOSONAR Ignore catch
         }
 
-        return (T) object;
+        return null;
     }
     
     public boolean isSubmitted() {
