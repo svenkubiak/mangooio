@@ -66,8 +66,8 @@ public class Identity implements IdentityManager {
     }
 
     private boolean verifyCredential(Credential credential) {
-        if (credential instanceof PasswordCredential) {
-            return Arrays.equals(((PasswordCredential) credential).getPassword(), this.password); 
+        if (credential instanceof PasswordCredential passwordCredential) {
+            return Arrays.equals(passwordCredential.getPassword(), this.password); 
         }
         
         return false;

@@ -161,15 +161,6 @@
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
 				<version>7.0.0-Alpha8-SNAPSHOT</version>
-				<executions>
-					<execution>
-						<id>dependencies</id>
-						<goals>
-							<goal>dependencies</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

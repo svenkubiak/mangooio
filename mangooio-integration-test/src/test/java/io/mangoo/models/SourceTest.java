@@ -1,10 +1,11 @@
 package io.mangoo.models;
 
-import dev.morphia.annotations.Entity;
-import org.junit.jupiter.api.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
+import org.junit.jupiter.api.Test;
+
+import dev.morphia.annotations.Entity;
 
 @Entity(value = "test")
 class SourceTest {
@@ -15,7 +16,7 @@ class SourceTest {
         Source source = new Source(true, 24, "foo");
 
         //then
-        assertThat(source.isCause(), equalTo(true));
+        assertThat(source.cause(), equalTo(true));
     }
 
     @Test
@@ -24,7 +25,7 @@ class SourceTest {
         Source source = new Source(true, 24, "foo");
 
         //then
-        assertThat(source.getLine(), equalTo(24));
+        assertThat(source.line(), equalTo(24));
     }
 
     @Test
@@ -33,6 +34,6 @@ class SourceTest {
         Source source = new Source(true, 24, "foo");
 
         //then
-        assertThat(source.getContent(), equalTo("foo"));
+        assertThat(source.content(), equalTo("foo"));
     }
 }

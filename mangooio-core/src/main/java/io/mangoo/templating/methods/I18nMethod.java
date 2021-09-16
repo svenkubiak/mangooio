@@ -38,10 +38,10 @@ public class I18nMethod implements TemplateMethodModelEx {
         } else if (arguments.size() > NUM_ARGUMENTS) {
             List<String> strings = new ArrayList<>();
             for (Object object : arguments) {
-                if (object instanceof SimpleScalar) {
-                    strings.add(((SimpleScalar) object).getAsString());
-                } else if (object instanceof SimpleNumber) {
-                    strings.add(object.toString());
+                if (object instanceof SimpleScalar scalar) {
+                    strings.add(scalar.getAsString());
+                } else if (object instanceof SimpleNumber number) {
+                    strings.add(number.toString());
                 } else {
                     LOG.warn("Argument can only be of type SimpleScalar or SimpleNumber. Is: {}", object.getClass());
                 }

@@ -1,15 +1,21 @@
 package io.mangoo.routing.bindings;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.mangoo.enums.Required;
-import io.mangoo.models.Source;
-import io.mangoo.utils.MangooUtils;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.io.InputStream;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.mangoo.enums.Required;
+import io.mangoo.utils.MangooUtils;
 
 /**
  *
@@ -224,6 +230,7 @@ public class Form extends Validator {
     
     /**
      * Checks if the form values are to put in the flash scope
+     * 
      * @return True if form values should be put into flash scope, false otherwise
      */
     public boolean isKept() {
@@ -238,9 +245,6 @@ public class Form extends Validator {
             files.forEach(MangooUtils::closeQuietly);            
         }
         valueMap = new HashMap<>();
-
-        Optional s = this.toObject(Source.class);
-        Source f = (Source) s.get();
     }
 
     /**
@@ -251,7 +255,8 @@ public class Form extends Validator {
      *
      * @return The converted object or null if conversion fails
      */
-    public <T> T toObject(Class clazz) {
+    @SuppressWarnings("unchecked")
+    public <T> T toObject(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         ObjectMapper mapper = new ObjectMapper();
