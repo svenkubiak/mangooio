@@ -55,7 +55,6 @@ public enum Default {
     I18N_COOKIE_NAME("mangooio-i18n"),
     JAVASCRIPT_FOLDER("javascript"),
     JBCRYPT_ROUNDS("12"),
-    LOGO_FILE("logo.txt"),
     METRICS_ENABLE(Constants.FALSE),
     MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),

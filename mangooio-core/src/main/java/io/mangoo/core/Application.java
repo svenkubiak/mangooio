@@ -191,20 +191,12 @@ public final class Application {
         Objects.requireNonNull(duration, "duration can not be null");
         
         var time = Long.parseLong(timespan);
-        
-        switch(duration) {
-            case "m":
-                time = time * 60;
-              break;
-            case "h":
-                time = time * 60 * 60;
-              break;  
-            case "d":
-                time = time * 60 * 60 * 24;
-              break;
-            default:
-              break;
-        }
+        time = switch(duration) {
+            case "m" -> time * 60;
+            case "h" -> time * 60 * 60;
+            case "d" -> time * 60 * 60 * 24;
+            default  -> time;
+        };
         
         return time;
     }
@@ -386,14 +378,11 @@ public final class Application {
     private static void prepareMode(Mode providedMode) {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
-            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
-                case "dev"  : mode = Mode.DEV;
-                break;
-                case "test" : mode = Mode.TEST;
-                break;
-                default     : mode = Mode.PROD;
-                break;
-            }
+            mode = switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
+                case "dev"  -> Mode.DEV;
+                case "test" -> Mode.TEST;
+                default     -> Mode.PROD;
+            };
         } else {
             mode = providedMode;
         }
@@ -702,16 +691,15 @@ public final class Application {
      * 
      * @return The mangoo I/O logo string
      */
-    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     public static String getLogo() {
-        String logo = "";
-        try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
-            logo = IOUtils.toString(inputStream, Default.ENCODING.toString());
-        } catch (final IOException e) {
-            LOG.error("Failed to get application logo", e);
-        }
-
-        return logo;
+        return """
+                                                        ___     __  ___ \s
+         _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
+        | '_ ` _ \\  / _` || '_ \\  / _` | / _ \\  / _ \\   | |   / / | | | |
+        | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
+        |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
+                                  |___/                                 \s              
+        """;
     }
 
     private static int getBitLength(String secret) {
