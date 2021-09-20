@@ -1,6 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import java.io.InputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +24,9 @@ import io.mangoo.utils.MangooUtils;
  *
  */
 public class Form extends Validator {
+    @Serial
     private static final long serialVersionUID = -5815141142864033904L;
+
     private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
@@ -255,15 +258,13 @@ public class Form extends Validator {
      *
      * @return The converted object or null if conversion fails
      */
-    @SuppressWarnings("unchecked")
     public <T> T toObject(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         ObjectMapper mapper = new ObjectMapper();
         Object object = null;
         try {
-            object = mapper.readValue(mapper.writeValueAsString(values), clazz);
-            return (T) object;
+            return (T) mapper.readValue(mapper.writeValueAsString(values), clazz);
         } catch (JsonProcessingException e) {
             //NOSONAR Ignore catch
         }

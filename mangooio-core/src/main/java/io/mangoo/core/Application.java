@@ -188,14 +188,12 @@ public final class Application {
         Objects.requireNonNull(duration, "duration can not be null");
         
         var time = Long.parseLong(timespan);
-        time = switch(duration) {
+        return switch(duration) {
             case "m" -> time * 60;
             case "h" -> time * 60 * 60;
             case "d" -> time * 60 * 60 * 24;
             default  -> time;
         };
-        
-        return time;
     }
 
     /**
