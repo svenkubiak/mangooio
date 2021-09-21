@@ -258,11 +258,11 @@ public class Form extends Validator {
      *
      * @return The converted object or null if conversion fails
      */
+    @SuppressWarnings("unchecked")
     public <T> T toObject(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         ObjectMapper mapper = new ObjectMapper();
-        Object object = null;
         try {
             return (T) mapper.readValue(mapper.writeValueAsString(values), clazz);
         } catch (JsonProcessingException e) {
