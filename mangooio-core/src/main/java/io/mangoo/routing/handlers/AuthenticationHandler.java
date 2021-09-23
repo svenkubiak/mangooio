@@ -38,10 +38,10 @@ public class AuthenticationHandler implements HttpHandler {
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         
         if (attachment.hasAuthentication()) {
-            Authentication authentication = attachment.getAuthentication();
+            var authentication = attachment.getAuthentication();
             
             if (!authentication.isValid() || ( authentication.isValid() && authentication.isTwoFactor() )) {
-                String redirect = config.getString(Key.AUTHENTICATION_REDIRECT.toString());
+                var redirect = config.getString(Key.AUTHENTICATION_REDIRECT.toString());
                 if (StringUtils.isNotBlank(redirect)) {
                     endRequest(exchange, redirect);
                 } else {

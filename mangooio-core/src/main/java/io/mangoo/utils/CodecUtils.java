@@ -51,7 +51,7 @@ public final class CodecUtils {
         Argon2BytesGenerator generator = new Argon2BytesGenerator();
         generator.init(builder.build());
 
-        byte[] passwdHash = new byte[32];
+        var passwdHash = new byte[32];
         generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
         return base64Encoder.encodeToString(passwdHash);

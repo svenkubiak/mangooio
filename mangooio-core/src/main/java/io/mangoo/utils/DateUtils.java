@@ -27,9 +27,7 @@ public final class DateUtils {
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME.toString());
-        
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
     
     /**
@@ -40,8 +38,6 @@ public final class DateUtils {
      */
     public static Date localDateToDate(LocalDate localDate) {
         Objects.requireNonNull(localDate, Required.LOCAL_DATE.toString());
-        
-        Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
-        return Date.from(instant);
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

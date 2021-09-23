@@ -28,9 +28,8 @@ public class I18nMethod implements TemplateMethodModelEx {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
-        String messageValue = "";
+        var messageValue = "";
         if (arguments.size() == NUM_ARGUMENTS) {
             String messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
             messageValue = messages.get(messageKey);
@@ -47,7 +46,7 @@ public class I18nMethod implements TemplateMethodModelEx {
                 }
             }
 
-            String messageKey = strings.get(0);
+            var messageKey = strings.get(0);
             strings.remove(0);
             messageValue = messages.get(messageKey, strings.toArray());
         } else {
