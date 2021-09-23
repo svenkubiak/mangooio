@@ -1,11 +1,9 @@
 package io.mangoo.admin;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -23,7 +21,6 @@ import java.util.concurrent.atomic.LongAdder;
 import javax.crypto.spec.SecretKeySpec;
 import javax.management.Attribute;
 import javax.management.AttributeList;
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.commons.lang3.StringUtils;
@@ -106,12 +103,12 @@ public class AdminController {
 
     @FilterWith(AdminFilter.class)
     public Response index() {
-        Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
+        var instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
-        EventBusService eventBusService = Application.getInstance(EventBusService.class);
+        var eventBusService = Application.getInstance(EventBusService.class);
         
         if (enabled) {
-            Metrics metrics = Application.getInstance(Metrics.class);
+            var metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
             long errorRequests = 0;
             
@@ -232,8 +229,8 @@ public class AdminController {
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         if (body != null && body.size() > 0) {
-            String clazz = body.get("class").toString();
-            String level = body.get("level").toString();
+            var clazz = body.get("class").toString();
+            var level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
                 LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
                 loggerContext.getLoggers()
@@ -322,20 +319,20 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        String value = "";
+        var value = "";
         
         if (body != null && body.size() > 0) {
-            String function = body.get("function").toString();
+            var function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {
                 KeyPair keyPair = crypto.generateKeyPair();
-                String publickey = crypto.getKeyAsString(keyPair.getPublic());
-                String privatekey = crypto.getKeyAsString(keyPair.getPrivate());
+                var publickey = crypto.getKeyAsString(keyPair.getPublic());
+                var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
                 
                 value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
             } else if (("encrypt").equalsIgnoreCase(function)) {
-                String cleartext = body.get("cleartext").toString();
-                String key = body.get("key").toString();
+                var cleartext = body.get("cleartext").toString();
+                var key = body.get("key").toString();
                 
                 try {
                     PublicKey publicKey = crypto.getPublicKeyFromString(key);
@@ -366,7 +363,7 @@ public class AdminController {
     }
     
     private boolean isValidHeaderToken(Request request) {
-        boolean valid = false;
+        var valid = false;
         String token = config.getApplicationAdminHealthToken();
         String header = request.getHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString());
         
@@ -384,7 +381,7 @@ public class AdminController {
     }
     
     private boolean isValidAuthentication(Form form) {
-        boolean valid = false;
+        var valid = false;
 
         String username = config.getApplicationAdminUsername();
         String password = config.getApplicationAdminPassword();
@@ -435,7 +432,7 @@ public class AdminController {
     }
     
     private Map<String, Double> getMemory() {
-        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        var memoryMXBean = ManagementFactory.getMemoryMXBean();
         return Map.of("initialMemory", (double) memoryMXBean.getHeapMemoryUsage().getInit() / MEGABYTE,
                       "usedMemory", (double) memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE,
                       "maxHeapMemory", (double) memoryMXBean.getHeapMemoryUsage().getMax() /MEGABYTE,
@@ -444,9 +441,9 @@ public class AdminController {
 
     private Double getCpu() {
         try {
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-            AttributeList list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
+            var beanServer = ManagementFactory.getPlatformMBeanServer();
+            var objectName = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = beanServer.getAttributes(objectName, new String[]{"ProcessCpuLoad"});
 
             return Optional.ofNullable(list)
                     .map(l -> l.isEmpty() ? null : l)

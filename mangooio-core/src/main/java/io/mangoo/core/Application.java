@@ -135,7 +135,7 @@ public final class Application {
      * Schedules all tasks annotated with @Run
      */
     private static void prepareScheduler() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         
         if (config.isSchedulerEnabled()) {
             scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
@@ -658,14 +658,14 @@ public final class Application {
 
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
-        final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
+        final var buffer = new StringBuilder(BUFFERSIZE);
         buffer.append('\n')
             .append(getLogo())
             .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
             .append(MangooUtils.getVersion())
             .append('\n');
 
-        String logo = buffer.toString();
+        var logo = buffer.toString();
         
         LOG.info(logo);
         

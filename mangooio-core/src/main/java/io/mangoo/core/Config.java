@@ -114,14 +114,14 @@ public class Config {
      * @param value The encrypted value to decrypt
      */
     private String decrypt(String value) {
-        Crypto crypto = new Crypto(this);
+        var crypto = new Crypto(this);
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
             try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
-                    PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
+                    var privateKey = crypto.getPrivateKeyFromString(key);
                     String cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
@@ -152,7 +152,7 @@ public class Config {
         var map = new HashMap<>();
         props.extractProps(map);
         
-        Properties properties = new Properties();
+        var properties = new Properties();
         properties.putAll(map);
         
         return properties;
