@@ -269,7 +269,7 @@ public class Mail {
             template = template.substring(1, template.length());
         } 
         
-        TemplateContext templateContext = new TemplateContext(content).withTemplatePath(template);
+        var templateContext = new TemplateContext(content).withTemplatePath(template);
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
     }
 }

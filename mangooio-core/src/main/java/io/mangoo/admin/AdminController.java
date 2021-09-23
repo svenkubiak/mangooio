@@ -325,7 +325,7 @@ public class AdminController {
             var function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {
-                KeyPair keyPair = crypto.generateKeyPair();
+                var keyPair = crypto.generateKeyPair();
                 var publickey = crypto.getKeyAsString(keyPair.getPublic());
                 var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
                 
@@ -335,7 +335,7 @@ public class AdminController {
                 var key = body.get("key").toString();
                 
                 try {
-                    PublicKey publicKey = crypto.getPublicKeyFromString(key);
+                    var publicKey = crypto.getPublicKeyFromString(key);
                     value = crypto.encrypt(cleartext, publicKey);
                 } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);

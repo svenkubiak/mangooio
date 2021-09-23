@@ -133,7 +133,7 @@ public class Crypto {
     private byte[] cipherData(final byte[] data) {
         byte[] result = null;
         try {
-            final byte[] buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
+            final var buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
 
             final int processedBytes = paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
             final int finalBytes = paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
@@ -162,7 +162,7 @@ public class Crypto {
     public KeyPair generateKeyPair() {
         KeyPair keyPair = null;
         try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+            var keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
             keyPairGenerator.initialize(KEYLENGTH);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
@@ -187,7 +187,7 @@ public class Crypto {
         
         byte[] encrypt = null;
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            var cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypt = cipher.doFinal(text);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
@@ -236,7 +236,7 @@ public class Crypto {
 
         byte[] decrypt = null;
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            var cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, key);
             decrypt = cipher.doFinal(text);
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
