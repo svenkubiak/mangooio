@@ -607,7 +607,9 @@ public class Validator implements Serializable {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(message, Required.MESSAGE.toString());
 
-        errors.computeIfAbsent(name, key -> errors.put(key, message));
+        if (!errors.containsKey(name)) {
+            errors.put(name, message);
+        }
     }
 
     public Map<String, String> getErrors() {
