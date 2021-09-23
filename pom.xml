@@ -27,8 +27,8 @@
 		<log4j.version>2.14.1</log4j.version>
 		<maven.version>3.8.2</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
-		<junit.version>5.8.0</junit.version>
-		<junit.platform.version>1.8.0</junit.platform.version>
+		<junit.version>5.8.1</junit.version>
+		<junit.platform.version>1.8.1</junit.platform.version>
 		<enforcer.version>1.3</enforcer.version>
 		<simplemail.version>6.6.1</simplemail.version>
 		<jpasteo.version>0.6.0</jpasteo.version>
