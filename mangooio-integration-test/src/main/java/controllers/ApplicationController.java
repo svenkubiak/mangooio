@@ -1,8 +1,6 @@
 package controllers;
 
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +23,7 @@ public class ApplicationController {
         return Response.withOk();
     }
     
+    @SuppressWarnings("null")
     public Response error() {
         String foo = null;
         foo.length(); //NOSONAR
