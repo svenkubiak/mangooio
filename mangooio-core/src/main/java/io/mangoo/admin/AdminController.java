@@ -2,8 +2,6 @@ package io.mangoo.admin;
 
 import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;

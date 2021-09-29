@@ -1,5 +1,6 @@
 package io.mangoo.models;
 
+import java.io.Serial;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +51,7 @@ public class Identity implements IdentityManager {
 
     private static Account getAccount(String username) {
         return new Account() {
+            @Serial
             private static final long serialVersionUID = 5311970975103831035L;
             private transient Principal principal = () -> username;
 

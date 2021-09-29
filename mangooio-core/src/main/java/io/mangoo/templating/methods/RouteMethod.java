@@ -12,7 +12,6 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.routing.Router;
-import io.mangoo.routing.routes.RequestRoute;
 
 /**
  *
@@ -24,6 +23,7 @@ public class RouteMethod implements TemplateMethodModelEx {
     private static final int MIN_ARGUMENTS = 1;
 
     @Override
+    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
         if (arguments.size() >= MIN_ARGUMENTS) {

@@ -28,6 +28,7 @@ public class I18nMethod implements TemplateMethodModelEx {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
         var messageValue = "";
         if (arguments.size() == NUM_ARGUMENTS) {

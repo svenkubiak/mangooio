@@ -67,6 +67,7 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
+    @SuppressWarnings("unchecked")
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
             .withContent(new HashMap<>())
@@ -136,6 +137,7 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
+    @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         var flash = Flash.create();
         
