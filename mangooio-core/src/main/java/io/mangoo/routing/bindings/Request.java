@@ -83,7 +83,6 @@ public class Request extends Validator {
      *
      * @return The request body as Map object
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
         if (StringUtils.isNotBlank(body)) {
             return JsonUtils.fromJson(body, Map.class);
@@ -288,7 +287,7 @@ public class Request extends Validator {
      */
     public String getAttributeAsString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        Object object = attributes.get(key);
+        var object = attributes.get(key);
         
         return object != null ? (String) object : null;
     }

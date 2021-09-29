@@ -25,6 +25,7 @@ import io.mangoo.enums.Required;
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
     private static final Base32 base32 = new Base32();
+    private static final Random random = new SecureRandom();
     private static final HmacShaAlgorithm ALGORITHM = HmacShaAlgorithm.HMAC_SHA_512;
     private static final int DIGITS = 6;
     private static final int MAX_CHARACTERS = 32;
@@ -41,7 +42,6 @@ public class TotpUtils {
      * @return A 64 characters random string based on SecureRandom
      */
     public static String createSecret() {
-        Random random = new SecureRandom();
         var buffer = new StringBuilder(BYTES_SECRET);
         for (var i = 0; i < BYTES_SECRET; i++) {
             var value = random.nextInt(MAX_CHARACTERS);

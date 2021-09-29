@@ -109,9 +109,9 @@ public final class RequestUtils {
      * @return True if the cookie contains a valid authentication, false otherwise
      */
     public static boolean hasValidAuthentication(String cookie) {
-        boolean valid = false;
+        var valid = false;
         if (StringUtils.isNotBlank(cookie)) {
-            Config config = Application.getInstance(Config.class);
+            var config = Application.getInstance(Config.class);
 
             String value = null;
             String [] contents = cookie.split(";");
