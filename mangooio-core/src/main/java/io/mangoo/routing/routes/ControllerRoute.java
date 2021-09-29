@@ -42,7 +42,7 @@ public class ControllerRoute {
         Objects.requireNonNull(routes, Required.ROUTE.toString());
         
         for (MangooRoute route : routes) {
-            RequestRoute requestRoute = (RequestRoute) route;
+            var requestRoute = (RequestRoute) route;
             requestRoute.withControllerClass(controllerClass);
 
             if (hasBasicAuthentication()) {

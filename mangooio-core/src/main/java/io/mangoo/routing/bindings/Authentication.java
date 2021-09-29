@@ -113,8 +113,8 @@ public class Authentication {
         Objects.requireNonNull(password, Required.SALT.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        boolean authenticated = false;
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        var authenticated = false;
         if (!userHasLock(identifier) && CodecUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
         } else {
@@ -175,10 +175,10 @@ public class Authentication {
      */
     public boolean userHasLock(String username) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
-        boolean lock = false;
+        var lock = false;
         
-        Config config = Application.getInstance(Config.class);
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        var config = Application.getInstance(Config.class);
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         AtomicInteger counter = cache.getCounter(username);
         if (counter != null && counter.get() > config.getAuthenticationLock()) {
             lock = true;

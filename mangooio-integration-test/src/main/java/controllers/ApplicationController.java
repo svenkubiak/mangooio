@@ -88,8 +88,8 @@ public class ApplicationController {
     }
 
     public Response binary() throws URISyntaxException {
-        final URL url = this.getClass().getResource("/attachment.txt");
-        final Path file = Paths.get(url.toURI());
+        final var url = this.getClass().getResource("/attachment.txt");
+        final var file = Paths.get(url.toURI());
         
         return Response.withOk().andBinaryFile(file);
     }
