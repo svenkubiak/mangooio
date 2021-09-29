@@ -411,7 +411,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
-            double doubleValue = Double.parseDouble(value);
+            var doubleValue = Double.parseDouble(value);
             if (doubleValue < minValue || doubleValue > maxValue) {
                 addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_VALUE_KEY.toString(), name, minValue, maxValue)));
             }

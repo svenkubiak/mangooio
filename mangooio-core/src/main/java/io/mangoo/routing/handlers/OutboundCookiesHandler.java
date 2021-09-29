@@ -69,7 +69,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setSessionCookie(HttpServerExchange exchange) {
-        Session session = attachment.getSession();
+        var session = attachment.getSession();
         if (session.isInvalid()) {
             Cookie cookie = new CookieImpl(config.getSessionCookieName())
                     .setSecure(config.isSessionCookieSecure())
@@ -116,7 +116,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = this.attachment.getAuthentication();
+        var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
             Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
                     .setSecure(config.isAuthenticationCookieSecure())
@@ -163,8 +163,8 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setFlashCookie(HttpServerExchange exchange) {
-        Flash flash = this.attachment.getFlash();
-        Form form = this.attachment.getForm();
+        var flash = attachment.getFlash();
+        var form = attachment.getForm();
         
         if (flash.isDiscard() || flash.isInvalid()) {
             final Cookie cookie = new CookieImpl(config.getFlashCookieName())

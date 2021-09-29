@@ -67,9 +67,8 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    @SuppressWarnings("unchecked")
     protected Session getSessionCookie(HttpServerExchange exchange) {
-        Session session = Session.create()
+        var session = Session.create()
             .withContent(new HashMap<>())
             .withExpires(LocalDateTime.now().plusMinutes(config.getSessionCookieTokenExpires()));
         
@@ -103,7 +102,7 @@ public class InboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Authentication getAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = Authentication.create()
+        var authentication = Authentication.create()
                 .withSubject(null)
                 .withExpires(LocalDateTime.now().plusMinutes(config.getAuthenticationCookieTokenExpires()));
         
@@ -137,9 +136,8 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
-        Flash flash = Flash.create();
+        var flash = Flash.create();
         
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {

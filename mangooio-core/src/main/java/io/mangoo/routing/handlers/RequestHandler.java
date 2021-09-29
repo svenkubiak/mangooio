@@ -87,7 +87,7 @@ public class RequestHandler implements HttpHandler {
      */
     protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
         //execute global request filter
-        Response response = Response.withOk();
+        var response = Response.withOk();
         if (attachment.hasRequestFilter()) {
             final OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
             response = mangooRequestFilter.execute(attachment.getRequest(), response);
@@ -138,7 +138,7 @@ public class RequestHandler implements HttpHandler {
         invokedResponse.andHeaders(response.getHeaders());
         
         if (invokedResponse.isRendered()) {
-            TemplateContext templateContext = new TemplateContext(invokedResponse.getContent())
+            var templateContext = new TemplateContext(invokedResponse.getContent())
                     .withFlash(attachment.getFlash())
                     .withSession(attachment.getSession())
                     .withForm(attachment.getForm())
@@ -149,9 +149,9 @@ public class RequestHandler implements HttpHandler {
             
             invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         } else if (invokedResponse.isUnrendered()) {
-            Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
+            var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
             String path = "templates/" + attachment.getControllerClassName() + '/' + attachment.getControllerMethodName() + ".body";
-            String body = "";
+            var body = "";
             
             if (cache.get(path) == null) {
                 body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
@@ -188,9 +188,9 @@ public class RequestHandler implements HttpHandler {
      */
     @SuppressFBWarnings(justification = "Intentionally adding unrelated types", value = "UCC_UNRELATED_COLLECTION_CONTENTS")
     protected Object[] getConvertedParameters(HttpServerExchange exchange) {
-        final Object [] convertedParameters = new Object[attachment.getMethodParametersCount()];
+        final var convertedParameters = new Object[attachment.getMethodParametersCount()];
 
-        int index = 0;
+        var index = 0;
         for (final Map.Entry<String, Class<?>> entry : attachment.getMethodParameters().entrySet()) {
             final String key = entry.getKey();
             final Class<?> clazz = entry.getValue();
@@ -238,7 +238,7 @@ public class RequestHandler implements HttpHandler {
      */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) {
-            final FilterWith filterWith = (FilterWith) annotation;
+            final var filterWith = (FilterWith) annotation;
             for (final Class<?> clazz : filterWith.value()) {
                 if (response.isEndResponse()) {
                     return response;
@@ -261,7 +261,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
-        String body = "";
+        var body = "";
         if (RequestUtils.isPostPutPatch(exchange)) {
             exchange.startBlocking();
             body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING.toString());

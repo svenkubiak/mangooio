@@ -35,7 +35,7 @@ public class LocaleHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Locale locale = Locale.forLanguageTag(config.getApplicationLanguage());
+        var locale = Locale.forLanguageTag(config.getApplicationLanguage());
         
         Cookie i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
         if (i18nCookie != null) {

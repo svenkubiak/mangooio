@@ -46,7 +46,7 @@ public class FormHandler implements HttpHandler {
      * @throws IOException If form parsing fails
      */
     protected Form getForm(HttpServerExchange exchange) throws IOException {
-        final Form form = Application.getInstance(Form.class);
+        final var form = Application.getInstance(Form.class);
         if (RequestUtils.isPostPutPatch(exchange)) {
             final Builder builder = FormParserFactory.builder();
             builder.setDefaultCharset(StandardCharsets.UTF_8.name());

@@ -35,7 +35,7 @@ public class MetricsListener implements ExchangeCompletionListener {
         if (StringUtils.isNotBlank(uri) && !uri.contains("@admin")) {
             int processTime = (int) (System.currentTimeMillis() - this.start);
             
-            Metrics metrics = Application.getInstance(Metrics.class);
+            var metrics = Application.getInstance(Metrics.class);
             metrics.update(processTime);
             metrics.addStatusCode(exchange.getStatusCode());
             

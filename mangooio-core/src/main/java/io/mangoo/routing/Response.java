@@ -344,7 +344,7 @@ public class Response {
     public Response andBinaryFile(Path file) {
         Objects.requireNonNull(file, Required.FILE.toString());
 
-        try (InputStream inputStream = Files.newInputStream(file)) {
+        try (var inputStream = Files.newInputStream(file)) {
             binaryFileName = file.getFileName().toString();
             binaryContent = IOUtils.toByteArray(inputStream);
             binary = true;

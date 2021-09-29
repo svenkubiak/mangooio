@@ -22,7 +22,7 @@ public class ResponseHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
+        var attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         final Response response = attachment.getResponse();
 
         if (response.isRedirect()) {
@@ -33,7 +33,7 @@ public class ResponseHandler implements HttpHandler {
             handleRenderedResponse(exchange, response);
         }
         
-        Form form = attachment.getForm();
+        var form = attachment.getForm();
         if (form != null) {
             form.discard();
         }
