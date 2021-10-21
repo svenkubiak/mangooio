@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -25,7 +24,6 @@ import io.mangoo.templating.methods.PrettyTimeMethod;
 @ExtendWith({TestExtension.class})
 public class TemplateContextTest {
     @Test
-    @Disabled
     public void testCreation() {
         //given
         Map<String, Object> content = new HashMap<>();
