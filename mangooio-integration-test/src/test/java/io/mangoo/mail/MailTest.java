@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
 
+import de.flapdoodle.embed.process.io.file.Files;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
@@ -71,8 +72,10 @@ public class MailTest {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
-        File file = new File(UUID.randomUUID().toString());
+        File file = new File(UUID.randomUUID().toString() + ".txt");
         file.createNewFile();
+        Files.write(UUID.randomUUID().toString(), file);
+        
         Map<String, Object> content = new HashMap<>();
         content.put("name", "raven");
         content.put("king", "none");
@@ -82,7 +85,7 @@ public class MailTest {
             .from("Jon Snow", "jon.snow@winterfell.com")
             .to("sansa.stark@westeros.com")
             .subject("Lord of light")
-            .attachment(file)
+            .attachment(file.toPath())
             .htmlMessage("emails/multipart.ftl", content)
             .send();
         
