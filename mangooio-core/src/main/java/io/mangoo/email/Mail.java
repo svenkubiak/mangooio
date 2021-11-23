@@ -189,7 +189,7 @@ public class Mail {
     /**
      * Adds a file as attachment to the mail
      *
-     * @param file The File to attach
+     * @param path The Path to attach
      * @return A mail object instance   
      */
     public Mail attachment(Path path) {
