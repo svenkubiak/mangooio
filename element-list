@@ -7,7 +7,6 @@ io.mangoo.crypto.totp
 io.mangoo.email
 io.mangoo.enums
 io.mangoo.exceptions
-io.mangoo.filters
 io.mangoo.i18n
 io.mangoo.interfaces
 io.mangoo.interfaces.filters
@@ -22,6 +21,5 @@ io.mangoo.routing.routes
 io.mangoo.scheduler
 io.mangoo.services
 io.mangoo.templating
-io.mangoo.templating.directives
 io.mangoo.templating.methods
 io.mangoo.utils
