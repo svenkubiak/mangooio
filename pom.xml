@@ -29,7 +29,7 @@
 		<required.maven.version>3.6.0</required.maven.version>
 		<junit.version>5.8.2</junit.version>
 		<junit.platform.version>1.8.2</junit.platform.version>
-		<enforcer.version>1.4</enforcer.version>
+		<enforcer.version>1.5.1</enforcer.version>
 		<simplemail.version>6.6.1</simplemail.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.4.0</mongodb.version>
@@ -106,7 +106,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>6.5.0</version>
+					<version>6.5.1</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -401,7 +401,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.13.0</version>
+				<version>2.13.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
