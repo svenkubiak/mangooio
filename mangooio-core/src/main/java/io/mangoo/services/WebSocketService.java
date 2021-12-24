@@ -44,10 +44,8 @@ public class WebSocketService {
         Set<WebSocketChannel> channels = getChannels(url);
         if (channels == null) {
             channels = new HashSet<>();
-            channels.add(channel);
-        } else {
-            channels.add(channel);
         }
+        channels.add(channel);
         setChannels(url, channels);
     }
 

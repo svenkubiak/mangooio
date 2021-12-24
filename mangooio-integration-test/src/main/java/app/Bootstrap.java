@@ -2,8 +2,6 @@ package app;
 
 import controllers.ApplicationController;
 import controllers.AuthenticationController;
-import controllers.AuthenticityController;
-import controllers.AuthorizationController;
 import controllers.BasicAuthenticationController;
 import controllers.FilterController;
 import controllers.FlashController;
@@ -32,21 +30,6 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),
                 On.get().to("/session/valued/{uuid}").respondeWith("valued")
-        );
-    
-        // AuthenticityController
-        Bind.controller(AuthenticityController.class).withRoutes(
-                On.get().to("/authenticityform").respondeWith("form"),
-                On.get().to("/authenticitytoken").respondeWith("token"),
-                On.get().to("/valid").respondeWith("valid"),
-                On.get().to("/invalid").respondeWith("invalid")
-        );
-        
-        // AuthorizationController
-        Bind.controller(AuthorizationController.class).withRoutes(
-                On.get().to("/authorize/{subject}").respondeWith("authorize"),
-                On.get().to("/read").respondeWith("read").withAuthorization(),
-                On.post().to("/write").respondeWith("write").withAuthorization()
         );
         
         // FilterController
@@ -143,7 +126,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/prettytime").respondeWith("prettytime"),
                 On.get().to("/location/{myloca}").respondeWith("location"),
                 On.get().to("/redirect").respondeWith("redirect"),
-                On.get().to("/limit").respondeWith("limit").withRequestLimit(10),
                 On.get().to("/text").respondeWith("text"),
                 On.get().to("/forbidden").respondeWith("forbidden"),
                 On.get().to("/badrequest").respondeWith("badrequest"),

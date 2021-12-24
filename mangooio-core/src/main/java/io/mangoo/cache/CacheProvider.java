@@ -73,7 +73,7 @@ public class CacheProvider implements Provider<Cache> {
         setDefaultApplicationCache();
     }
 
-    private final void initApplicationCache() {
+    private void initApplicationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .build();
@@ -81,7 +81,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
     }
 
-    private final void initAuthenticationCache() {
+    private void initAuthenticationCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.MINUTES)))
@@ -90,7 +90,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.AUTH.toString(), configuration);
     }
 
-    private final void initRequestCache() {
+    private void initRequestCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(FORTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.SECONDS)))
@@ -99,7 +99,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
     }
     
-    private final void initResponseCache() {
+    private void initResponseCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .build();
@@ -107,7 +107,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.RESPONSE.toString(), configuration);
     }
 
-    private final void initServerEventCache() {
+    private void initServerEventCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
@@ -116,7 +116,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.SSE.toString(), configuration);
     }
 
-    private final void initWebSocketCache() {
+    private void initWebSocketCache() {
         CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
                 .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
                 .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
@@ -125,7 +125,7 @@ public class CacheProvider implements Provider<Cache> {
         registerCacheConfiguration(CacheName.WSS.toString(), configuration);
     }
     
-    private final void setDefaultApplicationCache() {
+    private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
 
@@ -158,7 +158,7 @@ public class CacheProvider implements Provider<Cache> {
      * Retrieves a cache by its name from the cache pool
      * 
      * @param name The name of the cache
-     * @return An Cache instance
+     * @return A Cache instance
      */
     public Cache getCache(CacheName name) {
         return getCache(name.toString());
@@ -168,7 +168,7 @@ public class CacheProvider implements Provider<Cache> {
      * Retrieves a cache by its name from the cache pool
      * 
      * @param name The name of the cache
-     * @return An Cache instance
+     * @return A Cache instance
      */
     public Cache getCache(String name) {
         return caches.get(name);

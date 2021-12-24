@@ -9,8 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Authentication;
@@ -52,7 +50,6 @@ public class Attachment {
     private int methodParametersCount;
     private boolean requestFilter;
     private boolean requiresAuthentication;
-    private boolean requiresAuthorization;
 
     public static Attachment build() {
         return new Attachment();
@@ -160,10 +157,6 @@ public class Attachment {
 
     public boolean hasAuthentication() {
         return this.requiresAuthentication;
-    }
-    
-    public boolean hasBasicAuthentication() {
-        return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password);
     }
 
     public boolean hasLimit() {
@@ -287,14 +280,5 @@ public class Attachment {
     public Attachment withAuthentication(boolean authentication) {
         this.requiresAuthentication = authentication;
         return this;
-    }
-    
-    public Attachment withAuthorization(boolean authorization) {
-        this.requiresAuthorization = authorization;
-        return this;
-    }
-
-    public boolean hasAuthorization() {
-        return this.requiresAuthorization;
     }
 }

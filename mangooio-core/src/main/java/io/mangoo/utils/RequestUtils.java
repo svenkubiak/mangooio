@@ -24,7 +24,6 @@ import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
-import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.AuthenticationMode;
 import io.undertow.security.handlers.AuthenticationCallHandler;
 import io.undertow.security.handlers.AuthenticationConstraintHandler;
@@ -36,7 +35,6 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.HeaderMap;
-import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -48,8 +46,6 @@ import io.undertow.websockets.core.WebSocketChannel;
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
     private static AttachmentKey<Attachment> attachmentKey;
-    private static final String READ = "read";
-    private static final String WRITE = "write";
     private static final Pattern PATTERN = Pattern.compile("\"");
     
     private RequestUtils() {
@@ -75,7 +71,7 @@ public final class RequestUtils {
         final Map<String, String> requestParamater = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.entrySet().forEach(entry -> requestParamater.put(entry.getKey(), entry.getValue().element()));
+        queryParameters.forEach((key, value) -> requestParamater.put(key, value.element()));
 
         return requestParamater;
     }
@@ -113,9 +109,9 @@ public final class RequestUtils {
      * @return True if the cookie contains a valid authentication, false otherwise
      */
     public static boolean hasValidAuthentication(String cookie) {
-        boolean valid = false;
+        var valid = false;
         if (StringUtils.isNotBlank(cookie)) {
-            Config config = Application.getInstance(Config.class);
+            var config = Application.getInstance(Config.class);
 
             String value = null;
             String [] contents = cookie.split(";");
@@ -205,46 +201,8 @@ public final class RequestUtils {
         
         HttpHandler wrap = new AuthenticationCallHandler(httpHandler);
         wrap = new AuthenticationConstraintHandler(wrap);
-        wrap = new AuthenticationMechanismsHandler(wrap, Collections.<AuthenticationMechanism>singletonList(new BasicAuthenticationMechanism("Authentication required")));
+        wrap = new AuthenticationMechanismsHandler(wrap, Collections.singletonList(new BasicAuthenticationMechanism("Authentication required")));
         
         return new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), wrap);
-    }
-    
-    /**
-     * Return if a given HTTP method results in a read or write request to a resource
-     * 
-     * GET = read
-     * POST = write
-     * PUT = write
-     * DELETE = write
-     * PATCH = write
-     * OPTIONS = read
-     * HEAD = read
-     * 
-     * @param method The HTTP method
-     * @return read or write if HTTP method is found, blank otherwise
-     */
-    public static String getOperation(HttpString method) {
-        String operation = "";
-        
-        if (Methods.POST.equals(method)) {
-            operation = WRITE;
-        } else if (Methods.PUT.equals(method)) {
-            operation = WRITE;
-        } else if (Methods.DELETE.equals(method)) {
-            operation = WRITE;
-        } else if (Methods.GET.equals(method)) {
-            operation = READ;
-        } else if (Methods.PATCH.equals(method)) {
-            operation = WRITE;
-        } else if (Methods.OPTIONS.equals(method)) {
-            operation = READ;
-        } else if (Methods.HEAD.equals(method)) {
-            operation = READ;
-        } else {
-            // ignore everything else
-        }
-        
-        return operation;
     }
 }

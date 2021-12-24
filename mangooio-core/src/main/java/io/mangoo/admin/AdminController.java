@@ -1,11 +1,7 @@
 package io.mangoo.admin;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.PublicKey;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -23,7 +19,6 @@ import java.util.concurrent.atomic.LongAdder;
 import javax.crypto.spec.SecretKeySpec;
 import javax.management.Attribute;
 import javax.management.AttributeList;
-import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,8 +46,6 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooEncryptionException;
-import io.mangoo.exceptions.MangooSchedulerException;
-import io.mangoo.models.Job;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
@@ -63,7 +56,6 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
-import io.mangoo.scheduler.Scheduler;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
@@ -89,7 +81,6 @@ public class AdminController {
     private static final String URL = "url";
     private static final String METHOD = "method";
     private static final String CACHE_ADMINROUTES = "cache_adminroutes";
-    private static final String JOBS = "jobs";
     private static final String METRICS = "metrics";
     private static final String ROUTES = "routes";
     private static final double HUNDRED_PERCENT = 100.0;
@@ -99,36 +90,23 @@ public class AdminController {
     private final CacheProvider cacheProvider;
     private final Config config;
     private final Crypto crypto;
-    private final Scheduler scheduler;
     
     @Inject
-    public AdminController(Scheduler scheduler, Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
+    public AdminController(Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.scheduler = Objects.requireNonNull(scheduler, Required.SCHEDULER.toString());
         this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
     }
-    
-    @FilterWith(AdminFilter.class)
-    public Response execute(String name) {
-        try {
-            scheduler.executeJob(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to execute job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
-    }
-    
+
     @FilterWith(AdminFilter.class)
     public Response index() {
-        Instant instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
+        var instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
-        EventBusService eventBusService = Application.getInstance(EventBusService.class);
+        var eventBusService = Application.getInstance(EventBusService.class);
         
         if (enabled) {
-            Metrics metrics = Application.getInstance(Metrics.class);
+            var metrics = Application.getInstance(Metrics.class);
             long totalRequests = 0;
             long errorRequests = 0;
             
@@ -145,7 +123,7 @@ public class AdminController {
             }
             
             return Response.withOk()
-                    .andContent(ENABLED, enabled)
+                    .andContent(ENABLED, Boolean.TRUE)
                     .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("uptime", Date.from(instant))
                     .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
@@ -161,7 +139,7 @@ public class AdminController {
         }
         
         return Response.withOk()
-                .andContent(ENABLED, enabled)
+                .andContent(ENABLED, Boolean.FALSE)
                 .andContent("uptime", Date.from(instant))
                 .andContent("events", eventBusService.getNumEvents())
                 .andContent("listeners", eventBusService.getNumListeners())
@@ -249,8 +227,8 @@ public class AdminController {
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         if (body != null && body.size() > 0) {
-            String clazz = body.get("class").toString();
-            String level = body.get("level").toString();
+            var clazz = body.get("class").toString();
+            var level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
                 LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
                 loggerContext.getLoggers()
@@ -306,10 +284,8 @@ public class AdminController {
                         json.put(URL, route.getUrl());
                         json.put("controllerClass", route.getControllerClass());
                         json.put("controllerMethod", route.getControllerMethod());
-                        json.put("limit", route.getLimit());
                         json.put("basicAuthentication", route.hasBasicAuthentication());
                         json.put("authentication", route.hasAuthentication());
-                        json.put("authorization", route.hasAuthorization());
                         json.put("blocking", route.isBlocking());
                         routes.add(json);
                     });
@@ -320,33 +296,6 @@ public class AdminController {
         return Response.withOk()
                 .andContent(ROUTES, routes)
                 .andTemplate(Template.DEFAULT.routesPath());
-    }
-    
-    @FilterWith(AdminFilter.class)
-    public Response scheduler()  {
-        List<Job> jobs = new ArrayList<>();
-        if (scheduler.isInitialize()) {
-            try {
-                jobs = scheduler.getAllJobs();
-            } catch (MangooSchedulerException e) {
-                LOG.error("Failed to retrieve jobs from scheduler", e);
-            }   
-        }
-
-        return Response.withOk()
-                .andContent(JOBS, jobs)
-                .andTemplate(Template.DEFAULT.schedulerPath());
-    }
-    
-    @FilterWith(AdminFilter.class)
-    public Response state(String name) {
-        try {
-            scheduler.changeState(name);
-        } catch (MangooSchedulerException e) {
-            LOG.error("Failed to change the state of job with name: " + name, e);
-        }
-        
-        return Response.withRedirect("/@admin/scheduler");
     }
     
     @FilterWith(AdminFilter.class)
@@ -368,23 +317,23 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        String value = "";
+        var value = "";
         
         if (body != null && body.size() > 0) {
-            String function = body.get("function").toString();
+            var function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {
-                KeyPair keyPair = crypto.generateKeyPair();
-                String publickey = crypto.getKeyAsString(keyPair.getPublic());
-                String privatekey = crypto.getKeyAsString(keyPair.getPrivate());
+                var keyPair = crypto.generateKeyPair();
+                var publickey = crypto.getKeyAsString(keyPair.getPublic());
+                var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
                 
                 value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
             } else if (("encrypt").equalsIgnoreCase(function)) {
-                String cleartext = body.get("cleartext").toString();
-                String key = body.get("key").toString();
+                var cleartext = body.get("cleartext").toString();
+                var key = body.get("key").toString();
                 
                 try {
-                    PublicKey publicKey = crypto.getPublicKeyFromString(key);
+                    var publicKey = crypto.getPublicKeyFromString(key);
                     value = crypto.encrypt(cleartext, publicKey);
                 } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);
@@ -403,9 +352,7 @@ public class AdminController {
             json.put("cpu", getCpu());
 
             Map<String, Double> memory = getMemory();
-            for (Entry<String, Double> entry : memory.entrySet()) {
-                json.put(entry.getKey(), entry.getValue());
-            }
+            json.putAll(memory);
             
             return Response.withOk().andJsonBody(json);
         }
@@ -414,7 +361,7 @@ public class AdminController {
     }
     
     private boolean isValidHeaderToken(Request request) {
-        boolean valid = false;
+        var valid = false;
         String token = config.getApplicationAdminHealthToken();
         String header = request.getHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString());
         
@@ -432,7 +379,7 @@ public class AdminController {
     }
     
     private boolean isValidAuthentication(Form form) {
-        boolean valid = false;
+        var valid = false;
 
         String username = config.getApplicationAdminUsername();
         String password = config.getApplicationAdminPassword();
@@ -483,7 +430,7 @@ public class AdminController {
     }
     
     private Map<String, Double> getMemory() {
-        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        var memoryMXBean = ManagementFactory.getMemoryMXBean();
         return Map.of("initialMemory", (double) memoryMXBean.getHeapMemoryUsage().getInit() / MEGABYTE,
                       "usedMemory", (double) memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE,
                       "maxHeapMemory", (double) memoryMXBean.getHeapMemoryUsage().getMax() /MEGABYTE,
@@ -492,9 +439,9 @@ public class AdminController {
 
     private Double getCpu() {
         try {
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-            AttributeList list = mbs.getAttributes(name, new String[]{"ProcessCpuLoad"});
+            var beanServer = ManagementFactory.getPlatformMBeanServer();
+            var objectName = ObjectName.getInstance("java.lang:type=OperatingSystem");
+            AttributeList list = beanServer.getAttributes(objectName, new String[]{"ProcessCpuLoad"});
 
             return Optional.ofNullable(list)
                     .map(l -> l.isEmpty() ? null : l)
@@ -509,6 +456,6 @@ public class AdminController {
             LOG.error("Failed to get process CPU load", e);
         }
         
-        return Double.valueOf(0);
+        return (double) 0;
     }
 }

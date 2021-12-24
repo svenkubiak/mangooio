@@ -50,7 +50,7 @@ public interface Cache {
     /**
      * Increments a cache counter with a given key
      * 
-     * If the counter does not exists, it will be
+     * If the counter did not exist, it will be
      * created and the incremented
      * 
      * @param key The key for the cached value
@@ -61,7 +61,7 @@ public interface Cache {
     /**
      * Decrements a counter with a given key
      * 
-     * If the counter does not exists, it will be
+     * If the counter did not exist, it will be
      * created and the decremented
      * 
      * @param key The key for the cached value

@@ -17,7 +17,7 @@ public final class Server {
     private static Map<Header, String> headers = Map.of(
                 Header.X_CONTENT_TYPE_OPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString(),
                 Header.X_FRAME_OPTIONS, Default.APPLICATION_HEADERS_XFRAMEOPTIONS.toString(),
-                Header.X_XSS_PPROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toString(),
+                Header.X_XSS_PROTECTION, Default.APPLICATION_HEADERS_XSSPROTECTION.toString(),
                 Header.REFERER_POLICY, Default.APPLICATION_HEADERS_REFERERPOLICY.toString(),
                 Header.FEATURE_POLICY, Default.APPLICATION_HEADERS_FEATUREPOLICY.toString(),
                 Header.CONTENT_SECURITY_POLICY, Default.APPLICATION_HEADERS_CONTENTSECURITYPOLICY.toString(),

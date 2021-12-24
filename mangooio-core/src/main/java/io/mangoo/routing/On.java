@@ -14,7 +14,7 @@ public class On {
     }
 
     /**
-     * Creates a new RequestRoute for a HTTP GET request
+     * Creates a new RequestRoute for an HTTP GET request
      * 
      * @return RequestRoute instance
      */
@@ -23,7 +23,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP POST request
+     * Creates a new RequestRoute for an HTTP POST request
      * 
      * @return RequestRoute instance
      */
@@ -32,7 +32,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP PUT request
+     * Creates a new RequestRoute for an HTTP PUT request
      * 
      * @return RequestRoute instance
      */
@@ -41,7 +41,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP PATCH request
+     * Creates a new RequestRoute for an HTTP PATCH request
      * 
      * @return RequestRoute instance
      */
@@ -50,7 +50,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP DELETE request
+     * Creates a new RequestRoute for an HTTP DELETE request
      * 
      * @return RequestRoute instance
      */
@@ -59,7 +59,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP OPTIONS request
+     * Creates a new RequestRoute for an HTTP OPTIONS request
      * 
      * @return RequestRoute instance
      */
@@ -68,7 +68,7 @@ public class On {
     }
     
     /**
-     * Creates a new RequestRoute for a HTTP HEAD request
+     * Creates a new RequestRoute for an HTTP HEAD request
      * 
      * @return RequestRoute instance
      */

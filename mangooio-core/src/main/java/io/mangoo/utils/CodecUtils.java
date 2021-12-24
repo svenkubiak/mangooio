@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Objects;
 
@@ -9,9 +10,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
-import org.mindrot.jbcrypt.BCrypt;
 
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
 /**
@@ -28,57 +27,60 @@ public final class CodecUtils {
     
     private CodecUtils() {
     }
-
-    /**
-     * Hashes a given cleartext data with JBCrypt
-     * 
-     * @deprecated Use {@link #hashArgon2(String, String) hashArgon2} instead
-     * @param data The cleartext data
-     * @return JBCrypted hashed value
-     */
-    @Deprecated(since = "6.13.0", forRemoval = true)
-    public static String hexJBcrypt(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        
-        return BCrypt.hashpw(data, BCrypt.gensalt(Default.JBCRYPT_ROUNDS.toInt()));
-    }
     
+    /**
+     * Hashes a given clear text password with salt using Argon2Id password hashing
+     * 
+     * @param password The clear text password
+     * @param salt The salt
+     * 
+     * @return The hashed password
+     */
     public static String hashArgon2(String password, String salt) {
-        Objects.requireNonNull(password, "password can not be null");
-        Objects.requireNonNull(salt, "salt can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(salt, Required.SALT.toString());
         
-        Argon2Parameters.Builder builder = (new Argon2Parameters.Builder()).
-                withVersion(Argon2Parameters.ARGON2_id)
+        Argon2Parameters.Builder builder = (new Argon2Parameters.Builder())
+                .withVersion(Argon2Parameters.ARGON2_id)
                 .withIterations(ITERATIONS)
                 .withMemoryAsKB(MEMORY)
                 .withParallelism(PARALLELISM)
-                .withSecret(password.getBytes())
-                .withSalt(salt.getBytes());
+                .withSecret(password.getBytes(StandardCharsets.UTF_8))
+                .withSalt(salt.getBytes(StandardCharsets.UTF_8));
 
         Argon2BytesGenerator generator = new Argon2BytesGenerator();
         generator.init(builder.build());
 
-        byte[] passwdHash = new byte[32];
-        generator.generateBytes(password.getBytes(), passwdHash);
+        var passwdHash = new byte[32];
+        generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
         return base64Encoder.encodeToString(passwdHash);
     }
     
+    /**
+     * Matches a given clear text password with salt using Argon2Id against an already
+     * Argon2Id hashed password
+     * 
+     * @param password The clear text password
+     * @param salt The salt
+     * @param hashedPassword The already hashed password
+     * 
+     * @return True if hashes match, false otherwise
+     */
     public static boolean matchArgon2(String password, String salt, String hashedPassword) {
-        Objects.requireNonNull(password, "password can not be null");
-        Objects.requireNonNull(salt, "salt can not be null");
-        Objects.requireNonNull(hashedPassword, "hashedPassword can not be null");
+        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(salt, Required.SALT.toString());
+        Objects.requireNonNull(hashedPassword, Required.PASSWORD.toString());
         
-        String hash = hashArgon2(password, salt);
-        return Arrays.areEqual(hash.getBytes(), hashedPassword.getBytes());
+        return Arrays.areEqual(hashArgon2(password, salt).getBytes(StandardCharsets.UTF_8), hashedPassword.getBytes(StandardCharsets.UTF_8));
     }
     
     /**
-     * Hashes a given cleartext data with SHA512
+     * Hashes a given clear text data with SHA512
      * For simple hashing tasks
      * Use {@link #hashArgon2(String, String) hashArgon2} for password hashing
      * 
-     * @param data The cleartext data
+     * @param data The clear text data
      * @return SHA512 hashed value
      */
     public static String hexSHA512(String data) {
@@ -88,38 +90,7 @@ public final class CodecUtils {
     }
     
     /**
-     * Hashes a given cleartext data with SHA512 and an appended salt
-     * 
-     * @param data The cleartext data
-     * @param salt The salt to use
-     * @return SHA512 hashed value
-     */
-    @Deprecated(since = "6.13.0", forRemoval = true)
-    public static String hexSHA512(String data, String salt) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        Objects.requireNonNull(salt, Required.SALT.toString());
-        
-        return DigestUtils.sha512Hex(data + salt);
-    }
-    
-    /**
-     * Checks a given data against a JBCrypted hash
-     * 
-     * @deprecated Use {@link #matchArgon2(String, String, String) hashArgon2} instead
-     * @param data The cleartext data
-     * @param hash The JBCrypt hashed value
-     * @return True if it is a match, false otherwise
-     */
-    @Deprecated(since = "6.13.0", forRemoval = true)
-    public static boolean checkJBCrypt(String data, String hash) {
-        Objects.requireNonNull(data, Required.DATA.toString());
-        Objects.requireNonNull(hash, Required.HASH.toString());
-        
-        return BCrypt.checkpw(data, hash);
-    }
-    
-    /**
-     * Serializes an object into an Base64 encoded data string
+     * Serializes an object into a Base64 encoded data string
      *
      * @param object The object to serialize
      * @return The base64 encoded data string
@@ -132,7 +103,7 @@ public final class CodecUtils {
     }
     
     /**
-     * Deserialize a given Base64 encoded data string into an object
+     * Deserializes a given Base64 encoded data string into an object
      * 
      * @param data The base64 encoded data string
      * @param <T> Just for JavaDoc can be ignored

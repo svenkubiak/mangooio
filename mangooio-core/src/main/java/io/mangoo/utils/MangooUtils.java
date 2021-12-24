@@ -45,9 +45,9 @@ public final class MangooUtils {
      */
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {
-        String version = Default.VERSION_UNKNOW.toString();
+        var version = Default.VERSION_UNKNOW.toString();
         try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
-            final Properties properties = new Properties();
+            final var properties = new Properties();
             properties.load(inputStream);
             version = String.valueOf(properties.get("version"));
         } catch (final IOException e) {

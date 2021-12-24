@@ -35,13 +35,13 @@ public class MetricsListener implements ExchangeCompletionListener {
         if (StringUtils.isNotBlank(uri) && !uri.contains("@admin")) {
             int processTime = (int) (System.currentTimeMillis() - this.start);
             
-            Metrics metrics = Application.getInstance(Metrics.class);
+            var metrics = Application.getInstance(Metrics.class);
             metrics.update(processTime);
             metrics.addStatusCode(exchange.getStatusCode());
             
-            long contentLengeh = exchange.getResponseContentLength();
-            if (contentLengeh > 0) {
-                metrics.incrementDataSend(contentLengeh);
+            long contentLength = exchange.getResponseContentLength();
+            if (contentLength > 0) {
+                metrics.incrementDataSend(contentLength);
             }
         }
         

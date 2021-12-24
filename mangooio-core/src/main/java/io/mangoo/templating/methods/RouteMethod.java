@@ -12,29 +12,28 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.routing.Router;
-import io.mangoo.routing.routes.RequestRoute;
 
 /**
  *
  * @author svenkubiak
  *
  */
-@SuppressWarnings("rawtypes")
 public class RouteMethod implements TemplateMethodModelEx {
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(.*?)\\}");
     private static final int MIN_ARGUMENTS = 1;
 
     @Override
+    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
         if (arguments.size() >= MIN_ARGUMENTS) {
             String controller = ((SimpleScalar) arguments.get(0)).getAsString();
-            RequestRoute requestRoute = Router.getReverseRoute(controller);
+            var requestRoute = Router.getReverseRoute(controller);
             
             if (requestRoute != null) {
                 url = requestRoute.getUrl();
                 Matcher matcher = PARAMETER_PATTERN.matcher(url);
-                int i = 1;
+                var i = 1;
                 while (matcher.find()) {
                     String argument = ((SimpleScalar) arguments.get(i)).getAsString();
                     url = StringUtils.replace(url, "{" + matcher.group(1) + "}", argument);

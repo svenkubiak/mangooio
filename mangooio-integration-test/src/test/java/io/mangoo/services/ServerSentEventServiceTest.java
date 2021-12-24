@@ -40,6 +40,7 @@ import okhttp3.Headers;
  */
 @ExtendWith({TestExtension.class})
 public class ServerSentEventServiceTest {
+    
     @Test
     public void testAddConnection() {
         //given

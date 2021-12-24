@@ -1,26 +1,22 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.routing.bindings.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.routing.bindings.Form;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 public class CodecUtilsTest {
-    private static final String SERIALIZED = "rO0ABXNyAB9pby5tYW5nb28ucm91dGluZy5iaW5kaW5ncy5Gb3Jtr0x38MTUh5ACAANaAARrZWVwWgAJc3VibWl0dGVkTAAIdmFsdWVNYXB0AA9MamF2YS91dGlsL01hcDt4cgAkaW8ubWFuZ29vLnJvdXRpbmcuYmluZGluZ3MuVmFsaWRhdG9y3cEYQhBJCTwCAANMAAZlcnJvcnNxAH4AAUwACG1lc3NhZ2VzdAAZTGlvL21hbmdvby9pMThuL01lc3NhZ2VzO0wABnZhbHVlc3EAfgABeHBzcgARamF2YS51dGlsLkhhc2hNYXAFB9rBwxZg0QMAAkYACmxvYWRGYWN0b3JJAAl0aHJlc2hvbGR4cD9AAAAAAAAAdwgAAAAQAAAAAHhzcgAXaW8ubWFuZ29vLmkxOG4uTWVzc2FnZXNo6ui27qLkugIAAUwACGRlZmF1bHRzcQB+AAF4cHNxAH4ABT9AAAAAAAAYdwgAAAAgAAAAFHQAEHZhbGlkYXRpb24ubWF0Y2h0ABJ7MH0gbXVzdCBtYXRjaCB7MX10ABB2YWxpZGF0aW9uLmVtYWlsdAAhezB9IG11c3QgYmUgYSB2YWxpZCBlTWFpbCBhZGRyZXNzdAAPdmFsaWRhdGlvbi5pcHY0dAAgezB9IG11c3QgYmUgYSB2YWxpZCBJUHY0IGFkZHJlc3N0AA92YWxpZGF0aW9uLmlwdjZ0ACB7MH0gbXVzdCBiZSBhIHZhbGlkIElQdjYgYWRkcmVzc3QAF3ZhbGlkYXRpb24ucmFuZ2UubGVuZ3RodAAoezB9IG11c3QgYmUgYSBsZW5ndGggYmV0d2VlbiB7MX0gYW5kIHsyfXQAFXZhbGlkYXRpb24uZXhhY3RtYXRjaHQAGnswfSBtdXN0IGV4YWN0bHkgbWF0Y2ggezF9dAATdmFsaWRhdGlvbi5yZXF1aXJlZHQAF3swfSBpcyBhIHJlcXVpcmVkIHZhbHVldAAWdmFsaWRhdGlvbi5yYW5nZS52YWx1ZXQAJXswfSBtdXN0IGJlIHZhbHVlIGJldHdlZW4gezF9IGFuZCB7Mn10ABJ2YWxpZGF0aW9uLm51bWVyaWN0ABt7MH0gbXVzdCBiZSBhIG51bWVyaWMgdmFsdWV0ABB2YWxpZGF0aW9uLnJlZ2V4dAAXezB9IGlzIGFuIGludmFsaWQgdmFsdWV0AA52YWxpZGF0aW9uLm1heHQAH3swfSBtdXN0IGhhdmUgYSBzaXplIG9mIG1heCB7MX10ABR2YWxpZGF0aW9uLm1pbi52YWx1ZXQAJnswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGxlc3MgdGhhdG4gezF9dAAUdmFsaWRhdGlvbi5tYXgudmFsdWV0ACh7MH0gbXVzdCBiZSBhIHZhbHVlIG5vdCBncmVhdGVyIHRoYW4gezF9dAAVdmFsaWRhdGlvbi5kb21haW5uYW1ldAAfezB9IG11c3QgYmUgYSB2YWxpZCBkb21haW4gbmFtZXQAFXZhbGlkYXRpb24ubWluLmxlbmd0aHQALHswfSBtdXN0IGJlIGEgdmFsdWUgd2l0aCBhIG1pbiBsZW5ndGggb2YgezF9dAAOdmFsaWRhdGlvbi51cmx0ABd7MH0gbXVzdCBiZSBhIHZhbGlkIFVSTHQAFXZhbGlkYXRpb24ubWF4Lmxlbmd0aHQALHswfSBtdXN0IGJlIGEgdmFsdWUgd2l0aCBhIG1heCBsZW5ndGggb2YgezF9dAAQdmFsaWRhdGlvbi5yYW5nZXQAKHswfSBtdXN0IGhhdmUgYSBzaXplIGJldHdlZW4gezF9IGFuZCB7Mn10AA52YWxpZGF0aW9uLm1pbnQAI3swfSBtdXN0IGhhdmUgYSBsZWFzdCBhIHNpemUgb2YgezF9dAAWdmFsaWRhdGlvbi5tYXRjaHZhbHVlc3QAHlRoZSB2YWx1ZXMgb2YgezB9IGlzIG5vdCB2YWxpZHhzcQB+AAU/QAAAAAAADHcIAAAAEAAAAAF0AANmb290AANiYXJ4AABzcQB+AAU/QAAAAAAAAHcIAAAAEAAAAAB4";
+    private static final String SERIALIZED = "rO0ABXNyAB9pby5tYW5nb28ucm91dGluZy5iaW5kaW5ncy5Gb3Jtr0x38MTUh5ACAANaAARrZWVwWgAJc3VibWl0dGVkTAAIdmFsdWVNYXB0AA9MamF2YS91dGlsL01hcDt4cgAkaW8ubWFuZ29vLnJvdXRpbmcuYmluZGluZ3MuVmFsaWRhdG9y3cEYQhBJCTwCAANMAAZlcnJvcnNxAH4AAUwACG1lc3NhZ2VzdAAZTGlvL21hbmdvby9pMThuL01lc3NhZ2VzO0wABnZhbHVlc3EAfgABeHBzcgARamF2YS51dGlsLkhhc2hNYXAFB9rBwxZg0QMAAkYACmxvYWRGYWN0b3JJAAl0aHJlc2hvbGR4cD9AAAAAAAAAdwgAAAAQAAAAAHhzcgAXaW8ubWFuZ29vLmkxOG4uTWVzc2FnZXNo6ui27qLkugIAAUwACGRlZmF1bHRzcQB+AAF4cHNxAH4ABT9AAAAAAAAYdwgAAAAgAAAAEXQAEHZhbGlkYXRpb24ubWF0Y2h0ABJ7MH0gbXVzdCBtYXRjaCB7MX10ABB2YWxpZGF0aW9uLmVtYWlsdAAhezB9IG11c3QgYmUgYSB2YWxpZCBlTWFpbCBhZGRyZXNzdAAPdmFsaWRhdGlvbi5pcHY0dAAgezB9IG11c3QgYmUgYSB2YWxpZCBJUHY0IGFkZHJlc3N0AA92YWxpZGF0aW9uLmlwdjZ0ACB7MH0gbXVzdCBiZSBhIHZhbGlkIElQdjYgYWRkcmVzc3QAF3ZhbGlkYXRpb24ucmFuZ2UubGVuZ3RodAAoezB9IG11c3QgYmUgYSBsZW5ndGggYmV0d2VlbiB7MX0gYW5kIHsyfXQAFXZhbGlkYXRpb24uZXhhY3RtYXRjaHQAGnswfSBtdXN0IGV4YWN0bHkgbWF0Y2ggezF9dAATdmFsaWRhdGlvbi5yZXF1aXJlZHQAF3swfSBpcyBhIHJlcXVpcmVkIHZhbHVldAAWdmFsaWRhdGlvbi5yYW5nZS52YWx1ZXQAJXswfSBtdXN0IGJlIHZhbHVlIGJldHdlZW4gezF9IGFuZCB7Mn10ABJ2YWxpZGF0aW9uLm51bWVyaWN0ABt7MH0gbXVzdCBiZSBhIG51bWVyaWMgdmFsdWV0ABB2YWxpZGF0aW9uLnJlZ2V4dAAXezB9IGlzIGFuIGludmFsaWQgdmFsdWV0ABR2YWxpZGF0aW9uLm1pbi52YWx1ZXQAJXswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGxlc3MgdGhhbiB7MX10ABR2YWxpZGF0aW9uLm1heC52YWx1ZXQAKHswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGdyZWF0ZXIgdGhhbiB7MX10ABV2YWxpZGF0aW9uLmRvbWFpbm5hbWV0AB97MH0gbXVzdCBiZSBhIHZhbGlkIGRvbWFpbiBuYW1ldAAVdmFsaWRhdGlvbi5taW4ubGVuZ3RodAAsezB9IG11c3QgYmUgYSB2YWx1ZSB3aXRoIGEgbWluIGxlbmd0aCBvZiB7MX10AA52YWxpZGF0aW9uLnVybHQAF3swfSBtdXN0IGJlIGEgdmFsaWQgVVJMdAAVdmFsaWRhdGlvbi5tYXgubGVuZ3RodAAsezB9IG11c3QgYmUgYSB2YWx1ZSB3aXRoIGEgbWF4IGxlbmd0aCBvZiB7MX10ABZ2YWxpZGF0aW9uLm1hdGNodmFsdWVzdAAeVGhlIHZhbHVlcyBvZiB7MH0gaXMgbm90IHZhbGlkeHNxAH4ABT9AAAAAAAAMdwgAAAAQAAAAAXQAA2Zvb3QAA2JhcngAAHNxAH4ABT9AAAAAAAAAdwgAAAAQAAAAAHg=";
     private static final String PLAIN = "this is a plain text";
     
     @Test
@@ -75,6 +71,32 @@ public class CodecUtilsTest {
         
         //then
         assertThat(valid, equalTo(true));
+    }
+    
+    @Test
+    public void testNonMatchSaltArgon2() {
+        //given
+        String salt = MangooUtils.randomString(24);
+        String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
+        
+        //when
+        boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
+        
+        //then
+        assertThat(valid, equalTo(false));
+    }
+    
+    @Test
+    public void testNonMatchHashArgon2() {
+        //given
+        String salt = MangooUtils.randomString(24);
+        String hash = CodecUtils.hashArgon2(PLAIN, salt);
+        
+        //when
+        boolean valid = CodecUtils.matchArgon2("foobar", salt, hash);
+        
+        //then
+        assertThat(valid, equalTo(false));
     }
     
     @Test

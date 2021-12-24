@@ -23,7 +23,7 @@ import io.mangoo.exceptions.MangooMailerException;
  */
 @Singleton
 public class MailEvent {
-    private Mailer mailer;
+    private final Mailer mailer;
     
     @Inject
     public MailEvent(Config config) {

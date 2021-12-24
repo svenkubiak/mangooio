@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,7 +59,6 @@ public class DispatcherHandler implements HttpHandler {
     private boolean requestFilter;
     private boolean blocking;
     private boolean authentication;
-    private boolean authorization;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
@@ -118,11 +118,6 @@ public class DispatcherHandler implements HttpHandler {
         return this;
     }
     
-    public DispatcherHandler withAuthorization(boolean authorization) {
-        this.authorization = authorization;
-        return this;
-    }
-    
     public DispatcherHandler withLimit(int limit) {
         this.limit = limit;
         return this;
@@ -154,7 +149,6 @@ public class DispatcherHandler implements HttpHandler {
             .withMessages(this.messages)
             .withLimit(this.limit)
             .withAuthentication(this.authentication)
-            .withAuthorization(this.authorization)
             .withBasicAuthentication(this.username, this.password)
             .withTemplateEngine(this.templateEngine);
 
@@ -186,6 +180,15 @@ public class DispatcherHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(LimitHandler.class).handleRequest(exchange);
+        if (StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password)) {
+            HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
+                    Application.getInstance(LocaleHandler.class),
+                    this.username,
+                    this.password);
+            
+            httpHandler.handleRequest(exchange);
+        } else {
+            Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
+        }
     }
 }

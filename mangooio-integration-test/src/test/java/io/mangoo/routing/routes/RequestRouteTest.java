@@ -32,19 +32,6 @@ public class RequestRouteTest {
     }
     
     @Test
-    public void testAuthorization() {
-        //given
-        RequestRoute requestRoute = new RequestRoute(Http.GET);
-        
-        //when
-        requestRoute.withAuthorization();
-        
-        //then
-        assertThat(requestRoute.hasAuthentication(), equalTo(true));
-        assertThat(requestRoute.hasAuthorization(), equalTo(true));
-    }
-    
-    @Test
     public void testAuthentication() {
         //given
         RequestRoute requestRoute = new RequestRoute(Http.GET);
@@ -54,7 +41,6 @@ public class RequestRouteTest {
         
         //then
         assertThat(requestRoute.hasAuthentication(), equalTo(true));
-        assertThat(requestRoute.hasAuthorization(), equalTo(false));
     }
     
     @Test
@@ -79,18 +65,5 @@ public class RequestRouteTest {
         
         //then
         assertThat(requestRoute.isBlocking(), equalTo(true));
-    }
-    
-    @Test
-    public void testWithLimit() {
-        //given
-        RequestRoute requestRoute = new RequestRoute(Http.GET);
-        requestRoute.to("/foo");
-        
-        //when
-        requestRoute.withRequestLimit(42);
-        
-        //then
-        assertThat(requestRoute.getLimit(), equalTo(42));
     }
 }

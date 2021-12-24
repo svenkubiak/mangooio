@@ -29,7 +29,7 @@ public class Validator implements Serializable {
     private static final long serialVersionUID = -2467664448802191044L;
     private final Map<String, String> errors = new HashMap<>();
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
-    
+
     @Inject
     private Messages messages;
 
@@ -73,45 +73,6 @@ public class Validator implements Serializable {
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REQUIRED_KEY.toString(), name)));
-        }
-    }
-    
-    /**
-     * Validates a given field to have a minimum length
-     * 
-     * @deprecated
-     * Use {@link #expectMinValue(String, double)} or {@link #expectMinLength(String, double)} instead
-     * 
-     * @param name The field to check
-     * @param minLength The minimum length
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void expectMin(String name, double minLength) {
-        expectMin(name, minLength, null);
-    }
-
-    /**
-     * Validates a given field to have a minimum length
-     * 
-     * @deprecated
-     * Use {@link #expectMinValue(String, double, String)} or {@link #expectMinLength(String, double, String)} instead
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param message A custom error message instead of the default one
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void expectMin(String name, double minLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
-
-        if (StringUtils.isNumeric(value)) {
-            if (Double.parseDouble(value) < minLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_KEY.toString(), name, minLength)));
-            }
-        } else {
-            if (value.length() < minLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_KEY.toString(), name, minLength)));
-            }
         }
     }
     
@@ -168,20 +129,6 @@ public class Validator implements Serializable {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_LENGTH_KEY.toString(), name, minLength)));
         }
     }
-
-    /**
-     * Validates a given field to have a maximum length
-     * 
-     * @deprecated
-     * Use {@link #expectMaxLength(String, double)} or {@link #expectMaxValue(String, double)} instead
-     *
-     * @param maxLength The maximum length
-     * @param name The field to check
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void expectMax(String name, double maxLength) {
-        expectMax(name, maxLength, null);
-    }
     
     /**
      * Validates a given field to have a maximum value
@@ -230,31 +177,6 @@ public class Validator implements Serializable {
     /**
      * Validates a given field to have a maximum length
      *
-     * @deprecated
-     * Use {@link #expectMaxLength(String, double, String)} or {@link #expectMaxValue(String, double, String)} instead
-     * 
-     * @param name The field to check
-     * @param maxLength The maximum length
-     * @param message A custom error message instead of the default one
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void expectMax(String name, double maxLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
-
-        if (StringUtils.isNumeric(value)) {
-            if (Double.parseDouble(value) > maxLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.toString(), name, maxLength)));
-            }
-        } else {
-            if (value.length() > maxLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_KEY.toString(), name, maxLength)));
-            }
-        }
-    }
-    
-    /**
-     * Validates a given field to have a maximum length
-     *
      * @param name The field to check
      * @param maxLength The maximum length
      * @param message A custom error message instead of the default one
@@ -287,7 +209,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to exactly (case-sensitive) match
+     * Validates two fields to exactly (case-sensitive) match
      *
      * @param name The field to check
      * @param anotherName The other field to check against
@@ -297,7 +219,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to exactly (case-sensitive) match
+     * Validates two fields to exactly (case-sensitive) match
      *
      * @param name The field to check
      * @param anotherName The other field to check against
@@ -313,7 +235,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-insensitive) match
+     * Validates two fields to (case-insensitive) match
      *
      * @param name The field to check
      * @param anotherName The field to check against
@@ -323,7 +245,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-insensitive) match
+     * Validates two fields to (case-insensitive) match
      *
      * @param name The field to check
      * @param anotherName The field to check against
@@ -339,7 +261,7 @@ public class Validator implements Serializable {
     }
     
     /**
-     * Validates to list of given values to (case-sensitive) match
+     * Validates a list of given values to (case-sensitive) match
      *
      * @param name The field to check
      * @param values A list of given values to check against
@@ -349,7 +271,7 @@ public class Validator implements Serializable {
     }
 
     /**
-     * Validates to fields to (case-sensitive) match
+     * Validates a list of value to (case-sensitive) match
      *
      * @param name The field to check
      * @param message A custom error message instead of the default one
@@ -454,21 +376,6 @@ public class Validator implements Serializable {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.IPV6_KEY.toString(), name)));
         }
     }
-
-    /**
-     * Validates a field to be in a certain range
-     * 
-     * @deprecated
-     * Use {@link #expectRangeLength(String, int, int)} or {@link #expectRangeValue(String, int, int)} instead
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param maxLength The maximum length
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)    
-    public void expectRange(String name, int minLength, int maxLength) {
-        expectRange(name, minLength, maxLength, null);
-    }
     
     /**
      * Validates a field to be in a certain range length
@@ -504,7 +411,7 @@ public class Validator implements Serializable {
         String value = Optional.ofNullable(get(name)).orElse("");
 
         if (StringUtils.isNumeric(value)) {
-            double doubleValue = Double.parseDouble(value);
+            var doubleValue = Double.parseDouble(value);
             if (doubleValue < minValue || doubleValue > maxValue) {
                 addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_VALUE_KEY.toString(), name, minValue, maxValue)));
             }
@@ -526,33 +433,6 @@ public class Validator implements Serializable {
 
         if (value.length() < minLength || value.length() > maxLength) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_LENGTH_KEY.toString(), name, minLength, maxLength)));
-        }
-    }
-    
-    /**
-     * Validates a field to be in a certain range
-     * 
-     * @deprecated
-     * Use {@link #expectRangeLength(String, int, int, String)} or {@link #expectRangeValue(String, int, int, String)} instead
-     *
-     * @param name The field to check
-     * @param minLength The minimum length
-     * @param maxLength The maximum length
-     * @param message A custom error message instead of the default one
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)    
-    public void expectRange(String name, int minLength, int maxLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
-
-        if (StringUtils.isNumeric(value)) {
-            double doubleValue = Double.parseDouble(value);
-            if (doubleValue < minLength || doubleValue > maxLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_KEY.toString(), name, minLength, maxLength)));
-            }
-        } else {
-            if (value.length() < minLength || value.length() > maxLength) {
-                addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_KEY.toString(), name, minLength, maxLength)));
-            }
         }
     }
 
@@ -609,131 +489,6 @@ public class Validator implements Serializable {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.URL_KEY.toString(), name)));
         }
     }
-    
-    /**
-     * Validates a given value to be true
-     * 
-     * @deprecated
-     * Use {@link #expectTrue(String, boolean, String)} instead
-     *
-     * @param value The value to check
-     * @param name The name of the field to display the error message
-     * @param message A custom error message instead of the default one
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateTrue(boolean value, String name, String message) {
-        if (!value) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.TRUE_KEY.toString(), name)));
-        }
-    }
-    
-    /**
-     * Validates a given value to be true
-     * 
-     * @deprecated
-     * Use {@link #expectTrue(String, boolean)} instead
-     *
-     * @param value The value to check
-     * @param name The name of the field to display the error message
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateTrue(boolean value, String name) {
-        validateTrue(value, name, null);
-    }
-    
-    /**
-     * Validates a given value to be false
-     * 
-     * @deprecated
-     * Use {@link #expectFalse(String, boolean, String)} instead
-     *
-     * @param value The value to check
-     * @param name The name of the field to display the error message
-     * @param message A custom error message instead of the default one
-     */
-    @SuppressWarnings("all")
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateFalse(boolean value, String name, String message) {
-        if (value) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.toString(), name)));
-        }
-    }
-    
-    /**
-     * Validates a given value to be false
-     * 
-     * @deprecated
-     * Use {@link #expectFalse(String, boolean)} instead
-     *
-     * @param value The value to check
-     * @param name The name of the field to display the error message
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateFalse(boolean value, String name) {
-        validateFalse(value, name, null);
-    }
-    
-    /**
-     * Validates a given object to be not null
-     * 
-     * @deprecated
-     * Use {@link #expectNotNull(String, Object, String)} instead
-     *
-     * @param object The object to check
-     * @param name The name of the field to display the error message
-     * @param message A custom error message instead of the default one
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateNotNull(Object object, String name, String message) {
-        if (object == null) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NOTNULL_KEY.toString(), name)));
-        }
-    }
-    
-    /**
-     * Validates a given object to be not null
-     * 
-     * @deprecated
-     * Use {@link #expectNotNull(String, Object)} instead
-     *
-     * @param object The object to check
-     * @param name The name of the field to display the error message
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateNotNull(Object object, String name) {
-        validateNotNull(object, name, null);
-    }
-    
-    /**
-     * Validates a given object to be null
-     * 
-     * @deprecated
-     * Use {@link #expectNull(String, Object, String)} instead
-     *
-     * @param object The object to check
-     * @param name The name of the field to display the error message
-     * @param message A custom error message instead of the default one 
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateNull(Object object, String name, String message) {
-        if (object != null) {
-            addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NULL_KEY.toString(), name)));
-        }
-    }
-    
-    /**
-     * Validates a given object to be null
-     * 
-     * @deprecated
-     * Use {@link #expectNull(String, Object)} instead
-     *
-     * @param object The object to check
-     * @param name The name of the field to display the error message
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public void validateNull(Object object, String name) {
-        validateNull(object, name, null);
-    }
 
     /**
      * Validates a given value to be true
@@ -765,7 +520,6 @@ public class Validator implements Serializable {
      * @param value The value to check
      * @param message A custom error message instead of the default one
      */
-    @SuppressWarnings("all")
     public void expectFalse(String name, boolean value, String message) {
         if (value) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.FALSE_KEY.toString(), name)));
@@ -852,9 +606,9 @@ public class Validator implements Serializable {
     private void addError(String name, String message) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(message, Required.MESSAGE.toString());
-        
+
         if (!errors.containsKey(name)) {
-            errors.put(name, message);            
+            errors.put(name, message);
         }
     }
 

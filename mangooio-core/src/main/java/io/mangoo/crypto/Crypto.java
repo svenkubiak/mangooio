@@ -55,7 +55,7 @@ public class Crypto {
     private static final int KEYLENGTH = 2048;
     private static final int KEYINDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
-    private Config config;
+    private final Config config;
     
     @Inject
     public Crypto(Config config) {
@@ -64,7 +64,7 @@ public class Crypto {
     }
     
     /**
-     * Decrypts an given encrypted text using the application secret property (application.secret) as key
+     * Decrypts a given encrypted text using the application secret property (application.secret) as key
      *
      * @param encrytedText The encrypted text
      * @return The clear text or null if decryption fails
@@ -75,7 +75,7 @@ public class Crypto {
     }
 
     /**
-     * Decrypts an given encrypted text using the given key
+     * Decrypts a given encrypted text using the given key
      *
      * @param encrytedText The encrypted text
      * @param key The encryption key
@@ -133,7 +133,7 @@ public class Crypto {
     private byte[] cipherData(final byte[] data) {
         byte[] result = null;
         try {
-            final byte[] buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
+            final var buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];
 
             final int processedBytes = paddedBufferedBlockCipher.processBytes(data, 0, data.length, buffer, 0);
             final int finalBytes = paddedBufferedBlockCipher.doFinal(buffer, processedBytes);
@@ -162,11 +162,11 @@ public class Crypto {
     public KeyPair generateKeyPair() {
         KeyPair keyPair = null;
         try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+            var keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
             keyPairGenerator.initialize(KEYLENGTH);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
-            LOG.error("Failed to create publi/private key pair", e);
+            LOG.error("Failed to create public/private key pair", e);
         }
         
         return keyPair;
@@ -187,7 +187,7 @@ public class Crypto {
         
         byte[] encrypt = null;
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            var cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.ENCRYPT_MODE, key);
             encrypt = cipher.doFinal(text);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException e) {
@@ -236,7 +236,7 @@ public class Crypto {
 
         byte[] decrypt = null;
         try {
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            var cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, key);
             decrypt = cipher.doFinal(text);
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
@@ -261,8 +261,8 @@ public class Crypto {
         
         String decrypt = null;
         try {
-            byte[] dectyptedText = decrypt(decodeBase64(text), key);
-            decrypt = new String(dectyptedText, StandardCharsets.UTF_8);
+            byte[] decryptText = decrypt(decodeBase64(text), key);
+            decrypt = new String(decryptText, StandardCharsets.UTF_8);
         } catch (MangooEncryptionException e) {
             throw new MangooEncryptionException("Failed to decrypt encrypted text with private key", e);
         }
@@ -314,7 +314,7 @@ public class Crypto {
         try {
             return KeyFactory.getInstance(ALGORITHM).generatePublic(new X509EncodedKeySpec(decodeBase64(key)));
         } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new MangooEncryptionException("Failed to get pulbic key from string", e);
+            throw new MangooEncryptionException("Failed to get public key from string", e);
         }
     }
 

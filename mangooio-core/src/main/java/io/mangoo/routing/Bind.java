@@ -26,7 +26,7 @@ public class Bind {
     }
 
     /**
-     * Creates a new WebSocke route
+     * Creates a new WebSocket route
      * 
      * @return WebSocketRoute instance
      */

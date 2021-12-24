@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>6.15.3-SNAPSHOT</version>
+		<version>7.0.0-RC3-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-maven-archetype</artifactId>
 	<build>
@@ -83,6 +83,14 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 </project>

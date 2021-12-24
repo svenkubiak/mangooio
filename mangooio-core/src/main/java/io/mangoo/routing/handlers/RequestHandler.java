@@ -3,7 +3,6 @@ package io.mangoo.routing.handlers;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,9 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.io.Resources;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import freemarker.template.TemplateException;
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
@@ -66,13 +63,8 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected Request getRequest(HttpServerExchange exchange) {
-        final String authenticity = Optional.ofNullable(attachment.getRequestParameter()
-                .get(Default.AUTHENTICITY.toString()))
-                .orElse(attachment.getForm().get(Default.AUTHENTICITY.toString()));
-        
         return new Request(exchange)
                 .withSession(attachment.getSession())
-                .withAuthenticity(authenticity)
                 .withAuthentication(attachment.getAuthentication())
                 .withParameter(attachment.getRequestParameter())
                 .withBody(attachment.getBody());
@@ -88,13 +80,12 @@ public class RequestHandler implements HttpHandler {
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
-     * @throws TemplateException
      * @throws IOException
      * @throws MangooTemplateEngineException 
      */
     protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
         //execute global request filter
-        Response response = Response.withOk();
+        var response = Response.withOk();
         if (attachment.hasRequestFilter()) {
             final OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
             response = mangooRequestFilter.execute(attachment.getRequest(), response);
@@ -129,7 +120,6 @@ public class RequestHandler implements HttpHandler {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      * @throws IOException
-     * @throws TemplateException
      * @throws MangooTemplateEngineException 
      */
     protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
@@ -146,22 +136,20 @@ public class RequestHandler implements HttpHandler {
         invokedResponse.andHeaders(response.getHeaders());
         
         if (invokedResponse.isRendered()) {
-            TemplateContext templateContext = new TemplateContext(invokedResponse.getContent())
+            var templateContext = new TemplateContext(invokedResponse.getContent())
                     .withFlash(attachment.getFlash())
                     .withSession(attachment.getSession())
                     .withForm(attachment.getForm())
                     .withMessages(attachment.getMessages())
                     .withController(attachment.getControllerAndMethod())
                     .withPrettyTime(attachment.getLocale())
-                    .withAuthenticity(attachment.getSession())
-                    .withAuthenticityForm(attachment.getSession())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
             invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         } else if (invokedResponse.isUnrendered()) {
-            Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
+            var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
             String path = "templates/" + attachment.getControllerClassName() + '/' + attachment.getControllerMethodName() + ".body";
-            String body = "";
+            var body = "";
             
             if (cache.get(path) == null) {
                 body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
@@ -195,81 +183,39 @@ public class RequestHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      * @return an array with the request controller method parameter and sets the appropriate values
-     *
-     * @throws IOException
      */
     @SuppressFBWarnings(justification = "Intentionally adding unrelated types", value = "UCC_UNRELATED_COLLECTION_CONTENTS")
     protected Object[] getConvertedParameters(HttpServerExchange exchange) {
-        final Object [] convertedParameters = new Object[attachment.getMethodParametersCount()];
+        final var convertedParameters = new Object[attachment.getMethodParametersCount()];
 
-        int index = 0;
+        var index = 0;
         for (final Map.Entry<String, Class<?>> entry : attachment.getMethodParameters().entrySet()) {
             final String key = entry.getKey();
             final Class<?> clazz = entry.getValue();
             final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
-            switch (binding) {
-            case FORM:
-                convertedParameters[index] = attachment.getForm();
-                break;
-            case AUTHENTICATION:
-                convertedParameters[index] = attachment.getAuthentication();
-                break;
-            case SESSION:
-                convertedParameters[index] = attachment.getSession();
-                break;
-            case FLASH:
-                convertedParameters[index] = attachment.getFlash();
-                break;
-            case REQUEST:
-                convertedParameters[index] = attachment.getRequest();
-                break;
-            case MESSAGES:
-                convertedParameters[index] = attachment.getMessages();
-                break;
-            case LOCALDATE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
-                break;
-            case LOCALDATETIME:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
-                break;
-            case STRING:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
-                break;
-            case INT_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
-                break;               
-            case INTEGER:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case DOUBLE_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Double.parseDouble(attachment.getRequestParameter().get(key));
-                break;
-            case DOUBLE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Double.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case FLOAT_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Float.parseFloat(attachment.getRequestParameter().get(key));
-                break;                
-            case FLOAT:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Float.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case LONG_PRIMITIVE:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
-                break;
-            case LONG:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
-                break;
-            case OPTIONAL:
-                convertedParameters[index] = StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
-                break;                
-            case UNDEFINED:
-                convertedParameters[index] = RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(attachment.getBody(), clazz) : null;
-                break;
-            default:
-                convertedParameters[index] = null;
-                break;
-            }
+            convertedParameters[index] = switch (binding) {
+                case FORM -> attachment.getForm();
+                case AUTHENTICATION -> attachment.getAuthentication();
+                case SESSION -> attachment.getSession();
+                case FLASH -> attachment.getFlash();
+                case REQUEST -> attachment.getRequest();
+                case MESSAGES -> attachment.getMessages();
+                case LOCALDATE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
+                case LOCALDATETIME -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
+                case STRING -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
+                case INT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
+                case INTEGER -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));
+                case DOUBLE_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Double.parseDouble(attachment.getRequestParameter().get(key));
+                case DOUBLE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Double.valueOf(attachment.getRequestParameter().get(key));
+                case FLOAT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Float.parseFloat(attachment.getRequestParameter().get(key));
+                case FLOAT -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Float.valueOf(attachment.getRequestParameter().get(key));
+                case LONG_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
+                case LONG -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
+                case OPTIONAL -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
+                case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(attachment.getBody(), clazz) : null;
+                default -> null;
+            };
 
             index++;
         }
@@ -281,7 +227,7 @@ public class RequestHandler implements HttpHandler {
      * Executes all filters on controller and method level
      *
      * @param annotations An array of @FilterWith annotated classes and methods
-     * @param response
+     * @param response The response to use
      * @return True if the request should continue after filter execution, false otherwise
      *
      * @throws NoSuchMethodException
@@ -290,12 +236,12 @@ public class RequestHandler implements HttpHandler {
      */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) {
-            final FilterWith filterWith = (FilterWith) annotation;
+            final var filterWith = (FilterWith) annotation;
             for (final Class<?> clazz : filterWith.value()) {
                 if (response.isEndResponse()) {
                     return response;
                 } else {
-                    final Method classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
+                    final var classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
                     response = (Response) classMethod.invoke(Application.getInstance(clazz), attachment.getRequest(), response);
                 }
             }
@@ -313,7 +259,7 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
-        String body = "";
+        var body = "";
         if (RequestUtils.isPostPutPatch(exchange)) {
             exchange.startBlocking();
             body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING.toString());

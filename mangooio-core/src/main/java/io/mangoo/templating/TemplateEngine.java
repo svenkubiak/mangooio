@@ -76,7 +76,7 @@ public class TemplateEngine {
             throw new MangooTemplateEngineException("Template not found on path: " + context.getTemplatePath(), e);
         }
 
-        StringWriter buffer = new StringWriter(MAX_CHARS);
+        var buffer = new StringWriter(MAX_CHARS);
         try {
             template.process(context.getContent(), buffer);
         } catch (TemplateException | IOException e) {
@@ -94,7 +94,7 @@ public class TemplateEngine {
         if (templateException) {
             content.put("exceptions", cause.getMessage().split(REGEX)); //NOSONAR Method is only used in development mode
         } else {
-            StackTraceElement stackTraceElement = cause.getStackTrace()[0];
+            var stackTraceElement = cause.getStackTrace()[0];
             String sourceCodePath = getSourceCodePath(stackTraceElement);
 
             List<Source> sources;
@@ -146,7 +146,7 @@ public class TemplateEngine {
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
         Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
 
-        StringBuilder buffer = new StringBuilder();
+        var buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
         .append(File.separator)
         .append("src")
@@ -160,7 +160,7 @@ public class TemplateEngine {
         if (Files.exists(templateFile)) {
             List<String> lines = Files.readAllLines(templateFile);
 
-            int index = 0;
+            var index = 0;
             for (String line : lines) {
                 if ( (index + MAX_LINES > errorLine) && (index - MIN_LINES < errorLine) ) {
                     sources.add(new Source((index + 1) == errorLine, index + 1, line));
@@ -176,22 +176,21 @@ public class TemplateEngine {
      * @return The OS specific path to src/main/java
      */
     private String getBaseDirectory() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(System.getProperty("user.dir"))
-        .append(File.separator)
-        .append("src")
-        .append(File.separator)
-        .append("main")
-        .append(File.separator)
-        .append("java");
-        
-        return buffer.toString();
+       return new StringBuilder()
+            .append(System.getProperty("user.dir"))
+            .append(File.separator)
+            .append("src")
+            .append(File.separator)
+            .append("main")
+            .append(File.separator)
+            .append("java")
+            .toString();
     }
 
     /**
-     * Retrieves the source code file name from an StrackTraceElement
+     * Retrieves the source code file name from an StackTraceElement
      *
-     * @param stackTraceElement The StrackTraceElement to check
+     * @param stackTraceElement The StackTraceElement to check
      * @return Source code filename
      */
     private String getSourceCodePath(StackTraceElement stackTraceElement) {

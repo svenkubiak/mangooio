@@ -16,6 +16,7 @@ import io.mangoo.core.Application;
  */
 @ExtendWith({TestExtension.class})
 public class AuthenticationTest {
+    private static final String SALT = "6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
     private static final String VALID_HASH = "$2a$12$Vyb9AT6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
 
     @Test
@@ -24,14 +25,14 @@ public class AuthenticationTest {
         Authentication authentication = Application.getInstance(Authentication.class);
         
         //when
-        authentication.validLogin("foo", "bar", VALID_HASH);
+        authentication.validLogin("foo", "bar", SALT, VALID_HASH);
         
         //then
         assertThat(authentication.userHasLock("foo"), equalTo(false));
         
         //when
         for (int i=1; i <= 20; i++) {
-            authentication.validLogin("foobar", "bla", VALID_HASH);   
+            authentication.validLogin("foobar", "bla", SALT, VALID_HASH);   
         }
         
         //then

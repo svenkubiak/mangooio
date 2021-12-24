@@ -22,16 +22,12 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.InboundCookiesHandler;
-import io.mangoo.routing.handlers.LimitHandler;
 import io.mangoo.routing.handlers.LocaleHandler;
 import io.mangoo.routing.handlers.OutboundCookiesHandler;
 import io.mangoo.routing.handlers.ResponseHandler;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.routing.listeners.WebSocketCloseListener;
-import io.mangoo.scheduler.Scheduler;
-import io.mangoo.scheduler.SchedulerFactory;
-import io.mangoo.services.ConcurrentService;
 import io.mangoo.services.ServerSentEventService;
 import io.mangoo.services.WebSocketService;
 import io.mangoo.templating.TemplateEngine;
@@ -135,24 +131,6 @@ public class InjectionTest {
     }
     
     @Test
-    public void testScheduler() {
-        //given
-        Scheduler scheduler = Application.getInstance(Scheduler.class);
-        
-        //then
-        assertThat(scheduler, not(nullValue()));
-    }
-    
-    @Test
-    public void testExecutionManager() {
-        //given
-        ConcurrentService concurrentService = Application.getInstance(ConcurrentService.class);
-        
-        //then
-        assertThat(concurrentService, not(nullValue()));
-    }
-    
-    @Test
     public void testWebSocketManager() {
         //given
         WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
@@ -241,16 +219,7 @@ public class InjectionTest {
         //then
         assertThat(validator, not(nullValue()));
     }
-    
-    @Test
-    public void testLimitHandler() {
-        //given
-        LimitHandler limitHandler = Application.getInstance(LimitHandler.class);
-        
-        //then
-        assertThat(limitHandler, not(nullValue()));
-    }
-    
+
     @Test
     public void testLocaleHandler() {
         //given
@@ -313,15 +282,6 @@ public class InjectionTest {
         //then
         assertThat(webSocketCloseListener, not(nullValue()));
     }  
-    
-    @Test
-    public void testSchedulerFactory() {
-        //given
-        SchedulerFactory schedulerFactory = Application.getInstance(SchedulerFactory.class);
-        
-        //then
-        assertThat(schedulerFactory, not(nullValue()));
-    } 
     
     @Test
     public void testShutdown() {

@@ -1,5 +1,5 @@
 package io.mangoo.utils;
-    
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +25,7 @@ import io.mangoo.enums.Required;
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
     private static final Base32 base32 = new Base32();
+    private static final Random random = new SecureRandom();
     private static final HmacShaAlgorithm ALGORITHM = HmacShaAlgorithm.HMAC_SHA_512;
     private static final int DIGITS = 6;
     private static final int MAX_CHARACTERS = 32;
@@ -41,10 +42,9 @@ public class TotpUtils {
      * @return A 64 characters random string based on SecureRandom
      */
     public static String createSecret() {
-        Random random = new SecureRandom();
-        StringBuilder buffer = new StringBuilder(BYTES_SECRET);
-        for (int i = 0; i < BYTES_SECRET; i++) {
-            int value = random.nextInt(MAX_CHARACTERS);
+        var buffer = new StringBuilder(BYTES_SECRET);
+        for (var i = 0; i < BYTES_SECRET; i++) {
+            var value = random.nextInt(MAX_CHARACTERS);
             if (value < ITERATIONS) {
                 buffer.append((char) ('A' + value));
             } else {
@@ -142,7 +142,7 @@ public class TotpUtils {
     }
     
     /**
-     * Generates a QR code link from google charts API to share a secret with a user
+     * Generates a QR code link from Google charts API to share a secret with a user
      * 
      * @param name The name of the account
      * @param issuer The name of the issuer
@@ -151,7 +151,7 @@ public class TotpUtils {
      * @param digits The number of digits to use
      * @param period The period to use
      * 
-     * @return An URL to Google charts API with the QR code
+     * @return A URL to Google charts API with the QR code
      */
     public static String getQRCode(String name, String issuer, String secret, HmacShaAlgorithm algorithm, String digits, String period) {
         Objects.requireNonNull(name, Required.ACCOUNT_NAME.toString());
@@ -169,7 +169,7 @@ public class TotpUtils {
     }
     
     /**
-     * Generates a otpauth code to share a secret with a user
+     * Generates an otpauth code to share a secret with a user
      * 
      * @param name The name of the account
      * @param issuer The name of the issuer
@@ -202,7 +202,7 @@ public class TotpUtils {
             .append("&period=")
             .append(period);
         
-        String url = "";
+        var url = "";
         try {
             url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {

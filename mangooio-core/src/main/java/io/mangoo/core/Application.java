@@ -2,7 +2,6 @@ package io.mangoo.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -14,20 +13,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.quartz.CronExpression;
-import org.quartz.Job;
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
 
-import com.google.common.io.Resources;
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
+import com.cronutils.model.definition.CronDefinitionBuilder;
+import com.cronutils.parser.CronParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -35,17 +34,18 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.github.classgraph.AnnotationInfo;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
-import io.mangoo.annotations.Schedule;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooSchedulerException;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.DatastoreListener;
 import io.mangoo.routing.Bind;
@@ -62,11 +62,11 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.routing.routes.WebSocketRoute;
-import io.mangoo.scheduler.Scheduler;
+import io.mangoo.scheduler.CronTask;
+import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.SchedulerUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
@@ -86,14 +86,16 @@ import io.undertow.util.Methods;
  */
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
+    private static final LocalDateTime start = LocalDateTime.now();
+    private static ScheduledExecutorService scheduledExecutorService;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
     private static Mode mode;
     private static Injector injector;
-    private static LocalDateTime start = LocalDateTime.now();
     private static PathHandler pathHandler;
     private static boolean started;
     private static int httpPort;
@@ -115,10 +117,10 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
+            prepareScheduler();
             prepareRoutes();
             createRoutes();
             prepareDatastore();
-            prepareScheduler();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -129,13 +131,119 @@ public final class Application {
         }
     }
 
+    /**
+     * Schedules all tasks annotated with @Run
+     */
+    private static void prepareScheduler() {
+        var config = getInstance(Config.class);
+        
+        if (config.isSchedulerEnabled()) {
+            scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
+            
+            try (ScanResult scanResult =
+                    new ClassGraph()
+                        .enableAnnotationInfo()
+                        .enableClassInfo()
+                        .enableMethodInfo()
+                        .acceptPackages(ALL_PACKAGES)
+                        .scan()) {
+                
+                scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> 
+                    classInfo.getMethodInfo().forEach(methodInfo -> {
+                        boolean isCron = false;
+                        long seconds = 0;
+                        String at = null;
+                        
+                        for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
+                            AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                            at = ((String) annotationInfo.getParameterValues(true).get("at").getValue()).toLowerCase(Locale.ENGLISH).trim();
+                            if (at.contains("every")) {
+                                at = at.replace("every", "").trim();
+                                String timespan = at.substring(0, at.length() - 1);
+                                String duration = at.substring(at.length() - 1);
+                                seconds = getSeconds(timespan, duration);  
+                            } else {
+                                isCron = true;
+                            }
+                        }
+                        
+                        schedule(classInfo, methodInfo, isCron, seconds, at);
+                    })
+                );
+            } 
+        }
+    }
+
+    /**
+     * Parses a given time span and duration and returns the number of
+     * matching seconds to schedule a task
+     * 
+     * @param timespan The timespan to use
+     * @param duration The duration to use for calculation
+     * 
+     * @return The duration in seconds
+     */
+    private static long getSeconds(String timespan, String duration) {
+        Objects.requireNonNull(timespan, "timespan can not be null");
+        Objects.requireNonNull(duration, "duration can not be null");
+        
+        var time = Long.parseLong(timespan);
+        return switch(duration) {
+            case "m" -> time * 60;
+            case "h" -> time * 60 * 60;
+            case "d" -> time * 60 * 60 * 24;
+            default  -> time;
+        };
+    }
+
+    /**
+     * Schedules a task within the scheduler
+     * 
+     * @param classInfo The classInfo containing the class which holds the method to execute
+     * @param methodInfo The methodInfo containing the method to execute
+     * @param isCron True if Task is a cron or false if it has a fixed rate
+     * @param time The fixed rate for the scheduled task to be executed
+     * @param at The cron expression to be used when scheduling a cron
+     */
+    private static void schedule(ClassInfo classInfo, MethodInfo methodInfo, boolean isCron, long time, String at) {
+        Objects.requireNonNull(classInfo, "classInfo can not be null");
+        Objects.requireNonNull(methodInfo, "methodInfo can not be null");
+        Objects.requireNonNull(at, "at can not be null");
+        
+        if (isCron) {
+            try {
+                CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+                Cron quartzCron = parser.parse(at);
+                quartzCron.validate();
+                
+                scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
+                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
+            } catch (IllegalArgumentException e) {
+                LOG.error("Scheduled cron task found, but the unix cron is invalid", e);
+                failsafe();
+            }
+        } else {
+            if (time > 0) {
+                scheduledExecutorService.scheduleWithFixedDelay(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
+                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);  
+            } else {
+                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
+                failsafe();
+            }
+        }
+    }
+
+    /**
+     * Configures async persistence
+     */
     private static void prepareDatastore() {
         getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
     }
 
     /**
      * Checks if application is run as root
-     * There is no need to run as root
+     * 
+     * (Hint: There is no need to run as root)
      */
     private static void userCheck() {
         String osName = System.getProperty("os.name");
@@ -143,7 +251,7 @@ public final class Application {
             Process exec;
             try {
                 exec = Runtime.getRuntime().exec("id -u");
-                BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
+                var input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
                 
                 input.close();
@@ -193,6 +301,15 @@ public final class Application {
     public static Mode getMode() {
         return mode;
     }
+    
+    /**
+     * Returns the ScheduledExecutorService where all tasks are scheduled
+     * 
+     * @return ScheduledExecutorService
+     */
+    public static ScheduledExecutorService getScheduler() {
+        return scheduledExecutorService;
+    }
 
     /**
      * Returns the Google Guice Injector
@@ -227,7 +344,7 @@ public final class Application {
     }
 
     /**
-     * Short form for getting an Goolge Guice injected class by
+     * Short form for getting a Google Guice injected class by
      * calling getInstance(...)
      *
      * @param clazz The class to retrieve from the injector
@@ -256,21 +373,18 @@ public final class Application {
     private static void prepareMode(Mode providedMode) {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
         if (StringUtils.isNotBlank(applicationMode)) {
-            switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
-                case "dev"  : mode = Mode.DEV;
-                break;
-                case "test" : mode = Mode.TEST;
-                break;
-                default     : mode = Mode.PROD;
-                break;
-            }
+            mode = switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
+                case "dev"  -> Mode.DEV;
+                case "test" -> Mode.TEST;
+                default     -> Mode.PROD;
+            };
         } else {
             mode = providedMode;
         }
     }
     
     /**
-     * Sets the injector wrapped through netflix Governator
+     * Sets the injector wrapped through Netflix Governator
      */
     private static void prepareInjector() {
         injector = Guice.createInjector(Stage.PRODUCTION, getModules());
@@ -287,7 +401,7 @@ public final class Application {
      * Checks for config failures that prevent the application from starting
      */
     private static void prepareConfig() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
@@ -338,56 +452,56 @@ public final class Application {
     }
     
     /**
-     * Do sanity checks on the configuration an warn about it in the log
+     * Do sanity check on the configuration and warn about it in the log
      */
     private static void sanityChecks() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         List<String> warnings = new ArrayList<>();
         
         if (!config.isAuthenticationCookieSecure()) {
-            String warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
+            var warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
-            String warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
+            var warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
+            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (!config.isSessionCookieSecure()) {
-            String warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
+            var warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
-            String warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
+            var warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
+            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
-            String warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
+            var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
         
         if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
-            String warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
+            var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -406,11 +520,6 @@ public final class Application {
                 LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
                 failsafe();
             }
-            
-            if (requestRoute.hasAuthorization() && (!MangooUtils.resourceExists(Default.MODEL_CONF.toString()) || !MangooUtils.resourceExists(Default.POLICY_CSV.toString()))) {
-                LOG.error("Route on method '{}' in controller class '{}' requires authorization, but either model.conf or policy.csv is missing", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
-                failsafe();
-            } 
         });
     }
     
@@ -460,7 +569,7 @@ public final class Application {
         final RoutingHandler routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class)
                 .withRoutes(
@@ -468,12 +577,9 @@ public final class Application {
                         On.get().to("/@admin/cache").respondeWith("cache"),
                         On.get().to("/@admin/login").respondeWith("login"),
                         On.get().to("/@admin/twofactor").respondeWith("twofactor"),
-                        On.get().to("/@admin/scheduler").respondeWith("scheduler"),
                         On.get().to("/@admin/logger").respondeWith("logger"),
                         On.get().to("/@admin/routes").respondeWith("routes"),
                         On.get().to("/@admin/tools").respondeWith("tools"),
-                        On.get().to("/@admin/scheduler/execute/{name}").respondeWith("execute"),
-                        On.get().to("/@admin/scheduler/state/{name}").respondeWith("state"),   
                         On.get().to("/@admin/logout").respondeWith("logout"),
                         On.post().to("/@admin/authenticate").respondeWith("authenticate"),
                         On.post().to("/@admin/verify").respondeWith("verify"),
@@ -490,15 +596,13 @@ public final class Application {
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
-            DispatcherHandler dispatcherHandler = Application.getInstance(DispatcherHandler.class)
+            var dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
                     .withMaxEntitySize(requestRoute.getMaxEntitySize())
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
-                    .withAuthentication(requestRoute.hasAuthentication())
-                    .withAuthorization(requestRoute.hasAuthorization())
-                    .withLimit(requestRoute.getLimit());
-            
+                    .withAuthentication(requestRoute.hasAuthentication());
+
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
         
@@ -512,7 +616,7 @@ public final class Application {
     }
 
     private static void prepareUndertow() {
-        Config config = getInstance(Config.class);
+        var config = getInstance(Config.class);
         
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -532,7 +636,7 @@ public final class Application {
         ajpHost = config.getConnectorAjpHost();
         ajpPort = config.getConnectorAjpPort();
 
-        boolean hasConnector = false;
+        var hasConnector = false;
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             builder.addHttpListener(httpPort, httpHost);
             hasConnector = true;
@@ -554,14 +658,14 @@ public final class Application {
 
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
-        final StringBuilder buffer = new StringBuilder(BUFFERSIZE);
+        final var buffer = new StringBuilder(BUFFERSIZE);
         buffer.append('\n')
             .append(getLogo())
             .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
             .append(MangooUtils.getVersion())
             .append('\n');
 
-        String logo = buffer.toString();
+        var logo = buffer.toString();
         
         LOG.info(logo);
         
@@ -582,16 +686,14 @@ public final class Application {
      * 
      * @return The mangoo I/O logo string
      */
-    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     public static String getLogo() {
-        String logo = "";
-        try (InputStream inputStream = Resources.getResource(Default.LOGO_FILE.toString()).openStream()) {
-            logo = IOUtils.toString(inputStream, Default.ENCODING.toString());
-        } catch (final IOException e) {
-            LOG.error("Failed to get application logo", e);
-        }
-
-        return logo;
+        return """
+                                                        ___     __  ___ \s
+         _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
+        | '_ ` _ \\  / _` || '_ \\  / _` | / _ \\  / _ \\   | |   / / | | | |
+        | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
+        |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
+                                  |___/                                 \s""";
     }
 
     private static int getBitLength(String secret) {
@@ -616,86 +718,6 @@ public final class Application {
     
     private static void applicationStarted() {
         getInstance(MangooBootstrap.class).applicationStarted();            
-    }
-
-    private static void prepareScheduler() {
-        Config config = getInstance(Config.class);
-        
-        if (config.isSchedulerEnabled()) {
-            List<Class<?>> jobs = new ArrayList<>();
-            try (ScanResult scanResult =
-                    new ClassGraph()
-                        .enableAnnotationInfo()
-                        .enableClassInfo()
-                        .acceptPackages(config.getSchedulerPackage())
-                        .scan()) {
-                scanResult.getClassesWithAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(c -> jobs.add(c.loadClass()));
-            }
-            
-            if (!jobs.isEmpty() && config.isSchedulerAutostart()) {
-                final Scheduler mangooScheduler = getInstance(Scheduler.class);
-                mangooScheduler.initialize();
-                
-                for (Class<?> clazz : jobs) {
-                    final Schedule schedule = clazz.getDeclaredAnnotation(Schedule.class);
-                    String scheduled = schedule.cron();
-                    
-                    Trigger trigger = null;
-                    final JobDetail jobDetail = SchedulerUtils.createJobDetail(clazz.getName(), Default.SCHEDULER_JOB_GROUP.toString(), clazz.asSubclass(Job.class));
-                    if (scheduled != null) {
-                        scheduled = scheduled.toLowerCase(Locale.ENGLISH).trim();
-                        
-                        if (scheduled.contains("every")) {
-                            scheduled = scheduled.replace("every", "").trim();
-                            String timespan = scheduled.substring(0, scheduled.length() - 1);
-                            String duration = scheduled.substring(scheduled.length() - 1);
-                            String triggerName = clazz.getName() + "-trigger";
-                            String description = schedule.description();
-                            String triggerGroup = Default.SCHEDULER_TRIGGER_GROUP.toString();
-                            int time = Integer.parseInt(timespan);
-                            
-                            switch(duration) {
-                            case "s":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.SECONDS);
-                              break;
-                            case "m":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.MINUTES);
-                              break;
-                            case "h":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.HOURS);
-                              break;  
-                            case "d":
-                                trigger = SchedulerUtils.createTrigger(triggerName, triggerGroup, description, time, TimeUnit.DAYS);
-                              break;
-                            default:
-                              break;
-                          }
-                        } else {
-                            if (CronExpression.isValidExpression(schedule.cron())) {
-                                trigger = SchedulerUtils.createTrigger(clazz.getName() + "-trigger", Default.SCHEDULER_TRIGGER_GROUP.toString(), schedule.description(), schedule.cron());
-                            } else {
-                                LOG.error("Invalid or missing cron expression for job: {}", clazz.getName());
-                                failsafe();
-                            }
-                        }
-                        
-                        try {
-                            mangooScheduler.schedule(jobDetail, trigger);
-                            LOG.info("Successfully scheduled job {} with cron {} ", clazz.getName(), schedule.cron());
-                        } catch (MangooSchedulerException e) {
-                            LOG.error("Failed to add a job to the scheduler", e);
-                        }
-                    }
-                }
-
-                try {
-                    mangooScheduler.start();
-                } catch (MangooSchedulerException e) {
-                    LOG.error("Failed to start the scheduler", e);
-                    failsafe();
-                }
-            }            
-        }
     }
     
     /**

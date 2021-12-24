@@ -1,10 +1,10 @@
 package io.mangoo.email;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.activation.FileDataSource;
 
 import org.simplejavamail.api.email.EmailPopulatingBuilder;
 import org.simplejavamail.email.EmailBuilder;
@@ -175,7 +175,7 @@ public class Mail {
     /**
      * Sets the email priority
      *
-     * @param priority - 1 being the highest priority, 3 = normal and 5 = lowest priority.
+     * @param priority - 1 being the highest priority, 3 = normal priority and 5 = lowest priority
      *                 
      * @return A mail object instance
      */
@@ -189,12 +189,18 @@ public class Mail {
     /**
      * Adds a file as attachment to the mail
      *
-     * @param file The File to attach
-     * @return A mail object instance
+     * @param path The Path to attach
+     * @return A mail object instance   
      */
-    public Mail attachment(File file) {
-        Objects.requireNonNull(file, Required.FILE.toString());
-        email.withAttachment(file.getName(), new FileDataSource(file));
+    public Mail attachment(Path path) {
+        Objects.requireNonNull(path, Required.PATH.toString());
+        Preconditions.checkArgument(path.toFile().length() != 0, Required.CONTENT.toString());
+        
+        try {
+            email.withAttachment(path.getFileName().toString(), Files.readAllBytes(path), Files.probeContentType(path));
+        } catch (IOException e) {
+            // NOSONAR Intentionally left blank
+        }
         
         return this;
     }
@@ -269,7 +275,7 @@ public class Mail {
             template = template.substring(1, template.length());
         } 
         
-        TemplateContext templateContext = new TemplateContext(content).withTemplatePath(template);
+        var templateContext = new TemplateContext(content).withTemplatePath(template);
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
     }
 }

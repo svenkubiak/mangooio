@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -76,7 +75,7 @@ public class Authentication {
     }
 
     /**
-     * @return True if the user wants to logout, false otherwise
+     * @return True if the user wants to log out, false otherwise
      */
     public boolean isLogout() {
         return loggedOut;
@@ -91,7 +90,7 @@ public class Authentication {
     }
     
     /**
-     * @return True if two factor authentication is enabled for this user
+     * @return True if two-factor authentication is enabled for this user
      */
     public boolean isTwoFactor() {
         return twoFactor;
@@ -103,17 +102,19 @@ public class Authentication {
      *
      * @param identifier The identifier to authenticate
      * @param password The clear text password
+     * @param salt The salt to use for hashing
      * @param hash The previously hashed password to check
      * @return True if the new hashed password matches the hash, false otherwise
      */
-    public boolean validLogin(String identifier, String password, String hash) {
+    public boolean validLogin(String identifier, String password, String salt, String hash) {
         Objects.requireNonNull(identifier, Required.USERNAME.toString());
         Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(password, Required.SALT.toString());
         Objects.requireNonNull(hash, Required.HASH.toString());
 
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
-        boolean authenticated = false;
-        if (!userHasLock(identifier) && CodecUtils.checkJBCrypt(password, hash)) {
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        var authenticated = false;
+        if (!userHasLock(identifier) && CodecUtils.matchArgon2(password, salt, hash)) {
             authenticated = true;
         } else {
             cache.getAndIncrementCounter(identifier);
@@ -135,7 +136,7 @@ public class Authentication {
     }
     
     /**
-     * Sets the remember me functionality, default is false
+     * Sets remember me functionality, default is false
      * 
      * @param remember The state of remember to set
      * @return Authentication object
@@ -146,7 +147,7 @@ public class Authentication {
     }
     
     /**
-     * Sets the remember me functionality to true, default is false
+     * Sets remember me functionality to true, default is false
      * @return Authentication object
      */
     public Authentication rememberMe() {
@@ -155,9 +156,9 @@ public class Authentication {
     }
     
     /**
-     * Sets the requirement of the two factor authentication, default is false
+     * Sets the requirement of the two-factor authentication, default is false
      * 
-     * @param twoFactor True for enabling two factor authentication, false otherwise
+     * @param twoFactor True for enabling two-factor authentication, false otherwise
      * @return Authentication object
      */
     public Authentication twoFactorAuthentication(boolean twoFactor) {
@@ -173,10 +174,10 @@ public class Authentication {
      */
     public boolean userHasLock(String username) {
         Objects.requireNonNull(username, Required.USERNAME.toString());
-        boolean lock = false;
+        var lock = false;
         
-        Config config = Application.getInstance(Config.class);
-        Cache cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
+        var config = Application.getInstance(Config.class);
+        var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         AtomicInteger counter = cache.getCounter(username);
         if (counter != null && counter.get() > config.getAuthenticationLock()) {
             lock = true;

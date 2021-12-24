@@ -27,7 +27,7 @@ public final class ByteUtils {
         Objects.requireNonNull(bytes, Required.BYTES.toString());
         int byteLength = bytes.length;
         
-        int length = 0;
+        var length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {
             length = byteLength * BYTES;
         }
@@ -45,7 +45,7 @@ public final class ByteUtils {
         Objects.requireNonNull(string, Required.STRING.toString());
         int byteLength = string.getBytes(StandardCharsets.UTF_8).length;
         
-        int length = 0;
+        var length = 0;
         if (byteLength <= MAX_BYTE_LENGTH && byteLength > 0) {
             length = byteLength * BYTES;
         }

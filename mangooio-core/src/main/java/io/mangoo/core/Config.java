@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +29,7 @@ import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
 
 /**
- * Main configuration class for all properties configured in config.props
+ * Main configuration class for all properties configured in 'config.props'
  *
  * @author svenkubiak
  * @author williamdunne
@@ -57,7 +56,7 @@ public class Config {
     }
     
     @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
-    private final void load() {
+    private void load() {
         props.setActiveProfiles(mode);
         props.setSkipEmptyProps(false);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG.toString());
@@ -111,18 +110,17 @@ public class Config {
     /**
      * Decrypts a given property key and rewrites it to props
      * 
-     * @param propKey The property key
-     * @param propValue The property value
+     * @param value The encrypted value to decrypt
      */
     private String decrypt(String value) {
-        Crypto crypto = new Crypto(this);
+        var crypto = new Crypto(this);
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY.toString());
         if (StringUtils.isNotBlank(keyFile)) {
             try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
-                    PrivateKey privateKey = crypto.getPrivateKeyFromString(key);
+                    var privateKey = crypto.getPrivateKeyFromString(key);
                     String cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
@@ -153,7 +151,7 @@ public class Config {
         var map = new HashMap<>();
         props.extractProps(map);
         
-        Properties properties = new Properties();
+        var properties = new Properties();
         properties.putAll(map);
         
         return properties;
@@ -417,7 +415,7 @@ public class Config {
     }
 
     /**
-     * @return session.cookie.tooken.expires from config.props or default value if undefined
+     * @return session.cookie.token.expires from config.props or default value if undefined
      */
     public long getSessionCookieTokenExpires() {
         return getLong(Key.SESSION_COOKIE_TOKEN_EXPIRES, Default.SESSION_COOKIE_TOKEN_EXPIRES.toLong());
@@ -459,13 +457,6 @@ public class Config {
     }
 
     /**
-     * @return scheduler.autostart from config.props or default value if undefined
-     */
-    public boolean isSchedulerAutostart() {
-        return getBoolean(Key.SCHEDULER_AUTOSTART, Default.SCHEDULER_AUTOSTART.toBoolean());
-    }
-
-    /**
      * @return application.admin.username from config.props or null if undefined
      */
     public String getApplicationAdminUsername() {
@@ -480,10 +471,10 @@ public class Config {
     }
 
     /**
-     * @return scheduler.package from config.props or default value if undefined
+     * @return scheduler.poolsize from config.props or default value if undefined
      */
-    public String getSchedulerPackage() {
-        return getString(Key.SCHEDULER_PACKAGE, Default.SCHEDULER_PACKAGE.toString());
+    public int getSchedulerPoolsize() {
+        return getInt(Key.SCHEDULER_POOLSIZE, Default.SCHEDULER_POOSLIZE.toInt());
     }
 
     /**
@@ -491,13 +482,6 @@ public class Config {
      */
     public long getAuthenticationCookieRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong());
-    }
-
-    /**
-     * @return application.threadpool from config.props or default value if undefined
-     */
-    public int getApplicationThreadpool() {
-        return getInt(Key.APPLICATION_THREADPOOL, Default.APPLICATION_THREADPOOL.toInt());
     }
 
     /**
@@ -512,22 +496,6 @@ public class Config {
      */
     public String getApplicationTemplateEngine() {
         return getString(Key.APPLICATION_TEMPLATEENGINE, Default.APPLICATION_TEMPLATEENGINE.toString());
-    }
-
-    /**
-     * @return application.minify.js or default value if undefined
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public boolean isApplicationMinifyJS() {
-        return getBoolean(Key.APPLICATION_MINIFY_JS, Default.APPLICATION_MINIFY_JS.toBoolean());
-    }
-
-    /**
-     * @return application.minify.css or default value if undefined
-     */
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    public boolean isApplicationMinifyCSS() {
-        return getBoolean(Key.APPLICATION_MINIFY_CSS, Default.APPLICATION_MINIFY_CSS.toBoolean());
     }
 
     /**
@@ -859,5 +827,5 @@ public class Config {
      */
     public String getApplicationAdminHealthToken() {
         return getString(Key.APPLICATION_ADMIN_HEALTH_TOKEN, null);
-    }    
+    }
 }

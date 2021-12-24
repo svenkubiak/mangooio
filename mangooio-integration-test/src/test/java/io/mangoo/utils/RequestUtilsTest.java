@@ -58,23 +58,6 @@ public class RequestUtilsTest {
     }
     
     @Test
-    public void testGetOperation() {
-        // given
-        String read = "read";
-        String write = "write";
-        
-        // then
-        assertThat(RequestUtils.getOperation(Methods.GET), equalTo(read));
-        assertThat(RequestUtils.getOperation(Methods.POST), equalTo(write));
-        assertThat(RequestUtils.getOperation(Methods.PUT), equalTo(write));
-        assertThat(RequestUtils.getOperation(Methods.DELETE), equalTo(write));
-        assertThat(RequestUtils.getOperation(Methods.PATCH), equalTo(write));
-        assertThat(RequestUtils.getOperation(Methods.OPTIONS), equalTo(read));
-        assertThat(RequestUtils.getOperation(Methods.HEAD), equalTo(read));
-        assertThat(RequestUtils.getOperation(Methods.LABEL), equalTo(""));
-    }
-    
-    @Test
     public void testGetRequestParametersConcurrent() {
         MatcherAssert.assertThat(t -> {
             // given

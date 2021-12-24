@@ -13,7 +13,7 @@ import io.mangoo.persistence.Datastore;
  *
  */
 public class DeleteEvent {
-    private Datastore datastore;
+    private final Datastore datastore;
     private Object object;
     
     @Inject

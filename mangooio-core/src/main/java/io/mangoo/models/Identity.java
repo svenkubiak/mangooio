@@ -1,5 +1,6 @@
 package io.mangoo.models;
 
+import java.io.Serial;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,8 +21,8 @@ import io.undertow.security.idm.PasswordCredential;
  *
  */
 public class Identity implements IdentityManager {
-    private String username;
-    private char[] password;
+    private final String username;
+    private final char[] password;
     
     public Identity(String username, String password) {
         this.username = Objects.requireNonNull(username, Required.USERNAME.toString());
@@ -50,6 +51,7 @@ public class Identity implements IdentityManager {
 
     private static Account getAccount(String username) {
         return new Account() {
+            @Serial
             private static final long serialVersionUID = 5311970975103831035L;
             private transient Principal principal = () -> username;
 
@@ -66,8 +68,8 @@ public class Identity implements IdentityManager {
     }
 
     private boolean verifyCredential(Credential credential) {
-        if (credential instanceof PasswordCredential) {
-            return Arrays.equals(((PasswordCredential) credential).getPassword(), this.password); 
+        if (credential instanceof PasswordCredential passwordCredential) {
+            return Arrays.equals(passwordCredential.getPassword(), this.password); 
         }
         
         return false;

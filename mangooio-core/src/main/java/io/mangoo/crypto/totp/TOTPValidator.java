@@ -142,11 +142,11 @@ public final class TOTPValidator {
      *         {@code false}.
      */
     public boolean isValid(byte[] key, long timeStep, int digits, HmacShaAlgorithm hmacShaAlgorithm, String value, long validationTime) {
-        boolean result = false;
+        var result = false;
         TOTPBuilder builder = TOTP.key(key).timeStep(timeStep).digits(digits).hmacSha(hmacShaAlgorithm);
         for (int i = -window; i <= window; i++) {
             final long time = validationTime + (i * timeStep);
-            final TOTP vtotp = builder.build(time);
+            final var vtotp = builder.build(time);
             if (vtotp.value().equals(value)) {
                 result = true;
                 break;

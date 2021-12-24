@@ -30,11 +30,10 @@ public class Request extends Validator {
     private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
     private String body;
-    private String authenticity;
     private Map<String, String> parameter;
 
     public Request(){
-        //Empty constructor for google guice
+        //Empty constructor for Google guice
     }
 
     public Request(HttpServerExchange httpServerExchange) {
@@ -46,11 +45,6 @@ public class Request extends Validator {
 
     public Request withSession(Session session) {
         this.session = session;
-        return this;
-    }
-    
-    public Request withAuthenticity(String authenticity) {
-        this.authenticity = authenticity;
         return this;
     }
     
@@ -107,16 +101,6 @@ public class Request extends Validator {
     }
 
     /**
-     * Checks if the session bound authenticity token matches the client sent
-     * authenticity token
-     *
-     * @return True if the token matches, false otherwise
-     */
-    public boolean authenticityMatches() {
-        return session.getAuthenticity().equals(this.authenticity);
-    }
-
-    /**
      * @return The current authentication
      */
     public Authentication getAuthentication() {
@@ -126,7 +110,7 @@ public class Request extends Validator {
     /**
      * Retrieves a request parameter (request or query parameter) by its name
      *
-     * @param key The key to lookup the parameter
+     * @param key The key to find the parameter
      * @return The value for the given or null if none found
      */
     public String getParameter(String key) {
@@ -152,7 +136,7 @@ public class Request extends Validator {
     }
 
     /**
-     * Retrieves a the clients accepted languages
+     * Retrieves the clients accepted languages
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
@@ -180,7 +164,7 @@ public class Request extends Validator {
     }    
 
     /**
-     * The original request URI. This will include the host name, protocol etc
+     * The original request URI. This will include the host name, protocol etc.
      * if it was specified by the client.
      *
      * This is not decoded in any way, and does not include the query string.
@@ -196,7 +180,7 @@ public class Request extends Validator {
     }
 
     /**
-     * Reconstructs the complete URL as seen by the user. This includes scheme, host name etc,
+     * Reconstructs the complete URL as seen by the user. This includes scheme, host name etc.
      * but does not include query string.
      *
      * This is not decoded.
@@ -273,7 +257,7 @@ public class Request extends Validator {
     /**
      * The request path. This will be decoded by the server, and does not include the query string.
      *
-     * This path is not canonicalized, so care must be taken to ensure that escape attacks are not possible.
+     * This path is not canonical, so care must be taken to ensure that escape attacks are not possible.
      *
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'
@@ -304,7 +288,7 @@ public class Request extends Validator {
      */
     public String getAttributeAsString(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        Object object = attributes.get(key);
+        var object = attributes.get(key);
         
         return object != null ? (String) object : null;
     }

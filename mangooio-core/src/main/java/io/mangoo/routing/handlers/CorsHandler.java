@@ -26,7 +26,7 @@ public class CorsHandler implements HttpHandler {
     private static final String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
     private static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
     private static final String ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age";
-    private Config config;
+    private final Config config;
     
     @Inject
     public CorsHandler(Config config) {

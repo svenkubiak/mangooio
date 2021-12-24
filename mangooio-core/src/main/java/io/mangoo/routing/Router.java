@@ -46,11 +46,8 @@ public final class Router {
         
         routes.add(route);
 
-        if (route instanceof RequestRoute) {
-            RequestRoute requestRoute = (RequestRoute) route;
-            if (requestRoute.getControllerClass() != null && StringUtils.isNotBlank(requestRoute.getControllerMethod())) {
-                reverseRoutes.put((requestRoute.getControllerClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);    
-            }   
+        if (route instanceof RequestRoute requestRoute && requestRoute.getControllerClass() != null && StringUtils.isNotBlank(requestRoute.getControllerMethod())) {
+            reverseRoutes.put((requestRoute.getControllerClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);
         }
     }
 

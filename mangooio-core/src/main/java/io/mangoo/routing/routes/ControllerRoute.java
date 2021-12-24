@@ -15,13 +15,12 @@ import io.mangoo.routing.Router;
  *
  */
 public class ControllerRoute {
-    private Class<?> controllerClass;
+    private final Class<?> controllerClass;
     private String username;
     private String password;
     private boolean authentication;
     private boolean authorization;
     private boolean blocking;
-    private int limit;
     
     /**
      * Creates a new set of routes bind to a given controller class
@@ -43,7 +42,7 @@ public class ControllerRoute {
         Objects.requireNonNull(routes, Required.ROUTE.toString());
         
         for (MangooRoute route : routes) {
-            RequestRoute requestRoute = (RequestRoute) route;
+            var requestRoute = (RequestRoute) route;
             requestRoute.withControllerClass(controllerClass);
 
             if (hasBasicAuthentication()) {
@@ -54,16 +53,8 @@ public class ControllerRoute {
                 requestRoute.withAuthentication();
             }
             
-            if (hasAuthorization()) {
-                requestRoute.withAuthorization();
-            }
-            
             if (hasBlocking()) {
                 requestRoute.withNonBlocking();
-            }
-            
-            if (requestRoute.getLimit() == 0) {
-                requestRoute.withRequestLimit(limit);
             }
             
             if (requestRoute.hasMultipleMethods()) {
@@ -118,9 +109,9 @@ public class ControllerRoute {
     }
     
     /**
-     * Configures this request as long running request that is
+     * Configures this request as long-running request that is
      * executed in a different thread pool to not block the
-     * non blocking I/O request
+     * non-blocking I/O request
      * 
      * @return ControllerRoute instance
      */
@@ -128,18 +119,7 @@ public class ControllerRoute {
         blocking = true;
         return this;
     }
-    
-    /**
-     * Sets a request limit to the request
-     * 
-     * @param requestsPerSecond Number of requests per second
-     * @return ControllerRoute instance
-     */
-    public ControllerRoute withRequestLimit(int requestsPerSecond) {
-        limit = requestsPerSecond;
-        return this;
-    }
-    
+
     public boolean hasAuthentication() {
         return authentication;
     }
@@ -166,9 +146,5 @@ public class ControllerRoute {
 
     public String getPassword() {
         return password;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 }

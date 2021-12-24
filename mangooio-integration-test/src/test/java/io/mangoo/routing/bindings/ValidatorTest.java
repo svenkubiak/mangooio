@@ -1,18 +1,16 @@
 package io.mangoo.routing.bindings;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.util.List;
-
+import com.google.re2j.Pattern;
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.google.re2j.Pattern;
+import java.util.List;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * 
@@ -81,7 +79,7 @@ public class ValidatorTest {
         assertThat(validator.getError(MATCH), containsString("must match"));
         assertThat(validator.getError(EXACT_MATCH), containsString("must exactly match"));
         assertThat(validator.getError(MAX), containsString("max must be a value not greater than 1"));
-        assertThat(validator.getError(MIN), containsString("min must be a value not less thatn 42"));
+        assertThat(validator.getError(MIN), containsString("min must be a value not less than 42"));
         assertThat(validator.getError(REQUIRED), containsString("required is a required value"));
         assertThat(validator.getError(NUMERIC), containsString("must be a numeric value"));
     }

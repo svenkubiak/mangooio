@@ -8,8 +8,6 @@ import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
-import io.mangoo.templating.directives.FormDirective;
-import io.mangoo.templating.directives.TokenDirective;
 import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
@@ -60,16 +58,6 @@ public class TemplateContext {
     
     public TemplateContext withPrettyTime(Locale locale) {
         content.put("prettytime", new PrettyTimeMethod(locale));
-        return this;
-    }
-    
-    public TemplateContext withAuthenticity(Session session) {
-        content.put("authenticity", new TokenDirective(session));
-        return this;
-    }
-    
-    public TemplateContext withAuthenticityForm(Session session) {
-        content.put("authenticityForm", new FormDirective(session));
         return this;
     }
     

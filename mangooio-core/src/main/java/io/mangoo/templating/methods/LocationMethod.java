@@ -23,12 +23,7 @@ public class LocationMethod implements TemplateMethodModelEx {
 
     @Override
     public Boolean exec(List arguments) throws TemplateModelException {
-        boolean valid = false;
-        if (validArguments(arguments) && matches(arguments)) {
-            valid = true;
-        }
-        
-        return Boolean.valueOf(valid);
+        return validArguments(arguments) && matches(arguments);
     }
     
     private boolean validArguments(List arguments) {

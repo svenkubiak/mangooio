@@ -16,10 +16,6 @@ public enum Key {
     APPLICATION_CONFIG("application.config"),
     APPLICATION_CONTROLLER("application.controller"),
     APPLICATION_LANGUAGE("application.language"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    APPLICATION_MINIFY_CSS("application.minify.css"),
-    @Deprecated(since = "6.7.0", forRemoval = true)
-    APPLICATION_MINIFY_JS("application.minify.js"),
     APPLICATION_MODE("application.mode"),
     APPLICATION_NAME("application.name"),
     APPLICATION_PRIVATEKEY("application.privatekey"),
@@ -54,9 +50,8 @@ public enum Key {
     I18N_COOKIE_NAME("i18n.cookie.name"),
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
-    SCHEDULER_AUTOSTART("scheduler.autostart"),
     SCHEDULER_ENABLE("scheduler.enable"),
-    SCHEDULER_PACKAGE("scheduler.package"),
+    SCHEDULER_POOLSIZE("scheduler.poolsize"),
     SESSION_COOKIE_EXPIRES("session.cookie.expires"),
     SESSION_COOKIE_NAME("session.cookie.name"),
     SESSION_COOKIE_SECRET("session.cookie.secret"),

@@ -45,10 +45,8 @@ public class ServerSentEventService {
         Set<ServerSentEventConnection> uriConnections = getConnections(url);
         if (uriConnections == null) {
             uriConnections = new HashSet<>();
-            uriConnections.add(connection);
-        } else {
-            uriConnections.add(connection);
         }
+        uriConnections.add(connection);
         setConnections(url, uriConnections);
     }
 

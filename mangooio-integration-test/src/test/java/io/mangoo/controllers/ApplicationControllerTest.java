@@ -140,22 +140,6 @@ public class ApplicationControllerTest {
         assertThat(response.getContent(), containsString("vor"));
         assertThat(response.getContent(), containsString("Stunden"));
     }
-    
-    @Test
-    public void testLimit() {
-        //given
-        TestResponse response = null;
-
-        //then
-        for (int i=0; i < 10; i++) {
-            response = TestRequest.get("/limit").execute();   
-            assertThat(response, not(nullValue()));
-            assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        }
-        response = TestRequest.get("/limit").execute();   
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
-    }
 
     @Test
     public void testRequest() {
@@ -398,7 +382,7 @@ public class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader(Headers.SERVER.toString()), equalTo("Undertow"));
-        assertThat(response.getHeader(Header.X_XSS_PPROTECTION.toString()), equalTo("1"));
+        assertThat(response.getHeader(Header.X_XSS_PROTECTION.toString()), equalTo("1"));
         assertThat(response.getHeader(Header.X_CONTENT_TYPE_OPTIONS.toString()), equalTo("nosniff"));
         assertThat(response.getHeader(Header.X_FRAME_OPTIONS.toString()), equalTo("DENY"));
         assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));

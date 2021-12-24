@@ -26,7 +26,6 @@ public enum Template {
     private static final String TOO_MANY_REQUESTS_TEMPLATE_PATH = "defaults/429.html";
     private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
     private static final String TWOFACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
-    private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
@@ -134,13 +133,6 @@ public enum Template {
         return ROUTES_TEMPLATE_PATH;
     }
 
-    /**
-     * @return The relative path of the scheduler template
-     */
-    public String schedulerPath() {
-        return SCHEDULER_TEMPLATE_PATH;
-    }
-    
     /**
      * @return The content of the default internal server error template
      */

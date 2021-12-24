@@ -1,6 +1,7 @@
 package io.mangoo.routing.bindings;
 
 import java.io.InputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mangoo.enums.Required;
 import io.mangoo.utils.MangooUtils;
 
@@ -20,14 +24,16 @@ import io.mangoo.utils.MangooUtils;
  *
  */
 public class Form extends Validator {
+    @Serial
     private static final long serialVersionUID = -5815141142864033904L;
+
     private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;
     private boolean keep;
     
     public Form() {
-        //Empty constructor for google guice
+        //Empty constructor for Google guice
     }
     
     /**
@@ -80,16 +86,13 @@ public class Form extends Validator {
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
-            if (("1").equals(value)) {
-                return Optional.of(Boolean.TRUE);
-            } else if (("true").equals(value)) {
-                return Optional.of(Boolean.TRUE);
-            } else if (("false").equals(value)) {
-                return Optional.of(Boolean.FALSE);
-            } else if (("0").equals(value)) {
-                return Optional.of(Boolean.FALSE);
-            } else {
-                // Ignore anything else
+            switch (value) {
+                case "1", "true" -> {
+                    return Optional.of(Boolean.TRUE);
+                }
+                case "0", "false" -> {
+                    return Optional.of(Boolean.FALSE);
+                }
             }
         }
 
@@ -157,7 +160,7 @@ public class Form extends Validator {
     }
 
     /**
-     * Retrieves a single file of the form. If the the form
+     * Retrieves a single file of the form. If the form
      * has multiple files, the first will be returned
      *
      * @return File or null if no file is present
@@ -198,24 +201,22 @@ public class Form extends Validator {
     }
     
     /**
-     * Adds an additional item to the value list
+     * Adds an item to the value list
      * @param key The name of the form element
      * @param value The value to store
      */
     public void addValueList(String key, String value) {
         Objects.requireNonNull(key, Required.KEY.toString());
 
+        List<String> values;
         if (!valueMap.containsKey(key)) {
-            List<String> values = new ArrayList<>();
-            values.add(value);
-            
-            valueMap.put(key, values);
+            values = new ArrayList<>();
         } else {
-            List<String> values = valueMap.get(key);
-            values.add(value);
-            
-            valueMap.put(key, values);
+            values = valueMap.get(key);
         }
+
+        values.add(value);
+        valueMap.put(key, values);
     }
     
     /**
@@ -232,6 +233,7 @@ public class Form extends Validator {
     
     /**
      * Checks if the form values are to put in the flash scope
+     * 
      * @return True if form values should be put into flash scope, false otherwise
      */
     public boolean isKept() {
@@ -246,6 +248,28 @@ public class Form extends Validator {
             files.forEach(MangooUtils::closeQuietly);            
         }
         valueMap = new HashMap<>();
+    }
+
+    /**
+     * Converts the current form into a given object class
+     *
+     * @param clazz The class to convert to
+     * @param <T> Ignored
+     *
+     * @return The converted object or null if conversion fails
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T toObject(Class<?> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return (T) mapper.readValue(mapper.writeValueAsString(values), clazz);
+        } catch (JsonProcessingException e) {
+            //NOSONAR Ignore catch
+        }
+
+        return null;
     }
     
     public boolean isSubmitted() {

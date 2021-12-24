@@ -1,8 +1,6 @@
 package controllers;
 
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +23,7 @@ public class ApplicationController {
         return Response.withOk();
     }
     
-    @SuppressWarnings("all")
+    @SuppressWarnings("null")
     public Response error() {
         String foo = null;
         foo.length(); //NOSONAR
@@ -62,8 +60,8 @@ public class ApplicationController {
     }
     
     public Response prettytime() {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        LocalDate localDate = LocalDate.now();
+        var localDateTime = LocalDateTime.now();
+        var localDate = LocalDate.now();
         Date date = new Date(); //NOSONAR
         
         return Response.withOk()
@@ -88,10 +86,9 @@ public class ApplicationController {
         return Response.withUnauthorized().andEmptyBody();
     }
 
-    @SuppressWarnings("all")
     public Response binary() throws URISyntaxException {
-        final URL url = this.getClass().getResource("/attachment.txt");
-        final Path file = Paths.get(url.toURI());
+        final var url = this.getClass().getResource("/attachment.txt");
+        final var file = Paths.get(url.toURI());
         
         return Response.withOk().andBinaryFile(file);
     }

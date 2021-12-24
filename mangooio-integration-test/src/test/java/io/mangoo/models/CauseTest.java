@@ -24,8 +24,8 @@ public class CauseTest {
         
         //then
         assertThat(source, not(nullValue()));
-        assertThat(source.getContent(), equalTo("foo"));
-        assertThat(source.getLine(), equalTo(42));
-        assertThat(source.isCause(), equalTo(true));
+        assertThat(source.content(), equalTo("foo"));
+        assertThat(source.line(), equalTo(42));
+        assertThat(source.cause(), equalTo(true));
     }
 }

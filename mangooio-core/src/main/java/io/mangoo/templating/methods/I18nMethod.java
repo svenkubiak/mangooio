@@ -18,7 +18,6 @@ import io.mangoo.i18n.Messages;
  * @author svenkubiak
  *
  */
-@SuppressWarnings("rawtypes")
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;
@@ -29,8 +28,9 @@ public class I18nMethod implements TemplateMethodModelEx {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
-        String messageValue = "";
+        var messageValue = "";
         if (arguments.size() == NUM_ARGUMENTS) {
             String messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
             messageValue = messages.get(messageKey);
@@ -38,16 +38,16 @@ public class I18nMethod implements TemplateMethodModelEx {
         } else if (arguments.size() > NUM_ARGUMENTS) {
             List<String> strings = new ArrayList<>();
             for (Object object : arguments) {
-                if (object instanceof SimpleScalar) {
-                    strings.add(((SimpleScalar) object).getAsString());
-                } else if (object instanceof SimpleNumber) {
-                    strings.add(object.toString());
+                if (object instanceof SimpleScalar scalar) {
+                    strings.add(scalar.getAsString());
+                } else if (object instanceof SimpleNumber number) {
+                    strings.add(number.toString());
                 } else {
                     LOG.warn("Argument can only be of type SimpleScalar or SimpleNumber. Is: {}", object.getClass());
                 }
             }
 
-            String messageKey = strings.get(0);
+            var messageKey = strings.get(0);
             strings.remove(0);
             messageValue = messages.get(messageKey, strings.toArray());
         } else {

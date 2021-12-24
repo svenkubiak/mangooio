@@ -326,38 +326,6 @@ public class ConfigTest {
     }  
     
     @Test
-    public void testIsSchedulerAutostart() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String autostart = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("scheduler.autostart", autostart);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isSchedulerAutostart(), equalTo(Boolean.valueOf(autostart)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testIsSchedulerAutostartDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isSchedulerAutostart(), equalTo(Default.SCHEDULER_AUTOSTART.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    
-    @Test
     public void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -452,22 +420,6 @@ public class ConfigTest {
     }   
     
     @Test
-    public void testGetSchedulerPackage() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String schedulerPackage = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("scheduler.package", schedulerPackage);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getSchedulerPackage(), equalTo(schedulerPackage));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }  
-    
-    @Test
     public void testAuthenticationCookieRememberExpires() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String expires = "6000";
@@ -497,37 +449,6 @@ public class ConfigTest {
         assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong()));
         assertThat(tempConfig.delete(), equalTo(true));
     }   
-    
-    @Test
-    public void testGetApplicationThreadpool() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String threadpool = "555";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.threadpool", threadpool);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getApplicationThreadpool(), equalTo(Integer.valueOf(threadpool)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    public void testGetApplicationThreadpoolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationThreadpool(), equalTo(Default.APPLICATION_THREADPOOL.toInt()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }  
     
     @Test
     public void testGetApplicationController() throws JsonGenerationException, JsonMappingException, IOException {

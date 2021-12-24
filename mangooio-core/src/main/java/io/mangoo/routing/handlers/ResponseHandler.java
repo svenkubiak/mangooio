@@ -1,15 +1,11 @@
 package io.mangoo.routing.handlers;
 
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
-import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -24,7 +20,7 @@ public class ResponseHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
+        var attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         final Response response = attachment.getResponse();
 
         if (response.isRedirect()) {
@@ -35,7 +31,7 @@ public class ResponseHandler implements HttpHandler {
             handleRenderedResponse(exchange, response);
         }
         
-        Form form = attachment.getForm();
+        var form = attachment.getForm();
         if (form != null) {
             form.discard();
         }
@@ -47,8 +43,6 @@ public class ResponseHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      * @param response The response object
-     *
-     * @throws IOException
      */
     protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
         exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));

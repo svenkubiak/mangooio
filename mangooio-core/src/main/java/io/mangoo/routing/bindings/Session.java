@@ -18,9 +18,8 @@ import io.mangoo.enums.Required;
  */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
-    private static final Set<String> INVALID_CHRACTERTS = Set.of("|", ":", "&", " ");
+    private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
-    private String authenticity;
     private LocalDateTime expires;
     private boolean changed;
     private boolean invalid;
@@ -33,13 +32,6 @@ public class Session {
         Objects.requireNonNull(values, Required.VALUES.toString());
         
         this.values = values;
-        return this;
-    }
-    
-    public Session withAuthenticity(String authenticity) {
-        Objects.requireNonNull(authenticity, Required.AUTHENTICITY.toString());
-        
-        this.authenticity = authenticity;
         return this;
     }
     
@@ -84,7 +76,7 @@ public class Session {
     }
 
     /**
-     * @return The expire date of the session
+     * @return The expiry date of the session
      */
     public LocalDateTime getExpires() {
         return expires;
@@ -97,7 +89,7 @@ public class Session {
      * @param value The value to store
      */
     public void put(String key, String value) {
-        if (INVALID_CHRACTERTS.contains(key) || INVALID_CHRACTERTS.contains(value)) {
+        if (INVALID_CHARACTERS.contains(key) || INVALID_CHARACTERS.contains(value)) {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
             changed = true;
@@ -132,13 +124,5 @@ public class Session {
     
     public boolean isInvalid() {
         return invalid;
-    }
-
-    /**
-     * @return The current authenticity token and marks the session as changed
-     */
-    public String getAuthenticity() {
-        changed = true;
-        return authenticity;
     }
 }

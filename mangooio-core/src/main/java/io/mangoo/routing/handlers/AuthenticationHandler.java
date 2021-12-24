@@ -14,7 +14,6 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.routing.Attachment;
-import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -26,7 +25,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 public class AuthenticationHandler implements HttpHandler {
-    private Config config;
+    private final Config config;
     
     @Inject
     public AuthenticationHandler(Config config) {
@@ -38,10 +37,10 @@ public class AuthenticationHandler implements HttpHandler {
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
         
         if (attachment.hasAuthentication()) {
-            Authentication authentication = attachment.getAuthentication();
+            var authentication = attachment.getAuthentication();
             
             if (!authentication.isValid() || ( authentication.isValid() && authentication.isTwoFactor() )) {
-                String redirect = config.getString(Key.AUTHENTICATION_REDIRECT.toString());
+                var redirect = config.getString(Key.AUTHENTICATION_REDIRECT.toString());
                 if (StringUtils.isNotBlank(redirect)) {
                     endRequest(exchange, redirect);
                 } else {
@@ -56,7 +55,7 @@ public class AuthenticationHandler implements HttpHandler {
     }
     
     /**
-     * Ends the current request by sending a HTTP 302 status code and a direct to the given URL
+     * Ends the current request by sending an HTTP 302 status code and a direct to the given URL
      * @param exchange The HttpServerExchange
      */
     private void endRequest(HttpServerExchange exchange, String redirect) {
@@ -73,7 +72,7 @@ public class AuthenticationHandler implements HttpHandler {
     }
     
     /**
-     * Ends the current request by sending a HTTP 403 status code and the default forbidden template
+     * Ends the current request by sending an HTTP 403 status code and the default forbidden template
      * @param exchange The HttpServerExchange
      */
     private void endRequest(HttpServerExchange exchange) {
@@ -95,6 +94,7 @@ public class AuthenticationHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        Application.getInstance(AuthorizationHandler.class).handleRequest(exchange);
+        Application.getInstance(FormHandler.class).handleRequest(exchange);
+
     }
 }

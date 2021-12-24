@@ -18,10 +18,9 @@ import no.api.freemarker.java8.time.LocalDateAdapter;
 import no.api.freemarker.java8.time.LocalDateTimeAdapter;
 import no.api.freemarker.java8.time.TemporalDialerAdapter;
 
-@SuppressWarnings("rawtypes")
 public class PrettyTimeMethod implements TemplateMethodModelEx {
     private static final int NUM_ARGUMENTS = 1;
-    private PrettyTime prettyTime;
+    private final PrettyTime prettyTime;
     
     public PrettyTimeMethod (Locale locale) {
         Objects.requireNonNull(locale, Required.LOCALE.toString());
@@ -29,14 +28,14 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public String exec(List arguments) throws TemplateModelException {
         String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {
             Object temporal = null;
             Object object = arguments.get(0);
             
-            if (object instanceof TemporalDialerAdapter) {
-                TemporalDialerAdapter temporalDialerAdapter = (TemporalDialerAdapter) object;
+            if (object instanceof TemporalDialerAdapter temporalDialerAdapter) {
                 temporal = temporalDialerAdapter.getObject();   
             }
 
@@ -44,23 +43,23 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
                 object = temporal;
             }
             
-            if (object instanceof LocalDateTimeAdapter) {
-                Date date = DateUtils.localDateTimeToDate(((LocalDateTimeAdapter) object).getObject());
+            if (object instanceof LocalDateTimeAdapter localDateTimeAdapter) {
+                Date date = DateUtils.localDateTimeToDate(localDateTimeAdapter.getObject());
                 result = this.prettyTime.format(date);
-            } else if (object instanceof LocalDateAdapter) {
-                Date date = DateUtils.localDateToDate(((LocalDateAdapter) object).getObject());
+            } else if (object instanceof LocalDateAdapter localDateAdapter) {
+                Date date = DateUtils.localDateToDate(localDateAdapter.getObject());
                 result = this.prettyTime.format(date);              
-            } else if (object instanceof LocalDateTime) {
-                Date date = DateUtils.localDateTimeToDate((LocalDateTime) object);
+            } else if (object instanceof LocalDateTime localDateTime) {
+                Date date = DateUtils.localDateTimeToDate(localDateTime);
                 result = this.prettyTime.format(date);              
-            } else if (object instanceof LocalDate) {
-                Date date = DateUtils.localDateToDate(((LocalDate) object));
+            } else if (object instanceof LocalDate localDate) {
+                Date date = DateUtils.localDateToDate(localDate);
                 result = this.prettyTime.format(date);   
-            } else if (object instanceof SimpleDate) {
-                Date date = ((SimpleDate) object).getAsDate();
+            } else if (object instanceof SimpleDate simpleDate) {
+                Date date = simpleDate.getAsDate();
                 result = this.prettyTime.format(date);   
-            } else if (object instanceof Date) {
-                result = this.prettyTime.format((Date) object);   
+            } else if (object instanceof Date date) {
+                result = this.prettyTime.format(date);   
             } else {
                 throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }

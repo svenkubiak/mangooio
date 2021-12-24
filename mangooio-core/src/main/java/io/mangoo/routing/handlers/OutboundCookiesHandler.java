@@ -20,10 +20,6 @@ import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
-import io.mangoo.routing.bindings.Authentication;
-import io.mangoo.routing.bindings.Flash;
-import io.mangoo.routing.bindings.Form;
-import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
@@ -44,9 +40,9 @@ public class OutboundCookiesHandler implements HttpHandler {
     private static final String ALGORITHM = "AES";
     private static final String SAME_SITE_MODE = "Strict";
     private static final int SIXTY = 60;
+    private final Config config;
     private Attachment attachment;
-    private Config config;
-    
+
     @Inject
     public OutboundCookiesHandler(Config config) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
@@ -69,7 +65,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setSessionCookie(HttpServerExchange exchange) {
-        Session session = attachment.getSession();
+        var session = attachment.getSession();
         if (session.isInvalid()) {
             Cookie cookie = new CookieImpl(config.getSessionCookieName())
                     .setSecure(config.isSessionCookieSecure())
@@ -85,7 +81,6 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (session.hasChanges()) {
             PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
                     .setExpiration(session.getExpires().toInstant(ZONE_OFFSET))
-                    .claim(ClaimKey.AUTHENTICITY.toString(), session.getAuthenticity())
                     .claim(ClaimKey.DATA.toString(), session.getValues())
                     .setSharedSecret(new SecretKeySpec(config.getSessionCookieSecret().getBytes(CHARSET), ALGORITHM));
         
@@ -117,7 +112,7 @@ public class OutboundCookiesHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      */
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
-        Authentication authentication = this.attachment.getAuthentication();
+        var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
             Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
                     .setSecure(config.isAuthenticationCookieSecure())
@@ -162,11 +157,10 @@ public class OutboundCookiesHandler implements HttpHandler {
      * Sets the flash cookie to current HttpServerExchange
      *
      * @param exchange The Undertow HttpServerExchange
-     * @throws MangooCookieException 
      */
     protected void setFlashCookie(HttpServerExchange exchange) {
-        Flash flash = this.attachment.getFlash();
-        Form form = this.attachment.getForm();
+        var flash = attachment.getFlash();
+        var form = attachment.getForm();
         
         if (flash.isDiscard() || flash.isInvalid()) {
             final Cookie cookie = new CookieImpl(config.getFlashCookieName())
