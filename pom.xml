@@ -30,7 +30,7 @@
 		<junit.version>5.8.2</junit.version>
 		<junit.platform.version>1.8.2</junit.platform.version>
 		<enforcer.version>1.5.1</enforcer.version>
-		<simplemail.version>6.6.2</simplemail.version>
+		<simplemail.version>6.7.5</simplemail.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.4.0</mongodb.version>
 		<slf4j.version>1.7.32</slf4j.version>
