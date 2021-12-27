@@ -13,6 +13,6 @@ jobs:
         with:
           java-version: 17
       - name: Install with Maven
-        run: mvn -B clean install -Dmaven.test.skip=true --file pom.xml
+        run: mvn -B -Dmaven.test.skip=true clean install --file pom.xml
       - name: Build with Maven
         run: mvn -B verify --file pom.xml
