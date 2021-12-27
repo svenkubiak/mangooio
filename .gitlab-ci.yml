@@ -13,22 +13,6 @@ variables:
 cache:
   paths:
     - .m2/repository
-
-before_script:
-#  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
-#  - eval $(ssh-agent -s)
-#  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#  - mkdir -p ~/.ssh
-#  - chmod 700 ~/.ssh
-#  - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
-#  - chmod 644 ~/.ssh/known_hosts
-#  - apt-get update >/dev/null
-#  - apt-get install -y locales >/dev/null
-#  - echo "en_US UTF-8" > /etc/locale.gen
-#  - locale-gen en_US.UTF-8
-#  - export LANG=en_US.UTF-8
-#  - export LANGUAGE=en_US:en
-#  - export LC_ALL=en_US.UTF-8
  
 test:
   stage: test
@@ -48,7 +32,7 @@ smoke:
       - mangooio-integration-test/target/mangooio.jar
     expire_in: 10m
   script:
-    - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true clean verify    
+    - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean clean verify    
     - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
     - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
   only:
