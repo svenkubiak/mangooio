@@ -31,10 +31,18 @@ smoke:
     paths:
       - mangooio-integration-test/target/mangooio.jar
     expire_in: 10m
+  before_script:
+  - apt-get update -y && apt-get install openssh-client git -y
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
   script:
-    - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean clean verify    
-    - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
-    - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
+  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean verify
+  - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
+  - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
   only:
   - loader
 
