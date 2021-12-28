@@ -40,7 +40,7 @@ smoke:
   - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   script:
-  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean verify
+  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean verify -P shadeing
   - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
   - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
   only:
