@@ -21,6 +21,7 @@ public class Shutdown extends Thread {
         invokeLifecycle();
         stopUndertow();
         stopScheduler();
+        stopEmbeddedMongoDB();
         closeCaches();
     }
 
@@ -36,6 +37,10 @@ public class Shutdown extends Thread {
 
     private static void stopUndertow() {
         Application.stopUndertow();
+    }
+    
+    private static void stopEmbeddedMongoDB() {
+        Application.stopEmbeddedMongoDB();
     }
 
     private static void closeCaches() {

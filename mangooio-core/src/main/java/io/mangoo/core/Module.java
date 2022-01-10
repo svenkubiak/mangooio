@@ -17,11 +17,12 @@ import io.mangoo.persistence.DatastoreProvider;
  */
 public class Module extends AbstractModule {
     private Config config = new Config();
+    private EmbeddedMongoDB embeddedMongoDB;
     
     public Module() {
         var prefix = Default.PERSISTENCE_PREFIX.toString();
         if (config.isMongoEmbedded(prefix)) {
-            EmbeddedMongoDB.create()
+            this.embeddedMongoDB = EmbeddedMongoDB.create()
                 .withHost(config.getMongoHost(prefix))
                 .withPort(config.getMongoPort(prefix))
                 .start();
@@ -34,5 +35,11 @@ public class Module extends AbstractModule {
         
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);
+    }
+    
+    public void stopEmbeddedMongoDB() {
+        if (embeddedMongoDB != null) {
+            embeddedMongoDB.stop();
+        }
     }
 }
