@@ -24,7 +24,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<log4j.version>2.17.0</log4j.version>
+		<log4j.version>2.17.1</log4j.version>
 		<maven.version>3.8.4</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
 		<junit.version>5.8.2</junit.version>
@@ -32,7 +32,7 @@
 		<enforcer.version>1.5.1</enforcer.version>
 		<simplemail.version>6.7.5</simplemail.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.4.0</mongodb.version>
+		<mongodb.version>4.4.1</mongodb.version>
 		<slf4j.version>1.7.32</slf4j.version>
 	</properties>
 	<modules>
@@ -315,7 +315,7 @@
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
 				<artifactId>okhttp-eventsource</artifactId>
-				<version>2.3.2</version>
+				<version>2.4.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
@@ -335,7 +335,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-archiver</artifactId>
-				<version>4.2.6</version>
+				<version>4.2.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
