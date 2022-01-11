@@ -21,7 +21,7 @@ test:
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dmaven.javadoc.skip=true clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify sonar:sonar --settings settings.xml
   only:
   - /^feature.*$/
 
