@@ -16,12 +16,12 @@ cache:
  
 test:
   stage: test
-  script: mvn -Denforcer.skip clean $MAVEN_CLI_OPTS clean verify
+  script: mvn $MAVEN_CLI_OPTS clean verify
 
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dmaven.javadoc.skip=true clean verify sonar:sonar --settings settings.xml
   only:
   - /^feature.*$/
 
@@ -40,7 +40,7 @@ smoke:
   - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
   script:
-  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean verify -P shadeing
+  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip -Dmaven.test.skip=true -Dmaven.javadoc.skip=true clean verify -P shadeing
   - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
   - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
   only:
@@ -49,7 +49,7 @@ smoke:
 javadocs:
   stage: javadocs
   script:
-   - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean  clean install javadoc:javadoc
+   - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean -Dmaven.test.skip=true clean install javadoc:javadoc
    - mkdir /tmp/javadoc
    - mv /builds/svenkubiak/mangooio/mangooio-core/target/site/apidocs/* /tmp/javadoc
    - mkdir /tmp/build
