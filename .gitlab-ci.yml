@@ -16,7 +16,7 @@ cache:
  
 test:
   stage: test
-  script: mvn $MAVEN_CLI_OPTS clean verify
+  script: mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify
 
 sonar:
   stage: sonar
