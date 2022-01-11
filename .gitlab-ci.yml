@@ -21,7 +21,7 @@ test:
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_USERNAME} -Dsonar.password=${SONAR_PASSWORD} -Dsonar.java.libraries=target
   only:
   - /^feature.*$/
 
