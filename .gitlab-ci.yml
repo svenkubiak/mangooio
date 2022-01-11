@@ -21,7 +21,7 @@ test:
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_USER -Dsonar.password=$SONAR_PASSWORD -Dsonar.java.libraries=target clean verify sonar:sonar
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dsonar.host.url=https://sonar.svenkubiak.de -Dsonar.login=$SONAR_USER -Dsonar.password=$SONAR_PASSWORD -Dsonar.java.libraries=target clean verify sonar:sonar
   only:
   - /^feature.*$/
 
