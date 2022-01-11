@@ -126,7 +126,6 @@ public class Mail {
     /**
      * Sets message subject with specified encoding to override default platform encoding.
      * The application must ensure that the subject does not contain any line breaks.
-     * See {@link javax.mail.internet.MimeMessage#setSubject(String, String)}.
      *
      * @param subject The message subject
      * @return A mail object instance
@@ -227,7 +226,7 @@ public class Mail {
     /**
      * Adds a list of files as attachment to the mail
      *
-     * @param path The Path to attach
+     * @param paths The Path files to attach
      * @return A mail object instance   
      */
     public Mail attachments(List<Path> paths) {
