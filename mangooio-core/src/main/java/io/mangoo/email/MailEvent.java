@@ -40,6 +40,12 @@ public class MailEvent {
         this.mailCenter = Objects.requireNonNull(mailCenter, Required.MAIL_CENTER.toString());
     }
 
+    /**
+     * Sends a mail through the configured SMTP server
+     * 
+     * @param mail The mail to send
+     * @throws MangooMailerException
+     */
     public void send(Mail mail) throws MangooMailerException {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         
@@ -91,8 +97,8 @@ public class MailEvent {
                 Multipart multipart = new MimeMultipart();
                 multipart.addBodyPart(messageBodyPart);
 
-                messageBodyPart = new MimeBodyPart();
                 for (Path path : mail.getMessageAttachments()) {
+                    messageBodyPart = new MimeBodyPart();
                     String filename = path.toRealPath().toString();
                     DataSource source = new FileDataSource(filename);
                     messageBodyPart.setDataHandler(new DataHandler(source));

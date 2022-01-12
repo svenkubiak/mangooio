@@ -49,6 +49,12 @@ public class MailCenter {
         this.session = Session.getInstance(properties, authenticator);
     }
     
+    /**
+     * Processes the given mail message and passes it to the underlying SMTP handling
+     * 
+     * @param mimeMessage The mimeMessage to send
+     * @throws MessagingException
+     */
     public void process(MimeMessage mimeMessage) throws MessagingException {
         Transport.send(mimeMessage);
     }
