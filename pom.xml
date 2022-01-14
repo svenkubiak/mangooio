@@ -105,7 +105,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>6.5.1</version>
+					<version>6.5.3</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -309,7 +309,7 @@
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
 				<artifactId>okhttp-eventsource</artifactId>
-				<version>2.4.0</version>
+				<version>2.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
@@ -385,7 +385,7 @@
 			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
-				<version>3.4.2.Final</version>
+				<version>3.4.3.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
