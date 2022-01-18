@@ -20,15 +20,14 @@ Here are some key features of mangoo I/O in a nutshell:
 * Hot-Compiling development mode for high productivity
 * Straightforward persistence integration
 * Easy to use template engine
-* Super minimal use of Annotations
+* Two Framework Annotations only
 * Dependency Injection
-* Deploy as FatJAR or ThinJAR
 * Simplified Caching
 * Build-in asynchronous email handling
 * Support for Web Sockets and Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
-* Build-in authentication and authorization
+* Build-in authentication
 * Programmatically routing configuration
 * Easy handling of JSON in- and output
 * Simple global or per request filters
@@ -53,7 +52,6 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
 * [Ehcache](http://www.ehcache.org/) – Cacheing
 * [Freemarker](http://freemarker.org/) – Template engine
-* [Quartz Scheduler](http://www.quartz-scheduler.org/) – Scheduling
 * [Jackson](https://github.com/FasterXML/jackson), [JSONPath](https://github.com/jayway/JsonPath) – Handling JSON
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
 * [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) – Strong hashing
@@ -62,13 +60,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.233 Sonar rules
-* 8.959 Lines of code
-* 2.843 Commits
-* 549 Unit tests
+* 1.241 Sonar rules
+* 7.888 Lines of core code
+* 3.415 Commits
+* 551 Unit tests
 * 5+ years development maturity
-* 294 cups of coffee (estimated)
-
+* 242 cups of coffee (estimated)
 ## Resources
 
 **Homepage**   
