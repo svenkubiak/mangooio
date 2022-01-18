@@ -27,7 +27,7 @@ public class MailCenter {
         
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
-        properties.put("mail.smtp.port", config.getSmtpPort());
+        properties.put("mail.smtp.port", String.valueOf(config.getSmtpPort()));
         properties.put("mail.from", config.getSmtpFrom());
         properties.put("mail.debug", config.isSmtpDebug() ? TRUE : FALSE);
         
