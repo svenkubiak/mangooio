@@ -309,6 +309,9 @@ public class Mail {
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
+        Objects.requireNonNull(template, Required.CONTENT.toString());
+        
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.substring(1, template.length());
         } 
