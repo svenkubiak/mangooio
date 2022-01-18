@@ -17,23 +17,25 @@ import jakarta.mail.internet.MimeMessage;
 
 @Singleton
 public class MailCenter {
+    private static final String FALSE = "false";
+    private static final String TRUE = "true";
     private Session session;
     
     @Inject
     public MailCenter(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         
-        Properties properties = new Properties();
+        var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
         properties.put("mail.smtp.port", config.getSmtpPort());
         properties.put("mail.from", config.getSmtpFrom());
-        properties.put("mail.debug", config.isSmtpDebug());
+        properties.put("mail.debug", config.isSmtpDebug() ? TRUE : FALSE);
         
         if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.ssl.enable", true);
+            properties.put("mail.smtp.ssl.enable", TRUE);
         } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.ssl.enable", true);
-            properties.put("mail.smtp.starttls.enable", true);
+            properties.put("mail.smtp.ssl.enable", TRUE);
+            properties.put("mail.smtp.starttls.enable", TRUE);
         }
         
         Authenticator authenticator = null;

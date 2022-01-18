@@ -99,7 +99,7 @@ public class MailEvent {
 
                 for (Path path : mail.getMessageAttachments()) {
                     messageBodyPart = new MimeBodyPart();
-                    String filename = path.toRealPath().toString();
+                    var filename = path.toRealPath().toString();
                     DataSource source = new FileDataSource(filename);
                     messageBodyPart.setDataHandler(new DataHandler(source));
                     messageBodyPart.setFileName(filename);
