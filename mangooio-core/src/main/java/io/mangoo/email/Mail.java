@@ -39,6 +39,7 @@ public class Mail {
 
     /**
      * Creates a new mail instance
+     * 
      * @return A mail object instance
      */
     public static Mail newMail() {
@@ -46,7 +47,7 @@ public class Mail {
     }
     
     /**
-     * Appends one or more TO address
+     * Sets one or more TO address
      *
      * @param tos Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
      * @return A mail object instance
@@ -54,19 +55,6 @@ public class Mail {
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS.toString());
         messageTos.addAll(Arrays.asList(tos));
-        
-        return this;
-    }
-    
-    /**
-     * Appends TO address
-     *
-     * @param to Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail to(String to) {
-        Objects.requireNonNull(to, Required.TO.toString());
-        messageTos.add(to);
         
         return this;
     }
@@ -85,20 +73,7 @@ public class Mail {
     }
     
     /**
-     * Appends CC address
-     *
-     * @param cc Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail cc(String cc) {
-        Objects.requireNonNull(cc, Required.CC.toString());
-        messageCcs.add(cc);
-        
-        return this;
-    }
-    
-    /**
-     * Appends BCC address
+     * Sets one or more BCC address
      *
      * @param bccs array of {@link String}s to set.
      * @return A mail object instance
@@ -106,19 +81,6 @@ public class Mail {
     public Mail bcc(String... bccs) {
         Objects.requireNonNull(bccs, Required.BCCS.toString());
         messageBccs.addAll(Arrays.asList(bccs));
-        
-        return this;
-    }
-    
-    /**
-     * Appends BCC address.
-     *
-     * @param bcc Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail bcc(String bcc) {
-        Objects.requireNonNull(bcc, Required.BCC.toString());
-        messageBccs.add(bcc);
         
         return this;
     }
@@ -154,7 +116,7 @@ public class Mail {
     }
     
     /**
-     * Sets the FROM address and name
+     * Sets the FROM address
      * 
      * @param fromAddress Address may be specified with personal name like this: {@code email@foo.com}
      * @return A mail object instance
@@ -167,7 +129,7 @@ public class Mail {
     }
     
     /**
-     * Sets header value.
+     * Adds a header value
      *
      * @param name  The name of the header
      * @param value The value of the header
@@ -317,6 +279,7 @@ public class Mail {
         } 
         
         var templateContext = new TemplateContext(content).withTemplatePath(template);
+        
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
     }
 
