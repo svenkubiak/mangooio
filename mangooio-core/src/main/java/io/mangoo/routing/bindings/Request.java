@@ -23,7 +23,7 @@ import io.undertow.util.HttpString;
  *
  */
 public class Request extends Validator {
-    private static final long serialVersionUID = 1901891944955577394L;
+    private static final long serialVersionUID = 5589488716007844048L;
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
     private transient Authentication authentication;

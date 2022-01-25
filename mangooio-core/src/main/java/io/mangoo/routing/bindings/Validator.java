@@ -26,7 +26,7 @@ import io.mangoo.i18n.Messages;
  *
  */
 public class Validator implements Serializable {
-    private static final long serialVersionUID = -2467664448802191044L;
+    private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
 

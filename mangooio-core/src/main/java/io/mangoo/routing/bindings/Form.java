@@ -1,7 +1,6 @@
 package io.mangoo.routing.bindings;
 
 import java.io.InputStream;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +23,7 @@ import io.mangoo.utils.MangooUtils;
  *
  */
 public class Form extends Validator {
-    @Serial
-    private static final long serialVersionUID = -5815141142864033904L;
-
+    private static final long serialVersionUID = 2228639200039277653L;
     private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();
     private boolean submitted;

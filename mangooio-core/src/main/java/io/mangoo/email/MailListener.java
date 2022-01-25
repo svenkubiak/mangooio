@@ -58,14 +58,14 @@ public class MailListener {
         properties.put("mail.debug", String.valueOf(config.isSmtpDebug()));
         
         if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.ssl.enable", Boolean.TRUE.toString());
+            properties.put("mail.smtp.ssl.enable", "true");
         } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
-            properties.put("mail.smtp.starttls.enable", Boolean.TRUE.toString());
+            properties.put("mail.smtp.starttls.enable", "true");
         }
         
         Authenticator authenticator = null;
         if (config.isSmtpAuthentication()) {
-            properties.put("mail.smtp.auth", true);
+            properties.put("mail.smtp.auth", "true");
             authenticator = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -73,7 +73,7 @@ public class MailListener {
                 }
             };
         } else {
-            properties.put("mail.smtp.auth", false);
+            properties.put("mail.smtp.auth", "false");
         }
         
         this.session = Session.getInstance(properties, authenticator);

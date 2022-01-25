@@ -1,15 +1,12 @@
 package io.mangoo.exceptions;
 
-import java.io.Serial;
-
 /**
  *
  * @author svenkubiak
  *
  */
 public class MangooMailerException extends Exception {
-    @Serial
-    private static final long serialVersionUID = 8991735383215886040L;
+    private static final long serialVersionUID = 3207062008795009800L;
 
     public MangooMailerException(Exception e) {
         super(e);
