@@ -24,13 +24,13 @@ import io.undertow.util.FileUtils;
  * @author svenkubiak
  *
  */
-public class MinificationTest {
+class MinificationTest {
     private static final String CSS = "p{font:normal 14px/20px helvetica, arial, sans-serif;color:#333;}.woot{font-weight:bold;}";
     private static final String TEMP = System.getProperty("java.io.tmpdir") + File.separator + "stylesheet" + File.separator;
     private static final String ASSET_PATH = "assets" + File.separator;
     
     @BeforeEach
-    public void init() {
+    void init() {
         Minification.setBasePath(TEMP);
         Minification.setAssetPath(ASSET_PATH);
         
@@ -41,7 +41,7 @@ public class MinificationTest {
     }
     
     @Test
-    public void testMinifyCSS() throws IOException {
+    void testMinifyCSS() throws IOException {
         //given
         String uuid = UUID.randomUUID().toString();
         StringBuilder buffer = new StringBuilder();
