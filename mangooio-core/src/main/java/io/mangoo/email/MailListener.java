@@ -37,6 +37,11 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 
+/**
+ * 
+ * @author svenkubiak
+ *
+ */
 @Singleton
 public class MailListener {
     private static final Logger LOG = LogManager.getLogger(MailListener.class);
@@ -119,6 +124,7 @@ public class MailListener {
                 messageBodyPart.setFileName(filename);
                 multipart.addBodyPart(messageBodyPart);
             }
+            
             mimeMessage.setContent(multipart);
         }
     }
@@ -131,10 +137,10 @@ public class MailListener {
         }
     }
 
-    private void setFrom(Mail mail, MimeMessage mimeMessage)
-            throws MessagingException, UnsupportedEncodingException, AddressException {
+    private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException, AddressException {
         String messageFromName = mail.getMessageFromName();
         String messageFromAddress = mail.getMessageFromAddress();
+        
         if (StringUtils.isNotBlank(messageFromName) && StringUtils.isNotBlank(messageFromAddress)) {
             mimeMessage.setFrom(new InternetAddress(messageFromAddress, messageFromName));
         } else {
