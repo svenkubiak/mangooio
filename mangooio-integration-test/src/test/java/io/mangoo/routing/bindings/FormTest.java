@@ -42,7 +42,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidExactMatch() {
+    void testValidExactMatch() {
         //given
         Form form = getNewForm();
         
@@ -56,7 +56,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidExactMatch() {
+    void testInvalidExactMatch() {
         //given
         Form form = getNewForm();
         
@@ -70,7 +70,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         //given
         Form form = getNewForm();
         
@@ -84,7 +84,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         //given
         Form form = getNewForm();
         
@@ -98,7 +98,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidRequired() {
+    void testValidRequired() {
         //given
         Form form = getNewForm();
         
@@ -111,7 +111,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidRequired() {
+    void testInvalidRequired() {
         //given
         Form form = getNewForm();
         
@@ -124,7 +124,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidMin() {
+    void testValidMin() {
         //given
         Form form = getNewForm();
         
@@ -137,7 +137,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidMin() {
+    void testInvalidMin() {
         //given
         Form form = getNewForm();
         
@@ -150,7 +150,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidMax() {
+    void testValidMax() {
         //given
         Form form = getNewForm();
         
@@ -163,7 +163,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidMax() {
+    void testInvalidMax() {
         //given
         Form form = getNewForm();
         
@@ -176,7 +176,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidEmail() {
+    void testValidEmail() {
         //given
         Form form = getNewForm();
         
@@ -195,7 +195,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidEmail() {
+    void testInvalidEmail() {
         //given
         Form form = getNewForm();
         
@@ -208,7 +208,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidUrl() {
+    void testValidUrl() {
         //given
         Form form = getNewForm();
         
@@ -221,7 +221,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidUrl() {
+    void testInvalidUrl() {
         //given
         Form form = getNewForm();
         
@@ -234,7 +234,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidIpv4Address() {
+    void testValidIpv4Address() {
         //given
         Form form = getNewForm();
         
@@ -247,7 +247,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidIpv4Address() {
+    void testInvalidIpv4Address() {
         //given
         Form form = getNewForm();
         
@@ -260,7 +260,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidIpv6Address() {
+    void testValidIpv6Address() {
         //given
         Form form = getNewForm();
         
@@ -273,7 +273,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidIpv6Address() {
+    void testInvalidIpv6Address() {
         //given
         Form form = getNewForm();
         
@@ -286,7 +286,7 @@ public class FormTest {
     }
 
     @Test
-    public void testValidRange() {
+    void testValidRange() {
         //given
         Form form = getNewForm();
         
@@ -299,7 +299,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidRange() {
+    void testInvalidRange() {
         //given
         Form form = getNewForm();
         
@@ -312,7 +312,7 @@ public class FormTest {
     }
     
     @Test
-    public void testValidGetValue() {
+    void testValidGetValue() {
         //given
         Form form = getNewForm();
         
@@ -325,7 +325,7 @@ public class FormTest {
     }
     
     @Test
-    public void testInvalidGetValue() {
+    void testInvalidGetValue() {
         //given
         Form form = getNewForm();
         
@@ -337,7 +337,7 @@ public class FormTest {
     }
     
     @Test
-    public void testGetString() {
+    void testGetString() {
         //given
         Form form = getNewForm();
         
@@ -350,7 +350,7 @@ public class FormTest {
     }
     
     @Test
-    public void testGetBoolean() {
+    void testGetBoolean() {
         //given
         Form form = getNewForm();
         
@@ -368,7 +368,7 @@ public class FormTest {
     }
     
     @Test
-    public void testGetInteger() {
+    void testGetInteger() {
         //given
         Form form = getNewForm();
         
@@ -380,7 +380,7 @@ public class FormTest {
     }
     
     @Test
-    public void testGetDouble() {
+    void testGetDouble() {
         //given
         Form form = getNewForm();
         
@@ -392,7 +392,7 @@ public class FormTest {
     }
     
     @Test
-    public void testGetFloat() {
+    void testGetFloat() {
         //given
         Form form = getNewForm();
         
@@ -404,7 +404,7 @@ public class FormTest {
     }
     
     @Test
-    public void testFile() throws IOException {
+    void testFile() throws IOException {
         //given
         Form form = getNewForm();
         File file = new File(UUID.randomUUID().toString());
@@ -423,7 +423,7 @@ public class FormTest {
     }
 
     @Test
-    public void testToObject() throws IOException {
+    void testToObject() throws IOException {
         //given
         Form form = getNewForm();
 

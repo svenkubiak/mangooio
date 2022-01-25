@@ -17,7 +17,7 @@ import io.mangoo.routing.Router;
 public class ServerSentEventRouteTest {
     
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
         
@@ -35,7 +35,7 @@ public class ServerSentEventRouteTest {
     }
     
     @Test
-    public void testAddingRoute() {
+    void testAddingRoute() {
         //given
         String url = "/" + UUID.randomUUID().toString();
         ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();
@@ -57,7 +57,7 @@ public class ServerSentEventRouteTest {
     }
     
     @Test
-    public void testWithAuthentication() {
+    void testWithAuthentication() {
         //given
         String url = "/" + UUID.randomUUID().toString();
         ServerSentEventRoute serverSentEventRoute = new ServerSentEventRoute();

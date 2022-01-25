@@ -25,7 +25,7 @@ import io.undertow.util.StatusCodes;
 public class I18nControllerTest {
     
     @Test
-    public void testWithOutAdditionalHeader() {
+    void testWithOutAdditionalHeader() {
         //given
         TestResponse response = TestRequest.get("/translation").execute();
         
@@ -36,7 +36,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testSpecialCharacters() {
+    void testSpecialCharacters() {
         //given
         TestResponse response = TestRequest.get("/special")
                 .withHeader("Accept-Language", "fr-FR")
@@ -49,7 +49,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testUmlaute() {
+    void testUmlaute() {
         //given
         TestResponse response = TestRequest.get("/umlaute")
                 .withHeader("Accept-Language", "de-DE")
@@ -62,7 +62,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testWithAdditionalHeaderDe() {
+    void testWithAdditionalHeaderDe() {
         //given
         TestResponse response = TestRequest.get("/translation")
                 .withHeader("Accept-Language", "de-DE")
@@ -75,7 +75,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testWithAdditionalHeaderEn() {
+    void testWithAdditionalHeaderEn() {
         //given
         TestResponse response = TestRequest.get("/translation")
                 .withHeader("Accept-Language", "en-US")
@@ -88,7 +88,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testWithInjectedAdditionalHeaderDe() {
+    void testWithInjectedAdditionalHeaderDe() {
         //given
         TestResponse response = TestRequest.get("/messages")
                 .withHeader("Accept-Language", "de-DE")
@@ -101,7 +101,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testWithInjectedMessagesDefaultLanguage() {
+    void testWithInjectedMessagesDefaultLanguage() {
         //given
         TestResponse response = TestRequest.get("/messages")
                 .execute();
@@ -113,7 +113,7 @@ public class I18nControllerTest {
     }
     
     @Test
-    public void testWithI18nCookie() {
+    void testWithI18nCookie() {
         //given
         TestBrowser browser = TestBrowser.open();
         TestResponse response = browser.withHTTPMethod(Methods.GET.toString()).to("/localize").execute();

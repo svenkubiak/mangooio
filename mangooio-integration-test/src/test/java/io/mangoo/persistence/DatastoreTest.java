@@ -31,14 +31,14 @@ public class DatastoreTest {
     }
 
     @Test
-    public void testInit() {
+    void testInit() {
         assertThat(datastore.getMongoClient(), not(nullValue()));
         assertThat(datastore.getDatastore(), not(nullValue()));
         assertThat(datastore.query(), not(nullValue()));
     }
     
     @Test
-    public void testConcurrentInsert() throws InterruptedException {
+    void testConcurrentInsert() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String id = UUID.randomUUID().toString();
@@ -53,7 +53,7 @@ public class DatastoreTest {
     }
 
     @Test
-    public void testSaveAndDrop() {
+    void testSaveAndDrop() {
         //given
         datastore.dropDatabase();
         TestModel model = new TestModel("foo");
@@ -72,7 +72,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testSaveAsync() {
+    void testSaveAsync() {
         //given
         datastore.dropDatabase();
         TestModel model = new TestModel("foo");
@@ -88,7 +88,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testConcurrentSaveAsync() {
+    void testConcurrentSaveAsync() {
         //given
         datastore.dropDatabase();
         
@@ -110,7 +110,7 @@ public class DatastoreTest {
 
 
     @Test
-    public void testFindById() {
+    void testFindById() {
         //given
         datastore.dropDatabase();
         TestModel model = new TestModel("foo");
@@ -127,7 +127,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testConcurrentFindById() {
+    void testConcurrentFindById() {
         //given
         datastore.dropDatabase();
         
@@ -145,7 +145,7 @@ public class DatastoreTest {
     }
 
     @Test
-    public void testCountAll() {
+    void testCountAll() {
         //given
         datastore.dropDatabase();
         
@@ -159,7 +159,7 @@ public class DatastoreTest {
     }
 
     @Test
-    public void testDeleteAll() {
+    void testDeleteAll() {
         //given
         datastore.dropDatabase();
         
@@ -179,7 +179,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testDelete() {
+    void testDelete() {
         //given
         TestModel testModel = new TestModel("foo");
         datastore.dropDatabase();
@@ -198,7 +198,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testDeleteAsync() {
+    void testDeleteAsync() {
         //given
         TestModel testModel = new TestModel("foo");
         datastore.dropDatabase();
@@ -217,7 +217,7 @@ public class DatastoreTest {
     }
     
     @Test
-    public void testPrefix() {
+    void testPrefix() {
         //given
         Datastore datastore = Application.getInstance(DatastoreProvider.class).getDatastore("myprefix");
         

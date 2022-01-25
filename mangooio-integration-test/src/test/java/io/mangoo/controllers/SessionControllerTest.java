@@ -24,7 +24,7 @@ import io.undertow.util.StatusCodes;
 public class SessionControllerTest {
     
     @Test
-    public void testSessionCookie() {
+    void testSessionCookie() {
         //when
         Config config = Application.getInstance(Config.class);
         TestResponse response = TestRequest.get("/session").execute();

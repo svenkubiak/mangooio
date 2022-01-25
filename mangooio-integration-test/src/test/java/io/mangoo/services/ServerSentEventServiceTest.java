@@ -42,7 +42,7 @@ import okhttp3.Headers;
 public class ServerSentEventServiceTest {
     
     @Test
-    public void testAddConnection() {
+    void testAddConnection() {
         //given
         final ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
@@ -58,7 +58,7 @@ public class ServerSentEventServiceTest {
     }
 
     @Test
-    public void testRemoveConnection() {
+    void testRemoveConnection() {
         //given
         final ServerSentEventService ServerSentEventService = Application.getInstance(ServerSentEventService.class);
         final ServerSentEventConnection serverSentEventConnection = Mockito.mock(ServerSentEventConnection.class);
@@ -74,7 +74,7 @@ public class ServerSentEventServiceTest {
     }
 
 	@Test
-	public void testCloseConnection() throws InterruptedException {
+	void testCloseConnection() throws InterruptedException {
 		//given
 		ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
 		Config config = Application.getInstance(Config.class);
@@ -103,7 +103,7 @@ public class ServerSentEventServiceTest {
 	}
 
 	@Test
-	public void testSendData() throws InterruptedException {
+	void testSendData() throws InterruptedException {
         //given
 	    String data = UUID.randomUUID().toString();
         ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
@@ -139,7 +139,7 @@ public class ServerSentEventServiceTest {
 	}
 
     @Test
-    public void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException {
+    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException {
         //given
         String data = UUID.randomUUID().toString();
         ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);

@@ -17,7 +17,7 @@ import io.mangoo.routing.Router;
 public class FileRouteTest {
 
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         FileRoute fileRoute = new FileRoute();
         
@@ -35,7 +35,7 @@ public class FileRouteTest {
     }
     
     @Test
-    public void testAddingRoute() {
+    void testAddingRoute() {
         //given
         String url = "/" + UUID.randomUUID().toString();
         FileRoute fileRoute = new FileRoute();

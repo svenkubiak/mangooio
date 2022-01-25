@@ -29,7 +29,7 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 public class MailTest {
     
     @Test
-    public void testTos() {
+    void testTos() {
         //given
         String toA = UUID.randomUUID().toString() + "@bar.com";
         String toB = UUID.randomUUID().toString() + "@foo.com";
@@ -45,7 +45,7 @@ public class MailTest {
     }
     
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         String to = UUID.randomUUID().toString() + "@bar.com";
         
@@ -58,7 +58,7 @@ public class MailTest {
     }
     
     @Test
-    public void testCcs() {
+    void testCcs() {
         //given
         String ccA = UUID.randomUUID().toString() + "@bar.com";
         String ccB = UUID.randomUUID().toString() + "@foo.com";
@@ -74,7 +74,7 @@ public class MailTest {
     }
     
     @Test
-    public void testCc() {
+    void testCc() {
         //given
         String cc = UUID.randomUUID().toString() + "@bar.com";
         
@@ -87,7 +87,7 @@ public class MailTest {
     }
     
     @Test
-    public void testBccs() {
+    void testBccs() {
         //given
         String bccA = UUID.randomUUID().toString() + "@bar.com";
         String bccB = UUID.randomUUID().toString() + "@foo.com";
@@ -103,7 +103,7 @@ public class MailTest {
     }
     
     @Test
-    public void testBcc() {
+    void testBcc() {
         //given
         String bcc = UUID.randomUUID().toString() + "@bar.com";
         
@@ -116,7 +116,7 @@ public class MailTest {
     }
     
     @Test
-    public void testSubject() {
+    void testSubject() {
         //given
         String subject = UUID.randomUUID().toString();
         
@@ -129,7 +129,7 @@ public class MailTest {
     }
     
     @Test
-    public void testFromAddress() {
+    void testFromAddress() {
         //given
         String from = "foo@bar.com";
         
@@ -142,7 +142,7 @@ public class MailTest {
     }
     
     @Test
-    public void testFromAddressAndName() {
+    void testFromAddressAndName() {
         //given
         String fromAddress = "foo@bar.com";
         String fromName = "Peter Parker";
@@ -158,7 +158,7 @@ public class MailTest {
     }
     
     @Test
-    public void testHeader() {
+    void testHeader() {
         //given
         String myHeader = "myHeader";
         String myHeaderValue = "myHeaderValue";
@@ -172,7 +172,7 @@ public class MailTest {
     }
     
     @Test
-    public void testReplyTo() {
+    void testReplyTo() {
         //given
         String replyTo = "foo@bar.com";
         
@@ -185,7 +185,7 @@ public class MailTest {
     }
     
     @Test
-    public void testPriority() {
+    void testPriority() {
         //given
         int priority = 4;
         
@@ -198,7 +198,7 @@ public class MailTest {
     }
     
     @Test
-    public void testAttachment() throws IOException {
+    void testAttachment() throws IOException {
         //given
         File file = new File(UUID.randomUUID().toString() + ".txt");
         file.createNewFile();
@@ -214,7 +214,7 @@ public class MailTest {
     }
     
     @Test
-    public void testAttachments() throws IOException {
+    void testAttachments() throws IOException {
         //given
         File fileA = new File(UUID.randomUUID().toString() + ".txt");
         fileA.createNewFile();
@@ -236,7 +236,7 @@ public class MailTest {
     }
     
     @Test
-    public void testTextMessage() {
+    void testTextMessage() {
         //given
         String message = UUID.randomUUID().toString();
         
@@ -249,7 +249,7 @@ public class MailTest {
     }
     
     @Test
-    public void testHtmlMessage() {
+    void testHtmlMessage() {
         //given
         String message = UUID.randomUUID().toString();
         
@@ -263,7 +263,7 @@ public class MailTest {
     }
     
     @Test
-    public void testTextMessageWithTemplate() throws MangooTemplateEngineException {
+    void testTextMessageWithTemplate() throws MangooTemplateEngineException {
         //given
         String message = UUID.randomUUID().toString();
         Map<String, Object> content = new HashMap<>();
@@ -279,7 +279,7 @@ public class MailTest {
     }
     
     @Test
-    public void testHtmlMessageWithTemplate() throws MangooTemplateEngineException {
+    void testHtmlMessageWithTemplate() throws MangooTemplateEngineException {
         //given
         String message = UUID.randomUUID().toString();
         Map<String, Object> content = new HashMap<>();

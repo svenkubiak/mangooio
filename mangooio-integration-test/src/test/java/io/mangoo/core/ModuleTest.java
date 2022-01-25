@@ -26,7 +26,7 @@ import io.mangoo.templating.TemplateEngine;
 @ExtendWith({TestExtension.class})
 public class ModuleTest {
 	@Test
-	public void testBindings() {
+	void testBindings() {
         //given
 		Injector guice = Application.getInjector();
 		

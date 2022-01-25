@@ -17,7 +17,7 @@ import io.mangoo.TestExtension;
 public class EnumsTest {
     
     @Test
-    public void testBinding() {
+    void testBinding() {
         //then
         assertThat(Binding.fromString("io.mangoo.routing.bindings.Authentication"), equalTo(Binding.AUTHENTICATION));
         assertThat(Binding.fromString("java.lang.Double"), equalTo(Binding.DOUBLE));

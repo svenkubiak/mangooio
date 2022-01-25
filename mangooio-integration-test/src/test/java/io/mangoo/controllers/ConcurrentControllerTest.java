@@ -23,7 +23,7 @@ import io.undertow.util.StatusCodes;
 public class ConcurrentControllerTest {
 
     @Test
-    public void testConcurrentJsonParsing() throws InterruptedException {
+    void testConcurrentJsonParsing() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();

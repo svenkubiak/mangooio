@@ -24,7 +24,7 @@ public class CodecUtilsTest {
     private static final String PLAIN = "this is a plain text";
     
     @Test
-    public void testHexSHA512() {
+    void testHexSHA512() {
         //given
         String hex = CodecUtils.hexSHA512(PLAIN);
         
@@ -34,7 +34,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentHexSHA512() throws InterruptedException {
+    void testConcurrentHexSHA512() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String hex = CodecUtils.hexSHA512(PLAIN);
@@ -45,7 +45,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testHashArgon2() {
+    void testHashArgon2() {
         //given
         String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
         
@@ -54,7 +54,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentHashArgon2() {
+    void testConcurrentHashArgon2() {
         MatcherAssert.assertThat(t -> {
             //given
             String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
@@ -65,7 +65,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testMatchArgon2() {
+    void testMatchArgon2() {
         //given
         String salt = MangooUtils.randomString(24);
         String hash = CodecUtils.hashArgon2(PLAIN, salt);
@@ -78,7 +78,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testNonMatchSaltArgon2() {
+    void testNonMatchSaltArgon2() {
         //given
         String salt = MangooUtils.randomString(24);
         String hash = CodecUtils.hashArgon2(PLAIN, MangooUtils.randomString(24));
@@ -91,7 +91,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testNonMatchHashArgon2() {
+    void testNonMatchHashArgon2() {
         //given
         String salt = MangooUtils.randomString(24);
         String hash = CodecUtils.hashArgon2(PLAIN, salt);
@@ -104,7 +104,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentMatchArgon2() throws InterruptedException {
+    void testConcurrentMatchArgon2() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String salt = MangooUtils.randomString(24);
@@ -119,7 +119,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testSerialize() {
+    void testSerialize() {
         //given
         Form form = Application.getInstance(Form.class);
         form.addValue("foo", "bar");
@@ -131,7 +131,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentSerialize() throws Exception {
+    void testConcurrentSerialize() throws Exception {
         MatcherAssert.assertThat(t -> {
             //given
             Form form = Application.getInstance(Form.class);
@@ -144,7 +144,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testDeserialize() {
+    void testDeserialize() {
         //given
         Form form = CodecUtils.deserializeFromBase64(SERIALIZED);
         
@@ -155,7 +155,7 @@ public class CodecUtilsTest {
     }
     
     @Test
-    public void testConcurrentDeserialize() throws InterruptedException {
+    void testConcurrentDeserialize() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             Form form = CodecUtils.deserializeFromBase64(SERIALIZED);

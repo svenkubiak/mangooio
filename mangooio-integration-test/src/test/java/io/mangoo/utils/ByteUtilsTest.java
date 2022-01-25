@@ -12,7 +12,7 @@ import io.mangoo.TestExtension;
 public class ByteUtilsTest {
     
     @Test
-    public void testBitLengthAsByte() {
+    void testBitLengthAsByte() {
         //given
         String string = "jhjfksHjKSHjdkhsjdk2222";
         
@@ -21,7 +21,7 @@ public class ByteUtilsTest {
     }
     
     @Test
-    public void testBitLengthAsString() {
+    void testBitLengthAsString() {
         //given
         String string = "jhjfksHjKSHjdfdfdsfdsfskhsjdk2222";
         

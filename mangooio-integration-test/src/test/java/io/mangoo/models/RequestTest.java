@@ -23,7 +23,7 @@ import io.mangoo.routing.bindings.Session;
 public class RequestTest {
 
     @Test
-    public void testBuild() {
+    void testBuild() {
         //given
         Request reqeust = new Request()
                 .withAuthentication(Application.getInstance(Authentication.class))

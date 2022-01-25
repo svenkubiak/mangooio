@@ -25,7 +25,7 @@ public class WebSocketControllerTest {
     private static boolean connected = false;
 
     @Test
-    public void testWebSocketConnection() throws Exception {
+    void testWebSocketConnection() throws Exception {
         // given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);

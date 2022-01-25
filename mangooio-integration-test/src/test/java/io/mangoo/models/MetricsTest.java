@@ -19,7 +19,7 @@ import io.mangoo.core.Application;
 public class MetricsTest {
     
     @Test
-    public void testAddStatusCode() {
+    void testAddStatusCode() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -36,7 +36,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testIncrementContentLength() {
+    void testIncrementContentLength() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -51,7 +51,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testReset() {
+    void testReset() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -74,7 +74,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -90,7 +90,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testMinCount() {
+    void testMinCount() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -106,7 +106,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testMaxCount() {
+    void testMaxCount() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -122,7 +122,7 @@ public class MetricsTest {
     }
     
     @Test
-    public void testAvgCount() {
+    void testAvgCount() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         

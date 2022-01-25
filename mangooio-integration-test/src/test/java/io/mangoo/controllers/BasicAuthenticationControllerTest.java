@@ -16,7 +16,7 @@ import io.undertow.util.StatusCodes;
 @ExtendWith({TestExtension.class})
 public class BasicAuthenticationControllerTest {
     @Test
-    public void testBasicAuthenticationFail() {
+    void testBasicAuthenticationFail() {
         //given
         final TestResponse response = TestRequest.get("/basicauth").execute();
 
@@ -26,7 +26,7 @@ public class BasicAuthenticationControllerTest {
     }
     
     @Test
-    public void testBasicAuthenticationSuccess() {
+    void testBasicAuthenticationSuccess() {
         //given
         final TestResponse response = TestRequest.get("/basicauth").withBasicAuthentication("foo", "bar").execute();
 

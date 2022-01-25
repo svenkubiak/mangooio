@@ -26,7 +26,7 @@ import io.mangoo.templating.TemplateEngine;
 public class AttachmentTest {
 
     @Test
-    public void testCreateAttachment() {
+    void testCreateAttachment() {
         //given
         Attachment attachment = Attachment.build();
         

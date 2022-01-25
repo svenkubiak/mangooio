@@ -50,7 +50,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MangooTemplateEngineException {
+    void testHtmlEmail() throws MangooMailerException, FolderException, IOException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("thewall.com").length, equalTo(0));
@@ -71,7 +71,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testMultiPartEmailFile() throws MangooMailerException, IOException, FolderException, MangooTemplateEngineException {
+    void testMultiPartEmailFile() throws MangooMailerException, IOException, FolderException, MangooTemplateEngineException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -98,7 +98,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
+    void testBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -117,7 +117,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testConcurrentBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
+    void testConcurrentBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String domain = MangooUtils.randomString(16) + ".com";
@@ -139,7 +139,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testPlainEncoding() throws FolderException, MangooMailerException, IOException {
+    void testPlainEncoding() throws FolderException, MangooMailerException, IOException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));
@@ -159,7 +159,7 @@ public class SendMailTest {
     }
     
     @Test
-    public void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
+    void testHtmlEncoding() throws FolderException, MangooMailerException, MessagingException, IOException {
         //given
         greenMail.purgeEmailFromAllMailboxes();
         assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(0));

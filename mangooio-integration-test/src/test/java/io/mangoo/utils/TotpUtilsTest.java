@@ -22,7 +22,7 @@ public class TotpUtilsTest {
 	private static final int SECRET_LENGTH = 64;
 
 	@Test
-	public void testCreateKey() {
+	void testCreateKey() {
         //given
         String secret = TotpUtils.createSecret();
         
@@ -32,7 +32,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testCreateKeyConcurrent() throws InterruptedException {
+	void testCreateKeyConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = TotpUtils.createSecret();
@@ -43,7 +43,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testGetTotp() {
+	void testGetTotp() {
         //given
 		String secret = TotpUtils.createSecret();
 		
@@ -56,7 +56,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testGetTotpConcurrent() throws InterruptedException {
+	void testGetTotpConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = TotpUtils.createSecret();
@@ -70,7 +70,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testVerifyTotp() {
+	void testVerifyTotp() {
         //given
 		String secret = TotpUtils.createSecret();
 		String totp = TotpUtils.getTotp(secret);
@@ -80,7 +80,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testVerifyTotpConcurrent() throws InterruptedException {
+	void testVerifyTotpConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = TotpUtils.createSecret();
@@ -92,7 +92,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testGetQRCode() {
+	void testGetQRCode() {
         //given
 		String secret = TotpUtils.createSecret();
 		String qr = TotpUtils.getQRCode("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
@@ -103,7 +103,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testGetTotpURL() {
+	void testGetTotpURL() {
         //given
 		String secret = "foo";
 		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
@@ -114,7 +114,7 @@ public class TotpUtilsTest {
 	}
 	
 	@Test
-	public void testGetTotpURLConcurrent() throws InterruptedException {
+	void testGetTotpURLConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = "foo";

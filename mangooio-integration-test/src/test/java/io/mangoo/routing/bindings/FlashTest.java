@@ -25,7 +25,7 @@ public class FlashTest {
     private static final String ERROR_MESSAGE = "This is an error message!";
 
     @Test
-    public void testSuccessMessage() {
+    void testSuccessMessage() {
         //given
         final Flash flash = new Flash();
 
@@ -37,7 +37,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testWarningMessage() {
+    void testWarningMessage() {
         //given
         final Flash flash = new Flash();
 
@@ -49,7 +49,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testErrorMessage() {
+    void testErrorMessage() {
         //given
         final Flash flash = new Flash();
 
@@ -61,7 +61,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testNoContent() {
+    void testNoContent() {
         //given
         final Flash flash = new Flash();
 
@@ -70,7 +70,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testContent() {
+    void testContent() {
         //given
         final Flash flash = new Flash();
 
@@ -83,7 +83,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testInvalidCharacters() {
+    void testInvalidCharacters() {
         //given
         final Flash flash = new Flash();
 
@@ -102,7 +102,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testNoDiscard() {
+    void testNoDiscard() {
         //given
         final Flash flash = new Flash();
 
@@ -111,7 +111,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testValues() {
+    void testValues() {
         //given
         final Flash flash = new Flash();
 
@@ -120,7 +120,7 @@ public class FlashTest {
     }
 
     @Test
-    public void testDiscard() {
+    void testDiscard() {
         //given
         final Flash flash = new Flash();
 

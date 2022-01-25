@@ -23,7 +23,7 @@ import io.mangoo.interfaces.MangooBootstrap;
 public class RouterTest {
     
     @Test
-    public void testAddRoute() {
+    void testAddRoute() {
         //given
         On.get().to("/foo").respondeWith("index");
         
@@ -33,7 +33,7 @@ public class RouterTest {
     }
     
     @Test()
-    public void testMaxRoutes() {
+    void testMaxRoutes() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             for (int i=0; i <= 100000; i++) {
                 Bind.controller(ApplicationController.class).withRoutes(

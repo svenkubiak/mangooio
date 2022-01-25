@@ -25,7 +25,7 @@ import io.mangoo.exceptions.MangooEventBusException;
 public class EventBusServiceTest {
 
     @Test
-    public void testEventBus() throws MangooEventBusException, InterruptedException  {
+    void testEventBus() throws MangooEventBusException, InterruptedException  {
         //given
         EventBusService busManager = Application.getInstance(EventBusService.class);
         TestListener testListener = new TestListener();

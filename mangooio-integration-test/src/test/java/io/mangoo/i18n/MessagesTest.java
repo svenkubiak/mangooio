@@ -21,7 +21,7 @@ import io.mangoo.enums.Validation;
 public class MessagesTest {
     
     @Test
-    public void testReload() {
+    void testReload() {
         //given
         Messages messages = Application.getInstance(Messages.class);
         messages.reload(Locale.GERMAN);
@@ -37,7 +37,7 @@ public class MessagesTest {
     }
     
     @Test
-    public void testGet() {
+    void testGet() {
         //given
         Messages messages = Application.getInstance(Messages.class);
 
@@ -49,7 +49,7 @@ public class MessagesTest {
     }
     
     @Test
-    public void testGetWithKey() {
+    void testGetWithKey() {
         //given
         Messages messages = Application.getInstance(Messages.class);
         messages.reload(Locale.ENGLISH);

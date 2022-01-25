@@ -16,7 +16,7 @@ import io.undertow.util.StatusCodes;
 @ExtendWith({TestExtension.class})
 public class SubControllerTest {
     @Test
-    public void testSubPackageGet() {
+    void testSubPackageGet() {
         //given
         TestResponse response = TestRequest.get("/subcontroller").execute();
 

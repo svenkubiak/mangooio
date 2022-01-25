@@ -24,7 +24,7 @@ import io.mangoo.enums.Header;
 public class ServerTest {
     
     @Test
-    public void testAdditionalHeader() {
+    void testAdditionalHeader() {
         //then
         List<Entry<Header, String>> collect = Server.headers()
                 .entrySet()

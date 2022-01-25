@@ -17,7 +17,7 @@ import io.mangoo.core.Application;
 @ExtendWith({TestExtension.class})
 public class TemplateEngineTest {
     @Test
-    public void testGetTemplateName() {
+    void testGetTemplateName() {
         //given
         TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
         

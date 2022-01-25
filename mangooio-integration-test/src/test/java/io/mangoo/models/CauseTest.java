@@ -18,7 +18,7 @@ import io.mangoo.TestExtension;
 @ExtendWith({TestExtension.class})
 public class CauseTest {
     @Test
-    public void testCreateCause() {
+    void testCreateCause() {
         //given
         Source source = new Source(true, 42, "foo");
         

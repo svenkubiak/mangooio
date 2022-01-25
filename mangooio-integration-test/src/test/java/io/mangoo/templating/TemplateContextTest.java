@@ -24,7 +24,7 @@ import io.mangoo.templating.methods.PrettyTimeMethod;
 @ExtendWith({TestExtension.class})
 public class TemplateContextTest {
     @Test
-    public void testCreation() {
+    void testCreation() {
         //given
         Map<String, Object> content = new HashMap<>();
         content.put("foo", "bar");

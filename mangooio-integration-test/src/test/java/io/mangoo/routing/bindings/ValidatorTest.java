@@ -38,7 +38,7 @@ public class ValidatorTest {
     private static final String CUSTOM_ERROR_MESSAGE = "Custom error message";
 
     @Test
-    public void testDefaultErrorMessages() {
+    void testDefaultErrorMessages() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -85,7 +85,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testCustomErrorMessages() {
+    void testCustomErrorMessages() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -134,7 +134,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidRequired() {
+    void testValidRequired() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -147,7 +147,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidRequired() {
+    void testInvalidRequired() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -161,7 +161,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMinString() {
+    void testValidMinString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -175,7 +175,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMinString() {
+    void testInvalidMinString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -189,7 +189,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMinNumeric() {
+    void testValidMinNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -203,7 +203,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMinNumeric() {
+    void testInvalidMinNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -217,7 +217,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMaxString() {
+    void testValidMaxString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -231,7 +231,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMaxString() {
+    void testInvalidMaxString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -245,7 +245,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMaxNumeric() {
+    void testValidMaxNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -259,7 +259,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMaxNumeric() {
+    void testInvalidMaxNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -273,7 +273,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidDomainName() {
+    void testValidDomainName() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -287,7 +287,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidDomainName() {
+    void testInvalidDomainName() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -301,7 +301,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidExactMatch() {
+    void testValidExactMatch() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -315,7 +315,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidExactMatch() {
+    void testInvalidExactMatch() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -330,7 +330,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -345,7 +345,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -359,7 +359,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidMatchValues() {
+    void testValidMatchValues() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -373,7 +373,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidMatchValues() {
+    void testInvalidMatchValues() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -387,7 +387,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidEmail() {
+    void testValidEmail() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -401,7 +401,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidEmail() {
+    void testInvalidEmail() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -415,7 +415,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidIpv4Address() {
+    void testValidIpv4Address() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -429,7 +429,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidIpv4Address() {
+    void testInvalidIpv4Address() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -443,7 +443,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidIpv6Address() {
+    void testValidIpv6Address() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -457,7 +457,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidIpv6Address() {
+    void testInvalidIpv6Address() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -471,7 +471,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidRangeString() {
+    void testValidRangeString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -485,7 +485,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidRangeString() {
+    void testInvalidRangeString() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -499,7 +499,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidRangeNumeric() {
+    void testValidRangeNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -513,7 +513,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidRangeNumeric() {
+    void testInvalidRangeNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -527,7 +527,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidRegex() {
+    void testValidRegex() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -541,7 +541,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidRegex() {
+    void testInvalidRegex() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -555,7 +555,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidUrl() {
+    void testValidUrl() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -569,7 +569,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidUrl() {
+    void testInvalidUrl() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -583,7 +583,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidNumeric() {
+    void testValidNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -597,7 +597,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidNumeric() {
+    void testInvalidNumeric() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -611,7 +611,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidValidateTrue() {
+    void testValidValidateTrue() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -625,7 +625,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidValidateTrue() {
+    void testInvalidValidateTrue() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -639,7 +639,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidValidateFalse() {
+    void testValidValidateFalse() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -653,7 +653,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidValidateFalse() {
+    void testInvalidValidateFalse() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -667,7 +667,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidValidateNotNull() {
+    void testValidValidateNotNull() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -682,7 +682,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidValidateNotNull() {
+    void testInvalidValidateNotNull() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -697,7 +697,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidValidateNull() {
+    void testValidValidateNull() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 
@@ -712,7 +712,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testInvalidValidateNull() {
+    void testInvalidValidateNull() {
         // given
         Validator validator = Application.getInstance(Validator.class);
 

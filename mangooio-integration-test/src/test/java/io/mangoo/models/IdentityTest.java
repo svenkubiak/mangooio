@@ -22,7 +22,7 @@ public class IdentityTest {
     private static final char [] password = {'b','a','r'};
     
     @Test
-    public void testValidVerify() {
+    void testValidVerify() {
         //given
         Identity identity = new Identity("foo", "bar");
         PasswordCredential credential = new PasswordCredential(password);
@@ -36,7 +36,7 @@ public class IdentityTest {
     }
     
     @Test
-    public void testNonValidVerify() {
+    void testNonValidVerify() {
         //given
         Identity identity = new Identity("foo", "abar");
         PasswordCredential credential = new PasswordCredential(password);

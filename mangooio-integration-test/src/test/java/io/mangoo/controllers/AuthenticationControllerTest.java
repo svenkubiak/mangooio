@@ -25,7 +25,7 @@ public class AuthenticationControllerTest {
     private static final String USERNAME = "foo";
 
     @Test
-    public void testNotAuthenticated() {
+    void testNotAuthenticated() {
         //given
         TestResponse response = TestRequest.get("/authenticationrequired")
                 .withDisabledRedirects()
@@ -38,7 +38,7 @@ public class AuthenticationControllerTest {
     }
     
     @Test
-    public void testSubject() {
+    void testSubject() {
         //given
         TestResponse response = TestRequest.get("/subject")
                 .execute();
@@ -71,7 +71,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testAuthenticated() {
+    void testAuthenticated() {
         //given
         TestBrowser instance = TestBrowser.open();
 

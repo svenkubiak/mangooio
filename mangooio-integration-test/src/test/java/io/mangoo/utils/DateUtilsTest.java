@@ -20,7 +20,7 @@ import io.mangoo.TestExtension;
 public class DateUtilsTest {
     
     @Test
-    public void testLocalDateTimeToDate() {
+    void testLocalDateTimeToDate() {
         //given
         LocalDateTime localDateTime = LocalDateTime.now();
         
@@ -29,7 +29,7 @@ public class DateUtilsTest {
     }
     
     @Test
-    public void testConcurrentLocalDateTimeToDate() throws InterruptedException {
+    void testConcurrentLocalDateTimeToDate() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -40,7 +40,7 @@ public class DateUtilsTest {
     }
     
     @Test
-    public void testLocalDateToDate() {
+    void testLocalDateToDate() {
         //given
         LocalDate localDate = LocalDate.now();
         
@@ -49,7 +49,7 @@ public class DateUtilsTest {
     }
     
     @Test
-    public void testConcurrentLocalDateToDate() throws InterruptedException {
+    void testConcurrentLocalDateToDate() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             LocalDateTime localDateTime = LocalDateTime.now();
