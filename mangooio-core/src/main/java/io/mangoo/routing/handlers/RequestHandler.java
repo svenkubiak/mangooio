@@ -192,7 +192,7 @@ public class RequestHandler implements HttpHandler {
         for (final Map.Entry<String, Class<?>> entry : attachment.getMethodParameters().entrySet()) {
             final String key = entry.getKey();
             final Class<?> clazz = entry.getValue();
-            final Binding binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
+            final var binding = Optional.ofNullable(Binding.fromString(clazz.getName())).orElse(Binding.UNDEFINED);
 
             convertedParameters[index] = switch (binding) {
                 case FORM -> attachment.getForm();

@@ -54,9 +54,8 @@ public class MailListener {
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
         properties.put("mail.smtp.port", String.valueOf(config.getSmtpPort()));
-        properties.put("mail.smtp.auth", config.isSmtpAuthentication());
         properties.put("mail.from", config.getSmtpFrom());
-        properties.put("mail.debug", config.isSmtpDebug() ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+        properties.put("mail.debug", String.valueOf(config.isSmtpDebug()));
         
         if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
             properties.put("mail.smtp.ssl.enable", Boolean.TRUE.toString());
@@ -66,12 +65,15 @@ public class MailListener {
         
         Authenticator authenticator = null;
         if (config.isSmtpAuthentication()) {
+            properties.put("mail.smtp.auth", true);
             authenticator = new Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(config.getSmtpUsername(), config.getSmtpPassword());
                 }
             };
+        } else {
+            properties.put("mail.smtp.auth", false);
         }
         
         this.session = Session.getInstance(properties, authenticator);
