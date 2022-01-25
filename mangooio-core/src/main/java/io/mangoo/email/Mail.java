@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
+import io.mangoo.services.EventBusService;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
 
@@ -263,11 +263,9 @@ public class Mail {
     
     /**
      * Sends the mail
-     * 
-     * @throws MangooMailerException when sending the mail failed
      */
-    public void send() throws MangooMailerException {
-        Application.getInstance(MailEvent.class).send(this);
+    public void send() {
+        Application.getInstance(EventBusService.class).publish(this);
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {

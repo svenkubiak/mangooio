@@ -11,10 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMail;
@@ -26,6 +29,7 @@ import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.test.email.SmtpMock;
+import io.mangoo.utils.MangooUtils;
 import jakarta.mail.MessagingException;
 
 /**
@@ -110,6 +114,28 @@ public class SendMailTest {
         //then
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com").length, equalTo(1)));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain("westeros.com")[0].getContent().toString(), containsString("what is dead may never die")));
+    }
+    
+    @Test
+    public void testConcurrentBody() throws MangooMailerException, IOException, FolderException, InterruptedException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String domain = MangooUtils.randomString(16) + ".com";
+            String subject = MangooUtils.randomString(32);
+            
+            //when
+            Mail.newMail()
+                .from("Jon snow", "jon.snow@winterfell.com")
+                .to("sansa.stark@" + domain)
+                .subject(subject)
+                .textMessage("what is dead may never die")
+                .send();
+            
+            // then
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(domain).length, equalTo(1)));
+
+            return greenMail.getReceivedMessagesForDomain(domain)[0].getSubject().equals(subject);
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

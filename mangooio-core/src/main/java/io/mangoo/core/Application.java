@@ -41,6 +41,7 @@ import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.email.MailListener;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -122,6 +123,7 @@ public final class Application {
             prepareRoutes();
             createRoutes();
             prepareDatastore();
+            prepareMail();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -239,6 +241,13 @@ public final class Application {
      */
     private static void prepareDatastore() {
         getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
+    }
+    
+    /**
+     * Configures async mailer
+     */
+    private static void prepareMail() {
+        getInstance(EventBusService.class).register(getInstance(MailListener.class));
     }
 
     /**
