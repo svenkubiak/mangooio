@@ -19,7 +19,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FlashControllerTest {
+class FlashControllerTest {
     @Test
     void testFlash() {
         //given

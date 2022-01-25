@@ -33,7 +33,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 @ExtendWith({TestExtension.class})
-public class ConfigTest {
+class ConfigTest {
     
     @Test
     void testFlashCookieName() {

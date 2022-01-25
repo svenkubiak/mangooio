@@ -26,7 +26,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ParameterControllerTest {
+class ParameterControllerTest {
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
 
     @Test

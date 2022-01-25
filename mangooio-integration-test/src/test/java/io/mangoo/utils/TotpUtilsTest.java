@@ -17,7 +17,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.enums.HmacShaAlgorithm;
 
 @ExtendWith({TestExtension.class})
-public class TotpUtilsTest {
+class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;
 

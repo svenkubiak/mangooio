@@ -37,7 +37,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ApplicationControllerTest {
+class ApplicationControllerTest {
     private static final String JSON = "{\"foo\":\"bar\"}";
     private static final String JSON_PLAIN = "{foo=bar}";
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";

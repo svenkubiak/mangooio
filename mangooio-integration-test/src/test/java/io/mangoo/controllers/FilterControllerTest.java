@@ -20,7 +20,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FilterControllerTest {
+class FilterControllerTest {
 
     @Test
     void testFilterWithAdditionalContent() {

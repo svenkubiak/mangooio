@@ -17,7 +17,7 @@ import io.mangoo.TestExtension;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FlashTest {
+class FlashTest {
     private static final String MYMESSAGE = "mymessage";
     private static final String CUSTOM_MESSAGE = "This is my custom message";
     private static final String SUCCESS_MESSAGE = "This is a success message!";

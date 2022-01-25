@@ -39,7 +39,7 @@ import okhttp3.Headers;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ServerSentEventServiceTest {
+class ServerSentEventServiceTest {
     
     @Test
     void testAddConnection() {

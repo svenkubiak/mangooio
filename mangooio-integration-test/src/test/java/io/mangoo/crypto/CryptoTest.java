@@ -29,7 +29,7 @@ import io.mangoo.utils.MangooUtils;
  */
 @ExtendWith({TestExtension.class})
 @SuppressWarnings("unchecked")
-public class CryptoTest {
+class CryptoTest {
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
     private static final String plainText = "This is a super secret message!";
     private static final String key33 = "123456789012345678901234567890123";

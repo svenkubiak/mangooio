@@ -10,7 +10,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.enums.Http;
 
 @ExtendWith({TestExtension.class})
-public class RequestRouteTest {
+class RequestRouteTest {
 
     @Test
     void testTo() {

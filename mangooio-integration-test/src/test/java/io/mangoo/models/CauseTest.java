@@ -16,7 +16,7 @@ import io.mangoo.TestExtension;
  *
  */
 @ExtendWith({TestExtension.class})
-public class CauseTest {
+class CauseTest {
     @Test
     void testCreateCause() {
         //given

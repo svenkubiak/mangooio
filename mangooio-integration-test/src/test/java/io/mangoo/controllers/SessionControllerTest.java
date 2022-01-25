@@ -21,7 +21,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class SessionControllerTest {
+class SessionControllerTest {
     
     @Test
     void testSessionCookie() {

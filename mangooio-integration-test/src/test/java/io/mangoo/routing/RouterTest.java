@@ -20,7 +20,7 @@ import io.mangoo.interfaces.MangooBootstrap;
  *
  */
 @ExtendWith({TestExtension.class})
-public class RouterTest {
+class RouterTest {
     
     @Test
     void testAddRoute() {

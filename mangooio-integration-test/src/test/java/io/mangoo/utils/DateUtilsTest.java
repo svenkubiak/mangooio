@@ -17,7 +17,7 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 import io.mangoo.TestExtension;
 
 @ExtendWith({TestExtension.class})
-public class DateUtilsTest {
+class DateUtilsTest {
     
     @Test
     void testLocalDateTimeToDate() {

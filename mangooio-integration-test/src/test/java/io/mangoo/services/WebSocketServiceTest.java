@@ -40,7 +40,7 @@ import io.undertow.websockets.core.WebSockets;
  *
  */
 @ExtendWith({TestExtension.class})
-public class WebSocketServiceTest {
+class WebSocketServiceTest {
     private static String eventData;
 
     @Test

@@ -24,7 +24,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.enums.Default;
 
 @ExtendWith({TestExtension.class})
-public class MangooUtilsTest {
+class MangooUtilsTest {
     @Test
     void testGetVersion() throws InterruptedException {
         //then

@@ -15,7 +15,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class WebSocketRouteTest {
+class WebSocketRouteTest {
     
     @Test
     void testTo() {

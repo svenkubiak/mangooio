@@ -38,7 +38,7 @@ import jakarta.mail.MessagingException;
  *
  */
 @ExtendWith({TestExtension.class})
-public class SendMailTest {
+class SendMailTest {
     private static GreenMail greenMail;
     private static SmtpMock smtp;
 

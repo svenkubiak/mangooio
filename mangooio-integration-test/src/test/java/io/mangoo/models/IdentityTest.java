@@ -18,7 +18,7 @@ import io.undertow.security.idm.PasswordCredential;
  *
  */
 @ExtendWith({TestExtension.class})
-public class IdentityTest {
+class IdentityTest {
     private static final char [] password = {'b','a','r'};
     
     @Test

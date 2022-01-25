@@ -26,7 +26,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class JsonControllerTest {
+class JsonControllerTest {
     private static final String json = "{\"firstname\":\"Peter\",\"lastname\":\"Parker\",\"age\":24}";
 
     @Test

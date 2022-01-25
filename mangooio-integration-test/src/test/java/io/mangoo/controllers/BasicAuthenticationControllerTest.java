@@ -14,7 +14,7 @@ import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 @ExtendWith({TestExtension.class})
-public class BasicAuthenticationControllerTest {
+class BasicAuthenticationControllerTest {
     @Test
     void testBasicAuthenticationFail() {
         //given

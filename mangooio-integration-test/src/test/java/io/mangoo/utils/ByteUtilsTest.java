@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import io.mangoo.TestExtension;
 
 @ExtendWith({TestExtension.class})
-public class ByteUtilsTest {
+class ByteUtilsTest {
     
     @Test
     void testBitLengthAsByte() {

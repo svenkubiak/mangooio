@@ -22,7 +22,7 @@ import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
 
 @ExtendWith({TestExtension.class})
-public class DatastoreTest {
+class DatastoreTest {
     private static Datastore datastore;
 
     @BeforeAll

@@ -20,7 +20,7 @@ import io.mangoo.routing.bindings.Session;
  *
  */
 @ExtendWith({TestExtension.class})
-public class RequestTest {
+class RequestTest {
 
     @Test
     void testBuild() {

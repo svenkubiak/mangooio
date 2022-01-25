@@ -27,7 +27,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class AdminControllerTest {
+class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String EVICTIONS = "Evictions";
     private static final String LOGGER = "logger";

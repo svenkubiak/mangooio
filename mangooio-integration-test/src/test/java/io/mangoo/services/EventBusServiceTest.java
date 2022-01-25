@@ -22,7 +22,7 @@ import io.mangoo.exceptions.MangooEventBusException;
  *
  */
 @ExtendWith({TestExtension.class})
-public class EventBusServiceTest {
+class EventBusServiceTest {
 
     @Test
     void testEventBus() throws MangooEventBusException, InterruptedException  {

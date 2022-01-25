@@ -19,7 +19,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class HttpMethodsTest {
+class HttpMethodsTest {
     
     @Test
     void testGet() {

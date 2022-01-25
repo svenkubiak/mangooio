@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ValidatorTest {
+class ValidatorTest {
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9_.]+$");
     private static final String URL = "url";
     private static final String REGEX = "regex";

@@ -38,7 +38,7 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 @ExtendWith({TestExtension.class})
-public class InjectionTest {
+class InjectionTest {
 
     @Test
     void testForm() {

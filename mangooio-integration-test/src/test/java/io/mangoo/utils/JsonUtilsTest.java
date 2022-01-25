@@ -19,7 +19,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
 
 @ExtendWith({TestExtension.class})
-public class JsonUtilsTest {
+class JsonUtilsTest {
     private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test

@@ -20,7 +20,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ConcurrentControllerTest {
+class ConcurrentControllerTest {
 
     @Test
     void testConcurrentJsonParsing() throws InterruptedException {

@@ -23,7 +23,7 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 @ExtendWith({TestExtension.class})
-public class AttachmentTest {
+class AttachmentTest {
 
     @Test
     void testCreateAttachment() {

@@ -21,7 +21,7 @@ import io.mangoo.core.Config;
  *
  */
 @ExtendWith({ TestExtension.class })
-public class WebSocketControllerTest {
+class WebSocketControllerTest {
     private static boolean connected = false;
 
     @Test

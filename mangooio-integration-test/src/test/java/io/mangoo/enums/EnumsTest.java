@@ -14,7 +14,7 @@ import io.mangoo.TestExtension;
  *
  */
 @ExtendWith({TestExtension.class})
-public class EnumsTest {
+class EnumsTest {
     
     @Test
     void testBinding() {

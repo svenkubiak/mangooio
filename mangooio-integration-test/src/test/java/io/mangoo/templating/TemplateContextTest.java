@@ -22,7 +22,7 @@ import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
 
 @ExtendWith({TestExtension.class})
-public class TemplateContextTest {
+class TemplateContextTest {
     @Test
     void testCreation() {
         //given

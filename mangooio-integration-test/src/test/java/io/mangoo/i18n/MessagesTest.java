@@ -18,7 +18,7 @@ import io.mangoo.enums.Validation;
  *
  */
 @ExtendWith({TestExtension.class})
-public class MessagesTest {
+class MessagesTest {
     
     @Test
     void testReload() {

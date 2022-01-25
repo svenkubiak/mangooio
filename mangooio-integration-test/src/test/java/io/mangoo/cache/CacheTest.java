@@ -21,7 +21,7 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class CacheTest {
+class CacheTest {
     private static final String TEST_VALUE = "This is a test value for the cache!";
 
     @Test

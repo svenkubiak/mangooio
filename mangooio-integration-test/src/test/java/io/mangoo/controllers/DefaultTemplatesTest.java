@@ -15,7 +15,7 @@ import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 @ExtendWith({TestExtension.class})
-public class DefaultTemplatesTest {
+class DefaultTemplatesTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
 
     @Test

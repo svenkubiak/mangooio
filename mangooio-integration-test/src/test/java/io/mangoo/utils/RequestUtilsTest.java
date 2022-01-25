@@ -29,7 +29,7 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 
 @ExtendWith({TestExtension.class})
-public class RequestUtilsTest {
+class RequestUtilsTest {
 
     @Test
     void testGetRequestParameters() {

@@ -15,7 +15,7 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class TemplateEngineTest {
+class TemplateEngineTest {
     @Test
     void testGetTemplateName() {
         //given

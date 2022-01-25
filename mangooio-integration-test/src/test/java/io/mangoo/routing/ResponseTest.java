@@ -34,7 +34,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ResponseTest {
+class ResponseTest {
     
     @Test
     void testAndConent() {

@@ -16,7 +16,7 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class MetricsTest {
+class MetricsTest {
     
     @Test
     void testAddStatusCode() {

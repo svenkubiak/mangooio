@@ -14,7 +14,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class FileRouteTest {
+class FileRouteTest {
 
     @Test
     void testTo() {

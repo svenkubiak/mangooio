@@ -21,7 +21,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class AuthenticationControllerTest {
+class AuthenticationControllerTest {
     private static final String USERNAME = "foo";
 
     @Test

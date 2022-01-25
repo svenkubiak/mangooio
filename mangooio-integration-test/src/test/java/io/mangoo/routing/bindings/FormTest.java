@@ -24,7 +24,7 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FormTest {
+class FormTest {
     private static final String INVALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:7348";
     private static final String VALID_IPV6_ADDRESS = "001:db8:85a3:8d3:1319:8a2e:370:7348";
     private static final String INVALID_IPV4_ADDRESS = "501.15.1.2.1";

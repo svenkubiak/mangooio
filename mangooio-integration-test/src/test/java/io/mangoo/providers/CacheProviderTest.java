@@ -23,7 +23,7 @@ import io.mangoo.enums.CacheName;
  *
  */
 @ExtendWith({TestExtension.class})
-public class CacheProviderTest {
+class CacheProviderTest {
     @Test
     void testGet() {
         //given

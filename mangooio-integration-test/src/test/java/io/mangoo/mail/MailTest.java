@@ -26,7 +26,7 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
  *
  */
 @ExtendWith({TestExtension.class})
-public class MailTest {
+class MailTest {
     
     @Test
     void testTos() {

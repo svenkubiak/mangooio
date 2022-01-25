@@ -14,7 +14,7 @@ import io.mangoo.TestExtension;
  *
  */
 @ExtendWith({TestExtension.class})
-public class SessionTest {
+class SessionTest {
     private static final String BAR = "bar";
     private static final String FOO = "foo";
 

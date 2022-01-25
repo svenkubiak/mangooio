@@ -16,7 +16,7 @@ import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class ControllerRouteTest {
+class ControllerRouteTest {
 
     @Test
     void testCreation() {
