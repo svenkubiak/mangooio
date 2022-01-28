@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>7.0.2-SNAPSHOT</version>
+	<version>7.1.0-RC6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.</description>
@@ -30,9 +30,8 @@
 		<junit.version>5.8.2</junit.version>
 		<junit.platform.version>1.8.2</junit.platform.version>
 		<enforcer.version>1.5.1</enforcer.version>
-		<simplemail.version>6.6.2</simplemail.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.4.0</mongodb.version>
+		<mongodb.version>4.4.1</mongodb.version>
 		<slf4j.version>1.7.32</slf4j.version>
 	</properties>
 	<modules>
@@ -54,7 +53,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
+					<version>3.9.0</version>
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
@@ -73,12 +72,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.2.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.9.1</version>
+					<version>3.10.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -88,7 +87,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>3.0.0-M1</version>
+					<version>3.0.0-M2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -106,7 +105,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>6.5.1</version>
+					<version>6.5.3</version>
 					<configuration>
 						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
@@ -131,7 +130,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.9.0.2155</version>
+					<version>3.9.1.2184</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -190,12 +189,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.6.4</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-metadata</artifactId>
-					<version>2.1.0</version>
+					<version>2.1.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -220,7 +219,7 @@
 			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
-				<version>5.0.1</version>
+				<version>5.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -260,12 +259,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>3.6.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.simplejavamail</groupId>
-				<artifactId>simple-java-mail</artifactId>
-				<version>${simplemail.version}</version>
+				<version>3.6.4</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
@@ -273,14 +267,14 @@
 				<version>2.2.3</version>
 			</dependency>
 			<dependency>
-				<groupId>de.svenkubiak</groupId>
-				<artifactId>embedded-mongodb</artifactId>
-				<version>6.0.0</version>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>jakarta.mail</artifactId>
+				<version>2.0.1</version>
 			</dependency>
 			<dependency>
-				<groupId>org.simplejavamail</groupId>
-				<artifactId>batch-module</artifactId>
-				<version>${simplemail.version}</version>
+				<groupId>de.svenkubiak</groupId>
+				<artifactId>embedded-mongodb</artifactId>
+				<version>6.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -315,7 +309,7 @@
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
 				<artifactId>okhttp-eventsource</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
@@ -335,7 +329,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-archiver</artifactId>
-				<version>4.2.6</version>
+				<version>4.2.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
@@ -391,12 +385,12 @@
 			<dependency>
 				<groupId>org.jboss.logging</groupId>
 				<artifactId>jboss-logging</artifactId>
-				<version>3.4.2.Final</version>
+				<version>3.4.3.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail-standalone</artifactId>
-				<version>1.6.5</version>
+				<version>2.0.0-alpha-2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -471,7 +465,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>4.2.0</version>
+				<version>4.3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>

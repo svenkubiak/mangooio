@@ -26,11 +26,11 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ParameterControllerTest {
+class ParameterControllerTest {
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
 
     @Test
-    public void testStringParameter() {
+    void testStringParameter() {
         //given
         TestResponse response = TestRequest.get("/string/bar").execute();
 
@@ -41,7 +41,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testStringParameterConcurrent() {
+    void testStringParameterConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
@@ -55,7 +55,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testOptionalRequestParameter() {
+    void testOptionalRequestParameter() {
         //given
         TestResponse response = TestRequest.get("/optional/bar").execute();
 
@@ -66,7 +66,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testOptionalRequestParameterConcurrent() {
+    void testOptionalRequestParameterConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
@@ -80,7 +80,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testOptionalQueryParameter() {
+    void testOptionalQueryParameter() {
         //given
         TestResponse response = TestRequest.get("/optional/?foo=bar").execute();
 
@@ -91,7 +91,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testOptionalQueryParameterConcurrent() {
+    void testOptionalQueryParameterConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
@@ -105,7 +105,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testWithoutParameter() {
+    void testWithoutParameter() {
         //given
         TestResponse response = TestRequest.get("/string").execute();
 
@@ -117,7 +117,7 @@ public class ParameterControllerTest {
     
     @ParameterizedTest(name = "#{index} - Run test with args={0}")
     @ValueSource(strings = {"äöü", "tüsätö-$ß_"})
-    public void testUmlautParameter(String arg) {
+    void testUmlautParameter(String arg) {
         //given
         TestResponse response = TestRequest.get("/string/" + arg).execute();
 
@@ -128,7 +128,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testDoublePrimitiveParamter() {
+    void testDoublePrimitiveParamter() {
         //given
         TestResponse response = TestRequest.get("/doublePrimitive/1.42").execute();
 
@@ -139,7 +139,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testDoubleParameter() {
+    void testDoubleParameter() {
         //given
         TestResponse response = TestRequest.get("/double/1.42").execute();
 
@@ -150,7 +150,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testIntParameter() {
+    void testIntParameter() {
         //given
         TestResponse response = TestRequest.get("/int/42").execute();
 
@@ -161,7 +161,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testIntegerParameter() {
+    void testIntegerParameter() {
         //given
         TestResponse response = TestRequest.get("/integer/42").execute();
 
@@ -172,7 +172,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testFloatPrimitiveParameter() {
+    void testFloatPrimitiveParameter() {
         //given
         TestResponse response = TestRequest.get("/floatPrimitive/1.24").execute();
 
@@ -183,7 +183,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testFloatParameter() {
+    void testFloatParameter() {
         //given
         TestResponse response = TestRequest.get("/float/1.24").execute();
 
@@ -194,7 +194,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testPrimitiveLongParameter() {
+    void testPrimitiveLongParameter() {
         //given
         TestResponse response = TestRequest.get("/longPrimitive/6000").execute();
 
@@ -205,7 +205,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testLongParameter() {
+    void testLongParameter() {
         //given
         TestResponse response = TestRequest.get("/long/60000").execute();
 
@@ -216,7 +216,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testMultipleParameter() {
+    void testMultipleParameter() {
         //given
         TestResponse response = TestRequest.get("/multiple/bar/1").execute();
 
@@ -227,7 +227,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testPathParameter() {
+    void testPathParameter() {
         //given
         TestResponse response = TestRequest.get("/path?foo=bar").execute();
 
@@ -238,7 +238,7 @@ public class ParameterControllerTest {
     }
     
     @Test
-    public void testLocalDateParameter() {
+    void testLocalDateParameter() {
         //given
         TestResponse response = TestRequest.get("/localdate/2007-12-03").execute();
 
@@ -250,7 +250,7 @@ public class ParameterControllerTest {
     }
 
     @Test
-    public void testLocalDateTimeParameter() {
+    void testLocalDateTimeParameter() {
         //given
         TestResponse response = TestRequest.get("/localdatetime/2007-12-03T10:15:30").execute();
 

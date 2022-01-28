@@ -38,10 +38,10 @@ import io.mangoo.templating.TemplateEngine;
  *
  */
 @ExtendWith({TestExtension.class})
-public class InjectionTest {
+class InjectionTest {
 
     @Test
-    public void testForm() {
+    void testForm() {
         //given
         Form form = Application.getInstance(Form.class);
         
@@ -50,7 +50,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testAuthentication() {
+    void testAuthentication() {
         //given
         Authentication authentication = Application.getInstance(Authentication.class);
         
@@ -59,7 +59,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testSession() {
+    void testSession() {
         //given
         Session session = Application.getInstance(Session.class);
         
@@ -68,7 +68,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testFlash() {
+    void testFlash() {
         //given
         Flash flash = Application.getInstance(Flash.class);
         
@@ -77,7 +77,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testCache() {
+    void testCache() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -86,7 +86,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testCrypto() {
+    void testCrypto() {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
         
@@ -95,7 +95,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testConfig() {
+    void testConfig() {
         //given
         Config config = Application.getInstance(Config.class);
         
@@ -104,7 +104,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMessages() {
+    void testMessages() {
         //given
         Messages messages = Application.getInstance(Messages.class);
         
@@ -113,7 +113,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testResponse() {
+    void testResponse() {
         //given
         Response response  = Application.getInstance(Response.class);
         
@@ -122,7 +122,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testRequest() {
+    void testRequest() {
         //given
         Request request = Application.getInstance(Request.class);
         
@@ -131,7 +131,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testWebSocketManager() {
+    void testWebSocketManager() {
         //given
         WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         
@@ -140,7 +140,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testServerEventManager() {
+    void testServerEventManager() {
         //given
         ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
         
@@ -149,7 +149,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMetricsListener() {
+    void testMetricsListener() {
         //given
         MetricsListener metricsListener = Application.getInstance(MetricsListener.class);
         
@@ -158,7 +158,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMetrics() {
+    void testMetrics() {
         //given
         Metrics metrics = Application.getInstance(Metrics.class);
         
@@ -167,7 +167,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testFallbackHandler() {
+    void testFallbackHandler() {
         //given
         FallbackHandler fallbackHandler = Application.getInstance(FallbackHandler.class);
         
@@ -176,7 +176,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testExceptionHandler() {
+    void testExceptionHandler() {
         //given
         ExceptionHandler exceptionHandler = Application.getInstance(ExceptionHandler.class);
         
@@ -185,7 +185,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMangooBootstrap() {
+    void testMangooBootstrap() {
         //given
         MangooBootstrap mangooLifecycle = Application.getInstance(MangooBootstrap.class);
         
@@ -194,7 +194,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testCacheProvider() {
+    void testCacheProvider() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
@@ -203,7 +203,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testTemplateEngine() {
+    void testTemplateEngine() {
         //given
         TemplateEngine templateEngine = Application.getInstance(TemplateEngine.class);
         
@@ -212,7 +212,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testValidator() {
+    void testValidator() {
         //given
         Validator validator = Application.getInstance(Validator.class);
         
@@ -221,7 +221,7 @@ public class InjectionTest {
     }
 
     @Test
-    public void testLocaleHandler() {
+    void testLocaleHandler() {
         //given
         LocaleHandler localeHandler = Application.getInstance(LocaleHandler.class);
         
@@ -230,7 +230,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testInboundCookiesHandler() {
+    void testInboundCookiesHandler() {
         //given
         InboundCookiesHandler inboundCookieHandler = Application.getInstance(InboundCookiesHandler.class);
         
@@ -239,7 +239,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testOutboundCookiesHandler() {
+    void testOutboundCookiesHandler() {
         //given
         OutboundCookiesHandler outboundCookiesHandler = Application.getInstance(OutboundCookiesHandler.class);
         
@@ -248,7 +248,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testResponseHandler() {
+    void testResponseHandler() {
         //given
         ResponseHandler responseHandler = Application.getInstance(ResponseHandler.class);
         
@@ -257,7 +257,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testMangooRequestFilter() {
+    void testMangooRequestFilter() {
         //given
         OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
         
@@ -266,7 +266,7 @@ public class InjectionTest {
     }
     
     @Test
-    public void testServerSentEventCloseListener() {
+    void testServerSentEventCloseListener() {
         //given
         ServerSentEventCloseListener serverSentEventCloseListener = Application.getInstance(ServerSentEventCloseListener.class);
         
@@ -275,7 +275,7 @@ public class InjectionTest {
     } 
     
     @Test
-    public void testWebSocketCloseListener() {
+    void testWebSocketCloseListener() {
         //given
         WebSocketCloseListener webSocketCloseListener = Application.getInstance(WebSocketCloseListener.class);
         
@@ -284,7 +284,7 @@ public class InjectionTest {
     }  
     
     @Test
-    public void testShutdown() {
+    void testShutdown() {
         //given
         Shutdown shutdown = Application.getInstance(Shutdown.class);
         

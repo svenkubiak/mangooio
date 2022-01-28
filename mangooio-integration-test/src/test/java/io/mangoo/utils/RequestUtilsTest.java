@@ -29,10 +29,10 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 
 @ExtendWith({TestExtension.class})
-public class RequestUtilsTest {
+class RequestUtilsTest {
 
     @Test
-    public void testGetRequestParameters() {
+    void testGetRequestParameters() {
         // given
         Deque<String> paramsOne = new LinkedList<>();
         paramsOne.push("foo");
@@ -58,7 +58,7 @@ public class RequestUtilsTest {
     }
     
     @Test
-    public void testGetRequestParametersConcurrent() {
+    void testGetRequestParametersConcurrent() {
         MatcherAssert.assertThat(t -> {
             // given
             String one = UUID.randomUUID().toString();
@@ -87,7 +87,7 @@ public class RequestUtilsTest {
 
 
     @Test
-    public void testIsPost() {
+    void testIsPost() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
 
@@ -100,7 +100,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testIsPut() {
+    void testIsPut() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
 
@@ -113,7 +113,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testIsPatch() {
+    void testIsPatch() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
 
@@ -126,7 +126,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testIsNonPostPutPatch() {
+    void testIsNonPostPutPatch() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
 
@@ -139,7 +139,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testIsJsonRequest() {
+    void testIsJsonRequest() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
         HeaderMap headerMap = new HeaderMap();
@@ -154,7 +154,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testIsNonJsonRequest() {
+    void testIsNonJsonRequest() {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
         HeaderMap headerMap = new HeaderMap();
@@ -169,7 +169,7 @@ public class RequestUtilsTest {
     }
 
     @Test
-    public void testWrapSecurity() {
+    void testWrapSecurity() {
         // given
         HttpHandler handler = Mockito.mock(HttpHandler.class);
 
@@ -182,7 +182,7 @@ public class RequestUtilsTest {
     }
     
     @Test
-    public void testWrapSecurityConcurrent() throws InterruptedException {
+    void testWrapSecurityConcurrent() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             // given
             HttpHandler handler = Mockito.mock(HttpHandler.class);

@@ -26,11 +26,11 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class JsonControllerTest {
+class JsonControllerTest {
     private static final String json = "{\"firstname\":\"Peter\",\"lastname\":\"Parker\",\"age\":24}";
 
     @Test
-    public void testJsonSerialization() {
+    void testJsonSerialization() {
         //given
         TestResponse response = TestRequest.get("/render").execute();
 
@@ -41,7 +41,7 @@ public class JsonControllerTest {
     }
 
     @Test
-    public void testJsonParsingPost() {
+    void testJsonParsingPost() {
         //given
         TestResponse response = TestRequest.post("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -55,7 +55,7 @@ public class JsonControllerTest {
     }
     
     @Test
-    public void testJsonParsingPostConcurrent() {
+    void testJsonParsingPostConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
@@ -73,7 +73,7 @@ public class JsonControllerTest {
     }
     
     @Test
-    public void testJsonParsingPut() {
+    void testJsonParsingPut() {
         //given
         TestResponse response = TestRequest.put("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -87,7 +87,7 @@ public class JsonControllerTest {
     }
     
     @Test
-    public void testJsonParsingPatch() {
+    void testJsonParsingPatch() {
         //given
         TestResponse response = TestRequest.patch("/parse")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -101,7 +101,7 @@ public class JsonControllerTest {
     }
 
     @Test
-    public void testJsonEmptyResponseBody() {
+    void testJsonEmptyResponseBody() {
         //given
         TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -115,7 +115,7 @@ public class JsonControllerTest {
     }
     
     @Test
-    public void testJsonNullResponseBody() {
+    void testJsonNullResponseBody() {
         //given
         TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -129,7 +129,7 @@ public class JsonControllerTest {
     }
     
     @Test
-    public void testJsonResponseBody() {
+    void testJsonResponseBody() {
         //given
         TestResponse response = TestRequest.post("/body")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())
@@ -143,7 +143,7 @@ public class JsonControllerTest {
     }
 
     @Test
-    public void testJsonRequestBodyPost() {
+    void testJsonRequestBodyPost() {
         //given
         TestResponse response = TestRequest.post("/requestAndJson")
                 .withContentType(MediaType.JSON_UTF_8.withoutParameters().toString())

@@ -24,15 +24,15 @@ import io.mangoo.TestExtension;
 import io.mangoo.enums.Default;
 
 @ExtendWith({TestExtension.class})
-public class MangooUtilsTest {
+class MangooUtilsTest {
     @Test
-    public void testGetVersion() throws InterruptedException {
+    void testGetVersion() throws InterruptedException {
         //then
         assertThat(MangooUtils.getVersion(), not(nullValue()));
     } 
     
     @Test
-    public void testCopyMap() {
+    void testCopyMap() {
         //given
         String value1 = UUID.randomUUID().toString();
         String value2 = UUID.randomUUID().toString();
@@ -49,7 +49,7 @@ public class MangooUtilsTest {
     }
     
     @Test
-    public void testCopyMapConcurrent() {
+    void testCopyMapConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String value1 = UUID.randomUUID().toString();
@@ -67,7 +67,7 @@ public class MangooUtilsTest {
     }
 
     @Test
-    public void testRandomString() {
+    void testRandomString() {
         //given
         String string = MangooUtils.randomString(32);
         
@@ -77,7 +77,7 @@ public class MangooUtilsTest {
     }
     
     @Test
-    public void testConcurrentRandomString() throws InterruptedException {
+    void testConcurrentRandomString() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             // given
             int size = (int) (Math.random() * (64 - 16)) + 16;
@@ -89,7 +89,7 @@ public class MangooUtilsTest {
     }
     
     @Test()
-    public void testInvalidMinRandomString() {
+    void testInvalidMinRandomString() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             //given
             MangooUtils.randomString(0);
@@ -97,14 +97,14 @@ public class MangooUtilsTest {
     }
     
     @Test()
-    public void testInvalidMaxRandomString() {
+    void testInvalidMaxRandomString() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             MangooUtils.randomString(257);
         }, "Failed to test invalid max number of random string");
     }
     
     @Test
-    public void testCloseQuietly() throws IOException {
+    void testCloseQuietly() throws IOException {
         //given
         File file = new File(UUID.randomUUID().toString());
         file.createNewFile();
@@ -119,7 +119,7 @@ public class MangooUtilsTest {
     } 
     
     @Test
-    public void testReadableFileSize() {
+    void testReadableFileSize() {
         //given
         long size = 25165824;
 
@@ -132,7 +132,7 @@ public class MangooUtilsTest {
     }
     
     @Test
-    public void testResourceExists() {
+    void testResourceExists() {
         //when
         boolean exists = MangooUtils.resourceExists(Default.MODEL_CONF.toString());
         
@@ -141,14 +141,14 @@ public class MangooUtilsTest {
     }
     
     @Test
-    public void testResourceExistsConcurrent() {
+    void testResourceExistsConcurrent() {
         MatcherAssert.assertThat(t -> {
             return MangooUtils.resourceExists(Default.MODEL_CONF.toString());
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
-    public void testResourceNotExists() {
+    void testResourceNotExists() {
         //when
         boolean exists = MangooUtils.resourceExists("foo.txt");
         

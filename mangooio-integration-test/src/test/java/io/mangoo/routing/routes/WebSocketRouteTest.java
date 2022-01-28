@@ -15,10 +15,10 @@ import io.mangoo.TestExtension;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class WebSocketRouteTest {
+class WebSocketRouteTest {
     
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         WebSocketRoute webSocketRoute = new WebSocketRoute();
         
@@ -36,7 +36,7 @@ public class WebSocketRouteTest {
     }
     
     @Test
-    public void testWithController() {
+    void testWithController() {
         //given
         WebSocketRoute webSocketRoute = new WebSocketRoute();
         
@@ -48,7 +48,7 @@ public class WebSocketRouteTest {
     }
     
     @Test
-    public void testAddingRoute() {
+    void testAddingRoute() {
         //given
         String url = "/" + UUID.randomUUID().toString();
         WebSocketRoute webSocketRoute = new WebSocketRoute();
@@ -70,7 +70,7 @@ public class WebSocketRouteTest {
     }
     
     @Test
-    public void testWithAuthentication() {
+    void testWithAuthentication() {
         //given
         String url = "/" + UUID.randomUUID().toString();
         WebSocketRoute webSocketRoute = new WebSocketRoute();

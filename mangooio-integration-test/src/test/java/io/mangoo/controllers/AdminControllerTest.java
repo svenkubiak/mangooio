@@ -27,7 +27,7 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class AdminControllerTest {
+class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String EVICTIONS = "Evictions";
     private static final String LOGGER = "logger";
@@ -39,7 +39,7 @@ public class AdminControllerTest {
     private static final String CONTROL_PANEL = "Dashboard";
     
     @Test
-    public void testDashboardUnauthorized() {
+    void testDashboardUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin")
                 .withDisabledRedirects()
@@ -53,7 +53,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testCacheAuthorized() {
+    void testCacheAuthorized() {
         //given
         TestResponse response = login().to("/@admin/cache")
                 .withHTTPMethod(Methods.GET.toString())
@@ -68,7 +68,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testHealthWithHeader() {
+    void testHealthWithHeader() {
         //given
         TestResponse response = login().to("/@admin/health")
                 .withHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString(), Application.getInstance(Config.class).getApplicationAdminHealthToken())
@@ -83,7 +83,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testHealthWithoutHeader() {
+    void testHealthWithoutHeader() {
         //given
         TestResponse response = login().to("/@admin/health")
                 .withHTTPMethod(Methods.GET.toString())
@@ -95,7 +95,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testCacheUnauthorized() {
+    void testCacheUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/cache")
                 .withDisabledRedirects()
@@ -109,7 +109,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testDashboardAuthorized() {
+    void testDashboardAuthorized() {
         //given
         TestResponse response = login().to("/@admin")
                 .withHTTPMethod(Methods.GET.toString())
@@ -123,7 +123,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testLoggerUnauthorized() {
+    void testLoggerUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/logger")
                 .withDisabledRedirects()
@@ -137,7 +137,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testLoggerAuthorized() {
+    void testLoggerAuthorized() {
         //given
         TestResponse response = login().to("/@admin/logger")
                 .withHTTPMethod(Methods.GET.toString())
@@ -151,7 +151,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    public void testRoutesAuthorized() {
+    void testRoutesAuthorized() {
         //given
         TestResponse response = login().to("/@admin/routes")
                 .withHTTPMethod(Methods.GET.toString())
@@ -165,7 +165,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testRoutesNotConaintAdmin() {
+    void testRoutesNotConaintAdmin() {
         //given
         TestResponse response = TestRequest.get("/@admin/routes")
                 .withBasicAuthentication(ADMIN, ADMIN)
@@ -179,7 +179,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testRoutesUnauthorized() {
+    void testRoutesUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/routes").withDisabledRedirects().execute();
         
@@ -191,7 +191,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testToolsAuthorized() {
+    void testToolsAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools")
                 .withHTTPMethod(Methods.GET.toString())
@@ -205,7 +205,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testToolsTwoFactorAuthorized() {
+    void testToolsTwoFactorAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools")
                 .withHTTPMethod(Methods.GET.toString())
@@ -219,7 +219,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testToolsUnauthorized() {
+    void testToolsUnauthorized() {
         //given
         TestResponse response = TestRequest.get("/@admin/tools")
                 .withDisabledRedirects()
@@ -233,7 +233,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testToolsAjaxAuthorized() {
+    void testToolsAjaxAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools/ajax")
                 .withHTTPMethod(Methods.POST.toString())
@@ -246,7 +246,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testToolsAjaxUnauthorized() {
+    void testToolsAjaxUnauthorized() {
         //given
         TestResponse response = TestRequest.post("/@admin/tools/ajax")
                 .withDisabledRedirects()
@@ -260,7 +260,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testLoggerAjaxAuthorized() {
+    void testLoggerAjaxAuthorized() {
         //given
         TestResponse response = login().to("/@admin/logger/ajax")
                 .withHTTPMethod(Methods.POST.toString())
@@ -273,7 +273,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testLoggerAjaxUnauthorized() {
+    void testLoggerAjaxUnauthorized() {
         //given
         TestResponse response = TestRequest.post("/@admin/logger/ajax")
                 .withDisabledRedirects()
@@ -287,7 +287,7 @@ public class AdminControllerTest {
     }
     
     @Test
-    public void testLogin() {
+    void testLogin() {
         //given
         TestResponse response = TestRequest.get("/@admin/login").execute();
         

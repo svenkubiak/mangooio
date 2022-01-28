@@ -21,11 +21,11 @@ import io.mangoo.core.Config;
  *
  */
 @ExtendWith({ TestExtension.class })
-public class WebSocketControllerTest {
+class WebSocketControllerTest {
     private static boolean connected = false;
 
     @Test
-    public void testWebSocketConnection() throws Exception {
+    void testWebSocketConnection() throws Exception {
         // given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);

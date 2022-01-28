@@ -33,10 +33,10 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 
 @ExtendWith({TestExtension.class})
-public class ConfigTest {
+class ConfigTest {
     
     @Test
-    public void testFlashCookieName() {
+    void testFlashCookieName() {
         // given
         final Config config = Application.getInstance(Config.class);
 
@@ -45,7 +45,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSessionCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieName() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String sessionCookieName = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -61,7 +61,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSessionCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         //given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -76,7 +76,7 @@ public class ConfigTest {
     }      
 
     @Test
-    public void testGetApplicationSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String applicationSecret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -92,7 +92,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieName() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String authenticationCookieName = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -108,7 +108,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         //given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -123,7 +123,7 @@ public class ConfigTest {
     }    
   
     @Test
-    public void testGetAuthenticationCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String expires = "42";
@@ -139,7 +139,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -154,7 +154,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSessionCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String expires = "60";
@@ -171,7 +171,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSessionCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -186,7 +186,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSessionCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSessionCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secure = "true";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -202,7 +202,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSessionCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSessionCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -217,7 +217,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsAuthentcationCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthentcationCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String secure = "true";
@@ -233,7 +233,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsAuthenticationCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthenticationCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -248,7 +248,7 @@ public class ConfigTest {
     }    
  
     @Test
-    public void testI18nCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testI18nCookieName() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String name = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -264,7 +264,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testI18nCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testI18nCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -279,7 +279,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsFlashCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsFlashCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secure = "true";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -295,7 +295,7 @@ public class ConfigTest {
     }    
     
     @Test
-    public void testAplicationLanguage() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAplicationLanguage() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String language = "fr";
@@ -311,7 +311,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testAplicationLanguageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAplicationLanguageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -326,7 +326,7 @@ public class ConfigTest {
     }  
     
     @Test
-    public void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String enabled = "false";
@@ -342,7 +342,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSchedulerEnabledDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSchedulerEnabledDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -357,7 +357,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetApplicationAdminUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminUsername() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String username = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -373,7 +373,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationAdminSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -389,7 +389,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationAdminSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
@@ -404,7 +404,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetApplicationAdminPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminPassword() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String password = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -420,7 +420,7 @@ public class ConfigTest {
     }   
     
     @Test
-    public void testAuthenticationCookieRememberExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationCookieRememberExpires() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String expires = "6000";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -436,7 +436,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testAuthenticationCookieRememberExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationCookieRememberExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -451,7 +451,7 @@ public class ConfigTest {
     }   
     
     @Test
-    public void testGetApplicationController() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationController() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String controller = UUID.randomUUID().toString();
@@ -467,7 +467,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationControllerDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationControllerDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -482,7 +482,7 @@ public class ConfigTest {
     }  
     
     @Test
-    public void testGetApplicationtemplateEngine() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationtemplateEngine() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String engine = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -498,7 +498,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationtemplateEngineDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationtemplateEngineDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given 
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -513,7 +513,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testValueFromSystemPropertyInProfile() {
+    void testValueFromSystemPropertyInProfile() {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
@@ -526,7 +526,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testValueFromSystemProperty() {
+    void testValueFromSystemProperty() {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
@@ -539,7 +539,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testValueFromSystemPropertyInProfileEncrypted() {
+    void testValueFromSystemPropertyInProfileEncrypted() {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
@@ -552,7 +552,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testValueFromSystemPropertyEncrypted() {
+    void testValueFromSystemPropertyEncrypted() {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
@@ -565,7 +565,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String enable = "true";
@@ -581,7 +581,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsApplicationAdminEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsApplicationAdminEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -596,7 +596,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetSmptHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptHost() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String host = "192.168.2.24";
@@ -612,7 +612,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmptHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -627,7 +627,7 @@ public class ConfigTest {
     }  
     
     @Test
-    public void testGetSmptPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPort() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String port = "555";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -643,7 +643,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmptPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -658,7 +658,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsAuthentication() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthentication() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String ssl = "true";
@@ -674,7 +674,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSmptAuthenticationDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmptAuthenticationDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -689,7 +689,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetSmptUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptUsername() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String username = "smtpuser";
@@ -705,7 +705,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmptUsernameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptUsernameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -720,7 +720,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetSmptPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPassword() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String password = "smtppass";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -736,7 +736,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmptPasswordDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPasswordDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -751,7 +751,7 @@ public class ConfigTest {
     }   
     
     @Test
-    public void testGetSmptfrom() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptfrom() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String from = "smtpform";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -767,7 +767,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmptfromDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptfromDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -782,7 +782,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorAjpHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpHost() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String host = "192.168.3.24";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -798,7 +798,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorAjpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -813,7 +813,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorAjpPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpPort() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String port = "2542";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -830,7 +830,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorAjpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -845,7 +845,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorHttpHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpHost() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String host = "192.168.2.42";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -861,7 +861,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorHttpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -876,7 +876,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorHttpPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpPort() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String port = "2442";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -892,7 +892,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetConnectorHttpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -907,7 +907,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsCacheClusterEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsCacheClusterEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String enable = "true";
@@ -923,7 +923,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsCacheClusterEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsCacheClusterEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -938,7 +938,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testMetricsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testMetricsEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String enable = "true";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -955,7 +955,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testMetricsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testMetricsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -970,7 +970,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testAuthenticationLock() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationLock() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String lock = "24";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -986,7 +986,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testAuthenticationLockDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationLockDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1001,7 +1001,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testCacheClusterUrl() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCacheClusterUrl() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String url = "myclusterurl";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1017,7 +1017,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testCacheClusterUrlDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCacheClusterUrlDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1032,7 +1032,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetUndertowMaxEntitySize() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetUndertowMaxEntitySize() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String size = "4096";
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1048,7 +1048,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetUndertowMaxEntitySizeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetUndertowMaxEntitySizeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1063,7 +1063,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetSessionCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1079,7 +1079,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSessionCookieeSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieeSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1095,7 +1095,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetFlashCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetFlashCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1111,7 +1111,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetFlashCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetFlashCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1127,7 +1127,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String secret = UUID.randomUUID().toString();
@@ -1143,7 +1143,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String key = UUID.randomUUID().toString();
 
@@ -1158,7 +1158,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetAuthenticationCookieSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
@@ -1174,7 +1174,7 @@ public class ConfigTest {
     }     
     
     @Test
-    public void testGetString() {
+    void testGetString() {
         //given
         System.setProperty(Key.APPLICATION_CONFIG.toString(), "");
         final Config config = Application.getInstance(Config.class);
@@ -1185,7 +1185,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetInt() {
+    void testGetInt() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1195,7 +1195,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetBoolean() {
+    void testGetBoolean() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1205,7 +1205,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetLong() {
+    void testGetLong() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1215,7 +1215,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetStringDefaultValue() {
+    void testGetStringDefaultValue() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1224,7 +1224,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetIntDefaultValue() {
+    void testGetIntDefaultValue() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1233,7 +1233,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetBooleanDefaultValue() {
+    void testGetBooleanDefaultValue() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1243,7 +1243,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetLongDefaultValue() {
+    void testGetLongDefaultValue() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1252,7 +1252,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testGetAllConfigurationValues() {
+    void testGetAllConfigurationValues() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1262,7 +1262,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testEnvironmentValues() {
+    void testEnvironmentValues() {
         //given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         final Config config = Application.getInstance(Config.class);
@@ -1273,7 +1273,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testEncryptedValue() {
+    void testEncryptedValue() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1282,7 +1282,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testEncryptedValueMultiKeyLineTwo() {
+    void testEncryptedValueMultiKeyLineTwo() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1291,7 +1291,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testEncryptedValueMultiKeyLineThree() {
+    void testEncryptedValueMultiKeyLineThree() {
         //given
         final Config config = Application.getInstance(Config.class);
 
@@ -1318,7 +1318,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSmtpDebug() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmtpDebug() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String debug = "true";
@@ -1334,7 +1334,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testIsSmtpDebugDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmtpDebugDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1349,7 +1349,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmtpProtocol() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmtpProtocol() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String protocol = "smtptls";
@@ -1365,7 +1365,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetSmtpProtocolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmtpProtocolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1380,7 +1380,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoAuthDB() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoAuthDB() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String authDb = "admin";
@@ -1396,7 +1396,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoDBName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoDBName() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String mongodb = "mongodb";
@@ -1412,7 +1412,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoDBNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoDBNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1427,7 +1427,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoHost() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String host = "127.0.0.5";
@@ -1443,7 +1443,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1458,7 +1458,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetMongoPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPort() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String port = "47235";
@@ -1474,7 +1474,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1489,7 +1489,7 @@ public class ConfigTest {
     } 
     
     @Test
-    public void testGetMongoPackage() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPackage() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String pack = "my.package.models";
@@ -1505,7 +1505,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoPackageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPackageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1520,7 +1520,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPassword() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String password = "thisismypassword";
@@ -1536,7 +1536,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetMongoUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoUsername() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String username = "thisismyusername";
@@ -1552,7 +1552,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testCorsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCorsEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String cors = "true";
@@ -1568,7 +1568,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testCorsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCorsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1583,7 +1583,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsAllowOrigin() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsAllowOrigin() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String origin = "^http(s)?://(www.)?example.(com|org)$";
@@ -1599,7 +1599,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsAllowOriginDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsAllowOriginDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1614,7 +1614,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowCredentials() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowCredentials() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String credentials = "true";
@@ -1630,7 +1630,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowCredentialsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowCredentialsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1645,7 +1645,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowHeaders() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String headers = "Authorization,Content-Type";
@@ -1661,7 +1661,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1676,7 +1676,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowMethods() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowMethods() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String headers = "GET,POST";
@@ -1692,7 +1692,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersAllowMethodsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowMethodsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1707,7 +1707,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersExposeHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersExposeHeaders() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String headers = "Accept-Ranges,Content-Length";
@@ -1723,7 +1723,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersExposeHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersExposeHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1738,7 +1738,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersMaxAge() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersMaxAge() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String maxage = "86400";
@@ -1754,7 +1754,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsHeadersMaxAgeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersMaxAgeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1769,7 +1769,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsUrlPattern() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsUrlPattern() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String pattern = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
@@ -1785,7 +1785,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetCorsUrlPatternDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsUrlPatternDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         
@@ -1800,7 +1800,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationAdminHealthToken() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminHealthToken() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String token = UUID.randomUUID().toString();
@@ -1816,7 +1816,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationAdminHealthEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminHealthEnable() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         String enable = "true";
@@ -1832,7 +1832,7 @@ public class ConfigTest {
     }
     
     @Test
-    public void testGetApplicationAdminHealthEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminHealthEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
         

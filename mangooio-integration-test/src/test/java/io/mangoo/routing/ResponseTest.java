@@ -34,10 +34,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ResponseTest {
+class ResponseTest {
     
     @Test
-    public void testAndConent() {
+    void testAndConent() {
         //given
         Response response = new Response();
         
@@ -52,7 +52,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithOk() {
+    void testWithOk() {
         //given
         Response response = Response.withOk();
         
@@ -61,7 +61,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithNotFound() {
+    void testWithNotFound() {
         //given
         Response response = Response.withNotFound();
         
@@ -70,7 +70,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithForbidden() {
+    void testWithForbidden() {
         //given
         Response response = Response.withForbidden();
        
@@ -79,7 +79,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithUnauthorized() {
+    void testWithUnauthorized() {
         //given
         Response response = Response.withUnauthorized();
         
@@ -88,7 +88,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithBadRequest() {
+    void testWithBadRequest() {
         //given
         Response response = Response.withBadRequest();
         
@@ -97,7 +97,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithCreated() {
+    void testWithCreated() {
         //given
         Response response = Response.withCreated();
         
@@ -106,7 +106,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testStatusCode() {
+    void testStatusCode() {
         //given
         Response response = Response.withStatusCode(305);
         
@@ -115,7 +115,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testWithRedirect() {
+    void testWithRedirect() {
         //given
         Response response = Response.withRedirect("/foo");
         
@@ -127,7 +127,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndTemplate() {
+    void testAndTemplate() {
         //given
         Response response = Response.withOk();
         
@@ -139,7 +139,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndContentTypes() {
+    void testAndContentTypes() {
         //given
         Response response = Response.withOk();
         
@@ -151,7 +151,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndCharset() {
+    void testAndCharset() {
         //given
         Response response = Response.withOk();
         
@@ -163,7 +163,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndBody() {
+    void testAndBody() {
         //given
         Response response = Response.withOk();
         
@@ -175,7 +175,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndCookie() {
+    void testAndCookie() {
         //given
         Response response = Response.withOk();
         Cookie cookie = mock(Cookie.class);
@@ -188,7 +188,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndJsonBody() {
+    void testAndJsonBody() {
         //given
         Response response = Response.withOk();
         
@@ -202,7 +202,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndBinaryFile() throws FileNotFoundException, IOException {
+    void testAndBinaryFile() throws FileNotFoundException, IOException {
         //given
         Response response = Response.withOk();
         Path file = Paths.get(UUID.randomUUID().toString());
@@ -222,7 +222,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndBinaryConent() throws IOException {
+    void testAndBinaryConent() throws IOException {
         //given
         Response response = Response.withOk();
         File file = new File(UUID.randomUUID().toString());
@@ -241,7 +241,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndTextBody() throws IOException {
+    void testAndTextBody() throws IOException {
         //given
         Response response = Response.withOk();
         
@@ -255,7 +255,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndEmptyBody() throws IOException {
+    void testAndEmptyBody() throws IOException {
         //given
         Response response = Response.withOk();
         
@@ -269,7 +269,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndHeader() throws IOException {
+    void testAndHeader() throws IOException {
         //given
         Response response = Response.withOk();
         
@@ -281,7 +281,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndEnd() throws IOException {
+    void testAndEnd() throws IOException {
         //given
         Response response = Response.withOk();
         
@@ -293,7 +293,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndUnrenderedText() {
+    void testAndUnrenderedText() {
         //given
         Response response = Response.withOk().andUnrenderedBody();
         
@@ -302,7 +302,7 @@ public class ResponseTest {
     }
     
     @Test
-    public void testAndUnrenderedHtml() {
+    void testAndUnrenderedHtml() {
         //given
         Response response = Response.withOk().andUnrenderedBody();
         

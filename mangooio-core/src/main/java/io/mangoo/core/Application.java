@@ -41,6 +41,7 @@ import io.github.classgraph.MethodInfo;
 import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.email.MailListener;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
@@ -90,6 +91,7 @@ public final class Application {
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFERSIZE = 255;
     private static final LocalDateTime start = LocalDateTime.now();
+    private static io.mangoo.core.Module module;
     private static ScheduledExecutorService scheduledExecutorService;
     private static String httpHost;
     private static String ajpHost;
@@ -121,6 +123,7 @@ public final class Application {
             prepareRoutes();
             createRoutes();
             prepareDatastore();
+            prepareMail();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -238,6 +241,13 @@ public final class Application {
      */
     private static void prepareDatastore() {
         getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
+    }
+    
+    /**
+     * Configures async mailer
+     */
+    private static void prepareMail() {
+        getInstance(EventBusService.class).register(getInstance(MailListener.class));
     }
 
     /**
@@ -705,7 +715,8 @@ public final class Application {
     private static List<Module> getModules() {
         final List<Module> modules = new ArrayList<>();
         try {
-            modules.add(new io.mangoo.core.Module());
+            module = new io.mangoo.core.Module();
+            modules.add(module);
             modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
@@ -726,5 +737,9 @@ public final class Application {
     private static void failsafe() {
         System.out.print("Failed to start mangoo I/O application"); //NOSONAR Intentionally as we want to exit the application at this point
         System.exit(1); //NOSONAR Intentionally as we want to exit the application at this point
+    }
+
+    public static void stopEmbeddedMongoDB() {
+        module.stopEmbeddedMongoDB();        
     }
 }

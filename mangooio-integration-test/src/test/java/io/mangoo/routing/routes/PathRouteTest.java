@@ -14,10 +14,10 @@ import io.mangoo.TestExtension;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class PathRouteTest {
+class PathRouteTest {
     
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         PathRoute pathRoute = new PathRoute();
         
@@ -35,7 +35,7 @@ public class PathRouteTest {
     }
     
     @Test
-    public void testAddingRoute() {
+    void testAddingRoute() {
         //given
         String url = "/" + UUID.randomUUID().toString() + "/";
         PathRoute pathRoute = new PathRoute();

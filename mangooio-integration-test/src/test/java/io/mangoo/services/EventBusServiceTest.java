@@ -22,10 +22,10 @@ import io.mangoo.exceptions.MangooEventBusException;
  *
  */
 @ExtendWith({TestExtension.class})
-public class EventBusServiceTest {
+class EventBusServiceTest {
 
     @Test
-    public void testEventBus() throws MangooEventBusException, InterruptedException  {
+    void testEventBus() throws MangooEventBusException, InterruptedException  {
         //given
         EventBusService busManager = Application.getInstance(EventBusService.class);
         TestListener testListener = new TestListener();
@@ -38,13 +38,13 @@ public class EventBusServiceTest {
         
         //then
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(testListener.getCount(), equalTo(3)));
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(2L)));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(3L)));
         
         //when
         busManager.unregister(testListener);
         
         //then
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(1L)));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(2L)));
         
         MatcherAssert.assertThat(t -> {
             //given

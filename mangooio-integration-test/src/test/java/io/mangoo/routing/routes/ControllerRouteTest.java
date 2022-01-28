@@ -16,10 +16,10 @@ import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
 
 @ExtendWith({TestExtension.class})
-public class ControllerRouteTest {
+class ControllerRouteTest {
 
     @Test
-    public void testCreation() {
+    void testCreation() {
         //given
         Class<?> clazz = ApplicationController.class;
         
@@ -31,7 +31,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testWithMethods() {
+    void testWithMethods() {
         //given
         String route1 = UUID.randomUUID().toString();
         String route2 = UUID.randomUUID().toString();
@@ -52,7 +52,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testWithBasicAuthentication() {
+    void testWithBasicAuthentication() {
         //given
         String route1 = UUID.randomUUID().toString();
         
@@ -74,7 +74,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testWithAuthentication() {
+    void testWithAuthentication() {
         //given
         String route1 = UUID.randomUUID().toString();
         
@@ -95,7 +95,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testWithAuthorization() {
+    void testWithAuthorization() {
         //given
         String route1 = UUID.randomUUID().toString();
         
@@ -116,7 +116,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testWithNonBlocking() {
+    void testWithNonBlocking() {
         //given
         String route1 = UUID.randomUUID().toString();
         
@@ -137,7 +137,7 @@ public class ControllerRouteTest {
     }
     
     @Test
-    public void testUrl() {
+    void testUrl() {
         //given
         String route1 = UUID.randomUUID().toString();
         String url = UUID.randomUUID().toString();

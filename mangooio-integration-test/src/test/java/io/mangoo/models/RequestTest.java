@@ -20,10 +20,10 @@ import io.mangoo.routing.bindings.Session;
  *
  */
 @ExtendWith({TestExtension.class})
-public class RequestTest {
+class RequestTest {
 
     @Test
-    public void testBuild() {
+    void testBuild() {
         //given
         Request reqeust = new Request()
                 .withAuthentication(Application.getInstance(Authentication.class))

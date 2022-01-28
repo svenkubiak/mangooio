@@ -19,11 +19,11 @@ import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
 
 @ExtendWith({TestExtension.class})
-public class JsonUtilsTest {
+class JsonUtilsTest {
     private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
 
     @Test
-    public void testToJson() {
+    void testToJson() {
         //given
         Car car = new Car();
         
@@ -36,7 +36,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void testConcurrentToJson() throws InterruptedException {
+    void testConcurrentToJson() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();
@@ -51,7 +51,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void testFromJson() {
+    void testFromJson() {
         //given
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
@@ -64,7 +64,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void testConcurrentFromJson() throws InterruptedException {
+    void testConcurrentFromJson() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString(); 
@@ -79,7 +79,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void testFromJsonToClass() {
+    void testFromJsonToClass() {
         //given
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
@@ -94,7 +94,7 @@ public class JsonUtilsTest {
     }
     
     @Test
-    public void testConcurrentFromJsonToClass() throws InterruptedException {
+    void testConcurrentFromJsonToClass() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString(); 

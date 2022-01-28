@@ -30,7 +30,7 @@ public class FormController {
     }
     
     public Response singlefile(Form form) {
-        String content = "";
+        var content = "";
         Optional<InputStream> formFile = form.getFile();
         if (formFile.isPresent()) {
             InputStream file = formFile.get();

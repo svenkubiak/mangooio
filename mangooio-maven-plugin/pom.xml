@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>7.0.2-SNAPSHOT</version>
+		<version>7.1.0-RC6-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-			<version>7.0.2-SNAPSHOT</version>
+			<version>7.1.0-RC6-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.commons</groupId>
@@ -34,6 +34,7 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.inject</groupId>
@@ -66,6 +67,7 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>

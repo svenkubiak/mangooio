@@ -1,20 +1,19 @@
 package io.mangoo.email;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.simplejavamail.api.email.EmailPopulatingBuilder;
-import org.simplejavamail.email.EmailBuilder;
 
 import com.google.common.base.Preconditions;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
+import io.mangoo.services.EventBusService;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
 
@@ -26,10 +25,21 @@ import io.mangoo.templating.TemplateEngine;
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
-    private EmailPopulatingBuilder email = EmailBuilder.startingBlank();
+    private Map<String, String> messageHeaders = new HashMap<>();
+    private List<String> messageTos = new ArrayList<>(); 
+    private List<String> messageCcs = new ArrayList<>(); 
+    private List<String> messageBccs = new ArrayList<>(); 
+    private List<Path> messageAttachments = new ArrayList<>();
+    private String messageSubject;
+    private String messageReplyTo;
+    private String messageText;
+    private String messageFromName;
+    private String messageFromAddress;
+    private boolean messageHtml;
 
     /**
      * Creates a new mail instance
+     * 
      * @return A mail object instance
      */
     public static Mail newMail() {
@@ -37,27 +47,14 @@ public class Mail {
     }
     
     /**
-     * Appends one or more TO address
+     * Sets one or more TO address
      *
      * @param tos Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
      * @return A mail object instance
      */
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS.toString());
-        email.toMultiple(tos);
-        
-        return this;
-    }
-    
-    /**
-     * Appends TO address
-     *
-     * @param to Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail to(String to) {
-        Objects.requireNonNull(to, Required.TO.toString());
-        email.to(to);
+        messageTos.addAll(Arrays.asList(tos));
         
         return this;
     }
@@ -70,46 +67,20 @@ public class Mail {
      */
     public Mail cc(String... ccs) {
         Objects.requireNonNull(ccs, Required.CCS.toString());
-        email.ccMultiple(ccs);
+        messageCcs.addAll(Arrays.asList(ccs));
         
         return this;
     }
     
     /**
-     * Appends CC address
-     *
-     * @param cc Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail cc(String cc) {
-        Objects.requireNonNull(cc, Required.CC.toString());
-        email.cc(cc);
-        
-        return this;
-    }
-    
-    /**
-     * Appends BCC address
+     * Sets one or more BCC address
      *
      * @param bccs array of {@link String}s to set.
      * @return A mail object instance
      */
     public Mail bcc(String... bccs) {
         Objects.requireNonNull(bccs, Required.BCCS.toString());
-        email.bccMultiple(bccs);
-        
-        return this;
-    }
-    
-    /**
-     * Appends BCC address.
-     *
-     * @param bcc Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}.
-     * @return A mail object instance
-     */
-    public Mail bcc(String bcc) {
-        Objects.requireNonNull(bcc, Required.BCC.toString());
-        email.bcc(bcc);
+        messageBccs.addAll(Arrays.asList(bccs));
         
         return this;
     }
@@ -117,15 +88,14 @@ public class Mail {
     /**
      * Sets message subject with specified encoding to override default platform encoding.
      * The application must ensure that the subject does not contain any line breaks.
-     * See {@link javax.mail.internet.MimeMessage#setSubject(String, String)}.
      *
      * @param subject The message subject
      * @return A mail object instance
      */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT.toString());
-        email.withSubject(subject);
-        
+        messageSubject = subject;
+            
         return this;
     }
     
@@ -139,13 +109,27 @@ public class Mail {
     public Mail from(String fromName, String fromAddress) {
         Objects.requireNonNull(fromName, Required.FROM.toString());
         Objects.requireNonNull(fromAddress, Required.NAME.toString());
-        email.from(fromName, fromAddress);
+        messageFromName = fromName;
+        messageFromAddress = fromAddress;
         
         return this;
     }
     
     /**
-     * Sets header value.
+     * Sets the FROM address
+     * 
+     * @param fromAddress Address may be specified with personal name like this: {@code email@foo.com}
+     * @return A mail object instance
+     */
+    public Mail from(String fromAddress) {
+        Objects.requireNonNull(fromAddress, Required.FROM.toString());
+        messageFromAddress = fromAddress;
+        
+        return this;
+    }
+    
+    /**
+     * Adds a header value
      *
      * @param name  The name of the header
      * @param value The value of the header
@@ -154,20 +138,20 @@ public class Mail {
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
-        email.withHeader(name, value);
+        messageHeaders.put(name, value);
         
         return this;
     }
     
     /**
-     * Appends REPLY-TO address
+     * Sets REPLY-TO address
      *
      * @param replyTo Address may be specified with personal name like this: {@code Jenny Doe <email@foo.com>}
      * @return A mail object instance
      */
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO.toString());
-        email.withReplyTo(replyTo);
+        messageReplyTo = replyTo;
         
         return this;
     }
@@ -181,7 +165,7 @@ public class Mail {
      */
     public Mail priority(int priority) {
         Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY.toString());
-        email.withHeader("X-Priority", priority);
+        messageHeaders.put("X-Priority", String.valueOf(priority));
         
         return this;
     }
@@ -196,11 +180,25 @@ public class Mail {
         Objects.requireNonNull(path, Required.PATH.toString());
         Preconditions.checkArgument(path.toFile().length() != 0, Required.CONTENT.toString());
         
-        try {
-            email.withAttachment(path.getFileName().toString(), Files.readAllBytes(path), Files.probeContentType(path));
-        } catch (IOException e) {
-            // NOSONAR Intentionally left blank
-        }
+        messageAttachments.add(path);
+        
+        return this;
+    }
+    
+    /**
+     * Adds a list of files as attachment to the mail
+     *
+     * @param paths The Path files to attach
+     * @return A mail object instance   
+     */
+    public Mail attachments(List<Path> paths) {
+        Objects.requireNonNull(paths, Required.PATH.toString());
+        paths.stream().forEach(path -> {
+            Objects.requireNonNull(path, Required.PATH.toString());
+            Preconditions.checkArgument(path.toFile().length() != 0, Required.PATH.toString());
+        });
+        
+        messageAttachments.addAll(paths);
         
         return this;
     }
@@ -212,7 +210,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail textMessage(String message) {
-        email.appendText(message);
+        messageText = message;
         
         return this;
     }
@@ -224,7 +222,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail htmlMessage(String message) {
-        email.appendTextHTML(message);
+        messageText = message;
+        messageHtml = true;
         
         return this;
     }
@@ -240,7 +239,7 @@ public class Mail {
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        email.appendText(render(template, content));
+        messageText = render(template, content);
         
         return this;
     }
@@ -256,26 +255,77 @@ public class Mail {
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        email.appendTextHTML(render(template, content));
+        messageText = render(template, content);
+        messageHtml = true;
         
         return this;
     }
     
     /**
      * Sends the mail
-     * 
-     * @throws MangooMailerException when sending the mail failed
      */
-    public void send() throws MangooMailerException {
-        Application.getInstance(MailEvent.class).send(email.buildEmail());
+    public void send() {
+        Application.getInstance(EventBusService.class).publish(this);
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {
+        Objects.requireNonNull(template, Required.TEMPLATE.toString());
+        Objects.requireNonNull(template, Required.CONTENT.toString());
+        
         if (template.charAt(0) == '/' || template.startsWith("\\")) {
             template = template.substring(1, template.length());
         } 
         
         var templateContext = new TemplateContext(content).withTemplatePath(template);
+        
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
+    }
+
+    public Map<String, String> getMessageHeaders() {
+        return messageHeaders;
+    }
+
+    public List<String> getMessageTos() {
+        return messageTos;
+    }
+
+    public List<String> getMessageCcs() {
+        return messageCcs;
+    }
+
+    public List<String> getMessageBccs() {
+        return messageBccs;
+    }
+
+    public List<Path> getMessageAttachments() {
+        return messageAttachments;
+    }
+
+    public String getMessageSubject() {
+        return messageSubject;
+    }
+
+    public String getMessageReplyTo() {
+        return messageReplyTo;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+
+    public String getMessageFromName() {
+        return messageFromName;
+    }
+    
+    public String getMessageFromAddress() {
+        return messageFromAddress;
+    }
+
+    public boolean isMessageHtml() {
+        return messageHtml;
+    }
+    
+    public boolean hasAttachments() {
+        return !messageAttachments.isEmpty();
     }
 }

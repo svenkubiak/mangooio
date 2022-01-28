@@ -15,12 +15,12 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class AuthenticationTest {
+class AuthenticationTest {
     private static final String SALT = "6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
     private static final String VALID_HASH = "$2a$12$Vyb9AT6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
 
     @Test
-    public void testUserLock() {
+    void testUserLock() {
         //given
         Authentication authentication = Application.getInstance(Authentication.class);
         

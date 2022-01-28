@@ -13,31 +13,15 @@ variables:
 cache:
   paths:
     - .m2/repository
-
-before_script:
-#  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
-#  - eval $(ssh-agent -s)
-#  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#  - mkdir -p ~/.ssh
-#  - chmod 700 ~/.ssh
-#  - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
-#  - chmod 644 ~/.ssh/known_hosts
-#  - apt-get update >/dev/null
-#  - apt-get install -y locales >/dev/null
-#  - echo "en_US UTF-8" > /etc/locale.gen
-#  - locale-gen en_US.UTF-8
-#  - export LANG=en_US.UTF-8
-#  - export LANGUAGE=en_US:en
-#  - export LC_ALL=en_US.UTF-8
  
 test:
   stage: test
-  script: mvn -Denforcer.skip clean $MAVEN_CLI_OPTS clean verify
+  script: mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify
 
 sonar:
   stage: sonar
   script: 
-  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean verify sonar:sonar --settings settings.xml
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.java.libraries=target clean verify sonar:sonar
   only:
   - /^feature.*$/
 
@@ -47,17 +31,25 @@ smoke:
     paths:
       - mangooio-integration-test/target/mangooio.jar
     expire_in: 10m
+  before_script:
+  - apt-get update -y && apt-get install openssh-client git -y
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
   script:
-    - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true clean verify    
-    - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
-    - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
+  - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip -Dmaven.test.skip=true -Dmaven.javadoc.skip=true clean verify -P shadeing
+  - scp -P 1904 mangooio-integration-test/target/mangooio.jar git@zeus.svenkubiak.de:/home/git
+  - ssh git@zeus.svenkubiak.de -p 1904 'sudo /opt/scripts/loader.sh'
   only:
   - loader
 
 javadocs:
   stage: javadocs
   script:
-   - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean  clean install javadoc:javadoc
+   - mvn $MAVEN_CLI_OPTS -Dmaven.test.skip=true -Denforcer.skip clean -Dmaven.test.skip=true clean install javadoc:javadoc
    - mkdir /tmp/javadoc
    - mv /builds/svenkubiak/mangooio/mangooio-core/target/site/apidocs/* /tmp/javadoc
    - mkdir /tmp/build

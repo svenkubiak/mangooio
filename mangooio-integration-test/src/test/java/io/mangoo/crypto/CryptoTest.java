@@ -29,7 +29,7 @@ import io.mangoo.utils.MangooUtils;
  */
 @ExtendWith({TestExtension.class})
 @SuppressWarnings("unchecked")
-public class CryptoTest {
+class CryptoTest {
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
     private static final String plainText = "This is a super secret message!";
     private static final String key33 = "123456789012345678901234567890123";
@@ -37,7 +37,7 @@ public class CryptoTest {
     private static final String key31 = "1234567890123456789012345678901";
     
     @Test
-    public void testEncryption() {
+    void testEncryption() {
         //when
         String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
 
@@ -48,7 +48,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testEncryptionConcurrent() {
+    void testEncryptionConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String text = MangooUtils.randomString(32);
@@ -63,7 +63,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testLongKey() {
+    void testLongKey() {
         //when
         String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key33);
 
@@ -74,14 +74,14 @@ public class CryptoTest {
     }
     
     @Test
-    public void testShortKey() {
+    void testShortKey() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             Application.getInstance(Crypto.class).encrypt(plainText, key31);
         }, "Failed to add a key that is short than required");
     }
     
     @Test
-    public void testEncryptionWithKey() {
+    void testEncryptionWithKey() {
         //when
         String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key32);
         
@@ -92,7 +92,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testDecryption() {
+    void testDecryption() {
         //given
         String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
         
@@ -105,7 +105,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testDecryptionWithKey() {
+    void testDecryptionWithKey() {
         //given
         String encrypt = Application.getInstance(Crypto.class).encrypt(plainText, key32);
 
@@ -118,7 +118,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testGenerateKeyPair() throws NoSuchAlgorithmException {
+    void testGenerateKeyPair() throws NoSuchAlgorithmException {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
 
@@ -131,7 +131,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testEncryptWithPublicAndPrivateKey() throws Exception {
+    void testEncryptWithPublicAndPrivateKey() throws Exception {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
 
@@ -145,7 +145,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testDecryptWithPublicAndPrivateKey() throws Exception {
+    void testDecryptWithPublicAndPrivateKey() throws Exception {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
 
@@ -166,7 +166,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testGetKeyAsString() throws Exception {
+    void testGetKeyAsString() throws Exception {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
 
@@ -183,7 +183,7 @@ public class CryptoTest {
     }
     
     @Test
-    public void testGetPublicKeyFromString() throws Exception {
+    void testGetPublicKeyFromString() throws Exception {
         //given
         Crypto crypto = Application.getInstance(Crypto.class);
 

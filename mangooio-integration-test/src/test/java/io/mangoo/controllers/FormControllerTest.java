@@ -44,10 +44,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FormControllerTest {
+class FormControllerTest {
 
     @Test
-	public void testFormPost() {
+	void testFormPost() {
 		// given
 		Multimap<String, String> parameter = ArrayListMultimap.create();
 		parameter.put("username", "vip");
@@ -65,7 +65,7 @@ public class FormControllerTest {
 	}
 	
     @Test
-    public void testFormPostConcurrent() {
+    void testFormPostConcurrent() {
         MatcherAssert.assertThat(t -> {
             // given
             String username = UUID.randomUUID().toString();
@@ -86,7 +86,7 @@ public class FormControllerTest {
     }
 	
     @Test
-    public void testMultiValue() {
+    void testMultiValue() {
         // given
         Multimap<String, String> parameter = ArrayListMultimap.create();
         parameter.put("foo[]", "1");
@@ -106,7 +106,7 @@ public class FormControllerTest {
     }
     
 	@Test
-	public void testSingleFileUpload(@TempDir Path tempDir) throws IOException {
+	void testSingleFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given
 	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
 	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
@@ -138,7 +138,7 @@ public class FormControllerTest {
 	}
 	
 	@Test
-	public void testMultiFileUpload(@TempDir Path tempDir) throws IOException {
+	void testMultiFileUpload(@TempDir Path tempDir) throws IOException {
 	    // given
 	    String host = Application.getInstance(Config.class).getConnectorHttpHost();
 	    int port = Application.getInstance(Config.class).getConnectorHttpPort();
@@ -174,7 +174,7 @@ public class FormControllerTest {
 	}
 
 	@Test
-	public void testFormEncoding() {
+	void testFormEncoding() {
 		// given
 		Multimap<String, String> parameter = ArrayListMultimap.create();
         parameter.put("username", "süpöä");
@@ -193,7 +193,7 @@ public class FormControllerTest {
 	}
 
 	@Test
-	public void testInvalidFormValues() {
+	void testInvalidFormValues() {
 		// given
 		Multimap<String, String> parameter = ArrayListMultimap.create();
         parameter.put("phone", "1234567890123");
@@ -222,7 +222,7 @@ public class FormControllerTest {
 	}
 
 	@Test
-	public void testValidFormValues() {
+	void testValidFormValues() {
 		// given
         Multimap<String, String> parameter = ArrayListMultimap.create();
         parameter.put("name", "this is my name");
@@ -250,7 +250,7 @@ public class FormControllerTest {
 	}
 
     @Test
-    public void testFlashify() {
+    void testFlashify() {
         // given
         String data = "this is my namefoo@bar.com";
         Multimap<String, String> parameter = ArrayListMultimap.create();

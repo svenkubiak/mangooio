@@ -40,11 +40,11 @@ import io.undertow.websockets.core.WebSockets;
  *
  */
 @ExtendWith({TestExtension.class})
-public class WebSocketServiceTest {
+class WebSocketServiceTest {
     private static String eventData;
 
     @Test
-    public void testAddChannel() {
+    void testAddChannel() {
         //given
         final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
@@ -60,7 +60,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
-    public void testRemoveChannel() {
+    void testRemoveChannel() {
         //given
         final WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
         final WebSocketChannel channel = Mockito.mock(WebSocketChannel.class);
@@ -76,7 +76,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
-    public void testCloseChannel() throws Exception {
+    void testCloseChannel() throws Exception {
         //given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
@@ -100,7 +100,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
-    public void testSendData() throws Exception {
+    void testSendData() throws Exception {
         // given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
@@ -133,7 +133,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
-    public void testSendDataWithValidAuthentication() throws Exception {
+    void testSendDataWithValidAuthentication() throws Exception {
         // given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);
@@ -175,7 +175,7 @@ public class WebSocketServiceTest {
     }
 
     @Test
-    public void testSendDataWithInvalidAuthentication() throws Exception {
+    void testSendDataWithInvalidAuthentication() throws Exception {
         // given
         final HttpClient httpClient = HttpClient.newHttpClient();
         final Config config = Application.getInstance(Config.class);

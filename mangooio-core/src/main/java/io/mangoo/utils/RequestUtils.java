@@ -169,7 +169,7 @@ public final class RequestUtils {
      * @return The generated URL
      */
     public static String getURL(URI uri) {
-        final StringBuilder buffer = new StringBuilder();
+        final var buffer = new StringBuilder();
         buffer.append(uri.getPath());
         
         String query = uri.getQuery();

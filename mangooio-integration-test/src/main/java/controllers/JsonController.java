@@ -8,7 +8,7 @@ public class JsonController {
     private static final int AGE = 24;
 
     public Response render() {
-        Person person = new Person("Peter", "Parker", AGE);
+        var person = new Person("Peter", "Parker", AGE);
         return Response.withOk().andJsonBody(person);
     }
 

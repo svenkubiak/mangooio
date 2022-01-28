@@ -20,10 +20,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ConcurrentControllerTest {
+class ConcurrentControllerTest {
 
     @Test
-    public void testConcurrentJsonParsing() throws InterruptedException {
+    void testConcurrentJsonParsing() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid = UUID.randomUUID().toString();

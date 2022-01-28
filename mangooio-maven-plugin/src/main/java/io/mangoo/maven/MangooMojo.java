@@ -18,7 +18,6 @@ package io.mangoo.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -125,7 +124,7 @@ public class MangooMojo extends AbstractMojo {
         Set<String> excludesSet = new LinkedHashSet<>(excludes);
 
         Set<Path> watchDirectories = new LinkedHashSet<>();
-        FileSystem fileSystem = FileSystems.getDefault();
+        var fileSystem = FileSystems.getDefault();
         watchDirectories.add(fileSystem.getPath(buildOutputDirectory).toAbsolutePath());
 
         if (this.watchDirs != null) {
@@ -141,18 +140,18 @@ public class MangooMojo extends AbstractMojo {
 
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
         try {
-            Runner machine = new Runner(
+            var machine = new Runner(
                     Application.class.getName(),
                     StringUtils.join(classpathItems, File.pathSeparator),
                     project.getBasedir(),
                     jpdaPort,
                     jvmArgs);
 
-            Trigger restartTrigger = new Trigger(machine);
+            var restartTrigger = new Trigger(machine);
             restartTrigger.setSettleDownMillis(settleDownMillis);
             restartTrigger.start();
 
-            Watcher watcher = new Watcher(
+            var watcher = new Watcher(
                     watchDirectories,
                     includesSet,
                     excludesSet,
@@ -172,8 +171,8 @@ public class MangooMojo extends AbstractMojo {
             if (this.watchAllClassPathDirs && file.isDirectory()) {
                 watchDirectories.add(file.toPath().toAbsolutePath());
             } else if (file.getName().endsWith(".jar") && this.watchAllClassPathJars) {
-                File parentDir = file.getParentFile();
-                Path parentPath = parentDir.toPath().toAbsolutePath();
+                var parentDir = file.getParentFile();
+                var parentPath = parentDir.toPath().toAbsolutePath();
 
                 String rulePrefix = parentDir.getAbsolutePath() + File.separator;
                 rulePrefix = rulePrefix.replace("\\", "\\\\");

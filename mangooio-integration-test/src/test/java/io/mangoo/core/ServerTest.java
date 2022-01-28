@@ -21,10 +21,10 @@ import io.mangoo.enums.Header;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ServerTest {
+class ServerTest {
     
     @Test
-    public void testAdditionalHeader() {
+    void testAdditionalHeader() {
         //then
         List<Entry<Header, String>> collect = Server.headers()
                 .entrySet()

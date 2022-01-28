@@ -23,9 +23,9 @@ import io.mangoo.enums.CacheName;
  *
  */
 @ExtendWith({TestExtension.class})
-public class CacheProviderTest {
+class CacheProviderTest {
     @Test
-    public void testGet() {
+    void testGet() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
@@ -35,7 +35,7 @@ public class CacheProviderTest {
     }
     
     @Test
-    public void testCaches() {
+    void testCaches() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
@@ -51,7 +51,7 @@ public class CacheProviderTest {
     }
     
     @Test
-    public void testGetCache() {
+    void testGetCache() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
@@ -66,7 +66,7 @@ public class CacheProviderTest {
     }
     
     @Test
-    public void testDafultCache() {
+    void testDafultCache() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         Cache cache = Application.getInstance(Cache.class);

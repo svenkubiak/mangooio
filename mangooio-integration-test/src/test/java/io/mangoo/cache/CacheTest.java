@@ -21,11 +21,11 @@ import io.mangoo.core.Application;
  *
  */
 @ExtendWith({TestExtension.class})
-public class CacheTest {
+class CacheTest {
     private static final String TEST_VALUE = "This is a test value for the cache!";
 
     @Test
-    public void testAdd() {
+    void testAdd() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -38,7 +38,7 @@ public class CacheTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -51,7 +51,7 @@ public class CacheTest {
     }
 
     @Test
-    public void testCast() {
+    void testCast() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -63,7 +63,7 @@ public class CacheTest {
     }
     
     @Test
-    public void testPutAll() {
+    void testPutAll() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -79,7 +79,7 @@ public class CacheTest {
     }
     
     @Test
-    public void testIncrement() {
+    void testIncrement() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         
@@ -97,7 +97,7 @@ public class CacheTest {
     }
     
     @Test
-    public void testDecrement() {
+    void testDecrement() {
         //given
         Cache cache = Application.getInstance(Cache.class);
         

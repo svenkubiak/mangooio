@@ -19,10 +19,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ResourcesHandlerTest {
+class ResourcesHandlerTest {
     
     @Test
-    public void testResourceFile() {
+    void testResourceFile() {
         //given
         TestResponse response = TestRequest.get("/robots.txt").execute();
 
@@ -33,7 +33,7 @@ public class ResourcesHandlerTest {
     }
     
     @Test
-    public void testResourcePathJavaScript() {
+    void testResourcePathJavaScript() {
         //given
         TestResponse response = TestRequest.get("/assets/javascript/jquery.min.js").execute();
         
@@ -44,7 +44,7 @@ public class ResourcesHandlerTest {
     }
     
     @Test
-    public void testResourcePathStylesheet() {
+    void testResourcePathStylesheet() {
         //given
         TestResponse response = TestRequest.get("/assets/stylesheet/css.css").execute();
         

@@ -14,12 +14,12 @@ import io.mangoo.TestExtension;
  *
  */
 @ExtendWith({TestExtension.class})
-public class SessionTest {
+class SessionTest {
     private static final String BAR = "bar";
     private static final String FOO = "foo";
 
     @Test
-    public void testNoContent() {
+    void testNoContent() {
         //given
         final Session session = Session.create();
 
@@ -28,7 +28,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testContent() {
+    void testContent() {
         //given
         final Session session = Session.create();
 
@@ -42,7 +42,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testRemove() {
+    void testRemove() {
         //given
         final Session session = Session.create();
 
@@ -57,7 +57,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         //given
         final Session session = Session.create();
 
@@ -72,7 +72,7 @@ public class SessionTest {
     }
 
     @Test
-    public void testInvalidCharacters() {
+    void testInvalidCharacters() {
         //given
         final Session session = Session.create();
 

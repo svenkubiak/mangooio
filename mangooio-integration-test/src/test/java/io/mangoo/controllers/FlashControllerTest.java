@@ -19,9 +19,9 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FlashControllerTest {
+class FlashControllerTest {
     @Test
-    public void testFlash() {
+    void testFlash() {
         //given
         TestResponse response = TestRequest.get("/flash").execute();
 

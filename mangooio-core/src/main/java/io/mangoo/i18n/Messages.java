@@ -1,6 +1,5 @@
 package io.mangoo.i18n;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -18,9 +17,7 @@ import io.mangoo.enums.Key;
  *
  */
 public class Messages implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 7560110796880143546L;
-
+    private static final long serialVersionUID = -1713264225655435037L;
     private Map<String, String> defaults = Default.getMessages();
     private transient ResourceBundle bundle;
 

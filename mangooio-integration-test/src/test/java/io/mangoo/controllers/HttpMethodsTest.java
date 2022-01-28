@@ -19,10 +19,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class HttpMethodsTest {
+class HttpMethodsTest {
     
     @Test
-    public void testGet() {
+    void testGet() {
         //given
         final TestResponse response = TestRequest.get("/").execute();
 
@@ -32,7 +32,7 @@ public class HttpMethodsTest {
     }
     
     @Test
-    public void testPost() {
+    void testPost() {
         //given
         final TestResponse response = TestRequest.post("/").execute();
 
@@ -42,7 +42,7 @@ public class HttpMethodsTest {
     }
     
     @Test
-    public void testPut() {
+    void testPut() {
         //given
         final TestResponse response = TestRequest.put("/put").execute();
 
@@ -52,7 +52,7 @@ public class HttpMethodsTest {
     }
 
     @Test
-    public void testHead() {
+    void testHead() {
         //given
         final TestResponse response = TestRequest.head("/").execute();
 
@@ -62,7 +62,7 @@ public class HttpMethodsTest {
     }
     
     @Test
-    public void testDelete() {
+    void testDelete() {
         //given
         final TestResponse response = TestRequest.delete("/").execute();
 
@@ -72,7 +72,7 @@ public class HttpMethodsTest {
     }
     
     @Test
-    public void testOptions() {
+    void testOptions() {
         //given
         final TestResponse response = TestRequest.options("/").execute();
 
@@ -82,7 +82,7 @@ public class HttpMethodsTest {
     }
     
     @Test
-    public void testPatch() {
+    void testPatch() {
         //given
         final TestResponse response = TestRequest.patch("/").execute();
 

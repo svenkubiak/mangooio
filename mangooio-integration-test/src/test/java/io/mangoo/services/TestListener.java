@@ -11,7 +11,7 @@ public class TestListener {
     private int count;
     
     @Subscribe
-    public void task(String s) {
+    void task(String s) {
         this.count++;
     }
     

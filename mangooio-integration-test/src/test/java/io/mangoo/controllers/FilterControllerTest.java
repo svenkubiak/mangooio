@@ -20,10 +20,10 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class FilterControllerTest {
+class FilterControllerTest {
 
     @Test
-    public void testFilterWithAdditionalContent() {
+    void testFilterWithAdditionalContent() {
         //given
         TestResponse response = TestRequest.get("/filter").execute();
 
@@ -34,7 +34,7 @@ public class FilterControllerTest {
     }
 
     @Test
-    public void testFilterWithAdditionalHeader() {
+    void testFilterWithAdditionalHeader() {
         //given
         TestResponse response = TestRequest.get("/headerfilter").execute();
 
@@ -45,7 +45,7 @@ public class FilterControllerTest {
     }
     
     @Test
-    public void testMultipleFilters() {
+    void testMultipleFilters() {
         //given
         TestResponse response = TestRequest.get("/filters").execute();
 

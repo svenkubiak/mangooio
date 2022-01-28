@@ -10,10 +10,10 @@ import io.mangoo.TestExtension;
 import io.mangoo.enums.Http;
 
 @ExtendWith({TestExtension.class})
-public class RequestRouteTest {
+class RequestRouteTest {
 
     @Test
-    public void testTo() {
+    void testTo() {
         //given
         RequestRoute requestRoute = new RequestRoute(Http.GET);
         
@@ -32,7 +32,7 @@ public class RequestRouteTest {
     }
     
     @Test
-    public void testAuthentication() {
+    void testAuthentication() {
         //given
         RequestRoute requestRoute = new RequestRoute(Http.GET);
         
@@ -44,7 +44,7 @@ public class RequestRouteTest {
     }
     
     @Test
-    public void testBasicAuthentication() {
+    void testBasicAuthentication() {
         //given
         RequestRoute requestRoute = new RequestRoute(Http.GET);
         
@@ -56,7 +56,7 @@ public class RequestRouteTest {
     }
     
     @Test
-    public void testNonBlocking() {
+    void testNonBlocking() {
         //given
         RequestRoute requestRoute = new RequestRoute(Http.GET);
         

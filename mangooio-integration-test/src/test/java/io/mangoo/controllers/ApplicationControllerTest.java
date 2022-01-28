@@ -37,14 +37,14 @@ import io.undertow.util.StatusCodes;
  *
  */
 @ExtendWith({TestExtension.class})
-public class ApplicationControllerTest {
+class ApplicationControllerTest {
     private static final String JSON = "{\"foo\":\"bar\"}";
     private static final String JSON_PLAIN = "{foo=bar}";
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
 
     @Test
-    public void testIndex() {
+    void testIndex() {
         //given
         final TestResponse response = TestRequest.get("/").execute();
 
@@ -55,7 +55,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testRoute() {
+    void testRoute() {
         //given
         final TestResponse response = TestRequest.get("/route").execute();
 
@@ -67,7 +67,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testNamed() {
+    void testNamed() {
         //given
         final TestResponse response = TestRequest.get("/named").execute();
 
@@ -78,7 +78,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testReverse() {
+    void testReverse() {
         //given
         final TestResponse response = TestRequest.get("/reverse").execute();
 
@@ -91,7 +91,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testLocation() {
+    void testLocation() {
         //given
         final TestResponse response = TestRequest.get("/location").execute();
 
@@ -103,7 +103,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testLocationControllerOnly() {
+    void testLocationControllerOnly() {
         //given
         final TestResponse response = TestRequest.get("/location/controller").execute();
 
@@ -115,7 +115,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testLocationWithParameter() {
+    void testLocationWithParameter() {
         //given
         final TestResponse response = TestRequest.get("/location/8282838477").execute();
 
@@ -127,7 +127,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testPrettyTime() {
+    void testPrettyTime() {
         //given
         final TestResponse response = TestRequest.get("/prettytime")
                 .withHeader("Accept-Language", "de-DE")
@@ -142,7 +142,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testRequest() {
+    void testRequest() {
         //given
         final TestResponse response = TestRequest.get("/request").execute();
 
@@ -154,7 +154,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testRedirectWithDisableRedirects() {
+    void testRedirectWithDisableRedirects() {
         //given
         final TestResponse response = TestRequest.get("/redirect").withDisabledRedirects().execute();
 
@@ -165,7 +165,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testRedirectWithoutDisableRedirects() {
+    void testRedirectWithoutDisableRedirects() {
         //given
         final TestResponse response = TestRequest.get("/redirect").execute();
 
@@ -177,7 +177,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testPlainText() {
+    void testPlainText() {
         //given
         final TestResponse response = TestRequest.get("/text").execute();
 
@@ -188,7 +188,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testNotFound() {
+    void testNotFound() {
         //given
         final TestResponse response = TestRequest.get("/foo").execute();
 
@@ -199,7 +199,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testForbidden() {
+    void testForbidden() {
         //given
         final TestResponse response = TestRequest.get("/forbidden").execute();
 
@@ -210,7 +210,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testBadRequest() {
+    void testBadRequest() {
         //given
         final TestResponse response = TestRequest.get("/badrequest").execute();
 
@@ -221,7 +221,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testUnauthorized() {
+    void testUnauthorized() {
         //given
         final TestResponse response = TestRequest.get("/unauthorized").execute();
 
@@ -232,7 +232,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testAdditionalHeaders() {
+    void testAdditionalHeaders() {
         //given
         final TestResponse response = TestRequest.get("/header").execute();
 
@@ -244,7 +244,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testBinaryDownload(@TempDir Path tempDir) throws IOException {
+    void testBinaryDownload(@TempDir Path tempDir) throws IOException {
         //given
         final Config config = Application.getInjector().getInstance(Config.class);
         final String host = config.getConnectorHttpHost();
@@ -266,7 +266,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testPost() {
+    void testPost() {
         //given
         final TestResponse response = TestRequest.post("/post")
                 .withStringBody("Winter is coming!")
@@ -280,7 +280,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testPut() {
+    void testPut() {
         //given
         final TestResponse response = TestRequest.put("/put")
                 .withStringBody("The king of the north!")
@@ -294,7 +294,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testJsonPathWithPost() {
+    void testJsonPathWithPost() {
         //given
         final TestResponse response = TestRequest.post("/jsonpathpost")
                 .withStringBody(JSON)
@@ -308,7 +308,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testJsonPathWithPut() {
+    void testJsonPathWithPut() {
         //given
         final TestResponse response = TestRequest.put("/jsonpathput")
                 .withStringBody(JSON)
@@ -322,7 +322,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testJsonBoonWithPost() {
+    void testJsonBoonWithPost() {
         //given
         final TestResponse response = TestRequest.post("/jsonboonpost")
                 .withStringBody(JSON)
@@ -336,7 +336,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testJsonBoonWithPut() {
+    void testJsonBoonWithPut() {
         //given
         final TestResponse response = TestRequest.put("/jsonboonput")
                 .withStringBody(JSON)
@@ -350,7 +350,7 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    public void testUnrenderedText() {
+    void testUnrenderedText() {
         //given
         final TestResponse response = TestRequest.get("/unrendered/text")
                 .execute();
@@ -362,7 +362,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testFreemarkerConfiguration() {
+    void testFreemarkerConfiguration() {
         //given
         final TestResponse response = TestRequest.get("/freemarker").execute();
 
@@ -374,7 +374,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testHeaders() {
+    void testHeaders() {
         //given
         final TestResponse response = TestRequest.get("/").execute();
 
@@ -391,7 +391,7 @@ public class ApplicationControllerTest {
     }
     
     @Test
-    public void testCorsHeaders() {
+    void testCorsHeaders() {
         //given
         final TestResponse response = TestRequest.options("/api")
                 .withHeader("Origin", "localhost")

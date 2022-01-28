@@ -1,6 +1,5 @@
 package io.mangoo.persistence;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 import org.bson.types.ObjectId;
@@ -13,9 +12,8 @@ import dev.morphia.annotations.Id;
  *
  */
 public class BaseModel implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -3141621127850129919L;
-
+    private static final long serialVersionUID = 1117892356160010435L;
+    
     @Id
     protected ObjectId objectId;
 

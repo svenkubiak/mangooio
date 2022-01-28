@@ -15,11 +15,11 @@ import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
 
 @ExtendWith({TestExtension.class})
-public class DefaultTemplatesTest {
+class DefaultTemplatesTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
 
     @Test
-    public void testNotFound() {
+    void testNotFound() {
         //given
         final TestResponse response = TestRequest.get("/foo").execute();
 
@@ -31,7 +31,7 @@ public class DefaultTemplatesTest {
     }
     
     @Test
-    public void testInternalServerError() {
+    void testInternalServerError() {
         //given
         final TestResponse response = TestRequest.get("/error").execute();
 
