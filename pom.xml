@@ -274,7 +274,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>6.0.2</version>
+				<version>6.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -460,7 +460,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.138</version>
+				<version>4.8.139</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
