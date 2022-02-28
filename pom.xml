@@ -24,7 +24,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<log4j.version>2.17.1</log4j.version>
+		<log4j.version>2.17.2</log4j.version>
 		<maven.version>3.8.4</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
 		<junit.version>5.8.2</junit.version>
@@ -460,7 +460,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.140</version>
+				<version>4.8.141</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
