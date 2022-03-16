@@ -337,7 +337,7 @@ public class Response {
      * Sets a given JSON string as body. If a String is given, no template rendering will be
      * performed and the content type for the response will be set to "application/json"
      *
-     * @param String The String to set as JSON
+     * @param string The String to set as JSON
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andJsonBody(String json) {
