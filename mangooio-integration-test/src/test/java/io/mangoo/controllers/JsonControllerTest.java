@@ -27,6 +27,7 @@ import io.undertow.util.StatusCodes;
  */
 @ExtendWith({TestExtension.class})
 class JsonControllerTest {
+    private static final String APPLICATION_JSON_CHARSET_UTF_8 = "application/json; charset=UTF-8";
     private static final String json = "{\"firstname\":\"Peter\",\"lastname\":\"Parker\",\"age\":24}";
 
     @Test
@@ -37,6 +38,19 @@ class JsonControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
+        assertThat(response.getContent(), equalTo(json));
+    }
+    
+    @Test
+    void testJsonBody() {
+        //given
+        TestResponse response = TestRequest.get("/json-body").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
         assertThat(response.getContent(), equalTo(json));
     }
 
