@@ -274,7 +274,7 @@ class ResponseTest {
         Response response = Response.withOk();
         
         //when
-        response.andHeader(Headers.GZIP, "true");
+        response.andHeader("gzip", "true");
         
         //then
         assertThat(response.getHeaders().get(Headers.GZIP), equalTo("true"));

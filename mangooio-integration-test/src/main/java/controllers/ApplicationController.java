@@ -11,7 +11,6 @@ import com.google.inject.name.Named;
 
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
-import io.undertow.util.HttpString;
 
 public class ApplicationController {
     
@@ -141,6 +140,6 @@ public class ApplicationController {
         return Response
                 .withOk()
                 .andEmptyBody()
-                .andHeader(new HttpString("Access-Control-Allow-Origin"), "https://mangoo.io");
+                .andHeader("Access-Control-Allow-Origin", "https://mangoo.io");
     }
 }
