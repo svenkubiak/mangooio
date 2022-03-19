@@ -423,11 +423,8 @@ public class Response {
      * @param key The header constant from Headers class (e.g. Header.CONTENT_TYPE.toString())
      * @param value The header value
      * 
-     * @deprecated  As of release 7.3.0, replaced by {@link #andHeader(String,String)}
-     *
      * @return A response object {@link io.mangoo.routing.Response}
      */
-    @Deprecated(since = "7.3.0", forRemoval = true)
     public Response andHeader(HttpString key, String value) {
         Objects.requireNonNull(key, Required.KEY.toString());
         headers.put(key, value);
