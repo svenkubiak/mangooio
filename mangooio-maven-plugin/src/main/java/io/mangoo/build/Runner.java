@@ -120,8 +120,6 @@ public class Runner {
             commandLine.add(String.format("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=%s", jpdaPort));
         }
         
-        commandLine.add("-noverify");
-        
         if (StringUtils.isNotBlank(jvmArgs)){
             Arrays.stream(jvmArgs.split(" ")) //NOSONAR
                     .filter(arg -> arg.length() > 0)
