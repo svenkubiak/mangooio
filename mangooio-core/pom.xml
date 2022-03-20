@@ -241,13 +241,17 @@
 		<dependency>
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache-clustered</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun.activation</groupId>
 					<artifactId>jakarta.activation</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -256,6 +260,10 @@
 			<groupId>com.sun.mail</groupId>
 			<artifactId>jakarta.mail</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>jakarta.activation</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>

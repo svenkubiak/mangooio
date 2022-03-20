@@ -19,4 +19,12 @@
    		<notes><![CDATA[file name: tripwire:1.0.0]]></notes>
    		<cve>CVE-1999-0464</cve>
 	</suppress>	
+    <suppress base="true">
+        <notes><![CDATA[
+            Suppress many FPs in apache projects that have james in the (developer) evidences now triggering apache james
+            #4123, #4128, #4132, #4136, #4137, #4138, #4145, #4146
+            ]]></notes>
+        <packageUrl regex="true">^pkg:maven/(?!org\.apache\.james/).*$</packageUrl>
+        <cpe>cpe:/a:apache:james</cpe>
+    </suppress>	
 </suppressions>
