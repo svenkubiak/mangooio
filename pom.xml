@@ -192,6 +192,12 @@
 					<artifactId>maven-plugin-plugin</artifactId>
 					<version>3.6.4</version>
 				</plugin>
+				<plugin>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-component-metadata</artifactId>
+					<version>2.1.1</version>
+				</plugin>
+
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -271,7 +277,7 @@
 				<groupId>com.sun.activation</groupId>
 				<artifactId>jakarta.activation</artifactId>
 				<version>2.0.1</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
@@ -442,7 +448,7 @@
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache</artifactId>
 				<version>${ehcache.version}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
