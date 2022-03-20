@@ -24,7 +24,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
-		<ehcache.version>3.10.0</ehcache.version>
 		<log4j.version>2.17.2</log4j.version>
 		<maven.version>3.8.5</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
@@ -442,12 +441,7 @@
 			<dependency>
 				<groupId>org.ehcache</groupId>
 				<artifactId>ehcache-clustered</artifactId>
-				<version>${ehcache.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ehcache</groupId>
-				<artifactId>ehcache</artifactId>
-				<version>${ehcache.version}</version>
+				<version>3.9.9</version>
 			</dependency>
 			<dependency>
 				<groupId>org.cactoos</groupId>

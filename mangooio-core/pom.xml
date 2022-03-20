@@ -243,16 +243,6 @@
 			<artifactId>ehcache-clustered</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.activation</groupId>
-					<artifactId>jakarta.activation</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>	
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
