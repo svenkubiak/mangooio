@@ -9,8 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Preconditions;
-import com.tc.text.StringUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Required;
@@ -19,7 +20,6 @@ import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
 
 /**
  *
@@ -87,17 +87,6 @@ public final class Router {
         return routes.stream()
                 .filter(PathRoute.class::isInstance)
                 .map(PathRoute.class::cast)
-                .collect(Collectors.toUnmodifiableSet())
-                .stream();
-    }
-    
-    /**
-     * @return An unmodifiable set of all configured WebSocketRoutes
-     */
-    public static Stream<WebSocketRoute> getWebSocketRoutes() {
-        return routes.stream()
-                .filter(WebSocketRoute.class::isInstance)
-                .map(WebSocketRoute.class::cast)
                 .collect(Collectors.toUnmodifiableSet())
                 .stream();
     }

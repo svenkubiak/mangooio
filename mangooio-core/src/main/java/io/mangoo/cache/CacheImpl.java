@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
+
 import io.mangoo.enums.Required;
 
 /**
@@ -12,41 +15,41 @@ import io.mangoo.enums.Required;
  *
  */
 public class CacheImpl implements Cache {
-    private org.ehcache.Cache<String, Object> ehCache;
+    com.google.common.cache.Cache<String, Object> guavaCache = CacheBuilder.newBuilder().build();
     
-    public CacheImpl(org.ehcache.Cache<String, Object> ehCache) {
-        Objects.requireNonNull(ehCache, Required.EHCACHE.toString());
-        this.ehCache = ehCache;
+    public CacheImpl(com.google.common.cache.Cache<String, Object> guavaCache) {
+        Objects.requireNonNull(guavaCache, Required.CACHE.toString());
+        this.guavaCache = guavaCache;
     }
     
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        ehCache.put(key, value);
+        guavaCache.put(key, value);
     }
 
     @Override
     public void remove(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        ehCache.remove(key);
+        guavaCache.invalidate(key);
     }
 
     @Override
     public void clear() {
-        ehCache.clear();
+        guavaCache.invalidateAll();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return (T) ehCache.get(key);
+        return (T) guavaCache.getIfPresent(key);
     }
 
     @Override
     public void putAll(Map<String, Object> map) {
         Objects.requireNonNull(map, Required.MAP.toString());
-        ehCache.putAll(map);
+        guavaCache.putAll(map);
     }
 
     @Override
@@ -94,5 +97,9 @@ public class CacheImpl implements Cache {
         put(key, counter);
         
         return counter;
+    }
+    
+    public CacheStats getStats() {
+        return guavaCache.stats();
     }
 }

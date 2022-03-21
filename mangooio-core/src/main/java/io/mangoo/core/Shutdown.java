@@ -2,7 +2,6 @@ package io.mangoo.core;
 
 import com.google.inject.Singleton;
 
-import io.mangoo.cache.CacheProvider;
 import io.mangoo.interfaces.MangooBootstrap;
 
 /**
@@ -22,7 +21,6 @@ public class Shutdown extends Thread {
         stopUndertow();
         stopScheduler();
         stopEmbeddedMongoDB();
-        closeCaches();
     }
 
     private static void invokeLifecycle() {
@@ -41,9 +39,5 @@ public class Shutdown extends Thread {
     
     private static void stopEmbeddedMongoDB() {
         Application.stopEmbeddedMongoDB();
-    }
-
-    private static void closeCaches() {
-        Application.getInstance(CacheProvider.class).close();
     }
 }

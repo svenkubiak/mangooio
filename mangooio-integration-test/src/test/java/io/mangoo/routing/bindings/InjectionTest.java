@@ -27,9 +27,7 @@ import io.mangoo.routing.handlers.OutboundCookiesHandler;
 import io.mangoo.routing.handlers.ResponseHandler;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
-import io.mangoo.routing.listeners.WebSocketCloseListener;
 import io.mangoo.services.ServerSentEventService;
-import io.mangoo.services.WebSocketService;
 import io.mangoo.templating.TemplateEngine;
 
 /**
@@ -128,15 +126,6 @@ class InjectionTest {
         
         //then
         assertThat(request, not(nullValue()));
-    }
-    
-    @Test
-    void testWebSocketManager() {
-        //given
-        WebSocketService webSocketService = Application.getInstance(WebSocketService.class);
-        
-        //then
-        assertThat(webSocketService, not(nullValue()));
     }
     
     @Test
@@ -273,15 +262,6 @@ class InjectionTest {
         //then
         assertThat(serverSentEventCloseListener, not(nullValue()));
     } 
-    
-    @Test
-    void testWebSocketCloseListener() {
-        //given
-        WebSocketCloseListener webSocketCloseListener = Application.getInstance(WebSocketCloseListener.class);
-        
-        //then
-        assertThat(webSocketCloseListener, not(nullValue()));
-    }  
     
     @Test
     void testShutdown() {

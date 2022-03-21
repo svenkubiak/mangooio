@@ -1,25 +1,12 @@
 package io.mangoo.cache;
 
-import java.net.URI;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.ehcache.CacheManager;
-import org.ehcache.PersistentCacheManager;
-import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
-import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.ExpiryPolicyBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.core.internal.statistics.DefaultStatisticsService;
-import org.ehcache.core.spi.service.StatisticsService;
-import org.ehcache.core.statistics.CacheStatistics;
-
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -36,13 +23,10 @@ import io.mangoo.enums.Required;
  */
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private StatisticsService statisticsService = new DefaultStatisticsService();
     private Map<String, Cache> caches = new HashMap<>();
-    private CacheManager cacheManager;
     private Cache cache;
+    private static final long TEN = 10;
     private static final long SIXTY = 60;
-    private static final long THIRTY = 30;
-    private static final long FORTY_THOUSAND_ELEMENTS = 40000;
     private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
 
     @Inject
@@ -50,110 +34,52 @@ public class CacheProvider implements Provider<Cache> {
     public CacheProvider(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         
-        if (config.isCacheCluserEnable()) {
-            CacheManagerBuilder<PersistentCacheManager> clusteredCacheManagerBuilder = CacheManagerBuilder.newCacheManagerBuilder()
-                    .using(statisticsService)
-                    .with(ClusteringServiceConfigurationBuilder.cluster(URI.create(config.getCacheClusterUrl())) 
-                    .autoCreate(b -> b));
-
-            cacheManager = clusteredCacheManagerBuilder
-                    .build(true);
-        } else {
-            cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-                    .using(statisticsService)
-                    .build(true);
-        }
-        
         initApplicationCache();
         initAuthenticationCache();
-        initRequestCache();
         initResponseCache();
         initServerEventCache();
-        initWebSocketCache();
         setDefaultApplicationCache();
     }
 
     private void initApplicationCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .build();
-
-        registerCacheConfiguration(CacheName.APPLICATION.toString(), configuration);
+        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .build());
+        
+        caches.put(CacheName.APPLICATION.toString(), cache);
     }
 
     private void initAuthenticationCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.MINUTES)))
-                .build();
-
-        registerCacheConfiguration(CacheName.AUTH.toString(), configuration);
-    }
-
-    private void initRequestCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(FORTY_THOUSAND_ELEMENTS))
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(SIXTY, ChronoUnit.SECONDS)))
-                .build();
-
-        registerCacheConfiguration(CacheName.REQUEST.toString(), configuration);
+        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .build());
+        
+        caches.put(CacheName.AUTH.toString(), cache);
     }
     
     private void initResponseCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .build();
-
-        registerCacheConfiguration(CacheName.RESPONSE.toString(), configuration);
+        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .build());
+        
+        caches.put(CacheName.RESPONSE.toString(), cache);
     }
 
     private void initServerEventCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
-                .build();
-
-        registerCacheConfiguration(CacheName.SSE.toString(), configuration);
-    }
-
-    private void initWebSocketCache() {
-        CacheConfiguration<String, Object> configuration = CacheConfigurationBuilder
-                .newCacheConfigurationBuilder(String.class, Object.class, ResourcePoolsBuilder.heap(TWENTY_THOUSAND_ELEMENTS))
-                .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.of(THIRTY, ChronoUnit.MINUTES)))
-                .build();
-
-        registerCacheConfiguration(CacheName.WSS.toString(), configuration);
+        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .expireAfterAccess(Duration.of(TEN, ChronoUnit.MINUTES))
+                .build());
+        
+        caches.put(CacheName.SSE.toString(), cache);
     }
     
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
-
-    /**
-     * Registers a new cache with custom configuration
-     * 
-     * @param name The name of the cache
-     * @param configuration The configuration for the cache to use
-     */
-    public void registerCacheConfiguration(String name, CacheConfiguration<String, Object> configuration) {
-        caches.put(name, new CacheImpl(cacheManager.createCache(name, configuration)));
-    }
     
-    /**
-     * Returns a map containing cache names and cache statistics
-     * 
-     * @return Map of cache statistics
-     */
-    public Map<String, CacheStatistics> getCacheStatistics() {
-        Map<String, CacheStatistics> statistics = new HashMap<>();
-        for (Entry<String, Cache> entry : caches.entrySet()) {
-            String cacheName = entry.getKey();
-            statistics.put(cacheName, statisticsService.getCacheStatistics(cacheName));
-        }
-
-        return statistics;
-    }
-
     /**
      * Retrieves a cache by its name from the cache pool
      * 
@@ -173,12 +99,12 @@ public class CacheProvider implements Provider<Cache> {
     public Cache getCache(String name) {
         return caches.get(name);
     }
-
+    
     /**
-     * Closes all caches
+     * @return Map of all caches
      */
-    public void close() {
-        cacheManager.close();
+    public Map<String, Cache> getCaches() {
+        return caches;
     }
 
     @Override

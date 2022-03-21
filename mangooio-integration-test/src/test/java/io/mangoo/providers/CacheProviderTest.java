@@ -5,9 +5,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.Map;
-
-import org.ehcache.core.statistics.CacheStatistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -33,31 +30,15 @@ class CacheProviderTest {
         assertThat(cacheProvider, not(nullValue()));
         assertThat(cacheProvider.get(), not(nullValue()));
     }
-    
-    @Test
-    void testCaches() {
-        //given
-        CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
-        
-        //when
-        CacheName[] names = CacheName.values();
-        Map<String, CacheStatistics> cacheStatistics = cacheProvider.getCacheStatistics();
-        
-        //then
-        for (CacheName name : names) {
-            assertThat(name, not(nullValue()));
-            assertThat(cacheStatistics.get(name.toString()), not(nullValue()));
-        }
-    }
-    
+
     @Test
     void testGetCache() {
         //given
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
         //when
-        Cache cache = cacheProvider.getCache(CacheName.WSS);
-        Cache cache2 = cacheProvider.getCache(CacheName.WSS.toString());
+        Cache cache = cacheProvider.getCache(CacheName.SSE);
+        Cache cache2 = cacheProvider.getCache(CacheName.SSE.toString());
         
         //then
         assertThat(cache, not(nullValue()));

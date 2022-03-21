@@ -20,29 +20,25 @@
 	                      	<tr>
 								<th data-sort="string"><b>Cache name</b></th>
 								<th data-sort="string"><b>Evictions</b></th>
-								<th data-sort="string"><b>Expirations</b></th>
 								<th data-sort="string"><b>Gets</b></th>
 								<th data-sort="string"><b>Puts</b></th>
-								<th data-sort="string"><b>Removals</b></th>
 								<th data-sort="string"><b>Hits</b></th>
-								<th data-sort="string"><b>Hit percentage</b></th>
+								<th data-sort="string"><b>Hits %</b></th>
 								<th data-sort="string"><b>Misses</b></th>
-								<th data-sort="string"><b>Miss percentage</b></th>
+								<th data-sort="string"><b>Misses %</b></th>
 							</tr>
 						</thead>
 						<tbody class="searchable">
 							<#list statistics as name, statistic>
 								<tr>
 									<td>${name}</td>
-									<td>${statistic.cacheEvictions}</td>
-									<td>${statistic.cacheExpirations}</td>
-									<td>${statistic.cacheGets}</td>
-									<td>${statistic.cachePuts}</td>
-									<td>${statistic.cacheRemovals}</td>
-									<td>${statistic.cacheHits}</td>
-									<td>${statistic.cacheHitPercentage} %</td>
-									<td>${statistic.cacheMisses}</td>
-									<td>${statistic.cacheMissPercentage} %</td>
+									<td>${statistic.evictionCount()}</td>
+									<td>${statistic.requestCount()}</td>
+									<td>${statistic.loadCount()}</td>
+									<td>${statistic.hitCount()}</td>
+									<td>${statistic.hitRate()} %</td>
+									<td>${statistic.missCount()}</td>
+									<td>${statistic.missRate()} %</td>
 								</tr>
 							</#list>
 						</tbody>

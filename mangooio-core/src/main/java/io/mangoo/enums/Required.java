@@ -31,7 +31,7 @@ public enum Required {
     DATA("data can not be null"),
     DATASTORE("datastore can not be null"),
     DIGITS("digits can not be null"),
-    EHCACHE("ehCache can not be null"),
+    CACHE("cache can not be null"),
     ENCRYPTED_TEXT("encrypted text can not be null"),
     EVENT("event can not be null"),
     EVENT_BUS_SERVICE("event bus service can not be null"),

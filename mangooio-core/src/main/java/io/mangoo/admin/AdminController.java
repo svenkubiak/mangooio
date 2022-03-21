@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.ehcache.core.statistics.CacheStatistics;
 
+import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
@@ -35,6 +36,7 @@ import dev.paseto.jpaseto.Pasetos;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
+import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -55,7 +57,6 @@ import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
@@ -158,7 +159,10 @@ public class AdminController {
     
     @FilterWith(AdminFilter.class)
     public Response cache() {
-        Map<String, CacheStatistics> statistics = cacheProvider.getCacheStatistics();
+        Map<String, CacheStats> statistics = new HashMap<>();
+        for (Entry<String, Cache> entry : cacheProvider.getCaches().entrySet()) {
+            statistics.put(entry.getKey(), ((CacheImpl) entry.getValue()).getStats());
+        }
         
         return Response.withOk()
                 .andContent("statistics", statistics)
@@ -266,14 +270,6 @@ public class AdminController {
                 JSONObject json = new JSONObject();
                 json.put(METHOD, "SSE");
                 json.put(URL, route.getUrl());
-                routes.add(json);
-            });
-            
-            Router.getWebSocketRoutes().forEach((WebSocketRoute route) -> {
-                JSONObject json = new JSONObject();
-                json.put(METHOD, "WSS");
-                json.put(URL, route.getUrl());
-                json.put("controllerClass", route.getControllerClass());
                 routes.add(json);
             });
             

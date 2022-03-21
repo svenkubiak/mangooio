@@ -57,12 +57,10 @@ import io.mangoo.routing.handlers.ExceptionHandler;
 import io.mangoo.routing.handlers.FallbackHandler;
 import io.mangoo.routing.handlers.MetricsHandler;
 import io.mangoo.routing.handlers.ServerSentEventHandler;
-import io.mangoo.routing.handlers.WebSocketHandler;
 import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
@@ -552,13 +550,6 @@ public final class Application {
      */
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
-        
-        Router.getWebSocketRoutes().forEach((WebSocketRoute webSocketRoute) -> 
-            pathHandler.addExactPath(webSocketRoute.getUrl(),
-                    Handlers.websocket(getInstance(WebSocketHandler.class)
-                            .withControllerClass(webSocketRoute.getControllerClass())
-                            .withAuthentication(webSocketRoute.hasAuthentication())))
-        );
         
         Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) ->
             pathHandler.addExactPath(serverSentEventRoute.getUrl(),

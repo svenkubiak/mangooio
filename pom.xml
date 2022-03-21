@@ -439,11 +439,6 @@
 				<version>1.6</version>
 			</dependency>
 			<dependency>
-				<groupId>org.ehcache</groupId>
-				<artifactId>ehcache-clustered</artifactId>
-				<version>3.9.9</version>
-			</dependency>
-			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
 				<version>0.50</version>
