@@ -44,6 +44,7 @@ public class CacheProvider implements Provider<Cache> {
     private void initApplicationCache() {
         Cache cache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .recordStats()
                 .build());
         
         caches.put(CacheName.APPLICATION.toString(), cache);
@@ -53,6 +54,7 @@ public class CacheProvider implements Provider<Cache> {
         Cache cache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .recordStats()
                 .build());
         
         caches.put(CacheName.AUTH.toString(), cache);
@@ -62,6 +64,7 @@ public class CacheProvider implements Provider<Cache> {
         Cache cache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .recordStats()
                 .build());
         
         caches.put(CacheName.RESPONSE.toString(), cache);
@@ -71,6 +74,7 @@ public class CacheProvider implements Provider<Cache> {
         Cache cache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterAccess(Duration.of(TEN, ChronoUnit.MINUTES))
+                .recordStats()
                 .build());
         
         caches.put(CacheName.SSE.toString(), cache);
