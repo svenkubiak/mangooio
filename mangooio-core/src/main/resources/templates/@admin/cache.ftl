@@ -23,9 +23,7 @@
 								<th data-sort="string"><b>Gets</b></th>
 								<th data-sort="string"><b>Puts</b></th>
 								<th data-sort="string"><b>Hits</b></th>
-								<th data-sort="string"><b>Hits %</b></th>
 								<th data-sort="string"><b>Misses</b></th>
-								<th data-sort="string"><b>Misses %</b></th>
 							</tr>
 						</thead>
 						<tbody class="searchable">
@@ -36,9 +34,7 @@
 									<td>${statistic.requestCount()}</td>
 									<td>${statistic.loadCount()}</td>
 									<td>${statistic.hitCount()}</td>
-									<td>${statistic.hitRate()} %</td>
 									<td>${statistic.missCount()}</td>
-									<td>${statistic.missRate()} %</td>
 								</tr>
 							</#list>
 						</tbody>

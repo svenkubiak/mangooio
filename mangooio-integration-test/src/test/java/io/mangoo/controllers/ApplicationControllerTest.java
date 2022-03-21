@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
 import io.mangoo.TestExtension;
+import io.mangoo.cache.Cache;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
@@ -47,6 +48,8 @@ class ApplicationControllerTest {
     void testIndex() {
         //given
         final TestResponse response = TestRequest.get("/").execute();
+        
+        Application.getInstance(Cache.class).put("foo", "bar");
 
         //then
         assertThat(response, not(nullValue()));
