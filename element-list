@@ -6,6 +6,7 @@ io.mangoo.crypto
 io.mangoo.crypto.totp
 io.mangoo.email
 io.mangoo.enums
+io.mangoo.events
 io.mangoo.exceptions
 io.mangoo.i18n
 io.mangoo.interfaces
