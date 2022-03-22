@@ -15,6 +15,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
     @Override
     public void handleEvent(ServerSentEventConnection connection) {
-        Application.getInstance(EventBusService.class).publish(new ServerSentEventDisconnected(connection));
+        Application.getInstance(EventBusService.class).publish(new ServerSentEventDisconnected(connection.getRequestURI(), connection));
     }
 }

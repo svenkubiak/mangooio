@@ -34,13 +34,13 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             }
 
             if (RequestUtils.hasValidAuthentication(header)) {
-                Application.getInstance(EventBusService.class).publish(new ServerSentEventConnected(connection));
+                Application.getInstance(EventBusService.class).publish(new ServerSentEventConnected(connection.getRequestURI(), connection));
             } else {
                 MangooUtils.closeQuietly(connection);
             }
         } else {
             connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
-            Application.getInstance(EventBusService.class).publish(new ServerSentEventConnected(connection));
+            Application.getInstance(EventBusService.class).publish(new ServerSentEventConnected(connection.getRequestURI(), connection));
         }
     }
 }
