@@ -23,6 +23,7 @@ import io.mangoo.models.TestModel;
 
 @ExtendWith({TestExtension.class})
 class DatastoreTest {
+    private static final int THREADS = 50;
     private static Datastore datastore;
 
     @BeforeAll
@@ -49,7 +50,7 @@ class DatastoreTest {
             
             // then
             return datastore.query().find(TestModel.class).filter(Filters.eq("name", id)).first() != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 
     @Test
@@ -102,10 +103,10 @@ class DatastoreTest {
             
             // then
             return true;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
         
         //then
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(100L)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(50L)));
     }
 
 
@@ -141,7 +142,7 @@ class DatastoreTest {
             
             // then
             return datastore.findById(model.getId().toString(), TestModel.class) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 
     @Test

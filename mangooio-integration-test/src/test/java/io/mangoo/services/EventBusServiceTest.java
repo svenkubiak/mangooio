@@ -38,13 +38,13 @@ class EventBusServiceTest {
         
         //then
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(testListener.getCount(), equalTo(3)));
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(3L)));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(5L)));
         
         //when
         busManager.unregister(testListener);
         
         //then
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(2L)));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(4L)));
         
         MatcherAssert.assertThat(t -> {
             //given

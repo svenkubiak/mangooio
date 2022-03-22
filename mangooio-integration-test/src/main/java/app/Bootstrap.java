@@ -10,13 +10,15 @@ import controllers.I18nController;
 import controllers.JsonController;
 import controllers.ParameterController;
 import controllers.SessionController;
-import controllers.WebSocketController;
 import controllers.subcontrollers.SubController;
+import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
+import io.mangoo.services.EventBusService;
+import listeners.ServerSentEventListener;
 
 @SuppressWarnings("all")
 public class Bootstrap implements MangooBootstrap {
@@ -25,6 +27,9 @@ public class Bootstrap implements MangooBootstrap {
     public void initializeRoutes() {
         //when
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
+        
+        Application.getInstance(EventBusService.class).register(new ServerSentEventListener());
+        
         
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
@@ -156,9 +161,6 @@ public class Bootstrap implements MangooBootstrap {
          
          Bind.serverSentEvent().to("/sse");
          Bind.serverSentEvent().to("/sseauth").withAuthentication();
-         
-         Bind.webSocket().onController(WebSocketController.class).to("/websocket");
-         Bind.webSocket().onController(WebSocketController.class).to("/websocketauth").withAuthentication();
 
          Bind.pathResource().to("/assets/");
          Bind.fileResource().to("/robots.txt");

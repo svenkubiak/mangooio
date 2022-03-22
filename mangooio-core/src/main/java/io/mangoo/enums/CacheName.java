@@ -9,8 +9,7 @@ package io.mangoo.enums;
 public enum CacheName {
     APPLICATION("mangooio-application-cache"),
     AUTH("mangooio-auth-cache"),
-    RESPONSE("mangooio-response-cache"),
-    SSE("mangooio-sse-cache");
+    RESPONSE("mangooio-response-cache");
 
     private final String value;
 

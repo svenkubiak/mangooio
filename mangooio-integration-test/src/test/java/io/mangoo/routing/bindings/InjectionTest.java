@@ -27,7 +27,6 @@ import io.mangoo.routing.handlers.OutboundCookiesHandler;
 import io.mangoo.routing.handlers.ResponseHandler;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
-import io.mangoo.services.ServerSentEventService;
 import io.mangoo.templating.TemplateEngine;
 
 /**
@@ -126,15 +125,6 @@ class InjectionTest {
         
         //then
         assertThat(request, not(nullValue()));
-    }
-    
-    @Test
-    void testServerEventManager() {
-        //given
-        ServerSentEventService serverSentEventService = Application.getInstance(ServerSentEventService.class);
-        
-        //then
-        assertThat(serverSentEventService, not(nullValue()));
     }
     
     @Test

@@ -37,8 +37,8 @@ class CacheProviderTest {
         CacheProvider cacheProvider = Application.getInstance(CacheProvider.class);
         
         //when
-        Cache cache = cacheProvider.getCache(CacheName.SSE);
-        Cache cache2 = cacheProvider.getCache(CacheName.SSE.toString());
+        Cache cache = cacheProvider.getCache(CacheName.APPLICATION);
+        Cache cache2 = cacheProvider.getCache(CacheName.APPLICATION.toString());
         
         //then
         assertThat(cache, not(nullValue()));

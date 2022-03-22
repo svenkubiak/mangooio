@@ -25,7 +25,6 @@ import io.mangoo.enums.Required;
 public class CacheProvider implements Provider<Cache> {
     private Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
-    private static final long TEN = 10;
     private static final long SIXTY = 60;
     private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
 
@@ -37,7 +36,6 @@ public class CacheProvider implements Provider<Cache> {
         initApplicationCache();
         initAuthenticationCache();
         initResponseCache();
-        initServerEventCache();
         setDefaultApplicationCache();
     }
 
@@ -68,16 +66,6 @@ public class CacheProvider implements Provider<Cache> {
                 .build());
         
         caches.put(CacheName.RESPONSE.toString(), cache);
-    }
-
-    private void initServerEventCache() {
-        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
-                .expireAfterAccess(Duration.of(TEN, ChronoUnit.MINUTES))
-                .recordStats()
-                .build());
-        
-        caches.put(CacheName.SSE.toString(), cache);
     }
     
     private void setDefaultApplicationCache() {

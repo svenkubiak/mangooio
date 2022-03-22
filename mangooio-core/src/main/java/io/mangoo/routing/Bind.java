@@ -4,7 +4,6 @@ import io.mangoo.routing.routes.ControllerRoute;
 import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
-import io.mangoo.routing.routes.WebSocketRoute;
 
 /**
  * 
@@ -23,15 +22,6 @@ public class Bind {
      */
     public static ServerSentEventRoute serverSentEvent() {
         return new ServerSentEventRoute();
-    }
-
-    /**
-     * Creates a new WebSocket route
-     * 
-     * @return WebSocketRoute instance
-     */
-    public static WebSocketRoute webSocket() {
-        return new WebSocketRoute();
     }
 
     /**
