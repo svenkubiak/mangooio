@@ -31,7 +31,7 @@
 		<junit.platform.version>1.8.2</junit.platform.version>
 		<enforcer.version>1.5.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.5.0</mongodb.version>
+		<mongodb.version>4.6.0</mongodb.version>
 		<slf4j.version>1.7.36</slf4j.version>
 	</properties>
 	<modules>
@@ -461,7 +461,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.143</version>
+				<version>4.8.146</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
