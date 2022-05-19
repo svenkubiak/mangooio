@@ -235,7 +235,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>5.0.2.Final</version>
+				<version>5.0.3.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
@@ -265,7 +265,7 @@
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
-				<version>2.2.6</version>
+				<version>2.2.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
