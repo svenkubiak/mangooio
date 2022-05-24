@@ -21,6 +21,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
@@ -93,40 +95,22 @@ class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
-    @Test
-    void testLocation() {
+    @ParameterizedTest
+    @CsvSource({
+        ", we are at locationwe are at application controller",
+        "/controller, we are at application controller",
+        "/8282838477, we are at locationwe are at application controller",
+    })
+    void testLocation(String parameter, String result) {
         //given
-        final TestResponse response = TestRequest.get("/location").execute();
+    	if (parameter == null) {parameter = "";    	};
+        final TestResponse response = TestRequest.get("/location" + parameter).execute();
 
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("we are at locationwe are at application controller"));
-    }
-    
-    @Test
-    void testLocationControllerOnly() {
-        //given
-        final TestResponse response = TestRequest.get("/location/controller").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("we are at application controller"));
-    }
-    
-    @Test
-    void testLocationWithParameter() {
-        //given
-        final TestResponse response = TestRequest.get("/location/8282838477").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), equalTo("we are at locationwe are at application controller"));
+        assertThat(response.getContent(), equalTo(result));
     }
     
     @Test

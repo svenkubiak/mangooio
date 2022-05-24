@@ -40,32 +40,32 @@ public class CacheProvider implements Provider<Cache> {
     }
 
     private void initApplicationCache() {
-        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache applicationCache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .recordStats()
                 .build());
         
-        caches.put(CacheName.APPLICATION.toString(), cache);
+        caches.put(CacheName.APPLICATION.toString(), applicationCache);
     }
 
     private void initAuthenticationCache() {
-        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache authenticationCache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
         
-        caches.put(CacheName.AUTH.toString(), cache);
+        caches.put(CacheName.AUTH.toString(), authenticationCache);
     }
     
     private void initResponseCache() {
-        Cache cache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache responseCache = new CacheImpl(CacheBuilder.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
         
-        caches.put(CacheName.RESPONSE.toString(), cache);
+        caches.put(CacheName.RESPONSE.toString(), responseCache);
     }
     
     private void setDefaultApplicationCache() {
@@ -92,7 +92,7 @@ public class CacheProvider implements Provider<Cache> {
         return caches.get(name);
     }
     
-    /**
+    /**˝
      * @return Map of all caches
      */
     public Map<String, Cache> getCaches() {
