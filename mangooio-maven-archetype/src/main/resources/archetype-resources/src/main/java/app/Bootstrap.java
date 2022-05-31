@@ -40,9 +40,9 @@ public class Bootstrap implements MangooBootstrap {
     @Override
     public void applicationStarted() {
         // Load initial data
-        this.datastore.save(new Person("Richard M.", "Whittaker", 33));
-        this.datastore.save(new Person("Kitty D.", "Glenn", 45));
-        this.datastore.save(new Person("Raul E.", "Kuhn", 46));
+        datastore.save(new Person("Richard M.", "Whittaker", 33));
+        datastore.save(new Person("Kitty D.", "Glenn", 45));
+        datastore.save(new Person("Raul E.", "Kuhn", 46));
     }
 
     @Override
