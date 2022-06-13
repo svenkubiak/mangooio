@@ -25,7 +25,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>17</java.version>
 		<log4j.version>2.17.2</log4j.version>
-		<maven.version>3.8.5</maven.version>
+		<maven.version>3.8.6</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
 		<junit.version>5.9.0-M1</junit.version>
 		<junit.platform.version>1.9.0-M1</junit.platform.version>
@@ -334,7 +334,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-archiver</artifactId>
-				<version>4.2.7</version>
+				<version>4.3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
