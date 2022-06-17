@@ -384,7 +384,7 @@
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>
-				<version>1.8.0</version>
+				<version>1.8.1</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
