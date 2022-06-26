@@ -5,6 +5,7 @@ stages:
   - sonar
   - smoke
   - javadocs
+  - owasp
 
 variables:
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
@@ -24,6 +25,13 @@ sonar:
   - mvn $MAVEN_CLI_OPTS -Denforcer.skip -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN -Dsonar.java.libraries=target clean verify sonar:sonar
   only:
   - /^feature.*$/
+
+owasp:
+  stage: owasp
+  script:
+  - mvn $MAVEN_CLI_OPTS -Denforcer.skip clean dependency-check:check
+  only:
+  - schedules
 
 smoke:
   stage: smoke
