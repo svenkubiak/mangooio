@@ -27,8 +27,8 @@
 		<log4j.version>2.18.0</log4j.version>
 		<maven.version>3.8.6</maven.version>
 		<required.maven.version>3.6.0</required.maven.version>
-		<junit.version>5.9.0-M1</junit.version>
-		<junit.platform.version>1.9.0-M1</junit.platform.version>
+		<junit.version>5.9.0-RC1</junit.version>
+		<junit.platform.version>1.9.0-RC1</junit.platform.version>
 		<enforcer.version>1.5.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.6.1</mongodb.version>
@@ -460,7 +460,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.147</version>
+				<version>4.8.149</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
