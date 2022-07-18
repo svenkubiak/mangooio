@@ -209,7 +209,7 @@
 			<dependency>
 				<groupId>com.cronutils</groupId>
 				<artifactId>cron-utils</artifactId>
-				<version>9.1.6</version>
+				<version>9.1.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
@@ -440,7 +440,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.51.0</version>
+				<version>0.52.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
