@@ -31,7 +31,7 @@
 		<junit.platform.version>1.9.0-RC1</junit.platform.version>
 		<enforcer.version>1.6.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.6.1</mongodb.version>
+		<mongodb.version>4.7.0</mongodb.version>
 		<slf4j.version>1.7.36</slf4j.version>
 	</properties>
 	<modules>
