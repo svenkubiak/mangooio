@@ -1,5 +1,7 @@
 package io.mangoo.cache;
 
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +17,8 @@ import io.mangoo.enums.Required;
  *
  */
 public class CacheImpl implements Cache {
-    com.google.common.cache.Cache<String, Object> guavaCache = CacheBuilder.newBuilder().build();
+    private static final String EXPIRES_SUFFIX = "-expires";
+	private com.google.common.cache.Cache<String, Object> guavaCache = CacheBuilder.newBuilder().build();
     
     public CacheImpl(com.google.common.cache.Cache<String, Object> guavaCache) {
         Objects.requireNonNull(guavaCache, Required.CACHE.toString());
@@ -27,6 +30,15 @@ public class CacheImpl implements Cache {
         Objects.requireNonNull(key, Required.KEY.toString());
         guavaCache.put(key, value);
     }
+
+	@Override
+	public void put(String key, Object value, int expires, TemporalUnit temporalUnit) {
+		Objects.requireNonNull(key, Required.KEY.toString());
+		Objects.requireNonNull(temporalUnit, Required.TEMPORAL_UNIT.toString());
+		
+		guavaCache.put(key, value);
+		guavaCache.put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
+	}
 
     @Override
     public void remove(String key) {
@@ -43,6 +55,13 @@ public class CacheImpl implements Cache {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
+        
+        Object expires = guavaCache.getIfPresent(key + EXPIRES_SUFFIX);
+        if (expires != null && LocalDateTime.now().isAfter((LocalDateTime) expires)) {
+        	remove(key);
+        	remove(key + EXPIRES_SUFFIX);
+        }
+        
         return (T) guavaCache.getIfPresent(key);
     }
 
