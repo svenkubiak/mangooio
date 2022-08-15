@@ -44,7 +44,7 @@ class EventBusServiceTest {
         busManager.unregister(testListener);
         
         //then
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(4L)));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(busManager.getNumListeners(), equalTo(4L)));
         
         MatcherAssert.assertThat(t -> {
             //given
