@@ -31,10 +31,14 @@
 			<groupId>org.zeroturnaround</groupId>
 			<artifactId>zt-exec</artifactId>
 		</dependency>
-			<dependency>
-				<groupId>net.java.dev.jna</groupId>
-				<artifactId>jna</artifactId>
-			</dependency>			
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna-platform</artifactId>
+		</dependency>					
 		<dependency>
 			<groupId>org.eclipse.sisu</groupId>
 			<artifactId>org.eclipse.sisu.inject</artifactId>
