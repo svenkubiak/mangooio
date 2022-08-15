@@ -18,15 +18,23 @@
 					<artifactId>commons-compress</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>net.java.dev.jna</groupId>
+					<artifactId>jna</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
+				</exclusion>				
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.zeroturnaround</groupId>
 			<artifactId>zt-exec</artifactId>
 		</dependency>
+			<dependency>
+				<groupId>net.java.dev.jna</groupId>
+				<artifactId>jna</artifactId>
+			</dependency>			
 		<dependency>
 			<groupId>org.eclipse.sisu</groupId>
 			<artifactId>org.eclipse.sisu.inject</artifactId>
