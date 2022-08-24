@@ -274,7 +274,7 @@
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
-				<version>2.2.7</version>
+				<version>2.2.8</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
@@ -324,7 +324,7 @@
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
 				<artifactId>okhttp-eventsource</artifactId>
-				<version>2.7.0</version>
+				<version>2.7.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
