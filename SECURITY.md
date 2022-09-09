@@ -10,4 +10,4 @@
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities to sk@svenkubiak.de
+Please report any security vulnerabilities to sk@svenkubiak.de
