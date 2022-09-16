@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,6 +87,22 @@ class DatastoreTest {
         
         //then
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(1L)));
+    }
+    
+    @Test
+    void testSaveAllAsync() {
+        //given
+        datastore.dropDatabase();
+        TestModel m1 = new TestModel("foo");
+        TestModel m2 = new TestModel("bar");
+        TestModel m3 = new TestModel("bla");
+        List<TestModel> models = List.of(m1,  m2, m3);
+        
+        //then
+        datastore.saveAllAsync(models);
+        
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(3L)));
     }
     
     @Test
@@ -177,6 +194,22 @@ class DatastoreTest {
         
         //then
         assertThat(datastore.countAll(TestModel.class), equalTo(0L));
+    }
+    
+    @Test
+    void testDeleteAllAsync() {
+        //given
+        datastore.dropDatabase();
+        
+        //when
+        List<TestModel> models = List.of(new TestModel("foo"), new TestModel("bar"), new TestModel("bla"));
+        datastore.saveAll(models);
+
+        //then
+        datastore.deleteAllAsync(List.of(TestModel.class));
+        
+        //then
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(datastore.countAll(TestModel.class), equalTo(0L)));
     }
     
     @Test

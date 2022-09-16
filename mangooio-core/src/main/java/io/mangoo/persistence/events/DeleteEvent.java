@@ -1,5 +1,6 @@
 package io.mangoo.persistence.events;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.google.inject.Inject;
@@ -10,11 +11,13 @@ import io.mangoo.persistence.Datastore;
 /**
  * 
  * @author svenkubiak
+ * @param <T>
  *
  */
-public class DeleteEvent {
+public class DeleteEvent<T> {
     private final Datastore datastore;
     private Object object;
+    private List<Class<T>> clazzes;
     
     @Inject
     public DeleteEvent(Datastore datastore) {
@@ -22,11 +25,24 @@ public class DeleteEvent {
     }
 
     public void delete() {
-        datastore.delete(object);
+    	if (object != null) {
+            datastore.delete(object);
+    	}
+    	
+    	if (clazzes != null && !clazzes.isEmpty()) {
+    		for (Class<T> clazz : clazzes) {
+        		datastore.deleteAll(clazz);  			
+    		}
+    	}
     }
     
-    public DeleteEvent withObject(Object object) {
+    public DeleteEvent<T> withObject(Object object) {
         this.object = Objects.requireNonNull(object, Required.OBJECT.toString());
         return this;
     }
+
+	public Object withObjects(List<Class<T>> clazzes) {
+		this.clazzes = Objects.requireNonNull(clazzes, Required.CLASS.toString());
+		return this;
+	}
 }

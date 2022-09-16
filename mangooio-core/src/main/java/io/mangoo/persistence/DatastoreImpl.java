@@ -145,6 +145,21 @@ public class DatastoreImpl implements Datastore {
     }
     
     @Override
+    public <T> void saveAll(List<T> objects) {
+        Objects.requireNonNull(objects, "Tried to save multiple morphia objects, but a given objects are null");
+
+        datastore.save(objects);
+    }
+    
+	@Override
+    @SuppressWarnings("unchecked")
+    public <T> void saveAllAsync(List<T> objects) {
+        Objects.requireNonNull(objects, "Tried to save multiple morphia objects, but a given objects are null");
+
+        eventBus.publish(Application.getInstance(SaveEvent.class).withObjects(objects));
+    }
+    
+    @Override
     public void saveAsync(Object object) {
         Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
         
@@ -170,6 +185,14 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, "Tried to delete list of mapped morphia objects, but given class is null");
 
         datastore.find(clazz).delete(new DeleteOptions().multi(true));
+    }
+    
+	@Override
+    @SuppressWarnings("unchecked")
+    public <T> void deleteAllAsync(List<Class<T>> clazzes) {
+        Objects.requireNonNull(clazzes, "Tried to delete list of mapped morphia objects, but given clazzes are null");
+
+        eventBus.publish(Application.getInstance(DeleteEvent.class).withObjects(clazzes));
     }
 
     @Override

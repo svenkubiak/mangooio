@@ -98,4 +98,28 @@ public interface Datastore {
      * @param object The object to delete
      */
     void deleteAsync(Object object);
+
+    /**
+     * Saves a list of Morphia objects to MongoDB
+     * 
+     * @param <T> Type
+     * @param objects The list of objects
+     */
+    <T> void saveAll(List<T> objects);
+
+    /**
+     * Saves a list of Morphia objects to MongoDB
+     * 
+     * @param <T> Type
+     * @param objects The list of objects
+     */
+	<T> void saveAllAsync(List<T> objects);
+
+	/**
+	 * Deletes a list of Morphia objects to MongoDB
+	 * 
+	 * @param <T> Type
+	 * @param clazz The list of classes
+	 */
+	<T> void deleteAllAsync(List<Class<T>> clazz);
 }

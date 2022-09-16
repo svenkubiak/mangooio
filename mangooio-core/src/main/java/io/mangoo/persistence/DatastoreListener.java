@@ -12,12 +12,12 @@ import io.mangoo.persistence.events.SaveEvent;
  */
 public class DatastoreListener {
     @Subscribe
-    public void saveEvent(SaveEvent saveEvent) {
+    public void saveEvent(SaveEvent<?> saveEvent) {
         saveEvent.save();
     }
     
     @Subscribe
-    public void deleteEvent(DeleteEvent deleteEvent) {
+    public void deleteEvent(DeleteEvent<?> deleteEvent) {
         deleteEvent.delete();
     }
 }

@@ -64,6 +64,7 @@ public enum Required {
     MODE("mode can not be null"),
     NAME("name can not be null"),
     OBJECT("object can not be null"),
+    OBJECTS("objects can not be null"),
     PASSWORD("password can not be null"),
     PATH("path can not be null"),
     PERIOD("period can not be null"),
@@ -99,7 +100,6 @@ public enum Required {
     USERNAME("username can not be null"),
     VALUE("value can not be null"),
     VALUES("values can not be null");
-
     
     private final String value;
 
