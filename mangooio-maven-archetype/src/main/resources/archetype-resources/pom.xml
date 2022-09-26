@@ -11,7 +11,7 @@
 	<properties>
 		<mangooio.version>7.8.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>17</java.version>
+		<jdk.version>17</jdk.version>
 	</properties>
 	<build>
 		<resources>
@@ -37,8 +37,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.10.1</version>
 				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 					<optimize>true</optimize>
 					<debug>false</debug>
 					<showDeprecation>true</showDeprecation>
@@ -58,7 +58,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.2</version>
+				<version>3.3.0</version>
 				<configuration>
 					<excludes>
 						<exclude>**/log4j2-test*</exclude>
@@ -68,7 +68,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.4</version>
+				<version>3.4.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
