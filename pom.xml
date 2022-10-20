@@ -31,7 +31,7 @@
 		<junit.platform.version>1.9.1</junit.platform.version>
 		<enforcer.version>1.6.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.7.2</mongodb.version>
+		<mongodb.version>4.8.0-beta0</mongodb.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
