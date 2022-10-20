@@ -24,7 +24,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Dependency Injection
 * Simplified Caching
 * Build-in asynchronous email handling
-* Support for Web Sockets and Server-Sent Events
+* Support for Server-Sent Events
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
 * Build-in authentication
@@ -50,21 +50,20 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [mongoDB](https://www.mongodb.com/) – Persistence
 * [Google Guice](https://github.com/google/guice) – Dependency injection
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
-* [Ehcache](http://www.ehcache.org/) – Cacheing
+* [Guava](https://github.com/google/guava) – Caching
 * [Freemarker](http://freemarker.org/) – Template engine
 * [Jackson](https://github.com/FasterXML/jackson), [JSONPath](https://github.com/jayway/JsonPath) – Handling JSON
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
-* [JBcrypt](http://www.mindrot.org/projects/jBCrypt/) – Strong hashing
-* [Bouncy Castle](https://www.bouncycastle.org/) – Strong cryptography
+* [Bouncy Castle](https://www.bouncycastle.org/) – Strong hashing and cryptography
 * And many more …
 
 ## By the numbers
 
 * 1.241 Sonar rules
-* 7.888 Lines of core code
-* 3.415 Commits
-* 551 Unit tests
-* 5+ years development maturity
+* 7.568 Lines of core code
+* 3.633 Commits
+* 536 Unit tests
+* 6+ years development maturity
 * 242 cups of coffee (estimated)
 ## Resources
 
