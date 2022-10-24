@@ -1,7 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import com.google.inject.Inject;
 
 import dev.paseto.jpaseto.Paseto;
 import dev.paseto.jpaseto.PasetoException;
-import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
@@ -29,6 +26,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.TokenUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -40,7 +38,6 @@ import io.undertow.server.handlers.Cookie;
  */
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
     private final Config config;
     private Form form;
@@ -56,7 +53,7 @@ public class InboundCookiesHandler implements HttpHandler {
         attachment.setSession(getSessionCookie(exchange));
         attachment.setAuthentication(getAuthenticationCookie(exchange));
         attachment.setFlash(getFlashCookie(exchange));
-        attachment.setForm(this.form);
+        attachment.setForm(form);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);
@@ -76,11 +73,7 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(config.getSessionCookieSecret().getBytes(CHARSET))
-                        .build()
-                        .parse(cookieValue);
-
+                Paseto paseto = TokenUtils.parseToken(config.getSessionCookieSecret(), cookieValue);
                 LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
 
                 if (expiration.isAfter(LocalDateTime.now())) {
@@ -110,11 +103,7 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(config.getAuthenticationCookieSecret().getBytes(CHARSET))
-                        .build()
-                        .parse(cookieValue);
-                
+                Paseto paseto = TokenUtils.parseToken(config.getAuthenticationCookieSecret(), cookieValue);
                 LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
                 
                 if (expiration.isAfter(LocalDateTime.now())) {
@@ -144,16 +133,12 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = Pasetos.parserBuilder()
-                        .setSharedSecret(config.getFlashCookieSecret().getBytes(CHARSET))
-                        .build()
-                        .parse(cookieValue);
-                
+                Paseto paseto = TokenUtils.parseToken(config.getFlashCookieSecret(), cookieValue);
                 LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
                 
                 if (expiration.isAfter(LocalDateTime.now())) {
                     if (paseto.getClaims().containsKey(ClaimKey.FORM.toString())) {
-                        this.form = CodecUtils.deserializeFromBase64(paseto.getClaims().get(ClaimKey.FORM.toString(), String.class));
+                        form = CodecUtils.deserializeFromBase64(paseto.getClaims().get(ClaimKey.FORM.toString(), String.class));
                     } 
                     
                     flash = Flash.create()

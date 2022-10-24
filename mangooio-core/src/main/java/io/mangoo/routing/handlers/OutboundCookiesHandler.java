@@ -1,20 +1,15 @@
 package io.mangoo.routing.handlers;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.inject.Inject;
 
-import dev.paseto.jpaseto.PasetoV1LocalBuilder;
-import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
@@ -23,6 +18,7 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
+import io.mangoo.utils.TokenUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -35,9 +31,6 @@ import io.undertow.server.handlers.CookieImpl;
  */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(OutboundCookiesHandler.class);
-    private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
-    private static final String ALGORITHM = "AES";
     private static final String SAME_SITE_MODE = "Strict";
     private static final int SIXTY = 60;
     private final Config config;
@@ -79,14 +72,11 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanges()) {
-            PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
-                    .setExpiration(session.getExpires().toInstant(ZONE_OFFSET))
-                    .claim(ClaimKey.DATA.toString(), session.getValues())
-                    .setSharedSecret(new SecretKeySpec(config.getSessionCookieSecret().getBytes(CHARSET), ALGORITHM));
+            String token = TokenUtils.getToken(session.getExpires(), config.getSessionCookieSecret(), Map.of(ClaimKey.DATA, session.getValues()), null);
         
             try {
                 final Cookie cookie = new CookieImpl(config.getSessionCookieName())
-                        .setValue(token.compact())
+                        .setValue(token)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
@@ -130,13 +120,10 @@ public class OutboundCookiesHandler implements HttpHandler {
                 authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
             } 
             
-            PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder().setSubject(authentication.getSubject())
-                    .setExpiration(authentication.getExpires().toInstant(ZONE_OFFSET))
-                    .claim(ClaimKey.TWO_FACTOR.toString(), String.valueOf(authentication.isTwoFactor()))
-                    .setSharedSecret(new SecretKeySpec(config.getAuthenticationCookieSecret().getBytes(CHARSET), ALGORITHM));
+            String token = TokenUtils.getToken(authentication.getExpires(), config.getAuthenticationCookieSecret(), Map.of(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor())), authentication.getSubject());
             
             final Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
-                    .setValue(token.compact())
+                    .setValue(token)
                     .setSecure(config.isAuthenticationCookieSecure())
                     .setHttpOnly(true)
                     .setSameSite(true)
@@ -176,19 +163,18 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (flash.hasContent() || form.isKept()) {
             try {
-                PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
-                        .claim(ClaimKey.DATA.toString(), flash.getValues())
-                        .setSharedSecret(new SecretKeySpec(config.getFlashCookieSecret().getBytes(CHARSET), ALGORITHM));
-                
+                Map<ClaimKey, Object> claims = new HashMap<>();
+                claims.put(ClaimKey.DATA, flash.getValues());
+
                 if (form.isKept()) {
-                    token.claim(ClaimKey.FORM.toString(), CodecUtils.serializeToBase64(form));
+                    claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
                 }
                 
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                token.setExpiration(expires.toInstant(ZONE_OFFSET));
+                String token = TokenUtils.getToken(expires, config.getFlashCookieSecret(), claims, null);
 
                 final Cookie cookie = new CookieImpl(config.getFlashCookieName())
-                        .setValue(token.compact())
+                        .setValue(token)
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)

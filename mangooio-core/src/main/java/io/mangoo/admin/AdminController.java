@@ -31,7 +31,7 @@ import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
-import dev.paseto.jpaseto.PasetoV1LocalBuilder;
+import dev.paseto.jpaseto.PasetoV2LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
@@ -393,7 +393,7 @@ public class AdminController {
     }
 
     private Cookie getAdminCookie(boolean includeTwoFactor) {
-        PasetoV1LocalBuilder token = Pasetos.V1.LOCAL.builder()
+        PasetoV2LocalBuilder token = Pasetos.V2.LOCAL.builder()
                 .setSharedSecret(new SecretKeySpec(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8), "AES"))
                 .setExpiration(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC))
                 .claim("uuid", MangooUtils.randomString(32));
