@@ -32,7 +32,7 @@ public class I18nMethod implements TemplateMethodModelEx {
     public TemplateModel exec(List arguments) throws TemplateModelException {
         var messageValue = "";
         if (arguments.size() == NUM_ARGUMENTS) {
-            String messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
+            var messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
             messageValue = messages.get(messageKey);
 
         } else if (arguments.size() > NUM_ARGUMENTS) {

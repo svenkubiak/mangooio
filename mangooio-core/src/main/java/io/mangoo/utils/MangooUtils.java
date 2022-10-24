@@ -2,7 +2,6 @@ package io.mangoo.utils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
@@ -46,7 +45,7 @@ public final class MangooUtils {
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {
         var version = Default.VERSION_UNKNOW.toString();
-        try (InputStream inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
+        try (var inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
             final var properties = new Properties();
             properties.load(inputStream);
             version = String.valueOf(properties.get("version"));

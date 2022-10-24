@@ -2,7 +2,6 @@ package io.mangoo.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ public class Config {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
         } else {
-            try (InputStream inputStream = Resources.getResource(Default.CONFIGURATION_FILE.toString()).openStream()){
+            try (var inputStream = Resources.getResource(Default.CONFIGURATION_FILE.toString()).openStream()){
                 props.load(inputStream);
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from /src/main/resources/config.props", e);
@@ -121,7 +120,7 @@ public class Config {
                 String key = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(key)) {
                     var privateKey = crypto.getPrivateKeyFromString(key);
-                    String cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
+                    var cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
                         return crypto.decrypt(cryptex, privateKey);

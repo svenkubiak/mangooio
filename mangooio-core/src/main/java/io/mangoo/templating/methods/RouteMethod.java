@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
 
 import freemarker.template.SimpleScalar;
@@ -27,15 +26,15 @@ public class RouteMethod implements TemplateMethodModelEx {
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
         if (arguments.size() >= MIN_ARGUMENTS) {
-            String controller = ((SimpleScalar) arguments.get(0)).getAsString();
+            var controller = ((SimpleScalar) arguments.get(0)).getAsString();
             var requestRoute = Router.getReverseRoute(controller);
             
             if (requestRoute != null) {
                 url = requestRoute.getUrl();
-                Matcher matcher = PARAMETER_PATTERN.matcher(url);
+                var matcher = PARAMETER_PATTERN.matcher(url);
                 var i = 1;
                 while (matcher.find()) {
-                    String argument = ((SimpleScalar) arguments.get(i)).getAsString();
+                    var argument = ((SimpleScalar) arguments.get(i)).getAsString();
                     url = StringUtils.replace(url, "{" + matcher.group(1) + "}", argument);
                     i++;
                 }

@@ -90,7 +90,7 @@ public class MailListener {
         Objects.requireNonNull(mail, Required.MAIL.toString());
 
         try {
-            MimeMessage mimeMessage = new MimeMessage(session);
+            var mimeMessage = new MimeMessage(session);
             mimeMessage.setSentDate(new Date());
             mimeMessage.setSubject(mail.getMessageSubject());
 

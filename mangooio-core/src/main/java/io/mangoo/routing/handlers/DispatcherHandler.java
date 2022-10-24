@@ -134,7 +134,7 @@ public class DispatcherHandler implements HttpHandler {
             return;
         }
 
-        final Attachment attachment = Attachment.build()
+        final var attachment = Attachment.build()
             .withControllerInstance(Application.getInstance(this.controllerClass))
             .withControllerClass(this.controllerClass)
             .withControllerClassName(this.controllerClassName)

@@ -40,7 +40,7 @@ public final class CodecUtils {
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(salt, Required.SALT.toString());
         
-        Argon2Parameters.Builder builder = (new Argon2Parameters.Builder())
+        var aargon2Builder = (new Argon2Parameters.Builder())
                 .withVersion(Argon2Parameters.ARGON2_id)
                 .withIterations(ITERATIONS)
                 .withMemoryAsKB(MEMORY)
@@ -48,11 +48,11 @@ public final class CodecUtils {
                 .withSecret(password.getBytes(StandardCharsets.UTF_8))
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8));
 
-        Argon2BytesGenerator generator = new Argon2BytesGenerator();
-        generator.init(builder.build());
+        var aargon2Generator = new Argon2BytesGenerator();
+        aargon2Generator.init(aargon2Builder.build());
 
         var passwdHash = new byte[32];
-        generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
+        aargon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
         return base64Encoder.encodeToString(passwdHash);
     }

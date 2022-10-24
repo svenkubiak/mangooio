@@ -15,8 +15,6 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.util.HeaderValues;
 import io.undertow.util.LocaleUtils;
 
 /**
@@ -37,11 +35,11 @@ public class LocaleHandler implements HttpHandler {
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         var locale = Locale.forLanguageTag(config.getApplicationLanguage());
         
-        Cookie i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
+        var i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
         if (i18nCookie != null) {
             locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
         } else {
-            HeaderValues headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
+            var headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {

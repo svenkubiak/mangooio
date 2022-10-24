@@ -21,7 +21,7 @@ public class ResponseHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         var attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
-        final Response response = attachment.getResponse();
+        final var response = attachment.getResponse();
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);

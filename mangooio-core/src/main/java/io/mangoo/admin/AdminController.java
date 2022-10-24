@@ -149,7 +149,7 @@ public class AdminController {
     }
     
     @FilterWith(AdminFilter.class)
-    public Response logger() throws InterruptedException {
+    public Response logger() {
         var loggerContext = (LoggerContext) LogManager.getContext(false);
         
         return Response.withOk()
