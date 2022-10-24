@@ -181,7 +181,7 @@ public class DispatcherHandler implements HttpHandler {
      */
     private void nextHandler(HttpServerExchange exchange) throws Exception {
         if (StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password)) {
-            HttpHandler httpHandler = RequestUtils.wrapBasicAuthentication(
+            var httpHandler = RequestUtils.wrapBasicAuthentication(
                     Application.getInstance(LocaleHandler.class),
                     this.username,
                     this.password);

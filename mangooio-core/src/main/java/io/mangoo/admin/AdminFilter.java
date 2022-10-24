@@ -41,7 +41,7 @@ public class AdminFilter implements PerRequestFilter {
                     LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC);
 
                     if (expiration.isAfter(LocalDateTime.now())) {
-                        if (paseto.getClaims().containsKey("twofactor") && paseto.getClaims().get("twofactor", Boolean.class)) {
+                        if (paseto.getClaims().containsKey("twofactor") && paseto.getClaims().get("twofactor", boolean.class)) {
                             return Response.withRedirect("/@admin/twofactor").andEndResponse();
                         }
                         

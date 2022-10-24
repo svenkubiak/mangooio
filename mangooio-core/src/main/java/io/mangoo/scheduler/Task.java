@@ -31,7 +31,8 @@ public class Task implements Runnable {
             Object instance = Application.getInstance(clazz);
             instance.getClass().getMethod(methodName).invoke(instance);
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            LOG.error("Failed to execute scheduled task on class '%s' with annotated method '%s'", clazz.getName(), methodName, e);
+            LOG.error("Failed to execute scheduled task on class '%s' with annotated method '%s'", clazz.getName(), methodName);
+            LOG.error(e);
         }
     }
 }

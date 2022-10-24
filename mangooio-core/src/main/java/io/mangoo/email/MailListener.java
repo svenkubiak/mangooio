@@ -31,7 +31,6 @@ import jakarta.mail.Multipart;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
-import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
@@ -139,7 +138,7 @@ public class MailListener {
         }
     }
 
-    private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException, AddressException {
+    private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
         String messageFromName = mail.getMessageFromName();
         String messageFromAddress = mail.getMessageFromAddress();
         
@@ -174,7 +173,7 @@ public class MailListener {
         }
     }
 
-    private void setReplyTo(Mail mail, MimeMessage mimeMessage) throws AddressException, MessagingException {
+    private void setReplyTo(Mail mail, MimeMessage mimeMessage) throws MessagingException {
         String replyTo = mail.getMessageReplyTo();
         if (StringUtils.isNotBlank(replyTo)) {
             InternetAddress[] replyToAddress = { new InternetAddress(replyTo) };
