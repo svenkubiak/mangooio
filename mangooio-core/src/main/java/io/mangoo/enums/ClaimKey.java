@@ -6,7 +6,6 @@ package io.mangoo.enums;
  *
  */
 public enum ClaimKey {
-    AUTHENTICITY("authenticity"),
     DATA("data"),
     FORM("form"),
     TWO_FACTOR("twoFactor");

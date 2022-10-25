@@ -29,7 +29,7 @@ public class TokenBuilder extends TokenCommons {
     public static TokenBuilder create() {
         return new TokenBuilder();
     }
-    
+
     public TokenBuilder withExpires(LocalDateTime expires) {
         Objects.requireNonNull(expires, Required.EXPIRES.toString());
         this.expires = expires;
@@ -61,6 +61,22 @@ public class TokenBuilder extends TokenCommons {
         return this;
     }
     
+    public LocalDateTime getExpires() {
+        return expires;
+    }
+
+    public String getSharedSecret() {
+        return sharedSecret;
+    }
+
+    public Map<String, Object> getClaims() {
+        return claims;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
     public String build() throws MangooTokenException {
         try {
              PasetoV2LocalBuilder pasetoBuilder = Pasetos.V2.LOCAL.builder()

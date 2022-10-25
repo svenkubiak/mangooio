@@ -21,6 +21,10 @@ public class TokenParser extends TokenCommons {
         return new TokenParser();
     }
 
+    /**
+     * @param sharedSecret The shared secret the Token was created with
+     * @return TokenParser
+     */
     public TokenParser withSharedSecret(String sharedSecret) {
         Objects.requireNonNull(sharedSecret, Required.SHARED_SECRET.toString());
         
@@ -28,6 +32,10 @@ public class TokenParser extends TokenCommons {
         return this;
     }
     
+    /**
+     * @param cookieValue The cookie value to parse the token of
+     * @return TokenParser
+     */
     public TokenParser withCookieValue(String cookieValue) {
         Objects.requireNonNull(cookieValue, Required.COOKIE_VALUE.toString());
         
@@ -35,6 +43,19 @@ public class TokenParser extends TokenCommons {
         return this;
     }
     
+    public String getSharedSecret() {
+        return sharedSecret;
+    }
+
+    public String getCookieValue() {
+        return cookieValue;
+    }
+
+    /**
+     * Parses the cookie value to a token
+     * @return A Token
+     * @throws MangooTokenException if parsing fails
+     */
     public Token parse() throws MangooTokenException {
         try {
             Paseto paseto = Pasetos.parserBuilder()
