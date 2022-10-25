@@ -47,7 +47,7 @@ import io.mangoo.enums.HmacShaAlgorithm;
  *
  * @see <a href="https://tools.ietf.org/html/rfc6238#section-5.2">RFC 6238 (section 5.2)</a>
  */
-public final class TOTPValidator {
+public final class TotpValidator {
 
     /** The default window verification size. */
     public static final int DEFAULT_WINDOW = 1;
@@ -64,35 +64,35 @@ public final class TOTPValidator {
      * @throws IllegalArgumentException
      *             if {@code window} is < 0.
      */
-    private TOTPValidator(int window) {
+    private TotpValidator(int window) {
         Preconditions.checkArgument(window >= 0);
         this.window = window;
     }
 
     /**
-     * Returns a new {@link TOTPValidator} instance initialized with the
+     * Returns a new {@link TotpValidator} instance initialized with the
      * {@link #DEFAULT_WINDOW} verification size.
      * 
-     * @return a new {@link TOTPValidator} instance.
+     * @return a new {@link TotpValidator} instance.
      */
-    public static TOTPValidator defaultWindow() {
+    public static TotpValidator defaultWindow() {
         return window(DEFAULT_WINDOW);
     }
 
     /**
-     * Returns a new {@link TOTPValidator} instance initialized with the
+     * Returns a new {@link TotpValidator} instance initialized with the
      * specified {@code window} verification size.
      * 
      * @param window
      *            the window verification size
      * 
-     * @return a new {@link TOTPValidator} instance.
+     * @return a new {@link TotpValidator} instance.
      * 
      * @throws IllegalArgumentException
      *             if {@code window} is {@literal <} 0.
      */
-    public static TOTPValidator window(int window) {
-        return new TOTPValidator(window);
+    public static TotpValidator window(int window) {
+        return new TotpValidator(window);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class TOTPValidator {
      */
     public boolean isValid(byte[] key, long timeStep, int digits, HmacShaAlgorithm hmacShaAlgorithm, String value, long validationTime) {
         var result = false;
-        TOTPBuilder builder = TOTP.key(key).timeStep(timeStep).digits(digits).hmacSha(hmacShaAlgorithm);
+        TotpBuilder builder = Totp.key(key).timeStep(timeStep).digits(digits).hmacSha(hmacShaAlgorithm);
         for (int i = -window; i <= window; i++) {
             final long time = validationTime + (i * timeStep);
             final var vtotp = builder.build(time);

@@ -15,6 +15,7 @@ import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.utils.totp.TotpUtils;
 
 @ExtendWith({TestExtension.class})
 class TotpUtilsTest {

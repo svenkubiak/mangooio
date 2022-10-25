@@ -25,9 +25,9 @@ import io.mangoo.enums.HmacShaAlgorithm;
  * </p>
  * <p>
  * The builder, obtained via a call to the static {@code key(...)} method on
- * {@link TOTP}, provides methods for configuring the TOTP generation
+ * {@link Totp}, provides methods for configuring the TOTP generation
  * parameters. Once the TOTP configuration is prepared, the builder is used to
- * generate a {@link TOTP} using the {@code build()} or {@code build(time)}
+ * generate a {@link Totp} using the {@code build()} or {@code build(time)}
  * methods:
  * </p>
  * 
@@ -56,7 +56,7 @@ import io.mangoo.enums.HmacShaAlgorithm;
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC 6238</a>
  */
 @SuppressWarnings("all")
-public final class TOTPBuilder {
+public final class TotpBuilder {
     /** The default time step size in milliseconds (30000 milliseconds == 30 seconds). */
     public static final long DEFAULT_TIME_STEP = TimeUnit.SECONDS.toMillis(30);
 
@@ -98,7 +98,7 @@ public final class TOTPBuilder {
      * @throws NullPointerException
      *             if {@code key} is {@code null}.
      */
-    TOTPBuilder(byte[] key) {
+    TotpBuilder(byte[] key) {
         Preconditions.checkNotNull(key);
         this.key = new byte[key.length];
         System.arraycopy(key, 0, this.key, 0, key.length);
@@ -117,7 +117,7 @@ public final class TOTPBuilder {
      * @throws IllegalArgumentException
      *             if {@code timeStep} is {@literal <=} 0.
      */
-    public TOTPBuilder timeStep(long timeStep) {
+    public TotpBuilder timeStep(long timeStep) {
         Preconditions.checkArgument(timeStep > 0);
         this.timeStep = timeStep;
         return this;
@@ -139,7 +139,7 @@ public final class TOTPBuilder {
      *             if {@code digits} is not in [{@link #MIN_ALLOWED_DIGITS},
      *             {@link #MAX_ALLOWED_DIGITS}].
      */
-    public TOTPBuilder digits(int digits) {
+    public TotpBuilder digits(int digits) {
         Preconditions.checkArgument(Range.closed(MIN_ALLOWED_DIGITS, MAX_ALLOWED_DIGITS).contains(digits));
         this.digits = digits;
         return this;
@@ -158,7 +158,7 @@ public final class TOTPBuilder {
      * @throws NullPointerException
      *             if {@code algorithm} is {@code null}.
      */
-    public TOTPBuilder hmacSha(HmacShaAlgorithm algorithm) {
+    public TotpBuilder hmacSha(HmacShaAlgorithm algorithm) {
         Preconditions.checkNotNull(algorithm);
         this.hmacShaAlgorithm = algorithm;
         return this;
@@ -171,7 +171,7 @@ public final class TOTPBuilder {
      * @return this {@code TOTPBuilder} instance initialized with the
      *         {@link HmacShaAlgorithm#HMAC_SHA_256}.
      */
-    public TOTPBuilder hmacSha256() {
+    public TotpBuilder hmacSha256() {
         return hmacSha(HmacShaAlgorithm.HMAC_SHA_256);
     }
 
@@ -182,39 +182,39 @@ public final class TOTPBuilder {
      * @return this {@code TOTPBuilder} instance initialized with the
      *         {@link HmacShaAlgorithm#HMAC_SHA_512}.
      */
-    public TOTPBuilder hmacSha512() {
+    public TotpBuilder hmacSha512() {
         return hmacSha(HmacShaAlgorithm.HMAC_SHA_512);
     }
 
     /**
-     * Build a Time-based One-time Password {@link TOTP} using the current
+     * Build a Time-based One-time Password {@link Totp} using the current
      * system time (current time in milliseconds since the UNIX epoch). Note
      * that the builder instance can be reused for subsequent
      * configuration/generation calls.
      * 
-     * @return a Time-based One-time Password {@link TOTP} instance.
+     * @return a Time-based One-time Password {@link Totp} instance.
      */
-    public TOTP build() {
+    public Totp build() {
         long time = System.currentTimeMillis();
-        return new TOTP(generateTOTP(time), time, hmacShaAlgorithm, digits, timeStep);
+        return new Totp(generateTOTP(time), time, hmacShaAlgorithm, digits, timeStep);
     }
 
     /**
-     * Build a Time-based One-time Password {@link TOTP} using an arbitrary
+     * Build a Time-based One-time Password {@link Totp} using an arbitrary
      * time. Note that the builder instance can be reused for subsequent
      * configuration/generation calls.
      * 
      * @param time
      *            the time (in milliseconds) (must be {@literal >= 0})
      * 
-     * @return a Time-based One-time Password {@link TOTP} instance.
+     * @return a Time-based One-time Password {@link Totp} instance.
      * 
      * @throws IllegalArgumentException
      *             if {@code time} {@literal <} 0.
      */
-    public TOTP build(long time) {
+    public Totp build(long time) {
         Preconditions.checkArgument(time >= 0);
-        return new TOTP(generateTOTP(time), time, hmacShaAlgorithm, digits, timeStep);
+        return new Totp(generateTOTP(time), time, hmacShaAlgorithm, digits, timeStep);
     }
 
     /**

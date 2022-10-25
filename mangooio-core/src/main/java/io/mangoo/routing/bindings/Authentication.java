@@ -12,7 +12,7 @@ import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
-import io.mangoo.utils.TotpUtils;
+import io.mangoo.utils.totp.TotpUtils;
 
 /**
  * Convenient class for handling authentication

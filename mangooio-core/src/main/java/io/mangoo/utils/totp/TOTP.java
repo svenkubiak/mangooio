@@ -5,12 +5,12 @@ import io.mangoo.enums.HmacShaAlgorithm;
 /**
  * Class which represents a Time-based One-time Password as per RFC 6238.
  * <p>
- * Refer to {@link TOTPBuilder} on how to generate a {@code TOTP}.
+ * Refer to {@link TotpBuilder} on how to generate a {@code TOTP}.
  * </p>
  * 
  * @see <a href="https://tools.ietf.org/html/rfc6238">RFC 6238</a>
  */
-public final class TOTP {
+public final class Totp {
     private final String value;
     private final long time;
     private final HmacShaAlgorithm hmacShaAlgorithm;
@@ -19,10 +19,10 @@ public final class TOTP {
 
     /**
      * Creates a new instance of a Time-based one time password. Use the static
-     * method to obtain a {@link TOTPBuilder} instance and obtain a {@code TOTP}
+     * method to obtain a {@link TotpBuilder} instance and obtain a {@code TOTP}
      * from that. Note that all parameters are assumed to be valid since the
-     * {@link TOTPBuilder} is responsible for validation, and creation of
-     * {@link TOTP}s.
+     * {@link TotpBuilder} is responsible for validation, and creation of
+     * {@link Totp}s.
      * 
      * @param code
      *            the time-based one time password
@@ -35,7 +35,7 @@ public final class TOTP {
      * @param timeStep
      *            the time step size (in milliseconds)
      */
-    TOTP(String value, long time, HmacShaAlgorithm hmacShaAlgorithm, int digits, long timeStep) {
+    Totp(String value, long time, HmacShaAlgorithm hmacShaAlgorithm, int digits, long timeStep) {
         this.value = value;
         this.time = time;
         this.hmacShaAlgorithm = hmacShaAlgorithm;
@@ -44,19 +44,19 @@ public final class TOTP {
     }
 
     /**
-     * Returns a new {@link TOTPBuilder} instance initialized with the specified
+     * Returns a new {@link TotpBuilder} instance initialized with the specified
      * {@code key}.
      * 
      * @param key
      *            the shared secret key
      * 
-     * @return a new {@link TOTPBuilder} instance.
+     * @return a new {@link TotpBuilder} instance.
      * 
      * @throws NullPointerException
      *             if {@code key} is {@code null}.
      */
-    public static TOTPBuilder key(byte[] key) {
-        return new TOTPBuilder(key);
+    public static TotpBuilder key(byte[] key) {
+        return new TotpBuilder(key);
     }
 
     /**
@@ -122,7 +122,7 @@ public final class TOTP {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        TOTP other = (TOTP) obj;
+        Totp other = (Totp) obj;
         
         return value.equals(other.value);
     }

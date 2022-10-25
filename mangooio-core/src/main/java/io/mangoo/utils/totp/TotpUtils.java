@@ -1,4 +1,4 @@
-package io.mangoo.utils;
+package io.mangoo.utils.totp;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
-import io.mangoo.utils.totp.TOTP;
 
 /**
  * 
@@ -68,7 +67,7 @@ public class TotpUtils {
         
         String value = null;
         try {
-            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
+            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
                     .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
                     .digits(DIGITS)
                     .hmacSha(ALGORITHM)
@@ -98,7 +97,7 @@ public class TotpUtils {
         
         String value = null;
         try {
-            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
+            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
                     .timeStep(TimeUnit.SECONDS.toMillis(period))
                     .digits(digits)
                     .hmacSha(algorithm)
@@ -127,7 +126,7 @@ public class TotpUtils {
         
         String value = null;
         try {
-            TOTP builder = TOTP.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
+            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
                 .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
                 .digits(DIGITS)
                 .hmacSha(ALGORITHM)
