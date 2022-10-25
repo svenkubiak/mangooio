@@ -1,10 +1,8 @@
 package io.mangoo.admin;
 
 import java.lang.management.ManagementFactory;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +15,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
-import javax.crypto.spec.SecretKeySpec;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.ObjectName;
@@ -31,8 +28,6 @@ import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
-import dev.paseto.jpaseto.PasetoV2LocalBuilder;
-import dev.paseto.jpaseto.Pasetos;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
@@ -48,6 +43,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Required;
 import io.mangoo.enums.Template;
 import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.Router;
@@ -60,6 +56,7 @@ import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.TotpUtils;
+import io.mangoo.utils.token.TokenBuilder;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import net.minidev.json.JSONObject;
@@ -393,17 +390,24 @@ public class AdminController {
     }
 
     private Cookie getAdminCookie(boolean includeTwoFactor) {
-        PasetoV2LocalBuilder token = Pasetos.V2.LOCAL.builder()
-                .setSharedSecret(new SecretKeySpec(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8), "AES"))
-                .setExpiration(LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC))
-                .claim("uuid", MangooUtils.randomString(32));
+        TokenBuilder tokenBuilder = TokenBuilder.create()
+                .withSharedSecret(config.getApplicationSecret())
+                .withExpires(LocalDateTime.now().plusMinutes(30))
+                .withClaim("uuid", MangooUtils.randomString(32));
         
         if (includeTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
-            token.claim("twofactor", Boolean.TRUE);
+            tokenBuilder.withClaim("twofactor", Boolean.TRUE);
+        }
+        
+        String token = "";
+        try {
+            token = tokenBuilder.build();
+        } catch (MangooTokenException e) {
+            LOG.error("Failed to create admin cookie", e);
         }
     
         return new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
-                .setValue(token.compact())
+                .setValue(token)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
                 .setPath("/")

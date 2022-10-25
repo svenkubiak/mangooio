@@ -1,7 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -12,12 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.inject.Inject;
 
-import dev.paseto.jpaseto.Paseto;
-import dev.paseto.jpaseto.PasetoException;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -26,7 +24,8 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.TokenUtils;
+import io.mangoo.utils.token.Token;
+import io.mangoo.utils.token.TokenParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -38,7 +37,6 @@ import io.undertow.server.handlers.Cookie;
  */
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
-    private static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
     private final Config config;
     private Form form;
 
@@ -73,15 +71,17 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = TokenUtils.parseToken(config.getSessionCookieSecret(), cookieValue);
-                LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
-
-                if (expiration.isAfter(LocalDateTime.now())) {
+                Token token = TokenParser.create()
+                        .withSharedSecret(config.getSessionCookieSecret())
+                        .withCookieValue(cookieValue)
+                        .parse();
+                
+                if (token.expirationIsAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
-                            .withExpires(LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET)); 
+                            .withContent(MangooUtils.copyMap(token.getClaim(ClaimKey.DATA, Map.class)))
+                            .withExpires(token.getExpiration()); 
                 }
-            } catch (PasetoException e) {
+            } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse session cookie", e);
                 session.invalidate();
             }
@@ -103,16 +103,18 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = TokenUtils.parseToken(config.getAuthenticationCookieSecret(), cookieValue);
-                LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
+                Token token = TokenParser.create()
+                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                        .withCookieValue(cookieValue)
+                        .parse();
                 
-                if (expiration.isAfter(LocalDateTime.now())) {
+                if (token.expirationIsAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
-                            .withExpires(expiration)
-                            .withSubject(paseto.getClaims().getSubject())
-                            .twoFactorAuthentication(Boolean.parseBoolean(paseto.getClaims().get(ClaimKey.TWO_FACTOR.toString(), String.class)));
+                            .withExpires(token.getExpiration())
+                            .withSubject(token.getSubject())
+                            .twoFactorAuthentication(Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR, String.class)));
                 }
-            } catch (PasetoException e) {
+            } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
@@ -133,19 +135,21 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Paseto paseto = TokenUtils.parseToken(config.getFlashCookieSecret(), cookieValue);
-                LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
+                Token token = TokenParser.create()
+                        .withSharedSecret(config.getFlashCookieSecret())
+                        .withCookieValue(cookieValue)
+                        .parse();
                 
-                if (expiration.isAfter(LocalDateTime.now())) {
-                    if (paseto.getClaims().containsKey(ClaimKey.FORM.toString())) {
-                        form = CodecUtils.deserializeFromBase64(paseto.getClaims().get(ClaimKey.FORM.toString(), String.class));
+                if (token.expirationIsAfter(LocalDateTime.now())) {
+                    if (token.containsClaim(ClaimKey.FORM)) {
+                        form = CodecUtils.deserializeFromBase64(token.getClaim(ClaimKey.FORM, String.class));
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(paseto.getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(token.getPaseto().getClaims().get(ClaimKey.DATA.toString(), Map.class)))
                             .setDiscard(true);
                 }
-            } catch (PasetoException e) {
+            } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse flash cookie", e);
                 flash.invalidate();
             } 

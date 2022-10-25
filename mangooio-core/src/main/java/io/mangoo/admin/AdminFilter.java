@@ -1,20 +1,18 @@
 package io.mangoo.admin;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import org.apache.commons.lang3.StringUtils;
 
-import dev.paseto.jpaseto.PasetoException;
-import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
+import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.token.TokenParser;
 
 /**
  * 
@@ -33,22 +31,20 @@ public class AdminFilter implements PerRequestFilter {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    var paseto = Pasetos.parserBuilder()
-                            .setSharedSecret(config.getApplicationSecret().getBytes(StandardCharsets.UTF_8))
-                            .build()
-                            .parse(value);
+                    var token = TokenParser.create()
+                        .withSharedSecret(config.getApplicationSecret())
+                        .withCookieValue(value)
+                        .parse();
 
-                    LocalDateTime expiration = LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC);
-
-                    if (expiration.isAfter(LocalDateTime.now())) {
-                        if (paseto.getClaims().containsKey("twofactor") && paseto.getClaims().get("twofactor", Boolean.class)) {
+                    if (token.expirationIsAfter(LocalDateTime.now())) {
+                        if (token.containsClaim("twofactor") && token.getClaim("twofactor", Boolean.class)) {
                             return Response.withRedirect("/@admin/twofactor").andEndResponse();
                         }
                         
                         response.andContent("version", VERSION_TAG);
                         return response;
                     }
-                } catch (PasetoException e) {
+                } catch (MangooTokenException e) {
                     //NOSONAR Ignore catch
                 }
             }

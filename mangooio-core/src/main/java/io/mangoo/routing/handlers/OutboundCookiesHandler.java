@@ -1,8 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +16,7 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.TokenUtils;
+import io.mangoo.utils.token.TokenBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -72,9 +70,13 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanges()) {
-            String token = TokenUtils.getToken(session.getExpires(), config.getSessionCookieSecret(), Map.of(ClaimKey.DATA, session.getValues()), null);
-        
             try {
+                String token = TokenBuilder.create()
+                        .withExpires(session.getExpires())
+                        .withSharedSecret(config.getSessionCookieSecret())
+                        .withClaim(ClaimKey.DATA, session.getValues())
+                        .build();
+                
                 final Cookie cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
                         .setSameSite(true)
@@ -120,21 +122,30 @@ public class OutboundCookiesHandler implements HttpHandler {
                 authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
             } 
             
-            String token = TokenUtils.getToken(authentication.getExpires(), config.getAuthenticationCookieSecret(), Map.of(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor())), authentication.getSubject());
-            
-            final Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
-                    .setValue(token)
-                    .setSecure(config.isAuthenticationCookieSecure())
-                    .setHttpOnly(true)
-                    .setSameSite(true)
-                    .setPath("/")
-                    .setSameSiteMode(SAME_SITE_MODE);
-                        
-            if (config.isAuthenticationCookieExpires()) {
-                cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
-            } 
-            
-            exchange.setResponseCookie(cookie);
+            try {
+                String token = TokenBuilder.create()
+                        .withExpires(authentication.getExpires())
+                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                        .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
+                        .withSubject(authentication.getSubject())
+                        .build();
+                
+                final Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
+                        .setValue(token)
+                        .setSecure(config.isAuthenticationCookieSecure())
+                        .setHttpOnly(true)
+                        .setSameSite(true)
+                        .setPath("/")
+                        .setSameSiteMode(SAME_SITE_MODE);
+                            
+                if (config.isAuthenticationCookieExpires()) {
+                    cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
+                } 
+                
+                exchange.setResponseCookie(cookie);
+            } catch (Exception e) { //NOSONAR Intentionally catching exception here
+                LOG.error("Failed to generate authentication cookie", e);
+            }
         } else {
             //Ignore and send no cookie to the client
         }
@@ -163,18 +174,18 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (flash.hasContent() || form.isKept()) {
             try {
-                Map<ClaimKey, Object> claims = new HashMap<>();
-                claims.put(ClaimKey.DATA, flash.getValues());
-
-                if (form.isKept()) {
-                    claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
-                }
-                
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                String token = TokenUtils.getToken(expires, config.getFlashCookieSecret(), claims, null);
+                TokenBuilder tokenBuilder = TokenBuilder.create()
+                        .withExpires(expires)
+                        .withSharedSecret(config.getFlashCookieSecret())
+                        .withClaim(ClaimKey.DATA, flash.getValues());
+                
+                if (form.isKept()) {
+                    tokenBuilder.withClaim(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
+                }
 
                 final Cookie cookie = new CookieImpl(config.getFlashCookieName())
-                        .setValue(token)
+                        .setValue(tokenBuilder.build())
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)
