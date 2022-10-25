@@ -69,6 +69,7 @@ public enum Required {
     NAME("name can not be null"),
     OBJECT("object can not be null"),
     OBJECTS("objects can not be null"),
+    PASETO("paseto can not be null"),
     PASSWORD("password can not be null"),
     PATH("path can not be null"),
     PERIOD("period can not be null"),

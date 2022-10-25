@@ -1,4 +1,4 @@
-package io.mangoo.crypto.totp;
+package io.mangoo.utils.totp;
 
 import io.mangoo.enums.HmacShaAlgorithm;
 

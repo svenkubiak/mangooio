@@ -13,9 +13,9 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.crypto.totp.TOTP;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
+import io.mangoo.utils.totp.TOTP;
 
 /**
  * 

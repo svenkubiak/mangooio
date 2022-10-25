@@ -16,7 +16,7 @@ public class Token extends TokenCommons {
     private Paseto paseto;
     
     public Token(Paseto paseto) {
-        this.paseto = Objects.requireNonNull(paseto, "paseto can not be null");
+        this.paseto = Objects.requireNonNull(paseto, Required.PASETO.toString());
     }
 
     /**
@@ -97,6 +97,9 @@ public class Token extends TokenCommons {
         return paseto.getClaims().getSubject();
     }
     
+    /**
+     * @return The raw paseto object
+     */
     public Paseto getPaseto() {
         return paseto;
     }

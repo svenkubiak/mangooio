@@ -3,7 +3,6 @@ package io.mangoo.utils.token;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -84,9 +83,9 @@ public class TokenBuilder extends TokenCommons {
                     .setSubject(subject == null ? MangooUtils.randomString(32) : subject)
                     .setSharedSecret(new SecretKeySpec(sharedSecret.getBytes(CHARSET), ALGORITHM));
              
-             for (Entry<String, Object> entry : claims.entrySet()) {
-                 pasetoBuilder.claim(entry.getKey(), entry.getValue());
-             }
+             claims.entrySet()
+                 .stream()
+                 .forEach(entry -> pasetoBuilder.claim(entry.getKey(), entry.getValue()));
              
              return pasetoBuilder.compact();
         } catch (Exception e) {

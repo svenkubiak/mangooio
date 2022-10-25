@@ -1,4 +1,4 @@
-package io.mangoo.crypto.totp;
+package io.mangoo.utils.totp;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
