@@ -19,7 +19,6 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.token.TokenBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 
 /**
@@ -58,7 +57,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setSessionCookie(HttpServerExchange exchange) {
         var session = attachment.getSession();
         if (session.isInvalid()) {
-            Cookie cookie = new CookieImpl(config.getSessionCookieName())
+            var cookie = new CookieImpl(config.getSessionCookieName())
                     .setSecure(config.isSessionCookieSecure())
                     .setValue("")
                     .setHttpOnly(true)
@@ -77,7 +76,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withClaim(ClaimKey.DATA, session.getValues())
                         .build();
                 
-                final Cookie cookie = new CookieImpl(config.getSessionCookieName())
+                var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
                         .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
@@ -106,7 +105,7 @@ public class OutboundCookiesHandler implements HttpHandler {
     protected void setAuthenticationCookie(HttpServerExchange exchange) {
         var authentication = attachment.getAuthentication();
         if (authentication.isInvalid() || authentication.isLogout()) {
-            Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
+            var cookie = new CookieImpl(config.getAuthenticationCookieName())
                     .setSecure(config.isAuthenticationCookieSecure())
                     .setValue("")
                     .setHttpOnly(true)
@@ -130,7 +129,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withSubject(authentication.getSubject())
                         .build();
                 
-                final Cookie cookie = new CookieImpl(config.getAuthenticationCookieName())
+                var cookie = new CookieImpl(config.getAuthenticationCookieName())
                         .setValue(token)
                         .setSecure(config.isAuthenticationCookieSecure())
                         .setHttpOnly(true)
@@ -161,7 +160,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         var form = attachment.getForm();
         
         if (flash.isDiscard() || flash.isInvalid()) {
-            final Cookie cookie = new CookieImpl(config.getFlashCookieName())
+            var cookie = new CookieImpl(config.getFlashCookieName())
                     .setHttpOnly(true)
                     .setValue("")
                     .setSecure(config.isFlashCookieSecure())
@@ -183,9 +182,10 @@ public class OutboundCookiesHandler implements HttpHandler {
                 if (form.isKept()) {
                     tokenBuilder.withClaim(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
                 }
-
-                final Cookie cookie = new CookieImpl(config.getFlashCookieName())
-                        .setValue(tokenBuilder.build())
+                
+                String token = tokenBuilder.build();
+                var cookie = new CookieImpl(config.getFlashCookieName())
+                        .setValue(token)
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setSameSite(true)

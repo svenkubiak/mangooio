@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -16,14 +15,14 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
 
-import dev.paseto.jpaseto.PasetoException;
-import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
+import io.mangoo.utils.token.TokenParser;
 import io.undertow.security.api.AuthenticationMode;
 import io.undertow.security.handlers.AuthenticationCallHandler;
 import io.undertow.security.handlers.AuthenticationConstraintHandler;
@@ -124,13 +123,13 @@ public final class RequestUtils {
             
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    Pasetos.parserBuilder()
-                            .setSharedSecret(config.getAuthenticationCookieSecret().getBytes(StandardCharsets.UTF_8))
-                            .build()
-                            .parse(value);
+                    TokenParser.create()
+                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                        .withCookieValue(value)
+                        .parse();
                     
                     valid = true;
-                } catch (PasetoException e) {
+                } catch (MangooTokenException e) {
                     LOG.error("Failed to parse authentication cookie", e);
                 }
             }

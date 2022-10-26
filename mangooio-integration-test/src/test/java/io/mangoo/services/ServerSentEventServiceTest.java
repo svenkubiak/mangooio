@@ -6,14 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,11 +18,12 @@ import com.launchdarkly.eventsource.EventHandler;
 import com.launchdarkly.eventsource.EventSource;
 import com.launchdarkly.eventsource.ReadyState;
 
-import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
+import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.utils.token.TokenBuilder;
 import okhttp3.Headers;
 
 /**
@@ -59,16 +56,16 @@ class ServerSentEventServiceTest {
 	}
 
     @Test
-    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException {
+    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, MangooTokenException {
         //given
         Config config = Application.getInstance(Config.class);
         
-        String token = Pasetos.V1.LOCAL.builder()
-                .setSubject("foo")
-                .claim(ClaimKey.TWO_FACTOR.toString(), false)
-                .setExpiration(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.UTC))
-                .setSharedSecret(new SecretKeySpec("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk".getBytes(StandardCharsets.UTF_8), "AES"))
-                .compact();    
+        String token = TokenBuilder.create()
+            .withSubject("foo")
+            .withClaim(ClaimKey.TWO_FACTOR, false)
+            .withExpires(LocalDateTime.now().plusHours(1))
+            .withSharedSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
+            .build();
         
         String cookie = config.getAuthenticationCookieName() + "=" + token;
         
