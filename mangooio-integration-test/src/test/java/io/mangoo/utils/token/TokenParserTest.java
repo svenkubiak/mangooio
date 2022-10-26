@@ -5,9 +5,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import io.mangoo.TestExtension;
 import io.mangoo.enums.ClaimKey;
@@ -64,5 +67,32 @@ public class TokenParserTest {
         assertThat(token.getExpiration(), equalTo(expires));
         assertThat(token.getSubject(), equalTo(subject));
         assertThat(token.getClaim(claimKey, String.class), equalTo(claimValue));
+    }
+    
+    @Test
+    void testConcurrentParse() throws InterruptedException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            LocalDateTime expires = LocalDateTime.now().plusDays(1);
+            String sharedSecret = MangooUtils.randomString(32);
+            String subject = MangooUtils.randomString(32);
+            ClaimKey claimKey = ClaimKey.DATA;
+            String claimValue = MangooUtils.randomString(32);
+            String buildToken = TokenBuilder.create()
+                    .withExpires(expires)
+                    .withSharedSecret(sharedSecret)
+                    .withClaim(claimKey, claimValue)
+                    .withSubject(subject)
+                    .build();
+            
+            //when
+            Token token = TokenParser.create().withCookieValue(buildToken).withSharedSecret(sharedSecret).parse();
+            
+            //then
+            return token != null &&
+                   token.getExpiration().equals(expires) &&
+                   token.getSubject().equals(subject) &&
+                   token.getClaim(claimKey, String.class).equals(claimValue);
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }
