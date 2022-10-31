@@ -238,7 +238,7 @@
 			<dependency>
 				<groupId>org.ocpsoft.prettytime</groupId>
 				<artifactId>prettytime</artifactId>
-				<version>5.0.4.Final</version>
+				<version>5.0.5.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>no.api.freemarker</groupId>
@@ -404,7 +404,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.14.0-rc2</version>
+				<version>2.14.0-rc3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
