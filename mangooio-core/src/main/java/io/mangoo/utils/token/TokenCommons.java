@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 
 public class TokenCommons {
-    protected final static String ALGORITHM = "AES";
-    protected final static Charset CHARSET = StandardCharsets.UTF_8;
-    protected final static ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
+    protected static final String ALGORITHM = "AES";
+    protected static final Charset CHARSET = StandardCharsets.UTF_8;
+    protected static final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
 }
