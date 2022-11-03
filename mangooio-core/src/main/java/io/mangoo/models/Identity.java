@@ -1,6 +1,7 @@
 package io.mangoo.models;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +21,8 @@ import io.undertow.security.idm.PasswordCredential;
  * @author svenkubiak
  *
  */
-public class Identity implements IdentityManager {
+public class Identity implements IdentityManager, Serializable {
+    private static final long serialVersionUID = -412633269312361644L;
     private final String username;
     private final char[] password;
     
