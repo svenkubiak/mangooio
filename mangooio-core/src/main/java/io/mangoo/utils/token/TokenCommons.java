@@ -10,7 +10,7 @@ import java.time.ZoneOffset;
  *
  */
 public class TokenCommons {
-    protected final Charset CHARSET = StandardCharsets.UTF_8;
-    protected final ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
-    protected final String ALGORITHM = "AES";
+    protected final static Charset CHARSET = StandardCharsets.UTF_8;
+    protected final static ZoneOffset ZONE_OFFSET = ZoneOffset.UTC;
+    protected final static String ALGORITHM = "AES";
 }

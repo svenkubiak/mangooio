@@ -158,7 +158,7 @@ public class AdminController {
     public Response cache() {
         Map<String, CacheStats> statistics = new HashMap<>();
         for (Entry<String, Cache> entry : cacheProvider.getCaches().entrySet()) {
-            statistics.put(entry.getKey(), ((CacheImpl) entry.getValue()).getStats());
+            statistics.put(entry.getKey(), ((CacheImpl) entry.getValue()).getStats()); //NOSONAR
         }
         
         return Response.withOk()
