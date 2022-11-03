@@ -14,11 +14,6 @@ import com.jayway.jsonpath.ReadContext;
 
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
     private static ObjectMapper mapper = new ObjectMapper();

@@ -16,11 +16,6 @@ import io.mangoo.core.Config;
 import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Singleton
 public class CacheProvider implements Provider<Cache> {
     private Map<String, Cache> caches = new HashMap<>();

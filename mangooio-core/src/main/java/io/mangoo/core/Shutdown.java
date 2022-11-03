@@ -4,11 +4,6 @@ import com.google.inject.Singleton;
 
 import io.mangoo.interfaces.MangooBootstrap;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Singleton
 public class Shutdown extends Thread {
     public Shutdown() {

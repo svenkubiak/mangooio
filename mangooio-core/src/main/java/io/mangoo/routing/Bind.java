@@ -5,11 +5,6 @@ import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class Bind {
     
     private Bind() {

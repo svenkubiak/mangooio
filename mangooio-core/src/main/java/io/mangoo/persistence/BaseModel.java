@@ -6,11 +6,6 @@ import org.bson.types.ObjectId;
 
 import dev.morphia.annotations.Id;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class BaseModel implements Serializable {
     private static final long serialVersionUID = 1117892356160010435L;
     

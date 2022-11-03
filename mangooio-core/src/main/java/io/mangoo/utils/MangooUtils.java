@@ -21,11 +21,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };

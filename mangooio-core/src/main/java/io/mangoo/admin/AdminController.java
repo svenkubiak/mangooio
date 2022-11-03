@@ -61,12 +61,6 @@ import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import net.minidev.json.JSONObject;
 
-/**
- * Controller class for administrative area
- *
- * @author svenkubiak
- *
- */
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");

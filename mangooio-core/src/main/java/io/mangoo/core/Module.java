@@ -10,11 +10,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.persistence.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class Module extends AbstractModule {
     private Config config = new Config();
     private EmbeddedMongoDB embeddedMongoDB;

@@ -14,12 +14,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.totp.TotpUtils;
 
-/**
- * Convenient class for handling authentication
- *
- * @author svenkubiak
- *
- */
 public class Authentication {
     private LocalDateTime expires;
     private String subject;

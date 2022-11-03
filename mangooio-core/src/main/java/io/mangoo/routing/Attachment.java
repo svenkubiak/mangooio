@@ -18,11 +18,6 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.TemplateEngine;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Attachment {
     private final long start = System.currentTimeMillis();
     private Authentication authentication;

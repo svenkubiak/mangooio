@@ -10,11 +10,6 @@ import com.google.inject.Singleton;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEventBusException;
 
-/**
-*
-* @author svenkubiak
-*
-*/
 @Singleton
 public class EventBusService {
     private AsyncEventBus asyncEventBus;

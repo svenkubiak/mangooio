@@ -16,11 +16,6 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.enums.HmacShaAlgorithm;
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TotpUtils {
     private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
     private static final Base32 base32 = new Base32();

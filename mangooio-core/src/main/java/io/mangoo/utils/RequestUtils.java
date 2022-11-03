@@ -37,11 +37,6 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
     private static AttachmentKey<Attachment> attachmentKey;

@@ -5,11 +5,6 @@ import io.undertow.server.HandlerWrapper;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class MetricsHandler implements HttpHandler {
     public static final HandlerWrapper HANDLER_WRAPPER = MetricsHandler::new;
     private final HttpHandler nextHandler;

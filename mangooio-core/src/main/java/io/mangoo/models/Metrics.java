@@ -9,12 +9,6 @@ import java.util.concurrent.atomic.LongAdder;
 
 import com.google.inject.Singleton;
 
-/**
- * Base class for system metrics
- *
- * @author svenkubiak
- *
- */
 @Singleton
 public class Metrics {
     private static final int CONCURRENCY_LEVEL = 1;

@@ -9,12 +9,6 @@ import org.apache.logging.log4j.Logger;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 
-/**
- * Proxy class for executing scheduled tasks
- * 
- * @author svenkubiak
- *
- */
 public class Task implements Runnable {
     private static final Logger LOG = LogManager.getLogger(Task.class);
     private final Class<?> clazz;

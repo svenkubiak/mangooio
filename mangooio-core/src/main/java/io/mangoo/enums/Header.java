@@ -3,12 +3,6 @@ package io.mangoo.enums;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.undertow.util.HttpString;
 
-/**
- * Custom headers which are not part of undertow
- *
- * @author svenkubiak
- *
- */
 public enum Header {
     ACCEPT_LANGUAGE("Accept-Language", new HttpString("Accept-Language")),
     CONTENT_DISPOSITION("Content-Disposition", new HttpString("Content-Disposition")),

@@ -5,11 +5,6 @@ import com.google.common.eventbus.Subscribe;
 import io.mangoo.persistence.events.DeleteEvent;
 import io.mangoo.persistence.events.SaveEvent;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class DatastoreListener {
     @Subscribe
     public void saveEvent(SaveEvent<?> saveEvent) {

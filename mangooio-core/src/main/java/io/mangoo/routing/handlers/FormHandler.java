@@ -20,11 +20,6 @@ import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.server.handlers.form.FormParserFactory.Builder;
 import io.undertow.util.HttpString;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class FormHandler implements HttpHandler {
 
     @Override

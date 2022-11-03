@@ -8,12 +8,6 @@ import java.util.Objects;
 
 import io.mangoo.enums.Required;
 
-/**
- * Utility class for converting between Date, LocalDateTime and LocalDate
- * 
- * @author svenkubiak
- *
- */
 public final class DateUtils {
     private DateUtils() {
     }

@@ -12,11 +12,6 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.routing.Router;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class RouteMethod implements TemplateMethodModelEx {
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(.*?)\\}");
     private static final int MIN_ARGUMENTS = 1;

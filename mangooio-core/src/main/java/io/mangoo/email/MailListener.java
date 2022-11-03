@@ -36,11 +36,6 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Singleton
 public class MailListener {
     private static final Logger LOG = LogManager.getLogger(MailListener.class);

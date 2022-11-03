@@ -8,11 +8,6 @@ import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TokenParser extends TokenCommons {
     private String sharedSecret;
     private String cookieValue;

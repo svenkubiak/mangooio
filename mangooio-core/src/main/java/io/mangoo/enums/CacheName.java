@@ -1,11 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * Contains the names of the used caches
- * 
- * @author svenkubiak
- *
- */
 public enum CacheName {
     APPLICATION("mangooio-application-cache"),
     AUTH("mangooio-auth-cache"),

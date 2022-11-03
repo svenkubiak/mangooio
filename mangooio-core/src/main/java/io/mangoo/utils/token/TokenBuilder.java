@@ -14,11 +14,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TokenBuilder extends TokenCommons {
     private LocalDateTime expires;
     private String sharedSecret;

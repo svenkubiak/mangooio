@@ -18,12 +18,6 @@ import com.cronutils.parser.CronParser;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 
-/**
- * Proxy class for executing scheduled cron tasks
- * 
- * @author svenkubiak
- *
- */
 public class CronTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(CronTask.class);
     private final Class<?> clazz;

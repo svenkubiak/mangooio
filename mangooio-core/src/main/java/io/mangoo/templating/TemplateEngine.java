@@ -32,11 +32,6 @@ import io.mangoo.models.Source;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
     private static final String TEMPLATE_SUFFIX = ".ftl";

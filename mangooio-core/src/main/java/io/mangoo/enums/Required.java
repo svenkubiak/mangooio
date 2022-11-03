@@ -1,10 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public enum Required {
     ACCOUNT_NAME("account name can not be null"),
     ALGORITHM("algorithm can not be null"),

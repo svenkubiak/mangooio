@@ -14,13 +14,6 @@ import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.IdentityManager;
 import io.undertow.security.idm.PasswordCredential;
 
-/**
- * 
- * A simple IdentityManager implementation
- * 
- * @author svenkubiak
- *
- */
 public class Identity implements IdentityManager, Serializable {
     private static final long serialVersionUID = -412633269312361644L;
     private final String username;

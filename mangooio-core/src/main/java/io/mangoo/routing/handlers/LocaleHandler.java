@@ -17,12 +17,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.LocaleUtils;
 
-/**
- *
- * @author svenkubiak
- * @author williamdunne
- *
- */
 public class LocaleHandler implements HttpHandler {
     private final Config config;
     

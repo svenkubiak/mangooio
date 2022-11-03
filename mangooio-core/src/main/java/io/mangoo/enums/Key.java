@@ -1,11 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * Key strings for reading configuration properties of application
- *
- * @author svenkubiak
- *
- */
 public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
     APPLICATION_ADMIN_HEALTH_ENABLE("application.admin.health.enable"),

@@ -9,11 +9,6 @@ import io.mangoo.enums.Http;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class RequestRoute implements MangooRoute {
     private Class<?> controllerClass;
     private Http[] methods = {};

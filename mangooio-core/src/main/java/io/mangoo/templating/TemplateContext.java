@@ -13,11 +13,6 @@ import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
 import io.mangoo.templating.methods.RouteMethod;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class TemplateContext {
     private String templatePath;
     private Map<String, Object> content = new HashMap<>();

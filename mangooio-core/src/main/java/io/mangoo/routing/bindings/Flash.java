@@ -10,11 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import io.mangoo.enums.Required;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);
     private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");

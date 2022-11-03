@@ -7,11 +7,6 @@ import dev.paseto.jpaseto.Paseto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class Token extends TokenCommons {
     private Paseto paseto;
     

@@ -14,11 +14,6 @@ import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.token.TokenParser;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class AdminFilter implements PerRequestFilter {
     private static final String VERSION_TAG = MangooUtils.getVersion();
     

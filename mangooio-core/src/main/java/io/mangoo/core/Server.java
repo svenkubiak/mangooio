@@ -8,11 +8,6 @@ import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public final class Server {
     private static Map<Header, String> headers = Map.of(
                 Header.X_CONTENT_TYPE_OPTIONS, Default.APPLICATION_HEADERS_XCONTENTTYPEOPTIONS.toString(),

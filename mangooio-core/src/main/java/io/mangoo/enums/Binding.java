@@ -6,11 +6,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
     DOUBLE("java.lang.Double"),

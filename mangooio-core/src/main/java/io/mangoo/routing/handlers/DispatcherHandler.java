@@ -24,22 +24,6 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
-/**
- * Main class for dispatching a request to the request chain.
- * The request chain contains the following handlers in order:
- *
- * DispatcherHandler
- * LimitHandler
- * LocalHandler
- * InboundCookiesHandler
- * FormHandler
- * RequestHandler
- * OutboundCookiesHandler
- * ResponseHandler
- *
- * @author svenkubiak
- *
- */
 public class DispatcherHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);
     private Method method;

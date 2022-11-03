@@ -20,11 +20,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.enums.Validation;
 import io.mangoo.i18n.Messages;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Validator implements Serializable {
     private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();

@@ -11,11 +11,6 @@ import com.google.common.cache.CacheStats;
 
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class CacheImpl implements Cache {
     private static final String EXPIRES_SUFFIX = "-expires";
 	private com.google.common.cache.Cache<String, Object> guavaCache = CacheBuilder.newBuilder().build();

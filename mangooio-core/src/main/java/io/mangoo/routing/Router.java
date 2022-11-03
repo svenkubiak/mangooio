@@ -21,11 +21,6 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 
-/**
- *
- * @author svenkubiak
- *
- */
 @SuppressFBWarnings(value = "PMB_POSSIBLE_MEMORY_BLOAT", justification = "Route size is limited")
 public final class Router {
     private static Set<MangooRoute> routes = ConcurrentHashMap.newKeySet();

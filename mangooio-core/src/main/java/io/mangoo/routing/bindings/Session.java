@@ -11,11 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import io.mangoo.enums.Required;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");

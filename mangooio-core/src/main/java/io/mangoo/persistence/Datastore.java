@@ -4,11 +4,6 @@ import java.util.List;
 
 import com.mongodb.client.MongoClient;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public interface Datastore {
 
     dev.morphia.Datastore getDatastore();

@@ -17,11 +17,6 @@ import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Request extends Validator {
     private static final long serialVersionUID = 5589488716007844048L;
     private transient HttpServerExchange httpServerExchange;

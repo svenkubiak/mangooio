@@ -39,12 +39,6 @@ import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
 
-/**
- * Convenient class for encryption and decryption
- *
- * @author svenkubiak
- *
- */
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
     private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));

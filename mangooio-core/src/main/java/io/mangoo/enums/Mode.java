@@ -1,11 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * Application modes
- *
- * @author svenkubiak
- *
- */
 public enum Mode {
     DEV("dev"),
     PROD("prod"),

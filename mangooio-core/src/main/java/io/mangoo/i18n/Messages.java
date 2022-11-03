@@ -10,12 +10,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
 
-/**
- * Convenient class for handling translations
- *
- * @author svenkubiak
- *
- */
 public class Messages implements Serializable {
     private static final long serialVersionUID = -1713264225655435037L;
     private Map<String, String> defaults = Default.getMessages();

@@ -24,11 +24,6 @@ import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Response {
     private static final Logger LOG = LogManager.getLogger(Response.class);
     private final Map<HttpString, String> headers = new HashMap<>();

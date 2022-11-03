@@ -5,11 +5,6 @@ import java.util.Objects;
 import io.mangoo.enums.Required;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class ServerSentEventConnected {
     private String uri;
     private ServerSentEventConnection connection;

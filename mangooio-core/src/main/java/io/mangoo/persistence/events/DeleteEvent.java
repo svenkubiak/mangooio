@@ -8,12 +8,6 @@ import com.google.inject.Inject;
 import io.mangoo.enums.Required;
 import io.mangoo.persistence.Datastore;
 
-/**
- * 
- * @author svenkubiak
- * @param <T>
- *
- */
 public class DeleteEvent<T> {
     private final Datastore datastore;
     private Object object;

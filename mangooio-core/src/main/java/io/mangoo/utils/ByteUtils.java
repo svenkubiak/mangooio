@@ -5,11 +5,6 @@ import java.util.Objects;
 
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public final class ByteUtils {
     private static final int BYTES = 8;
     private static final int MAX_BYTE_LENGTH = Integer.MAX_VALUE / 8;

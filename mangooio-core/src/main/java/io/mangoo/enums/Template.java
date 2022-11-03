@@ -7,12 +7,6 @@ import org.apache.logging.log4j.LogManager;
 
 import com.google.common.io.Resources;
 
-/**
- * Default HTML templates for standard HTTP responses
- *
- * @author svenkbiak
- *
- */
 public enum Template {
     DEFAULT;
     private static final String ADMIN_TEMPLATE_PATH = "@admin/index.ftl";

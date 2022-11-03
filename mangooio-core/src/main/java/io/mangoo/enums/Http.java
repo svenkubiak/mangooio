@@ -2,11 +2,6 @@ package io.mangoo.enums;
 
 import io.undertow.util.HttpString;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public enum Http {
     DELETE("delete"),
     GET("get"),

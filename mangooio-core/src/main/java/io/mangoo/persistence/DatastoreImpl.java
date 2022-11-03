@@ -22,11 +22,6 @@ import io.mangoo.persistence.events.DeleteEvent;
 import io.mangoo.persistence.events.SaveEvent;
 import io.mangoo.services.EventBusService;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
     private final Config config;

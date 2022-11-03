@@ -11,11 +11,6 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
 import io.undertow.util.HeaderValues;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
     private boolean hasAuthentication;
     

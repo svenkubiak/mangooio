@@ -3,13 +3,6 @@ package io.mangoo.enums;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Default application values
- *
- * @author svenkubiak
- * @author williamdunne
- *
- */
 public enum Default {
     ADMIN_COOKIE_NAME("mangooio-admin"),
     APPLICATION_ADMIN_ENABLE(Constants.FALSE),

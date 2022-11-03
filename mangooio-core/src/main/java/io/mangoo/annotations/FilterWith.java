@@ -7,12 +7,6 @@ import java.lang.annotation.Target;
 
 import io.mangoo.interfaces.filters.PerRequestFilter;
 
-/**
- * Filter annotation for request and controller filter
- *
- * @author svenkubiak
- *
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface FilterWith {

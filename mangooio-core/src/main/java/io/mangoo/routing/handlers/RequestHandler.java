@@ -33,12 +33,6 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
-/**
- * Main class that handles all controller requests
- *
- * @author skubiak
- *
- */
 public class RequestHandler implements HttpHandler {
     private Attachment attachment;
     

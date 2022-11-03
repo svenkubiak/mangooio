@@ -10,11 +10,6 @@ import io.mangoo.models.Metrics;
 import io.undertow.server.ExchangeCompletionListener;
 import io.undertow.server.HttpServerExchange;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class MetricsListener implements ExchangeCompletionListener {
     private long start;
     

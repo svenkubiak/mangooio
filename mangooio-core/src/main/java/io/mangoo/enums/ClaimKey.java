@@ -1,10 +1,5 @@
 package io.mangoo.enums;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public enum ClaimKey {
     DATA("data"),
     FORM("form"),

@@ -77,12 +77,6 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
 
-/**
- * Main class that starts all components of a mangoo I/O application
- *
- * @author svenkubiak
- *
- */
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final String ALL_PACKAGES = "*";

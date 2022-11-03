@@ -17,11 +17,6 @@ import io.mangoo.services.EventBusService;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;

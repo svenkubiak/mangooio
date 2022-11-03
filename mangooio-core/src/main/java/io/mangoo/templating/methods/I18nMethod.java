@@ -13,11 +13,6 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.i18n.Messages;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class I18nMethod implements TemplateMethodModelEx {
     private static final Logger LOG = LogManager.getLogger(I18nMethod.class);
     private static final int NUM_ARGUMENTS = 1;

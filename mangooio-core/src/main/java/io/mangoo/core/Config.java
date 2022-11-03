@@ -27,13 +27,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
 
-/**
- * Main configuration class for all properties configured in 'config.props'
- *
- * @author svenkubiak
- * @author williamdunne
- *
- */
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);

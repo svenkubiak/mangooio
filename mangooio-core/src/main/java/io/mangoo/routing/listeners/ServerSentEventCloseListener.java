@@ -7,11 +7,6 @@ import io.mangoo.events.ServerSentEventDisconnected;
 import io.mangoo.services.EventBusService;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
     @Override
     public void handleEvent(ServerSentEventConnection connection) {

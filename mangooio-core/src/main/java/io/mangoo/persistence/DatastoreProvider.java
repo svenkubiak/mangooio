@@ -10,11 +10,6 @@ import com.google.inject.Singleton;
 
 import io.mangoo.enums.Required;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 @Singleton
 public class DatastoreProvider implements Provider<Datastore> {
     private Map<String, DatastoreImpl> datastores = new HashMap<>();

@@ -3,11 +3,6 @@ package io.mangoo.routing;
 import io.mangoo.enums.Http;
 import io.mangoo.routing.routes.RequestRoute;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class On {
     
     private On() {

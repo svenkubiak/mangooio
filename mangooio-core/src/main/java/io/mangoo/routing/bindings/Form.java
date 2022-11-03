@@ -17,11 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.MangooUtils;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class Form extends Validator {
     private static final long serialVersionUID = 2228639200039277653L;
     private transient List<InputStream> files = new ArrayList<>();

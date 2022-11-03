@@ -6,11 +6,6 @@ import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
 
-/**
- * 
- * @author svenkubiak
- *
- */
 public class ServerSentEventRoute implements MangooRoute {
     private String url;
     private boolean authentication;

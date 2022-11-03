@@ -15,11 +15,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);
     

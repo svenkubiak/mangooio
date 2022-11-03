@@ -21,11 +21,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class OutboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(OutboundCookiesHandler.class);
     private static final String SAME_SITE_MODE = "Strict";

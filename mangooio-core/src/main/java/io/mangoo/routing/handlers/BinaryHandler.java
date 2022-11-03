@@ -13,11 +13,6 @@ import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
-/**
- *
- * @author svenkubiak
- *
- */
 public class BinaryHandler implements HttpHandler {
     private Response response;
 
