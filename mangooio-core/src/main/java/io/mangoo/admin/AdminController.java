@@ -166,7 +166,7 @@ public class AdminController {
     }
     
     public Response logout() {
-        Cookie cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+        var cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
                 .setValue("")
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -225,7 +225,7 @@ public class AdminController {
             var clazz = body.get("class").toString();
             var level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
-                LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+                var loggerContext = (LoggerContext) LogManager.getContext(false);
                 loggerContext.getLoggers()
                     .stream()
                     .filter(logger -> clazz.equals(logger.getName()))
@@ -244,21 +244,21 @@ public class AdminController {
         
         if (routes.isEmpty()) {
             Router.getFileRoutes().forEach((FileRoute route) -> {
-                JSONObject json = new JSONObject();
+                var json = new JSONObject();
                 json.put(METHOD, "FILE");
                 json.put(URL, route.getUrl());
                 routes.add(json);
             });
             
             Router.getPathRoutes().forEach((PathRoute route) -> {
-                JSONObject json = new JSONObject();
+                var json = new JSONObject();
                 json.put(METHOD, "PATH");
                 json.put(URL, route.getUrl());
                 routes.add(json);
             });
             
             Router.getServerSentEventRoutes().forEach((ServerSentEventRoute route) -> {
-                JSONObject json = new JSONObject();
+                var json = new JSONObject();
                 json.put(METHOD, "SSE");
                 json.put(URL, route.getUrl());
                 routes.add(json);
@@ -266,7 +266,7 @@ public class AdminController {
             
             Router.getRequestRoutes().filter((RequestRoute route) -> !route.getUrl().contains("@admin"))
                     .forEach((RequestRoute route) -> {
-                        JSONObject json = new JSONObject();
+                        var json = new JSONObject();
                         json.put(METHOD, route.getMethod());
                         json.put(URL, route.getUrl());
                         json.put("controllerClass", route.getControllerClass());
@@ -335,7 +335,7 @@ public class AdminController {
     
     public Response health(Request request)  {
         if (isValidHeaderToken(request)) {
-            JSONObject json = new JSONObject();
+            var json = new JSONObject();
             json.put("cpu", getCpu());
 
             Map<String, Double> memory = getMemory();
@@ -384,7 +384,7 @@ public class AdminController {
     }
 
     private Cookie getAdminCookie(boolean includeTwoFactor) {
-        TokenBuilder tokenBuilder = TokenBuilder.create()
+        var tokenBuilder = TokenBuilder.create()
                 .withSharedSecret(config.getApplicationSecret())
                 .withExpires(LocalDateTime.now().plusMinutes(30))
                 .withClaim("uuid", MangooUtils.randomString(32));
@@ -393,7 +393,7 @@ public class AdminController {
             tokenBuilder.withClaim("twofactor", Boolean.TRUE);
         }
         
-        String token = "";
+        var token = "";
         try {
             token = tokenBuilder.build();
         } catch (MangooTokenException e) {
