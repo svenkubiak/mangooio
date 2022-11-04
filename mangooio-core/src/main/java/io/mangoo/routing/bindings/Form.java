@@ -254,7 +254,7 @@ public class Form extends Validator {
     public <T> T toObject(Class<?> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
         try {
             return (T) mapper.readValue(mapper.writeValueAsString(values), clazz);
         } catch (JsonProcessingException e) {
