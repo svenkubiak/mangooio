@@ -103,7 +103,7 @@ public class Runner {
     }
 
     private StartedProcess startProcess() throws IOException {
-        ProcessExecutor processExecutor = buildProcessExecutor();
+        var processExecutor = buildProcessExecutor();
         return processExecutor.start();
     }
 

@@ -108,7 +108,7 @@ public class TemplateEngine {
             content.put("sourceCodePath", StringUtils.substringAfter(Paths.get(getBaseDirectory()).resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
-        Configuration config = new Configuration(VERSION);
+        var config = new Configuration(VERSION);
         config.setClassForTemplateLoading(getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
 
         Writer writer = new StringWriter();

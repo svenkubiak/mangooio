@@ -2,7 +2,6 @@ package io.mangoo.utils.token;
 
 import java.util.Objects;
 
-import dev.paseto.jpaseto.Paseto;
 import dev.paseto.jpaseto.PasetoException;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.enums.Required;
@@ -53,7 +52,7 @@ public class TokenParser extends TokenCommons {
      */
     public Token parse() throws MangooTokenException {
         try {
-            Paseto paseto = Pasetos.parserBuilder()
+            var paseto = Pasetos.parserBuilder()
                 .setSharedSecret(sharedSecret.getBytes(CHARSET))
                 .build()
                 .parse(cookieValue);

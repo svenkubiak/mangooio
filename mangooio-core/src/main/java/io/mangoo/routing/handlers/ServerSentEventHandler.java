@@ -9,7 +9,6 @@ import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.server.handlers.sse.ServerSentEventConnectionCallback;
-import io.undertow.util.HeaderValues;
 
 public class ServerSentEventHandler implements ServerSentEventConnectionCallback {
     private boolean hasAuthentication;
@@ -23,7 +22,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
     public void connected(ServerSentEventConnection connection, String lastEventId) {
         if (hasAuthentication) {
             String header = null;
-            HeaderValues headerValues = connection.getRequestHeaders().get(Header.COOKIE.toHttpString());
+            var headerValues = connection.getRequestHeaders().get(Header.COOKIE.toHttpString());
             if (headerValues != null) {
                 header = headerValues.element();
             }

@@ -33,7 +33,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.AttachmentKey;
-import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
 import io.undertow.websockets.core.WebSocketChannel;
 
@@ -91,7 +90,7 @@ public final class RequestUtils {
     public static boolean isJsonRequest(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
-        final HeaderMap headerMap = exchange.getRequestHeaders();
+        var headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Header.CONTENT_TYPE.toHttpString()) != null &&
                 headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
     }
