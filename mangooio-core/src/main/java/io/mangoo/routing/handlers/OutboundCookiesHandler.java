@@ -169,7 +169,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (flash.hasContent() || form.isKept()) {
             try {
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                TokenBuilder tokenBuilder = TokenBuilder.create()
+                var tokenBuilder = TokenBuilder.create()
                         .withExpires(expires)
                         .withSharedSecret(config.getFlashCookieSecret())
                         .withClaim(ClaimKey.DATA, flash.getValues());

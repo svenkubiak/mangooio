@@ -39,7 +39,7 @@ public class MinifyMojo extends AbstractMojo {
     
     @SuppressFBWarnings(value = "ISB_TOSTRING_APPENDING", justification = "toString is called on an enum")
     public void minifyFiles(String directoryName){
-        StringBuilder buffer = new StringBuilder();
+        var buffer = new StringBuilder();
         buffer.append(directoryName).append('/').append(Default.FILES_PATH.toString());
         
         File directory = new File(buffer.toString()); //NOSONAR

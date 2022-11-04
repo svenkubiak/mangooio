@@ -166,7 +166,7 @@ public class MangooMojo extends AbstractMojo {
 
     private void getArtifacts(Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
         for (Artifact artifact : project.getArtifacts()) {
-            File file = artifact.getFile();
+            var file = artifact.getFile();
 
             if (this.watchAllClassPathDirs && file.isDirectory()) {
                 watchDirectories.add(file.toPath().toAbsolutePath());

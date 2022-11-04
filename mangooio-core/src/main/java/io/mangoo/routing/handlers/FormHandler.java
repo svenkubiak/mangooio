@@ -13,11 +13,8 @@ import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.form.FormData;
 import io.undertow.server.handlers.form.FormData.FormValue;
-import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.server.handlers.form.FormParserFactory;
-import io.undertow.server.handlers.form.FormParserFactory.Builder;
 import io.undertow.util.HttpString;
 
 public class FormHandler implements HttpHandler {
@@ -43,22 +40,22 @@ public class FormHandler implements HttpHandler {
     protected Form getForm(HttpServerExchange exchange) throws IOException {
         final var form = Application.getInstance(Form.class);
         if (RequestUtils.isPostPutPatch(exchange)) {
-            final Builder builder = FormParserFactory.builder();
+            var builder = FormParserFactory.builder();
             builder.setDefaultCharset(StandardCharsets.UTF_8.name());
-            try (final FormDataParser formDataParser = builder.build().createParser(exchange)) {
+            try (var formDataParser = builder.build().createParser(exchange)) {
                 if (formDataParser != null) {
                     exchange.startBlocking();
-                    final FormData formData = formDataParser.parseBlocking();
+                    var formData = formDataParser.parseBlocking();
                     for (String data : formData) {
                         Deque<FormValue> deque = formData.get(data);
                         if (deque != null) {
-                            FormValue formValue = deque.element();
+                            var formValue = deque.element();
                             if (formValue != null) {
                                 if (formValue.isFileItem() && formValue.getFileItem().getFile() != null) {
                                     form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
                                 } else {
                                     if (data.contains("[]")) {
-                                        String key = StringUtils.replace(data, "[]", "");
+                                        var key = StringUtils.replace(data, "[]", "");
                                         for (FormValue value : deque) {
                                             form.addValueList(new HttpString(key).toString(), value.getValue());
                                         }

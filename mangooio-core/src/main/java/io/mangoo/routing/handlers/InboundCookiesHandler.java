@@ -24,11 +24,9 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.token.Token;
 import io.mangoo.utils.token.TokenParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 
 public class InboundCookiesHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(InboundCookiesHandler.class);
@@ -66,7 +64,7 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Token token = TokenParser.create()
+                var token = TokenParser.create()
                         .withSharedSecret(config.getSessionCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
@@ -98,7 +96,7 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Token token = TokenParser.create()
+                var token = TokenParser.create()
                         .withSharedSecret(config.getAuthenticationCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
@@ -130,7 +128,7 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                Token token = TokenParser.create()
+                var token = TokenParser.create()
                         .withSharedSecret(config.getFlashCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
@@ -163,7 +161,7 @@ public class InboundCookiesHandler implements HttpHandler {
      */
     private String getCookieValue(HttpServerExchange exchange, String cookieName) {
         String value = null;
-        Cookie cookie = exchange.getRequestCookie(cookieName);
+        var cookie = exchange.getRequestCookie(cookieName);
         if (cookie != null) {
             value = cookie.getValue();
         }  

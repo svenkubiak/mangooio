@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
@@ -34,11 +33,9 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.github.classgraph.AnnotationInfo;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
-import io.github.classgraph.ScanResult;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.email.MailListener;
@@ -68,7 +65,6 @@ import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
-import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
@@ -135,7 +131,7 @@ public final class Application {
         if (config.isSchedulerEnabled()) {
             scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
             
-            try (ScanResult scanResult =
+            try (var scanResult =
                     new ClassGraph()
                         .enableAnnotationInfo()
                         .enableClassInfo()
@@ -145,17 +141,17 @@ public final class Application {
                 
                 scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> 
                     classInfo.getMethodInfo().forEach(methodInfo -> {
-                        boolean isCron = false;
+                        var isCron = false;
                         long seconds = 0;
                         String at = null;
                         
                         for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
-                            AnnotationInfo annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                            var annotationInfo = methodInfo.getAnnotationInfo().get(i);
                             at = ((String) annotationInfo.getParameterValues(true).get("at").getValue()).toLowerCase(Locale.ENGLISH).trim();
                             if (at.contains("every")) {
                                 at = at.replace("every", "").trim();
-                                String timespan = at.substring(0, at.length() - 1);
-                                String duration = at.substring(at.length() - 1);
+                                var timespan = at.substring(0, at.length() - 1);
+                                var duration = at.substring(at.length() - 1);
                                 seconds = getSeconds(timespan, duration);  
                             } else {
                                 isCron = true;
@@ -207,8 +203,8 @@ public final class Application {
         
         if (isCron) {
             try {
-                CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
-                Cron quartzCron = parser.parse(at);
+                var parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
+                var quartzCron = parser.parse(at);
                 quartzCron.validate();
                 
                 scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
@@ -561,7 +557,7 @@ public final class Application {
     }
 
     private static RoutingHandler getRoutingHandler() {
-        final RoutingHandler routingHandler = Handlers.routing();
+        var routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
         
         var config = getInstance(Config.class);
@@ -601,7 +597,7 @@ public final class Application {
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
         });
         
-        ResourceHandler resourceHandler = Handlers.resource(new ClassPathResourceManager(
+        var resourceHandler = Handlers.resource(new ClassPathResourceManager(
                 Thread.currentThread().getContextClassLoader(),
                 Default.FILES_FOLDER.toString() + '/'));
         
@@ -622,7 +618,7 @@ public final class Application {
                     .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
         }
         
-        Builder builder = Undertow.builder()
+        var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                 .setHandler(httpHandler);
 

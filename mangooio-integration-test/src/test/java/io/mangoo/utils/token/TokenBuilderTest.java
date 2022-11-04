@@ -18,7 +18,7 @@ import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
 
 @ExtendWith({TestExtension.class})
-public class TokenBuilderTest {
+class TokenBuilderTest {
     
     @Test
     void testWithExpipres() {
