@@ -104,7 +104,6 @@ public class MangooMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         if (skip) {
-            getLog().info("Skip flag is on. Will not execute.");
             return;
         }
 
@@ -160,7 +159,7 @@ public class MangooMojo extends AbstractMojo {
             machine.restart();
             watcher.run(); //NOSONAR
         } catch (IOException e) {
-            getLog().error(e);
+            e.printStackTrace();
         }
     }
 
