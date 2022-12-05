@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 import java.net.URI;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -42,7 +41,7 @@ class ServerSentEventServiceTest {
         
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         EventHandler eventHandler = new SimpleEventHandler();
-        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(Duration.ofMillis(3000));
+        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(3, TimeUnit.SECONDS);
         
         try (EventSource eventSource = builder.build()) {
               eventSource.start();
@@ -71,7 +70,7 @@ class ServerSentEventServiceTest {
         
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
         EventHandler eventHandler = new SimpleEventHandler();
-        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(Duration.ofMillis(3000));
+        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(3, TimeUnit.SECONDS);
         Headers headers = new Headers.Builder()
             .add("Accept", "text/event-stream")
             .add("Cache-Control", "no-cache")
