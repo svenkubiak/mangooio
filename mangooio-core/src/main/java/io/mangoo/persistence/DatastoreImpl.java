@@ -13,7 +13,7 @@ import com.mongodb.client.MongoClients;
 
 import dev.morphia.DeleteOptions;
 import dev.morphia.Morphia;
-import dev.morphia.query.experimental.filters.Filters;
+import dev.morphia.query.filters.Filters;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;

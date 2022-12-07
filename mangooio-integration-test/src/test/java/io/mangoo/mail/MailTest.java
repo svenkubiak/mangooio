@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import de.flapdoodle.embed.process.io.file.Files;
+import com.google.common.io.Files;
+
 import io.mangoo.TestExtension;
 import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooTemplateEngineException;
@@ -202,7 +204,7 @@ class MailTest {
         //given
         File file = new File(UUID.randomUUID().toString() + ".txt");
         file.createNewFile();
-        Files.write(UUID.randomUUID().toString(), file);
+        Files.asCharSink(file, StandardCharsets.UTF_8).write(UUID.randomUUID().toString());
         
         //when
         Mail mail = Mail.newMail().attachment(file.toPath());
@@ -218,11 +220,12 @@ class MailTest {
         //given
         File fileA = new File(UUID.randomUUID().toString() + ".txt");
         fileA.createNewFile();
-        Files.write(UUID.randomUUID().toString(), fileA);
+        Files.asCharSink(fileA, StandardCharsets.UTF_8).write(UUID.randomUUID().toString());
         
         File fileB = new File(UUID.randomUUID().toString() + ".txt");
         fileB.createNewFile();
-        Files.write(UUID.randomUUID().toString(), fileB);
+        
+        Files.asCharSink(fileB, StandardCharsets.UTF_8).write(UUID.randomUUID().toString());
         
         //when
         Mail mail = Mail.newMail().attachments(List.of(fileA.toPath(), fileB.toPath()));

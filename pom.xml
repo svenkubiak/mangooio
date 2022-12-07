@@ -31,7 +31,7 @@
 		<junit.platform.version>1.9.1</junit.platform.version>
 		<enforcer.version>1.6.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.8.0</mongodb.version>
+		<mongodb.version>4.8.1</mongodb.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -273,7 +273,7 @@
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
 				<artifactId>morphia-core</artifactId>
-				<version>2.2.10</version>
+				<version>2.3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
@@ -288,7 +288,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>6.0.10</version>
+				<version>7.0.0-Beta1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
