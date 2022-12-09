@@ -293,7 +293,7 @@
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-stdlib</artifactId>
-				<version>1.8.0-Beta</version>
+				<version>1.8.0-RC</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
