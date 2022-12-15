@@ -208,7 +208,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>2.3.1.Final</version>
+				<version>2.3.2.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
@@ -474,7 +474,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>4.9.0</version>
+				<version>4.10.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
