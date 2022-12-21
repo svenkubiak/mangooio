@@ -13,9 +13,12 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.launchdarkly.eventsource.EventHandler;
+import com.launchdarkly.eventsource.ConnectStrategy;
 import com.launchdarkly.eventsource.EventSource;
+import com.launchdarkly.eventsource.HttpConnectStrategy;
 import com.launchdarkly.eventsource.ReadyState;
+import com.launchdarkly.eventsource.background.BackgroundEventHandler;
+import com.launchdarkly.eventsource.background.BackgroundEventSource;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
@@ -40,14 +43,14 @@ class ServerSentEventServiceTest {
         Config config = Application.getInstance(Config.class);
         
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
-        EventHandler eventHandler = new SimpleEventHandler();
-        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(3, TimeUnit.SECONDS);
-        
-        try (EventSource eventSource = builder.build()) {
-              eventSource.start();
+        BackgroundEventHandler eventHandler = new SimpleEventHandler();
+        BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(URI.create(url)));
+                
+        try (BackgroundEventSource backgroundEventSource = builder.build()) {
+            backgroundEventSource.start();
               
               //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.OPEN)));
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
               
               //then
               await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
@@ -67,23 +70,26 @@ class ServerSentEventServiceTest {
             .build();
         
         String cookie = config.getAuthenticationCookieName() + "=" + token;
-        
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-        EventHandler eventHandler = new SimpleEventHandler();
-        EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url)).reconnectTime(3, TimeUnit.SECONDS);
+        
         Headers headers = new Headers.Builder()
-            .add("Accept", "text/event-stream")
-            .add("Cache-Control", "no-cache")
-            .add("Set-Cookie", cookie)
-            .build();
+                .add("Accept", "text/event-stream")
+                .add("Cache-Control", "no-cache")
+                .add("Set-Cookie", cookie)
+                .build();
         
-        builder.headers(headers);
+        HttpConnectStrategy connectStrategy = ConnectStrategy.http(URI.create(url));
+        connectStrategy.connectTimeout(5, TimeUnit.SECONDS);
+        connectStrategy.headers(headers);
         
-        try (EventSource eventSource = builder.build()) {
-              eventSource.start();
+        BackgroundEventHandler eventHandler = new SimpleEventHandler();
+        BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(connectStrategy));
+        
+        try (BackgroundEventSource backgroundEventSource = builder.build()) {
+            backgroundEventSource.start();
 
               //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(eventSource.getState(), equalTo(ReadyState.CLOSED)));
+              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.CLOSED)));
               
               //then
               await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), not(equalTo(true))));

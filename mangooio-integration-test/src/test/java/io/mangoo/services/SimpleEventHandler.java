@@ -1,9 +1,9 @@
 package io.mangoo.services;
 
-import com.launchdarkly.eventsource.EventHandler;
 import com.launchdarkly.eventsource.MessageEvent;
+import com.launchdarkly.eventsource.background.BackgroundEventHandler;
 
-public class SimpleEventHandler implements EventHandler {
+public class SimpleEventHandler implements BackgroundEventHandler {
     @Override
     public void onOpen() throws Exception {
     }
