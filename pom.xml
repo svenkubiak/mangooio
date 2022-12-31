@@ -288,12 +288,12 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>7.0.0-Beta2</version>
+				<version>7.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-stdlib</artifactId>
-				<version>1.8.0-RC2</version>
+				<version>1.8.0</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
@@ -474,7 +474,7 @@
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>4.10.0</version>
+				<version>4.11.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
