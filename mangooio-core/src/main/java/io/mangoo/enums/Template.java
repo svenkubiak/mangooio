@@ -1,11 +1,10 @@
 package io.mangoo.enums;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 
-import com.google.common.io.Resources;
+import io.mangoo.utils.MangooUtils;
 
 public enum Template {
     DEFAULT;
@@ -32,12 +31,12 @@ public enum Template {
     
     Template () {
         try {
-            this.notFoundContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH), StandardCharsets.UTF_8);
-            this.badRequestContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH), StandardCharsets.UTF_8);
-            this.unauthorizedContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH), StandardCharsets.UTF_8);
-            this.forbiddenContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH), StandardCharsets.UTF_8);
-            this.serverErrorContent = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH), StandardCharsets.UTF_8);
-            this.tooManyRequests = Resources.toString(Resources.getResource(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH), StandardCharsets.UTF_8);
+            this.notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
+            this.badRequestContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
+            this.unauthorizedContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
+            this.forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH);
+            this.serverErrorContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);      
+            this.tooManyRequests = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
         } catch (IOException e) {
             LogManager.getLogger(Template.class).error("Failed to load default templates", e);
         }
