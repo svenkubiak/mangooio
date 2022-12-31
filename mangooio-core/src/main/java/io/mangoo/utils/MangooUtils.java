@@ -3,6 +3,9 @@ package io.mangoo.utils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -127,5 +130,62 @@ public final class MangooUtils {
         }
         
         return resource != null;
+    }
+
+    /**
+     * Reads the content of a file to a String
+     * 
+     * @param path The path of the file
+     * @return The content of the file or null
+     */
+    public static String readFileToString(Path path) {
+        Objects.requireNonNull(path, Required.PATH.toString());
+        
+        String content = null;
+        try {
+            content = Files.readString(path);
+        } catch (IOException e) {
+            // Intentionally left blank
+        }
+        
+        return content;
+    }
+    
+    /**
+     * Reads the content of a file to a String
+     * 
+     * @param path The path of the file
+     * @return The content of the file or null
+     */
+    public static String readFileToString(String path) {
+        Objects.requireNonNull(path, Required.PATH.toString());
+        
+        String content = null;
+        try {
+            content = Files.readString(Path.of(path));
+        } catch (IOException e) {
+            // Intentionally left blank
+        }
+        
+        return content;
+    }
+    
+    /**
+     * Reads the content of a local resource to String
+     * 
+     * @param resource The resource path 
+     * @return The content of the resource or null
+     */
+    public static String readResourceToString(String resource) {
+        Objects.requireNonNull(resource, Required.RESOURCE.toString());
+        
+        String content = null;
+        try {
+            content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            // Intentionally left blank
+        }
+        
+        return content;
     }
 }

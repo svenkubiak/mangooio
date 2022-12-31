@@ -77,6 +77,7 @@ public enum Required {
     REPLY_TO("replyTo can not be null"),
     REPLY_TOS("replytos can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),
+    RESOURCE("resource can not be null"),
     RESPONSE("response can not be null"),
     ROUTE("route can not be null"),
     SALT("salt can not be null"),
