@@ -1,9 +1,5 @@
 package io.mangoo.enums;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-
 import io.mangoo.utils.MangooUtils;
 
 public enum Template {
@@ -30,16 +26,12 @@ public enum Template {
     private String tooManyRequests;
     
     Template () {
-        try {
-            this.notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
-            this.badRequestContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
-            this.unauthorizedContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
-            this.forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH);
-            this.serverErrorContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);      
-            this.tooManyRequests = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
-        } catch (IOException e) {
-            LogManager.getLogger(Template.class).error("Failed to load default templates", e);
-        }
+        this.notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
+        this.badRequestContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
+        this.unauthorizedContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
+        this.forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH);
+        this.serverErrorContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);      
+        this.tooManyRequests = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
     }
 
     /**
