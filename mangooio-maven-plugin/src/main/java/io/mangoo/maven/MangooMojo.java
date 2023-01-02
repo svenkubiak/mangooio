@@ -108,7 +108,6 @@ public class MangooMojo extends AbstractMojo {
         }
 
         initMojo();
-        checkClasses(buildOutputDirectory);
 
         Minification.setBasePath(project.getBasedir().getAbsolutePath());
 
@@ -191,14 +190,6 @@ public class MangooMojo extends AbstractMojo {
     private void initMojo() {
         if (useDefaultExcludes) {
             excludes.addAll(List.of(DEFAULT_EXCLUDE_PATTERNS));
-        }
-    }
-
-    @SuppressWarnings("all")
-    public void checkClasses(String classesDirectory) {
-        if (!new File(classesDirectory).exists()) { //NOSONAR
-            getLog().error("Directory with classes does not exist: " + classesDirectory);
-            System.exit(1); //NOSONAR
         }
     }
 }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -154,5 +155,79 @@ class MangooUtilsTest {
         
         //then
         assertThat(exists, equalTo(false));
+    }
+    
+    @Test
+    void testReadFileToStringPath() throws IOException {
+        //given
+        File file = new File(UUID.randomUUID().toString());
+        String uuid = UUID.randomUUID().toString();
+        Files.write(file.toPath(), uuid.getBytes());
+        
+        //when
+        String content = MangooUtils.readFileToString(file.toPath());
+        
+        //then
+        assertThat(content, equalTo(uuid));
+        assertThat(file.delete(), equalTo(true));
+    }
+    
+    @Test
+    void testReadFileToStringString() throws IOException {
+        //given
+        File file = new File(UUID.randomUUID().toString());
+        String uuid = UUID.randomUUID().toString();
+        Files.write(file.toPath(), uuid.getBytes());
+        
+        //when
+        String content = MangooUtils.readFileToString(file.getAbsolutePath());
+        
+        //then
+        assertThat(content, equalTo(uuid));
+        assertThat(file.delete(), equalTo(true));
+    }
+    
+    @Test
+    void testReadResourceToString() {
+        //given
+        String resource = "attachment.txt";
+        
+        //when
+        String content = MangooUtils.readResourceToString(resource);
+        
+        //then
+        assertThat(content, equalTo("This is an attachment"));
+    }
+    
+    @Test
+    void testReadFileToStringPathConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            File file = new File(UUID.randomUUID().toString());
+            String uuid = UUID.randomUUID().toString();
+            Files.write(file.toPath(), uuid.getBytes());
+            
+            //when
+            String content = MangooUtils.readFileToString(file.toPath());
+            
+            // then
+            return content.equals(uuid) && file.delete();
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+    
+    @Test
+    void testReadFileToStringStringConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            File file = new File(UUID.randomUUID().toString());
+            String uuid = UUID.randomUUID().toString();
+            Files.write(file.toPath(), uuid.getBytes());
+            
+            //when
+            String content = MangooUtils.readFileToString(file.getAbsolutePath());
+            
+            // then
+            return content.equals(uuid) && file.delete();
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }
