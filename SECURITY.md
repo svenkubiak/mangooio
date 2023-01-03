@@ -6,7 +6,7 @@
 | ------- | ------------------ |
 | 7.x.x   | :white_check_mark: |
 | 6.x.x   | :white_check_mark: |
-| < 5.0   | :x:                |
+| <= 5.0  | :x:                |
 
 ## Reporting a Vulnerability
 
