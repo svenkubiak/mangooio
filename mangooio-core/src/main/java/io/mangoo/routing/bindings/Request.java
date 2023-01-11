@@ -270,9 +270,10 @@ public class Request extends Validator {
      * @param key The key the attribute is stored
      * @return Object the value from the attributes map
      */
-    public Object getAttribute(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> T getAttribute(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        return attributes.get(key);
+        return (T) attributes.get(key);
     }
     
     /**
@@ -287,7 +288,7 @@ public class Request extends Validator {
         
         return object != null ? (String) object : null;
     }
-    
+
     /**
      * @return All attributes of the request
      */
