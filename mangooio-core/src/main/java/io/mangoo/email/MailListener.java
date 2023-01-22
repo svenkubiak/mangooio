@@ -19,7 +19,6 @@ import com.google.inject.Singleton;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooMailerException;
-import io.mangoo.services.EventBusService;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -28,6 +27,7 @@ import jakarta.mail.BodyPart;
 import jakarta.mail.Message.RecipientType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
+import jakarta.mail.Part;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
@@ -42,7 +42,7 @@ public class MailListener {
     private Session session;
     
     @Inject
-    public MailListener(Config config, EventBusService events) {
+    public MailListener(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
         
         var properties = new Properties();
@@ -104,7 +104,10 @@ public class MailListener {
         }
     }
 
-    private void setAttachments(Mail mail, MimeMessage mimeMessage) throws MessagingException, IOException {
+    private void setAttachments(Mail mail, Part part) throws MessagingException, IOException {
+        Objects.requireNonNull(mail, Required.MAIL.toString());
+        Objects.requireNonNull(part, Required.PART.toString());
+        
         if (mail.hasAttachments()) {
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(mail.getMessageText());
@@ -121,19 +124,25 @@ public class MailListener {
                 multipart.addBodyPart(messageBodyPart);
             }
             
-            mimeMessage.setContent(multipart);
+            part.setContent(multipart);
         }
     }
 
-    private void setContent(Mail mail, MimeMessage mimeMessage) throws MessagingException {
+    private void setContent(Mail mail, Part part) throws MessagingException {
+        Objects.requireNonNull(mail, Required.MAIL.toString());
+        Objects.requireNonNull(part, Required.PART.toString());
+        
         if (mail.isMessageHtml()) {
-            mimeMessage.setContent(mail.getMessageText(), "text/html; charset=utf-8");
+            part.setContent(mail.getMessageText(), "text/html; charset=utf-8");
         } else {
-            mimeMessage.setText(mail.getMessageText());
+            part.setText(mail.getMessageText());
         }
     }
 
     private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
+        Objects.requireNonNull(mail, Required.MAIL.toString());
+        Objects.requireNonNull(mimeMessage, Required.MIME_MESSAGE.toString());
+        
         String messageFromName = mail.getMessageFromName();
         String messageFromAddress = mail.getMessageFromAddress();
         
