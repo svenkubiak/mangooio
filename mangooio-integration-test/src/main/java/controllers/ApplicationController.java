@@ -74,7 +74,7 @@ public class ApplicationController {
     }
     
     public Response unrenderedText() {
-        return Response.withOk().andUnrenderedBody();
+        return Response.withOk().andBody();
     }
     
     public Response badrequest() {

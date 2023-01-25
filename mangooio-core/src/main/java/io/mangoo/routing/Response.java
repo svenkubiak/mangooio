@@ -284,12 +284,29 @@ public class Response {
     }
     
     /**
+     * Sets the content of a response from a file in the template folder as
+     * /templates/CONTROLLER_NAME/METHOD_NAME.html as body without rendering the
+     * file with the template engine
+     * 
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
+    public Response andBody() {
+        rendered = false;
+        unrendered = true;
+
+        return this;
+    }
+    
+    /**
+     * @deprecated {@link #andBody()} instead
+     * 
      * Sets the content of a given file placed in the template folder
      * in /templates/CONTROLLER_NAME/METHOD_NAME.body as body without rendering the
      * file in the template engine
      * 
      * @return A response object {@link io.mangoo.routing.Response}
      */
+    @Deprecated(forRemoval = true, since = "7.11.0")
     public Response andUnrenderedBody() {
         rendered = false;
         unrendered = true;

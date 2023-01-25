@@ -142,7 +142,14 @@ public class RequestHandler implements HttpHandler {
             invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         } else if (invokedResponse.isUnrendered()) {
             var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
-            String path = "templates/" + attachment.getControllerClassName() + '/' + attachment.getControllerMethodName() + ".body";
+            String path = new StringBuffer()
+                    .append(Default.TEMPLATES_FOLDER.toString())
+                    .append(attachment.getControllerClassName())
+                    .append('/')
+                    .append(attachment.getControllerMethodName())
+                    .append(Default.HTML_SUFFIX.toString())
+                    .toString();
+            
             var body = "";
             
             if (cache.get(path) == null) {

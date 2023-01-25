@@ -295,7 +295,7 @@ class ResponseTest {
     @Test
     void testAndUnrenderedText() {
         //given
-        Response response = Response.withOk().andUnrenderedBody();
+        Response response = Response.withOk().andBody();
         
         //then
         assertThat(response.isRendered(), equalTo(false));
@@ -304,7 +304,7 @@ class ResponseTest {
     @Test
     void testAndUnrenderedHtml() {
         //given
-        Response response = Response.withOk().andUnrenderedBody();
+        Response response = Response.withOk().andBody();
         
         //then
         assertThat(response.isRendered(), equalTo(false));

@@ -44,7 +44,7 @@ public class TemplateEngine {
     private static final Version VERSION = new Version(2, 3, 30);
     
     public TemplateEngine() {
-        configuration.setClassForTemplateLoading(getClass(), Default.TEMPLATES_FOLDER.toString());
+        configuration.setClassForTemplateLoading(getClass(), "/" + Default.TEMPLATES_FOLDER.toString());
         configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         configuration.setOutputEncoding(StandardCharsets.UTF_8.name());
         configuration.setLocalizedLookup(false);
