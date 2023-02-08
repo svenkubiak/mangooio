@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
+![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
 [![Travis Build Status](https://travis-ci.org/svenkubiak/mangooio.svg?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
 
 
@@ -78,16 +78,6 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 **Support**   
 [https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)  
-
-or
-
-[https://stackoverflow.com](https://stackoverflow.com) - use the tag "mangooio"
-
-**Apidocs**   
-[http://svenkubiak.github.io/mangooio/](http://svenkubiak.github.io/mangooio/)
-
-**Twitter**  
-[https://twitter.com/mangoo_io](https://twitter.com/mangoo_io)
 
 **Contact**  
 Security, Support, etc.: sk@svenkubiak.de
