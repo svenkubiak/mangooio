@@ -31,7 +31,7 @@
 		<junit.platform.version>1.9.2</junit.platform.version>
 		<enforcer.version>1.6.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.8.2</mongodb.version>
+		<mongodb.version>4.9.0</mongodb.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -588,7 +588,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
