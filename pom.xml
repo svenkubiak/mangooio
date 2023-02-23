@@ -32,6 +32,7 @@
 		<enforcer.version>1.6.1</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.9.0</mongodb.version>
+		<maven.compiler.optimze>true</maven.compiler.optimze>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -57,7 +58,6 @@
 						<source>${java.version}</source>
 						<target>${java.version}</target>
 						<compilerArgument>-parameters</compilerArgument>
-						<optimize>true</optimize>
 						<debug>false</debug>
 						<showDeprecation>true</showDeprecation>
 						<fork>true</fork>
@@ -309,7 +309,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>7.0.1</version>
+				<version>7.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
