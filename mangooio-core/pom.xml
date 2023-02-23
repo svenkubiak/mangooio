@@ -171,8 +171,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-  			<groupId>org.apache.logging.log4j</groupId>
-  			<artifactId>log4j-slf4j2-impl</artifactId>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j2-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.cronutils</groupId>
@@ -245,7 +245,7 @@
 		<dependency>
 			<groupId>com.sun.activation</groupId>
 			<artifactId>jakarta.activation</artifactId>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
@@ -351,7 +351,6 @@
 					<show>public</show>
 					<nohelp>true</nohelp>
 					<header>svenkubiak, ${project.version}</header>
-					<footer>svenkubiak, ${project.version}</footer>
 					<doctitle>svenkubiak, ${project.version}</doctitle>
 				</configuration>
 			</plugin>
