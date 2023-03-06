@@ -63,4 +63,22 @@
 		<packageUrl regex="true">^pkg:maven/(?!org\.apache\.james/).*$</packageUrl>
 		<cpe>cpe:/a:apache:james</cpe>
 	</suppress>
+	<suppress>
+		<notes>
+			<![CDATA[
+   file name: guava-31.1-jre.jar
+   ]]>
+		</notes>
+		<packageUrl regex="true">^pkg:maven/com\.google\.guava/guava@.*$</packageUrl>
+		<cpe>cpe:/a:google:guava</cpe>
+	</suppress>
+	<suppress>
+		<notes>
+			<![CDATA[
+   file name: guava-31.1-jre.jar
+   ]]>
+		</notes>
+		<packageUrl regex="true">^pkg:maven/com\.google\.guava/guava@.*$</packageUrl>
+		<vulnerabilityName>CVE-2020-8908</vulnerabilityName>
+	</suppress>
 </suppressions>
