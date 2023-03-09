@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
@@ -63,6 +65,21 @@ class CacheTest {
     }
     
     @Test
+    void testFetch() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String value = UUID.randomUUID().toString();
+        
+        //when
+        cache.put("foo", value);
+
+        //then
+        assertThat(cache.fetch("foo"), not(equalTo(null)));
+        assertThat(cache.fetch("foo").get(), equalTo(value));
+        assertThat(cache.fetch("bar"), equalTo(Optional.empty()));
+    }
+    
+    @Test
     void testPutAll() {
         //given
         Cache cache = Application.getInstance(Cache.class);
@@ -76,6 +93,23 @@ class CacheTest {
         //then
         assertThat(cache.get("test"), equalTo(TEST_VALUE));
         assertThat(cache.get("test2"), equalTo(1));
+    }
+    
+    @Test
+    void testGetAll() {
+        //given
+        Cache cache = Application.getInstance(Cache.class);
+        String value1 = UUID.randomUUID().toString();
+        String value2 = UUID.randomUUID().toString();
+        
+        //when
+        cache.put("foo", value1);
+        cache.put("bar", value2);
+        
+        //then
+        assertThat(cache.getAll("foo", "bar"), not(equalTo(null)));
+        assertThat(cache.getAll("foo", "bar").get("foo"), equalTo(value1));
+        assertThat(cache.getAll("foo", "bar").get("bar"), equalTo(value2));
     }
     
     @Test

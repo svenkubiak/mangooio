@@ -2,6 +2,7 @@ package io.mangoo.cache;
 
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface Cache {
@@ -92,4 +93,22 @@ public interface Cache {
      * @return A counter based on AtomicInteger
      */
     AtomicInteger resetCounter(String key);
+
+    /**
+     * Retrieves the values of multiple given keys or null if no value found
+     * 
+     * @param keys The keys to retrieve from cache
+     * @return A Map of key and value
+     */
+    Map<String, Object> getAll(String... keys);
+
+    /**
+     * Retrieves an object from the caches 
+     *
+     * @param key The key for the cached value
+     * @param <T> JavaDoc requires this (just ignore it)
+     *
+     * @return Optional value of the fetched value
+     */
+    <T> Optional<T> fetch(String key);
 }

@@ -2,8 +2,10 @@ package io.mangoo.cache;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheBuilder;
@@ -58,6 +60,23 @@ public class CacheImpl implements Cache {
         }
         
         return (T) guavaCache.getIfPresent(key);
+    }
+    
+    @Override
+    public <T> Optional<T> fetch(String key) {
+        return get(key) == null ? Optional.empty() : Optional.of(get(key));
+    }
+    
+    @Override
+    public Map<String, Object> getAll(String... keys) {
+        Objects.requireNonNull(keys, Required.KEY.toString());
+        
+        Map<String, Object> values = new HashMap<>();
+        for (String key : keys) {
+            values.put(key, get(key));
+        }
+        
+        return values;
     }
 
     @Override
