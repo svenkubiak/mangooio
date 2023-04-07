@@ -34,7 +34,7 @@
 		<junit.platform.version>1.9.2</junit.platform.version>
 		<enforcer.version>1.6.2</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<mongodb.version>4.9.0</mongodb.version>
+		<mongodb.version>4.9.1</mongodb.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 	</properties>
 	<modules>
