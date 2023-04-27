@@ -30,8 +30,8 @@
 		<log4j.version>2.20.0</log4j.version>
 		<maven.version>4.0.0-alpha-5</maven.version>
 		<required.maven.version>3.8.5</required.maven.version>
-		<junit.version>5.9.2</junit.version>
-		<junit.platform.version>1.9.2</junit.platform.version>
+		<junit.version>5.9.3</junit.version>
+		<junit.platform.version>1.9.3</junit.platform.version>
 		<enforcer.version>1.6.2</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.9.1</mongodb.version>
