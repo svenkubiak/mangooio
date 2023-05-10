@@ -569,7 +569,6 @@ public final class Application {
                         On.get().to("/@admin/login").respondeWith("login"),
                         On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                         On.get().to("/@admin/logger").respondeWith("logger"),
-                        On.get().to("/@admin/routes").respondeWith("routes"),
                         On.get().to("/@admin/tools").respondeWith("tools"),
                         On.get().to("/@admin/logout").respondeWith("logout"),
                         On.post().to("/@admin/authenticate").respondeWith("authenticate"),
