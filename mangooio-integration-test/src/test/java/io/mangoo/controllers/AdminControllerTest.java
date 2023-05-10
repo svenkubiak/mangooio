@@ -32,10 +32,8 @@ class AdminControllerTest {
     private static final String EVICTIONS = "Evictions";
     private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
-    private static final String ROUTES = "routes";
     private static final String TOOLS = "tools";
     private static final String CACHE = "cache";
-    private static final String ADMIN = "admin";
     private static final String CONTROL_PANEL = "Dashboard";
     
     @Test
@@ -148,46 +146,6 @@ class AdminControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(LOGGER));
-    }
-
-    @Test
-    void testRoutesAuthorized() {
-        //given
-        TestResponse response = login().to("/@admin/routes")
-                .withHTTPMethod(Methods.GET.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(ROUTES));
-    }
-    
-    @Test
-    void testRoutesNotConaintAdmin() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/routes")
-                .withBasicAuthentication(ADMIN, ADMIN)
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), not(containsString("io.mangoo.admin.AdminController")));
-    }
-    
-    @Test
-    void testRoutesUnauthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/routes").withDisabledRedirects().execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(ROUTES)));
     }
     
     @Test

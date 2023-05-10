@@ -3,7 +3,6 @@ package io.mangoo.admin;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
@@ -46,20 +44,14 @@ import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.Router;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.routing.routes.FileRoute;
-import io.mangoo.routing.routes.PathRoute;
-import io.mangoo.routing.routes.RequestRoute;
-import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.token.TokenBuilder;
 import io.mangoo.utils.totp.TotpUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
-import net.minidev.json.JSONObject;
 
 public class AdminController {
     private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
@@ -70,11 +62,7 @@ public class AdminController {
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String PERIOD = "30";
     private static final String DIGITS = "6";
-    private static final String URL = "url";
-    private static final String METHOD = "method";
-    private static final String CACHE_ADMINROUTES = "cache_adminroutes";
     private static final String METRICS = "metrics";
-    private static final String ROUTES = "routes";
     private static final double HUNDRED_PERCENT = 100.0;
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
     private static final long  MEGABYTE = 1048576L;
@@ -238,54 +226,6 @@ public class AdminController {
     }
     
     @FilterWith(AdminFilter.class)
-    @SuppressFBWarnings(value = "CE_CLASS_ENVY", justification = "JSONObject creation as intended")
-    public Response routes() {
-        List<JSONObject> routes = getRoutes();
-        
-        if (routes.isEmpty()) {
-            Router.getFileRoutes().forEach((FileRoute route) -> {
-                var json = new JSONObject();
-                json.put(METHOD, "FILE");
-                json.put(URL, route.getUrl());
-                routes.add(json);
-            });
-            
-            Router.getPathRoutes().forEach((PathRoute route) -> {
-                var json = new JSONObject();
-                json.put(METHOD, "PATH");
-                json.put(URL, route.getUrl());
-                routes.add(json);
-            });
-            
-            Router.getServerSentEventRoutes().forEach((ServerSentEventRoute route) -> {
-                var json = new JSONObject();
-                json.put(METHOD, "SSE");
-                json.put(URL, route.getUrl());
-                routes.add(json);
-            });
-            
-            Router.getRequestRoutes().filter((RequestRoute route) -> !route.getUrl().contains("@admin"))
-                    .forEach((RequestRoute route) -> {
-                        var json = new JSONObject();
-                        json.put(METHOD, route.getMethod());
-                        json.put(URL, route.getUrl());
-                        json.put("controllerClass", route.getControllerClass());
-                        json.put("controllerMethod", route.getControllerMethod());
-                        json.put("basicAuthentication", route.hasBasicAuthentication());
-                        json.put("authentication", route.hasAuthentication());
-                        json.put("blocking", route.isBlocking());
-                        routes.add(json);
-                    });
-            
-            cache.put(CACHE_ADMINROUTES, routes);
-        }
-
-        return Response.withOk()
-                .andContent(ROUTES, routes)
-                .andTemplate(Template.DEFAULT.routesPath());
-    }
-    
-    @FilterWith(AdminFilter.class)
     public Response tools() {
         String secret = config.getApplicationAdminSecret();
         String qrCode = null;
@@ -335,13 +275,11 @@ public class AdminController {
     
     public Response health(Request request)  {
         if (isValidHeaderToken(request)) {
-            var json = new JSONObject();
-            json.put("cpu", getCpu());
-
-            Map<String, Double> memory = getMemory();
-            json.putAll(memory);
+            Map<String, Object> health = new HashMap<>();
+            health.put("cpu", getCpu());
+            health.put("memoty", getMemory());
             
-            return Response.withOk().andJsonBody(json);
+            return Response.withOk().andJsonBody(health);
         }
         
         return Response.withNotFound().andEmptyBody();
@@ -357,12 +295,6 @@ public class AdminController {
         }
         
         return valid;
-    }
-
-    private List<JSONObject> getRoutes() {
-        List<JSONObject> routes = cache.get(CACHE_ADMINROUTES);
-        
-        return (routes == null) ? new ArrayList<>() : routes;
     }
     
     private boolean isValidAuthentication(Form form) {
