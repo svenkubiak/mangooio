@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 
@@ -16,19 +18,15 @@ import io.mangoo.enums.Required;
 
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = JsonMapper.builder()
+            .addModule(new AfterburnerModule())
+            .build();
+    
     static {
         mapper.setSerializationInclusion(Include.NON_NULL);
     }
     
     private JsonUtils(){
-    }
-    
-    /**
-     * @return Default object mapper
-     */
-    public static ObjectMapper getObjectMapper() {
-        return mapper;
     }
     
     /**

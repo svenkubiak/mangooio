@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-import io.mangoo.models.TestModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -420,19 +419,5 @@ class FormTest {
         assertThat(form.getFiles().size(), equalTo(1));
         
         file.delete();
-    }
-
-    @Test
-    void testToObject() throws IOException {
-        //given
-        Form form = getNewForm();
-
-        //when
-        form.addValue("name", "Ironman");
-        TestModel test = form.toObject(TestModel.class);
-
-        //then
-        assertThat(test, not(nullValue()));
-        assertThat(test.getName(), equalTo("Ironman"));
     }
 }

@@ -11,9 +11,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.mangoo.enums.Required;
 import io.mangoo.utils.MangooUtils;
 
@@ -240,28 +237,6 @@ public class Form extends Validator {
             files.forEach(MangooUtils::closeQuietly);            
         }
         valueMap = new HashMap<>();
-    }
-
-    /**
-     * Converts the current form into a given object class
-     *
-     * @param clazz The class to convert to
-     * @param <T> Ignored
-     *
-     * @return The converted object or null if conversion fails
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T toObject(Class<?> clazz) {
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
-
-        var mapper = new ObjectMapper();
-        try {
-            return (T) mapper.readValue(mapper.writeValueAsString(values), clazz);
-        } catch (JsonProcessingException e) {
-            //NOSONAR Ignore catch
-        }
-
-        return null;
     }
     
     public boolean isSubmitted() {
