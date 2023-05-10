@@ -261,10 +261,6 @@
 			<artifactId>jakarta.activation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.minidev</groupId>
-			<artifactId>json-smart</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
 		</dependency>
