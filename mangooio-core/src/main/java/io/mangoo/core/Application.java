@@ -147,7 +147,11 @@ public final class Application {
                         
                         for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
                             var annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                            at = ((String) annotationInfo.getParameterValues(true).get("at").getValue()).toLowerCase(Locale.ENGLISH).trim();
+                            at = ((String) annotationInfo
+                                    .getParameterValues(true).get("at").getValue())
+                                    .toLowerCase(Locale.ENGLISH)
+                                    .trim();
+                            
                             if (at.contains("every")) {
                                 at = at.replace("every", "").trim();
                                 var timespan = at.substring(0, at.length() - 1);
