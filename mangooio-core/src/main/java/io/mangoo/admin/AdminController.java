@@ -27,7 +27,6 @@ import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
-import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
@@ -44,6 +43,7 @@ import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.annotations.FilterWith;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.services.EventBusService;

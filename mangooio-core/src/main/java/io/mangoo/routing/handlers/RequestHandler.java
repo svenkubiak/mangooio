@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.io.Resources;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.annotations.FilterWith;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
@@ -26,6 +25,7 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.annotations.FilterWith;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;

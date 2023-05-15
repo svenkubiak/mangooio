@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -28,8 +30,8 @@
 		<log4j.version>2.20.0</log4j.version>
 		<maven.version>4.0.0-alpha-5</maven.version>
 		<required.maven.version>3.8.5</required.maven.version>
-		<junit.version>5.9.3</junit.version>
-		<junit.platform.version>1.9.3</junit.platform.version>
+		<junit.version>5.10.0-M1</junit.version>
+		<junit.platform.version>1.10.0-M1</junit.platform.version>
 		<enforcer.version>1.6.2</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.9.1</mongodb.version>
@@ -78,7 +80,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>4.0.0-M4</version>
+					<version>4.0.0-M8</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -257,7 +259,7 @@
 			<dependency>
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
-				<version>7.0.0-rc1</version>
+				<version>7.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

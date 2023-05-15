@@ -1,6 +1,6 @@
 package jobs;
 
-import io.mangoo.annotations.Run;
+import io.mangoo.scheduler.annotations.Run;
 
 public class InfoJob {
     @Run(at = "Every 3m")

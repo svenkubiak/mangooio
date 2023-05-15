@@ -1,4 +1,4 @@
-package io.mangoo.annotations;
+package io.mangoo.scheduler.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
