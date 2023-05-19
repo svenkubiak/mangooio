@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +20,12 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.net.MediaType;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
 
@@ -485,6 +490,23 @@ public class Response {
         Objects.requireNonNull(headers, Required.HEADERS.toString());
         this.headers.putAll(headers);
 
+        return this;
+    }
+    
+    /**
+     * Disposes a cookie by setting the expired date of the give cookie name
+     * to a date in the past.
+     * 
+     * @param cookieName The cookie name to dispose
+     * @return A response object {@link io.mangoo.routing.Response}
+     */
+    public Response andDisposeCookie(String cookieName) {
+        Objects.requireNonNull(cookieName, Required.COOKIE.toString());
+        
+        cookies.add(new CookieImpl(cookieName)
+                .setExpires(Date.from(LocalDate.of(1970,1,1).atStartOfDay(ZoneId.of(Default.TIMEZONE.toString()))
+                .toInstant())));
+        
         return this;
     }
 

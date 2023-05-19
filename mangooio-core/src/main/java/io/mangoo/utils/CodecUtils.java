@@ -14,8 +14,8 @@ import org.bouncycastle.util.Arrays;
 import io.mangoo.enums.Required;
 
 public final class CodecUtils {
-    private static final Base64.Encoder base64Encoder = Base64.getEncoder();
-    private static final Base64.Decoder base64Decoder = Base64.getDecoder();
+    private static final Base64.Encoder BASRE64ENCODER = Base64.getEncoder();
+    private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
     private static final int ITERATIONS = 20;
     private static final int MEMORY = 16777;
     private static final int PARALLELISM = 4;
@@ -49,7 +49,7 @@ public final class CodecUtils {
         var passwdHash = new byte[32];
         aargon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
-        return base64Encoder.encodeToString(passwdHash);
+        return BASRE64ENCODER.encodeToString(passwdHash);
     }
     
     /**
@@ -94,7 +94,7 @@ public final class CodecUtils {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
         byte[] serialize = SerializationUtils.serialize(object);
-        return base64Encoder.encodeToString(serialize);
+        return BASRE64ENCODER.encodeToString(serialize);
     }
     
     /**
@@ -107,7 +107,29 @@ public final class CodecUtils {
     public static <T> T deserializeFromBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
-        byte[] bytes = base64Decoder.decode(data);
+        byte[] bytes = BASE64DECODER.decode(data);
         return SerializationUtils.deserialize(bytes);
+    }
+    
+    /**
+     * Encodes a given string to a Base64 byte array
+     * 
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] encodeBase64(String data) {
+        Objects.requireNonNull(data, Required.DATA.toString());
+        return BASRE64ENCODER.encode(data.getBytes());
+    }
+    
+    /**
+     * Decodes a given Base64 encoded string to a byte array
+     * 
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] decodeBase64(String data) {
+        Objects.requireNonNull(data, Required.DATA.toString());
+        return BASE64DECODER.decode(data);
     }
 }

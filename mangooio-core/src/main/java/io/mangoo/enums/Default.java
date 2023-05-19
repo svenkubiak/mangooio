@@ -78,6 +78,7 @@ public enum Default {
     SSE_CACHE_PREFIX("mangooio-sse-"),
     STYLESHEET_FOLDER("stylesheet"),
     TEMPLATES_FOLDER("templates/"),
+    TIMEZONE("Europa/Berlin"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
     VERSION_PROPERTIES("version.properties"),
     VERSION_UNKNOW("unknown"),

@@ -164,4 +164,16 @@ class CodecUtilsTest {
             return form.get("foo").equals("bar");
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
+    
+    @Test
+    void testBase64Encoder() {
+        //given
+        String foo = "abcdefghjik";
+
+        //when
+        byte[] base64 = CodecUtils.encodeBase64(foo);
+                
+        //then
+        assertThat(base64, not(nullValue()));
+    }
 }
