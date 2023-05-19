@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -168,12 +169,52 @@ class CodecUtilsTest {
     @Test
     void testBase64Encoder() {
         //given
-        String foo = "abcdefghjik";
+        String foo = UUID.randomUUID().toString();
 
         //when
         byte[] base64 = CodecUtils.encodeBase64(foo);
                 
         //then
         assertThat(base64, not(nullValue()));
+    }
+    
+    @Test
+    void testBase64EncoderConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String foo = UUID.randomUUID().toString();
+
+            //when
+            byte[] base64 = CodecUtils.encodeBase64(foo);
+            
+            return base64 != null;
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+    
+    @Test
+    void testBase64Dencoder() {
+        //given
+        String foo = UUID.randomUUID().toString();
+
+        //when
+        byte[] base64Encoded = CodecUtils.encodeBase64(foo);
+        byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded));
+                
+        //then
+        assertThat(new String(base64Decoded), equalTo(foo));
+    }
+    
+    @Test
+    void testBase64DencoderConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String foo = UUID.randomUUID().toString();
+
+            //when
+            byte[] base64Encoded = CodecUtils.encodeBase64(foo);
+            byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded));
+            
+            return new String(base64Decoded).equals(foo);
+        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }
