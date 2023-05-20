@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.net.MediaType;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -495,7 +492,7 @@ public class Response {
     
     /**
      * Disposes a cookie by setting the expired date of the give cookie name
-     * to a date in the past.
+     * to a date in the past, max age to -1 and an empty value
      * 
      * @param cookieName The cookie name to dispose
      * @return A response object {@link io.mangoo.routing.Response}
@@ -504,8 +501,10 @@ public class Response {
         Objects.requireNonNull(cookieName, Required.COOKIE.toString());
         
         cookies.add(new CookieImpl(cookieName)
-                .setExpires(Date.from(LocalDate.of(1970,1,1).atStartOfDay(ZoneId.of(Default.TIMEZONE.toString()))
-                .toInstant())));
+                .setValue("")
+                .setMaxAge(-1)
+                .setDiscard(true)
+                .setExpires(new Date(1)));
         
         return this;
     }
