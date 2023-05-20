@@ -101,6 +101,10 @@ public class RequestHandler implements HttpHandler {
             return response;
         }
 
+        if (response.isRedirect()) {
+            return response;
+        }
+        
         return invokeController(exchange, response);
     }
 
