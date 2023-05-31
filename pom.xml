@@ -33,7 +33,7 @@
 		<enforcer.version>1.6.2</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.10.0-alpha0</mongodb.version>
-		<jackson.version>2.15.1</jackson.version>
+		<jackson.version>2.15.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 	</properties>
 	<modules>
