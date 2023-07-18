@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -198,10 +199,10 @@ class CodecUtilsTest {
 
         //when
         byte[] base64Encoded = CodecUtils.encodeBase64(foo);
-        byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded));
+        byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded, StandardCharsets.UTF_8));
                 
         //then
-        assertThat(new String(base64Decoded), equalTo(foo));
+        assertThat(new String(base64Decoded, StandardCharsets.UTF_8), equalTo(foo));
     }
     
     @Test
@@ -212,9 +213,9 @@ class CodecUtilsTest {
 
             //when
             byte[] base64Encoded = CodecUtils.encodeBase64(foo);
-            byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded));
+            byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded, StandardCharsets.UTF_8));
             
-            return new String(base64Decoded).equals(foo);
+            return new String(base64Decoded, StandardCharsets.UTF_8).equals(foo);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

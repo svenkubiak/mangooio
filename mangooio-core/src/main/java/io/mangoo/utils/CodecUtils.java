@@ -119,7 +119,7 @@ public final class CodecUtils {
      */
     public static byte[] encodeBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
-        return BASRE64ENCODER.encode(data.getBytes());
+        return BASRE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
     
     /**
