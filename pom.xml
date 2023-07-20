@@ -28,8 +28,8 @@
 		<log4j.version>2.20.0</log4j.version>
 		<maven.version>4.0.0-alpha-5</maven.version>
 		<required.maven.version>3.8.5</required.maven.version>
-		<junit.version>5.10.0-RC1</junit.version>
-		<junit.platform.version>1.10.0-RC1</junit.platform.version>
+		<junit.version>5.10.0-RC2</junit.version>
+		<junit.platform.version>1.10.0-RC2</junit.platform.version>
 		<enforcer.version>1.7.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.10.2</mongodb.version>
@@ -318,7 +318,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>7.1.3</version>
+				<version>7.1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
