@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>7.15.0-Beta5-SNAPSHOT</version>
+		<version>7.15.0</version>
 	</parent>
 	<artifactId>mangooio-maven-archetype</artifactId>
 	<build>
