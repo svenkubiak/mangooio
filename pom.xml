@@ -165,8 +165,9 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.5.3</version>
+					<version>3.0.1</version>
 					<configuration>
+						<releaseProfiles>mangooio-release</releaseProfiles>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<goals>deploy</goals>
 					</configuration>
@@ -471,7 +472,7 @@
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-suite-engine</artifactId>
-				<version>1.10.0-RC2</version>
+				<version>${junit.platform.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.annotation</groupId>
@@ -597,13 +598,7 @@
 	</distributionManagement>
 	<profiles>
 		<profile>
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
+			<id>mangooio-release</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -616,6 +611,27 @@
 								<phase>verify</phase>
 								<goals>
 									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.1</version>
+						<configuration>
+							<propertiesEncoding>utf-8</propertiesEncoding>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.5.0</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
 								</goals>
 							</execution>
 						</executions>
