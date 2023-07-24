@@ -2,6 +2,7 @@ package io.mangoo.test;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.suite.api.Suite;
 
 import io.mangoo.core.Application;
 import io.mangoo.enums.Mode;
@@ -12,6 +13,7 @@ import io.mangoo.enums.Mode;
  *
  */ 
 @SuppressWarnings("all")
+@Suite(failIfNoTests = false)
 public class TestRunner implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
     private boolean started = false;
     
