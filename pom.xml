@@ -35,6 +35,7 @@
 		<mongodb.version>4.10.2</mongodb.version>
 		<jackson.version>2.15.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
+		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
