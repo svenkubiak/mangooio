@@ -59,9 +59,12 @@ public class DatastoreImpl implements Datastore {
         return mongoClient;
     }
 
+    @SuppressWarnings("removal")
     private void connect() {
        mongoClient = MongoClients.create(getConnectionString());
+       //FIXME Needs to be updated when updating to Morphia 3.0
        datastore = Morphia.createDatastore(mongoClient, config.getMongoDbName(prefix));
+       //FIXME Needs to be updated when updating to Morphia 3.0
        datastore.getMapper().mapPackage(config.getMongoPackage(prefix));
  
        LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
@@ -101,12 +104,16 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void ensureIndexes() {
+        //FIXME Needs to be removed when updating to Morphia 3.0
         datastore.ensureIndexes();
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void ensureCaps() {
+        //FIXME Needs to be removed when updating to Morphia 3.0
         datastore.ensureCaps();
     }
 
