@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.mangoo</groupId>
@@ -171,8 +173,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemPropertyVariables>
+						<de.flapdoodle.os.override>
+							Linux|X86_64|Ubuntu|Ubuntu_22_04</de.flapdoodle.os.override>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -206,12 +213,18 @@
 								</goals>
 								<configuration>
 									<transformers>
-										<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-										<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
-										<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
-										<transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer" />
-										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-											<mainClass>io.mangoo.core.Application</mainClass>
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer" />
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+											<mainClass>
+												io.mangoo.core.Application</mainClass>
 											<manifestEntries>
 												<Multi-Release>true</Multi-Release>
 											</manifestEntries>
@@ -223,10 +236,12 @@
 											<exclude>io.bit3:*</exclude>
 											<exclude>com.hazelcast:*</exclude>
 											<exclude>org.eclipse.jetty:*</exclude>
-											<exclude>org.glassfish.jersey.media:*</exclude>
+											<exclude>
+												org.glassfish.jersey.media:*</exclude>
 											<exclude>org.glassfish.jersey.core:*</exclude>
 											<exclude>org.glassfish.hk2:*</exclude>
-											<exclude>org.glassfish.hk2.external:*</exclude>
+											<exclude>
+												org.glassfish.hk2.external:*</exclude>
 											<exclude>com.google.com.findbugs:*</exclude>
 											<exclude>com.google.xing:*</exclude>
 											<exclude>com.icegreen:*</exclude>
