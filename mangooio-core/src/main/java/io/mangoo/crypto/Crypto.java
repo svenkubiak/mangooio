@@ -41,7 +41,7 @@ import io.mangoo.exceptions.MangooEncryptionException;
 
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
-    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESLightEngine()));
+    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(CBCBlockCipher.newInstance(new AESLightEngine()));
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String TRANSFORMATION = "RSA/None/OAEPWITHSHA-512ANDMGF1PADDING";
