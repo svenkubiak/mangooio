@@ -12,6 +12,7 @@
 		<mangooio.version>7.16.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>17</jdk.version>
+		<maven.compiler.optimze>true</maven.compiler.optimze>
 	</properties>
 	<build>
 		<resources>
@@ -39,7 +40,6 @@
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
-					<optimize>true</optimize>
 					<debug>false</debug>
 					<showDeprecation>true</showDeprecation>
 					<fork>true</fork>
