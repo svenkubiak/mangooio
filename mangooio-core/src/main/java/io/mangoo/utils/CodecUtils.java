@@ -6,16 +6,22 @@ import java.util.Base64;
 import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
+import io.fury.Fury;
+import io.fury.Language;
+import io.fury.ThreadSafeFury;
 import io.mangoo.enums.Required;
 
 public final class CodecUtils {
     private static final Base64.Encoder BASRE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
+    private static final ThreadSafeFury FURY = Fury.builder()
+            .withLanguage(Language.JAVA)
+            .requireClassRegistration(false)
+            .buildThreadSafeFury();
     private static final int ITERATIONS = 20;
     private static final int MEMORY = 16777;
     private static final int PARALLELISM = 4;
@@ -93,7 +99,7 @@ public final class CodecUtils {
     public static String serializeToBase64(Serializable object)  {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        byte[] serialize = SerializationUtils.serialize(object);
+        byte[] serialize = FURY.serialize(object);
         return BASRE64ENCODER.encodeToString(serialize);
     }
     
@@ -104,11 +110,12 @@ public final class CodecUtils {
      * @param <T> Just for JavaDoc can be ignored
      * @return The required object
      */
+    @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         
         byte[] bytes = BASE64DECODER.decode(data);
-        return SerializationUtils.deserialize(bytes);
+        return (T) FURY.deserialize(bytes);
     }
     
     /**
