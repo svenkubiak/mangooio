@@ -1,5 +1,4 @@
-![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
-[![Travis Build Status](https://travis-ci.org/svenkubiak/mangooio.svg?branch=master)](http://travis-ci.org/svenkubiak/mangooio)
+![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)]([http://search.maven.org/#search|ga|1|io.mangoo](https://mvnrepository.com/artifact/io.mangoo/mangooio))
 
 
 mangoo I/O
