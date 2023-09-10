@@ -1,4 +1,4 @@
-![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)]([http://search.maven.org/#search|ga|1|io.mangoo](https://mvnrepository.com/artifact/io.mangoo/mangooio))
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.mangoo/mangooio/badge.svg?style=flat)](http://search.maven.org/#search|ga|1|io.mangoo)
 
 
 mangoo I/O
@@ -64,6 +64,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * 536 Unit tests
 * 6+ years development maturity
 * 242 cups of coffee (estimated)
+
 ## Resources
 
 **Homepage**   
