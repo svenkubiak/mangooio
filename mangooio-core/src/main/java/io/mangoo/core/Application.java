@@ -250,9 +250,10 @@ public final class Application {
     private static void userCheck() {
         String osName = System.getProperty("os.name");
         if (StringUtils.isNotBlank(osName) && !osName.startsWith("Windows")) {
-            Process exec;
+            String [] command = {"id", "-u"};
+
             try {
-                exec = Runtime.getRuntime().exec("id -u");
+                Process exec = Runtime.getRuntime().exec(command);
                 var input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
                 
@@ -263,7 +264,7 @@ public final class Application {
                     failsafe();
                 }
             } catch (IOException e) {
-                LOG.error("Failed to check user running application", e);
+                LOG.error("Failed to check if application is started as root", e);
             }
         }
     }
