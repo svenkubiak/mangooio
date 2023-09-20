@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<properties>
-		<mangooio.version>7.16.0</mangooio.version>
+		<mangooio.version>7.17.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>17</jdk.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -133,7 +133,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.4.1</version>
 				<configuration>
 					<rules>
 						<DependencyConvergence>
