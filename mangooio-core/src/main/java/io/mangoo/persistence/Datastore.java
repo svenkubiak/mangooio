@@ -5,25 +5,18 @@ import java.util.List;
 import com.mongodb.client.MongoClient;
 
 public interface Datastore {
-
     dev.morphia.Datastore getDatastore();
-
     dev.morphia.Datastore query();
-
     MongoClient getMongoClient();
 
     /**
      * Ensures (creating if necessary) the indexes found during class mapping (using @Indexed, @Indexes)
-     * @deprecated Will be removed with mangoo I/O 8.0.0 as Morphia 3.0 is using a file based config
      */
-    @Deprecated(forRemoval = true, since = "7.16.0")
     void ensureIndexes();
 
     /**
      * Ensure capped DBCollections for Entity(s)
-     * @deprecated Will be removed with mangoo I/O 8.0.0 as Morphia 3.0 is using a file based config
      */
-    @Deprecated(forRemoval = true, since = "7.16.0")
     void ensureCaps();
 
     /**

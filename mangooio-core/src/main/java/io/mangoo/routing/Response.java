@@ -300,7 +300,7 @@ public class Response {
     }
     
     /**
-     * @deprecated {@link #andBody()} instead
+     * @deprecated user {@link #andBody()} instead
      * 
      * Sets the content of a given file placed in the template folder
      * in /templates/CONTROLLER_NAME/METHOD_NAME.body as body without rendering the
