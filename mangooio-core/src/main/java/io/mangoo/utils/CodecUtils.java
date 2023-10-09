@@ -11,8 +11,8 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
 import io.fury.Fury;
-import io.fury.Language;
 import io.fury.ThreadSafeFury;
+import io.fury.config.Language;
 import io.mangoo.enums.Required;
 
 public final class CodecUtils {
