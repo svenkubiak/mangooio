@@ -44,8 +44,7 @@ import io.mangoo.core.Application;
 import io.mangoo.utils.MangooUtils;
 
 /**
- * This is a refactored version of
- * NinjaRunMojo.java from the Ninja Web Framework
+ * This is a refactored version of NinjaRunMojo.java from the Ninja Web Framework
  *
  * Original source code can be found here:
  * https://github.com/ninjaframework/ninja/blob/develop/ninja-maven-plugin/src/main/java/ninja/maven/NinjaRunMojo.java

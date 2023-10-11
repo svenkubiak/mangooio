@@ -24,7 +24,7 @@
 	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 		<log4j.version>2.20.0</log4j.version>
 		<maven.version>4.0.0-alpha-7</maven.version>
 		<required.maven.version>3.8.5</required.maven.version>
@@ -320,7 +320,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>7.1.14</version>
+				<version>8.0.0-RC1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
