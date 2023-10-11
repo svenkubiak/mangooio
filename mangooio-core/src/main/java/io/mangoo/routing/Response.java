@@ -298,23 +298,6 @@ public class Response {
 
         return this;
     }
-    
-    /**
-     * @deprecated user {@link #andBody()} instead
-     * 
-     * Sets the content of a given file placed in the template folder
-     * in /templates/CONTROLLER_NAME/METHOD_NAME.body as body without rendering the
-     * file in the template engine
-     * 
-     * @return A response object {@link io.mangoo.routing.Response}
-     */
-    @Deprecated(forRemoval = true, since = "7.11.0")
-    public Response andUnrenderedBody() {
-        rendered = false;
-        unrendered = true;
-
-        return this;
-    }
 
     /**
      * Adds a Cookie to the response which is passed to the client
