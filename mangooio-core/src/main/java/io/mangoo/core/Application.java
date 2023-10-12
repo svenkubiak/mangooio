@@ -33,6 +33,7 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.github.classgraph.AnnotationInfoList;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
@@ -45,7 +46,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.persistence.DatastoreListener;
+import io.mangoo.persistence.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -229,10 +230,27 @@ public final class Application {
     }
 
     /**
-     * Configures async persistence
+     * Configures persistence
      */
     private static void prepareDatastore() {
-        getInstance(EventBusService.class).register(getInstance(DatastoreListener.class));
+        try (var scanResult =
+                new ClassGraph()
+                    .enableAnnotationInfo()
+                    .enableClassInfo()
+                    .enableMethodInfo()
+                    .acceptPackages(ALL_PACKAGES)
+                    .scan()) {
+            
+            scanResult.getClassesWithAnnotation(Default.COLLECTION_ANNOTATION.toString()).forEach(classInfo -> {
+                String key = classInfo.getName();
+                String value = "";
+                
+                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();   
+                value = (String) annotationInfo.get(0).getParameterValues().get(0).getValue();
+                
+                getInstance(Datastore.class).addCollection(key, value);
+            });
+        } 
     }
     
     /**

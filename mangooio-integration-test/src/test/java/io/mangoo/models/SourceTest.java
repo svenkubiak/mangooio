@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 
-import dev.morphia.annotations.Entity;
+import io.mangoo.persistence.annotations.Collection;
 
-@Entity(value = "test")
+@Collection(name = "test")
 class SourceTest {
 
     @Test

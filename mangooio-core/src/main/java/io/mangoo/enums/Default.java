@@ -28,6 +28,7 @@ public enum Default {
     AUTHENTICITY("authenticity"),
     BUNDLE_NAME("translations/messages"),
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
+    COLLECTION_ANNOTATION("io.mangoo.persistence.annotations.Collection"),
     CONFIG_PATH("/src/main/resources/config.props"),
     CONFIGURATION_FILE("config.props"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
