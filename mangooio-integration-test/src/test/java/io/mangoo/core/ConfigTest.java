@@ -1489,37 +1489,6 @@ class ConfigTest {
     } 
     
     @Test
-    void testGetMongoPackage() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String pack = "my.package.models";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("persistence.mongo.package", pack);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getMongoPackage("persistence."), equalTo(pack));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    void testGetMongoPackageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getMongoPackage("persistence."), equalTo(Default.PERSISTENCE_MONGO_PACKAGE.toString()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
     void testGetMongoPassword() throws JsonGenerationException, JsonMappingException, IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());

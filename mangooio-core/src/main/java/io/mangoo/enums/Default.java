@@ -58,7 +58,6 @@ public enum Default {
     PERSISTENCE_MONGO_DBNAME("mangoo-io-mongodb"),
     PERSISTENCE_MONGO_EMBEDDED(Constants.FALSE),
     PERSISTENCE_MONGO_HOST("localhost"),
-    PERSISTENCE_MONGO_PACKAGE("models"),
     PERSISTENCE_MONGO_PORT("27017"),
     PERSISTENCE_PREFIX("persistence."),
     POLICY_CSV("policy.csv"),
