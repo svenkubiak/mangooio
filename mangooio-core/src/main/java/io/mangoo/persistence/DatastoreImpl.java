@@ -9,18 +9,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.google.inject.Inject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -34,8 +35,7 @@ public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
     private static final Map<String, String> COLLECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
     private final Config config;
-    private MongoDatabase database;
-    private MongoClient mongoClient;
+    private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     @Inject
@@ -62,8 +62,7 @@ public class DatastoreImpl implements Datastore {
                 .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                 .build();
         
-       mongoClient = MongoClients.create(settings);
-       database = mongoClient.getDatabase("mydatabase");
+       mongoDatabase = MongoClients.create(settings).getDatabase("mydatabase");
        
        LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
                config.getMongoHost(prefix),
@@ -100,8 +99,8 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T findById(String id, Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to find an object by id, but given class is null");
-        Objects.requireNonNull(id, "Tried to find an object by id, but given id is null");
+        Objects.requireNonNull(clazz, Required.ID.toString());
+        Objects.requireNonNull(id, Required.CLASS.toString());
         
         Object object = null;
         MongoCollection collection = getCollection(clazz);
@@ -178,13 +177,24 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public void dropDatabase() {
-        database.drop();
+        mongoDatabase.drop();
+    }
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    public <T> void dropCollection(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            collection.drop();
+        }
     }
 
     @Override
     public void addCollection(String key, String value) {
-        Objects.requireNonNull(key, "key of collection can not be null");
-        Objects.requireNonNull(value, "value of collection can not be null");
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(value, Required.VALUE.toString());
         
         COLLECTIONS.put(key, value);
     }
@@ -197,9 +207,18 @@ public class DatastoreImpl implements Datastore {
         MongoCollection mongoCollection = null;
         String name = COLLECTIONS.get(clazz.getName());
         if (StringUtils.isNotBlank(name)) {
-            mongoCollection = database.getCollection(name, clazz);
+            mongoCollection = mongoDatabase.getCollection(name, clazz);
         }
 
         return mongoCollection;
+    }
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    public <T> void addIndex(Class<T> clazz, Bson... indexes) {
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            Stream.of(indexes).forEach(collection::createIndex);   
+        }
     }
 }

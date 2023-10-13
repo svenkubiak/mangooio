@@ -46,6 +46,7 @@ public enum Required {
     HTTP_HANDLER("httpHandler can not be null"),
     HTTP_METHOD("HTTP method can not be null"),
     HTTP_SERVER_EXCHANGE("httpServerExchange can not be null"),
+    ID("id can not be null"),
     ISSUER("issuer can not be null"),
     JSON("json can not be null"),
     JSON_OBJECT("json object can not be null"),

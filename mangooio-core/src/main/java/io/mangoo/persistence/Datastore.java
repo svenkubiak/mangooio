@@ -2,6 +2,8 @@ package io.mangoo.persistence;
 
 import java.util.List;
 
+import org.bson.conversions.Bson;
+
 import com.mongodb.client.MongoCollection;
 
 public interface Datastore {
@@ -84,4 +86,19 @@ public interface Datastore {
      */
     @SuppressWarnings("rawtypes")
     <T> MongoCollection getCollection(Class<T> clazz);
+
+    /**
+     * Drops a collection specified by a given class
+     * 
+     * @param clazz The class corresponding with the collection
+     */
+    <T> void dropCollection(Class<T> clazz);
+
+    /**
+     * Adds an index to the collection in the MondoDB database
+     * @param <T> Type
+     * @param clazz The class corresponding with the collection
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo"))
+     */
+    <T> void addIndex(Class<T> clazz, Bson... indexes);
 }

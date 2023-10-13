@@ -135,6 +135,15 @@ class DatastoreTest {
     }
     
     @Test
+    void testDropCollection() {
+        //given
+        datastore.dropDatabase();
+        
+        //when
+        datastore.dropCollection(TestModel.class);
+    }
+    
+    @Test
     void testPrefix() {
         //given
         Datastore datastore = Application.getInstance(DatastoreProvider.class).getDatastore("myprefix");
