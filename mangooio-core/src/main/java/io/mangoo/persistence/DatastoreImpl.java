@@ -1,30 +1,34 @@
 package io.mangoo.persistence;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.types.ObjectId;
 
 import com.google.inject.Inject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
-import com.mongodb.reactivestreams.client.MongoCollection;
-import com.mongodb.reactivestreams.client.MongoDatabase;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.InsertOneResult;
 
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.utils.PersistenceUtils.OperationSubscriber;
 
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
@@ -45,11 +49,6 @@ public class DatastoreImpl implements Datastore {
         this.prefix = Objects.requireNonNull(prefix, Required.PREFIX.toString());
         this.prefix = Default.PERSISTENCE_PREFIX.toString() + prefix + ".";
         connect();
-    }
-
-    @Override
-    public MongoClient getMongoClient() {
-        return mongoClient;
     }
 
     private void connect() {
@@ -99,111 +98,87 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T findById(String id, Class<T> clazz) {
         Objects.requireNonNull(clazz, "Tried to find an object by id, but given class is null");
         Objects.requireNonNull(id, "Tried to find an object by id, but given id is null");
         
-        OperationSubscriber s = new OperationSubscriber<>();
-        try {
-            getCollection(clazz).find().subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        Object object = null;
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            object = collection.find(eq("_id", new ObjectId(id))).first();
         }
-        
-        return (T) s.getReceived().get(0);
+
+        return (T) object;
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> List<T> findAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to get all morphia objects of a given object, but given object is null");
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        OperationSubscriber s = new OperationSubscriber<>();
-        try {
-            getCollection(clazz).find().subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            collection.find().forEach(result::add);
         }
         
-        return s.getReceived();
+        return (List<T>) result;
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public <T> long countAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to count all a morphia objects of a given object, but given object is null");
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        OperationSubscriber s = new OperationSubscriber<>();
-        getCollection(clazz).countDocuments().subscribe(s);
-        
-        try {
-            getCollection(clazz).find().subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        long count = -1;
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            count = collection.countDocuments();
         }
         
-        return (long) s.getReceived().get(0);
+        return count;
     }
 
     @Override
-    public void save(Object object) {
-        Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public String save(Object object) {
+        Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        try {
-            OperationSubscriber s = new OperationSubscriber<>();
-            getCollection(object.getClass()).insertOne(object).subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        MongoCollection collection = getCollection(object.getClass());
+        if (collection != null) {
+            InsertOneResult result = collection.insertOne(object);
+            if (result != null) {
+                return result.getInsertedId().asObjectId().getValue().toString();
+            }
+        }
+        
+        return null;
+    }
+    
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public <T> void saveAll(List<T> objects) {
+        Objects.requireNonNull(objects, Required.OBJECTS.toString());
+        
+        Object object = objects.get(0);
+        MongoCollection collection = getCollection(object.getClass());
+        if (collection != null) {
+            collection.insertMany(objects);
         }
     }
     
     @Override
-    public <T> void saveAll(List<T> objects) {
-        Objects.requireNonNull(objects, "Tried to save multiple morphia objects, but a given objects are null");
+    @SuppressWarnings("rawtypes")
+    public <T> MongoCollection query(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        Object object = objects.get(0);
-        
-        try {
-            OperationSubscriber s = new OperationSubscriber<>();
-            getCollection(object.getClass()).insertOne(objects).subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void delete(Object object) {
-        Objects.requireNonNull(object, "Tried to delete a morphia object, but given object is null");
-        //Implement me;
-    }
-
-    @Override
-    public <T> void deleteAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to delete list of mapped morphia objects, but given class is null");
-        //Implement me;
-        
+        return getCollection(clazz);
     }
 
     @Override
     public void dropDatabase() {
-        try {
-            OperationSubscriber s = new OperationSubscriber<>();
-            database.drop().subscribe(s);
-            s.await();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private <T> MongoCollection getCollection(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "clazz can not be null");
-
-        String name = COLLECTIONS.get(clazz.getName());
-        
-        return database.getCollection(name, clazz);
+        database.drop();
     }
 
     @Override
@@ -212,5 +187,19 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(value, "value of collection can not be null");
         
         COLLECTIONS.put(key, value);
+    }
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    public <T> MongoCollection getCollection(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        MongoCollection mongoCollection = null;
+        String name = COLLECTIONS.get(clazz.getName());
+        if (StringUtils.isNotBlank(name)) {
+            mongoCollection = database.getCollection(name, clazz);
+        }
+
+        return mongoCollection;
     }
 }

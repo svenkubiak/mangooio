@@ -136,7 +136,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver-reactivestreams</artifactId>
+			<artifactId>mongodb-driver-sync</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>

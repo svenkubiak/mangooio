@@ -1,5 +1,6 @@
 package io.mangoo.persistence;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -10,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
@@ -28,26 +28,21 @@ class DatastoreTest {
     public static void setup() {
         datastore = Application.getInstance(Datastore.class);
     }
-
-    @Test
-    void testInit() {
-        assertThat(datastore.getMongoClient(), not(nullValue()));
-    }
     
-//    @Test
-//    void testConcurrentInsert() throws InterruptedException {
-//        MatcherAssert.assertThat(t -> {
-//            //given
-//            String id = UUID.randomUUID().toString();
-//            TestModel model = new TestModel(id);
-//            
-//            //when
-//            datastore.save(model);
-//            
-//            // then
-//            return datastore.query().find(TestModel.class).filter(Filters.eq("name", id)).first() != null;
-//        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
-//    }
+    @Test
+    void testConcurrentInsert() throws InterruptedException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String name = UUID.randomUUID().toString();
+            TestModel model = new TestModel(name);
+            
+            //when
+            datastore.save(model);
+            
+            // then
+            return datastore.query(TestModel.class).find(eq("name", name)).first() != null;
+        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+    }
 
     @Test
     void testSaveAndDrop() {
@@ -70,23 +65,18 @@ class DatastoreTest {
 
     @Test
     void testFindById() {
-//        //given
-//        datastore.dropDatabase();
-//        TestModel model = new TestModel("foo");
-//        
-//        //when
-//        datastore.save(model);
-//        TestModel storedModel = datastore.getDatastore()
-//            .find(TestModel.class)
-//            .filter(Filters.eq("name", "foo"))
-//            .first();
-//
-//        assertThat(storedModel, not(nullValue()));
-//        assertThat(datastore.findById(storedModel.getId().toString(), TestModel.class), not(nullValue()));
+        //given
+        datastore.dropDatabase();
+        TestModel model = new TestModel("foo");
+        
+        //when
+        String id = datastore.save(model);
+
+        assertThat(id, not(nullValue()));
+        assertThat(datastore.findById(id, TestModel.class), not(nullValue()));
     }
     
     @Test
-    @Disabled
     void testConcurrentFindById() {
         //given
         datastore.dropDatabase();
@@ -97,15 +87,14 @@ class DatastoreTest {
             TestModel model = new TestModel(id);
             
             //when
-            datastore.save(model);
+            String _id = datastore.save(model);
             
             // then
-            return datastore.findById(model.getId().toString(), TestModel.class) != null;
+            return datastore.findById(_id, TestModel.class) != null;
         }, new RunsInThreads<>(new AtomicInteger(), THREADS));
     }
 
     @Test
-    @Disabled
     void testCountAll() {
         //given
         datastore.dropDatabase();
@@ -118,10 +107,9 @@ class DatastoreTest {
         //then
         assertThat(datastore.countAll(TestModel.class), equalTo(3L));
     }
-
+    
     @Test
-    @Disabled
-    void testDeleteAll() {
+    void testFindAll() {
         //given
         datastore.dropDatabase();
         
@@ -131,33 +119,19 @@ class DatastoreTest {
         datastore.save(new TestModel("bla"));
 
         //then
-        assertThat(datastore.countAll(TestModel.class), equalTo(3L));
-
-        //when
-        datastore.deleteAll(TestModel.class);
-        
-        //then
-        assertThat(datastore.countAll(TestModel.class), equalTo(0L));
+        assertThat(datastore.findAll(TestModel.class).size(), equalTo(3));
     }
     
     @Test
-    @Disabled
-    void testDelete() {
+    void testAddCollection() {
         //given
-        TestModel testModel = new TestModel("foo");
         datastore.dropDatabase();
         
         //when
-        datastore.save(testModel);
+        datastore.addCollection(TestModel.class.getClass().getName(), "bar");
 
         //then
-        assertThat(datastore.countAll(TestModel.class), equalTo(1L));
-
-        //when
-        datastore.delete(testModel);
-        
-        //then
-        assertThat(datastore.countAll(TestModel.class), equalTo(0L));
+        assertThat(datastore.getCollection(TestModel.class.getClass()), not(nullValue()));
     }
     
     @Test

@@ -2,10 +2,9 @@ package io.mangoo.persistence;
 
 import java.util.List;
 
-import com.mongodb.reactivestreams.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 
 public interface Datastore {
-    MongoClient getMongoClient();
 
     /**
      * Retrieves a mapped Morphia object from MongoDB.
@@ -43,22 +42,7 @@ public interface Datastore {
      *
      * @param object The object to save
      */
-    void save(Object object);
-
-    /**
-     * Deletes a mapped Morphia object in MongoDB
-     *
-     * @param object The object to delete
-     */
-    void delete(Object object);
-
-    /**
-     * Deletes all mapped Morphia objects of a given class
-    
-     * @param <T> JavaDoc requires this - please ignore
-     * @param clazz The mapped Morphia class
-     */
-    <T> void deleteAll(Class<T> clazz);
+    String save(Object object);
 
     /**
      * Drops all data in MongoDB on the connected database
@@ -73,5 +57,31 @@ public interface Datastore {
      */
     <T> void saveAll(List<T> objects);
 
+    /**
+     * Adds a collection to the datastore
+     * 
+     * @param key The key of the collection
+     * @param value The value/name of the collection
+     */
     void addCollection(String key, String value);
+
+    /**
+     * Returns a collection to execute a query against the MongoDB database
+     * 
+     * @param <T> Type
+     * @param clazz The clazz to query against
+     * @return MongoCollection
+     */
+    @SuppressWarnings("rawtypes")
+    <T> MongoCollection query(Class<T> clazz);
+
+    /**
+     * Adds a collection to the MongoDB datastore
+     * 
+     * @param <T> Type
+     * @param clazz The clazz to query against
+     * @return MongoCollection
+     */
+    @SuppressWarnings("rawtypes")
+    <T> MongoCollection getCollection(Class<T> clazz);
 }

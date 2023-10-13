@@ -34,7 +34,7 @@
 		<junit.platform.version>1.10.0</junit.platform.version>
 		<enforcer.version>1.7.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
-		<jackson.version>2.15.2</jackson.version>
+		<jackson.version>2.15.3</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
 	</properties>
@@ -320,7 +320,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
-				<artifactId>mongodb-driver-reactivestreams</artifactId>
+				<artifactId>mongodb-driver-sync</artifactId>
 				<version>4.11.0</version>
 			</dependency>
 			<dependency>
