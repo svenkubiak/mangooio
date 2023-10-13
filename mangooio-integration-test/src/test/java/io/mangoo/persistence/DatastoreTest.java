@@ -123,18 +123,6 @@ class DatastoreTest {
     }
     
     @Test
-    void testAddCollection() {
-        //given
-        datastore.dropDatabase();
-        
-        //when
-        datastore.addCollection(TestModel.class.getClass().getName(), "bar");
-
-        //then
-        assertThat(datastore.getCollection(TestModel.class.getClass()), not(nullValue()));
-    }
-    
-    @Test
     void testDropCollection() {
         //given
         datastore.dropDatabase();

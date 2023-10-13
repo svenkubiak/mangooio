@@ -35,7 +35,7 @@ public interface Datastore {
      * @param clazz The corresponding class
      * @param <T> Type
      *      
-     * @return The number of objects in MongoDB
+     * @return The number of objects in MongoDB or -1 if count failed
      */
     <T> long countAll(Class<T> clazz);
 
@@ -43,6 +43,7 @@ public interface Datastore {
      * Saves am entity to MongoDB
      *
      * @param object The object to save
+     * @return The objectId of the stored entity or null if save failed
      */
     String save(Object object);
 
@@ -76,16 +77,6 @@ public interface Datastore {
      */
     @SuppressWarnings("rawtypes")
     <T> MongoCollection query(Class<T> clazz);
-
-    /**
-     * Adds a collection to the MongoDB datastore
-     * 
-     * @param <T> Type
-     * @param clazz The clazz to query against
-     * @return MongoCollection
-     */
-    @SuppressWarnings("rawtypes")
-    <T> MongoCollection getCollection(Class<T> clazz);
 
     /**
      * Drops a specific collection specified by a given class

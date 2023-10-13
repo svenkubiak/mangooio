@@ -33,8 +33,8 @@ import io.mangoo.enums.Required;
 
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
-    private static final Map<String, String> COLLECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
-    private final Config config;
+    private Map<String, String> collections = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private Config config;
     private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
@@ -196,16 +196,15 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(key, Required.KEY.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
         
-        COLLECTIONS.put(key, value);
+        collections.put(key, value);
     }
     
-    @Override
     @SuppressWarnings("rawtypes")
-    public <T> MongoCollection getCollection(Class<T> clazz) {
+    private <T> MongoCollection getCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         MongoCollection mongoCollection = null;
-        String name = COLLECTIONS.get(clazz.getName());
+        String name = collections.get(clazz.getName());
         if (StringUtils.isNotBlank(name)) {
             mongoCollection = mongoDatabase.getCollection(name, clazz);
         }
@@ -216,6 +215,9 @@ public class DatastoreImpl implements Datastore {
     @Override
     @SuppressWarnings("rawtypes")
     public <T> void addIndex(Class<T> clazz, Bson... indexes) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(indexes, Required.INDEXES.toString());
+        
         MongoCollection collection = getCollection(clazz);
         if (collection != null) {
             Stream.of(indexes).forEach(collection::createIndex);   
