@@ -5,6 +5,7 @@ import java.util.List;
 import org.bson.conversions.Bson;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.IndexOptions;
 
 public interface Datastore {
 
@@ -93,4 +94,14 @@ public interface Datastore {
      * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo"))
      */
     <T> void addIndex(Class<T> clazz, Bson... indexes);
+    
+    /**
+     * Adds an index to the collection in the MondoDB database
+     * 
+     * @param <T> Type
+     * @param clazz The class corresponding with the collection
+     * @param index The Index to set
+     * @param indexOptions The IndexOptions to set
+     */
+    <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions);
 }

@@ -25,6 +25,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.InsertOneResult;
 
 import io.mangoo.core.Config;
@@ -62,12 +63,13 @@ public class DatastoreImpl implements Datastore {
                 .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                 .build();
         
-       mongoDatabase = MongoClients.create(settings).getDatabase("mydatabase");
+       mongoDatabase = MongoClients.create(settings).getDatabase(config.getMongoDbName(prefix));
        
-       LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
+       LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
                config.getMongoHost(prefix),
                config.getMongoPort(prefix),
-               config.isMongoAuth(prefix));
+               config.isMongoAuth(prefix),
+               config.getMongoDbName(prefix));
     }
     
     private String getConnectionString() {
@@ -221,6 +223,19 @@ public class DatastoreImpl implements Datastore {
         MongoCollection collection = getCollection(clazz);
         if (collection != null) {
             Stream.of(indexes).forEach(collection::createIndex);   
+        }
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(index, Required.INDEX.toString());
+        Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS.toString());
+        
+        MongoCollection collection = getCollection(clazz);
+        if (collection != null) {
+            collection.createIndex(index, indexOptions);
         }
     }
 }
