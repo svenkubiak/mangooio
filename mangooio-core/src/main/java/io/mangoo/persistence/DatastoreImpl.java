@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -63,7 +64,8 @@ public class DatastoreImpl implements Datastore {
                 .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                 .build();
         
-       mongoDatabase = MongoClients.create(settings).getDatabase(config.getMongoDbName(prefix));
+       mongoDatabase = MongoClients.create(settings)
+               .getDatabase(config.getMongoDbName(prefix));
        
        LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
                config.getMongoHost(prefix),
@@ -105,7 +107,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(id, Required.CLASS.toString());
         
         Object object = null;
-        MongoCollection collection = getCollection(clazz);
+        MongoCollection collection = getCollection(clazz).orElse(null);
         if (collection != null) {
             object = collection.find(eq("_id", new ObjectId(id))).first();
         }
@@ -119,7 +121,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
         List<Object> result = new ArrayList<>();
-        MongoCollection collection = getCollection(clazz);
+        MongoCollection collection = getCollection(clazz).orElseGet(null);
         if (collection != null) {
             collection.find().forEach(result::add);
         }
@@ -133,7 +135,7 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
         long count = -1;
-        MongoCollection collection = getCollection(clazz);
+        MongoCollection collection = getCollection(clazz).orElseGet(null);
         if (collection != null) {
             count = collection.countDocuments();
         }
@@ -146,7 +148,7 @@ public class DatastoreImpl implements Datastore {
     public String save(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        MongoCollection collection = getCollection(object.getClass());
+        MongoCollection collection = getCollection(object.getClass()).orElse(null);
         if (collection != null) {
             InsertOneResult result = collection.insertOne(object);
             if (result != null) {
@@ -158,15 +160,12 @@ public class DatastoreImpl implements Datastore {
     }
     
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("unchecked")
     public <T> void saveAll(List<T> objects) {
         Objects.requireNonNull(objects, Required.OBJECTS.toString());
         
         Object object = objects.get(0);
-        MongoCollection collection = getCollection(object.getClass());
-        if (collection != null) {
-            collection.insertMany(objects);
-        }
+        getCollection(object.getClass()).ifPresent(collection -> collection.insertMany(objects));
     }
     
     @Override
@@ -174,7 +173,7 @@ public class DatastoreImpl implements Datastore {
     public <T> MongoCollection query(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        return getCollection(clazz);
+        return getCollection(clazz).orElse(null);
     }
 
     @Override
@@ -183,14 +182,10 @@ public class DatastoreImpl implements Datastore {
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public <T> void dropCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        MongoCollection collection = getCollection(clazz);
-        if (collection != null) {
-            collection.drop();
-        }
+        getCollection(clazz).ifPresent(collection -> collection.drop());
     }
 
     @Override
@@ -202,7 +197,7 @@ public class DatastoreImpl implements Datastore {
     }
     
     @SuppressWarnings("rawtypes")
-    private <T> MongoCollection getCollection(Class<T> clazz) {
+    private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         MongoCollection mongoCollection = null;
@@ -211,31 +206,23 @@ public class DatastoreImpl implements Datastore {
             mongoCollection = mongoDatabase.getCollection(name, clazz);
         }
 
-        return mongoCollection;
+        return Optional.of(mongoCollection);
     }
     
     @Override
-    @SuppressWarnings("rawtypes")
     public <T> void addIndex(Class<T> clazz, Bson... indexes) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         Objects.requireNonNull(indexes, Required.INDEXES.toString());
         
-        MongoCollection collection = getCollection(clazz);
-        if (collection != null) {
-            Stream.of(indexes).forEach(collection::createIndex);   
-        }
+        getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::createIndex));
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         Objects.requireNonNull(index, Required.INDEX.toString());
         Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS.toString());
         
-        MongoCollection collection = getCollection(clazz);
-        if (collection != null) {
-            collection.createIndex(index, indexOptions);
-        }
+        getCollection(clazz).ifPresent(collection -> collection.createIndex(index, indexOptions));
     }
 }
