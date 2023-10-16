@@ -484,6 +484,7 @@ public class Response {
         Objects.requireNonNull(cookieName, Required.COOKIE.toString());
         
         cookies.add(new CookieImpl(cookieName)
+                .setPath("/")
                 .setValue("")
                 .setMaxAge(-1)
                 .setDiscard(true)
