@@ -206,7 +206,7 @@ public class DatastoreImpl implements Datastore {
             mongoCollection = mongoDatabase.getCollection(name, clazz);
         }
 
-        return Optional.of(mongoCollection);
+        return Optional.ofNullable(mongoCollection);
     }
     
     @Override
