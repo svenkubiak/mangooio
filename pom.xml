@@ -578,11 +578,6 @@
 				<artifactId>commons-compress</artifactId>
 				<version>1.24.0</version>
 			</dependency>
-			<dependency>
-				<groupId>org.instancio</groupId>
-				<artifactId>instancio-junit</artifactId>
-				<version>3.4.0</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
