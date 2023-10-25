@@ -33,7 +33,7 @@
 		<enforcer.version>1.7.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<mongodb.version>4.11.0</mongodb.version>
-		<jackson.version>2.15.2</jackson.version>
+		<jackson.version>2.16.0-rc1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
 	</properties>
@@ -235,7 +235,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>2.3.9.Final</version>
+				<version>2.3.10.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
@@ -280,7 +280,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.22.0</version>
+				<version>2.23.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
@@ -300,7 +300,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>3.9.0</version>
+				<version>3.10.1</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.morphia.morphia</groupId>
@@ -325,7 +325,7 @@
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-stdlib</artifactId>
-				<version>1.9.20-RC</version>
+				<version>1.9.20-RC2</version>
 			</dependency>
 			<dependency>
 				<groupId>dev.paseto</groupId>
@@ -416,7 +416,7 @@
 			<dependency>
 				<groupId>org.furyio</groupId>
 				<artifactId>fury-core</artifactId>
-				<version>0.2.0</version>
+				<version>0.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -517,7 +517,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.162</version>
+				<version>4.8.163</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -592,7 +592,7 @@
 			<dependency>
 				<groupId>org.instancio</groupId>
 				<artifactId>instancio-junit</artifactId>
-				<version>3.3.1</version>
+				<version>3.4.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
