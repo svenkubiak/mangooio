@@ -24,7 +24,7 @@ public final class Totp {
      * {@link TotpBuilder} is responsible for validation, and creation of
      * {@link Totp}s.
      * 
-     * @param code
+     * @param value
      *            the time-based one time password
      * @param time
      *            the time (in milliseconds)

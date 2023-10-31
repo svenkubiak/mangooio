@@ -29,7 +29,6 @@ public enum Default {
     BUNDLE_NAME("translations/messages"),
     CACHE_CLUSTER_ENABLE(Constants.FALSE),
     COLLECTION_ANNOTATION("io.mangoo.persistence.annotations.Collection"),
-    CONFIG_PATH("/src/main/resources/config.props"),
     CONFIGURATION_FILE("config.props"),
     CONTENT_TYPE("text/html; charset=UTF-8"),
     CORS_ALLOWORIGIN("^http(s)?://(www\\.)?example\\.(com|org)$"),
@@ -49,7 +48,6 @@ public enum Default {
     HTML_SUFFIX(".html"),
     I18N_COOKIE_NAME("mangooio-i18n"),
     JAVASCRIPT_FOLDER("javascript"),
-    JBCRYPT_ROUNDS("12"),
     METRICS_ENABLE(Constants.FALSE),
     MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),
@@ -60,7 +58,6 @@ public enum Default {
     PERSISTENCE_MONGO_HOST("localhost"),
     PERSISTENCE_MONGO_PORT("27017"),
     PERSISTENCE_PREFIX("persistence."),
-    POLICY_CSV("policy.csv"),
     SCHEDULER_ANNOTATION("io.mangoo.annotations.Run"),
     SCHEDULER_ENABLE(Constants.TRUE),
     SCHEDULER_POOSLIZE("20"),
@@ -75,14 +72,11 @@ public enum Default {
     SMTP_PORT("25"),
     SMTP_PROTOCOL("smtps"),
     SMTP_SERVER_NAME("smtp"),
-    SSE_CACHE_PREFIX("mangooio-sse-"),
     STYLESHEET_FOLDER("stylesheet"),
     TEMPLATES_FOLDER("templates/"),
-    TIMEZONE("Europa/Berlin"),
     UNDERTOW_MAX_ENTITY_SIZE("4194304"),
     VERSION_PROPERTIES("version.properties"),
-    VERSION_UNKNOW("unknown"),
-    WSS_CACHE_PREFIX("mangooio-wss-");
+    VERSION_UNKNOW("unknown");
 
     private static class Constants {
         public static final String FALSE = "false";

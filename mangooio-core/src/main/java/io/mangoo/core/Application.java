@@ -243,10 +243,9 @@ public final class Application {
             
             scanResult.getClassesWithAnnotation(Default.COLLECTION_ANNOTATION.toString()).forEach(classInfo -> {
                 String key = classInfo.getName();
-                String value = "";
                 
-                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();   
-                value = (String) annotationInfo.get(0).getParameterValues().get(0).getValue();
+                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
+                String value = (String) annotationInfo.get(0).getParameterValues().get(0).getValue();
                 
                 getInstance(Datastore.class).addCollection(key, value);
             });
