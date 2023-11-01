@@ -14,13 +14,11 @@ import io.mangoo.routing.Router;
 
 public class RouteMethod implements TemplateMethodModelEx {
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(.*?)\\}");
-    private static final int MIN_ARGUMENTS = 1;
 
     @Override
-    @SuppressWarnings("rawtypes")
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
-        if (arguments.size() >= MIN_ARGUMENTS) {
+        if (!arguments.isEmpty()) {
             var controller = ((SimpleScalar) arguments.get(0)).getAsString();
             var requestRoute = Router.getReverseRoute(controller);
             

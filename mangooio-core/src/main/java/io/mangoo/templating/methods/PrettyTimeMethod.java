@@ -28,7 +28,6 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public String exec(List arguments) throws TemplateModelException {
         String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {
@@ -42,26 +41,31 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
             if (temporal != null) {
                 object = temporal;
             }
-            
-            if (object instanceof LocalDateTimeAdapter localDateTimeAdapter) {
-                Date date = DateUtils.localDateTimeToDate(localDateTimeAdapter.getObject());
-                result = this.prettyTime.format(date);
-            } else if (object instanceof LocalDateAdapter localDateAdapter) {
-                Date date = DateUtils.localDateToDate(localDateAdapter.getObject());
-                result = this.prettyTime.format(date);              
-            } else if (object instanceof LocalDateTime localDateTime) {
-                Date date = DateUtils.localDateTimeToDate(localDateTime);
-                result = this.prettyTime.format(date);              
-            } else if (object instanceof LocalDate localDate) {
-                Date date = DateUtils.localDateToDate(localDate);
-                result = this.prettyTime.format(date);   
-            } else if (object instanceof SimpleDate simpleDate) {
-                Date date = simpleDate.getAsDate();
-                result = this.prettyTime.format(date);   
-            } else if (object instanceof Date date) {
-                result = this.prettyTime.format(date);   
-            } else {
-                throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
+
+            switch (object) {
+                case LocalDateTimeAdapter localDateTimeAdapter -> {
+                    Date date = DateUtils.localDateTimeToDate(localDateTimeAdapter.getObject());
+                    result = this.prettyTime.format(date);
+                }
+                case LocalDateAdapter localDateAdapter -> {
+                    Date date = DateUtils.localDateToDate(localDateAdapter.getObject());
+                    result = this.prettyTime.format(date);
+                }
+                case LocalDateTime localDateTime -> {
+                    Date date = DateUtils.localDateTimeToDate(localDateTime);
+                    result = this.prettyTime.format(date);
+                }
+                case LocalDate localDate -> {
+                    Date date = DateUtils.localDateToDate(localDate);
+                    result = this.prettyTime.format(date);
+                }
+                case SimpleDate simpleDate -> {
+                    Date date = simpleDate.getAsDate();
+                    result = this.prettyTime.format(date);
+                }
+                case Date date -> result = this.prettyTime.format(date);
+                case null, default ->
+                        throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }
             
         } else if (arguments != null && arguments.size() > NUM_ARGUMENTS) {

@@ -583,7 +583,7 @@ public class Validator implements Serializable {
      * @return True if at least one field has an error, false otherwise
      */
     public boolean hasErrors() {
-        return errors.size() > 0;
+        return !errors.isEmpty();
     }
 
     /**

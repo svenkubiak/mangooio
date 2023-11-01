@@ -188,7 +188,7 @@ public class Mail {
      */
     public Mail attachments(List<Path> paths) {
         Objects.requireNonNull(paths, Required.PATH.toString());
-        paths.stream().forEach(path -> {
+        paths.forEach(path -> {
             Objects.requireNonNull(path, Required.PATH.toString());
             Preconditions.checkArgument(path.toFile().length() != 0, Required.PATH.toString());
         });

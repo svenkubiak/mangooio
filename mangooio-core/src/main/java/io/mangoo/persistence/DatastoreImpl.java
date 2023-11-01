@@ -185,7 +185,7 @@ public class DatastoreImpl implements Datastore {
     public <T> void dropCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        getCollection(clazz).ifPresent(collection -> collection.drop());
+        getCollection(clazz).ifPresent(MongoCollection::drop);
     }
 
     @Override
