@@ -420,7 +420,7 @@
 			<dependency>
 				<groupId>org.wildfly.common</groupId>
 				<artifactId>wildfly-common</artifactId>
-				<version>1.6.0.Final</version>
+				<version>1.7.0.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
@@ -506,12 +506,12 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.163</version>
+				<version>4.8.164</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>5.6.0</version>
+				<version>5.7.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.freemarker</groupId>
