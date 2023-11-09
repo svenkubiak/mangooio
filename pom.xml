@@ -314,12 +314,12 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.0.5</version>
+				<version>8.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>4.11.0</version>
+				<version>4.11.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
