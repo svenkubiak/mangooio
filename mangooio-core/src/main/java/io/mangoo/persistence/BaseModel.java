@@ -5,7 +5,7 @@ import org.bson.types.ObjectId;
 
 public class BaseModel {
     @BsonProperty("id")
-    private ObjectId id;
+    protected ObjectId id;
 
     public ObjectId getId() {
         return id;
