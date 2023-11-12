@@ -177,6 +177,14 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
+    public MongoCollection query(String collection) {
+        Objects.requireNonNull(collection, Required.COLLECTION.toString());
+
+        return mongoDatabase.getCollection(collection);
+    }
+
+    @Override
     public void dropDatabase() {
         mongoDatabase.drop();
     }

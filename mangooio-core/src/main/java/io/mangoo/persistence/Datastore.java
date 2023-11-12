@@ -49,6 +49,14 @@ public interface Datastore {
     String save(Object object);
 
     /**
+     * Returns a collection to execute a query against the MongoDB database
+     *
+     * @param collection The name of the collection
+     * @return MongoCollection
+     */
+    MongoCollection query(String collection);
+
+    /**
      * Drops all data in MongoDB on the connected database
      */
     void dropDatabase();
@@ -72,7 +80,7 @@ public interface Datastore {
     /**
      * Returns a collection to execute a query against the MongoDB database
      * 
-     * @param clazz The entity class to query against
+     * @param clazz The POJO entity class to query against
      * @param <T> Type
      * @return MongoCollection
      */

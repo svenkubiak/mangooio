@@ -21,6 +21,7 @@ public enum Required {
     CONTROLLER_NAME("controller name can not be null"),
     COOKIE("cookie can not be null"),
     COOKIE_VALUE("cookievalue can not be null"),
+    COLLECTION("collection can not be null"),
     CRON("cron can no be null"),
     CRYPTO("crypto can not be null"),
     DATA("data can not be null"),
