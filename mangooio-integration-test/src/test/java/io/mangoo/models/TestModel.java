@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import io.mangoo.persistence.annotations.Collection;
 
-@Collection(name = "test")
+@Collection(name = "tests")
 public class TestModel {
 
     private String name;

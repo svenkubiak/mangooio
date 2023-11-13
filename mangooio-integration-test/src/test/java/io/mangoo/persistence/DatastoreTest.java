@@ -6,9 +6,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.mongodb.client.FindIterable;
+import org.bson.Document;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -121,6 +124,19 @@ class DatastoreTest {
         //then
         assertThat(datastore.findAll(TestModel.class).size(), equalTo(3));
     }
+
+    @Test
+    void testSaveAll() {
+        //given
+        datastore.dropDatabase();
+
+        //when
+        List<TestModel> models = List.of(new TestModel("foo"), new TestModel("bar"), new TestModel("bla"));
+        datastore.saveAll(models);
+
+        //then
+        assertThat(datastore.findAll(TestModel.class).size(), equalTo(3));
+    }
     
     @Test
     void testDropCollection() {
@@ -130,7 +146,33 @@ class DatastoreTest {
         //when
         datastore.dropCollection(TestModel.class);
     }
-    
+
+    @Test
+    void testQueryByClass() {
+        //given
+        datastore.dropDatabase();
+        datastore.save(new TestModel("foo"));
+
+        //when
+        TestModel testModel = (TestModel) datastore.query(TestModel.class).find(eq("name", "foo")).first();
+
+        //when
+        assertThat(testModel, not(nullValue()));
+    }
+
+    @Test
+    void testQueryByCollectionName() {
+        //given
+        datastore.dropDatabase();
+        datastore.save(new TestModel("foo"));
+
+        //when
+        Document document = (Document) datastore.query("tests").find(eq("name", "foo")).first();
+
+        //when
+        assertThat(document, not(nullValue()));
+    }
+
     @Test
     void testPrefix() {
         //given
