@@ -70,14 +70,6 @@ public interface Datastore {
     <T> void saveAll(List<T> objects);
 
     /**
-     * Adds a collection to the datastore
-     * 
-     * @param key The key of the collection
-     * @param value The value/name of the collection
-     */
-    void addCollection(String key, String value);
-
-    /**
      * Returns a collection to execute a query against the MongoDB database
      * 
      * @param clazz The POJO entity class to query against

@@ -31,7 +31,7 @@ public final class MangooUtils {
     private static final int MAX_LENGTH = 256;
     private static final int MIN_LENGTH = 0;
     private static final int CONVERTION = 1024;
-    
+
     private MangooUtils() {
     }
 
@@ -188,4 +188,5 @@ public final class MangooUtils {
         
         return content;
     }
+
 }

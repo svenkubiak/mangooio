@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +36,6 @@ import io.mangoo.enums.Required;
 
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
-    private Map<String, String> collections = new ConcurrentHashMap<>(16, 0.9f, 1);
     private Config config;
     private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
@@ -197,27 +197,6 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    public void addCollection(String key, String value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-        Objects.requireNonNull(value, Required.VALUE.toString());
-        
-        collections.put(key, value);
-    }
-    
-    @SuppressWarnings("rawtypes")
-    private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
-
-        MongoCollection mongoCollection = null;
-        String name = collections.get(clazz.getName());
-        if (StringUtils.isNotBlank(name)) {
-            mongoCollection = mongoDatabase.getCollection(name, clazz);
-        }
-
-        return Optional.ofNullable(mongoCollection);
-    }
-    
-    @Override
     public <T> void addIndex(Class<T> clazz, Bson... indexes) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         Objects.requireNonNull(indexes, Required.INDEXES.toString());
@@ -232,5 +211,18 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS.toString());
         
         getCollection(clazz).ifPresent(collection -> collection.createIndex(index, indexOptions));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        MongoCollection mongoCollection = null;
+        String name = PersistenceUtils.getCollectionName(clazz);
+        if (StringUtils.isNotBlank(name)) {
+            mongoCollection = mongoDatabase.getCollection(name, clazz);
+        }
+
+        return Optional.ofNullable(mongoCollection);
     }
 }

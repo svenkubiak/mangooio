@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -243,11 +244,11 @@ public final class Application {
             
             scanResult.getClassesWithAnnotation(Default.COLLECTION_ANNOTATION.toString()).forEach(classInfo -> {
                 String key = classInfo.getName();
-                
+
                 AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
                 String value = (String) annotationInfo.get(0).getParameterValues().get(0).getValue();
-                
-                getInstance(Datastore.class).addCollection(key, value);
+
+                PersistenceUtils.addCollection(key, value);
             });
         } 
     }

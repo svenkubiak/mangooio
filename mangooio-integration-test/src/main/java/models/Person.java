@@ -2,12 +2,14 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.mangoo.persistence.annotations.Collection;
 
 /**
  * 
  * @author svenkubiak
  *
  */
+@Collection(name = "people")
 public class Person {
     private final String firstname;
     private final String lastname;
