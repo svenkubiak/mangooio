@@ -1,8 +1,10 @@
 package io.mangoo.persistence;
 
 import static com.mongodb.client.model.Filters.eq;
+import static java.util.Arrays.asList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+import com.mongodb.client.result.UpdateResult;
 import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +59,7 @@ public class DatastoreImpl implements Datastore {
     private void connect() {
        CodecRegistry codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
        PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+            .conventions(asList(ANNOTATION_CONVENTION))
             .automatic(true)
             .build();
                 
@@ -150,9 +154,14 @@ public class DatastoreImpl implements Datastore {
         
         MongoCollection collection = getCollection(object.getClass()).orElse(null);
         if (collection != null) {
-            InsertOneResult result = collection.insertOne(object);
-            if (result != null) {
-                return result.getInsertedId().asObjectId().getValue().toString();
+            BaseEntity baseEntity = (BaseEntity) object;
+            ObjectId id = baseEntity.getId();
+            if (id == null) {
+                InsertOneResult insertResult = collection.insertOne(object);
+                return insertResult.getInsertedId().asObjectId().getValue().toString();
+            } else {
+                UpdateResult updateResult = collection.replaceOne(eq("_id", id), object);
+                return id.toString();
             }
         }
         
