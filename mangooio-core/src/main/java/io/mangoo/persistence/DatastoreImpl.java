@@ -169,12 +169,10 @@ public class DatastoreImpl implements Datastore {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
     public <T> void saveAll(List<T> objects) {
         Objects.requireNonNull(objects, Required.OBJECTS.toString());
-        
-        Object object = objects.get(0);
-        getCollection(object.getClass()).ifPresent(collection -> collection.insertMany(objects));
+
+        objects.forEach(this::save);
     }
     
     @Override
