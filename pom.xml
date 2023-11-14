@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>8.0.0-Beta6</version>
+	<version>8.0.0-Beta7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High
@@ -47,7 +47,7 @@
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
 		<developerConnection>scm:git:git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<url>github.com:svenkubiak/mangooio.git</url>
-		<tag>8.0.0-Beta6</tag>
+		<tag>8.0.0-Beta5</tag>
 	</scm>
 	<build>
 		<pluginManagement>
