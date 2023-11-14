@@ -8,10 +8,8 @@ import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import com.mongodb.client.result.UpdateResult;
@@ -218,6 +216,14 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS.toString());
         
         getCollection(clazz).ifPresent(collection -> collection.createIndex(index, indexOptions));
+    }
+
+    @Override
+    public <T> void dropIndex(Class<T> clazz, Bson... indexes) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(indexes, Required.INDEXES.toString());
+
+        getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::dropIndex));
     }
 
     @SuppressWarnings("rawtypes")

@@ -91,7 +91,7 @@ public interface Datastore {
      * 
      * @param <T> Type
      * @param clazz The class corresponding with the collection
-     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo"))
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to add
      */
     <T> void addIndex(Class<T> clazz, Bson... indexes);
     
@@ -104,4 +104,13 @@ public interface Datastore {
      * @param indexOptions The IndexOptions to set
      */
     <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions);
+
+    /**
+     * Removes an index from the collection in the MondoDB database
+     *
+     * @param <T> Type
+     * @param clazz The class corresponding with the collection
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to remove
+     */
+    <T> void dropIndex(Class<T> clazz, Bson... indexes);
 }
