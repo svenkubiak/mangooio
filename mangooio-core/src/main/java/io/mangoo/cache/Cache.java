@@ -103,12 +103,12 @@ public interface Cache {
     Map<String, Object> getAll(String... keys);
 
     /**
-     * Retrieves an object from the caches 
+     * Retrieves an object from the caches
      *
      * @param key The key for the cached value
      * @param <T> JavaDoc requires this (just ignore it)
      *
      * @return Optional value of the fetched value
      */
-    <T> Optional<T> fetch(String key);
+    <T> Optional<T> getIfPresent(String key);
 }

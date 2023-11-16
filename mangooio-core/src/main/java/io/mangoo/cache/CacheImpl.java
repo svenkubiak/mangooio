@@ -21,7 +21,7 @@ public class CacheImpl implements Cache {
         Objects.requireNonNull(guavaCache, Required.CACHE.toString());
         this.guavaCache = guavaCache;
     }
-    
+
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
@@ -61,12 +61,12 @@ public class CacheImpl implements Cache {
         
         return (T) guavaCache.getIfPresent(key);
     }
-    
+
     @Override
-    public <T> Optional<T> fetch(String key) {
-        return get(key) == null ? Optional.empty() : Optional.of(get(key));
+    public <T> Optional<T> getIfPresent(String key) {
+        return Optional.ofNullable(get(key));
     }
-    
+
     @Override
     public Map<String, Object> getAll(String... keys) {
         Objects.requireNonNull(keys, Required.KEY.toString());
@@ -75,7 +75,7 @@ public class CacheImpl implements Cache {
         for (String key : keys) {
             values.put(key, get(key));
         }
-        
+
         return values;
     }
 

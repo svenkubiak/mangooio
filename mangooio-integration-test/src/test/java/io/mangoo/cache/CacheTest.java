@@ -74,9 +74,9 @@ class CacheTest {
         cache.put("foo", value);
 
         //then
-        assertThat(cache.fetch("foo"), not(equalTo(null)));
-        assertThat(cache.fetch("foo").get(), equalTo(value));
-        assertThat(cache.fetch("bar"), equalTo(Optional.empty()));
+        assertThat(cache.getIfPresent("foo"), not(equalTo(null)));
+        assertThat(cache.getIfPresent("foo").get(), equalTo(value));
+        assertThat(cache.getIfPresent("bar"), equalTo(Optional.empty()));
     }
     
     @Test
