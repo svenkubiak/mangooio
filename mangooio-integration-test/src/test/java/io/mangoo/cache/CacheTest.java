@@ -65,18 +65,24 @@ class CacheTest {
     }
     
     @Test
-    void testFetch() {
+    void testGetIfPresent() {
         //given
         Cache cache = Application.getInstance(Cache.class);
-        String value = UUID.randomUUID().toString();
-        
-        //when
-        cache.put("foo", value);
 
         //then
-        assertThat(cache.getIfPresent("foo"), not(equalTo(null)));
-        assertThat(cache.getIfPresent("foo").get(), equalTo(value));
-        assertThat(cache.getIfPresent("bar"), equalTo(Optional.empty()));
+        assertThat(cache.get("foo"),equalTo(null));
+
+        //when
+        String value = (String) cache.getIfPresent("foo").orElseGet(() -> {
+            cache.put("foo", "bla");
+            return "bar";
+        });
+
+        //then
+        assertThat(value, equalTo("bar"));
+
+        //then
+        assertThat(cache.get("foo"),equalTo("bla"));
     }
     
     @Test
