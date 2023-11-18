@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>8.0.0-Beta8-SNAPSHOT</version>
+		<version>8.0.0-Beta8</version>
 	</parent>
 	<artifactId>mangooio-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-			<version>8.0.0-Beta8-SNAPSHOT</version>
+			<version>8.0.0-Beta8</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.commons</groupId>
