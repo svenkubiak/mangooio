@@ -484,13 +484,6 @@ public class Config {
     }
 
     /**
-     * @return application.templateengine from config.props or default value if undefined
-     */
-    public String getApplicationTemplateEngine() {
-        return getString(Key.APPLICATION_TEMPLATEENGINE, Default.APPLICATION_TEMPLATEENGINE.toString());
-    }
-
-    /**
      * @return application.admin.enable or default value if undefined
      */
     public boolean isApplicationAdminEnable() {

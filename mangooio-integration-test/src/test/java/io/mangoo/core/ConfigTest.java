@@ -10,14 +10,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
+import io.mangoo.enums.Annotation;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -480,38 +477,7 @@ class ConfigTest {
         assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }  
-    
-    @Test
-    void testGetApplicationtemplateEngine() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        String engine = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
 
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.templateengine", engine);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getApplicationTemplateEngine(), equalTo(engine));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    void testGetApplicationtemplateEngineDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given 
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.getApplicationTemplateEngine(), equalTo(Default.APPLICATION_TEMPLATEENGINE.toString()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    } 
-    
     @Test
     void testValueFromSystemPropertyInProfile() {
         // given
@@ -1813,5 +1779,19 @@ class ConfigTest {
         // then
         assertThat(config.isApplicationAdminHealthEnable(), equalTo(Default.APPLICATION_ADMIN_HEALTH_ENABLE.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
+    }
+
+    @Test
+    void checkAnnotationExists() throws ClassNotFoundException {
+        // given
+        Annotation[] annotations = Annotation.values();
+
+        // when
+        for (Annotation annotation : annotations) {
+            Class<?> result = Class.forName(annotation.toString());
+
+            //then
+            assertThat(result, not(nullValue()));
+        }
     }
 }

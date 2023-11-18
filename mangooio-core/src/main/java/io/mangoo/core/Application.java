@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import io.mangoo.enums.*;
 import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,13 +42,7 @@ import io.github.classgraph.MethodInfo;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.email.MailListener;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
-import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.persistence.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -141,7 +136,7 @@ public final class Application {
                         .acceptPackages(ALL_PACKAGES)
                         .scan()) {
                 
-                scanResult.getClassesWithMethodAnnotation(Default.SCHEDULER_ANNOTATION.toString()).forEach(classInfo -> 
+                scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
                     classInfo.getMethodInfo().forEach(methodInfo -> {
                         var isCron = false;
                         long seconds = 0;
@@ -242,7 +237,7 @@ public final class Application {
                     .acceptPackages(ALL_PACKAGES)
                     .scan()) {
             
-            scanResult.getClassesWithAnnotation(Default.COLLECTION_ANNOTATION.toString()).forEach(classInfo -> {
+            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
                 String key = classInfo.getName();
 
                 AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
