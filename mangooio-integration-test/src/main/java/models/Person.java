@@ -2,13 +2,17 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.mangoo.persistence.BaseEntity;
+import io.mangoo.persistence.Entity;
+import io.mangoo.persistence.annotations.Collection;
 
 /**
  * 
  * @author svenkubiak
  *
  */
-public class Person {
+@Collection(name = "people")
+public class Person extends Entity {
     private final String firstname;
     private final String lastname;
     private final int age;

@@ -77,7 +77,7 @@ public class MailListener {
      * Processes the given mail message and passes it to the underlying SMTP handling
      * 
      * @param mail The mail to send
-     * @throws MangooMailerException 
+     * @throws MangooMailerException if delivery of mail fails
      */
     @Subscribe
     public void process(Mail mail) throws MangooMailerException {

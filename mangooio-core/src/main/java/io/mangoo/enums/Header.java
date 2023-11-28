@@ -14,7 +14,6 @@ public enum Header {
     REFERER_POLICY("Referrer-Policy", new HttpString("Referrer-Policy")),
     SERVER("Server", new HttpString("Server")),
     X_CONTENT_TYPE_OPTIONS("X-Content-Type-Options", new HttpString("X-Content-Type-Options")),
-    X_FORWARDED_FOR("X-Forwarded-For", new HttpString("X-Forwarded-For")),
     X_FRAME_OPTIONS("X-Frame-Options", new HttpString("X-Frame-Options")),
     X_XSS_PROTECTION("X-XSS-Protection", new HttpString("X-XSS-Protection"));
 

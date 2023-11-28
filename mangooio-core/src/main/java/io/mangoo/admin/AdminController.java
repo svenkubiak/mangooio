@@ -209,7 +209,7 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response loggerajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        if (body != null && body.size() > 0) {
+        if (body != null && !body.isEmpty()) {
             var clazz = body.get("class").toString();
             var level = body.get("level").toString();
             if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
@@ -246,7 +246,7 @@ public class AdminController {
         Map<String, Object> body = request.getBodyAsJsonMap();
         var value = "";
         
-        if (body != null && body.size() > 0) {
+        if (body != null && !body.isEmpty()) {
             var function = body.get("function").toString();
 
             if (("keypair").equalsIgnoreCase(function)) {

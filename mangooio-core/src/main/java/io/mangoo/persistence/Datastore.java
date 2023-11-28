@@ -2,116 +2,115 @@ package io.mangoo.persistence;
 
 import java.util.List;
 
-import com.mongodb.client.MongoClient;
+import org.bson.conversions.Bson;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.IndexOptions;
 
 public interface Datastore {
-    dev.morphia.Datastore getDatastore();
-    dev.morphia.Datastore query();
-    MongoClient getMongoClient();
 
     /**
-     * Ensures (creating if necessary) the indexes found during class mapping (using @Indexed, @Indexes)
-     */
-    void ensureIndexes();
-
-    /**
-     * Ensure capped DBCollections for Entity(s)
-     */
-    void ensureCaps();
-
-    /**
-     * Retrieves a mapped Morphia object from MongoDB.
+     * Retrieves a MongoDB entity from the database
      *
-     * @param id The mongodb id of the object
-     * @param clazz The mapped Morphia class
-     * @param <T> JavaDoc requires this - please ignore
+     * @param id The id of the object
+     * @param clazz The corresponding class
+     * @param <T> Type
      *
-     * @return The requested class from MongoDB or null if none found
+     * @return The requested object from MongoDB or null if not found
      */
     <T> T findById(String id, Class<T> clazz);
 
     /**
-     * Retrieves a list of mapped Morphia objects from MongoDB
+     * Retrieves a MongoDB entity from the database
      *
-     * @param clazz The mapped Morphia class
-     * @param <T> JavaDoc requires this - please ignore
+     * @param clazz The corresponding class
+     * @param <T> Type
      * 
-     * @return A list of mapped Morphia objects or an empty list if none found
+     * @return A list of MongoDB objects or an empty list if none found
      */
     <T> List<T> findAll(Class<T> clazz);
 
     /**
-     * Counts all objected of a mapped Morphia class
+     * Counts all objected of a MongoDB entity
      *
-     * @param clazz The mapped Morphia class
-     * @param <T> JavaDoc requires this - please ignore
+     * @param clazz The corresponding class
+     * @param <T> Type
      *      
-     * @return The number of objects in MongoDB
+     * @return The number of objects in MongoDB or -1 if count failed
      */
     <T> long countAll(Class<T> clazz);
 
     /**
-     * Saves a mapped Morphia object to MongoDB
+     * Saves am entity to MongoDB
      *
      * @param object The object to save
+     * @return The objectId of the stored entity or null if save failed
      */
-    void save(Object object);
+    String save(Object object);
 
     /**
-     * Deletes a mapped Morphia object in MongoDB
+     * Returns a collection to execute a query against the MongoDB database
      *
-     * @param object The object to delete
+     * @param collection The name of the collection
+     * @return MongoCollection
      */
-    void delete(Object object);
-
-    /**
-     * Deletes all mapped Morphia objects of a given class
-    
-     * @param <T> JavaDoc requires this - please ignore
-     * @param clazz The mapped Morphia class
-     */
-    <T> void deleteAll(Class<T> clazz);
+    MongoCollection query(String collection);
 
     /**
      * Drops all data in MongoDB on the connected database
      */
     void dropDatabase();
-    
-    /**
-     * Saves a mapped Morphia object to MongoDB asynchronously
-     *
-     * @param object The object to save
-     */
-    void saveAsync(Object object);
 
     /**
-     * Deletes a mapped Morphia object to MongoDB asynchronously
-     *
-     * @param object The object to delete
-     */
-    void deleteAsync(Object object);
-
-    /**
-     * Saves a list of Morphia objects to MongoDB
+     * Saves a list of MongoDB entitiesB
      * 
-     * @param <T> Type
      * @param objects The list of objects
+     * @param <T> Type
      */
     <T> void saveAll(List<T> objects);
 
     /**
-     * Saves a list of Morphia objects to MongoDB
+     * Returns a collection to execute a query against the MongoDB database
+     * 
+     * @param clazz The POJO entity class to query against
+     * @param <T> Type
+     * @return MongoCollection
+     */
+    @SuppressWarnings("rawtypes")
+    <T> MongoCollection query(Class<T> clazz);
+
+    /**
+     * Drops a specific collection specified by a given class
+     * 
+     * @param clazz The class corresponding with the collection
+     */
+    <T> void dropCollection(Class<T> clazz);
+
+    /**
+     * Adds an index to the collection in the MondoDB database
      * 
      * @param <T> Type
-     * @param objects The list of objects
+     * @param clazz The class corresponding with the collection
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to add
      */
-	<T> void saveAllAsync(List<T> objects);
+    <T> void addIndex(Class<T> clazz, Bson... indexes);
+    
+    /**
+     * Adds an index to the collection in the MondoDB database
+     * 
+     * @param <T> Type
+     * @param clazz The class corresponding with the collection
+     * @param index The Index to set
+     * @param indexOptions The IndexOptions to set
+     */
+    <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions);
 
-	/**
-	 * Deletes a list of Morphia objects to MongoDB
-	 * 
-	 * @param <T> Type
-	 * @param clazz The list of classes
-	 */
-	<T> void deleteAllAsync(List<Class<T>> clazz);
+    /**
+     * Removes an index from the collection in the MondoDB database
+     *
+     * @param <T> Type
+     * @param clazz The class corresponding with the collection
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to remove
+     */
+    <T> void dropIndex(Class<T> clazz, Bson... indexes);
 }

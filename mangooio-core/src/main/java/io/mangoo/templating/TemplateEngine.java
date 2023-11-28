@@ -143,12 +143,12 @@ public class TemplateEngine {
 
         var buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
-        .append(File.separator)
-        .append("src")
-        .append(File.separator)
-        .append("main")
-        .append(File.separator)
-        .append("java");
+            .append(File.separator)
+            .append("src")
+            .append(File.separator)
+            .append("main")
+            .append(File.separator)
+            .append("java");
 
         List<Source> sources = new ArrayList<>();
         Path templateFile = Paths.get(buffer.toString()).resolve(sourcePath);

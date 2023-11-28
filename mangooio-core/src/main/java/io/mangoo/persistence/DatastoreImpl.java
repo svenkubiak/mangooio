@@ -1,39 +1,49 @@
 package io.mangoo.persistence;
 
+import static com.mongodb.client.model.Filters.eq;
+import static java.util.Arrays.asList;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
+import com.mongodb.client.result.UpdateResult;
+import io.mangoo.utils.PersistenceUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.google.inject.Inject;
-import com.mongodb.client.MongoClient;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.result.InsertOneResult;
 
-import dev.morphia.DeleteOptions;
-import dev.morphia.Morphia;
-import dev.morphia.query.filters.Filters;
-import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
-import io.mangoo.persistence.events.DeleteEvent;
-import io.mangoo.persistence.events.SaveEvent;
-import io.mangoo.services.EventBusService;
 
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
-    private final Config config;
-    private dev.morphia.Datastore datastore; //NOSONAR
-    private MongoClient mongoClient;
-    private EventBusService eventBus;
+    private Config config;
+    private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
     @Inject
-    public DatastoreImpl(Config config, EventBusService eventBus) {
+    public DatastoreImpl(Config config) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.eventBus = Objects.requireNonNull(eventBus, Required.EVENT_BUS_SERVICE.toString());
         connect();
     }
 
@@ -44,34 +54,25 @@ public class DatastoreImpl implements Datastore {
         connect();
     }
 
-    @Override
-    public dev.morphia.Datastore getDatastore() {
-        return datastore;
-    }
-    
-    @Override
-    public dev.morphia.Datastore query() {
-        return datastore;
-    }
-
-    @Override
-    public MongoClient getMongoClient() {
-        return mongoClient;
-    }
-
-    @SuppressWarnings("removal")
     private void connect() {
-       mongoClient = MongoClients.create(getConnectionString());
-       datastore = Morphia.createDatastore(mongoClient, config.getMongoDbName(prefix));
-       datastore.getMapper().mapPackage(config.getMongoPackage(prefix));
- 
-       LOG.info("Created MongoClient connected to {}:{} with credentials = {}",
+       CodecRegistry codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+       PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+            .conventions(asList(ANNOTATION_CONVENTION))
+            .automatic(true)
+            .build();
+                
+       MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(getConnectionString()))
+                .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
+                .build();
+        
+       mongoDatabase = MongoClients.create(settings)
+               .getDatabase(config.getMongoDbName(prefix));
+       
+       LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
                config.getMongoHost(prefix),
                config.getMongoPort(prefix),
-               config.isMongoAuth(prefix));
-       
-       LOG.info("Mapped Morphia models of package '{}' and created Morphia Datastore connected to database '{}'",
-               config.getMongoPackage(prefix),
+               config.isMongoAuth(prefix),
                config.getMongoDbName(prefix));
     }
     
@@ -102,101 +103,139 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings("removal")
-    public void ensureIndexes() {
-        //FIXME Needs to be removed when updating to Morphia 3.0
-        datastore.ensureIndexes();
-    }
-
-    @Override
-    @SuppressWarnings("removal")
-    public void ensureCaps() {
-        //FIXME Needs to be removed when updating to Morphia 3.0
-        datastore.ensureCaps();
-    }
-
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T findById(String id, Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to find an object by id, but given class is null");
-        Objects.requireNonNull(id, "Tried to find an object by id, but given id is null");
+        Objects.requireNonNull(clazz, Required.ID.toString());
+        Objects.requireNonNull(id, Required.CLASS.toString());
         
-        return datastore.find(clazz).filter(Filters.eq("_id", new ObjectId(id))).first();
+        Object object = null;
+        MongoCollection collection = getCollection(clazz).orElse(null);
+        if (collection != null) {
+            object = collection.find(eq("_id", new ObjectId(id))).first();
+        }
+
+        return (T) object;
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> List<T> findAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to get all morphia objects of a given object, but given object is null");
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        return datastore.find(clazz).iterator().toList();
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null);
+        if (collection != null) {
+            collection.find().forEach(result::add);
+        }
+        
+        return (List<T>) result;
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public <T> long countAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to count all a morphia objects of a given object, but given object is null");
-
-        return datastore.find(clazz).count();
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        
+        long count = -1;
+        MongoCollection collection = getCollection(clazz).orElseGet(null);
+        if (collection != null) {
+            count = collection.countDocuments();
+        }
+        
+        return count;
     }
 
     @Override
-    public void save(Object object) {
-        Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
-
-        datastore.save(object);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public String save(Object object) {
+        Objects.requireNonNull(object, Required.OBJECT.toString());
+        
+        MongoCollection collection = getCollection(object.getClass()).orElse(null);
+        if (collection != null) {
+            BaseEntity baseEntity = (BaseEntity) object;
+            ObjectId id = baseEntity.getId();
+            if (id == null) {
+                InsertOneResult insertResult = collection.insertOne(object);
+                return insertResult.getInsertedId().asObjectId().getValue().toString();
+            } else {
+                UpdateResult updateResult = collection.replaceOne(eq("_id", id), object);
+                return id.toString();
+            }
+        }
+        
+        return null;
     }
     
     @Override
     public <T> void saveAll(List<T> objects) {
-        Objects.requireNonNull(objects, "Tried to save multiple morphia objects, but a given objects are null");
+        Objects.requireNonNull(objects, Required.OBJECTS.toString());
 
-        datastore.save(objects);
-    }
-    
-	@Override
-    @SuppressWarnings("unchecked")
-    public <T> void saveAllAsync(List<T> objects) {
-        Objects.requireNonNull(objects, "Tried to save multiple morphia objects, but a given objects are null");
-
-        eventBus.publish(Application.getInstance(SaveEvent.class).withObjects(objects));
+        objects.forEach(this::save);
     }
     
     @Override
-    public void saveAsync(Object object) {
-        Objects.requireNonNull(object, "Tried to save a morphia object, but a given object is null");
+    @SuppressWarnings("rawtypes")
+    public <T> MongoCollection query(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
         
-        eventBus.publish(Application.getInstance(SaveEvent.class).withObject(object));
+        return getCollection(clazz).orElse(null);
     }
 
     @Override
-    public void delete(Object object) {
-        Objects.requireNonNull(object, "Tried to delete a morphia object, but given object is null");
+    @SuppressWarnings("rawtypes")
+    public MongoCollection query(String collection) {
+        Objects.requireNonNull(collection, Required.COLLECTION.toString());
 
-        datastore.delete(object);
-    }
-    
-    @Override
-    public void deleteAsync(Object object) {
-        Objects.requireNonNull(object, "Tried to delete a morphia object, but given object is null");
-
-        eventBus.publish(Application.getInstance(DeleteEvent.class).withObject(object));
-    }
-
-    @Override
-    public <T> void deleteAll(Class<T> clazz) {
-        Objects.requireNonNull(clazz, "Tried to delete list of mapped morphia objects, but given class is null");
-
-        datastore.find(clazz).delete(new DeleteOptions().multi(true));
-    }
-    
-	@Override
-    @SuppressWarnings("unchecked")
-    public <T> void deleteAllAsync(List<Class<T>> clazzes) {
-        Objects.requireNonNull(clazzes, "Tried to delete list of mapped morphia objects, but given clazzes are null");
-
-        eventBus.publish(Application.getInstance(DeleteEvent.class).withObjects(clazzes));
+        return mongoDatabase.getCollection(collection);
     }
 
     @Override
     public void dropDatabase() {
-        datastore.getDatabase().drop();
+        mongoDatabase.drop();
+    }
+    
+    @Override
+    public <T> void dropCollection(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        
+        getCollection(clazz).ifPresent(MongoCollection::drop);
+    }
+
+    @Override
+    public <T> void addIndex(Class<T> clazz, Bson... indexes) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(indexes, Required.INDEXES.toString());
+        
+        getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::createIndex));
+    }
+
+    @Override
+    public <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(index, Required.INDEX.toString());
+        Objects.requireNonNull(indexOptions, Required.INDEX_OPTIONS.toString());
+        
+        getCollection(clazz).ifPresent(collection -> collection.createIndex(index, indexOptions));
+    }
+
+    @Override
+    public <T> void dropIndex(Class<T> clazz, Bson... indexes) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(indexes, Required.INDEXES.toString());
+
+        getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::dropIndex));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        MongoCollection mongoCollection = null;
+        String name = PersistenceUtils.getCollectionName(clazz);
+        if (StringUtils.isNotBlank(name)) {
+            mongoCollection = mongoDatabase.getCollection(name, clazz);
+        }
+
+        return Optional.ofNullable(mongoCollection);
     }
 }
