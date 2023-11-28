@@ -3,11 +3,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-<<<<<<< HEAD
-		<version>7.19.1-SNAPSHOT</version>
-=======
 		<version>8.0.0-Beta9-SNAPSHOT</version>
->>>>>>> feature/8.0.0
 	</parent>
 	<artifactId>mangooio-integration-test</artifactId>
 	<packaging>jar</packaging>
@@ -15,11 +11,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-core</artifactId>
-<<<<<<< HEAD
-			<version>7.19.1-SNAPSHOT</version>
-=======
 			<version>8.0.0-Beta9-SNAPSHOT</version>
->>>>>>> feature/8.0.0
 			<exclusions>
 				<exclusion>
 					<groupId>org.glassfish.jaxb</groupId>
@@ -42,11 +34,7 @@
 		<dependency>
 			<groupId>io.mangoo</groupId>
 			<artifactId>mangooio-test</artifactId>
-<<<<<<< HEAD
-			<version>7.19.1-SNAPSHOT</version>
-=======
 			<version>8.0.0-Beta9-SNAPSHOT</version>
->>>>>>> feature/8.0.0
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -178,23 +166,11 @@
 			<plugin>
 				<groupId>io.mangoo</groupId>
 				<artifactId>mangooio-maven-plugin</artifactId>
-<<<<<<< HEAD
-				<version>7.19.1-SNAPSHOT</version>
+				<version>8.0.0-Beta9-SNAPSHOT</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>17</source>
-					<target>17</target>
-				</configuration>
-=======
-				<version>8.0.0-Beta9-SNAPSHOT</version>
->>>>>>> feature/8.0.0
 			</plugin>
 		</plugins>
 	</build>
