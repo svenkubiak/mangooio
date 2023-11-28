@@ -109,11 +109,11 @@
 					<artifactId>dependency-check-maven</artifactId>
 					<version>9.0.1</version>
 					<configuration>
-						<cveValidForHours>12</cveValidForHours>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
 							<suppressionFile>
-								${maven.multiModuleProjectDirectory}/owasp-suppression.xml</suppressionFile>
+								${maven.multiModuleProjectDirectory}/owasp-suppression.xml
+							</suppressionFile>
 						</suppressionFiles>
 						<assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
 						<composerAnalyzerEnabled>false</composerAnalyzerEnabled>
