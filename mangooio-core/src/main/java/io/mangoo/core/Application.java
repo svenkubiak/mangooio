@@ -74,7 +74,7 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
-    private static final int BUFFERSIZE = 255;
+    private static final int BUFFER_SIZE = 255;
     private static final LocalDateTime start = LocalDateTime.now();
     private static io.mangoo.core.Module module;
     private static ScheduledExecutorService scheduledExecutorService;
@@ -126,7 +126,7 @@ public final class Application {
         var config = getInstance(Config.class);
         
         if (config.isSchedulerEnabled()) {
-            scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
+            scheduledExecutorService = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
             
             try (var scanResult =
                     new ClassGraph()
@@ -666,7 +666,7 @@ public final class Application {
 
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
-        final var buffer = new StringBuilder(BUFFERSIZE);
+        final var buffer = new StringBuilder(BUFFER_SIZE);
         buffer.append('\n')
             .append(getLogo())
             .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")

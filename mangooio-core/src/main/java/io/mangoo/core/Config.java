@@ -463,13 +463,6 @@ public class Config {
     }
 
     /**
-     * @return scheduler.poolsize from config.props or default value if undefined
-     */
-    public int getSchedulerPoolsize() {
-        return getInt(Key.SCHEDULER_POOLSIZE, Default.SCHEDULER_POOSLIZE.toInt());
-    }
-
-    /**
      * @return authentication.cookie.remember.expires from config.props or default value if undefined
      */
     public long getAuthenticationCookieRememberExpires() {

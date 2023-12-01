@@ -55,7 +55,6 @@ public enum Default {
     PERSISTENCE_MONGO_PORT("27017"),
     PERSISTENCE_PREFIX("persistence."),
     SCHEDULER_ENABLE(Constants.TRUE),
-    SCHEDULER_POOSLIZE("20"),
     SESSION_COOKIE_EXPIRES(Constants.FALSE),
     SESSION_COOKIE_NAME("mangooio-session"),
     SESSION_COOKIE_SECURE(Constants.FALSE),
