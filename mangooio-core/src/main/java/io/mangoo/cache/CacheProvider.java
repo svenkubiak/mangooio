@@ -21,7 +21,8 @@ public class CacheProvider implements Provider<Cache> {
     private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
     private static final long SIXTY = 60;
-    private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
+    private static final long SIX = 6;
+    private static final long TWENTY_THOUSAND = 20000;
 
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
@@ -30,13 +31,13 @@ public class CacheProvider implements Provider<Cache> {
         
         initApplicationCache();
         initAuthenticationCache();
-        initResponseCache();
         setDefaultApplicationCache();
     }
 
     private void initApplicationCache() {
         Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+                .maximumSize(TWENTY_THOUSAND)
+                .expireAfterAccess(Duration.of(SIX, ChronoUnit.HOURS))
                 .recordStats()
                 .build());
 
@@ -45,24 +46,14 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initAuthenticationCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+                .maximumSize(TWENTY_THOUSAND)
+                .expireAfterAccess(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
 
         caches.put(CacheName.AUTH.toString(), authenticationCache);
     }
-    
-    private void initResponseCache() {
-        Cache responseCache = new CacheImpl(Caffeine.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
-                .recordStats()
-                .build());
 
-        caches.put(CacheName.RESPONSE.toString(), responseCache);
-    }
-    
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }

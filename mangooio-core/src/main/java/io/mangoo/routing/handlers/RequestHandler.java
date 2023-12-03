@@ -145,7 +145,6 @@ public class RequestHandler implements HttpHandler {
             
             invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         } else if (invokedResponse.isUnrendered()) {
-            var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
             String path = new StringBuffer()
                     .append(Default.TEMPLATES_FOLDER.toString())
                     .append(attachment.getControllerClassName())
@@ -154,15 +153,7 @@ public class RequestHandler implements HttpHandler {
                     .append(Default.HTML_SUFFIX.toString())
                     .toString();
             
-            var body = "";
-            
-            if (cache.get(path) == null) {
-                body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
-                cache.put(path, body);
-            } else {
-                body = cache.get(path);
-            }
-            
+            var body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
             invokedResponse.andBody(body);
         } else {
             //ignore anything else
