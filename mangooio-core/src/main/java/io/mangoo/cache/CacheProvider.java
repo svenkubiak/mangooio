@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -18,7 +18,7 @@ import io.mangoo.enums.Required;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private Map<String, Cache> caches = new HashMap<>();
+    private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
     private static final long SIXTY = 60;
     private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
@@ -35,31 +35,31 @@ public class CacheProvider implements Provider<Cache> {
     }
 
     private void initApplicationCache() {
-        Cache applicationCache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .recordStats()
                 .build());
-        
+
         caches.put(CacheName.APPLICATION.toString(), applicationCache);
     }
 
     private void initAuthenticationCache() {
-        Cache authenticationCache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
-        
+
         caches.put(CacheName.AUTH.toString(), authenticationCache);
     }
     
     private void initResponseCache() {
-        Cache responseCache = new CacheImpl(CacheBuilder.newBuilder()
+        Cache responseCache = new CacheImpl(Caffeine.newBuilder()
                 .maximumSize(TWENTY_THOUSAND_ELEMENTS)
                 .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
-        
+
         caches.put(CacheName.RESPONSE.toString(), responseCache);
     }
     

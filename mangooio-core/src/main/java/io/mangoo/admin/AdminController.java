@@ -18,12 +18,12 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.ObjectName;
 
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 
-import com.google.common.cache.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 
