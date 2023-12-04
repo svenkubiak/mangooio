@@ -143,20 +143,7 @@ public class RequestHandler implements HttpHandler {
                     .withPrettyTime(attachment.getLocale())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
-            invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
-        } else if (invokedResponse.isUnrendered()) {
-            String path = new StringBuffer()
-                    .append(Default.TEMPLATES_FOLDER.toString())
-                    .append(attachment.getControllerClassName())
-                    .append('/')
-                    .append(attachment.getControllerMethodName())
-                    .append(Default.HTML_SUFFIX.toString())
-                    .toString();
-            
-            var body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
-            invokedResponse.andBody(body);
-        } else {
-            //ignore anything else
+            invokedResponse.andHtmlBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         }
 
         return invokedResponse;

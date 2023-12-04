@@ -42,7 +42,6 @@ public class Response {
     private boolean binary;
     private boolean rendered;
     private boolean redirect;
-    private boolean unrendered;
     private int statusCode = StatusCodes.OK;
 
     public Response() {
@@ -114,10 +113,6 @@ public class Response {
         return endResponse;
     }
     
-    public boolean isUnrendered() {
-        return unrendered;
-    }
-
     public String getRedirectTo() {
         return redirectTo;
     }
@@ -278,23 +273,9 @@ public class Response {
      * @param body The body for the response
      * @return A response object {@link io.mangoo.routing.Response}
      */
-    public Response andBody(String body) {
+    public Response andHtmlBody(String body) {
         this.body = body;
         rendered = false;
-
-        return this;
-    }
-    
-    /**
-     * Sets the content of a response from a file in the template folder as
-     * /templates/CONTROLLER_NAME/METHOD_NAME.html as body without rendering the
-     * file with the template engine
-     * 
-     * @return A response object {@link io.mangoo.routing.Response}
-     */
-    public Response andBody() {
-        rendered = false;
-        unrendered = true;
 
         return this;
     }
@@ -402,7 +383,8 @@ public class Response {
     }
 
     /**
-     * Disables template rendering, sending an empty body in the response
+     * Disables template rendering, sending an empty body with content-type
+     * text/plain in the response
      *
      * @return A response object {@link io.mangoo.routing.Response}
      */
