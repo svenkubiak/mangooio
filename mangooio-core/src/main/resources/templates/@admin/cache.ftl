@@ -20,8 +20,7 @@
 	                      	<tr>
 								<th data-sort="string"><b>Cache name</b></th>
 								<th data-sort="string"><b>Evictions</b></th>
-								<th data-sort="string"><b>Gets</b></th>
-								<th data-sort="string"><b>Puts</b></th>
+								<th data-sort="string"><b>Requests</b></th>
 								<th data-sort="string"><b>Hits</b></th>
 								<th data-sort="string"><b>Hit rate</b></th>
 								<th data-sort="string"><b>Misses</b></th>
@@ -34,11 +33,10 @@
 									<td>${name}</td>
 									<td>${statistic.evictionCount()}</td>
 									<td>${statistic.requestCount()}</td>
-									<td>${statistic.loadCount()}</td>
 									<td>${statistic.hitCount()}</td>
-									<td>${statistic.hitRate()}</td>
+									<td>${statistic.hitRate()?string["0.##"]}</td>
 									<td>${statistic.missCount()}</td>
-									<td>${statistic.missRate()}</td>
+									<td>${statistic.missRate()?string["0.##"]}</td>
 								</tr>
 							</#list>
 						</tbody>
