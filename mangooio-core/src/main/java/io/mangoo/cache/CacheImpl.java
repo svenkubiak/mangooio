@@ -7,9 +7,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import io.mangoo.enums.Required;
+import org.apache.commons.collections.bag.SynchronizedSortedBag;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+import org.checkerframework.checker.units.qual.K;
 
 public class CacheImpl implements Cache {
     private static final String EXPIRES_SUFFIX = "-expires";
@@ -56,13 +60,26 @@ public class CacheImpl implements Cache {
         	remove(key);
         	remove(key + EXPIRES_SUFFIX);
         }
-        
+
         return (T) caffeineCache.getIfPresent(key);
     }
 
     @Override
-    public <T> Optional<T> getIfPresent(String key) {
-        return Optional.ofNullable(get(key));
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Function<String, Object> fallback) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(fallback, Required.FALLBACK.toString());
+
+        Object object = caffeineCache.getIfPresent(key);
+        if (object == null) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.computeIfAbsent(key, fallback);
+            object = temp.get(key);
+
+            caffeineCache.put(key, object);
+        }
+
+        return (T) object;
     }
 
     @Override
