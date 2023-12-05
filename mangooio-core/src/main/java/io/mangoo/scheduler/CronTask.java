@@ -3,9 +3,7 @@ package io.mangoo.scheduler;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,14 +46,16 @@ public class CronTask implements Runnable {
     }
     
     private long delay() throws ExecutionException, InterruptedException {
-        if (getDelay() == 0) {
-            Executors.newSingleThreadScheduledExecutor().schedule(() -> {}, 1, TimeUnit.SECONDS).get();
+        if (secondsToNextExecution() == 0) {
+            try (ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory())) {
+                executor.schedule(() -> {}, 1, TimeUnit.SECONDS).get();
+            }
         }
 
-        return getDelay();
+        return secondsToNextExecution();
     }
 
-    private long getDelay() {
+    private long secondsToNextExecution() {
         return executionTime
                 .timeToNextExecution(ZonedDateTime.now())
                 .orElse(Duration.ofSeconds(-1))
