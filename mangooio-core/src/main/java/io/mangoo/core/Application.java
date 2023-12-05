@@ -13,9 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import io.mangoo.enums.*;
@@ -77,7 +75,7 @@ public final class Application {
     private static final int BUFFER_SIZE = 255;
     private static final LocalDateTime start = LocalDateTime.now();
     private static io.mangoo.core.Module module;
-    private static ScheduledExecutorService scheduledExecutorService;
+    private static ScheduledExecutorService scheduler;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
@@ -126,7 +124,7 @@ public final class Application {
         var config = getInstance(Config.class);
         
         if (config.isSchedulerEnabled()) {
-            scheduledExecutorService = Executors.newScheduledThreadPool(0, Thread.ofVirtual().factory());
+            scheduler = Executors.newScheduledThreadPool(20, Thread.ofVirtual().factory());
             
             try (var scanResult =
                     new ClassGraph()
@@ -203,21 +201,21 @@ public final class Application {
         Objects.requireNonNull(at, "at can not be null");
         
         if (isCron) {
-            try {
+            try (ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
                 var parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
                 var quartzCron = parser.parse(at);
                 quartzCron.validate();
-                
-                scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
-                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
+
+                scheduler.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
+                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
                 LOG.error("Scheduled cron task found, but the unix cron is invalid", e);
                 failsafe();
             }
         } else {
             if (time > 0) {
-                scheduledExecutorService.scheduleWithFixedDelay(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
-                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);  
+                scheduler.scheduleWithFixedDelay(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
+                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
                 LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
                 failsafe();
@@ -324,7 +322,7 @@ public final class Application {
      * @return ScheduledExecutorService
      */
     public static ScheduledExecutorService getScheduler() {
-        return scheduledExecutorService;
+        return scheduler;
     }
 
     /**
