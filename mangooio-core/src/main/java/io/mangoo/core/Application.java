@@ -332,6 +332,16 @@ public final class Application {
     }
 
     /**
+     * Returns the ExecutorService the execution of the scheduled tasks
+     * are performed
+     *
+     * @return ExecutorService
+     */
+    public static ExecutorService getExecutor() {
+        return executor;
+    }
+
+    /**
      * Returns the Google Guice Injector
      *
      * @return Google Guice injector instance
