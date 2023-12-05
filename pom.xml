@@ -33,7 +33,7 @@
 		<enforcer.version>1.7.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.16.0</jackson.version>
-		<maven.javadoc.version>3.6.2</maven.javadoc.version>
+		<maven.javadoc.version>3.6.3</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
 	</properties>
