@@ -1,12 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Deque;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.core.Application;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Form;
@@ -16,6 +9,12 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.HttpString;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Deque;
 
 public class FormHandler implements HttpHandler {
 

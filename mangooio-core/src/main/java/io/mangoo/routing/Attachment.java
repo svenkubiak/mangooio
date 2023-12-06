@@ -1,22 +1,13 @@
 package io.mangoo.routing;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
-import io.mangoo.routing.bindings.Authentication;
-import io.mangoo.routing.bindings.Flash;
-import io.mangoo.routing.bindings.Form;
-import io.mangoo.routing.bindings.Request;
-import io.mangoo.routing.bindings.Session;
+import io.mangoo.routing.bindings.*;
 import io.mangoo.templating.TemplateEngine;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class Attachment {
     private final long start = System.currentTimeMillis();

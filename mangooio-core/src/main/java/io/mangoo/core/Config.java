@@ -1,5 +1,19 @@
 package io.mangoo.core;
 
+import com.google.common.io.Resources;
+import com.google.inject.Singleton;
+import com.google.re2j.Pattern;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooEncryptionException;
+import jodd.props.Props;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,22 +24,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.io.Resources;
-import com.google.inject.Singleton;
-import com.google.re2j.Pattern;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooEncryptionException;
-import jodd.props.Props;
 
 @Singleton
 public class Config {

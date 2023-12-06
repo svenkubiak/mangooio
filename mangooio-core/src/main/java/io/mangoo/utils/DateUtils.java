@@ -1,12 +1,12 @@
 package io.mangoo.utils;
 
+import io.mangoo.enums.Required;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
-
-import io.mangoo.enums.Required;
 
 public final class DateUtils {
     private DateUtils() {

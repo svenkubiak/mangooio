@@ -1,16 +1,14 @@
 package io.mangoo.templating.methods;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.re2j.Pattern;
-
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.routing.Router;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 public class RouteMethod implements TemplateMethodModelEx {
     private static final Pattern PARAMETER_PATTERN = Pattern.compile("\\{(.*?)\\}");

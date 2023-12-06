@@ -1,19 +1,17 @@
 package io.mangoo.utils.totp;
 
-import java.lang.reflect.UndeclaredThrowableException;
-import java.security.GeneralSecurityException;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.google.common.io.BaseEncoding;
-
 import io.mangoo.enums.HmacShaAlgorithm;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.security.GeneralSecurityException;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A Time-based One-time Password (TOTP) builder.

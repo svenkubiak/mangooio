@@ -1,11 +1,11 @@
 package io.mangoo.utils.token;
 
-import java.util.Objects;
-
 import dev.paseto.jpaseto.PasetoException;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
+
+import java.util.Objects;
 
 public class TokenParser extends TokenCommons {
     private String sharedSecret;

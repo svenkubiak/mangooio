@@ -1,18 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
@@ -23,6 +10,13 @@ import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class DispatcherHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(DispatcherHandler.class);

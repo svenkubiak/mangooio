@@ -1,11 +1,11 @@
 package io.mangoo.utils.token;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 import dev.paseto.jpaseto.Paseto;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Token extends TokenCommons {
     private Paseto paseto;

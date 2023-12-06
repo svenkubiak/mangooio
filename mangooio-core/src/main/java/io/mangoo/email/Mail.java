@@ -1,21 +1,15 @@
 package io.mangoo.email;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
-
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.services.EventBusService;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
+
+import java.nio.file.Path;
+import java.util.*;
 
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;

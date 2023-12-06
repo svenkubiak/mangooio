@@ -1,9 +1,9 @@
 package io.mangoo.utils;
 
+import io.mangoo.enums.Required;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-
-import io.mangoo.enums.Required;
 
 public final class ByteUtils {
     private static final int BYTES = 8;

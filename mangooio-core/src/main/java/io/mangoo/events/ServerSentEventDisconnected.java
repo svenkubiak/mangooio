@@ -1,9 +1,9 @@
 package io.mangoo.events;
 
-import java.util.Objects;
-
 import io.mangoo.enums.Required;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
+
+import java.util.Objects;
 
 public class ServerSentEventDisconnected {
     private String uri;

@@ -1,9 +1,5 @@
 package io.mangoo.templating;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
@@ -12,6 +8,10 @@ import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
 import io.mangoo.templating.methods.RouteMethod;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class TemplateContext {
     private String templatePath;

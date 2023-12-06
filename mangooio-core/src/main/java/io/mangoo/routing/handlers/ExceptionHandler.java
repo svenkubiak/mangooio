@@ -1,11 +1,6 @@
 package io.mangoo.routing.handlers;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.net.MediaType;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
@@ -14,6 +9,9 @@ import io.mangoo.templating.TemplateEngine;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ExceptionHandler implements HttpHandler {
     private static final Logger LOG = LogManager.getLogger(ExceptionHandler.class);

@@ -1,17 +1,15 @@
 package io.mangoo.routing.handlers;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.net.MediaType;
-
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public class BinaryHandler implements HttpHandler {
     private Response response;

@@ -1,12 +1,12 @@
 package io.mangoo.core;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
-
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
 
 public final class Server {
     private static Map<Header, String> headers = Map.of(

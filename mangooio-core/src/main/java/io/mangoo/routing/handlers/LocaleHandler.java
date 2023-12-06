@@ -1,12 +1,6 @@
 package io.mangoo.routing.handlers;
 
-import java.util.Locale;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.inject.Inject;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Header;
@@ -16,6 +10,10 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Locale;
+import java.util.Objects;
 
 public class LocaleHandler implements HttpHandler {
     private final Config config;

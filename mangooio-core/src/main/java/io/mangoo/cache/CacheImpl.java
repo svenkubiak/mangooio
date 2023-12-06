@@ -1,19 +1,15 @@
 package io.mangoo.cache;
 
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import io.mangoo.enums.Required;
+
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
-import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import io.mangoo.enums.Required;
-import org.apache.commons.collections.bag.SynchronizedSortedBag;
-import org.checkerframework.checker.nullness.qual.PolyNull;
-import org.checkerframework.checker.units.qual.K;
 
 public class CacheImpl implements Cache {
     private static final String EXPIRES_SUFFIX = "-expires";
@@ -48,6 +44,7 @@ public class CacheImpl implements Cache {
     @Override
     public void clear() {
         caffeineCache.invalidateAll();
+        caffeineCache.cleanUp();
     }
 
     @Override

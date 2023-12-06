@@ -1,20 +1,19 @@
 package io.mangoo.cache;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.core.Config;
+import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.core.Config;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Required;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {

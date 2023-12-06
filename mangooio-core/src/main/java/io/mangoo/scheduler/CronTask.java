@@ -1,20 +1,21 @@
 package io.mangoo.scheduler;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.concurrent.*;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
-
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CronTask implements Runnable {
     private static final Logger LOG = LogManager.getLogger(CronTask.class);

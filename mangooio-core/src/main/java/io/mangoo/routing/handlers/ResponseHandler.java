@@ -1,7 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
@@ -10,6 +8,7 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.lang3.StringUtils;
 
 public class ResponseHandler implements HttpHandler {
     

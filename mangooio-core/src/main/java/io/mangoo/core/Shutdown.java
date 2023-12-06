@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import com.google.inject.Singleton;
-
 import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton

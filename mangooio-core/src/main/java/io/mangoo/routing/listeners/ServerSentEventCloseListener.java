@@ -1,11 +1,10 @@
 package io.mangoo.routing.listeners;
 
-import org.xnio.ChannelListener;
-
 import io.mangoo.core.Application;
 import io.mangoo.events.ServerSentEventDisconnected;
 import io.mangoo.services.EventBusService;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import org.xnio.ChannelListener;
 
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
     @Override

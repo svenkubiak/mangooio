@@ -1,13 +1,12 @@
 package io.mangoo.routing.routes;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.enums.Http;
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RequestRoute implements MangooRoute {
     private Class<?> controllerClass;

@@ -1,11 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -13,6 +7,11 @@ import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.totp.TotpUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Authentication {
     private LocalDateTime expires;

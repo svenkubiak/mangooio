@@ -1,7 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.core.Server;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Header;
@@ -9,6 +7,7 @@ import io.mangoo.enums.Template;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.lang3.StringUtils;
 
 public class FallbackHandler implements HttpHandler {
     @Override
