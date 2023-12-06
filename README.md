@@ -44,10 +44,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * [Maven](https://maven.apache.org/) – Dependency management, built-system, packaging
 * [Undertow](http://undertow.io/) – Web Server
-* [mongoDB](https://www.mongodb.com/) – Persistence
+* [MongoDB](https://www.mongodb.com/) – Persistence
 * [Google Guice](https://github.com/google/guice) – Dependency injection
+* [Google Guava](https://github.com/google/guava) – EventBus
+* [Classgraph](https://github.com/classgraph/classgraph) – Classpath scanning
+* [Caffeine](https://github.com/ben-manes/caffeine) – Caching
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
-* [Guava](https://github.com/google/guava) – Caching
 * [Freemarker](http://freemarker.org/) – Template engine
 * [Jackson](https://github.com/FasterXML/jackson), [JSONPath](https://github.com/jayway/JsonPath) – Handling JSON
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
