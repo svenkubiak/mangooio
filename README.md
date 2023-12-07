@@ -62,7 +62,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * 7.706 Lines of core code
 * 4.032 Commits
 * 547 Unit tests
-* 7+ years development maturity
+* 8+ years development maturity
 * 242 cups of coffee (estimated)
 
 ## Resources

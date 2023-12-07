@@ -49,6 +49,17 @@ public interface Cache {
      */
     <T> T get(String key);
 
+    /**
+     * Tries to retrieve an object from the cache and if not
+     * found invokes the given fallback methods, returns that
+     * value while also populating the cache under the given key
+     *
+     * @param key The key for the cached value
+     * @param fallback The fallback method to call if value not found
+     * @param <T> JavaDoc requires this (just ignore it)
+     *
+     * @return A converted cache class value
+     */
     <T> T get(String key, Function<String, Object> fallback);
 
     /**
