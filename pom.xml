@@ -36,6 +36,7 @@
 		<maven.javadoc.version>3.6.3</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
+		<jna.version>5.14.0</jna.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -240,12 +241,12 @@
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna</artifactId>
-				<version>5.13.0</version>
+				<version>${jna.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
 				<artifactId>jna-platform</artifactId>
-				<version>5.13.0</version>
+				<version>${jna.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.cronutils</groupId>
@@ -406,7 +407,7 @@
 			<dependency>
 				<groupId>org.furyio</groupId>
 				<artifactId>fury-core</artifactId>
-				<version>0.4.0</version>
+				<version>0.4.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
