@@ -108,7 +108,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>9.0.1</version>
+					<version>9.0.4</version>
 					<configuration>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
@@ -122,6 +122,7 @@
 						<nuspecAnalyzerEnabled>false</nuspecAnalyzerEnabled>
 						<cocoapodsAnalyzerEnabled>false</cocoapodsAnalyzerEnabled>
 						<golangDepEnabled>false</golangDepEnabled>
+						<nvdApiKey>${nvd-key}</nvdApiKey>
 					</configuration>
 					<executions>
 						<execution>
