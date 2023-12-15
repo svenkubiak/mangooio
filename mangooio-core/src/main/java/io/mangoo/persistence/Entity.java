@@ -1,10 +1,13 @@
 package io.mangoo.persistence;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
 public class Entity implements BaseEntity {
     @BsonId
+    @JsonSerialize(using = ToStringSerializer.class)
     protected ObjectId id;
 
     @Override
