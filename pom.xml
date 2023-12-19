@@ -57,7 +57,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.12.0</version>
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
@@ -80,7 +80,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>4.0.0-M12</version>
+					<version>4.0.0-M13</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -118,7 +118,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>9.0.6</version>
+					<version>9.0.7</version>
 					<configuration>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
@@ -514,7 +514,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>32.1.3-jre</version>
+				<version>33.0.0-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
