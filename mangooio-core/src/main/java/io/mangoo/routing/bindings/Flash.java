@@ -1,14 +1,13 @@
 package io.mangoo.routing.bindings;
 
+import io.mangoo.enums.Required;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import io.mangoo.enums.Required;
 
 public class Flash {
     private static final Logger LOG = LogManager.getLogger(Flash.class);

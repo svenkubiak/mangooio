@@ -1,11 +1,6 @@
 package io.mangoo.routing.handlers;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.inject.Inject;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.core.Server;
@@ -18,6 +13,9 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public class AuthenticationHandler implements HttpHandler {
     private final Config config;

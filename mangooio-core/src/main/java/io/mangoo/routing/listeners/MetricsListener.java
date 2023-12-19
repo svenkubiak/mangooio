@@ -1,14 +1,13 @@
 package io.mangoo.routing.listeners;
 
-import java.util.Locale;
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.core.Application;
 import io.mangoo.models.Metrics;
 import io.undertow.server.ExchangeCompletionListener;
 import io.undertow.server.HttpServerExchange;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Locale;
+import java.util.Optional;
 
 public class MetricsListener implements ExchangeCompletionListener {
     private long start;

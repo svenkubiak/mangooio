@@ -31,6 +31,7 @@ public enum Required {
     EVENT("event can not be null"),
     EVENT_LISTENER("eventListener can not be null"),
     EXPIRES("expires can not be null"),
+    FALLBACK("fallback can not be null"),
     FILE("file can not be null"),
     FROM("from can not be null"),
     HASH("hash can not be null"),

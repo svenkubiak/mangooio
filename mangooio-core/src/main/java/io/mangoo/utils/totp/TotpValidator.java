@@ -1,7 +1,6 @@
 package io.mangoo.utils.totp;
 
 import com.google.common.base.Preconditions;
-
 import io.mangoo.enums.HmacShaAlgorithm;
 
 /**

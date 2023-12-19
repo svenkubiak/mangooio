@@ -1,5 +1,14 @@
 package io.mangoo.utils;
 
+import com.google.common.base.Preconditions;
+import com.google.common.io.Resources;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
@@ -12,17 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.base.Preconditions;
-import com.google.common.io.Resources;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);

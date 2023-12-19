@@ -1,22 +1,5 @@
 package io.mangoo.templating;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.cache.MruCacheStorage;
 import freemarker.core.HTMLOutputFormat;
@@ -31,6 +14,18 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.models.Source;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);

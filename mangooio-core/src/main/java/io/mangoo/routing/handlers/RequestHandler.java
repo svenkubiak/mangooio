@@ -1,25 +1,8 @@
 package io.mangoo.routing.handlers;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.io.Resources;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.cache.CacheProvider;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
-import io.mangoo.enums.CacheName;
 import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
@@ -32,6 +15,17 @@ import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class RequestHandler implements HttpHandler {
     private Attachment attachment;
@@ -143,29 +137,7 @@ public class RequestHandler implements HttpHandler {
                     .withPrettyTime(attachment.getLocale())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
-            invokedResponse.andBody(attachment.getTemplateEngine().renderTemplate(templateContext));
-        } else if (invokedResponse.isUnrendered()) {
-            var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.RESPONSE);
-            String path = new StringBuffer()
-                    .append(Default.TEMPLATES_FOLDER.toString())
-                    .append(attachment.getControllerClassName())
-                    .append('/')
-                    .append(attachment.getControllerMethodName())
-                    .append(Default.HTML_SUFFIX.toString())
-                    .toString();
-            
-            var body = "";
-            
-            if (cache.get(path) == null) {
-                body = Resources.toString(Resources.getResource(path), StandardCharsets.UTF_8);
-                cache.put(path, body);
-            } else {
-                body = cache.get(path);
-            }
-            
-            invokedResponse.andBody(body);
-        } else {
-            //ignore anything else
+            invokedResponse.andHtmlBody(attachment.getTemplateEngine().renderTemplate(templateContext));
         }
 
         return invokedResponse;

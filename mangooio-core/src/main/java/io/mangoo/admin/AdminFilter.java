@@ -1,9 +1,5 @@
 package io.mangoo.admin;
 
-import java.time.LocalDateTime;
-
-import org.apache.commons.lang3.StringUtils;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
@@ -13,6 +9,9 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.token.TokenParser;
+import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
 
 public class AdminFilter implements PerRequestFilter {
     private static final String VERSION_TAG = MangooUtils.getVersion();

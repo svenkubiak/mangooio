@@ -1,14 +1,18 @@
 package controllers;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import io.mangoo.enums.Default;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 
@@ -74,7 +78,14 @@ public class ApplicationController {
     }
     
     public Response unrenderedText() {
-        return Response.withOk().andBody();
+        String body = null;
+        try {
+            body = Resources.toString(Resources.getResource("templates/ApplicationController/unrenderedText.html"), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            // Intentionally left blank
+        }
+
+        return Response.withOk().andHtmlBody(body);
     }
     
     public Response badrequest() {

@@ -1,27 +1,27 @@
 package io.mangoo.cache;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.core.Config;
+import io.mangoo.enums.CacheName;
+import io.mangoo.enums.Required;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.core.Config;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Required;
-
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private Map<String, Cache> caches = new HashMap<>();
+    private final Map<String, Cache> caches = new HashMap<>();
     private Cache cache;
     private static final long SIXTY = 60;
-    private static final long TWENTY_THOUSAND_ELEMENTS = 20000;
+    private static final long THIRTY = 30;
+    private static final long FOURTY_THOUSAND = 40000;
 
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
@@ -30,39 +30,29 @@ public class CacheProvider implements Provider<Cache> {
         
         initApplicationCache();
         initAuthenticationCache();
-        initResponseCache();
         setDefaultApplicationCache();
     }
 
     private void initApplicationCache() {
-        Cache applicationCache = new CacheImpl(CacheBuilder.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
+        Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
+                .maximumSize(FOURTY_THOUSAND)
+                .expireAfterAccess(Duration.of(THIRTY, ChronoUnit.DAYS))
                 .recordStats()
                 .build());
-        
+
         caches.put(CacheName.APPLICATION.toString(), applicationCache);
     }
 
     private void initAuthenticationCache() {
-        Cache authenticationCache = new CacheImpl(CacheBuilder.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
+        Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
+                .maximumSize(FOURTY_THOUSAND)
+                .expireAfterAccess(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());
-        
+
         caches.put(CacheName.AUTH.toString(), authenticationCache);
     }
-    
-    private void initResponseCache() {
-        Cache responseCache = new CacheImpl(CacheBuilder.newBuilder()
-                .maximumSize(TWENTY_THOUSAND_ELEMENTS)
-                .expireAfterWrite(Duration.of(SIXTY, ChronoUnit.MINUTES))
-                .recordStats()
-                .build());
-        
-        caches.put(CacheName.RESPONSE.toString(), responseCache);
-    }
-    
+
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }

@@ -1,13 +1,12 @@
 package io.mangoo.scheduler;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Objects;
-
+import io.mangoo.core.Application;
+import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import io.mangoo.core.Application;
-import io.mangoo.enums.Required;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 public class Task implements Runnable {
     private static final Logger LOG = LogManager.getLogger(Task.class);

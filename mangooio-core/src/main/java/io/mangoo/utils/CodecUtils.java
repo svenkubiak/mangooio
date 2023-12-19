@@ -1,19 +1,18 @@
 package io.mangoo.utils;
 
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Objects;
-
+import io.fury.Fury;
+import io.fury.ThreadSafeFury;
+import io.fury.config.Language;
+import io.mangoo.enums.Required;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
-import io.fury.Fury;
-import io.fury.ThreadSafeFury;
-import io.fury.config.Language;
-import io.mangoo.enums.Required;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Objects;
 
 public final class CodecUtils {
     private static final Base64.Encoder BASRE64ENCODER = Base64.getEncoder();

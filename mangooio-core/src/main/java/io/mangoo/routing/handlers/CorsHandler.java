@@ -1,11 +1,6 @@
 package io.mangoo.routing.handlers;
 
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.inject.Inject;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
@@ -13,6 +8,9 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 public class CorsHandler implements HttpHandler {
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";

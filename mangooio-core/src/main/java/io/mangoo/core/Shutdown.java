@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import com.google.inject.Singleton;
-
 import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton
@@ -24,7 +23,8 @@ public class Shutdown extends Thread {
 
     private static void stopScheduler() {
         if (Application.getInstance(Config.class).isSchedulerEnabled()) {
-            Application.getScheduler().shutdown();            
+            Application.getScheduler().shutdown();
+            Application.getExecutor().shutdown();
         }
     }
 

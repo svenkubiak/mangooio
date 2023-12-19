@@ -1,51 +1,50 @@
 package io.mangoo.cache;
 
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import io.mangoo.enums.Required;
+
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheStats;
-
-import io.mangoo.enums.Required;
+import java.util.function.Function;
 
 public class CacheImpl implements Cache {
     private static final String EXPIRES_SUFFIX = "-expires";
-	private com.google.common.cache.Cache<String, Object> guavaCache = CacheBuilder.newBuilder().build();
+    private final com.github.benmanes.caffeine.cache.Cache<String, Object> caffeineCache;
     
-    public CacheImpl(com.google.common.cache.Cache<String, Object> guavaCache) {
-        Objects.requireNonNull(guavaCache, Required.CACHE.toString());
-        this.guavaCache = guavaCache;
+    public CacheImpl(com.github.benmanes.caffeine.cache.Cache<String, Object> caffeineCache) {
+        Objects.requireNonNull(caffeineCache, Required.CACHE.toString());
+        this.caffeineCache = caffeineCache;
     }
 
     @Override
     public void put(String key, Object value) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        guavaCache.put(key, value);
+        caffeineCache.put(key, value);
     }
 
 	@Override
 	public void put(String key, Object value, int expires, TemporalUnit temporalUnit) {
 		Objects.requireNonNull(key, Required.KEY.toString());
 		Objects.requireNonNull(temporalUnit, Required.TEMPORAL_UNIT.toString());
-		
-		guavaCache.put(key, value);
-		guavaCache.put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
+
+        caffeineCache.put(key, value);
+        caffeineCache.put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
 	}
 
     @Override
     public void remove(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
-        guavaCache.invalidate(key);
+        caffeineCache.invalidate(key);
     }
 
     @Override
     public void clear() {
-        guavaCache.invalidateAll();
+        caffeineCache.invalidateAll();
+        caffeineCache.cleanUp();
     }
 
     @Override
@@ -53,18 +52,31 @@ public class CacheImpl implements Cache {
     public <T> T get(String key) {
         Objects.requireNonNull(key, Required.KEY.toString());
         
-        Object expires = guavaCache.getIfPresent(key + EXPIRES_SUFFIX);
+        Object expires = caffeineCache.getIfPresent(key + EXPIRES_SUFFIX);
         if (expires != null && LocalDateTime.now().isAfter((LocalDateTime) expires)) {
         	remove(key);
         	remove(key + EXPIRES_SUFFIX);
         }
-        
-        return (T) guavaCache.getIfPresent(key);
+
+        return (T) caffeineCache.getIfPresent(key);
     }
 
     @Override
-    public <T> Optional<T> getIfPresent(String key) {
-        return Optional.ofNullable(get(key));
+    @SuppressWarnings("unchecked")
+    public <T> T get(String key, Function<String, Object> fallback) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(fallback, Required.FALLBACK.toString());
+
+        Object object = caffeineCache.getIfPresent(key);
+        if (object == null) {
+            Map<String, Object> temp = new HashMap<>();
+            temp.computeIfAbsent(key, fallback);
+            object = temp.get(key);
+
+            caffeineCache.put(key, object);
+        }
+
+        return (T) object;
     }
 
     @Override
@@ -82,7 +94,7 @@ public class CacheImpl implements Cache {
     @Override
     public void putAll(Map<String, Object> map) {
         Objects.requireNonNull(map, Required.MAP.toString());
-        guavaCache.putAll(map);
+        caffeineCache.putAll(map);
     }
 
     @Override
@@ -133,6 +145,6 @@ public class CacheImpl implements Cache {
     }
     
     public CacheStats getStats() {
-        return guavaCache.stats();
+        return caffeineCache.stats();
     }
 }

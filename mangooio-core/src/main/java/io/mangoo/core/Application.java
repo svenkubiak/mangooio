@@ -1,39 +1,10 @@
 package io.mangoo.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import io.mangoo.enums.*;
-import io.mangoo.utils.PersistenceUtils;
-import org.apache.commons.lang3.RegExUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Stage;
-
+import com.google.inject.*;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.AnnotationInfoList;
 import io.github.classgraph.ClassGraph;
@@ -42,15 +13,13 @@ import io.github.classgraph.MethodInfo;
 import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.email.MailListener;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
-import io.mangoo.routing.handlers.DispatcherHandler;
-import io.mangoo.routing.handlers.ExceptionHandler;
-import io.mangoo.routing.handlers.FallbackHandler;
-import io.mangoo.routing.handlers.MetricsHandler;
-import io.mangoo.routing.handlers.ServerSentEventHandler;
+import io.mangoo.routing.handlers.*;
 import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
@@ -60,6 +29,7 @@ import io.mangoo.scheduler.Task;
 import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.PersistenceUtils;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
@@ -69,15 +39,35 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Methods;
+import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
-    private static final int BUFFERSIZE = 255;
-    private static final LocalDateTime start = LocalDateTime.now();
+    private static final int BUFFER_SIZE = 255;
+    private static final LocalDateTime START = LocalDateTime.now();
     private static io.mangoo.core.Module module;
-    private static ScheduledExecutorService scheduledExecutorService;
+    private static ScheduledExecutorService scheduler;
+    private static ExecutorService executor;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
@@ -126,8 +116,9 @@ public final class Application {
         var config = getInstance(Config.class);
         
         if (config.isSchedulerEnabled()) {
-            scheduledExecutorService = Executors.newScheduledThreadPool(config.getSchedulerPoolsize());
-            
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            executor = Executors.newVirtualThreadPerTaskExecutor();
+
             try (var scanResult =
                     new ClassGraph()
                         .enableAnnotationInfo()
@@ -207,19 +198,23 @@ public final class Application {
                 var parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
                 var quartzCron = parser.parse(at);
                 quartzCron.validate();
-                
-                scheduledExecutorService.schedule(new CronTask(classInfo.loadClass(), methodInfo.getName(), at), 0, TimeUnit.SECONDS);
-                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);  
+
+                CronTask cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
+                scheduler.schedule( () -> executor.execute(cronTask), 0, TimeUnit.SECONDS);
+
+                LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
                 LOG.error("Scheduled cron task found, but the unix cron is invalid", e);
                 failsafe();
             }
         } else {
             if (time > 0) {
-                scheduledExecutorService.scheduleWithFixedDelay(new Task(classInfo.loadClass(), methodInfo.getName()), time, time, TimeUnit.SECONDS);
-                LOG.info("Successfully scheduled task from class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);  
+                Task task = new Task(classInfo.loadClass(), methodInfo.getName());
+                scheduler.scheduleWithFixedDelay( () -> executor.execute(task), time, time, TimeUnit.SECONDS);
+
+                LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
-                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' and rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
+                LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
                 failsafe();
             }
         }
@@ -324,7 +319,17 @@ public final class Application {
      * @return ScheduledExecutorService
      */
     public static ScheduledExecutorService getScheduler() {
-        return scheduledExecutorService;
+        return scheduler;
+    }
+
+    /**
+     * Returns the ExecutorService the execution of the scheduled tasks
+     * are performed
+     *
+     * @return ExecutorService
+     */
+    public static ExecutorService getExecutor() {
+        return executor;
     }
 
     /**
@@ -347,16 +352,14 @@ public final class Application {
      * @return The LocalDateTime of the application start
      */
     public static LocalDateTime getStart() {
-        return start;
+        return START;
     }
 
     /**
      * @return The duration of the application uptime
      */
     public static Duration getUptime() {
-        Objects.requireNonNull(start, Required.START.toString());
-
-        return Duration.between(start, LocalDateTime.now());
+        return Duration.between(START, LocalDateTime.now());
     }
 
     /**
@@ -666,7 +669,7 @@ public final class Application {
 
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
-        final var buffer = new StringBuilder(BUFFERSIZE);
+        final var buffer = new StringBuilder(BUFFER_SIZE);
         buffer.append('\n')
             .append(getLogo())
             .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
@@ -685,7 +688,7 @@ public final class Application {
             LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
         }
         
-        String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(start, LocalDateTime.now()) + " ms in " + mode.toString() + " mode. Enjoy."; 
+        String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode.toString() + " mode. Enjoy.";
         LOG.info(startup);
     }
 

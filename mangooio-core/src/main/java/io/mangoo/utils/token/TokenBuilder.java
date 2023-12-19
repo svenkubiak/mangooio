@@ -1,18 +1,17 @@
 package io.mangoo.utils.token;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.crypto.spec.SecretKeySpec;
-
 import dev.paseto.jpaseto.PasetoV2LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class TokenBuilder extends TokenCommons {
     private LocalDateTime expires;

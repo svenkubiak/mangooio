@@ -65,24 +65,21 @@ class CacheTest {
     }
     
     @Test
-    void testGetIfPresent() {
+    void testGetWithFallback() {
         //given
         Cache cache = Application.getInstance(Cache.class);
 
         //then
-        assertThat(cache.get("foo"),equalTo(null));
+        assertThat(cache.get("foo"), equalTo(null));
 
         //when
-        String value = (String) cache.getIfPresent("foo").orElseGet(() -> {
-            cache.put("foo", "bla");
-            return "bar";
-        });
+        String value = cache.get("foo", v -> fallback());
 
         //then
-        assertThat(value, equalTo("bar"));
+        assertThat(value, equalTo("fallback"));
 
         //then
-        assertThat(cache.get("foo"),equalTo("bla"));
+        assertThat(cache.get("foo"), equalTo("fallback"));
     }
     
     @Test
@@ -152,5 +149,9 @@ class CacheTest {
         
         //then
         assertThat(decrement.get(), equalTo(-2));
+    }
+
+    private String fallback() {
+        return "fallback";
     }
 }

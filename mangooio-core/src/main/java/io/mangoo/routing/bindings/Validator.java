@@ -1,24 +1,18 @@
 package io.mangoo.routing.bindings;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.google.inject.Inject;
+import com.google.re2j.Pattern;
+import io.mangoo.enums.Required;
+import io.mangoo.enums.Validation;
+import io.mangoo.i18n.Messages;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
-import com.google.inject.Inject;
-import com.google.re2j.Pattern;
-
-import io.mangoo.enums.Required;
-import io.mangoo.enums.Validation;
-import io.mangoo.i18n.Messages;
+import java.io.Serializable;
+import java.util.*;
 
 public class Validator implements Serializable {
     private static final long serialVersionUID = -714400230978999709L;

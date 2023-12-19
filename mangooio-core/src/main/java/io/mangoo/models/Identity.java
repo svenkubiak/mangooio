@@ -1,5 +1,11 @@
 package io.mangoo.models;
 
+import io.mangoo.enums.Required;
+import io.undertow.security.idm.Account;
+import io.undertow.security.idm.Credential;
+import io.undertow.security.idm.IdentityManager;
+import io.undertow.security.idm.PasswordCredential;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.security.Principal;
@@ -7,12 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
-
-import io.mangoo.enums.Required;
-import io.undertow.security.idm.Account;
-import io.undertow.security.idm.Credential;
-import io.undertow.security.idm.IdentityManager;
-import io.undertow.security.idm.PasswordCredential;
 
 public class Identity implements IdentityManager, Serializable {
     private static final long serialVersionUID = -412633269312361644L;

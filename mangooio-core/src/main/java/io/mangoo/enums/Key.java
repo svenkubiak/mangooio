@@ -52,7 +52,6 @@ public enum Key {
     PERSISTENCE_MONGO_PORT("mongo.port"),
     PERSISTENCE_MONGO_USERNAME("mongo.username"),
     SCHEDULER_ENABLE("scheduler.enable"),
-    SCHEDULER_POOLSIZE("scheduler.poolsize"),
     SESSION_COOKIE_EXPIRES("session.cookie.expires"),
     SESSION_COOKIE_NAME("session.cookie.name"),
     SESSION_COOKIE_SECRET("session.cookie.secret"),

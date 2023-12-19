@@ -1,14 +1,13 @@
 package io.mangoo.services;
 
+import com.google.common.eventbus.AsyncEventBus;
+import com.google.inject.Singleton;
+import io.mangoo.enums.Required;
+import io.mangoo.exceptions.MangooEventBusException;
+
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.inject.Singleton;
-
-import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooEventBusException;
 
 @Singleton
 public class EventBusService {

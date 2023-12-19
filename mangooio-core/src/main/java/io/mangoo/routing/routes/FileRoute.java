@@ -1,10 +1,10 @@
 package io.mangoo.routing.routes;
 
-import java.util.Objects;
-
 import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
+
+import java.util.Objects;
 
 public class FileRoute implements MangooRoute {
     private String url;

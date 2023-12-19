@@ -1,14 +1,13 @@
 package io.mangoo.persistence;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
 import io.mangoo.enums.Required;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Singleton
 public class DatastoreProvider implements Provider<Datastore> {

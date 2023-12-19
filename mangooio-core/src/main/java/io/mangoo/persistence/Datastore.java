@@ -1,11 +1,10 @@
 package io.mangoo.persistence;
 
-import java.util.List;
-
-import org.bson.conversions.Bson;
-
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import org.bson.conversions.Bson;
+
+import java.util.List;
 
 public interface Datastore {
 

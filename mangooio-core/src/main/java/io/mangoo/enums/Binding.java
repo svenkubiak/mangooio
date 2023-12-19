@@ -1,10 +1,10 @@
 package io.mangoo.enums;
 
+import com.google.common.collect.Maps;
+
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),

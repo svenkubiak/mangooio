@@ -19,7 +19,6 @@ Here are some key features of mangoo I/O in a nutshell:
 * Hot-Compiling development mode for high productivity
 * Straightforward persistence integration
 * Easy to use template engine
-* Two Framework Annotations only
 * Dependency Injection
 * Simplified Caching
 * Build-in asynchronous email handling
@@ -33,7 +32,6 @@ Here are some key features of mangoo I/O in a nutshell:
 * Strong cryptography and enforced security
 * Build-in EventBus for asynchronous tasks
 * Administrative interface
-* Supports CORS
 * Build-in asset minification
 * Flexible testing tools
 * Simple Deployment and CI-Integration
@@ -46,10 +44,12 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 * [Maven](https://maven.apache.org/) – Dependency management, built-system, packaging
 * [Undertow](http://undertow.io/) – Web Server
-* [mongoDB](https://www.mongodb.com/) – Persistence
+* [MongoDB](https://www.mongodb.com/) – Persistence
 * [Google Guice](https://github.com/google/guice) – Dependency injection
+* [Google Guava](https://github.com/google/guava) – EventBus
+* [Classgraph](https://github.com/classgraph/classgraph) – Classpath scanning
+* [Caffeine](https://github.com/ben-manes/caffeine) – Caching
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
-* [Guava](https://github.com/google/guava) – Caching
 * [Freemarker](http://freemarker.org/) – Template engine
 * [Jackson](https://github.com/FasterXML/jackson), [JSONPath](https://github.com/jayway/JsonPath) – Handling JSON
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
@@ -58,11 +58,11 @@ Here are some used libraries and their purpose in mangoo I/O.
 
 ## By the numbers
 
-* 1.241 Sonar rules
-* 7.568 Lines of core code
-* 3.633 Commits
-* 536 Unit tests
-* 6+ years development maturity
+* 1.307 Sonar rules
+* 7.706 Lines of core code
+* 4.032 Commits
+* 547 Unit tests
+* 8+ years development maturity
 * 242 cups of coffee (estimated)
 
 ## Resources
