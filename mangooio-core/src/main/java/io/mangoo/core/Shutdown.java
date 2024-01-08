@@ -2,6 +2,7 @@ package io.mangoo.core;
 
 import com.google.inject.Singleton;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.reactive.Stream;
 
 @Singleton
 public class Shutdown extends Thread {
@@ -15,6 +16,7 @@ public class Shutdown extends Thread {
         stopUndertow();
         stopScheduler();
         stopEmbeddedMongoDB();
+        closeStreams();
     }
 
     private static void invokeLifecycle() {
@@ -34,5 +36,9 @@ public class Shutdown extends Thread {
     
     private static void stopEmbeddedMongoDB() {
         Application.stopEmbeddedMongoDB();
+    }
+
+    private static void closeStreams() {
+        Application.getInstance(Stream.class).close();
     }
 }

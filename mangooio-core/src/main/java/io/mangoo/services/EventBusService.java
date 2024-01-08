@@ -14,7 +14,13 @@ public class EventBusService {
     private AsyncEventBus asyncEventBus;
     private AtomicLong listeners = new AtomicLong();
     private AtomicLong events = new AtomicLong();
-    
+
+    /**
+     * Guava based event bus is deprecated and replaced by
+     * io.mangoo.reactive.Stream, see documentation on more
+     * information https://github.com/svenkubiak/mangooio/wiki/Async
+     * */
+    @Deprecated(since = "8.2.0", forRemoval = true)
     public EventBusService() {
         asyncEventBus = new AsyncEventBus(Executors.newCachedThreadPool());
     }
