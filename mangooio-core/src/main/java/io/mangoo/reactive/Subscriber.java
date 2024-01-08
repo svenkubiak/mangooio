@@ -2,7 +2,7 @@ package io.mangoo.reactive;
 
 import java.util.concurrent.Flow;
 
-class Subscriber<T> implements Flow.Subscriber<T> {
+public class Subscriber<T> implements Flow.Subscriber<T> {
     protected Flow.Subscription subscription;
 
     @Override
