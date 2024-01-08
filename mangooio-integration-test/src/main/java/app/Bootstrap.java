@@ -1,36 +1,28 @@
 package app;
 
-import controllers.ApplicationController;
-import controllers.AuthenticationController;
-import controllers.BasicAuthenticationController;
-import controllers.FilterController;
-import controllers.FlashController;
-import controllers.FormController;
-import controllers.I18nController;
-import controllers.JsonController;
-import controllers.ParameterController;
-import controllers.SessionController;
+import controllers.*;
 import controllers.subcontrollers.SubController;
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.services.EventBusService;
 import listeners.ServerSentEventListener;
+import reactive.MySubscriber;
+
 
 @SuppressWarnings("all")
 public class Bootstrap implements MangooBootstrap {
 
     @Override
     public void initializeRoutes() {
-        //when
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
-        
         Application.getInstance(EventBusService.class).register(new ServerSentEventListener());
-        
-        
+        Application.getInstance(Stream.class).register(MySubscriber.class);
+
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),
