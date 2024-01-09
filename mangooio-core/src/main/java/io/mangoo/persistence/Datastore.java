@@ -53,7 +53,8 @@ public interface Datastore {
      * @param collection The name of the collection
      * @return MongoCollection
      */
-    MongoCollection<?> query(String collection);
+    @SuppressWarnings("rawtypes")
+    MongoCollection query(String collection);
 
     /**
      * Drops all data in MongoDB on the connected database
