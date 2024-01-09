@@ -1,11 +1,10 @@
 package io.mangoo.email;
 
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
-import io.mangoo.exceptions.MangooMailerException;
+import io.mangoo.reactive.Subscriber;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -28,9 +27,9 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Singleton
-public class MailListener {
+public class MailListener extends Subscriber<Mail> {
     private static final Logger LOG = LogManager.getLogger(MailListener.class);
-    private Session session;
+    private final Session session;
     
     @Inject
     public MailListener(Config config) {
@@ -68,10 +67,9 @@ public class MailListener {
      * Processes the given mail message and passes it to the underlying SMTP handling
      * 
      * @param mail The mail to send
-     * @throws MangooMailerException if delivery of mail fails
      */
-    @Subscribe
-    public void process(Mail mail) throws MangooMailerException {
+    @Override
+    public void onNext(Mail mail) {
         Objects.requireNonNull(mail, Required.MAIL.toString());
 
         try {
@@ -91,7 +89,6 @@ public class MailListener {
             Transport.send(mimeMessage);
         } catch (IOException | MessagingException e) {
             LOG.error("Failed to send mail", e);
-            throw new MangooMailerException(e);
         }
     }
 

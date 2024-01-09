@@ -30,7 +30,7 @@ public class LocationMethod implements TemplateMethodModelEx {
     }
     
     private boolean matches(List arguments) {
-        String route = ((SimpleScalar) arguments.get(0)).getAsString().toLowerCase(Locale.ENGLISH);
+        String route = ((SimpleScalar) arguments.getFirst()).getAsString().toLowerCase(Locale.ENGLISH);
         boolean equals = this.controller.equalsIgnoreCase(route);
         
         if (equals) {

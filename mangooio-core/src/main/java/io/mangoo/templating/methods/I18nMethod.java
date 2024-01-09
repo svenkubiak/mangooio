@@ -21,7 +21,7 @@ public class I18nMethod implements TemplateMethodModelEx {
     public TemplateModel exec(List arguments) throws TemplateModelException {
         var messageValue = "";
         if (arguments.size() == NUM_ARGUMENTS) {
-            var messageKey = ((SimpleScalar) arguments.get(0)).getAsString();
+            var messageKey = ((SimpleScalar) arguments.getFirst()).getAsString();
             messageValue = messages.get(messageKey);
 
         } else if (arguments.size() > NUM_ARGUMENTS) {
@@ -36,8 +36,8 @@ public class I18nMethod implements TemplateMethodModelEx {
                 }
             }
 
-            var messageKey = strings.get(0);
-            strings.remove(0);
+            var messageKey = strings.getFirst();
+            strings.removeFirst();
             messageValue = messages.get(messageKey, strings.toArray());
         } else {
             LOG.warn("Invalid number of arguments for i18n");

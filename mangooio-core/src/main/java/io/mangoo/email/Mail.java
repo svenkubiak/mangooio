@@ -2,9 +2,10 @@ package io.mangoo.email;
 
 import com.google.common.base.Preconditions;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Queue;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.services.EventBusService;
+import io.mangoo.reactive.Stream;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.templating.TemplateEngine;
 
@@ -253,8 +254,9 @@ public class Mail {
     /**
      * Sends the mail
      */
+    @SuppressWarnings("unchecked")
     public void send() {
-        Application.getInstance(EventBusService.class).publish(this);
+        Application.getInstance(Stream.class).publish(Queue.MAIL.toString(), this);
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {

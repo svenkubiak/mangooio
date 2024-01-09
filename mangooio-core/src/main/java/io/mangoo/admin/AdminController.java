@@ -13,11 +13,11 @@ import io.mangoo.enums.*;
 import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
+import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.annotations.FilterWith;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.services.EventBusService;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.token.TokenBuilder;
 import io.mangoo.utils.totp.TotpUtils;
@@ -69,7 +69,7 @@ public class AdminController {
     public Response index() {
         var instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
-        var eventBusService = Application.getInstance(EventBusService.class);
+        var stream = Application.getInstance(Stream.class);
         
         if (enabled) {
             var metrics = Application.getInstance(Metrics.class);
@@ -99,16 +99,16 @@ public class AdminController {
                     .andContent("avgRequestTime", metrics.getAvgRequestTime())
                     .andContent("maxRequestTime", metrics.getMaxRequestTime())
                     .andContent("errorRate", errorRate)
-                    .andContent("events", eventBusService.getNumEvents())
-                    .andContent("listeners", eventBusService.getNumListeners())
+                    .andContent("events", stream.getHandledEvents())
+                    .andContent("subscribers", stream.getNumberOfSubscribers())
                     .andTemplate(Template.DEFAULT.adminPath());
         }
         
         return Response.withOk()
                 .andContent(ENABLED, Boolean.FALSE)
                 .andContent("uptime", Date.from(instant))
-                .andContent("events", eventBusService.getNumEvents())
-                .andContent("listeners", eventBusService.getNumListeners())
+                .andContent("events", stream.getHandledEvents())
+                .andContent("subscribers", stream.getNumberOfSubscribers())
                 .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }

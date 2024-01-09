@@ -150,7 +150,7 @@ public class Form extends Validator {
      */
     public Optional<InputStream> getFile() {
         if (!files.isEmpty()) {
-            return Optional.of(files.get(0));
+            return Optional.of(files.getFirst());
         }
 
         return Optional.empty();

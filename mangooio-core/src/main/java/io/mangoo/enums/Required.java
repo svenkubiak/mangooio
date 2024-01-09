@@ -72,6 +72,7 @@ public enum Required {
     PRIORITY("Priority of 1 through 5 are acceptable, with 1 being the highest priority, 3 = normal and 5 = lowest priority"),
     PRIVATE_KEY("private key can not be null"),
     PUBLIC_KEY("public key can not be null"),
+    QUEUE("queue can not be null"),
     REDIRECT_TO("redirect to can not be null"),
     REPLY_TO("replyTo can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),

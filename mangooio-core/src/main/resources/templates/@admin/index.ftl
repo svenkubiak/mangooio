@@ -68,13 +68,13 @@
 	                        <div class="tile is-parent">
 	                            <article class="tile is-child box">
 	                                <p class="title">${events}</p>
-	                                <p class="subtitle">EventBus events</p>
+	                                <p class="subtitle">Handled events</p>
 	                            </article>
 	                        </div>
 	                        <div class="tile is-parent">
 	                            <article class="tile is-child box">
-	                                <p class="title">${listeners}</p>
-	                                <p class="subtitle">EventBus listeners</p>
+	                                <p class="title">${subscribers}</p>
+	                                <p class="subtitle">Total subscribers</p>
 	                            </article>
 	                        </div>
 	                    </div>

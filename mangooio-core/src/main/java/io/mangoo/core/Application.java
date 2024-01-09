@@ -14,8 +14,10 @@ import io.mangoo.admin.AdminController;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.email.MailListener;
 import io.mangoo.enums.Key;
+import io.mangoo.enums.Queue;
 import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -26,7 +28,6 @@ import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
-import io.mangoo.services.EventBusService;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.PersistenceUtils;
@@ -236,7 +237,7 @@ public final class Application {
                 String key = classInfo.getName();
 
                 AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
-                String value = (String) annotationInfo.get(0).getParameterValues().get(0).getValue();
+                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
 
                 PersistenceUtils.addCollection(key, value);
             });
@@ -246,8 +247,9 @@ public final class Application {
     /**
      * Configures async mailer
      */
+    @SuppressWarnings("unchecked")
     private static void prepareMail() {
-        getInstance(EventBusService.class).register(getInstance(MailListener.class));
+        getInstance(Stream.class).register(Queue.MAIL.toString(), MailListener.class);
     }
 
     /**

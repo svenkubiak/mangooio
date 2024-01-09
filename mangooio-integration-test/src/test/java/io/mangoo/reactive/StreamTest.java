@@ -29,7 +29,7 @@ class StreamTest {
         Stream stream = Application.getInstance(Stream.class);
 
         //when
-        stream.publish(uuid);
+        stream.publish("mysubscriber", uuid);
 
         //then
         await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(Utils.value.equals(uuid), equalTo(true)));
