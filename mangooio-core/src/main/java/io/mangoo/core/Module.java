@@ -10,7 +10,7 @@ import io.mangoo.persistence.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
 
 public class Module extends AbstractModule {
-    private Config config = new Config();
+    private final Config config = new Config();
     private EmbeddedMongoDB embeddedMongoDB;
     
     public Module() {

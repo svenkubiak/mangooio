@@ -263,7 +263,7 @@ public class AdminController {
         if (isValidHeaderToken(request)) {
             Map<String, Object> health = new HashMap<>();
             health.put("cpu", getCpu());
-            health.put("memoty", getMemory());
+            health.put("memory", getMemory());
             
             return Response.withOk().andJsonBody(health);
         }

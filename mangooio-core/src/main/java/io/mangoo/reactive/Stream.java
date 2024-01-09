@@ -24,6 +24,7 @@ public class Stream<T> {
      * @param queue The name of the queue
      * @param clazz The Subscriber class
      */
+    @SuppressWarnings("unchecked")
     public void register(String queue, Class<T> clazz) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(clazz, Required.CLASS.toString());

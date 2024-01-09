@@ -71,7 +71,7 @@ public interface Cache {
     
     /**
      * Increments a cache counter with a given key
-     * 
+     * <p>
      * If the counter did not exist, it will be
      * created and the incremented
      * 
@@ -82,7 +82,7 @@ public interface Cache {
     
     /**
      * Decrements a counter with a given key
-     * 
+     * <p>
      * If the counter did not exist, it will be
      * created and the decremented
      * 

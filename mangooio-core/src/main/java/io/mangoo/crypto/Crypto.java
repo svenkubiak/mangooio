@@ -76,7 +76,7 @@ public class Crypto {
 
     /**
      * Encrypts a given plain text using the application secret property (application.secret) as key
-     *
+     * <p>
      * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt
@@ -90,7 +90,7 @@ public class Crypto {
 
     /**
      * Encrypts a given plain text using the given key
-     *
+     * <p>
      * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
      *
      * @param plainText The plain text to encrypt

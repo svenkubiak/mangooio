@@ -3,7 +3,7 @@ package io.mangoo.reactive;
 import java.util.concurrent.Flow;
 
 public class Subscriber<T> implements Flow.Subscriber<T> {
-    private Flow.Subscription subscription;
+    protected Flow.Subscription subscription;
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {

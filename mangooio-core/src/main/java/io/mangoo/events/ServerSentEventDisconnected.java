@@ -6,8 +6,8 @@ import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import java.util.Objects;
 
 public class ServerSentEventDisconnected {
-    private String uri;
-    private ServerSentEventConnection connection;
+    private final String uri;
+    private final ServerSentEventConnection connection;
     
     public ServerSentEventDisconnected(String uri, ServerSentEventConnection connection) {
         this.uri = Objects.requireNonNull(uri, Required.URI.toString());
