@@ -200,7 +200,7 @@ public final class Application {
                 var quartzCron = parser.parse(at);
                 quartzCron.validate();
 
-                CronTask cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
+                var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
                 scheduler.schedule( () -> executor.execute(cronTask), 0, TimeUnit.SECONDS);
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
@@ -210,7 +210,7 @@ public final class Application {
             }
         } else {
             if (time > 0) {
-                Task task = new Task(classInfo.loadClass(), methodInfo.getName());
+                var task = new Task(classInfo.loadClass(), methodInfo.getName());
                 scheduler.scheduleWithFixedDelay( () -> executor.execute(task), time, time, TimeUnit.SECONDS);
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);

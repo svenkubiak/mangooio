@@ -67,7 +67,7 @@ public class CacheImpl implements Cache {
         Objects.requireNonNull(key, Required.KEY.toString());
         Objects.requireNonNull(fallback, Required.FALLBACK.toString());
 
-        Object object = caffeineCache.getIfPresent(key);
+        var object = caffeineCache.getIfPresent(key);
         if (object == null) {
             Map<String, Object> temp = new HashMap<>();
             temp.computeIfAbsent(key, fallback);

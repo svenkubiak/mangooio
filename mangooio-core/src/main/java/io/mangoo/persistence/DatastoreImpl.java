@@ -8,7 +8,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.InsertOneResult;
-import com.mongodb.client.result.UpdateResult;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
@@ -28,14 +27,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
-import static java.util.Arrays.asList;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
-    private Config config;
+    private final Config config;
     private MongoDatabase mongoDatabase;
     private String prefix = Default.PERSISTENCE_PREFIX.toString();
     
@@ -54,8 +52,8 @@ public class DatastoreImpl implements Datastore {
 
     private void connect() {
        CodecRegistry codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
-       PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
-            .conventions(asList(ANNOTATION_CONVENTION))
+       var pojoCodecProvider = PojoCodecProvider.builder()
+            .conventions(List.of(ANNOTATION_CONVENTION))
             .automatic(true)
             .build();
                 
@@ -150,13 +148,13 @@ public class DatastoreImpl implements Datastore {
         
         MongoCollection collection = getCollection(object.getClass()).orElse(null);
         if (collection != null) {
-            BaseEntity baseEntity = (BaseEntity) object;
+            var baseEntity = (BaseEntity) object;
             ObjectId id = baseEntity.getId();
             if (id == null) {
                 InsertOneResult insertResult = collection.insertOne(object);
                 return insertResult.getInsertedId().asObjectId().getValue().toString();
             } else {
-                UpdateResult updateResult = collection.replaceOne(eq("_id", id), object);
+                var updateResult = collection.replaceOne(eq("_id", id), object);
                 return id.toString();
             }
         }
