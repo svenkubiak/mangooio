@@ -10,8 +10,8 @@ import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
-import listeners.ServerSentEventListener;
 import reactive.MySubscriber;
+import reactive.ServerSentEventSubscriber;
 
 
 @SuppressWarnings("all")
@@ -21,7 +21,7 @@ public class Bootstrap implements MangooBootstrap {
     public void initializeRoutes() {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
         Application.getInstance(Stream.class).register("mysubscriber", MySubscriber.class);
-        Application.getInstance(Stream.class).register(Queue.SSE.toString(), ServerSentEventListener.class);
+        Application.getInstance(Stream.class).register(Queue.SSE.toString(), ServerSentEventSubscriber.class);
 
         // SessionController
         Bind.controller(SessionController.class).withRoutes(

@@ -11,8 +11,8 @@ import java.util.Objects;
 
 @Singleton
 public class DatastoreProvider implements Provider<Datastore> {
-    private Map<String, DatastoreImpl> datastores = new HashMap<>();
-    private DatastoreImpl defaultDatastore;
+    private final Map<String, DatastoreImpl> datastores = new HashMap<>();
+    private final DatastoreImpl defaultDatastore;
 
     @Inject
     private DatastoreProvider(DatastoreImpl defaultDatastore) {
