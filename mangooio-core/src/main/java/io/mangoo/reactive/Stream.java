@@ -24,13 +24,12 @@ public class Stream<T> {
      * @param queue The name of the queue
      * @param clazz The Subscriber class
      */
-    @SuppressWarnings("unchecked")
-    public void register(String queue, Class<T> clazz) {
+    public void register(String queue, Class<Flow.Subscriber<? super Object>> clazz) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         SubmissionPublisher<T> publisher = new SubmissionPublisher<>(Executors.newVirtualThreadPerTaskExecutor(), Flow.defaultBufferSize());
-        publisher.subscribe(Application.getInstance((Class<Flow.Subscriber<? super T>>) clazz));
+        publisher.subscribe(Application.getInstance(clazz));
 
         subscribers.incrementAndGet();
         publishers.computeIfAbsent(queue, k -> new CopyOnWriteArrayList<>()).add(publisher);
