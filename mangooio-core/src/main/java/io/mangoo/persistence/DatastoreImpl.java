@@ -15,7 +15,6 @@ import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -51,7 +50,7 @@ public class DatastoreImpl implements Datastore {
     }
 
     private void connect() {
-       CodecRegistry codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+       var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
        var pojoCodecProvider = PojoCodecProvider.builder()
             .conventions(List.of(ANNOTATION_CONVENTION))
             .automatic(true)
@@ -154,7 +153,7 @@ public class DatastoreImpl implements Datastore {
                 InsertOneResult insertResult = collection.insertOne(object);
                 return insertResult.getInsertedId().asObjectId().getValue().toString();
             } else {
-                var updateResult = collection.replaceOne(eq("_id", id), object);
+                collection.replaceOne(eq("_id", id), object);
                 return id.toString();
             }
         }

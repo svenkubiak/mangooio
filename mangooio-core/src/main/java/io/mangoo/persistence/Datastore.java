@@ -53,7 +53,7 @@ public interface Datastore {
      * @param collection The name of the collection
      * @return MongoCollection
      */
-    MongoCollection query(String collection);
+    MongoCollection<?> query(String collection);
 
     /**
      * Drops all data in MongoDB on the connected database
@@ -86,16 +86,16 @@ public interface Datastore {
     <T> void dropCollection(Class<T> clazz);
 
     /**
-     * Adds an index to the collection in the MondoDB database
+     * Adds an index to the collection in the MongoDB database
      * 
      * @param <T> Type
      * @param clazz The class corresponding with the collection
-     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to add
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascending("foo")) to add
      */
     <T> void addIndex(Class<T> clazz, Bson... indexes);
     
     /**
-     * Adds an index to the collection in the MondoDB database
+     * Adds an index to the collection in the MongoDB database
      * 
      * @param <T> Type
      * @param clazz The class corresponding with the collection
@@ -105,11 +105,11 @@ public interface Datastore {
     <T> void addIndex(Class<T> clazz, Bson index, IndexOptions indexOptions);
 
     /**
-     * Removes an index from the collection in the MondoDB database
+     * Removes an index from the collection in the MongoDB database
      *
      * @param <T> Type
      * @param clazz The class corresponding with the collection
-     * @param indexes One or multiple Indexes (e.g. Indexes.ascedning("foo")) to remove
+     * @param indexes One or multiple Indexes (e.g. Indexes.ascending("foo")) to remove
      */
     <T> void dropIndex(Class<T> clazz, Bson... indexes);
 }
