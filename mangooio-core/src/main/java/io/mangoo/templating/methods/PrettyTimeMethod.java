@@ -31,7 +31,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
         String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {
             Object temporal = null;
-            Object object = arguments.get(0);
+            Object object = arguments.getFirst();
             
             if (object instanceof TemporalDialerAdapter temporalDialerAdapter) {
                 temporal = temporalDialerAdapter.getObject();   

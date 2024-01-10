@@ -30,10 +30,10 @@ public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
     private static final String CRYPTEX_TAG = "cryptex{";
     private static final String ARG_TAG = "arg{}";
+    private final String mode;
+    private final Props props = Props.create();
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
-    private String mode;
-    private Props props = Props.create();
     private boolean decrypted = true;
     
     public Config() {
@@ -45,7 +45,7 @@ public class Config {
         this.mode = Objects.requireNonNull(mode, Required.MODE.toString());
     }
     
-    @SuppressFBWarnings(justification = "Intenionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
+    @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private void load() {
         props.setActiveProfiles(mode);
         props.setSkipEmptyProps(false);

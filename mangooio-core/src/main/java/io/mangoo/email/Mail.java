@@ -15,11 +15,11 @@ import java.util.*;
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
-    private Map<String, String> messageHeaders = new HashMap<>();
-    private List<String> messageTos = new ArrayList<>(); 
-    private List<String> messageCcs = new ArrayList<>(); 
-    private List<String> messageBccs = new ArrayList<>(); 
-    private List<Path> messageAttachments = new ArrayList<>();
+    private final Map<String, String> messageHeaders = new HashMap<>();
+    private final List<String> messageTos = new ArrayList<>();
+    private final List<String> messageCcs = new ArrayList<>();
+    private final List<String> messageBccs = new ArrayList<>();
+    private final List<Path> messageAttachments = new ArrayList<>();
     private String messageSubject;
     private String messageReplyTo;
     private String messageText;

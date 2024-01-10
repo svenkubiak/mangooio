@@ -17,7 +17,7 @@ public class RouteMethod implements TemplateMethodModelEx {
     public TemplateModel exec(List arguments) throws TemplateModelException {
         String url;
         if (!arguments.isEmpty()) {
-            var controller = ((SimpleScalar) arguments.get(0)).getAsString();
+            var controller = ((SimpleScalar) arguments.getFirst()).getAsString();
             var requestRoute = Router.getReverseRoute(controller);
             
             if (requestRoute != null) {

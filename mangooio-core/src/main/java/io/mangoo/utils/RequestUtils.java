@@ -18,15 +18,12 @@ import io.undertow.security.handlers.SecurityInitialHandler;
 import io.undertow.security.impl.BasicAuthenticationMechanism;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.sse.ServerSentEventConnection;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
-import io.undertow.websockets.core.WebSocketChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URI;
 import java.util.*;
 
 public final class RequestUtils {
@@ -54,12 +51,12 @@ public final class RequestUtils {
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
         Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
 
-        final Map<String, String> requestParamater = new HashMap<>();
+        final Map<String, String> requestParameter = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
         queryParameters.putAll(exchange.getPathParameters());
-        queryParameters.forEach((key, value) -> requestParamater.put(key, value.element()));
+        queryParameters.forEach((key, value) -> requestParameter.put(key, value.element()));
 
-        return requestParamater;
+        return requestParameter;
     }
 
     /**
@@ -85,7 +82,7 @@ public final class RequestUtils {
 
         var headerMap = exchange.getRequestHeaders();
         return headerMap != null && headerMap.get(Header.CONTENT_TYPE.toHttpString()) != null &&
-                headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
+               headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 
     /**
@@ -125,53 +122,6 @@ public final class RequestUtils {
         return valid;
     }
 
-    /**
-     * Retrieves a URL from a Server-Sent Event connection
-     *
-     * @param connection The ServerSentEvent Connection
-     *
-     * @return The URL of the Server-Sent Event Connection
-     */
-    public static String getServerSentEventURL(ServerSentEventConnection connection) {
-        return getURL(URI.create(connection.getRequestURI()));
-    }
-
-    /**
-     * Retrieves the URL of a WebSocketChannel
-     *
-     * @param channel The WebSocket Channel
-     *
-     * @return The URL of the WebSocket Channel
-     */
-    public static String getWebSocketURL(WebSocketChannel channel) {
-        return getURL(URI.create(channel.getUrl()));
-    }
-
-    /**
-     * Creates and URL with only path and if present query and
-     * fragment, e.g. /path/data?key=value#fragid1
-     *
-     * @param uri The URI to generate from
-     * @return The generated URL
-     */
-    public static String getURL(URI uri) {
-        final var buffer = new StringBuilder();
-        buffer.append(uri.getPath());
-        
-        String query = uri.getQuery();
-        String fragment = uri.getFragment();
-
-        if (StringUtils.isNotBlank(query)) {
-            buffer.append('?').append(query);
-        }
-
-        if (StringUtils.isNotBlank(fragment)) {
-            buffer.append('#').append(fragment);
-        }
-
-        return buffer.toString();
-    }
-    
     /**
      * Adds a Wrapper to the handler when the request requires authentication
      * 

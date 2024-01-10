@@ -35,8 +35,8 @@ public class Crypto {
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String TRANSFORMATION = "RSA/None/OAEPWITHSHA-512ANDMGF1PADDING";
     private static final String ALGORITHM = "RSA";
-    private static final int KEYLENGTH = 2048;
-    private static final int KEYINDEX_START = 0;
+    private static final int KEY_LENGTH = 2048;
+    private static final int KEY_INDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
     private final Config config;
     
@@ -49,29 +49,29 @@ public class Crypto {
     /**
      * Decrypts a given encrypted text using the application secret property (application.secret) as key
      *
-     * @param encrytedText The encrypted text
+     * @param encryptedText The encrypted text
      * @return The clear text or null if decryption fails
      */
-    public String decrypt(String encrytedText) {
-        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
-        return decrypt(encrytedText, getSizedSecret(config.getApplicationSecret()));
+    public String decrypt(String encryptedText) {
+        Objects.requireNonNull(encryptedText, Required.ENCRYPTED_TEXT.toString());
+        return decrypt(encryptedText, getSizedSecret(config.getApplicationSecret()));
     }
 
     /**
      * Decrypts a given encrypted text using the given key
      *
-     * @param encrytedText The encrypted text
+     * @param encryptedText The encrypted text
      * @param key The encryption key
      * @return The clear text or null if decryption fails
      */
-    public String decrypt(String encrytedText, String key) {
-        Objects.requireNonNull(encrytedText, Required.ENCRYPTED_TEXT.toString());
+    public String decrypt(String encryptedText, String key) {
+        Objects.requireNonNull(encryptedText, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(key, Required.KEY.toString());
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
         paddedBufferedBlockCipher.init(false, cipherParameters);
         
-        return new String(cipherData(base64Decoder.decode(encrytedText)), StandardCharsets.UTF_8);
+        return new String(cipherData(base64Decoder.decode(encryptedText)), StandardCharsets.UTF_8);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Crypto {
         Objects.requireNonNull(secret, Required.SECRET.toString());
         
         String key = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
-        return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEYINDEX_START, MAX_KEY_LENGTH);
+        return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEY_INDEX_START, MAX_KEY_LENGTH);
     }
     
     /**
@@ -146,7 +146,7 @@ public class Crypto {
         KeyPair keyPair = null;
         try {
             var keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
-            keyPairGenerator.initialize(KEYLENGTH);
+            keyPairGenerator.initialize(KEY_LENGTH);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             LOG.error("Failed to create public/private key pair", e);
@@ -193,7 +193,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
-        String encrypt = null;
+        String encrypt = "";
         try {
             byte[] cipherText = encrypt(text.getBytes(StandardCharsets.UTF_8), key);
             encrypt = encodeBase64(cipherText);
@@ -242,7 +242,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
         
-        String decrypt = null;
+        String decrypt = "";
         try {
             byte[] decryptText = decrypt(decodeBase64(text), key);
             decrypt = new String(decryptText, StandardCharsets.UTF_8);

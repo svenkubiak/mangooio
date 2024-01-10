@@ -36,7 +36,7 @@ public final class JsonUtils {
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        String json = null;
+        String json = "";
         try {
             json = mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -55,7 +55,7 @@ public final class JsonUtils {
     public static String toPrettyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        String json = null;
+        String json = "";
         try {
             json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {

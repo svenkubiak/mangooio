@@ -254,7 +254,7 @@ public final class Application {
 
     /**
      * Checks if application is run as root
-     * 
+     * <p>
      * (Hint: There is no need to run as root)
      */
     private static void userCheck() {
@@ -405,7 +405,7 @@ public final class Application {
     }
     
     /**
-     * Sets the injector wrapped through Netflix Governator
+     * Sets the injector wrapped through guice modules
      */
     private static void prepareInjector() {
         injector = Guice.createInjector(Stage.PRODUCTION, getModules());

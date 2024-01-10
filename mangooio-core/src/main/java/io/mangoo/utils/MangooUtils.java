@@ -139,7 +139,7 @@ public final class MangooUtils {
     public static String readFileToString(Path path) {
         Objects.requireNonNull(path, Required.PATH.toString());
         
-        String content = null;
+        String content = "";
         try {
             content = Files.readString(path);
         } catch (IOException e) {
@@ -157,15 +157,8 @@ public final class MangooUtils {
      */
     public static String readFileToString(String path) {
         Objects.requireNonNull(path, Required.PATH.toString());
-        
-        String content = null;
-        try {
-            content = Files.readString(Path.of(path));
-        } catch (IOException e) {
-            // Intentionally left blank
-        }
-        
-        return content;
+
+        return readFileToString(Path.of(path));
     }
     
     /**
@@ -177,7 +170,7 @@ public final class MangooUtils {
     public static String readResourceToString(String resource) {
         Objects.requireNonNull(resource, Required.RESOURCE.toString());
         
-        String content = null;
+        String content = "";
         try {
             content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
         } catch (IOException e) {

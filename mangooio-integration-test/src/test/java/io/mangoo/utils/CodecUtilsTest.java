@@ -1,24 +1,20 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.routing.bindings.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.routing.bindings.Form;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class CodecUtilsTest {
@@ -173,7 +169,7 @@ class CodecUtilsTest {
         String foo = UUID.randomUUID().toString();
 
         //when
-        byte[] base64 = CodecUtils.encodeBase64(foo);
+        byte[] base64 = CodecUtils.encodeToBase64(foo);
                 
         //then
         assertThat(base64, not(nullValue()));
@@ -186,7 +182,7 @@ class CodecUtilsTest {
             String foo = UUID.randomUUID().toString();
 
             //when
-            byte[] base64 = CodecUtils.encodeBase64(foo);
+            byte[] base64 = CodecUtils.encodeToBase64(foo);
             
             return base64 != null;
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
@@ -198,8 +194,8 @@ class CodecUtilsTest {
         String foo = UUID.randomUUID().toString();
 
         //when
-        byte[] base64Encoded = CodecUtils.encodeBase64(foo);
-        byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded, StandardCharsets.UTF_8));
+        byte[] base64Encoded = CodecUtils.encodeToBase64(foo);
+        byte[] base64Decoded = CodecUtils.decodeFromBase64(new String(base64Encoded, StandardCharsets.UTF_8));
                 
         //then
         assertThat(new String(base64Decoded, StandardCharsets.UTF_8), equalTo(foo));
@@ -212,8 +208,8 @@ class CodecUtilsTest {
             String foo = UUID.randomUUID().toString();
 
             //when
-            byte[] base64Encoded = CodecUtils.encodeBase64(foo);
-            byte[] base64Decoded = CodecUtils.decodeBase64(new String(base64Encoded, StandardCharsets.UTF_8));
+            byte[] base64Encoded = CodecUtils.encodeToBase64(foo);
+            byte[] base64Decoded = CodecUtils.decodeFromBase64(new String(base64Encoded, StandardCharsets.UTF_8));
             
             return new String(base64Decoded, StandardCharsets.UTF_8).equals(foo);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));

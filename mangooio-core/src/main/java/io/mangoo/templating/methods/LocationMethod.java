@@ -13,7 +13,7 @@ import java.util.Objects;
 @SuppressWarnings("rawtypes")
 public class LocationMethod implements TemplateMethodModelEx {
    private static final int NUM_ARGUMENTS = 1;
-   private String controller;
+   private final String controller;
 
     public LocationMethod(String path) {
         Objects.requireNonNull(path, Required.PATH.toString());

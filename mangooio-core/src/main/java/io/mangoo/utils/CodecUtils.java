@@ -85,7 +85,7 @@ public final class CodecUtils {
      */
     public static String hexSHA512(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
-        
+
         return DigestUtils.sha512Hex(data);
     }
     
@@ -123,7 +123,7 @@ public final class CodecUtils {
      * @param data The data to convert
      * @return The converted byte array
      */
-    public static byte[] encodeBase64(String data) {
+    public static byte[] encodeToBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         return BASRE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
@@ -134,7 +134,7 @@ public final class CodecUtils {
      * @param data The data to convert
      * @return The converted byte array
      */
-    public static byte[] decodeBase64(String data) {
+    public static byte[] decodeFromBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
         return BASE64DECODER.decode(data);
     }

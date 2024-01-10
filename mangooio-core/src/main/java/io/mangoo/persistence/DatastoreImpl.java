@@ -158,7 +158,7 @@ public class DatastoreImpl implements Datastore {
             }
         }
         
-        return null;
+        return "";
     }
     
     @Override
