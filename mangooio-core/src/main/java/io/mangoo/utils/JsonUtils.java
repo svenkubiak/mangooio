@@ -2,14 +2,21 @@ package io.mangoo.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 public final class JsonUtils {
@@ -84,5 +91,44 @@ public final class JsonUtils {
         }
     
         return object;
+    }
+
+    /**
+     * Converts a given Json to a map while fattening all keys, e.g
+     * one.two.three
+     *
+     * @param json The json string to convert
+     * @return A flat map containing the json data
+     */
+    public static Map<String, String> toFlatMap(String json) {
+        Map<String, String> map = new HashMap<String, String>();
+        try {
+            addKeys("", new ObjectMapper().readTree(json), map);
+        } catch (Exception e) {
+            //Intentionally left blank
+        }
+
+        return map;
+    }
+
+    private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
+        if (jsonNode.isObject()) {
+            ObjectNode objectNode = (ObjectNode) jsonNode;
+            Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
+            String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
+
+            while (iter.hasNext()) {
+                Map.Entry<String, JsonNode> entry = iter.next();
+                addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
+            }
+        } else if (jsonNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            for (int i = 0; i < arrayNode.size(); i++) {
+                addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
+            }
+        } else if (jsonNode.isValueNode()) {
+            ValueNode valueNode = (ValueNode) jsonNode;
+            map.put(currentPath, valueNode.asText());
+        }
     }
 }

@@ -51,7 +51,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Caffeine](https://github.com/ben-manes/caffeine) – Caching
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
 * [Freemarker](http://freemarker.org/) – Template engine
-* [Jackson](https://github.com/FasterXML/jackson), [JSONPath](https://github.com/jayway/JsonPath) – Handling JSON
+* [Jackson](https://github.com/FasterXML/jackson) – JSON Handling
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
 * [Bouncy Castle](https://www.bouncycastle.org/) – Strong hashing and cryptography
 * And many more …
