@@ -133,8 +133,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/request").respondeWith("request"),
                 On.post().to("/post").respondeWith("post"),
                 On.put().to("/post").respondeWith("put"),
-                On.post().to("/jsonpathpost").respondeWith("jsonPathPost"),
-                On.put().to("/jsonpathput").respondeWith("jsonPathPut"),
                 On.post().to("/jsonboonpost").respondeWith("jsonBoonPost"),
                 On.put().to("/jsonboonput").respondeWith("jsonBoonPut"),
                 On.get().to("/freemarker").respondeWith("freemarker"),

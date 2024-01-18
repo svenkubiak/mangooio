@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
 import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +14,7 @@ import java.util.Objects;
 
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
-    private static ObjectMapper mapper = JsonMapper.builder()
+    private static final ObjectMapper mapper = JsonMapper.builder()
             .addModule(new AfterburnerModule())
             .build();
     
@@ -64,19 +62,7 @@ public final class JsonUtils {
         
         return json;
     }
-    
-    /**
-     * Converts a given Json string to an JSONPath ReadContext
-     * 
-     * @param json The json string to convert
-     * @return JSPNPath read context
-     */
-    public static ReadContext fromJson(String json) {
-        Objects.requireNonNull(json, Required.JSON.toString());
-        
-        return JsonPath.parse(json);
-    }
-    
+
     /**
      * Converts a given Json string to given Class
      * 

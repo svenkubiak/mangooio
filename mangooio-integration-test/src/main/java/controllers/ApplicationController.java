@@ -1,5 +1,11 @@
 package controllers;
 
+import com.google.common.io.Resources;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Request;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -7,14 +13,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
-
-import com.google.common.io.Resources;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import io.mangoo.enums.Default;
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Request;
 
 public class ApplicationController {
     
@@ -117,14 +115,6 @@ public class ApplicationController {
     
     public Response put(Request request) {
         return Response.withOk().andTextBody(request.getBody());
-    }
-
-    public Response jsonPathPost(Request request) {
-        return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
-    }
-
-    public Response jsonPathPut(Request request) {
-        return Response.withOk().andTextBody(request.getBodyAsJsonPath().jsonString());
     }
 
     public Response jsonBoonPost(Request request) {

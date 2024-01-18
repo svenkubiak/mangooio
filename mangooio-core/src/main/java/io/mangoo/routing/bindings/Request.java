@@ -1,7 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Required;
 import io.mangoo.utils.JsonUtils;
@@ -11,11 +9,13 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class Request extends Validator {
+    @Serial
     private static final long serialVersionUID = 5589488716007844048L;
     private transient HttpServerExchange httpServerExchange;
     private transient Session session;
@@ -83,14 +83,6 @@ public class Request extends Validator {
         }
         
         return new HashMap<>();
-    }
-
-    /**
-     *
-     * @return The request body as JsonPath object
-     */
-    public ReadContext getBodyAsJsonPath() {
-        return JsonPath.parse(body);
     }
 
     /**
