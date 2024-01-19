@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,7 +16,36 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class JsonUtilsTest {
-    private static final String expectedJson = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
+    private static final String EXPECTED_JSON = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
+    private static final String EXPECTED_PRETTY_JSON = "{\n  \"brand\" : null,\n  \"doors\" : 0,\n  \"foo\" : \"blablabla\"\n}";
+
+    private static final String JSON = """
+            {"widget": {
+                "debug": "on",
+                "window": {
+                    "title": "Sample Konfabulator Widget",
+                    "name": "main_window",
+                    "width": 500,
+                    "height": 500
+                },
+                "image": {
+                    "src": "Images/Sun.png",
+                    "name": "sun1",
+                    "hOffset": 250,
+                    "vOffset": 250,
+                    "alignment": "center"
+                },
+                "text": {
+                    "data": "Click Here",
+                    "size": 36,
+                    "style": "bold",
+                    "name": "text1",
+                    "hOffset": 250,
+                    "vOffset": 100,
+                    "alignment": "center"
+                }
+            }}
+            """;
 
     @Test
     void testToJson() {
@@ -27,7 +57,31 @@ class JsonUtilsTest {
         
         //then
         assertThat(json, not(nullValue()));
-        assertThat(json, equalTo(expectedJson));
+        assertThat(json, equalTo(EXPECTED_JSON));
+    }
+
+    @Test
+    void testToPrettyJson() {
+        //given
+        Car car = new Car();
+
+        //when
+        String json = JsonUtils.toPrettyJson(car);
+
+        //then
+        assertThat(json, not(nullValue()));
+        assertThat(json, equalTo(EXPECTED_PRETTY_JSON));
+    }
+
+    @Test
+    void testFlatMap() {
+        //when
+        Map<String, String> map = JsonUtils.toFlatMap(JSON);
+
+        //then
+        assertThat(map, not(nullValue()));
+        assertThat(map.get("widget.debug"), equalTo("on"));
+        assertThat(map.get("widget.image.name"), equalTo("sun1"));
     }
     
     @Test

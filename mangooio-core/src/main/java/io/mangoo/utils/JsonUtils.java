@@ -101,6 +101,8 @@ public final class JsonUtils {
      * @return A flat map containing the json data
      */
     public static Map<String, String> toFlatMap(String json) {
+        Objects.requireNonNull(json, Required.JSON.toString());
+
         Map<String, String> map = new HashMap<String, String>();
         try {
             addKeys("", new ObjectMapper().readTree(json), map);

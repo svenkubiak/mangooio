@@ -1,32 +1,24 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
-
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-import org.mockito.Mockito;
-
 import com.google.common.net.MediaType;
-
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Header;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.RunsInThreads;
+import org.mockito.Mockito;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({TestExtension.class})
 class RequestUtilsTest {
@@ -79,7 +71,6 @@ class RequestUtilsTest {
             when(mockedExchange.getQueryParameters()).thenReturn(queryParameters);
             when(mockedExchange.getPathParameters()).thenReturn(pathParameters);
             Map<String, String> requestParameters = RequestUtils.getRequestParameters(mockedExchange);
-
 
             return requestParameters != null && requestParameters.get("first").equals(one) && requestParameters.get("second").equals(two);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
