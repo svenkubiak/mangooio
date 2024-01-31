@@ -371,6 +371,11 @@
 				<version>1.16.0</version>
 			</dependency>
 			<dependency>
+				<groupId>com.squareup.okio</groupId>
+				<artifactId>okio</artifactId>
+				<version>3.7.0</version>
+			</dependency>
+			<dependency>
 				<groupId>com.launchdarkly</groupId>
 				<artifactId>okhttp-eventsource</artifactId>
 				<version>4.1.1</version>
