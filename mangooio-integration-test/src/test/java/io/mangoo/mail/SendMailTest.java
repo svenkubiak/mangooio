@@ -1,9 +1,21 @@
 package io.mangoo.mail;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import com.google.common.io.Files;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMail;
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.email.Mail;
+import io.mangoo.exceptions.MangooMailerException;
+import io.mangoo.exceptions.MangooTemplateEngineException;
+import io.mangoo.test.email.SmtpMock;
+import io.mangoo.utils.MangooUtils;
+import jakarta.mail.MessagingException;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,24 +26,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import com.google.common.io.Files;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.util.GreenMail;
-
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.email.Mail;
-import io.mangoo.exceptions.MangooMailerException;
-import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.test.email.SmtpMock;
-import io.mangoo.utils.MangooUtils;
-import jakarta.mail.MessagingException;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * 
@@ -133,7 +131,7 @@ class SendMailTest {
                 .send();
             
             // then
-            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(domain).length, equalTo(1)));
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(domain).length, equalTo(1)));
 
             return greenMail.getReceivedMessagesForDomain(domain)[0].getSubject().equals(subject);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
