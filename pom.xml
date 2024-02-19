@@ -529,7 +529,7 @@
 			<dependency>
 				<groupId>com.mchange</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>0.10.0-pre2</version>
+				<version>0.10.0-pre3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.exparity</groupId>
@@ -594,7 +594,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-compress</artifactId>
-				<version>1.25.0</version>
+				<version>1.26.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
