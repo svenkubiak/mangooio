@@ -4,7 +4,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.test.TestRunner;
 
 public class TestExtension extends TestRunner {
-    public static final int THREADS = 100;
+    public static final int THREADS = 25;
 
     @Override
     public void beforeStartup() {

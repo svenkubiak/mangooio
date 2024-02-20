@@ -5,7 +5,6 @@ import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
@@ -21,7 +20,7 @@ import static org.hamcrest.Matchers.*;
 class CodecUtilsTest {
     private static final String SERIALIZED = "Av8BAE8RTONuVa1FGgBpby5tYW5nb28ucm91dGluZy5iaW5kaW5ncwCin0YlwLEkYgQARm9ybQAAAAEA3jptXE6zLtsOAGlvLm1hbmdvby5pMThuAI8r14oLIdc9CABNZXNzYWdlcwBEEQAAEHZhbGlkYXRpb24ubWF0Y2gAABJ7MH0gbXVzdCBtYXRjaCB7MX0AABB2YWxpZGF0aW9uLmVtYWlsAAAhezB9IG11c3QgYmUgYSB2YWxpZCBlTWFpbCBhZGRyZXNzAAAPdmFsaWRhdGlvbi5pcHY0AAAgezB9IG11c3QgYmUgYSB2YWxpZCBJUHY0IGFkZHJlc3MAAA92YWxpZGF0aW9uLmlwdjYAACB7MH0gbXVzdCBiZSBhIHZhbGlkIElQdjYgYWRkcmVzcwAAF3ZhbGlkYXRpb24ucmFuZ2UubGVuZ3RoAAAoezB9IG11c3QgYmUgYSBsZW5ndGggYmV0d2VlbiB7MX0gYW5kIHsyfQAAFXZhbGlkYXRpb24uZXhhY3RtYXRjaAAAGnswfSBtdXN0IGV4YWN0bHkgbWF0Y2ggezF9AAATdmFsaWRhdGlvbi5yZXF1aXJlZAAAF3swfSBpcyBhIHJlcXVpcmVkIHZhbHVlAAAWdmFsaWRhdGlvbi5yYW5nZS52YWx1ZQAAJXswfSBtdXN0IGJlIHZhbHVlIGJldHdlZW4gezF9IGFuZCB7Mn0AABJ2YWxpZGF0aW9uLm51bWVyaWMAABt7MH0gbXVzdCBiZSBhIG51bWVyaWMgdmFsdWUAABB2YWxpZGF0aW9uLnJlZ2V4AAAXezB9IGlzIGFuIGludmFsaWQgdmFsdWUAABR2YWxpZGF0aW9uLm1pbi52YWx1ZQAAJXswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGxlc3MgdGhhbiB7MX0AABR2YWxpZGF0aW9uLm1heC52YWx1ZQAAKHswfSBtdXN0IGJlIGEgdmFsdWUgbm90IGdyZWF0ZXIgdGhhbiB7MX0AABV2YWxpZGF0aW9uLmRvbWFpbm5hbWUAAB97MH0gbXVzdCBiZSBhIHZhbGlkIGRvbWFpbiBuYW1lAAAVdmFsaWRhdGlvbi5taW4ubGVuZ3RoAAAsezB9IG11c3QgYmUgYSB2YWx1ZSB3aXRoIGEgbWluIGxlbmd0aCBvZiB7MX0AAA52YWxpZGF0aW9uLnVybAAAF3swfSBtdXN0IGJlIGEgdmFsaWQgVVJMAAAVdmFsaWRhdGlvbi5tYXgubGVuZ3RoAAAsezB9IG11c3QgYmUgYSB2YWx1ZSB3aXRoIGEgbWF4IGxlbmd0aCBvZiB7MX0AABZ2YWxpZGF0aW9uLm1hdGNodmFsdWVzAAAeVGhlIHZhbHVlcyBvZiB7MH0gaXMgbm90IHZhbGlkAEQAAEQAAEQBAAADZm9vAAADYmFy";
     private static final String PLAIN = "this is a plain text";
-    
+
     @Test
     void testHexSHA512() {
         //given
@@ -109,11 +108,8 @@ class CodecUtilsTest {
             String salt = MangooUtils.randomString(24);
             String hash = CodecUtils.hashArgon2(PLAIN, salt);
             
-            //when
-            boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
-            
             // then
-            return valid;
+            return CodecUtils.matchArgon2(PLAIN, salt, hash);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
@@ -128,21 +124,20 @@ class CodecUtilsTest {
         assertThat(serialized, not(nullValue()));
         assertThat(serialized, equalTo(SERIALIZED));
     }
-    
+
     @Test
-    @Disabled
     void testConcurrentSerialize() throws Exception {
         MatcherAssert.assertThat(t -> {
             //given
             Form form = Application.getInstance(Form.class);
             form.addValue("foo", "bar");
             String serialized = CodecUtils.serializeToBase64(form);
-            
+
             // then
             return serialized.equals(SERIALIZED);
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
-    
+
     @Test
     void testDeserialize() {
         //given
@@ -153,19 +148,18 @@ class CodecUtilsTest {
         assertThat(form, instanceOf(Form.class));
         assertThat(form.get("foo"), equalTo("bar"));
     }
-    
+
     @Test
-    @Disabled
     void testConcurrentDeserialize() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             Form form = CodecUtils.deserializeFromBase64(SERIALIZED);
-            
+
             // then
             return form.get("foo").equals("bar");
         }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
     }
-    
+
     @Test
     void testBase64Encoder() {
         //given
@@ -192,7 +186,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64Decoder() {
+    void testBase64Dencoder() {
         //given
         String foo = UUID.randomUUID().toString();
 
@@ -205,7 +199,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64DecoderConcurrent() {
+    void testBase64DencoderConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String foo = UUID.randomUUID().toString();
