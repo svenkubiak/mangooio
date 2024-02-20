@@ -1,10 +1,13 @@
 package io.mangoo.crypto;
 
-import static io.mangoo.test.hamcrest.RegexMatcher.matches;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.utils.MangooUtils;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -12,15 +15,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.utils.MangooUtils;
+import static io.mangoo.test.hamcrest.RegexMatcher.matches;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 
@@ -59,7 +56,7 @@ class CryptoTest {
            
             //when
             return decrypt.equals(text);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

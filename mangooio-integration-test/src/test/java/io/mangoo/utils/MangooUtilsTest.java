@@ -1,9 +1,12 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import io.mangoo.TestExtension;
+import io.mangoo.enums.Default;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,14 +18,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import io.mangoo.TestExtension;
-import io.mangoo.enums.Default;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class MangooUtilsTest {
@@ -64,7 +61,7 @@ class MangooUtilsTest {
             
             // then
             return copy.get("value1").equals(value1) && copy.get("value2").equals(value2);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -86,7 +83,7 @@ class MangooUtilsTest {
             
             // then
             return secret.length() == size;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test()
@@ -145,7 +142,7 @@ class MangooUtilsTest {
     void testResourceExistsConcurrent() {
         MatcherAssert.assertThat(t -> {
             return MangooUtils.resourceExists(Default.MODEL_CONF.toString());
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -212,7 +209,7 @@ class MangooUtilsTest {
             
             // then
             return content.equals(uuid) && file.delete();
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -228,6 +225,6 @@ class MangooUtilsTest {
             
             // then
             return content.equals(uuid) && file.delete();
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

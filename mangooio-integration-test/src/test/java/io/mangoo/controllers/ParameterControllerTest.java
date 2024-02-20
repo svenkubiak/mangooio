@@ -1,24 +1,21 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import io.mangoo.TestExtension;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.StatusCodes;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
-import io.undertow.util.StatusCodes;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  *
@@ -51,7 +48,7 @@ class ParameterControllerTest {
             
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -76,7 +73,7 @@ class ParameterControllerTest {
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -101,7 +98,7 @@ class ParameterControllerTest {
 
             //then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Optional[" + uuid + "]");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

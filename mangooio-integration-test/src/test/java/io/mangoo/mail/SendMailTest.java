@@ -8,6 +8,7 @@ import io.mangoo.core.Application;
 import io.mangoo.email.Mail;
 import io.mangoo.exceptions.MangooMailerException;
 import io.mangoo.exceptions.MangooTemplateEngineException;
+import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.test.email.SmtpMock;
 import io.mangoo.utils.MangooUtils;
 import jakarta.mail.MessagingException;
@@ -15,7 +16,6 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +134,7 @@ class SendMailTest {
             await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(greenMail.getReceivedMessagesForDomain(domain).length, equalTo(1)));
 
             return greenMail.getReceivedMessagesForDomain(domain)[0].getSubject().equals(subject);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

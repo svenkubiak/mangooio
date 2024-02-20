@@ -3,11 +3,11 @@ package io.mangoo.utils;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Form;
+import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -39,7 +39,7 @@ class CodecUtilsTest {
             
             // then
             return hex.equals("39e668e353a0b4caf7e8e3c7093e30be8c0a29db739bf86bd5243d11d1bfe040ad2a712be1a96b405233ce13cbd7c3db9bcc40f2f2e70c6a344a0898208347e4");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -59,7 +59,7 @@ class CodecUtilsTest {
             
             // then
             return StringUtils.isNotBlank(hash);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -110,7 +110,7 @@ class CodecUtilsTest {
             
             // then
             return CodecUtils.matchArgon2(PLAIN, salt, hash);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -135,7 +135,7 @@ class CodecUtilsTest {
 
             // then
             return serialized.equals(SERIALIZED);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -157,7 +157,7 @@ class CodecUtilsTest {
 
             // then
             return form.get("foo").equals("bar");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -182,7 +182,7 @@ class CodecUtilsTest {
             byte[] base64 = CodecUtils.encodeToBase64(foo);
             
             return base64 != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -199,7 +199,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64DencoderConcurrent() {
+    void testBase64DecoderConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String foo = UUID.randomUUID().toString();
@@ -209,6 +209,6 @@ class CodecUtilsTest {
             byte[] base64Decoded = CodecUtils.decodeFromBase64(new String(base64Encoded, StandardCharsets.UTF_8));
             
             return new String(base64Decoded, StandardCharsets.UTF_8).equals(foo);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

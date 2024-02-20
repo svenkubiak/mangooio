@@ -1,21 +1,20 @@
 package io.mangoo.utils.token;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import io.mangoo.TestExtension;
+import io.mangoo.enums.ClaimKey;
+import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.utils.MangooUtils;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import io.mangoo.TestExtension;
-import io.mangoo.enums.ClaimKey;
-import io.mangoo.exceptions.MangooTokenException;
-import io.mangoo.utils.MangooUtils;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 @ExtendWith({TestExtension.class})
 class TokenParserTest {
@@ -93,6 +92,6 @@ class TokenParserTest {
                    token.getExpiration().equals(expires) &&
                    token.getSubject().equals(subject) &&
                    token.getClaim(claimKey, String.class).equals(claimValue);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

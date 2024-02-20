@@ -3,6 +3,7 @@ package io.mangoo.utils;
 import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
 import io.mangoo.enums.Header;
+import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -10,7 +11,6 @@ import io.undertow.util.Methods;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 import org.mockito.Mockito;
 
 import java.util.*;
@@ -73,7 +73,7 @@ class RequestUtilsTest {
             Map<String, String> requestParameters = RequestUtils.getRequestParameters(mockedExchange);
 
             return requestParameters != null && requestParameters.get("first").equals(one) && requestParameters.get("second").equals(two);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
 
@@ -183,6 +183,6 @@ class RequestUtilsTest {
             
             // then
             return security != null && security.getClass().getSimpleName().equals("SecurityInitialHandler");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

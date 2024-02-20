@@ -2,10 +2,10 @@ package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
 import io.mangoo.models.Car;
+import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
 import java.util.Map;
 import java.util.UUID;
@@ -96,7 +96,7 @@ class JsonUtilsTest {
             
             // then
             return json.equals("{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\",\"id\":\"" + uuid + "\"}");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -126,6 +126,6 @@ class JsonUtilsTest {
             
             // then
             return car.brand == null && car.doors == 0 && car.foo.equals(uuid);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

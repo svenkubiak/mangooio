@@ -1,20 +1,17 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import io.mangoo.TestExtension;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import io.mangoo.TestExtension;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class DateUtilsTest {
@@ -36,7 +33,7 @@ class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test
@@ -56,6 +53,6 @@ class DateUtilsTest {
             
             // then
             return DateUtils.localDateTimeToDate(localDateTime) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

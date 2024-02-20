@@ -1,26 +1,22 @@
 package io.mangoo.persistence;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.mongodb.client.FindIterable;
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.models.TestModel;
+import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.bson.Document;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.models.TestModel;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class DatastoreTest {
@@ -44,7 +40,7 @@ class DatastoreTest {
             
             // then
             return datastore.query(TestModel.class).find(eq("name", name)).first() != null;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), THREADS));
     }
 
     @Test
@@ -94,7 +90,7 @@ class DatastoreTest {
             
             // then
             return datastore.findById(_id, TestModel.class) != null;
-        }, new RunsInThreads<>(new AtomicInteger(), THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), THREADS));
     }
 
     @Test

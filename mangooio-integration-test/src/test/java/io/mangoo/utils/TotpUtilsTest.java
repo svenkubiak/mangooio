@@ -1,21 +1,17 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
+import io.mangoo.TestExtension;
+import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.utils.totp.TotpUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
 
-import io.mangoo.TestExtension;
-import io.mangoo.enums.HmacShaAlgorithm;
-import io.mangoo.utils.totp.TotpUtils;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class TotpUtilsTest {
@@ -40,7 +36,7 @@ class TotpUtilsTest {
             
             // then
             return secret.length() == SECRET_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -67,7 +63,7 @@ class TotpUtilsTest {
             
             // then
             return totp.length() == PASSWORD_LENGTH;
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -89,7 +85,7 @@ class TotpUtilsTest {
         
             // then
             return TotpUtils.verifiedTotp(secret, totp);
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 	
 	@Test
@@ -123,6 +119,6 @@ class TotpUtilsTest {
         
             // then
             return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30"));
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 }

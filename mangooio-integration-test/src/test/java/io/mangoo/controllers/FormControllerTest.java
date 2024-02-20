@@ -1,17 +1,16 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.io.Resources;
+import com.google.common.net.MediaType;
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.StatusCodes;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -26,17 +25,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.io.Resources;
-import com.google.common.net.MediaType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
-import io.undertow.util.StatusCodes;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  *
@@ -82,7 +79,7 @@ class FormControllerTest {
             
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals(username + ";" + password);
-        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 	
     @Test

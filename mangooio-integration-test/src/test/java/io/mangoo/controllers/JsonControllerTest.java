@@ -1,24 +1,20 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import com.google.common.net.MediaType;
+import io.mangoo.TestExtension;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.StatusCodes;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.llorllale.cactoos.matchers.RunsInThreads;
-
-import com.google.common.net.MediaType;
-
-import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
-import io.undertow.util.StatusCodes;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 /**
  *
@@ -83,7 +79,7 @@ class JsonControllerTest {
 
             // then
             return response != null && response.getStatusCode() == StatusCodes.OK && response.getContent().equals("Peter;" + uuid + ";24");
-        }, new RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
     @Test

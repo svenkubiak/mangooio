@@ -1,18 +1,17 @@
 package io.mangoo.controllers;
 
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.google.common.net.MediaType;
+import io.mangoo.TestExtension;
+import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.test.http.TestRequest;
+import io.mangoo.test.http.TestResponse;
+import io.undertow.util.StatusCodes;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.google.common.net.MediaType;
-
-import io.mangoo.TestExtension;
-import io.mangoo.test.http.TestRequest;
-import io.mangoo.test.http.TestResponse;
-import io.undertow.util.StatusCodes;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 
@@ -37,6 +36,6 @@ class ConcurrentControllerTest {
             
             // then
             return response.getStatusCode() == StatusCodes.OK && response.getContent().equals(uuid + ";Parker;24");
-        }, new org.llorllale.cactoos.matchers.RunsInThreads<>(new AtomicInteger(), TestExtension.THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

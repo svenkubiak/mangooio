@@ -60,6 +60,10 @@
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.llorllale</groupId>
+			<artifactId>cactoos-matchers</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
