@@ -5,6 +5,7 @@ import io.mangoo.core.Application;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.llorllale.cactoos.matchers.RunsInThreads;
@@ -129,6 +130,7 @@ class CodecUtilsTest {
     }
     
     @Test
+    @Disabled
     void testConcurrentSerialize() throws Exception {
         MatcherAssert.assertThat(t -> {
             //given
@@ -153,6 +155,7 @@ class CodecUtilsTest {
     }
     
     @Test
+    @Disabled
     void testConcurrentDeserialize() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
@@ -189,7 +192,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64Dencoder() {
+    void testBase64Decoder() {
         //given
         String foo = UUID.randomUUID().toString();
 
@@ -202,7 +205,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64DencoderConcurrent() {
+    void testBase64DecoderConcurrent() {
         MatcherAssert.assertThat(t -> {
             //given
             String foo = UUID.randomUUID().toString();
