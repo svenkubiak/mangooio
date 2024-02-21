@@ -29,13 +29,13 @@ public final class ConcurrentRunner<T> extends TypeSafeDiagnosingMatcher<Func<? 
     public boolean matchesSafely(final Func<? super T, Boolean> func, final Description desc) {
         final int matching;
         try (ExecutorService service = Executors.newVirtualThreadPerTaskExecutor()) {
-            final CountDownLatch latch = new CountDownLatch(1);
+            final var latch = new CountDownLatch(1);
             final List<Future<Boolean>> futures = new ArrayList<>(this.total);
             final Callable<Boolean> task = () -> {
                 latch.await();
                 return func.apply(this.input);
             };
-            for (int thread = 0; thread < this.total; ++thread) {
+            for (var thread = 0; thread < this.total; ++thread) {
                 futures.add(service.submit(task));
             }
             latch.countDown();

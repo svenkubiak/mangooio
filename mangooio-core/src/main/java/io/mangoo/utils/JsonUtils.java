@@ -12,6 +12,7 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public final class JsonUtils {
     public static String toJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        String json = "";
+        String json = Strings.EMPTY;
         try {
             json = mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -60,7 +61,7 @@ public final class JsonUtils {
     public static String toPrettyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        String json = "";
+        var json = Strings.EMPTY;
         try {
             json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -103,9 +104,9 @@ public final class JsonUtils {
     public static Map<String, String> toFlatMap(String json) {
         Objects.requireNonNull(json, Required.JSON.toString());
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         try {
-            addKeys("", new ObjectMapper().readTree(json), map);
+            addKeys(Strings.EMPTY, new ObjectMapper().readTree(json), map);
         } catch (Exception e) {
             //Intentionally left blank
         }
@@ -115,7 +116,7 @@ public final class JsonUtils {
 
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
         if (jsonNode.isObject()) {
-            ObjectNode objectNode = (ObjectNode) jsonNode;
+            var objectNode = (ObjectNode) jsonNode;
             Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
             String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
 
@@ -124,12 +125,12 @@ public final class JsonUtils {
                 addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
             }
         } else if (jsonNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            var arrayNode = (ArrayNode) jsonNode;
             for (int i = 0; i < arrayNode.size(); i++) {
                 addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
             }
         } else if (jsonNode.isValueNode()) {
-            ValueNode valueNode = (ValueNode) jsonNode;
+            var valueNode = (ValueNode) jsonNode;
             map.put(currentPath, valueNode.asText());
         }
     }

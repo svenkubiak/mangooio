@@ -35,7 +35,6 @@
 		<jackson.version>2.16.1</jackson.version>
 		<maven.javadoc.version>3.6.3</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
-		<sonar.coverage.exclusions>*Test.java</sonar.coverage.exclusions>
 		<jna.version>5.14.0</jna.version>
 	</properties>
 	<modules>
