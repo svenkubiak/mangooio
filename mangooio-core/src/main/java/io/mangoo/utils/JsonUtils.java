@@ -60,7 +60,7 @@ public final class JsonUtils {
     public static String toPrettyJson(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
-        String json = "";
+        var json = "";
         try {
             json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -115,7 +115,7 @@ public final class JsonUtils {
 
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
         if (jsonNode.isObject()) {
-            ObjectNode objectNode = (ObjectNode) jsonNode;
+            var objectNode = (ObjectNode) jsonNode;
             Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
             String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
 
@@ -124,12 +124,12 @@ public final class JsonUtils {
                 addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
             }
         } else if (jsonNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            var arrayNode = (ArrayNode) jsonNode;
             for (int i = 0; i < arrayNode.size(); i++) {
                 addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
             }
         } else if (jsonNode.isValueNode()) {
-            ValueNode valueNode = (ValueNode) jsonNode;
+            var valueNode = (ValueNode) jsonNode;
             map.put(currentPath, valueNode.asText());
         }
     }

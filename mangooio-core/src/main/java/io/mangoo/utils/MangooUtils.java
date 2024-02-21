@@ -139,7 +139,7 @@ public final class MangooUtils {
     public static String readFileToString(Path path) {
         Objects.requireNonNull(path, Required.PATH.toString());
         
-        String content = "";
+        var content = "";
         try {
             content = Files.readString(path);
         } catch (IOException e) {
@@ -170,7 +170,7 @@ public final class MangooUtils {
     public static String readResourceToString(String resource) {
         Objects.requireNonNull(resource, Required.RESOURCE.toString());
         
-        String content = "";
+        var content = "";
         try {
             content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
         } catch (IOException e) {
