@@ -3,18 +3,19 @@ package io.mangoo.enums;
 import io.mangoo.utils.MangooUtils;
 
 public enum Template {
-    DEFAULT;
+    DEFAULT,
+    NULL;
     private static final String ADMIN_TEMPLATE_PATH = "@admin/index.ftl";
     private static final String BAD_REQUEST_TEMPLATE_PATH = "defaults/400.html";
     private static final String CACHE_TEMPLATE_PATH = "@admin/cache.ftl";
-    private static final String FORBIDDEN_TAMPLTE_PATH = "defaults/403.html";
+    private static final String FORBIDDEN_TEMPLATE_PATH = "defaults/403.html";
     private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
     private static final String LOGGER_TEMPLATE_PATH = "@admin/logger.ftl";
-    private static final String LOGIN_TEMPLARE_PATH = "@admin/login.ftl";
+    private static final String LOGIN_TEMPLATE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String TOO_MANY_REQUESTS_TEMPLATE_PATH = "defaults/429.html";
     private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
-    private static final String TWOFACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
+    private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
@@ -29,7 +30,7 @@ public enum Template {
         this.notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
         this.badRequestContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
         this.unauthorizedContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
-        this.forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TAMPLTE_PATH);
+        this.forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
         this.serverErrorContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);      
         this.tooManyRequests = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
     }
@@ -73,7 +74,7 @@ public enum Template {
      * @return The relative path of the forbidden template
      */
     public String forbiddenPath() {
-        return FORBIDDEN_TAMPLTE_PATH;
+        return FORBIDDEN_TEMPLATE_PATH;
     }
 
     /**
@@ -87,14 +88,14 @@ public enum Template {
      * @return The relative path of the cache template
      */
     public String twofactorPath() {
-        return TWOFACTOR_TEMPLATE_PATH;
+        return TWO_FACTOR_TEMPLATE_PATH;
     }
 
     /**
      * @return The relative path of the login template
      */
     public String loginPath() {
-        return LOGIN_TEMPLARE_PATH;
+        return LOGIN_TEMPLATE_PATH;
     }
 
     /**

@@ -113,12 +113,12 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
         List<Object> result = new ArrayList<>();
-        MongoCollection collection = getCollection(clazz).orElseGet(null);
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
         if (collection != null) {
             collection.find().forEach(result::add);
         }
@@ -127,12 +127,12 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "DataFlowIssue"})
     public <T> long countAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         
         long count = -1;
-        MongoCollection collection = getCollection(clazz).orElseGet(null);
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
         if (collection != null) {
             count = collection.countDocuments();
         }
@@ -151,7 +151,9 @@ public class DatastoreImpl implements Datastore {
             ObjectId id = baseEntity.getId();
             if (id == null) {
                 InsertOneResult insertResult = collection.insertOne(object);
-                return insertResult.getInsertedId().asObjectId().getValue().toString();
+                if (insertResult.getInsertedId() != null) {
+                    return insertResult.getInsertedId().asObjectId().getValue().toString();
+                }
             } else {
                 collection.replaceOne(eq("_id", id), object);
                 return id.toString();
