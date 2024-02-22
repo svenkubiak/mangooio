@@ -61,7 +61,7 @@ public class DatastoreImpl implements Datastore {
                 .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                 .build();
         
-       mongoDatabase = MongoClients.create(settings)
+       mongoDatabase = MongoClients.create(settings) //NOSONAR
                .getDatabase(config.getMongoDbName(prefix));
        
        LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
