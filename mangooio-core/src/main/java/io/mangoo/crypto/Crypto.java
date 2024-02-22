@@ -193,7 +193,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.PLAIN_TEXT.toString());
         Objects.requireNonNull(text, Required.PUBLIC_KEY.toString());
         
-        String encrypt = "";
+        var encrypt = "";
         try {
             byte[] cipherText = encrypt(text.getBytes(StandardCharsets.UTF_8), key);
             encrypt = encodeBase64(cipherText);
@@ -242,7 +242,7 @@ public class Crypto {
         Objects.requireNonNull(text, Required.ENCRYPTED_TEXT.toString());
         Objects.requireNonNull(text, Required.PRIVATE_KEY.toString());
         
-        String decrypt = "";
+        var decrypt = "";
         try {
             byte[] decryptText = decrypt(decodeBase64(text), key);
             decrypt = new String(decryptText, StandardCharsets.UTF_8);

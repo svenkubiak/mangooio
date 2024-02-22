@@ -62,6 +62,13 @@ import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final String LOGO = """
+                                                        ___     __  ___ \s
+         _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
+        | '_ ` _ \\  / _` || '_ \\  / _` | / _ \\  / _ \\   | |   / / | | | |
+        | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
+        |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
+                                  |___/                                 \s""";
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final int BUFFER_SIZE = 255;
@@ -700,13 +707,7 @@ public final class Application {
      * @return The mangoo I/O logo string
      */
     public static String getLogo() {
-        return """
-                                                        ___     __  ___ \s
-         _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
-        | '_ ` _ \\  / _` || '_ \\  / _` | / _ \\  / _ \\   | |   / / | | | |
-        | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
-        |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
-                                  |___/                                 \s""";
+        return LOGO;
     }
 
     private static int getBitLength(String secret) {

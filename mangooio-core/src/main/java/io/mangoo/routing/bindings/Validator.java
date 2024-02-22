@@ -11,10 +11,12 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 public class Validator implements Serializable {
+    @Serial
     private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
@@ -427,7 +429,7 @@ public class Validator implements Serializable {
 
     /**
      * Validates a field by a given regular expression pattern
-     *
+     * <p>
      * It is required to pass a pre-compiled pattern, e.g.
      * Pattern pattern = Pattern.compile("[a-Z,0-9]")
      *
@@ -440,7 +442,7 @@ public class Validator implements Serializable {
 
     /**
      * Validates a field by a given regular expression pattern
-     *
+     * <p>
      * It is required to pass a pre-compiled pattern, e.g.
      * Pattern pattern = Pattern.compile("[a-Z,0-9]")
      *
@@ -596,9 +598,7 @@ public class Validator implements Serializable {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(message, Required.MESSAGE.toString());
 
-        if (!errors.containsKey(name)) {
-            errors.put(name, message);
-        }
+        errors.computeIfAbsent(name, k -> message);
     }
 
     public Map<String, String> getErrors() {

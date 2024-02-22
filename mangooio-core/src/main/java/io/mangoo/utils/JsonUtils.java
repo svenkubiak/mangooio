@@ -126,7 +126,7 @@ public final class JsonUtils {
             }
         } else if (jsonNode.isArray()) {
             var arrayNode = (ArrayNode) jsonNode;
-            for (int i = 0; i < arrayNode.size(); i++) {
+            for (var i = 0; i < arrayNode.size(); i++) {
                 addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
             }
         } else if (jsonNode.isValueNode()) {
