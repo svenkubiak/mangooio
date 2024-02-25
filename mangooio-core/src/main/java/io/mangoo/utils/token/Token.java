@@ -5,10 +5,11 @@ import io.mangoo.enums.ClaimKey;
 import io.mangoo.enums.Required;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
-public class Token extends TokenCommons {
-    private Paseto paseto;
+public class Token {
+    private final Paseto paseto;
     
     public Token(Paseto paseto) {
         this.paseto = Objects.requireNonNull(paseto, Required.PASETO.toString());
@@ -18,7 +19,7 @@ public class Token extends TokenCommons {
      * @return The LocalDateTime representation of the expiration with ZoneOffset.UTC
      */
     public LocalDateTime getExpiration() {
-        return LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZONE_OFFSET);
+        return LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC);
     }
 
     /**

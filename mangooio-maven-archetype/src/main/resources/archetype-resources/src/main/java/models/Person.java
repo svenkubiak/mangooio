@@ -1,9 +1,9 @@
 package models;
 
-import java.io.Serializable;
-
 import dev.morphia.annotations.Entity;
 import io.mangoo.persistence.BaseModel;
+
+import java.io.Serializable;
 
 @Entity(value = "persons", useDiscriminator = false)
 public class Person extends BaseModel implements Serializable {
@@ -13,8 +13,8 @@ public class Person extends BaseModel implements Serializable {
     private final int age;
 
     public Person() {
-        this.firstname = "";
-        this.lastname = "";
+        this.firstname = Strings.EMPTY;
+        this.lastname = Strings.EMPTY;
         this.age = 0;
     }
 

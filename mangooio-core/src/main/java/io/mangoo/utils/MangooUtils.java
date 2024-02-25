@@ -8,6 +8,7 @@ import io.mangoo.enums.Required;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -66,9 +67,9 @@ public final class MangooUtils {
     
     /**
      * Generates a random string with the given length.
-     * 
+     * <p>
      * Based on commons-lang3 RandomStringUtils using SecureRandom
-     * 
+     * <p>
      * Uses: uppercase letters, lowercase letters and numbers 0-9
      * 
      * @param length The length of the random string
@@ -139,7 +140,7 @@ public final class MangooUtils {
     public static String readFileToString(Path path) {
         Objects.requireNonNull(path, Required.PATH.toString());
         
-        var content = "";
+        var content = Strings.EMPTY;
         try {
             content = Files.readString(path);
         } catch (IOException e) {
@@ -170,7 +171,7 @@ public final class MangooUtils {
     public static String readResourceToString(String resource) {
         Objects.requireNonNull(resource, Required.RESOURCE.toString());
         
-        var content = "";
+        var content = Strings.EMPTY;
         try {
             content = Resources.toString(Resources.getResource(resource), StandardCharsets.UTF_8);
         } catch (IOException e) {

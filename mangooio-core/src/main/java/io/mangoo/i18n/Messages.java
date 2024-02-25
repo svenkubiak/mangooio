@@ -3,7 +3,9 @@ package io.mangoo.i18n;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Key;
+import org.apache.logging.log4j.util.Strings;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -11,6 +13,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Messages implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1713264225655435037L;
     private Map<String, String> defaults = Default.getMessages();
     private transient ResourceBundle bundle;
@@ -56,7 +59,7 @@ public class Messages implements Serializable {
             // Ignore anything else
         }
 
-        return "";
+        return Strings.EMPTY;
     }
 
     /**

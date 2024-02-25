@@ -10,6 +10,7 @@ import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -41,7 +42,7 @@ public class Validator implements Serializable {
      * @return The error message for the field, or an empty string if no error is found
      */
     public String getError(String name) {
-        return hasError(name) ? errors.get(name) : "";
+        return hasError(name) ? errors.get(name) : Strings.EMPTY;
     }
 
     /**
@@ -60,7 +61,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectValue(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (StringUtils.isBlank(StringUtils.trimToNull(value))) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REQUIRED_KEY.toString(), name)));
@@ -85,7 +86,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectMinValue(String name, double minValue, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) < minValue) {
@@ -114,7 +115,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectMinLength(String name, double minLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() < minLength) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MIN_LENGTH_KEY.toString(), name, minLength)));
@@ -158,7 +159,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectNumeric(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!StringUtils.isNumeric(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.NUMERIC_KEY.toString(), name)));
@@ -173,7 +174,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectMaxLength(String name, double maxLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() > maxLength) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MAX_LENGTH_KEY.toString(), name, maxLength)));
@@ -188,7 +189,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectMaxValue(String name, double maxValue, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (StringUtils.isNumeric(value)) {
             if (Double.parseDouble(value) > maxValue) {
@@ -217,8 +218,8 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectExactMatch(String name, String anotherName, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
-        String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
+        String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
         if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equals(anotherValue) )) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.EXACT_MATCH_KEY.toString(), name, anotherName)));
@@ -243,8 +244,8 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectMatch(String name, String anotherName, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
-        String anotherValue = Optional.ofNullable(get(anotherName)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
+        String anotherValue = Optional.ofNullable(get(anotherName)).orElse(Strings.EMPTY);
 
         if (( StringUtils.isBlank(value) && StringUtils.isBlank(anotherValue) ) || ( StringUtils.isNotBlank(value) && !value.equalsIgnoreCase(anotherValue)  )) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_KEY.toString(), name, anotherName)));
@@ -269,7 +270,7 @@ public class Validator implements Serializable {
      * @param values A list of given values to check against
      */
     public void expectMatch(String name, String message, List<String> values) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!(values).contains(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.MATCH_VALUES_KEY.toString(), name)));
@@ -292,7 +293,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectEmail(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!EmailValidator.getInstance().isValid(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.EMAIL_KEY.toString(), name)));
@@ -315,7 +316,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectIpv4(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!InetAddressValidator.getInstance().isValidInet4Address(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.IPV4_KEY.toString(), name)));
@@ -338,7 +339,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectDomainName(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!DomainValidator.getInstance().isValid(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.DOMAIN_NAME_KEY.toString(), name)));
@@ -361,7 +362,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectIpv6(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!InetAddressValidator.getInstance().isValidInet6Address(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.IPV6_KEY.toString(), name)));
@@ -399,7 +400,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectRangeValue(String name, int minValue, int maxValue, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (StringUtils.isNumeric(value)) {
             var doubleValue = Double.parseDouble(value);
@@ -420,7 +421,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectRangeLength(String name, int minLength, int maxLength, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (value.length() < minLength || value.length() > maxLength) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.RANGE_LENGTH_KEY.toString(), name, minLength, maxLength)));
@@ -451,7 +452,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectRegex(String name, Pattern pattern, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!pattern.matcher(value).matches()) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.REGEX_KEY.toString(), name)));
@@ -474,7 +475,7 @@ public class Validator implements Serializable {
      * @param message A custom error message instead of the default one
      */
     public void expectUrl(String name, String message) {
-        String value = Optional.ofNullable(get(name)).orElse("");
+        String value = Optional.ofNullable(get(name)).orElse(Strings.EMPTY);
 
         if (!UrlValidator.getInstance().isValid(value)) {
             addError(name, Optional.ofNullable(message).orElse(messages.get(Validation.URL_KEY.toString(), name)));
@@ -618,6 +619,6 @@ public class Validator implements Serializable {
     }
     
     public void invalidate() {
-        errors.put("", "");
+        errors.put(Strings.EMPTY, Strings.EMPTY);
     }
 }

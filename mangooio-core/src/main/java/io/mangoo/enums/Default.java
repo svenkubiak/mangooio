@@ -1,5 +1,7 @@
 package io.mangoo.enums;
 
+import org.apache.logging.log4j.util.Strings;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +11,8 @@ public enum Default {
     APPLICATION_ADMIN_HEALTH_ENABLE(Constants.FALSE),
     APPLICATION_ADMIN_HEALTH_HEADER("mangooio-health"),
     APPLICATION_CONTROLLER("controllers."),
-    APPLICATION_HEADERS_CONTENTSECURITYPOLICY(""),
-    APPLICATION_HEADERS_FEATUREPOLICY(""),
+    APPLICATION_HEADERS_CONTENTSECURITYPOLICY(Strings.EMPTY),
+    APPLICATION_HEADERS_FEATUREPOLICY(Strings.EMPTY),
     APPLICATION_HEADERS_REFERERPOLICY("no-referrer"),
     APPLICATION_HEADERS_SERVER("Undertow"),
     APPLICATION_HEADERS_XCONTENTTYPEOPTIONS("nosniff"),
@@ -80,7 +82,7 @@ public enum Default {
         }
     }
 
-    private static Map<String, String> messages = new HashMap<>();
+    private static final Map<String, String> messages = new HashMap<>();
     
     static {
         messages.put(Validation.REQUIRED_KEY.toString(), Validation.REQUIRED.toString());

@@ -44,6 +44,7 @@ import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -112,7 +113,10 @@ public final class Application {
             showLogo();
             applicationStarted();
             
-            Runtime.getRuntime().addShutdownHook(getInstance(Shutdown.class));
+            Runtime
+                    .getRuntime()
+                    .addShutdownHook(getInstance(Shutdown.class));
+
             started = true;
         }
     }
@@ -149,7 +153,7 @@ public final class Application {
                                     .trim();
                             
                             if (at.contains("every")) {
-                                at = at.replace("every", "").trim();
+                                at = at.replace("every", Strings.EMPTY).trim();
                                 var timespan = at.substring(0, at.length() - 1);
                                 var duration = at.substring(at.length() - 1);
                                 seconds = getSeconds(timespan, duration);  
@@ -671,7 +675,7 @@ public final class Application {
             undertow = builder.build();
             undertow.start();
         } else {
-            LOG.error("No connector found! Please configure a HTTP and/or AJP connector in your config.props");
+            LOG.error("No connector found! Please configure a HTTP and/or an AJP connector in your config.props file");
             failsafe();
         }
     }
@@ -681,7 +685,7 @@ public final class Application {
         final var buffer = new StringBuilder(BUFFER_SIZE);
         buffer.append('\n')
             .append(getLogo())
-            .append("\n\nhttps://github.com/svenkubiak/mangooio | @mangoo_io | ")
+            .append("\n\nhttps://github.com/svenkubiak/mangooio | ")
             .append(MangooUtils.getVersion())
             .append('\n');
 
@@ -713,7 +717,7 @@ public final class Application {
     private static int getBitLength(String secret) {
         Objects.requireNonNull(secret, Required.SECRET.toString());
 
-        return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", ""));
+        return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
     }
 
     private static List<Module> getModules() {

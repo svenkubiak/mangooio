@@ -153,7 +153,7 @@ public class MailListener extends Subscriber<Mail> {
         }
     }
 
-    private void setRecipients(Mail mail, MimeMessage mimeMessage) throws MessagingException {
+    private void setRecipients(Mail mail, MimeMessage mimeMessage) throws MessagingException { //NOSONAR
         for (String recipient : mail.getMessageTos()) {
             mimeMessage.addRecipients(RecipientType.TO, recipient);
         }

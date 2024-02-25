@@ -15,7 +15,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 public final class CodecUtils {
-    private static final Base64.Encoder BASRE64ENCODER = Base64.getEncoder();
+    private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
     private static final ThreadSafeFury FURY = Fury.builder()
             .withLanguage(Language.JAVA)
@@ -40,7 +40,7 @@ public final class CodecUtils {
         Objects.requireNonNull(password, Required.PASSWORD.toString());
         Objects.requireNonNull(salt, Required.SALT.toString());
         
-        var aargon2Builder = (new Argon2Parameters.Builder())
+        var argon2Builder = (new Argon2Parameters.Builder())
                 .withVersion(Argon2Parameters.ARGON2_id)
                 .withIterations(ITERATIONS)
                 .withMemoryAsKB(MEMORY)
@@ -48,13 +48,13 @@ public final class CodecUtils {
                 .withSecret(password.getBytes(StandardCharsets.UTF_8))
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8));
 
-        var aargon2Generator = new Argon2BytesGenerator();
-        aargon2Generator.init(aargon2Builder.build());
+        var argon2Generator = new Argon2BytesGenerator();
+        argon2Generator.init(argon2Builder.build());
 
         var passwdHash = new byte[32];
-        aargon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
+        argon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
 
-        return BASRE64ENCODER.encodeToString(passwdHash);
+        return BASE64ENCODER.encodeToString(passwdHash);
     }
     
     /**
@@ -99,7 +99,7 @@ public final class CodecUtils {
         Objects.requireNonNull(object, Required.OBJECT.toString());
         
         byte[] serialize = FURY.serialize(object);
-        return BASRE64ENCODER.encodeToString(serialize);
+        return BASE64ENCODER.encodeToString(serialize);
     }
     
     /**
@@ -125,7 +125,7 @@ public final class CodecUtils {
      */
     public static byte[] encodeToBase64(String data) {
         Objects.requireNonNull(data, Required.DATA.toString());
-        return BASRE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
+        return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
     
     /**

@@ -1,20 +1,19 @@
 package controllers;
 
+import com.google.re2j.Pattern;
+import io.mangoo.enums.Default;
+import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Form;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.re2j.Pattern;
-
-import io.mangoo.enums.Default;
-import io.mangoo.routing.Response;
-import io.mangoo.routing.bindings.Form;
-    
 public class FormController {
     private static final Logger LOG = LogManager.getLogger(FormController.class);
     private static final Pattern PATTERN = Pattern.compile("[a-z]");
@@ -30,7 +29,7 @@ public class FormController {
     }
     
     public Response singlefile(Form form) {
-        var content = "";
+        var content = Strings.EMPTY;
         Optional<InputStream> formFile = form.getFile();
         if (formFile.isPresent()) {
             InputStream file = formFile.get();
@@ -46,7 +45,7 @@ public class FormController {
     
     @SuppressWarnings("all")
     public Response multifile(Form form) {
-        String content = "";
+        String content = Strings.EMPTY;
         List<InputStream> files = form.getFiles();
         for (InputStream file : files) {
             try {

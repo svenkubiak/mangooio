@@ -4,6 +4,7 @@ import freemarker.template.*;
 import io.mangoo.i18n.Messages;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class I18nMethod implements TemplateMethodModelEx {
 
     @Override
     public TemplateModel exec(List arguments) throws TemplateModelException {
-        var messageValue = "";
+        var messageValue = Strings.EMPTY;
         if (arguments.size() == NUM_ARGUMENTS) {
             var messageKey = ((SimpleScalar) arguments.getFirst()).getAsString();
             messageValue = messages.get(messageKey);

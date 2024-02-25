@@ -8,15 +8,18 @@ import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class TokenBuilder extends TokenCommons {
+public class TokenBuilder {
+    private static final String ALGORITHM = "AES";
+    private final Map<String, Object> claims = new HashMap<>();
     private LocalDateTime expires;
     private String sharedSecret;
-    private Map<String, Object> claims = new HashMap<>();
     private String subject;
     
     public static TokenBuilder create() {
@@ -73,15 +76,15 @@ public class TokenBuilder extends TokenCommons {
     public String build() throws MangooTokenException {
         try {
              PasetoV2LocalBuilder pasetoBuilder = Pasetos.V2.LOCAL.builder()
-                    .setExpiration(expires.toInstant(ZONE_OFFSET))
+                    .setExpiration(expires.toInstant(ZoneOffset.UTC))
                     .setSubject(subject == null ? MangooUtils.randomString(32) : subject)
-                    .setSharedSecret(new SecretKeySpec(sharedSecret.getBytes(CHARSET), ALGORITHM));
-             
-             claims.entrySet()
-                 .stream()
-                 .forEach(entry -> pasetoBuilder.claim(entry.getKey(), entry.getValue()));
-             
-             return pasetoBuilder.compact();
+                    .setSharedSecret(new SecretKeySpec(sharedSecret.getBytes(StandardCharsets.UTF_8), ALGORITHM));
+
+            for (Map.Entry<String, Object> entry : claims.entrySet()) {
+                pasetoBuilder.claim(entry.getKey(), entry.getValue());
+            }
+
+            return pasetoBuilder.compact();
         } catch (Exception e) {
             throw new MangooTokenException(e);
         }

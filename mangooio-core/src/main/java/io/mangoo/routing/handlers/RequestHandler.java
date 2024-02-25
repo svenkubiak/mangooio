@@ -65,13 +65,12 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @return A Response object that will be merged to the final response
      *
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws IOException
-     * @throws MangooTemplateEngineException 
+     * @throws NoSuchMethodException when no method is found
+     * @throws IllegalAccessException when an illegal access occurs
+     * @throws InvocationTargetException when an invocation fails
+     * @throws MangooTemplateEngineException when the template rendering fails
      */
-    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
+    protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         //execute global request filter
         var response = Response.withOk();
         if (attachment.hasRequestFilter()) {
@@ -109,12 +108,11 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @return A response object
      *
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws IOException
-     * @throws MangooTemplateEngineException 
+     * @throws IllegalAccessException when an illegal access occurs
+     * @throws InvocationTargetException when an invocation fails
+     * @throws MangooTemplateEngineException when the template rendering fails
      */
-    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException, IOException {
+    protected Response invokeController(HttpServerExchange exchange, Response response) throws IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         Response invokedResponse;
 
         if (attachment.getMethodParameters().isEmpty()) {
@@ -207,9 +205,9 @@ public class RequestHandler implements HttpHandler {
      * @param response The response to use
      * @return True if the request should continue after filter execution, false otherwise
      *
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
+     * @throws NoSuchMethodException when the method is not found
+     * @throws IllegalAccessException when an illegal access occurs
+     * @throws InvocationTargetException when the target is not found
      */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         for (final Annotation annotation : annotations) {
@@ -233,7 +231,7 @@ public class RequestHandler implements HttpHandler {
      * @param exchange The Undertow HttpServerExchange
      * @return A body object containing the request body
      *
-     * @throws IOException
+     * @throws IOException when setting the body fails
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
         var body = "";

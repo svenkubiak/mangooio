@@ -1,14 +1,18 @@
 package io.mangoo.test.http;
 
+import com.google.common.collect.Multimap;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Required;
+import io.undertow.util.Methods;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
+
 import java.io.IOException;
-import java.net.Authenticator;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.net.HttpCookie;
-import java.net.PasswordAuthentication;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
@@ -21,18 +25,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.collect.Multimap;
-
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
-import io.undertow.util.Methods;
 
 /**
  * 
@@ -293,7 +285,7 @@ public class TestResponse {
      * @return The content type of the response
      */
     public String getContentType() {
-        return this.httpResponse.headers().firstValue(CONTENT_TYPE).orElse("");
+        return this.httpResponse.headers().firstValue(CONTENT_TYPE).orElse(Strings.EMPTY);
     }
 
     /**

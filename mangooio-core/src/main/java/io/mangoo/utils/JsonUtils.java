@@ -118,7 +118,7 @@ public final class JsonUtils {
         if (jsonNode.isObject()) {
             var objectNode = (ObjectNode) jsonNode;
             Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
-            String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
+            String pathPrefix = currentPath.isEmpty() ? Strings.EMPTY : currentPath + ".";
 
             while (iter.hasNext()) {
                 Map.Entry<String, JsonNode> entry = iter.next();

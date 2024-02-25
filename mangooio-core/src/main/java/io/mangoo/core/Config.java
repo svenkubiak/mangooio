@@ -13,6 +13,7 @@ import jodd.props.Props;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class Config {
         props.extractProps(profileProps, Application.getMode().toString());
         profileProps.forEach(this::parse);
 
-        System.setProperty(Key.APPLICATION_SECRET.toString(), "");
+        System.setProperty(Key.APPLICATION_SECRET.toString(), Strings.EMPTY);
     }
     
     /**
@@ -129,7 +130,7 @@ public class Config {
             decrypted = false;
         }
         
-        return "";
+        return Strings.EMPTY;
     }
     
     /**

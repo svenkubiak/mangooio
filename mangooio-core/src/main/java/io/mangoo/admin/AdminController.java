@@ -26,7 +26,9 @@ import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -40,7 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
 public class AdminController {
-    private static final org.apache.logging.log4j.Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
@@ -141,7 +143,7 @@ public class AdminController {
     
     public Response logout() {
         var cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
-                .setValue("")
+                .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
                 .setPath("/")
@@ -230,7 +232,7 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        var value = "";
+        var value = Strings.EMPTY;
         
         if (body != null && !body.isEmpty()) {
             var function = body.get("function").toString();
