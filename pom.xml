@@ -27,7 +27,7 @@
 		<jdk.version>21</jdk.version>
 		<log4j.version>2.23.0</log4j.version>
 		<maven.version>4.0.0-alpha-9</maven.version>
-		<required.maven.version>3.8.5</required.maven.version>
+		<required.maven.version>3.9.0</required.maven.version>
 		<junit.version>5.10.2</junit.version>
 		<junit.platform.version>1.10.2</junit.platform.version>
 		<enforcer.version>1.7.0</enforcer.version>
