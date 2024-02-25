@@ -46,7 +46,6 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Undertow](http://undertow.io/) – Web Server
 * [MongoDB](https://www.mongodb.com/) – Persistence
 * [Google Guice](https://github.com/google/guice) – Dependency injection
-* [Google Guava](https://github.com/google/guava) – EventBus
 * [Classgraph](https://github.com/classgraph/classgraph) – Classpath scanning
 * [Caffeine](https://github.com/ben-manes/caffeine) – Caching
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
