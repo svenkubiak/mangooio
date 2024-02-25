@@ -7,11 +7,10 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class PersistenceUtils {
+    private static final Map<String, String> COLLECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     private PersistenceUtils(){
     }
-
-    private static final Map<String, String> COLLECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     /**
      * Adds a collection to be retrieved for the datastore

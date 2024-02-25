@@ -28,9 +28,9 @@ import java.util.*;
 
 public final class RequestUtils {
     private static final Logger LOG = LogManager.getLogger(RequestUtils.class);
-    private static AttachmentKey<Attachment> attachmentKey;
     private static final Pattern PATTERN = Pattern.compile("\"");
-    
+    private static AttachmentKey<Attachment> attachmentKey;
+
     private RequestUtils() {
     }
     

@@ -25,11 +25,12 @@ import java.util.Properties;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
     private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int MAX_LENGTH = 256;
     private static final int MIN_LENGTH = 0;
-    private static final int CONVERTION = 1024;
+    private static final int CONVERSION = 1024;
 
     private MangooUtils() {
     }
@@ -79,7 +80,7 @@ public final class MangooUtils {
         Preconditions.checkArgument(length > MIN_LENGTH, "random string length must be at least 1 character");
         Preconditions.checkArgument(length <= MAX_LENGTH, "random string length must be at most 256 character");
         
-        return RandomStringUtils.random(length, 0, CHARACTERS.length-1, false, false, CHARACTERS, new SecureRandom());
+        return RandomStringUtils.random(length, 0, CHARACTERS.length-1, false, false, CHARACTERS, SECURE_RANDOM);
     }
 
     /**
@@ -108,8 +109,8 @@ public final class MangooUtils {
             return "0";
         }
         
-        int index = (int) (Math.log10(size) / Math.log10(CONVERTION));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(CONVERTION, index)) + " " + UNITS[index];
+        int index = (int) (Math.log10(size) / Math.log10(CONVERSION));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(CONVERSION, index)) + " " + UNITS[index];
     }
     
     /**

@@ -51,10 +51,10 @@ public final class CodecUtils {
         var argon2Generator = new Argon2BytesGenerator();
         argon2Generator.init(argon2Builder.build());
 
-        var passwdHash = new byte[32];
-        argon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), passwdHash);
+        var hash = new byte[32];
+        argon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), hash);
 
-        return BASE64ENCODER.encodeToString(passwdHash);
+        return BASE64ENCODER.encodeToString(hash);
     }
     
     /**
