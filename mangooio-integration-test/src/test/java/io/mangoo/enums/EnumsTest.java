@@ -1,12 +1,11 @@
 package io.mangoo.enums;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+import io.mangoo.TestExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import io.mangoo.TestExtension;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * 
@@ -28,8 +27,8 @@ class EnumsTest {
         assertThat(Binding.fromString("io.mangoo.routing.bindings.Form"), equalTo(Binding.FORM));
         assertThat(Binding.fromString("int"), equalTo(Binding.INT_PRIMITIVE));
         assertThat(Binding.fromString("java.lang.Integer"), equalTo(Binding.INTEGER));
-        assertThat(Binding.fromString("java.time.LocalDate"), equalTo(Binding.LOCALDATE));
-        assertThat(Binding.fromString("java.time.LocalDateTime"), equalTo(Binding.LOCALDATETIME));
+        assertThat(Binding.fromString("java.time.LocalDate"), equalTo(Binding.LOCAL_DATE));
+        assertThat(Binding.fromString("java.time.LocalDateTime"), equalTo(Binding.LOCAL_DATE_TIME));
         assertThat(Binding.fromString("java.lang.Long"), equalTo(Binding.LONG));
         assertThat(Binding.fromString("long"), equalTo(Binding.LONG_PRIMITIVE));
         assertThat(Binding.fromString("java.util.Optional"), equalTo(Binding.OPTIONAL));

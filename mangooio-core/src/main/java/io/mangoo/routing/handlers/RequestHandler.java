@@ -176,8 +176,8 @@ public class RequestHandler implements HttpHandler {
                 case FLASH -> attachment.getFlash();
                 case REQUEST -> attachment.getRequest();
                 case MESSAGES -> attachment.getMessages();
-                case LOCALDATE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
-                case LOCALDATETIME -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
+                case LOCAL_DATE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDate.parse(attachment.getRequestParameter().get(key));
+                case LOCAL_DATE_TIME -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : LocalDateTime.parse(attachment.getRequestParameter().get(key));
                 case STRING -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : attachment.getRequestParameter().get(key);
                 case INT_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Integer.parseInt(attachment.getRequestParameter().get(key));
                 case INTEGER -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Integer.valueOf(attachment.getRequestParameter().get(key));

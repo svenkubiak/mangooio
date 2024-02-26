@@ -634,7 +634,7 @@ public class Config {
      */
     public Pattern getCorsUrlPattern() {
         if (corsUrl == null) {
-            corsUrl = Pattern.compile(getString(Key.CORS_URLPATTERN, Default.CORS_URLPATTERN.toString()));
+            corsUrl = Pattern.compile(getString(Key.CORS_URL_PATTERN, Default.CORS_URL_PATTERN.toString()));
         }
         return corsUrl;
     }
@@ -644,7 +644,7 @@ public class Config {
      */
     public Pattern getCorsAllowOrigin() {
         if (corsAllowOrigin == null) {
-            corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOWORIGIN, Default.CORS_ALLOWORIGIN.toString()));
+            corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOW_ORIGIN, Default.CORS_ALLOW_ORIGIN.toString()));
         }
         
         return corsAllowOrigin;
@@ -654,35 +654,35 @@ public class Config {
      * @return cors.headers.allowcredentials or default value if undefined
      */
     public String getCorsHeadersAllowCredentials() {
-        return getString(Key.CORS_HEADERS_ALLOWCREDENTIALS, Default.CORS_HEADERS_ALLOWCREDENTIALS.toString());
+        return getString(Key.CORS_HEADERS_ALLOW_CREDENTIALS, Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString());
     }
     
     /**
      * @return cors.headers.allowheaders or default value if undefined
      */
     public String getCorsHeadersAllowHeaders() {
-        return getString(Key.CORS_HEADERS_ALLOWHEADERS, Default.CORS_HEADERS_ALLOWHEADERS.toString());
+        return getString(Key.CORS_HEADERS_ALLOW_HEADERS, Default.CORS_HEADERS_ALLOW_HEADERS.toString());
     }
     
     /**
      * @return cors.headers.allowheaders or default value if undefined
      */
     public String getCorsHeadersAllowMethods() {
-        return getString(Key.CORS_HEADERS_ALLOWMETHODS, Default.CORS_HEADERS_ALLOWMETHODS.toString());
+        return getString(Key.CORS_HEADERS_ALLOW_METHODS, Default.CORS_HEADERS_ALLOW_METHODS.toString());
     }
     
     /**
      * @return cors.headers.exposeheaders or default value if undefined
      */
     public String getCorsHeadersExposeHeaders() {
-        return getString(Key.CORS_HEADERS_EXPOSEHEADERS, Default.CORS_HEADERS_EXPOSEHEADERS.toString());
+        return getString(Key.CORS_HEADERS_EXPOSE_HEADERS, Default.CORS_HEADERS_EXPOSE_HEADERS.toString());
     }
 
     /**
      * @return cors.headers.maxage or default value if undefined
      */
     public String getCorsHeadersMaxAge() {
-        return getString(Key.CORS_HEADERS_MAXAGE, Default.CORS_HEADERS_MAXAGE.toString());
+        return getString(Key.CORS_HEADERS_MAX_AGE, Default.CORS_HEADERS_MAX_AGE.toString());
     }
 
     /**

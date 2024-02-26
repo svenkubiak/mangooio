@@ -1,10 +1,17 @@
 package io.mangoo.core;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
+import io.mangoo.TestExtension;
+import io.mangoo.enums.Annotation;
+import io.mangoo.enums.Default;
+import io.mangoo.enums.Key;
+import io.mangoo.enums.Mode;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,20 +21,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import io.mangoo.enums.Annotation;
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableMap;
-
-import io.mangoo.TestExtension;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class ConfigTest {
@@ -1544,7 +1539,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOWORIGIN.toString()).toString()));
+        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN.toString()).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1575,7 +1570,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOWCREDENTIALS.toString()));
+        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1606,7 +1601,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOWHEADERS.toString()));
+        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1637,7 +1632,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOWMETHODS.toString()));
+        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1668,7 +1663,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSEHEADERS.toString()));
+        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1699,7 +1694,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAXAGE.toString()));
+        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE.toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
@@ -1730,7 +1725,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URLPATTERN.toString()).toString()));
+        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN.toString()).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
