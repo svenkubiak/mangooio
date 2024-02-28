@@ -1,7 +1,7 @@
 package io.mangoo.enums;
 
 public enum Queue {
-    MAIL("mangooio-maillistener"),
+    MAIL("mangooio-mail"),
     SSE("mangooio-sse");
 
     private final String value;

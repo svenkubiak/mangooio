@@ -2,9 +2,9 @@ package io.mangoo.email;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.mangoo.async.MangooSubscriber;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
-import io.mangoo.reactive.Subscriber;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Singleton
-public class MailListener extends Subscriber<Mail> {
+public class MailListener implements MangooSubscriber<Mail> {
     private static final Logger LOG = LogManager.getLogger(MailListener.class);
     private final Session session;
     
@@ -69,7 +69,7 @@ public class MailListener extends Subscriber<Mail> {
      * @param mail The mail to send
      */
     @Override
-    public void onNext(Mail mail) {
+    public void receive(Mail mail) {
         Objects.requireNonNull(mail, Required.MAIL.toString());
 
         try {

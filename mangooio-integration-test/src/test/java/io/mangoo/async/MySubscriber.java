@@ -1,6 +1,4 @@
-package io.mangoo.reactive;
-
-import io.mangoo.reactive.beta.MangooSubscriber;
+package io.mangoo.async;
 
 public class MySubscriber implements MangooSubscriber<String> {
     @Override

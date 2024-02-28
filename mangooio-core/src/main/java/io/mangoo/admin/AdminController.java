@@ -3,6 +3,7 @@ package io.mangoo.admin;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.google.inject.Inject;
 import com.google.re2j.Pattern;
+import io.mangoo.async.EventBus;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
@@ -13,7 +14,6 @@ import io.mangoo.enums.*;
 import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
-import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.annotations.FilterWith;
 import io.mangoo.routing.bindings.Form;
@@ -71,7 +71,7 @@ public class AdminController {
     public Response index() {
         var instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
-        var stream = Application.getInstance(Stream.class);
+        var stream = Application.getInstance(EventBus.class);
         
         if (enabled) {
             var metrics = Application.getInstance(Metrics.class);

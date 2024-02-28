@@ -11,13 +11,13 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.MethodInfo;
 import io.mangoo.admin.AdminController;
+import io.mangoo.async.EventBus;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.email.MailListener;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Queue;
 import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.reactive.Stream;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -260,7 +260,7 @@ public final class Application {
      */
     @SuppressWarnings("unchecked")
     private static void prepareMail() {
-        getInstance(Stream.class).register(Queue.MAIL.toString(), MailListener.class);
+        getInstance(EventBus.class).register(Queue.MAIL.toString(), MailListener.class);
     }
 
     /**

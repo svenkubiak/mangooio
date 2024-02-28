@@ -1,10 +1,10 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.async.EventBus;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Header;
 import io.mangoo.enums.Queue;
 import io.mangoo.events.ServerSentEventConnected;
-import io.mangoo.reactive.Stream;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
@@ -30,13 +30,13 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
             }
 
             if (RequestUtils.hasValidAuthentication(header)) {
-                Application.getInstance(Stream.class).publish(Queue.SSE.toString(), new ServerSentEventConnected(connection.getRequestURI(), connection));
+                Application.getInstance(EventBus.class).publish(Queue.SSE.toString(), new ServerSentEventConnected(connection.getRequestURI(), connection));
             } else {
                 MangooUtils.closeQuietly(connection);
             }
         } else {
             connection.addCloseTask(Application.getInstance(ServerSentEventCloseListener.class));
-            Application.getInstance(Stream.class).publish(Queue.SSE.toString(), new ServerSentEventConnected(connection.getRequestURI(), connection));
+            Application.getInstance(EventBus.class).publish(Queue.SSE.toString(), new ServerSentEventConnected(connection.getRequestURI(), connection));
         }
     }
 }

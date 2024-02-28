@@ -1,8 +1,7 @@
-package io.mangoo.reactive;
+package io.mangoo.async;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.reactive.beta.EventBus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

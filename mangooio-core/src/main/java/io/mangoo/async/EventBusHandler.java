@@ -1,4 +1,4 @@
-package io.mangoo.reactive.beta;
+package io.mangoo.async;
 
 import com.google.inject.Singleton;
 import com.softwaremill.jox.Channel;
@@ -10,11 +10,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Singleton
 public class EventBusHandler<T> {
     private static final Logger LOG = LogManager.getLogger(EventBusHandler.class);
     private final Map<String, Channel<?>> channels = new ConcurrentHashMap<>(16, 0.9f, 1);
+    private final AtomicLong handledEvents = new AtomicLong();
+    private final AtomicLong subscribers = new AtomicLong();
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void register(String queue, Class<?> subscriber) {
@@ -38,6 +41,7 @@ public class EventBusHandler<T> {
                 LOG.error("EventBus queue was interrupted", e);
             }
         });
+        subscribers.addAndGet(1);
     }
 
     @SuppressWarnings("all")
@@ -49,6 +53,7 @@ public class EventBusHandler<T> {
         if (channel != null) {
             try {
                 channel.send(payload);
+                handledEvents.addAndGet(1);
             } catch (InterruptedException e) {
                 LOG.error("Failed to send payload to queue '" + queue + "'", e);
             }
@@ -57,5 +62,13 @@ public class EventBusHandler<T> {
 
     public void shutdown() {
         for (Map.Entry<String, Channel<?>> entry : channels.entrySet()) entry.getValue().done();
+    }
+
+    public long getHandledEvents() {
+        return handledEvents.longValue();
+    }
+
+    public long getNumberOfSubscribers() {
+        return subscribers.longValue();
     }
 }
