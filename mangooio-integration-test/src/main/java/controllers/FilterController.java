@@ -6,7 +6,7 @@ import filters.FilterThree;
 import filters.FilterTwo;
 import filters.HeaderFilter;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.annotations.FilterWith;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.routing.bindings.Request;
 
 public class FilterController {

@@ -11,6 +11,8 @@ import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
+import io.mangoo.persistence.interfaces.BaseEntity;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.PersistenceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

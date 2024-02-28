@@ -2,9 +2,8 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.mangoo.persistence.BaseEntity;
 import io.mangoo.persistence.Entity;
-import io.mangoo.persistence.annotations.Collection;
+import io.mangoo.annotations.Collection;
 
 /**
  * 

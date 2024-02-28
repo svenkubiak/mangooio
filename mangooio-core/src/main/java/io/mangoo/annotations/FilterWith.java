@@ -1,4 +1,4 @@
-package io.mangoo.routing.annotations;
+package io.mangoo.annotations;
 
 import io.mangoo.interfaces.filters.PerRequestFilter;
 

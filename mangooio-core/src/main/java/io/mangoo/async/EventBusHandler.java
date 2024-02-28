@@ -19,11 +19,18 @@ public class EventBusHandler<T> {
     private final AtomicLong handledEvents = new AtomicLong();
     private final AtomicLong subscribers = new AtomicLong();
 
+    /**
+     * Register a subscriber class on a provided queue
+     *
+     * @param queue The name of the queue (case-insensitive)
+     * @param subscriber The subscriber of the queue
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void register(String queue, Class<?> subscriber) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(subscriber, Required.SUBSCRIBER.toString());
 
+        queue = queue.toLowerCase();
         Channel<?> channel = channels.get(queue);
         if (channel == null) {
             channel = new Channel<>(-1);
@@ -35,7 +42,7 @@ public class EventBusHandler<T> {
             try {
                 do {
                     var payload = receiver.receive();
-                    ((MangooSubscriber) Application.getInstance(subscriber)).receive(payload);
+                    ((Subscriber) Application.getInstance(subscriber)).receive(payload);
                 } while (true);
             } catch (InterruptedException e) {
                 LOG.error("EventBus queue was interrupted", e);
@@ -44,6 +51,13 @@ public class EventBusHandler<T> {
         subscribers.addAndGet(1);
     }
 
+    /**
+     * Publishes a payload to a queue which is then recieved
+     * by all registered subscribers
+     *
+     * @param queue The name of the queue (case-insensitive)
+     * @param payload the playload to send
+     */
     @SuppressWarnings("all")
     public void publish(String queue, T payload) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());

@@ -1,4 +1,4 @@
-package io.mangoo.persistence.annotations;
+package io.mangoo.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

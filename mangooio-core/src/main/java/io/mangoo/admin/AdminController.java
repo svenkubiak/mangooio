@@ -15,7 +15,7 @@ import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.annotations.FilterWith;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;

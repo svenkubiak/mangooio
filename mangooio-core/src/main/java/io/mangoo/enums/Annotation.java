@@ -1,8 +1,8 @@
 package io.mangoo.enums;
 
 public enum Annotation {
-    COLLECTION("io.mangoo.persistence.annotations.Collection"),
-    SCHEDULER("io.mangoo.scheduler.annotations.Run");
+    COLLECTION("io.mangoo.annotations.Collection"),
+    SCHEDULER("io.mangoo.annotations.Run");
 
     private final String value;
 

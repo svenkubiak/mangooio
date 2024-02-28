@@ -1,4 +1,4 @@
-package io.mangoo.persistence;
+package io.mangoo.persistence.interfaces;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;

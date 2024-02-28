@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Test;
 
-import io.mangoo.persistence.annotations.Collection;
+import io.mangoo.annotations.Collection;
 
 @Collection(name = "test")
 class SourceTest {

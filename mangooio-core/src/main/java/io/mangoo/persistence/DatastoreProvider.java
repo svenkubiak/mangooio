@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import io.mangoo.enums.Required;
+import io.mangoo.persistence.interfaces.Datastore;
 
 import java.util.HashMap;
 import java.util.Map;

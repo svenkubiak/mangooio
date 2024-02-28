@@ -2,7 +2,7 @@ package io.mangoo.email;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.mangoo.async.MangooSubscriber;
+import io.mangoo.async.Subscriber;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Required;
 import jakarta.activation.DataHandler;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 @Singleton
-public class MailListener implements MangooSubscriber<Mail> {
+public class MailListener implements Subscriber<Mail> {
     private static final Logger LOG = LogManager.getLogger(MailListener.class);
     private final Session session;
     

@@ -5,7 +5,7 @@ import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
-import io.mangoo.routing.annotations.FilterWith;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;

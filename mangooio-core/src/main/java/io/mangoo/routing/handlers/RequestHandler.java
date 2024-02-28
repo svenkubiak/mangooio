@@ -8,7 +8,7 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.annotations.FilterWith;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;

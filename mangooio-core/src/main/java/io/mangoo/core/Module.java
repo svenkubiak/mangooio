@@ -6,7 +6,7 @@ import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Default;
-import io.mangoo.persistence.Datastore;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
 
 public class Module extends AbstractModule {

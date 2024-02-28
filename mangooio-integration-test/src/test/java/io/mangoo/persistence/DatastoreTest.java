@@ -3,6 +3,7 @@ package io.mangoo.persistence;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.bson.Document;
 import org.hamcrest.MatcherAssert;

@@ -1,4 +1,4 @@
-package io.mangoo.scheduler.annotations;
+package io.mangoo.annotations;
 
 import java.lang.annotation.*;
 
