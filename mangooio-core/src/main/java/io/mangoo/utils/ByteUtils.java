@@ -2,6 +2,7 @@ package io.mangoo.utils;
 
 import io.mangoo.enums.Required;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public final class ByteUtils {
@@ -37,6 +38,6 @@ public final class ByteUtils {
      */
     public static int bitLength(String string) {
         Objects.requireNonNull(string, Required.STRING.toString());
-        return bitLength(string.getBytes());
+        return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 }

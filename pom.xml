@@ -331,7 +331,7 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>4.11.1</version>
+				<version>5.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -528,7 +528,7 @@
 			<dependency>
 				<groupId>com.mchange</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>0.10.0-pre5</version>
+				<version>0.10.0-pre6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.exparity</groupId>
