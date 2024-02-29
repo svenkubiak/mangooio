@@ -39,6 +39,6 @@ public class Shutdown extends Thread {
     }
 
     private static void closeEventBus() {
-        Application.getInstance(EventBusHandler.class).shutdown();;
+        Application.getInstance(EventBusHandler.class).shutdown();
     }
 }
