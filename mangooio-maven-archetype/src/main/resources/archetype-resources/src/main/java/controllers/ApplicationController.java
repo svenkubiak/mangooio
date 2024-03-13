@@ -1,13 +1,12 @@
 package controllers;
 
-import java.util.List;
-import java.util.Objects;
-
 import com.google.inject.Inject;
-
-import io.mangoo.persistence.Datastore;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import models.Person;
+
+import java.util.List;
+import java.util.Objects;
 
 public class ApplicationController {
     private Datastore datastore;

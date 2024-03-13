@@ -1,16 +1,15 @@
 package app;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import controllers.ApplicationController;
 import io.mangoo.interfaces.MangooBootstrap;
-import io.mangoo.persistence.Datastore;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import models.Person;
+
+import java.util.Objects;
 
 @Singleton
 public class Bootstrap implements MangooBootstrap {
