@@ -236,23 +236,26 @@ public final class Application {
      * Configures persistence
      */
     private static void prepareDatastore() {
-        try (var scanResult =
-                new ClassGraph()
-                    .enableAnnotationInfo()
-                    .enableClassInfo()
-                    .enableMethodInfo()
-                    .acceptPackages(ALL_PACKAGES)
-                    .scan()) {
-            
-            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
-                String key = classInfo.getName();
+        var config = getInstance(Config.class);
+        if (config.isPersistenceEnabled()) {
+            try (var scanResult =
+                         new ClassGraph()
+                                 .enableAnnotationInfo()
+                                 .enableClassInfo()
+                                 .enableMethodInfo()
+                                 .acceptPackages(ALL_PACKAGES)
+                                 .scan()) {
 
-                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
-                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
+                scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
+                    String key = classInfo.getName();
 
-                PersistenceUtils.addCollection(key, value);
-            });
-        } 
+                    AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
+                    String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
+
+                    PersistenceUtils.addCollection(key, value);
+                });
+            }
+        }
     }
     
     /**

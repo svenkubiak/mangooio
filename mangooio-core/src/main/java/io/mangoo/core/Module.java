@@ -6,8 +6,8 @@ import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Default;
-import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.persistence.DatastoreProvider;
+import io.mangoo.persistence.interfaces.Datastore;
 
 public class Module extends AbstractModule {
     private final Config config = new Config();
@@ -15,7 +15,7 @@ public class Module extends AbstractModule {
     
     public Module() {
         var prefix = Default.PERSISTENCE_PREFIX.toString();
-        if (config.isMongoEmbedded(prefix)) {
+        if (config.isPersistenceEnabled() && config.isMongoEmbedded(prefix)) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
                 .withHost(config.getMongoHost(prefix))
                 .withPort(config.getMongoPort(prefix))

@@ -42,7 +42,7 @@ public enum Key {
     I18N_COOKIE_NAME("i18n.cookie.name"),
     MANGOOIO_WARNINGS("MANGOOIO-WARNINGS"),
     METRICS_ENABLE("metrics.enable"),
-    PERSISTENCE_ENABLE("mongo.enable"),
+    PERSISTENCE_ENABLE("persistence.enable"),
     PERSISTENCE_MONGO_AUTH("mongo.auth"),
     PERSISTENCE_MONGO_AUTHDB("mongo.authdb"),
     PERSISTENCE_MONGO_DBNAME("mongo.dbname"),
