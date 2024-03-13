@@ -52,25 +52,27 @@ public class DatastoreImpl implements Datastore {
     }
 
     private void connect() {
-       var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
-       var pojoCodecProvider = PojoCodecProvider.builder()
-            .conventions(List.of(ANNOTATION_CONVENTION))
-            .automatic(true)
-            .build();
-                
-       MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(getConnectionString()))
-                .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
-                .build();
-        
-       mongoDatabase = MongoClients.create(settings) //NOSONAR
-               .getDatabase(config.getMongoDbName(prefix));
-       
-       LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
-               config.getMongoHost(prefix),
-               config.getMongoPort(prefix),
-               config.isMongoAuth(prefix),
-               config.getMongoDbName(prefix));
+       if (config.isPersistenceEnabled()) {
+           var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
+           var pojoCodecProvider = PojoCodecProvider.builder()
+                   .conventions(List.of(ANNOTATION_CONVENTION))
+                   .automatic(true)
+                   .build();
+
+           MongoClientSettings settings = MongoClientSettings.builder()
+                   .applyConnectionString(new ConnectionString(getConnectionString()))
+                   .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
+                   .build();
+
+           mongoDatabase = MongoClients.create(settings) //NOSONAR
+                   .getDatabase(config.getMongoDbName(prefix));
+
+           LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
+                   config.getMongoHost(prefix),
+                   config.getMongoPort(prefix),
+                   config.isMongoAuth(prefix),
+                   config.getMongoDbName(prefix));
+       }
     }
     
     private String getConnectionString() {

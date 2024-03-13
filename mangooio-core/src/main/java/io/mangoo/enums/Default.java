@@ -49,6 +49,7 @@ public enum Default {
     MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),
     NUMBER_FORMAT("0.######"),
+    PERSISTENCE_ENABLE(Constants.TRUE),
     PERSISTENCE_MONGO_AUTH(Constants.FALSE),
     PERSISTENCE_MONGO_DBNAME("mangoo-io-mongodb"),
     PERSISTENCE_MONGO_EMBEDDED(Constants.FALSE),

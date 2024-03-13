@@ -778,6 +778,13 @@ public class Config {
     }
 
     /**
+     * @return mongo.enable or default value if undefined
+     */
+    public boolean isPersistenceEnabled() {
+        return getBoolean(Key.PERSISTENCE_ENABLE, Default.PERSISTENCE_ENABLE.toBoolean());
+    }
+
+    /**
      * @return smtp.protocol or default value if undefined
      */
     public String getSmtpProtocol() {

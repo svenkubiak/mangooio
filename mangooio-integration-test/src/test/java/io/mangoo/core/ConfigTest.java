@@ -929,6 +929,38 @@ class ConfigTest {
         assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE.toBoolean()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
+
+    @Test
+    void testPersistenceEnable() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        String enable = "true";
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Map<String, String> configValues = ImmutableMap.of("mongo.enable", enable);
+        File tempConfig = createTempConfig(configValues);
+        System.setProperty("mongo.enable", Mode.TEST.toString());
+        Config config = new Config();
+
+        // then
+        assertThat(config.isPersistenceEnabled(), equalTo(Boolean.valueOf(enable)));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
+
+    @Test
+    void testPersistenceEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+        // given
+        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+
+        // when
+        Map<String, String> configValues = new HashMap<>();
+        File tempConfig = createTempConfig(configValues);
+        Config config = new Config();
+
+        // then
+        assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE.toBoolean()));
+        assertThat(tempConfig.delete(), equalTo(true));
+    }
     
     @Test
     void testAuthenticationLock() throws JsonGenerationException, JsonMappingException, IOException {
