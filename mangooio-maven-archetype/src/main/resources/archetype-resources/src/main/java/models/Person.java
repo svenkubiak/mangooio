@@ -1,12 +1,15 @@
 package models;
 
-import dev.morphia.annotations.Entity;
-import io.mangoo.persistence.BaseModel;
+import io.mangoo.annotations.Collection;
+import io.mangoo.persistence.Entity;
+import org.apache.logging.log4j.util.Strings;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-@Entity(value = "persons", useDiscriminator = false)
-public class Person extends BaseModel implements Serializable {
+@Collection(name = "persons")
+public class Person extends Entity implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4343854859740893649L;
     private final String firstname;
     private final String lastname;
