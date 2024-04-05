@@ -22,12 +22,12 @@ import java.util.Objects;
 
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
-    private static final ObjectMapper mapper = JsonMapper.builder()
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
             .addModule(new AfterburnerModule())
             .build();
     
     static {
-        mapper.setSerializationInclusion(Include.NON_NULL);
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
     }
     
     private JsonUtils(){
@@ -44,7 +44,7 @@ public final class JsonUtils {
         
         String json = Strings.EMPTY;
         try {
-            json = mapper.writeValueAsString(object);
+            json = MAPPER.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             LOG.error("Failed to convert object to json",  e);
         }
@@ -63,7 +63,7 @@ public final class JsonUtils {
         
         var json = Strings.EMPTY;
         try {
-            json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+            json = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (JsonProcessingException e) {
             LOG.error("Failed to convert object to json",  e);
         }
@@ -86,7 +86,7 @@ public final class JsonUtils {
         
         T object = null;
         try {
-            object = mapper.readValue(json, clazz);
+            object = MAPPER.readValue(json, clazz);
         } catch (IOException e) {
             LOG.error("Failed to convert json to object class",  e);
         }
@@ -112,6 +112,13 @@ public final class JsonUtils {
         }
 
         return map;
+    }
+
+    /**
+     * @return The used Jackson ObjectMapper
+     */
+    public static ObjectMapper getMapper() {
+        return MAPPER;
     }
 
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
