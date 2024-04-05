@@ -102,6 +102,60 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings({"unchecked" })
+    public <T> T findBy(String key, String value, Class<T> clazz) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(value, Required.VALUE.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        return (T) query(clazz)
+                .find(eq(key, value))
+                .first();
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked" })
+    public <T> T findBy(Bson query, Class<T> clazz) {
+        Objects.requireNonNull(query, Required.KEY.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        return (T) query(clazz)
+                .find(query)
+                .first();
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
+    public <T> List<T> findAllBy(String key, String value, Class<T> clazz) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(value, Required.VALUE.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
+        if (collection != null) {
+            collection.find(eq(key, value)).forEach(result::add);
+        }
+
+        return (List<T>) result;
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
+    public <T> List<T> findAllBy(Bson query, Class<T> clazz) {
+        Objects.requireNonNull(query, Required.KEY.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
+        if (collection != null) {
+            collection.find(query).forEach(result::add);
+        }
+
+        return (List<T>) result;
+    }
+
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public <T> T findById(String id, Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.ID.toString());

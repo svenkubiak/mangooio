@@ -9,6 +9,56 @@ import java.util.List;
 public interface Datastore {
 
     /**
+     * Retrieves exactly one MongoDB entity matching the given query from
+     * the provided key and value pair
+     *
+     * @param key The key for the query
+     * @param value The value for the query
+     * @param clazz The corresponding class
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> T findBy(String key, String value, Class<T> clazz);
+
+    /**
+     * Retrieves exactly one MongoDB entity from the database queried
+     * by the given Bson query
+     *
+     * @param query The bson query (e.g. eq(key, value))
+     * @param clazz The corresponding class
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> T findBy(Bson query, Class<T> clazz);
+
+    /**
+     * Retrieves multiple MongoDB entities matching the given query from
+     * the provided key and value pair
+     *
+     * @param key The key for the query
+     * @param value The value for the query
+     * @param clazz The corresponding class
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> List<T> findAllBy(String key, String value, Class<T> clazz);
+
+    /**
+     * Retrieves multiple MongoDB entities matching the given query from
+     * the provided bson query
+     *
+     * @param query The bson query (e.g. eq(key, value))
+     * @param clazz The corresponding class
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> List<T> findAllBy(Bson query, Class<T> clazz);
+
+    /**
      * Retrieves a MongoDB entity from the database
      *
      * @param id The id of the object
