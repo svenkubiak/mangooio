@@ -2,6 +2,7 @@ package io.mangoo.persistence.interfaces;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.conversions.Bson;
 
 import java.util.List;
@@ -70,6 +71,18 @@ public interface Datastore {
     <T> T findById(String id, Class<T> clazz);
 
     /**
+     * Retrieves the first MongoDB entity from the database sorted
+     * by the given Bson sort
+     *
+     * @param clazz The corresponding class
+     * @param sorts The sort to use
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> T findFirst(Class<T> clazz, Bson sorts);
+
+    /**
      * Retrieves a MongoDB entity from the database
      *
      * @param clazz The corresponding class
@@ -105,6 +118,21 @@ public interface Datastore {
      */
     @SuppressWarnings("rawtypes")
     MongoCollection query(String collection);
+
+    /**
+     * Deletes one object from the database
+     *
+     * @param object The object to delete
+     * @return The DeleteResult
+     */
+    DeleteResult delete(Object object);
+
+    /**
+     * Deletes all given objects from the database
+     *
+     * @param objects The objects to delete
+     */
+    void deleteAll(List<Object> objects);
 
     /**
      * Drops all data in MongoDB on the connected database

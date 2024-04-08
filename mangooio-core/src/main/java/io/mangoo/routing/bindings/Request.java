@@ -79,7 +79,7 @@ public class Request extends Validator {
     @SuppressWarnings("unchecked")
     public Map<String, Object> getBodyAsJsonMap() {
         if (StringUtils.isNotBlank(body)) {
-            return JsonUtils.fromJson(body, Map.class);
+            return JsonUtils.toObject(body, Map.class);
         }
         
         return new HashMap<>();

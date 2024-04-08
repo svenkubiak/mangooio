@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.enums.Default;
@@ -8,7 +9,6 @@ import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.Response;
-import io.mangoo.annotations.FilterWith;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.templating.TemplateContext;
 import io.mangoo.utils.JsonUtils;
@@ -188,7 +188,7 @@ public class RequestHandler implements HttpHandler {
                 case LONG_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
                 case LONG -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
                 case OPTIONAL -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
-                case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.fromJson(attachment.getBody(), clazz) : null;
+                case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.toObject(attachment.getBody(), clazz) : null;
                 default -> null;
             };
 

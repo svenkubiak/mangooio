@@ -73,17 +73,20 @@ public final class JsonUtils {
 
     /**
      * Converts a given Json string to given Class
-     * 
+     * @deprecated
+     * Use {@link #toObject(String, Class)} instead
+     *
      * @param json The json string to convert
      * @param clazz The Class to convert to
      * @param <T> JavaDoc wants this, just ignore it
      * 
      * @return The converted class or null if conversion fails
      */
+    @Deprecated(since = "8.5.0", forRemoval = true)
     public static <T> T fromJson(String json, Class<T> clazz) {
         Objects.requireNonNull(json, Required.JSON.toString());
         Objects.requireNonNull(clazz, Required.CLASS.toString());
-        
+
         T object = null;
         try {
             object = MAPPER.readValue(json, clazz);
@@ -91,6 +94,29 @@ public final class JsonUtils {
             LOG.error("Failed to convert json to object class",  e);
         }
     
+        return object;
+    }
+
+    /**
+     * Converts a given Json string to a given Class
+     *
+     * @param json The json string to convert
+     * @param clazz The Class to convert to
+     * @param <T> JavaDoc wants this, just ignore it
+     *
+     * @return The converted class or null if conversion fails
+     */
+    public static <T> T toObject(String json, Class<T> clazz) {
+        Objects.requireNonNull(json, Required.JSON.toString());
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+
+        T object = null;
+        try {
+            object = MAPPER.readValue(json, clazz);
+        } catch (IOException e) {
+            LOG.error("Failed to convert json to object class",  e);
+        }
+
         return object;
     }
 

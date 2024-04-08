@@ -21,7 +21,6 @@ public class Bootstrap implements MangooBootstrap {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
         Application.getInstance(EventBus.class).register(Queue.SSE.toString(), ServerSentEventSubscriber.class);
 
-
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
                 On.get().to("/session").respondeWith("session"),

@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
@@ -63,6 +64,8 @@ public class DatastoreImpl implements Datastore {
                    .applyConnectionString(new ConnectionString(getConnectionString()))
                    .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                    .build();
+
+           var foo = MongoClients.create(settings);
 
            mongoDatabase = MongoClients.create(settings) //NOSONAR
                    .getDatabase(config.getMongoDbName(prefix));
@@ -171,6 +174,21 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public <T> T findFirst(Class<T> clazz, Bson sorts) {
+        Objects.requireNonNull(clazz, Required.ID.toString());
+        Objects.requireNonNull(sorts, Required.SORTS.toString());
+
+        Object object = null;
+        MongoCollection collection = getCollection(clazz).orElse(null);
+        if (collection != null) {
+            object = collection.find().sort(sorts).first();
+        }
+
+        return (T) object;
+    }
+
+    @Override
     @SuppressWarnings({"rawtypes", "unchecked", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
@@ -243,6 +261,22 @@ public class DatastoreImpl implements Datastore {
 
         return mongoDatabase.getCollection(collection);
     }
+
+    @Override
+    public DeleteResult delete(Object object) {
+        Objects.requireNonNull(object, Required.OBJECT.toString());
+        BaseEntity baseEntity = (BaseEntity) object;
+
+        return query(object.getClass()).deleteOne(eq("_id", baseEntity.getId()));
+    }
+
+    @Override
+    public void deleteAll(List<Object> objects) {
+        Objects.requireNonNull(objects, Required.OBJECTS.toString());
+        objects.forEach(this::delete);
+    }
+
+
 
     @Override
     public void dropDatabase() {

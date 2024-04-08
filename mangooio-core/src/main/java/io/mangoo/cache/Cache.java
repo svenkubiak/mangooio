@@ -1,5 +1,6 @@
 package io.mangoo.cache;
 
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +26,17 @@ public interface Cache {
      * @param temporalUnit The time unit for the expiration
      */
     void put(String key, Object value, int expires, TemporalUnit temporalUnit);
+
+    /**
+     * Adds a value to cache with a given key overwriting and existing value
+     * The value will expire after the given expiration value and the given
+     * temporal unit for the expiration
+     *
+     * @param key The key for the cached value
+     * @param value The value to store
+     * @param expires The LocalDateTime when the entry expires
+     */
+    void put(String key, Object value, LocalDateTime expires);
 
     /**
      * Removes a value with a given key from the cache

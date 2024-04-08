@@ -32,9 +32,17 @@ public class CacheImpl implements Cache {
 		Objects.requireNonNull(key, Required.KEY.toString());
 		Objects.requireNonNull(temporalUnit, Required.TEMPORAL_UNIT.toString());
 
-        caffeineCache.put(key, value);
-        caffeineCache.put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
+        put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
 	}
+
+    @Override
+    public void put(String key, Object value, LocalDateTime expires) {
+        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+
+        caffeineCache.put(key, value);
+        caffeineCache.put(key + EXPIRES_SUFFIX, expires);
+    }
 
     @Override
     public void remove(String key) {

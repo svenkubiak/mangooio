@@ -1,25 +1,11 @@
 package io.mangoo.services;
 
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import com.launchdarkly.eventsource.ConnectStrategy;
 import com.launchdarkly.eventsource.EventSource;
 import com.launchdarkly.eventsource.HttpConnectStrategy;
 import com.launchdarkly.eventsource.ReadyState;
 import com.launchdarkly.eventsource.background.BackgroundEventHandler;
 import com.launchdarkly.eventsource.background.BackgroundEventSource;
-
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -27,6 +13,18 @@ import io.mangoo.enums.ClaimKey;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.token.TokenBuilder;
 import okhttp3.Headers;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 
 /**
  *
@@ -49,11 +47,11 @@ class ServerSentEventServiceTest {
         try (BackgroundEventSource backgroundEventSource = builder.build()) {
             backgroundEventSource.start();
               
-              //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
+            //then
+            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
               
-              //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
+            //then
+            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
         } 	    
 	}
 
@@ -88,11 +86,11 @@ class ServerSentEventServiceTest {
         try (BackgroundEventSource backgroundEventSource = builder.build()) {
             backgroundEventSource.start();
 
-              //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.CLOSED)));
+            //then
+            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.CLOSED)));
               
-              //then
-              await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), not(equalTo(true))));
+            //then
+            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), not(equalTo(true))));
         } 
     }
 	

@@ -105,7 +105,7 @@ class JsonUtilsTest {
         String json = "{\"brand\":null,\"doors\":0,\"foo\":\"blablabla\"}";
         
         //when
-        Car car = JsonUtils.fromJson(json, Car.class);
+        Car car = JsonUtils.toObject(json, Car.class);
         
         //then
         assertThat(car, not(nullValue()));
@@ -122,7 +122,7 @@ class JsonUtilsTest {
             String json = "{\"brand\":null,\"doors\":0,\"foo\":\"" + uuid + "\"}";
             
             ///when
-            Car car = JsonUtils.fromJson(json, Car.class);
+            Car car = JsonUtils.toObject(json, Car.class);
             
             // then
             return car.brand == null && car.doors == 0 && car.foo.equals(uuid);
