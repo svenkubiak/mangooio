@@ -17,6 +17,7 @@ public class ServerSentEventConnectedSubscriber implements Subscriber<ServerSent
 
     @Override
     public void receive(ServerSentEventConnected event) {
+        Objects.requireNonNull(event, "event can not be null");
         manager.addConnection(event.getUri(), event.getConnection());
     }
 }

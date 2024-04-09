@@ -17,6 +17,7 @@ public class ServerSentEventDisconnectedSubscriber implements Subscriber<ServerS
 
     @Override
     public void receive(ServerSentEventDisconnected event) {
+        Objects.requireNonNull(event, "event can not be null");
         manager.removeConnection(event.getUri());
     }
 }

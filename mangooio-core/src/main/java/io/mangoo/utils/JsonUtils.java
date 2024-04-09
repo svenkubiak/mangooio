@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
     private static final ObjectMapper MAPPER = JsonMapper.builder()
             .addModule(new AfterburnerModule())
+            .addModule(new JavaTimeModule())
             .build();
     
     static {
