@@ -2,7 +2,8 @@ package io.mangoo.enums;
 
 public enum Queue {
     MAIL("mangooio-mail"),
-    SSE("mangooio-sse");
+    SSE_CONNECTED("mangooio-sse-connected"),
+    SSE_DISCONNECTED("mangooio-sse-disconnected");
 
     private final String value;
 

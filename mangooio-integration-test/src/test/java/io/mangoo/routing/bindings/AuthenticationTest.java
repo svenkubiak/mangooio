@@ -1,13 +1,12 @@
 package io.mangoo.routing.bindings;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+import io.mangoo.TestExtension;
+import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import io.mangoo.TestExtension;
-import io.mangoo.core.Application;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * 

@@ -11,6 +11,6 @@ public class ServerSentEventCloseListener implements ChannelListener<ServerSentE
     @SuppressWarnings("unchecked")
     @Override
     public void handleEvent(ServerSentEventConnection connection) {
-        Application.getInstance(EventBus.class).publish(Queue.SSE.toString(), new ServerSentEventDisconnected(connection.getRequestURI(), connection));
+        Application.getInstance(EventBus.class).publish(Queue.SSE_DISCONNECTED.toString(), new ServerSentEventDisconnected(connection.getRequestURI(), connection));
     }
 }

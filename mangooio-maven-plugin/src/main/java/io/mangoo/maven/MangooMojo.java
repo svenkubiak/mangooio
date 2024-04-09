@@ -16,16 +16,12 @@
 
 package io.mangoo.maven;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
+import io.mangoo.build.Minification;
+import io.mangoo.build.Runner;
+import io.mangoo.build.Trigger;
+import io.mangoo.build.Watcher;
+import io.mangoo.core.Application;
+import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -36,12 +32,15 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import io.mangoo.build.Minification;
-import io.mangoo.build.Runner;
-import io.mangoo.build.Trigger;
-import io.mangoo.build.Watcher;
-import io.mangoo.core.Application;
-import io.mangoo.utils.MangooUtils;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is a refactored version of NinjaRunMojo.java from the Ninja Web Framework

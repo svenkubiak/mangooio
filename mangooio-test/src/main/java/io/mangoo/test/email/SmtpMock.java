@@ -1,16 +1,15 @@
 package io.mangoo.test.email;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
-
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.Default;
 import io.mangoo.enums.Required;
+
+import java.util.Objects;
 
 /**
  *

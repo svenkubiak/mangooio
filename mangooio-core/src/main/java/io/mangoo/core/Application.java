@@ -13,7 +13,6 @@ import io.github.classgraph.MethodInfo;
 import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.email.MailListener;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.Queue;
 import io.mangoo.enums.*;
@@ -28,6 +27,7 @@ import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
+import io.mangoo.subscribers.MailSubscriber;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.PersistenceUtils;
@@ -263,7 +263,7 @@ public final class Application {
      */
     @SuppressWarnings("unchecked")
     private static void prepareMail() {
-        getInstance(EventBus.class).register(Queue.MAIL.toString(), MailListener.class);
+        getInstance(EventBus.class).register(Queue.MAIL.toString(), MailSubscriber.class);
     }
 
     /**

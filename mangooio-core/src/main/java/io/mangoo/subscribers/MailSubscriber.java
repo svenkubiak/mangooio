@@ -1,15 +1,14 @@
-package io.mangoo.email;
+package io.mangoo.subscribers;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import io.mangoo.async.Subscriber;
 import io.mangoo.core.Config;
+import io.mangoo.email.Mail;
 import io.mangoo.enums.Required;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 import jakarta.mail.*;
-import jakarta.mail.Message.RecipientType;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
@@ -26,27 +25,26 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 
-@Singleton
-public class MailListener implements Subscriber<Mail> {
-    private static final Logger LOG = LogManager.getLogger(MailListener.class);
+public class MailSubscriber implements Subscriber<Mail> {
+    private static final Logger LOG = LogManager.getLogger(MailSubscriber.class);
     private final Session session;
-    
+
     @Inject
-    public MailListener(Config config) {
+    public MailSubscriber(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
-        
+
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
         properties.put("mail.smtp.port", String.valueOf(config.getSmtpPort()));
         properties.put("mail.from", config.getSmtpFrom());
         properties.put("mail.debug", String.valueOf(config.isSmtpDebug()));
-        
+
         if (("smtps").equalsIgnoreCase(config.getSmtpProtocol())) {
             properties.put("mail.smtp.ssl.enable", "true");
         } else if (("smtptls").equalsIgnoreCase(config.getSmtpProtocol())) {
             properties.put("mail.smtp.starttls.enable", "true");
         }
-        
+
         Authenticator authenticator = null;
         if (config.isSmtpAuthentication()) {
             properties.put("mail.smtp.auth", "true");
@@ -59,13 +57,13 @@ public class MailListener implements Subscriber<Mail> {
         } else {
             properties.put("mail.smtp.auth", "false");
         }
-        
+
         this.session = Session.getInstance(properties, authenticator);
     }
-    
+
     /**
      * Processes the given mail message and passes it to the underlying SMTP handling
-     * 
+     *
      * @param mail The mail to send
      */
     @Override
@@ -95,7 +93,7 @@ public class MailListener implements Subscriber<Mail> {
     private void setAttachments(Mail mail, Part part) throws MessagingException, IOException {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         Objects.requireNonNull(part, Required.PART.toString());
-        
+
         if (mail.hasAttachments()) {
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(mail.getMessageText());
@@ -111,7 +109,7 @@ public class MailListener implements Subscriber<Mail> {
                 messageBodyPart.setFileName(filename);
                 multipart.addBodyPart(messageBodyPart);
             }
-            
+
             part.setContent(multipart);
         }
     }
@@ -119,7 +117,7 @@ public class MailListener implements Subscriber<Mail> {
     private void setContent(Mail mail, Part part) throws MessagingException {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         Objects.requireNonNull(part, Required.PART.toString());
-        
+
         if (mail.isMessageHtml()) {
             part.setContent(mail.getMessageText(), "text/html; charset=utf-8");
         } else {
@@ -130,10 +128,10 @@ public class MailListener implements Subscriber<Mail> {
     private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         Objects.requireNonNull(mimeMessage, Required.MIME_MESSAGE.toString());
-        
+
         String messageFromName = mail.getMessageFromName();
         String messageFromAddress = mail.getMessageFromAddress();
-        
+
         if (StringUtils.isNotBlank(messageFromName) && StringUtils.isNotBlank(messageFromAddress)) {
             mimeMessage.setFrom(new InternetAddress(messageFromAddress, messageFromName));
         } else {
@@ -143,19 +141,19 @@ public class MailListener implements Subscriber<Mail> {
 
     private void setBccs(Mail mail, MimeMessage mimeMessage) throws MessagingException {
         for (String recipient : mail.getMessageBccs()) {
-            mimeMessage.addRecipients(RecipientType.BCC, recipient);
+            mimeMessage.addRecipients(Message.RecipientType.BCC, recipient);
         }
     }
 
     private void setCcs(Mail mail, MimeMessage mimeMessage) throws MessagingException {
         for (String recipient : mail.getMessageCcs()) {
-            mimeMessage.addRecipients(RecipientType.CC, recipient);
+            mimeMessage.addRecipients(Message.RecipientType.CC, recipient);
         }
     }
 
     private void setRecipients(Mail mail, MimeMessage mimeMessage) throws MessagingException { //NOSONAR
         for (String recipient : mail.getMessageTos()) {
-            mimeMessage.addRecipients(RecipientType.TO, recipient);
+            mimeMessage.addRecipients(Message.RecipientType.TO, recipient);
         }
     }
 
@@ -168,7 +166,7 @@ public class MailListener implements Subscriber<Mail> {
     private void setReplyTo(Mail mail, MimeMessage mimeMessage) throws MessagingException {
         String replyTo = mail.getMessageReplyTo();
         if (StringUtils.isNotBlank(replyTo)) {
-            InternetAddress[] replyToAddress = { new InternetAddress(replyTo) };
+            InternetAddress[] replyToAddress = {new InternetAddress(replyTo)};
             mimeMessage.setReplyTo(replyToAddress);
         }
     }

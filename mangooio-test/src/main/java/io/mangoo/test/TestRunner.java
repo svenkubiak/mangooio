@@ -1,11 +1,10 @@
 package io.mangoo.test;
 
+import io.mangoo.core.Application;
+import io.mangoo.enums.Mode;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.suite.api.Suite;
-
-import io.mangoo.core.Application;
-import io.mangoo.enums.Mode;
 
 /**
  *

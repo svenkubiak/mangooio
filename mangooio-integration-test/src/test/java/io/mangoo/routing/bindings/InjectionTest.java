@@ -1,12 +1,5 @@
 package io.mangoo.routing.bindings;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
@@ -19,15 +12,16 @@ import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
-import io.mangoo.routing.handlers.ExceptionHandler;
-import io.mangoo.routing.handlers.FallbackHandler;
-import io.mangoo.routing.handlers.InboundCookiesHandler;
-import io.mangoo.routing.handlers.LocaleHandler;
-import io.mangoo.routing.handlers.OutboundCookiesHandler;
-import io.mangoo.routing.handlers.ResponseHandler;
+import io.mangoo.routing.handlers.*;
 import io.mangoo.routing.listeners.MetricsListener;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.templating.TemplateEngine;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /**
  * 

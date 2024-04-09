@@ -1,22 +1,20 @@
 package io.mangoo.core;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
-import java.util.logging.Logger;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
-
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.templating.TemplateEngine;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.logging.Logger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * 

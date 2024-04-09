@@ -1,21 +1,20 @@
 package io.mangoo.routing;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import io.mangoo.TestExtension;
 import io.mangoo.admin.AdminController;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
 import io.mangoo.templating.TemplateEngine;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 /**
  * 
