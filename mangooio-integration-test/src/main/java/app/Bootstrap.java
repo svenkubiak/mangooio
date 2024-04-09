@@ -19,7 +19,7 @@ public class Bootstrap implements MangooBootstrap {
     @Override
     public void initializeRoutes() {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
-        Application.getInstance(EventBus.class).register(Queue.SSE.toString(), ServerSentEventSubscriber.class);
+        Application.getInstance(EventBus.class).register(Queue.SSE_CONNECTED.toString(), ServerSentEventSubscriber.class);
 
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
