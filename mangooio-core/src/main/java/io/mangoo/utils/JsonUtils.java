@@ -24,6 +24,7 @@ import java.util.Objects;
 public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
     private static final ObjectMapper MAPPER = JsonMapper.builder()
+            .findAndAddModules()
             .addModule(new AfterburnerModule())
             .addModule(new JavaTimeModule())
             .build();
