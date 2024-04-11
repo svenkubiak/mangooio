@@ -33,14 +33,8 @@ public class ServerSentEventManager {
 
         Thread.ofVirtual().start(() -> {
             ServerSentEventConnection connection = CONNECTIONS.get(uri);
-            if (connection != null) {
-                if (connection.isOpen()) {
-                    connection.send(data);
-                } else {
-                    LOG.error("ServerSentEvent connection for uri [{}] is closed", uri);
-                }
-            } else {
-                LOG.error("ServerSentEvent connection for uri [{}] not found", uri);
+            if (connection != null && connection.isOpen()) {
+                connection.send(data);
             }
         });
     }
