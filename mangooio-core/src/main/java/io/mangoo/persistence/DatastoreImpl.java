@@ -1,6 +1,7 @@
 package io.mangoo.persistence;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;
@@ -33,6 +34,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.bson.codecs.pojo.Conventions.ANNOTATION_CONVENTION;
 
+@Singleton
 public class DatastoreImpl implements Datastore {
     private static final Logger LOG = LogManager.getLogger(DatastoreImpl.class);
     private final Config config;
@@ -65,9 +67,8 @@ public class DatastoreImpl implements Datastore {
                    .codecRegistry(fromRegistries(codecRegistry, fromProviders(pojoCodecProvider)))
                    .build();
 
-           var foo = MongoClients.create(settings);
-
-           mongoDatabase = MongoClients.create(settings) //NOSONAR
+           mongoDatabase = MongoClients
+                   .create(settings) //NOSONAR
                    .getDatabase(config.getMongoDbName(prefix));
 
            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
@@ -204,15 +205,30 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     @SuppressWarnings({"rawtypes", "DataFlowIssue"})
+    public <T> long count(Class<T> clazz, Bson query) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(clazz, Required.QUERY.toString());
+        
+        long count = -1;
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
+        if (collection != null) {
+            count = collection.countDocuments(query);
+        }
+        
+        return count;
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "DataFlowIssue"})
     public <T> long countAll(Class<T> clazz) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
-        
+
         long count = -1;
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
         if (collection != null) {
             count = collection.countDocuments();
         }
-        
+
         return count;
     }
 

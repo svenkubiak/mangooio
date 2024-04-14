@@ -93,6 +93,16 @@ public interface Datastore {
     <T> List<T> findAll(Class<T> clazz);
 
     /**
+     * Counts all objected of a MongoDB entity based on the given query
+     *
+     * @param clazz The corresponding class
+     * @param <T> Type
+     *
+     * @return The number of objects in MongoDB or -1 if count failed
+     */
+    <T> long count(Class<T> clazz, Bson query);
+
+    /**
      * Counts all objected of a MongoDB entity
      *
      * @param clazz The corresponding class

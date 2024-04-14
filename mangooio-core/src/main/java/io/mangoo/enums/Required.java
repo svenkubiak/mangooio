@@ -73,6 +73,7 @@ public enum Required {
     PRIVATE_KEY("private key can not be null"),
     PUBLIC_KEY("public key can not be null"),
     QUEUE("queue can not be null"),
+    QUERY("query can not be null"),
     REDIRECT_TO("redirect to can not be null"),
     REPLY_TO("replyTo can not be null"),
     REQUEST_PARAMETER("request parameter can not be null"),
