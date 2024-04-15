@@ -96,7 +96,7 @@ class TotpUtilsTest {
 		
         //then
 		assertThat(qr, not(nullValue()));
-        assertThat(qr, startsWith("https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=200x200&chld=M|0&cht=qr&chl=otpauth%3A%2F%2Ftotp%2Ftest%3Fsecret"));
+        assertThat(qr, startsWith("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth"));
 	}
 	
 	@Test
