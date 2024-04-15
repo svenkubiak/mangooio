@@ -232,8 +232,8 @@ public class AdminController {
     @FilterWith(AdminFilter.class)
     public Response toolsajax(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
-        var value = Strings.EMPTY;
-        
+        Map<String, String> response = new HashMap<>();
+
         if (body != null && !body.isEmpty()) {
             var function = body.get("function").toString();
 
@@ -242,14 +242,14 @@ public class AdminController {
                 var publickey = crypto.getKeyAsString(keyPair.getPublic());
                 var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
                 
-                value = "{\"publickey\" : \"" + publickey + "\", \"privatekey\" : \"" + privatekey + "\"}";
+                response = Map.of("publickey", publickey,  "privatekey", privatekey);
             } else if (("encrypt").equalsIgnoreCase(function)) {
                 var cleartext = body.get("cleartext").toString();
                 var key = body.get("key").toString();
                 
                 try {
                     var publicKey = crypto.getPublicKeyFromString(key);
-                    value = crypto.encrypt(cleartext, publicKey);
+                    response = Map.of("encrypted", crypto.encrypt(cleartext, publicKey));
                 } catch (MangooEncryptionException e) {
                     LOG.error("Failed to encrypt cleartext.", e);
                 }
@@ -258,7 +258,7 @@ public class AdminController {
             }
         }
         
-        return Response.withOk().andJsonBody(value);
+        return Response.withOk().andJsonBody(response);
     }
     
     public Response health(Request request)  {

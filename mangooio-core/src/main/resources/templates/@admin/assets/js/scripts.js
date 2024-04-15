@@ -32,7 +32,7 @@ $(document).ready(function(){
   			data: JSON.stringify({ "function": "keypair"}),
   			dataType: "json",
   			success: function(data){
-				var keypair = jQuery.parseJSON(data);
+				var keypair = data;
 				$("#publickey").val(keypair.publickey);
 				$("#privatekey").val(keypair.privatekey);
   			}
@@ -51,7 +51,7 @@ $(document).ready(function(){
   			data: JSON.stringify({ "function": "encrypt", "cleartext" : cleartext, "key" : pubkey }),
   			dataType: "json",
   			success: function(data){
-				$("#encryptedvalue").val(data);
+				$("#encryptedvalue").val(data.encrypted);
   			}
 		});
 	  });

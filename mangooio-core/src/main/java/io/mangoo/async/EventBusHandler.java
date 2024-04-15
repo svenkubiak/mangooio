@@ -40,7 +40,7 @@ public class EventBusHandler<T> {
                     ((Subscriber) Application.getInstance(subscriber)).receive(payload);
                 } while (true);
             } catch (InterruptedException e) { //NOSONAR
-                LOG.error("EventBus queue was interrupted", e);
+                LOG.error("EventBus queue '" + queue + "' was interrupted", e);
             }
         });
         subscribers.addAndGet(1);
@@ -57,16 +57,18 @@ public class EventBusHandler<T> {
     public void publish(String queue, T payload) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(payload, Required.PAYLOAD.toString());
-        Preconditions.checkArgument(channels.containsKey(queue), "queue '" + queue + "' does not exist");
+        Preconditions.checkArgument(channels.containsKey(queue), "Queue '" + queue + "' does not exist");
 
         Channel channel = channels.get(queue);
-        if (channel != null) {
+        if (!channel.isClosedForSend()) {
             try {
                 channel.send(payload);
                 handledEvents.addAndGet(1);
             } catch (InterruptedException e) { //NOSONAR
                 LOG.error("Failed to send payload to queue '" + queue + "'", e);
             }
+        } else {
+            LOG.warn("Queue '" + queue + "' is closed for sending");
         }
     }
 
