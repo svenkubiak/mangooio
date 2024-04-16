@@ -107,21 +107,9 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     @SuppressWarnings({"unchecked" })
-    public <T> T findBy(String key, String value, Class<T> clazz) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-        Objects.requireNonNull(value, Required.VALUE.toString());
+    public <T> T find(Class<T> clazz, Bson query) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
-
-        return (T) query(clazz)
-                .find(eq(key, value))
-                .first();
-    }
-
-    @Override
-    @SuppressWarnings({"unchecked" })
-    public <T> T findBy(Bson query, Class<T> clazz) {
         Objects.requireNonNull(query, Required.KEY.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
 
         return (T) query(clazz)
                 .find(query)
@@ -130,63 +118,18 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
-    public <T> List<T> findAllBy(String key, String value, Class<T> clazz) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-        Objects.requireNonNull(value, Required.VALUE.toString());
+    public <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
-
-        List<Object> result = new ArrayList<>();
-        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
-        if (collection != null) {
-            collection.find(eq(key, value)).forEach(result::add);
-        }
-
-        return (List<T>) result;
-    }
-
-    @Override
-    @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
-    public <T> List<T> findAllBy(Bson query, Class<T> clazz) {
         Objects.requireNonNull(query, Required.KEY.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
-
-        List<Object> result = new ArrayList<>();
-        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
-        if (collection != null) {
-            collection.find(query).forEach(result::add);
-        }
-
-        return (List<T>) result;
-    }
-
-    @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T> T findById(String id, Class<T> clazz) {
-        Objects.requireNonNull(clazz, Required.ID.toString());
-        Objects.requireNonNull(id, Required.CLASS.toString());
-        
-        Object object = null;
-        MongoCollection collection = getCollection(clazz).orElse(null);
-        if (collection != null) {
-            object = collection.find(eq("_id", new ObjectId(id))).first();
-        }
-
-        return (T) object;
-    }
-
-    @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T> T findFirst(Class<T> clazz, Bson sort) {
-        Objects.requireNonNull(clazz, Required.ID.toString());
         Objects.requireNonNull(sort, Required.SORT.toString());
 
-        Object object = null;
-        MongoCollection collection = getCollection(clazz).orElse(null);
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
         if (collection != null) {
-            object = collection.find().sort(sort).first();
+            collection.find(query).sort(sort).forEach(result::add);
         }
 
-        return (T) object;
+        return (List<T>) result;
     }
 
     @Override
@@ -220,7 +163,7 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     @SuppressWarnings({"rawtypes", "DataFlowIssue"})
-    public <T> long count(Class<T> clazz, Bson query) {
+    public <T> long countAll(Class<T> clazz, Bson query) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
         Objects.requireNonNull(clazz, Required.QUERY.toString());
         
@@ -306,8 +249,6 @@ public class DatastoreImpl implements Datastore {
         Objects.requireNonNull(objects, Required.OBJECTS.toString());
         objects.forEach(this::delete);
     }
-
-
 
     @Override
     public void dropDatabase() {

@@ -1,5 +1,6 @@
 package io.mangoo.persistence;
 
+import com.mongodb.client.model.Sorts;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
@@ -30,7 +31,7 @@ class DatastoreTest {
     }
     
     @Test
-    void testConcurrentInsert() throws InterruptedException {
+    void testConcurrentSave() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
             String name = UUID.randomUUID().toString();
@@ -64,33 +65,33 @@ class DatastoreTest {
     }
 
     @Test
-    void testFindById() {
+    void testFind() {
         //given
+        String name = "foo";
         datastore.dropDatabase();
-        TestModel model = new TestModel("foo");
+        TestModel model = new TestModel(name);
         
         //when
-        String id = datastore.save(model);
+        datastore.save(model);
 
-        assertThat(id, not(nullValue()));
-        assertThat(datastore.findById(id, TestModel.class), not(nullValue()));
+        assertThat(datastore.find(TestModel.class, eq("name", name)), not(nullValue()));
     }
     
     @Test
-    void testConcurrentFindById() {
+    void testConcurrentFind() {
         //given
         datastore.dropDatabase();
         
         MatcherAssert.assertThat(t -> {
             //given
-            String id = UUID.randomUUID().toString();
-            TestModel model = new TestModel(id);
+            String name = UUID.randomUUID().toString();
+            TestModel model = new TestModel(name);
             
             //when
-            String _id = datastore.save(model);
+            datastore.save(model);
             
             // then
-            return datastore.findById(_id, TestModel.class) != null;
+            return datastore.find(TestModel.class, eq("name", name)) != null;
         }, new ConcurrentRunner<>(new AtomicInteger(), THREADS));
     }
 
@@ -120,6 +121,35 @@ class DatastoreTest {
 
         //then
         assertThat(datastore.findAll(TestModel.class).size(), equalTo(3));
+    }
+
+    @Test
+    void testFindAllSort() {
+        //given
+        datastore.dropDatabase();
+
+        //when
+        datastore.save(new TestModel("foo"));
+        datastore.save(new TestModel("bar"));
+        datastore.save(new TestModel("bla"));
+
+        //then
+        assertThat(datastore.findAll(TestModel.class, Sorts.ascending()).size(), equalTo(3));
+    }
+
+    @Test
+    void testFindAllSortAndQuery() {
+        //given
+        String name = "foo";
+        datastore.dropDatabase();
+
+        //when
+        datastore.save(new TestModel(name));
+        datastore.save(new TestModel(name));
+        datastore.save(new TestModel("bla"));
+
+        //then
+        assertThat(datastore.findAll(TestModel.class, eq("name", name), Sorts.ascending()).size(), equalTo(2));
     }
 
     @Test
