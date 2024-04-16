@@ -1,84 +1,13 @@
 <#include "header.ftl">
 <div class="container">
     <div class="columns">
-        <div class="column is-12">
-            <section class="hero is-info welcome is-small">
+        <div class="column">
+            <section class="hero is-info is-small">
                 <div class="hero-body">
-                    <div class="container">
-                        <h1 class="title">
-                            Dashboard
-                        </h1>
-                    </div>
+                    <p class="title">Dashboard</p>
                 </div>
             </section>
-            <#if enabled>
-                <section class="info-tiles">
-                    <div class="tile is-ancestor has-text-centered">
-                        <div class="tile is-parent">
-                            <article class="tile is-child is-primary box">
-                                <p class="title">${totalRequests}</p>
-                                <p class="subtitle">Total requests</p>
-                            </article>
-                        </div>
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-                                <p class="title">${dataSend}</p>
-                                <p class="subtitle">Data send</p>
-                            </article>
-                        </div>
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-                                <p class="title">${errorRate} %</p>
-                                <p class="subtitle">Error rate</p>
-                            </article>
-                        </div>
-                    </div>
-                </section>
-                <section class="info-tiles">
-                    <div class="tile is-ancestor has-text-centered">
-                        <div class="tile is-parent is-primary">
-                            <article class="tile is-child box">
-                                <p class="title">${minRequestTime} ms</p>
-                                <p class="subtitle">Min process time</p>
-                            </article>
-                        </div>
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-                                <p class="title">${avgRequestTime} ms</p>
-                                <p class="subtitle">Avg process time</p>
-                            </article>
-                        </div>
-                        <div class="tile is-parent">
-                            <article class="tile is-child box">
-                                <p class="title">${maxRequestTime} ms</p>
-                                <p class="subtitle">Max process time</p>
-                            </article>
-                        </div>
-                    </div>
-                </section>
-            </#if>
-            <section class="info-tiles">
-                <div class="tile is-ancestor has-text-centered">
-                    <div class="tile is-parent">
-                        <article class="tile is-child box">
-                            <p class="title">${prettytime(uptime)}</p>
-                            <p class="subtitle">Application started</p>
-                        </article>
-                    </div>
-                    <div class="tile is-parent">
-                        <article class="tile is-child box">
-                            <p class="title">${events}</p>
-                            <p class="subtitle">Handled events</p>
-                        </article>
-                    </div>
-                    <div class="tile is-parent">
-                        <article class="tile is-child box">
-                            <p class="title">${subscribers}</p>
-                            <p class="subtitle">Total subscribers</p>
-                        </article>
-                    </div>
-                </div>
-            </section>
+            <br>
             <#if warnings?has_content>
                 <#list warnings as warning>
                     <div class="notification is-warning">
@@ -86,12 +15,106 @@
                     </div>
                 </#list>
             </#if>
-            <nav class="breadcrumb" aria-label="breadcrumbs">
-                <ul>
-                    <li><a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a></li>
-                </ul>
-            </nav>
         </div>
     </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${prettytime(uptime)}</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Application started</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${events}</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Handled events</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${subscribers}</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Total subscribers</span></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <#if enabled>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${totalRequests}</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Total requests</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${dataSend}</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Data send</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${errorRate} %</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Error rate</span></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${minRequestTime} ms</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Min process time</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${avgRequestTime} ms</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Avg process time</span></p>
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card">
+                <div class="card-content">
+                    <p class="title">${maxRequestTime} ms</p>
+                </div>
+                <footer class="card-footer">
+                    <p class="card-footer-item"><span>Max process time</span></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    </#if>
+    <a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a>
 </div>
 <#include "footer.ftl">

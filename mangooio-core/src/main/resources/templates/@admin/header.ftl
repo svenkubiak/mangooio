@@ -13,7 +13,8 @@
 	<link rel="manifest" href="/@admin/assets/favicons/site.webmanifest">
     <link rel="stylesheet" href="/@admin/assets/css/bulma.min.css">
     <link rel="stylesheet" href="/@admin/assets/css/admin.min.css">
-    <link rel="stylesheet" href="/@admin/assets/css/styles.min.css">    
+    <link rel="stylesheet" href="/@admin/assets/css/styles.min.css">
+    <style>.card{text-align:center;}</style>
 </head>
 <body>
 <nav class="navbar is-white">

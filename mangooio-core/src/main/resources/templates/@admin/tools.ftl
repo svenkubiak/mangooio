@@ -1,16 +1,16 @@
 <#include "header.ftl">
 <div class="container">
     <div class="columns">
-        <div class="column is-12">
-            <section class="hero is-info welcome is-small">
+        <div class="column">
+            <section class="hero is-info is-small">
                 <div class="hero-body">
-                    <div class="container">
-                        <h1 class="title">
-                            Config tools
-                        </h1>
-                    </div>
+                    <p class="title">Config tools</p>
                 </div>
             </section>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
             <section class="info-tiles">
                 <div class="tile is-ancestor">
                     <div class="tile is-parent">
@@ -38,6 +38,10 @@
                     </div>
                 </div>
             </section>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
             <section class="info-tiles">
                 <div class="tile is-ancestor">
                     <div class="tile is-parent">
@@ -71,31 +75,35 @@
                     </div>
                 </div>
             </section>
-            <#if qrcode?has_content && secret?has_content>
-                <section class="info-tiles">
-                    <div class="tile is-ancestor">
-                        <div class="tile is-parent">
-                            <article class="tile is-child is-primary box">
-                                <p class="title">Two Factor Authentication</p>
-                                <div class="content">
-                                    <form>
-                                        <div class="field">
-                                            <img src="${qrcode}" alt="qrcode">
-                                        </div>
-                                        <div class="field">
-                                            <label class="label">Secret</label>
-                                            <div class="control">
-                                                <textarea class="textarea" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </article>
-                        </div>
-                    </div>
-                </section>
-            </#if>
         </div>
     </div>
+    <#if qrcode?has_content && secret?has_content>
+    <div class="columns">
+        <div class="column">
+            <section class="info-tiles">
+                <div class="tile is-ancestor">
+                    <div class="tile is-parent">
+                        <article class="tile is-child is-primary box">
+                            <p class="title">Two Factor Authentication</p>
+                            <div class="content">
+                                <form>
+                                    <div class="field">
+                                        <img src="${qrcode}" alt="qrcode">
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Secret</label>
+                                        <div class="control">
+                                            <textarea class="textarea" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    </#if>
 </div>
 <#include "footer.ftl">
