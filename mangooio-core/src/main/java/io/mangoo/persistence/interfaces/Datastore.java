@@ -75,15 +75,15 @@ public interface Datastore {
      * by the given Bson sort
      *
      * @param clazz The corresponding class
-     * @param sorts The sort to use
+     * @param sort The sort to use
      * @param <T> Type
      *
      * @return The requested object from MongoDB or null if not found
      */
-    <T> T findFirst(Class<T> clazz, Bson sorts);
+    <T> T findFirst(Class<T> clazz, Bson sort);
 
     /**
-     * Retrieves a MongoDB entity from the database
+     * Retrieves MongoDB entities from the database
      *
      * @param clazz The corresponding class
      * @param <T> Type
@@ -91,6 +91,17 @@ public interface Datastore {
      * @return A list of MongoDB objects or an empty list if none found
      */
     <T> List<T> findAll(Class<T> clazz);
+
+    /**
+     * Retrieves a MongoDB entity from the database
+     *
+     * @param clazz The corresponding class
+     * @param sort The sort to use
+     * @param <T> Type
+     *
+     * @return A list of MongoDB objects or an empty list if none found
+     */
+    <T> List<T> findAll(Class<T> clazz, Bson sort);
 
     /**
      * Counts all objected of a MongoDB entity based on the given query

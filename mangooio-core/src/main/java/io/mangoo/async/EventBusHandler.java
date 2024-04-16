@@ -39,7 +39,7 @@ public class EventBusHandler<T> {
                     var payload = channel.receive();
                     ((Subscriber) Application.getInstance(subscriber)).receive(payload);
                 } while (true);
-            } catch (InterruptedException e) { //NOSONAR
+            } catch (Exception e) { //NOSONAR
                 LOG.error("EventBus queue '" + queue + "' was interrupted", e);
             }
         });
@@ -59,17 +59,19 @@ public class EventBusHandler<T> {
         Objects.requireNonNull(payload, Required.PAYLOAD.toString());
         Preconditions.checkArgument(channels.containsKey(queue), "Queue '" + queue + "' does not exist");
 
-        Channel channel = channels.get(queue);
-        if (!channel.isClosedForSend()) {
-            try {
-                channel.send(payload);
-                handledEvents.addAndGet(1);
-            } catch (InterruptedException e) { //NOSONAR
-                LOG.error("Failed to send payload to queue '" + queue + "'", e);
+        Thread.ofVirtual().start(() -> {
+            Channel channel = channels.get(queue);
+            if (!channel.isClosedForSend()) {
+                try {
+                    channel.send(payload);
+                    handledEvents.addAndGet(1);
+                } catch (Exception e) { //NOSONAR
+                    LOG.error("Failed to send payload to queue '" + queue + "'", e);
+                }
+            } else {
+                LOG.warn("Queue '" + queue + "' is closed for sending");
             }
-        } else {
-            LOG.warn("Queue '" + queue + "' is closed for sending");
-        }
+        });
     }
 
     public void shutdown() {

@@ -84,7 +84,7 @@ public enum Required {
     SECRET("secret can not be null"),
     SHARED_SECRET("sharedCecret can not be null"),
     SOURCE_PATH("source path can not be null"),
-    SORTS("sorts can not be null"),
+    SORT("sort can not be null"),
     STACK_TRACE_ELEMENT("stack trace element can not be null"),
     STRING("string can not be null"),
     SUBSCRIBER("subscriber can not be null"),

@@ -176,14 +176,14 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public <T> T findFirst(Class<T> clazz, Bson sorts) {
+    public <T> T findFirst(Class<T> clazz, Bson sort) {
         Objects.requireNonNull(clazz, Required.ID.toString());
-        Objects.requireNonNull(sorts, Required.SORTS.toString());
+        Objects.requireNonNull(sort, Required.SORT.toString());
 
         Object object = null;
         MongoCollection collection = getCollection(clazz).orElse(null);
         if (collection != null) {
-            object = collection.find().sort(sorts).first();
+            object = collection.find().sort(sort).first();
         }
 
         return (T) object;
@@ -200,6 +200,21 @@ public class DatastoreImpl implements Datastore {
             collection.find().forEach(result::add);
         }
         
+        return (List<T>) result;
+    }
+
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked", "DataFlowIssue"})
+    public <T> List<T> findAll(Class<T> clazz, Bson sort) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(sort, Required.SORT.toString());
+
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
+        if (collection != null) {
+            collection.find().sort(sort).forEach(result::add);
+        }
+
         return (List<T>) result;
     }
 
