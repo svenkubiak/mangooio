@@ -207,7 +207,14 @@ public final class Application {
         Objects.requireNonNull(classInfo, "classInfo can not be null");
         Objects.requireNonNull(methodInfo, "methodInfo can not be null");
         Objects.requireNonNull(at, "at can not be null");
-        
+
+        try {
+            getInstance(classInfo.loadClass());
+        } catch (Exception e) {
+            LOG.error("Failed to scheduled a task as class creation ran into an error. Check class '{}' with method '{}'", classInfo.getName(), methodInfo.getName(), e);
+            failsafe();
+        }
+
         if (isCron) {
             try {
                 var parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));

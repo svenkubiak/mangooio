@@ -5,7 +5,6 @@ import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 public class Task implements Runnable {
@@ -23,7 +22,7 @@ public class Task implements Runnable {
         try {
             Object instance = Application.getInstance(clazz);
             instance.getClass().getMethod(methodName).invoke(instance);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (Exception e) {
             LOG.error("Failed to execute scheduled task on class '{}' with annotated method '{}' - Error: {}", clazz.getName(), methodName, e.getCause().getMessage());
         }
     }
