@@ -5,11 +5,9 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.inject.Module;
 import com.google.inject.*;
+import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.github.classgraph.AnnotationInfoList;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.MethodInfo;
+import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.cache.CacheProvider;
@@ -17,6 +15,7 @@ import io.mangoo.enums.Key;
 import io.mangoo.enums.Queue;
 import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
 import io.mangoo.routing.Router;
@@ -250,9 +249,7 @@ public final class Application {
         if (config.isPersistenceEnabled()) {
             try (var scanResult =
                          new ClassGraph()
-                                 .enableAnnotationInfo()
-                                 .enableClassInfo()
-                                 .enableMethodInfo()
+                                 .enableAllInfo()
                                  .acceptPackages(ALL_PACKAGES)
                                  .scan()) {
 
@@ -263,6 +260,23 @@ public final class Application {
                     String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
 
                     PersistenceUtils.addCollection(key, value);
+                });
+
+                scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
+                    FieldInfoList annotationInfo = classInfo.getFieldInfo();
+                    annotationInfo.forEach(info -> {
+                        if (info.getAnnotationInfo().size() == 1) {
+                            String field = info.getName();
+                            if (info.getAnnotationInfo() != null) {
+                                Order order = (Order) info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue();
+                                if (Order.ASCENDING.equals(order)) {
+                                    Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
+                                } else if (Order.DESCENDING.equals(order)) {
+                                    Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
+                                }
+                            }
+                        }
+                    });
                 });
             }
         }

@@ -2,8 +2,10 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.mangoo.persistence.Entity;
 import io.mangoo.annotations.Collection;
+import io.mangoo.annotations.Indexed;
+import io.mangoo.enums.Order;
+import io.mangoo.persistence.Entity;
 
 /**
  * 
@@ -12,8 +14,13 @@ import io.mangoo.annotations.Collection;
  */
 @Collection(name = "people")
 public class Person extends Entity {
+    //@Indexed(order = "asc")
     private final String firstname;
+
+    //@Indexed(order = "desc")
     private final String lastname;
+
+    @Indexed(order = Order.DESCENDING)
     private final int age;
 
     @JsonCreator
