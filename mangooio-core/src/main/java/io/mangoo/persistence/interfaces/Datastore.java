@@ -10,8 +10,7 @@ import java.util.List;
 public interface Datastore {
 
     /**
-     * Retrieves the first MongoDB entity from the database sorted
-     * by the given Bson sort
+     * Retrieves a MongoDB entity from the database by the given query
      *
      * @param clazz The corresponding class
      * @param query The query to use
@@ -20,6 +19,18 @@ public interface Datastore {
      * @return The requested object from MongoDB or null if not found
      */
     <T> T find(Class<T> clazz, Bson query);
+
+    /**
+     * Retrieves the first MongoDB entity from the database sorted
+     * by the given Bson sort
+     *
+     * @param clazz The corresponding class
+     * @param sort The sort to use
+     * @param <T> Type
+     *
+     * @return The requested object from MongoDB or null if not found
+     */
+    <T> T findFirst(Class<T> clazz, Bson sort);
 
     /**
      * Retrieves a MongoDB entity from the database
@@ -32,6 +43,19 @@ public interface Datastore {
      * @return A list of MongoDB objects or an empty list if none found
      */
     <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort);
+
+    /**
+     * Retrieves a MongoDB entity from the database
+     *
+     * @param clazz The corresponding class
+     * @param query The query to use
+     * @param sort The sort to use
+     * @param limit The limit of returned entities
+     * @param <T> Type
+     *
+     * @return A list of MongoDB objects or an empty list if none found
+     */
+    <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort, int limit);
 
     /**
      * Retrieves MongoDB entities from the database

@@ -1,5 +1,6 @@
 package io.mangoo.persistence;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.mongodb.ConnectionString;
@@ -117,6 +118,18 @@ public class DatastoreImpl implements Datastore {
     }
 
     @Override
+    @SuppressWarnings({"unchecked" })
+    public <T> T findFirst(Class<T> clazz, Bson sort) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(sort, Required.SORT.toString());
+
+        return (T) query(clazz)
+                .find()
+                .sort(sort)
+                .first();
+    }
+
+    @Override
     @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
     public <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort) {
         Objects.requireNonNull(clazz, Required.CLASS.toString());
@@ -127,6 +140,23 @@ public class DatastoreImpl implements Datastore {
         MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
         if (collection != null) {
             collection.find(query).sort(sort).forEach(result::add);
+        }
+
+        return (List<T>) result;
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
+    public <T> List<T> findAll(Class<T> clazz, Bson query, Bson sort, int limit) {
+        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(query, Required.KEY.toString());
+        Objects.requireNonNull(sort, Required.SORT.toString());
+        Preconditions.checkArgument(limit > 0, "limit must be greater than 0");
+
+        List<Object> result = new ArrayList<>();
+        MongoCollection collection = getCollection(clazz).orElseGet(null); //NOSONAR
+        if (collection != null) {
+            collection.find(query).sort(sort).limit(limit).forEach(result::add);
         }
 
         return (List<T>) result;
