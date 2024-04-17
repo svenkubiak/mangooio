@@ -267,11 +267,11 @@ public final class Application {
                     annotationInfo.forEach(info -> {
                         if (info.getAnnotationInfo().size() == 1) {
                             String field = info.getName();
-                            if (info.getAnnotationInfo() != null) {
-                                Order order = (Order) info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue();
-                                if (Order.ASCENDING.equals(order)) {
+                            if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
+                                String value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
+                                if ((Sort.ASCENDING.toString()).equals(value)) {
                                     Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
-                                } else if (Order.DESCENDING.equals(order)) {
+                                } else if ((Sort.DESCENDING.toString()).equals(value)) {
                                     Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
                                 }
                             }
