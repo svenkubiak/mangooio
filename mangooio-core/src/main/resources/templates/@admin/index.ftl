@@ -115,6 +115,10 @@
         </div>
     </div>
     </#if>
-    <a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a>
+    <div class="columns">
+        <div class="column">
+            <a href="/@admin" aria-current="page">Running on mangoo I/O ${version}</a>
+        </div>
+    </div>
 </div>
 <#include "footer.ftl">
