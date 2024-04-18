@@ -259,7 +259,7 @@ public final class Application {
                     FieldInfoList annotationInfo = classInfo.getFieldInfo();
                     annotationInfo.forEach(info -> {
                         if (info.getAnnotationInfo().size() == 1) {
-                            String field = info.getName();
+                            var field = info.getName();
                             if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
                                 String value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
                                 if ((Sort.ASCENDING.toString()).equals(value)) {
