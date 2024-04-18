@@ -6,9 +6,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.InputStream;
+import java.io.Serial;
 import java.util.*;
 
 public class Form extends Validator {
+    @Serial
     private static final long serialVersionUID = 2228639200039277653L;
     private transient List<InputStream> files = new ArrayList<>();
     private Map<String, List<String>> valueMap = new HashMap<>();

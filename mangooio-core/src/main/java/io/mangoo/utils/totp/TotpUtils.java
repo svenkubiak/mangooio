@@ -197,12 +197,8 @@ public class TotpUtils {
             .append(period);
         
         var url = "";
-        try {
-            url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to encode otpauth url", e);
-        }
-        
+        url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8);
+
         return url;
     }
 }

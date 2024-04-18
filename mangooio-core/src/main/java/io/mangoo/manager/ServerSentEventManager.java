@@ -3,8 +3,6 @@ package io.mangoo.manager;
 import com.google.inject.Singleton;
 import io.mangoo.enums.Required;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class ServerSentEventManager {
-    private static final Logger LOG = LogManager.getLogger(ServerSentEventManager.class);
     private static final Map<String, ServerSentEventConnection> CONNECTIONS = new ConcurrentHashMap<>(16, 0.9f, 1);
 
     public void addConnection(String uri, ServerSentEventConnection connection) {

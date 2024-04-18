@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Identity implements IdentityManager, Serializable {
+    @Serial
     private static final long serialVersionUID = -412633269312361644L;
     private final String username;
     private final char[] password;
