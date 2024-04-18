@@ -40,7 +40,7 @@ public class EventBusHandler<T> {
                     ((Subscriber) Application.getInstance(subscriber)).receive(payload);
                 } while (true);
             } catch (Exception e) { //NOSONAR
-                LOG.error("EventBus queue '" + queue + "' was interrupted", e);
+                LOG.error("EventBus queue '{}' was interrupted", queue, e);
             }
         });
         subscribers.addAndGet(1);
@@ -50,29 +50,27 @@ public class EventBusHandler<T> {
      * Publishes a payload to a queue which is then recieved
      * by all registered subscribers
      *
-     * @param queue The name of the queue (case-insensitive)
+     * @param queue The name of the queue (case-sensitive)
      * @param payload the playload to send
      */
     @SuppressWarnings("all")
     public void publish(String queue, T payload) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(payload, Required.PAYLOAD.toString());
-        Preconditions.checkArgument(channels.containsKey(queue), "Queue '" + queue + "' does not exist");
+        Preconditions.checkArgument(channels.containsKey(queue), String.format("Queue '%s' does not exist", queue));
 
         Thread.ofVirtual().start(() -> {
             Channel channel = channels.get(queue);
-            if (channel.isClosedForReceive()) {
-                LOG.warn("Queue '" + queue + "' is closed for recieving");
+            if (channel.isClosedForSend()) {
+                LOG.warn("Queue '{}' is closed for send", queue);
+            } else if (channel.isClosedForReceive()) {
+                LOG.warn("Queue '{}' is closed for receive", queue);
             } else {
-                if (!channel.isClosedForSend()) {
-                    try {
-                        channel.send(payload);
-                        handledEvents.addAndGet(1);
-                    } catch (Exception e) { //NOSONAR
-                        LOG.error("Failed to send payload to queue '" + queue + "'", e);
-                    }
-                } else {
-                    LOG.warn("Queue '" + queue + "' is closed for sending");
+                try {
+                    channel.send(payload);
+                    handledEvents.addAndGet(1);
+                } catch (Exception e) { //NOSONAR
+                    LOG.error("Failed to send payload to queue '{}'", queue, e);
                 }
             }
         });
