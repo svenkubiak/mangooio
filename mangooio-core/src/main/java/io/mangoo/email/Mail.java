@@ -1,9 +1,7 @@
 package io.mangoo.email;
 
 import com.google.common.base.Preconditions;
-import io.mangoo.async.EventBus;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Queue;
 import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.templating.TemplateContext;
@@ -251,12 +249,8 @@ public class Mail {
         return this;
     }
     
-    /**
-     * Sends the mail
-     */
-    @SuppressWarnings("unchecked")
     public void send() {
-        Application.getInstance(EventBus.class).publish(Queue.MAIL.toString(), this);
+        Thread.ofVirtual().start(() -> Application.getInstance(PostOffice.class).send(this));
     }
     
     private String render(String template, Map<String, Object> content) throws MangooTemplateEngineException {

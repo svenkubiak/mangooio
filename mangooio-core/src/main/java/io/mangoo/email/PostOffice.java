@@ -1,9 +1,8 @@
-package io.mangoo.subscribers;
+package io.mangoo.email;
 
 import com.google.inject.Inject;
-import io.mangoo.async.Subscriber;
+import com.google.inject.Singleton;
 import io.mangoo.core.Config;
-import io.mangoo.email.Mail;
 import io.mangoo.enums.Required;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -25,12 +24,13 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 
-public class MailSubscriber implements Subscriber<Mail> {
-    private static final Logger LOG = LogManager.getLogger(MailSubscriber.class);
+@Singleton
+public class PostOffice {
+    private static final Logger LOG = LogManager.getLogger(PostOffice.class);
     private final Session session;
 
     @Inject
-    public MailSubscriber(Config config) {
+    public PostOffice(Config config) {
         Objects.requireNonNull(config, Required.CONFIG.toString());
 
         var properties = new Properties();
@@ -66,8 +66,7 @@ public class MailSubscriber implements Subscriber<Mail> {
      *
      * @param mail The mail to send
      */
-    @Override
-    public void receive(Mail mail) {
+    public void send(Mail mail) {
         Objects.requireNonNull(mail, Required.MAIL.toString());
 
         try {

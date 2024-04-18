@@ -9,10 +9,8 @@ import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
-import io.mangoo.async.EventBus;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Key;
-import io.mangoo.enums.Queue;
 import io.mangoo.enums.*;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.interfaces.Datastore;
@@ -26,9 +24,6 @@ import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.scheduler.CronTask;
 import io.mangoo.scheduler.Task;
-import io.mangoo.subscribers.MailSubscriber;
-import io.mangoo.subscribers.ServerSentEventConnectedSubscriber;
-import io.mangoo.subscribers.ServerSentEventDisconnectedSubscriber;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.PersistenceUtils;
@@ -108,8 +103,6 @@ public final class Application {
             prepareRoutes();
             createRoutes();
             prepareDatastore();
-            prepareMail();
-            prepareServerSentEvent();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -280,23 +273,6 @@ public final class Application {
                 });
             }
         }
-    }
-    
-    /**
-     * Configures async mailer
-     */
-    @SuppressWarnings("unchecked")
-    private static void prepareMail() {
-        getInstance(EventBus.class).register(Queue.MAIL.toString(), MailSubscriber.class);
-    }
-
-    /**
-     * Configures the connected and disconnected subscribers for ServerSentEvents
-     */
-    @SuppressWarnings("unchecked")
-    private static void prepareServerSentEvent() {
-        getInstance(EventBus.class).register(Queue.SSE_CONNECTED.toString(), ServerSentEventConnectedSubscriber.class);
-        getInstance(EventBus.class).register(Queue.SSE_DISCONNECTED.toString(), ServerSentEventDisconnectedSubscriber.class);
     }
 
     /**

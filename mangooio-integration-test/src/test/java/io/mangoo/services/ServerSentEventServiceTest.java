@@ -11,6 +11,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.enums.ClaimKey;
 import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.utils.token.TokenBuilder;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -43,15 +45,17 @@ class ServerSentEventServiceTest {
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         BackgroundEventHandler eventHandler = new SimpleEventHandler();
         BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(URI.create(url)));
-                
+
         try (BackgroundEventSource backgroundEventSource = builder.build()) {
             backgroundEventSource.start();
+
+            //then
+            await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
+
+            Application.getInstance(ServerSentEventManager.class).send("/sse", UUID.randomUUID().toString());
               
             //then
-            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
-              
-            //then
-            await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
+            await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
         } 	    
 	}
 

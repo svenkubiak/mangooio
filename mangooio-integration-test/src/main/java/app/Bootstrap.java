@@ -2,15 +2,11 @@ package app;
 
 import controllers.*;
 import controllers.subcontrollers.SubController;
-import io.mangoo.async.EventBus;
-import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.enums.Header;
-import io.mangoo.enums.Queue;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
-import reactive.ServerSentEventSubscriber;
 
 
 @SuppressWarnings("all")
@@ -19,7 +15,6 @@ public class Bootstrap implements MangooBootstrap {
     @Override
     public void initializeRoutes() {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
-        Application.getInstance(EventBus.class).register(Queue.SSE_CONNECTED.toString(), ServerSentEventSubscriber.class);
 
         // SessionController
         Bind.controller(SessionController.class).withRoutes(
