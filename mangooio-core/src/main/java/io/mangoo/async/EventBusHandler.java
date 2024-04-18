@@ -61,15 +61,19 @@ public class EventBusHandler<T> {
 
         Thread.ofVirtual().start(() -> {
             Channel channel = channels.get(queue);
-            if (!channel.isClosedForSend()) {
-                try {
-                    channel.send(payload);
-                    handledEvents.addAndGet(1);
-                } catch (Exception e) { //NOSONAR
-                    LOG.error("Failed to send payload to queue '" + queue + "'", e);
-                }
+            if (channel.isClosedForReceive()) {
+                LOG.warn("Queue '" + queue + "' is closed for recieving");
             } else {
-                LOG.warn("Queue '" + queue + "' is closed for sending");
+                if (!channel.isClosedForSend()) {
+                    try {
+                        channel.send(payload);
+                        handledEvents.addAndGet(1);
+                    } catch (Exception e) { //NOSONAR
+                        LOG.error("Failed to send payload to queue '" + queue + "'", e);
+                    }
+                } else {
+                    LOG.warn("Queue '" + queue + "' is closed for sending");
+                }
             }
         });
     }
