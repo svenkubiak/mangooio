@@ -269,7 +269,7 @@ public class DatastoreImpl implements Datastore {
     @Override
     public DeleteResult delete(Object object) {
         Objects.requireNonNull(object, Required.OBJECT.toString());
-        BaseEntity baseEntity = (BaseEntity) object;
+        var baseEntity = (BaseEntity) object;
 
         return query(object.getClass()).deleteOne(eq("_id", baseEntity.getId()));
     }

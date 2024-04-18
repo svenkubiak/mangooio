@@ -261,7 +261,7 @@ public final class Application {
                         if (info.getAnnotationInfo().size() == 1) {
                             var field = info.getName();
                             if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
-                                String value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
+                                var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
                                 if ((Sort.ASCENDING.toString()).equals(value)) {
                                     Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
                                 } else if ((Sort.DESCENDING.toString()).equals(value)) {
