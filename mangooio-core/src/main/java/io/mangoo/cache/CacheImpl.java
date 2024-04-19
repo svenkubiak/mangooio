@@ -32,7 +32,7 @@ public class CacheImpl implements Cache {
 		Objects.requireNonNull(key, Required.KEY.toString());
 		Objects.requireNonNull(temporalUnit, Required.TEMPORAL_UNIT.toString());
 
-        put(key + EXPIRES_SUFFIX, LocalDateTime.now().plus(expires, temporalUnit));
+        put(key, value, LocalDateTime.now().plus(expires, temporalUnit));
 	}
 
     @Override

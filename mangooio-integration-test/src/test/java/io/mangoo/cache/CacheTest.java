@@ -5,6 +5,8 @@ import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,95 +22,139 @@ import static org.hamcrest.Matchers.*;
  */
 @ExtendWith({TestExtension.class})
 class CacheTest {
-    private static final String TEST_VALUE = "This is a test value for the cache!";
+
+    public static final String FALLBACK = "fallback";
 
     @Test
     void testAdd() {
         //given
+        String key = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        cache.put("test", TEST_VALUE);
+        cache.put(key, value);
 
         //then
-        assertThat(cache.get("test"), not(nullValue()));
-        assertThat(cache.get("test"), equalTo(TEST_VALUE));
+        assertThat(cache.get(key), not(nullValue()));
+        assertThat(cache.get(key), equalTo(value));
+    }
+
+    @Test
+    void testExpiresLocalDateTime() {
+        //given
+        String key = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
+        Cache cache = Application.getInstance(Cache.class);
+
+        //when
+        cache.put(key, value, LocalDateTime.now().plusMinutes(5));
+
+        //then
+        assertThat(cache.get(key), not(nullValue()));
+        assertThat(cache.get(key), equalTo(value));
+    }
+
+    @Test
+    void testExpiresTemporal() {
+        //given
+        String key = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
+        Cache cache = Application.getInstance(Cache.class);
+
+        //when
+        cache.put(key, value, 5, ChronoUnit.MINUTES);
+
+        //then
+        assertThat(cache.get(key), not(nullValue()));
+        assertThat(cache.get(key), equalTo(value));
     }
 
     @Test
     void testClear() {
         //given
+        String key = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-        cache.put("test", TEST_VALUE);
+        cache.put(key, value);
         cache.clear();
 
         //then
-        assertThat(cache.get("test"), equalTo(null));
+        assertThat(cache.get(key), equalTo(null));
     }
 
     @Test
     void testCast() {
         //given
+        String key = UUID.randomUUID().toString();
+        String value = UUID.randomUUID().toString();
         Cache cache = Application.getInstance(Cache.class);
         
         //when
-    	cache.put("test", 1);
+    	cache.put(key, value);
 
     	//then
-        assertThat(cache.get("test"), equalTo(1));
+        assertThat(cache.get(key), equalTo(value));
     }
     
     @Test
     void testGetWithFallback() {
         //given
+        String key = UUID.randomUUID().toString();
         Cache cache = Application.getInstance(Cache.class);
 
         //then
-        assertThat(cache.get("foo"), equalTo(null));
+        assertThat(cache.get(key), equalTo(null));
 
         //when
-        String value = cache.get("foo", v -> fallback());
+        String value = cache.get(key, v -> fallback());
 
         //then
-        assertThat(value, equalTo("fallback"));
+        assertThat(value, equalTo(FALLBACK));
 
         //then
-        assertThat(cache.get("foo"), equalTo("fallback"));
+        assertThat(cache.get(key), equalTo(FALLBACK));
     }
     
     @Test
     void testPutAll() {
         //given
+        String key1 = UUID.randomUUID().toString();
+        String value1 = UUID.randomUUID().toString();
+        String key2 = UUID.randomUUID().toString();
+        String value2 = UUID.randomUUID().toString();
         Cache cache = Application.getInstance(Cache.class);
         
         //when
         Map<String, Object> map = new HashMap<>();
-        map.put("test", TEST_VALUE);
-        map.put("test2", 1);
+        map.put(key1, value1);
+        map.put(key2, value2);
         cache.putAll(map);
         
         //then
-        assertThat(cache.get("test"), equalTo(TEST_VALUE));
-        assertThat(cache.get("test2"), equalTo(1));
+        assertThat(cache.get(key1), equalTo(value1));
+        assertThat(cache.get(key2), equalTo(value2));
     }
     
     @Test
     void testGetAll() {
         //given
         Cache cache = Application.getInstance(Cache.class);
+        String key1 = UUID.randomUUID().toString();
+        String key2 = UUID.randomUUID().toString();
         String value1 = UUID.randomUUID().toString();
         String value2 = UUID.randomUUID().toString();
         
         //when
-        cache.put("foo", value1);
-        cache.put("bar", value2);
+        cache.put(key1, value1);
+        cache.put(key2, value2);
         
         //then
-        assertThat(cache.getAll("foo", "bar"), not(equalTo(null)));
-        assertThat(cache.getAll("foo", "bar").get("foo"), equalTo(value1));
-        assertThat(cache.getAll("foo", "bar").get("bar"), equalTo(value2));
+        assertThat(cache.getAll(key1, key2), not(equalTo(null)));
+        assertThat(cache.getAll(key1, key2).get(key1), equalTo(value1));
+        assertThat(cache.getAll(key1, key2).get(key2), equalTo(value2));
     }
     
     @Test
@@ -148,6 +194,6 @@ class CacheTest {
     }
 
     private String fallback() {
-        return "fallback";
+        return FALLBACK;
     }
 }
