@@ -33,7 +33,7 @@ public class EventBusHandler<T> {
         Objects.requireNonNull(subscriber, Required.SUBSCRIBER.toString());
 
         Channel<?> channel = channels.computeIfAbsent(queue, k -> new Channel<>(-1));
-        Thread.ofVirtual().start(() -> {
+        Thread.ofPlatform().start(() -> {
             try {
                 do {
                     var payload = channel.receive();
