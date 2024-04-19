@@ -99,7 +99,7 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
-            prepareScheduler();
+            Thread.ofVirtual().start(Application::prepareScheduler);
             prepareRoutes();
             createRoutes();
             prepareDatastore();
@@ -107,7 +107,7 @@ public final class Application {
             sanityChecks();
             showLogo();
             applicationStarted();
-            
+
             Runtime
                     .getRuntime()
                     .addShutdownHook(getInstance(Shutdown.class));
