@@ -124,7 +124,7 @@ public final class Application {
         
         if (config.isSchedulerEnabled()) {
             scheduler = Executors.newSingleThreadScheduledExecutor();
-            executor = Executors.newVirtualThreadPerTaskExecutor();
+            executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
             try (var scanResult =
                     new ClassGraph()
