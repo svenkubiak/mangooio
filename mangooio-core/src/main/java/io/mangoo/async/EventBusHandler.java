@@ -38,6 +38,7 @@ public class EventBusHandler<T> {
                 do {
                     var payload = channel.receive();
                     ((Subscriber) Application.getInstance(subscriber)).receive(payload);
+                    handledEvents.addAndGet(1);
                 } while (true);
             } catch (Exception e) { //NOSONAR
                 LOG.error("EventBus queue '{}' was interrupted", queue, e);
@@ -68,7 +69,6 @@ public class EventBusHandler<T> {
             } else {
                 try {
                     channel.send(payload);
-                    handledEvents.addAndGet(1);
                 } catch (Exception e) { //NOSONAR
                     LOG.error("Failed to send payload to queue '{}'", queue, e);
                 }
