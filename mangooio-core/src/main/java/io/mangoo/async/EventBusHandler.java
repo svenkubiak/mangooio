@@ -8,7 +8,6 @@ import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -64,23 +63,23 @@ public class EventBusHandler<T> {
         Preconditions.checkArgument(channels.containsKey(queue), String.format("Queue '%s' does not exist", queue));
 
         Thread.ofVirtual().start(() -> {
-            Channel channel = channels.get(queue);
-            if (channel.isClosedForSend()) {
-                LOG.warn("Queue '{}' is closed for send", queue);
-            } else if (channel.isClosedForReceive()) {
-                LOG.warn("Queue '{}' is closed for receive", queue);
-            } else {
-                try {
+            try {
+                Channel channel = channels.get(queue);
+                if (channel.isClosedForSend()) {
+                    LOG.warn("Queue '{}' is closed for send", queue);
+                } else if (channel.isClosedForReceive()) {
+                    LOG.warn("Queue '{}' is closed for receive", queue);
+                } else {
                     channel.send(payload);
-                } catch (Exception e) { //NOSONAR
-                    LOG.error("Failed to send payload to queue '{}'", queue, e);
                 }
+            } catch (Exception e) { //NOSONAR
+                LOG.error("Failed to send payload to queue '{}'", queue, e);
             }
         });
     }
 
     public void shutdown() {
-        for (Map.Entry<String, Channel<?>> entry : channels.entrySet()) entry.getValue().done();
+        channels.forEach((key, value) -> value.done());
     }
 
     public long getHandledEvents() {
