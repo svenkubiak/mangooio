@@ -27,24 +27,27 @@ public class EventBusHandler<T> {
      * @param queue The name of the queue (case-sensitive)
      * @param subscriber The subscriber of the queue
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void register(String queue, Class<?> subscriber) {
         Objects.requireNonNull(queue, Required.QUEUE.toString());
         Objects.requireNonNull(subscriber, Required.SUBSCRIBER.toString());
 
         Channel<?> channel = channels.computeIfAbsent(queue, k -> new Channel<>(-1));
-        Thread.ofPlatform().start(() -> {
+        awaitNextEvent(channel, subscriber, queue);
+        subscribers.addAndGet(1);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void awaitNextEvent(Channel channel, Class<?> subscriber, String queue) {
+        Thread.ofVirtual().start(() -> {
             try {
-                do {
-                    var payload = channel.receive();
-                    ((Subscriber) Application.getInstance(subscriber)).receive(payload);
-                    handledEvents.addAndGet(1);
-                } while (true);
+                var payload = channel.receive();
+                ((Subscriber) Application.getInstance(subscriber)).receive(payload);
+                handledEvents.addAndGet(1);
+                awaitNextEvent(channel, subscriber, queue);
             } catch (Exception e) { //NOSONAR
                 LOG.error("EventBus queue '{}' was interrupted", queue, e);
             }
         });
-        subscribers.addAndGet(1);
     }
 
     /**
