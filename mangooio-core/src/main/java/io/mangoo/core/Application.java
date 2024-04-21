@@ -9,6 +9,8 @@ import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.*;
 import io.mangoo.admin.AdminController;
+import io.mangoo.async.EventBus;
+import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.enums.Key;
 import io.mangoo.enums.*;
@@ -82,7 +84,7 @@ public final class Application {
     private static boolean started;
     private static int httpPort;
     private static int ajpPort;
-    
+
     private Application() {
     }
 
@@ -92,14 +94,18 @@ public final class Application {
 
     public static void start(Mode mode) {
         Objects.requireNonNull(mode, Required.MODE.toString());
-        
+
         if (!started) {
             userCheck();
             prepareMode(mode);
             prepareInjector();
             applicationInitialized();
             prepareConfig();
-            prepareSchedulerAndDatastore();
+            try (ScanResult scanResult = scanClasspath()) {
+                prepareScheduler(scanResult);
+                prepareDatastore(scanResult);
+                prepareSubscriber(scanResult);
+            }
             prepareRoutes();
             createRoutes();
             prepareUndertow();
@@ -115,92 +121,65 @@ public final class Application {
         }
     }
 
+    private static ScanResult scanClasspath() {
+        return new ClassGraph()
+                .enableAllInfo()
+                .acceptPackages(ALL_PACKAGES)
+                .scan();
+    }
+
     /**
      * Schedules all tasks annotated with @Run
-     * Prepares the persistence
      */
-    private static void prepareSchedulerAndDatastore() {
+    private static void prepareScheduler(ScanResult scanResult) {
         var config = getInstance(Config.class);
 
-        try (var scanResult =
-                new ClassGraph()
-                    .enableAllInfo()
-                    .acceptPackages(ALL_PACKAGES)
-                    .scan()) {
+        if (config.isSchedulerEnabled()) {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
-            if (config.isSchedulerEnabled()) {
-                scheduler = Executors.newSingleThreadScheduledExecutor();
-                executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
+            scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
+                classInfo.getMethodInfo().forEach(methodInfo -> {
+                    var isCron = false;
+                    long seconds = 0;
+                    String at = null;
 
-                scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
-                        classInfo.getMethodInfo().forEach(methodInfo -> {
-                            var isCron = false;
-                            long seconds = 0;
-                            String at = null;
+                    for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
+                        var annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                        at = ((String) annotationInfo
+                                .getParameterValues(true).get("at").getValue())
+                                .toLowerCase(Locale.ENGLISH)
+                                .trim();
 
-                            for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
-                                var annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                                at = ((String) annotationInfo
-                                        .getParameterValues(true).get("at").getValue())
-                                        .toLowerCase(Locale.ENGLISH)
-                                        .trim();
-
-                                if (at.contains("every")) {
-                                    at = at.replace("every", Strings.EMPTY).trim();
-                                    var timespan = at.substring(0, at.length() - 1);
-                                    var duration = at.substring(at.length() - 1);
-                                    seconds = getSeconds(timespan, duration);
-                                } else {
-                                    isCron = true;
-                                }
-                            }
-
-                            schedule(classInfo, methodInfo, isCron, seconds, at);
-                        })
-                );
-            }
-
-            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
-                String key = classInfo.getName();
-
-                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
-                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
-
-                PersistenceUtils.addCollection(key, value);
-            });
-
-            scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
-                FieldInfoList annotationInfo = classInfo.getFieldInfo();
-                annotationInfo.forEach(info -> {
-                    if (info.getAnnotationInfo().size() == 1) {
-                        var field = info.getName();
-                        if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
-                            var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
-                            if ((Sort.ASCENDING.toString()).equals(value)) {
-                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
-                            } else if ((Sort.DESCENDING.toString()).equals(value)) {
-                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
-                            }
+                        if (at.contains("every")) {
+                            at = at.replace("every", Strings.EMPTY).trim();
+                            var timespan = at.substring(0, at.length() - 1);
+                            var duration = at.substring(at.length() - 1);
+                            seconds = getSeconds(timespan, duration);
+                        } else {
+                            isCron = true;
                         }
                     }
-                });
-            });
+
+                    schedule(classInfo, methodInfo, isCron, seconds, at);
+                })
+            );
         }
     }
 
     /**
      * Parses a given time span and duration and returns the number of
      * matching seconds to schedule a task
-     * 
+     *
      * @param timespan The timespan to use
      * @param duration The duration to use for calculation
-     * 
+     *
      * @return The duration in seconds
      */
     private static long getSeconds(String timespan, String duration) {
         Objects.requireNonNull(timespan, "timespan can not be null");
         Objects.requireNonNull(duration, "duration can not be null");
-        
+
         var time = Long.parseLong(timespan);
         return switch(duration) {
             case "m" -> time * 60;
@@ -212,7 +191,7 @@ public final class Application {
 
     /**
      * Schedules a task within the scheduler
-     * 
+     *
      * @param classInfo The classInfo containing the class which holds the method to execute
      * @param methodInfo The methodInfo containing the method to execute
      * @param isCron True if Task is a cron or false if it has a fixed rate
@@ -259,6 +238,52 @@ public final class Application {
     }
 
     /**
+     * Configures persistence
+     */
+    private static void prepareDatastore(ScanResult scanResult) {
+        var config = getInstance(Config.class);
+        if (config.isPersistenceEnabled()) {
+            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
+                String key = classInfo.getName();
+
+                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
+                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
+
+                PersistenceUtils.addCollection(key, value);
+            });
+
+            scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
+                FieldInfoList annotationInfo = classInfo.getFieldInfo();
+                annotationInfo.forEach(info -> {
+                    if (info.getAnnotationInfo().size() == 1) {
+                        var field = info.getName();
+                        if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
+                            var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
+                            if ((Sort.ASCENDING.toString()).equals(value)) {
+                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
+                            } else if ((Sort.DESCENDING.toString()).equals(value)) {
+                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
+                            }
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void prepareSubscriber(ScanResult scanResult) {
+        scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
+            MethodInfo methodInfo = classInfo.getMethodInfo().getFirst();
+            if (("receive").equals(methodInfo.getName())) {
+                MethodParameterInfo methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
+                String descriptor = methodParameterInfo.getTypeDescriptor().toString();
+                Application.getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
+            }
+        });
+    }
+
+    /**
      * Checks if application is run as root
      * <p>
      * (Hint: There is no need to run as root)
@@ -272,9 +297,9 @@ public final class Application {
                 Process exec = Runtime.getRuntime().exec(command);
                 var input = new BufferedReader(new InputStreamReader(exec.getInputStream(), StandardCharsets.UTF_8));
                 String output = input.lines().collect(Collectors.joining(System.lineSeparator()));
-                
+
                 input.close();
-                
+
                 if (("0").equals(output) && inProdMode()) {
                     LOG.error("Can not run application as root");
                     failsafe();
@@ -320,10 +345,10 @@ public final class Application {
     public static Mode getMode() {
         return mode;
     }
-    
+
     /**
      * Returns the ScheduledExecutorService where all tasks are scheduled
-     * 
+     *
      * @return ScheduledExecutorService
      */
     public static ScheduledExecutorService getScheduler() {
@@ -384,17 +409,17 @@ public final class Application {
 
         return injector.getInstance(clazz);
     }
-    
+
     /**
      * Stops the underlying undertow server
      */
     public static void stopUndertow() {
         undertow.stop();
     }
-    
+
     /**
      * Sets the mode the application is running in
-     * 
+     *
      * @param providedMode A given mode or null
      */
     private static void prepareMode(Mode providedMode) {
@@ -409,7 +434,7 @@ public final class Application {
             mode = providedMode;
         }
     }
-    
+
     /**
      * Sets the injector wrapped through guice modules
      */
@@ -421,7 +446,7 @@ public final class Application {
      * Callback to MangooLifecycle applicationInitialized
      */
     private static void applicationInitialized() {
-        getInstance(MangooBootstrap.class).applicationInitialized();            
+        getInstance(MangooBootstrap.class).applicationInitialized();
     }
 
     /**
@@ -429,31 +454,31 @@ public final class Application {
      */
     private static void prepareConfig() {
         var config = getInstance(Config.class);
-        
+
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bit.", bitLength);
             failsafe();
         }
-        
+
         bitLength = getBitLength(config.getAuthenticationCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.secret has only {} bit.", bitLength);
             failsafe();
         }
-        
+
         bitLength = getBitLength(config.getAuthenticationCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bit.", bitLength);
             failsafe();
         }
-        
+
         bitLength = getBitLength(config.getSessionCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie secret a 512 bit encryption key. The current property for session.cookie.secret has only {} bit.", bitLength);
             failsafe();
         }
-        
+
         bitLength = getBitLength(config.getSessionCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bit.", bitLength);
@@ -465,74 +490,74 @@ public final class Application {
             LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bit.", bitLength);
             failsafe();
         }
-        
+
         bitLength = getBitLength(config.getFlashCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.secret has only {} bit.", bitLength);
             failsafe();
         }
-        
+
         if (!config.isDecrypted()) {
             LOG.error("Found encrypted config values in config.props but decryption was not successful!");
             failsafe();
         }
     }
-    
+
     /**
      * Do sanity check on the configuration and warn about it in the log
      */
     private static void sanityChecks() {
         var config = getInstance(Config.class);
         List<String> warnings = new ArrayList<>();
-        
+
         if (!config.isAuthenticationCookieSecure()) {
             var warning = "Authentication cookie has secure flag set to 'false'. It is highly recommended to set authentication.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
             var warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
             var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (!config.isSessionCookieSecure()) {
             var warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
             var warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
             var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
             var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
             var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
-        
+
         getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
     }
 
@@ -541,7 +566,7 @@ public final class Application {
      */
     private static void prepareRoutes() {
         injector.getInstance(MangooBootstrap.class).initializeRoutes();
-        
+
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
             if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
                 LOG.error("Could not find controller method '{}' in controller class '{}'", requestRoute.getControllerMethod(), requestRoute.getControllerClass());
@@ -549,18 +574,18 @@ public final class Application {
             }
         });
     }
-    
+
     /**
      * Checks if a given method exists in a given class
      * @param controllerMethod The method to check
      * @param controllerClass The class to check 
-     * 
+     *
      * @return True if the method exists, false otherwise
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
         Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
         Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
-        
+
         return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
 
@@ -569,48 +594,48 @@ public final class Application {
      */
     private static void createRoutes() {
         pathHandler = new PathHandler(getRoutingHandler());
-        
+
         Router.getServerSentEventRoutes().forEach((ServerSentEventRoute serverSentEventRoute) ->
-            pathHandler.addExactPath(serverSentEventRoute.getUrl(),
-                    Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
-                            .withAuthentication(serverSentEventRoute.hasAuthentication())))
+                pathHandler.addExactPath(serverSentEventRoute.getUrl(),
+                        Handlers.serverSentEvents(getInstance(ServerSentEventHandler.class)
+                                .withAuthentication(serverSentEventRoute.hasAuthentication())))
         );
-        
+
         Router.getPathRoutes().forEach((PathRoute pathRoute) ->
-            pathHandler.addPrefixPath(pathRoute.getUrl(),
-                    new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())))
+                pathHandler.addPrefixPath(pathRoute.getUrl(),
+                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())))
         );
-        
+
         pathHandler.addPrefixPath("/@admin/assets/",
-                new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "templates/@admin/assets/")));            
+                new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), "templates/@admin/assets/")));
     }
 
     private static RoutingHandler getRoutingHandler() {
         var routingHandler = Handlers.routing();
         routingHandler.setFallbackHandler(Application.getInstance(FallbackHandler.class));
-        
+
         var config = getInstance(Config.class);
         if (config.isApplicationAdminEnable()) {
             Bind.controller(AdminController.class)
-                .withRoutes(
-                        On.get().to("/@admin").respondeWith("index"),
-                        On.get().to("/@admin/cache").respondeWith("cache"),
-                        On.get().to("/@admin/login").respondeWith("login"),
-                        On.get().to("/@admin/twofactor").respondeWith("twofactor"),
-                        On.get().to("/@admin/logger").respondeWith("logger"),
-                        On.get().to("/@admin/tools").respondeWith("tools"),
-                        On.get().to("/@admin/logout").respondeWith("logout"),
-                        On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                        On.post().to("/@admin/verify").respondeWith("verify"),
-                        On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
-                        On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
-                 );
-            
+                    .withRoutes(
+                            On.get().to("/@admin").respondeWith("index"),
+                            On.get().to("/@admin/cache").respondeWith("cache"),
+                            On.get().to("/@admin/login").respondeWith("login"),
+                            On.get().to("/@admin/twofactor").respondeWith("twofactor"),
+                            On.get().to("/@admin/logger").respondeWith("logger"),
+                            On.get().to("/@admin/tools").respondeWith("tools"),
+                            On.get().to("/@admin/logout").respondeWith("logout"),
+                            On.post().to("/@admin/authenticate").respondeWith("authenticate"),
+                            On.post().to("/@admin/verify").respondeWith("verify"),
+                            On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
+                            On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
+                    );
+
             if (config.isApplicationAdminHealthEnable()) {
                 Bind.controller(AdminController.class)
-                    .withRoutes(
-                            On.get().to("/@admin/health").respondeWith("health")
-                    );
+                        .withRoutes(
+                                On.get().to("/@admin/health").respondeWith("health")
+                        );
             }
         }
 
@@ -622,21 +647,21 @@ public final class Application {
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                     .withAuthentication(requestRoute.hasAuthentication());
 
-            routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);  
+            routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);
         });
-        
+
         var resourceHandler = Handlers.resource(new ClassPathResourceManager(
                 Thread.currentThread().getContextClassLoader(),
                 Default.FILES_FOLDER.toString() + '/'));
-        
+
         Router.getFileRoutes().forEach((FileRoute fileRoute) -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
-        
+
         return routingHandler;
     }
 
     private static void prepareUndertow() {
         var config = getInstance(Config.class);
-        
+
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
             httpHandler = MetricsHandler.HANDLER_WRAPPER.wrap(Handlers.exceptionHandler(pathHandler)
@@ -645,7 +670,7 @@ public final class Application {
             httpHandler = Handlers.exceptionHandler(pathHandler)
                     .addExceptionHandler(Throwable.class, Application.getInstance(ExceptionHandler.class));
         }
-        
+
         var builder = Undertow.builder()
                 .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, config.getUndertowMaxEntitySize())
                 .setHandler(httpHandler);
@@ -660,12 +685,12 @@ public final class Application {
             builder.addHttpListener(httpPort, httpHost);
             hasConnector = true;
         }
-        
+
         if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
             builder.addAjpListener(ajpPort, ajpHost);
             hasConnector = true;
         }
-                
+
         if (hasConnector) {
             undertow = builder.build();
             undertow.start();
@@ -679,30 +704,30 @@ public final class Application {
     private static void showLogo() {
         final var buffer = new StringBuilder(BUFFER_SIZE);
         buffer.append('\n')
-            .append(getLogo())
-            .append("\n\nhttps://github.com/svenkubiak/mangooio | ")
-            .append(MangooUtils.getVersion())
-            .append('\n');
+                .append(getLogo())
+                .append("\n\nhttps://github.com/svenkubiak/mangooio | ")
+                .append(MangooUtils.getVersion())
+                .append('\n');
 
         var logo = buffer.toString();
-        
+
         LOG.info(logo);
-        
+
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
         }
-        
+
         if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
             LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
         }
-        
+
         String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode.toString() + " mode. Enjoy.";
         LOG.info(startup);
     }
 
     /**
      * Retrieves the logo from the logo file and returns the string
-     * 
+     *
      * @return The mangoo I/O logo string
      */
     public static String getLogo() {
@@ -722,18 +747,18 @@ public final class Application {
             modules.add(module);
             modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+                 | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);
             failsafe();
         }
-        
+
         return modules;
     }
-    
+
     private static void applicationStarted() {
-        getInstance(MangooBootstrap.class).applicationStarted();            
+        getInstance(MangooBootstrap.class).applicationStarted();
     }
-    
+
     /**
      * Failsafe exit of application startup
      */
@@ -743,6 +768,6 @@ public final class Application {
     }
 
     public static void stopEmbeddedMongoDB() {
-        module.stopEmbeddedMongoDB();        
+        module.stopEmbeddedMongoDB();
     }
 }

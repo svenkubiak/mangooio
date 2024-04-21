@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
-import io.mangoo.enums.Default;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
@@ -132,7 +131,7 @@ class MangooUtilsTest {
     @Test
     void testResourceExists() {
         //when
-        boolean exists = MangooUtils.resourceExists(Default.MODEL_CONF.toString());
+        boolean exists = MangooUtils.resourceExists("attachment.txt");
         
         //then
         assertThat(exists, equalTo(true));
@@ -141,7 +140,7 @@ class MangooUtilsTest {
     @Test
     void testResourceExistsConcurrent() {
         MatcherAssert.assertThat(t -> {
-            return MangooUtils.resourceExists(Default.MODEL_CONF.toString());
+            return MangooUtils.resourceExists("attachment.txt");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     

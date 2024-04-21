@@ -4,6 +4,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import utils.Utils;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -20,19 +21,18 @@ import static org.hamcrest.Matchers.equalTo;
  */
 @ExtendWith({TestExtension.class})
 class EventBustTest {
-    public static String value = null;
 
     @Test
+    @SuppressWarnings("unchecked")
     void testEventBus() {
         //given
         String uuid = UUID.randomUUID().toString();
         EventBus eventBus = Application.getInstance(EventBus.class);
 
         //when
-        eventBus.register("foo", MySubscriber.class);
-        eventBus.publish("foo", uuid);
+        eventBus.publish(uuid);
 
         //then
-        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(EventBustTest.value.equals(uuid), equalTo(true)));
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(uuid.equals(Utils.eventBusValue), equalTo(true)));
     }
 }

@@ -46,7 +46,6 @@ public enum Default {
     I18N_COOKIE_NAME("mangooio-i18n"),
     JAVASCRIPT_FOLDER("javascript"),
     METRICS_ENABLE(Constants.FALSE),
-    MODEL_CONF("model.conf"),
     MODULE_CLASS("app.Module"),
     NUMBER_FORMAT("0.######"),
     PERSISTENCE_ENABLE(Constants.TRUE),
