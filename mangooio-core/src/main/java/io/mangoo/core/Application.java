@@ -99,10 +99,9 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
-            Thread.ofVirtual().start(Application::prepareScheduler);
+            prepareSchedulerAndDatastore();
             prepareRoutes();
             createRoutes();
-            prepareDatastore();
             prepareUndertow();
             sanityChecks();
             showLogo();
@@ -118,49 +117,74 @@ public final class Application {
 
     /**
      * Schedules all tasks annotated with @Run
+     * Prepares the persistence
      */
-    private static void prepareScheduler() {
+    private static void prepareSchedulerAndDatastore() {
         var config = getInstance(Config.class);
-        
-        if (config.isSchedulerEnabled()) {
-            scheduler = Executors.newSingleThreadScheduledExecutor();
-            executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
-            try (var scanResult =
-                    new ClassGraph()
-                        .enableAnnotationInfo()
-                        .enableClassInfo()
-                        .enableMethodInfo()
-                        .acceptPackages(ALL_PACKAGES)
-                        .scan()) {
-                
+        try (var scanResult =
+                new ClassGraph()
+                    .enableAllInfo()
+                    .acceptPackages(ALL_PACKAGES)
+                    .scan()) {
+
+            if (config.isSchedulerEnabled()) {
+                scheduler = Executors.newSingleThreadScheduledExecutor();
+                executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
+
                 scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
-                    classInfo.getMethodInfo().forEach(methodInfo -> {
-                        var isCron = false;
-                        long seconds = 0;
-                        String at = null;
-                        
-                        for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
-                            var annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                            at = ((String) annotationInfo
-                                    .getParameterValues(true).get("at").getValue())
-                                    .toLowerCase(Locale.ENGLISH)
-                                    .trim();
-                            
-                            if (at.contains("every")) {
-                                at = at.replace("every", Strings.EMPTY).trim();
-                                var timespan = at.substring(0, at.length() - 1);
-                                var duration = at.substring(at.length() - 1);
-                                seconds = getSeconds(timespan, duration);  
-                            } else {
-                                isCron = true;
+                        classInfo.getMethodInfo().forEach(methodInfo -> {
+                            var isCron = false;
+                            long seconds = 0;
+                            String at = null;
+
+                            for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
+                                var annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                                at = ((String) annotationInfo
+                                        .getParameterValues(true).get("at").getValue())
+                                        .toLowerCase(Locale.ENGLISH)
+                                        .trim();
+
+                                if (at.contains("every")) {
+                                    at = at.replace("every", Strings.EMPTY).trim();
+                                    var timespan = at.substring(0, at.length() - 1);
+                                    var duration = at.substring(at.length() - 1);
+                                    seconds = getSeconds(timespan, duration);
+                                } else {
+                                    isCron = true;
+                                }
+                            }
+
+                            schedule(classInfo, methodInfo, isCron, seconds, at);
+                        })
+                );
+            }
+
+            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
+                String key = classInfo.getName();
+
+                AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
+                String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
+
+                PersistenceUtils.addCollection(key, value);
+            });
+
+            scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
+                FieldInfoList annotationInfo = classInfo.getFieldInfo();
+                annotationInfo.forEach(info -> {
+                    if (info.getAnnotationInfo().size() == 1) {
+                        var field = info.getName();
+                        if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
+                            var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
+                            if ((Sort.ASCENDING.toString()).equals(value)) {
+                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
+                            } else if ((Sort.DESCENDING.toString()).equals(value)) {
+                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
                             }
                         }
-                        
-                        schedule(classInfo, methodInfo, isCron, seconds, at);
-                    })
-                );
-            } 
+                    }
+                });
+            });
         }
     }
 
@@ -230,47 +254,6 @@ public final class Application {
             } else {
                 LOG.error("Scheduled task found, but unable to schedule it. Check class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
                 failsafe();
-            }
-        }
-    }
-
-    /**
-     * Configures persistence
-     */
-    private static void prepareDatastore() {
-        var config = getInstance(Config.class);
-        if (config.isPersistenceEnabled()) {
-            try (var scanResult =
-                         new ClassGraph()
-                                 .enableAllInfo()
-                                 .acceptPackages(ALL_PACKAGES)
-                                 .scan()) {
-
-                scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
-                    String key = classInfo.getName();
-
-                    AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
-                    String value = (String) annotationInfo.getFirst().getParameterValues().getFirst().getValue();
-
-                    PersistenceUtils.addCollection(key, value);
-                });
-
-                scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
-                    FieldInfoList annotationInfo = classInfo.getFieldInfo();
-                    annotationInfo.forEach(info -> {
-                        if (info.getAnnotationInfo().size() == 1) {
-                            var field = info.getName();
-                            if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
-                                var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
-                                if ((Sort.ASCENDING.toString()).equals(value)) {
-                                    Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
-                                } else if ((Sort.DESCENDING.toString()).equals(value)) {
-                                    Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
-                                }
-                            }
-                        }
-                    });
-                });
             }
         }
     }
