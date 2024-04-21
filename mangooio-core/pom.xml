@@ -73,10 +73,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.softwaremill.jox</groupId>
-			<artifactId>core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 		</dependency>

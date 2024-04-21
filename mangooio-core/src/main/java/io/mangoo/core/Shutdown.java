@@ -1,7 +1,6 @@
 package io.mangoo.core;
 
 import com.google.inject.Singleton;
-import io.mangoo.async.EventBusHandler;
 import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton
@@ -16,7 +15,6 @@ public class Shutdown extends Thread {
         stopUndertow();
         stopScheduler();
         stopEmbeddedMongoDB();
-        closeEventBus();
     }
 
     private static void invokeLifecycle() {
@@ -36,9 +34,5 @@ public class Shutdown extends Thread {
     
     private static void stopEmbeddedMongoDB() {
         Application.stopEmbeddedMongoDB();
-    }
-
-    private static void closeEventBus() {
-        Application.getInstance(EventBusHandler.class).shutdown();
     }
 }
