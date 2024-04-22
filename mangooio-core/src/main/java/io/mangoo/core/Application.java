@@ -114,19 +114,24 @@ public final class Application {
             sanityChecks();
             while (true) { if(!start.isAlive()) {break;} }
             showLogo();
-            applicationStarted();
-
-            Runtime
-                    .getRuntime()
-                    .addShutdownHook(getInstance(Shutdown.class));
-
+            prepareShutdown();
             started = true;
+            applicationStarted();
         }
+    }
+
+    private static void prepareShutdown() {
+        Runtime
+                .getRuntime()
+                .addShutdownHook(getInstance(Shutdown.class));
     }
 
     private static ScanResult scanClasspath() {
         return new ClassGraph()
-                .enableAllInfo()
+                .enableAnnotationInfo()
+                .enableFieldInfo()
+                .enableClassInfo()
+                .enableMethodInfo()
                 .acceptPackages(ALL_PACKAGES)
                 .scan();
     }
