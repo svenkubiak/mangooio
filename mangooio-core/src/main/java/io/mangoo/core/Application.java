@@ -160,8 +160,10 @@ public final class Application {
                             isCron = true;
                         }
                     }
-
-                    schedule(classInfo, methodInfo, isCron, seconds, at);
+                    
+                    if (StringUtils.isNotBlank(at) && seconds > 0) {
+                        schedule(classInfo, methodInfo, isCron, seconds, at);
+                    }
                 })
             );
         }
