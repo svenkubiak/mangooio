@@ -7,4 +7,11 @@ public class InfoJobEveryDay {
     public void execute(){
         //Do nothing for now
     }
+
+    public void foo() {
+    }
+
+    @SuppressWarnings("ALL")
+    public void bar() {
+    }
 }

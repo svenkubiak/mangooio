@@ -101,15 +101,18 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
-            try (ScanResult scanResult = scanClasspath()) {
-                prepareScheduler(scanResult);
-                prepareDatastore(scanResult);
-                prepareSubscriber(scanResult);
-            }
+            Thread start = Thread.ofVirtual().start(() -> {
+                try (ScanResult scanResult = scanClasspath()) {
+                    prepareScheduler(scanResult);
+                    prepareDatastore(scanResult);
+                    prepareSubscriber(scanResult);
+                }
+            });
             prepareRoutes();
             createRoutes();
             prepareUndertow();
             sanityChecks();
+            while (true) { if(!start.isAlive()) {break;} }
             showLogo();
             applicationStarted();
 
@@ -140,29 +143,31 @@ public final class Application {
 
             scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
                 classInfo.getMethodInfo().forEach(methodInfo -> {
-                    var isCron = false;
-                    long seconds = 0;
-                    String at = null;
+                    if (!methodInfo.getAnnotationInfo().isEmpty()) {
+                        var isCron = false;
+                        long seconds = 0;
+                        String at = null;
 
-                    for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
-                        var annotationInfo = methodInfo.getAnnotationInfo().get(i);
-                        at = ((String) annotationInfo
-                                .getParameterValues(true).get("at").getValue())
-                                .toLowerCase(Locale.ENGLISH)
-                                .trim();
+                        for (var i = 0; i < methodInfo.getAnnotationInfo().size(); i++) {
+                            var annotationInfo = methodInfo.getAnnotationInfo().get(i);
+                            at = ((String) annotationInfo
+                                    .getParameterValues(true).get("at").getValue())
+                                    .toLowerCase(Locale.ENGLISH)
+                                    .trim();
 
-                        if (at.contains("every")) {
-                            at = at.replace("every", Strings.EMPTY).trim();
-                            var timespan = at.substring(0, at.length() - 1);
-                            var duration = at.substring(at.length() - 1);
-                            seconds = getSeconds(timespan, duration);
-                        } else {
-                            isCron = true;
+                            if (at.contains("every")) {
+                                at = at.replace("every", Strings.EMPTY).trim();
+                                var timespan = at.substring(0, at.length() - 1);
+                                var duration = at.substring(at.length() - 1);
+                                seconds = getSeconds(timespan, duration);
+                            } else {
+                                isCron = true;
+                            }
                         }
-                    }
-                    
-                    if (StringUtils.isNotBlank(at) && seconds > 0) {
-                        schedule(classInfo, methodInfo, isCron, seconds, at);
+
+                        if (StringUtils.isNotBlank(at) && seconds > 0) {
+                            schedule(classInfo, methodInfo, isCron, seconds, at);
+                        }
                     }
                 })
             );
