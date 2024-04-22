@@ -1,10 +1,10 @@
 package io.mangoo.async;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Required;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Singleton
 public class EventBus<T> {
     private static final Logger LOG = LogManager.getLogger(EventBus.class);
-    private final MultiValuedMap<String, Class<?>> subscribers = new ArrayListValuedHashMap<>();
+    private final Multimap<String, Class<?>> subscribers = ArrayListMultimap.create();
     private final AtomicLong handledEvents = new AtomicLong();
     private final AtomicLong numSubscribers = new AtomicLong();
 
