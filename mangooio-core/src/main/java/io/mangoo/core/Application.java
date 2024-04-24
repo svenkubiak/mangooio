@@ -61,6 +61,7 @@ import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final LocalDateTime START = LocalDateTime.now();
     private static final String LOGO = """
                                                         ___     __  ___ \s
          _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
@@ -70,8 +71,6 @@ public final class Application {
                                   |___/                                 \s""";
     private static final String ALL_PACKAGES = "*";
     private static final int KEY_MIN_BIT_LENGTH = 512;
-    private static final int BUFFER_SIZE = 255;
-    private static final LocalDateTime START = LocalDateTime.now();
     private static io.mangoo.core.Module module;
     private static ScheduledExecutorService scheduler;
     private static ExecutorService executor;
@@ -92,6 +91,7 @@ public final class Application {
         start(Mode.PROD);
     }
 
+    @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
     public static void start(Mode mode) {
         Objects.requireNonNull(mode, Required.MODE.toString());
 
@@ -101,7 +101,7 @@ public final class Application {
             prepareInjector();
             applicationInitialized();
             prepareConfig();
-            Thread start = Thread.ofVirtual().start(() -> {
+            Thread scan = Thread.ofVirtual().start(() -> {
                 try (ScanResult scanResult = scanClasspath()) {
                     prepareScheduler(scanResult);
                     prepareDatastore(scanResult);
@@ -111,12 +111,12 @@ public final class Application {
             prepareRoutes();
             createRoutes();
             prepareUndertow();
-            sanityChecks();
-            while (true) { if(!start.isAlive()) {break;} }
-            showLogo();
             prepareShutdown();
-            started = true;
+            sanityChecks();
             applicationStarted();
+            do {} while (scan.isAlive());
+            showLogo();
+            started = true;
         }
     }
 
@@ -714,14 +714,11 @@ public final class Application {
 
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
-        final var buffer = new StringBuilder(BUFFER_SIZE);
-        buffer.append('\n')
-                .append(getLogo())
-                .append("\n\nhttps://github.com/svenkubiak/mangooio | ")
-                .append(MangooUtils.getVersion())
-                .append('\n');
-
-        var logo = buffer.toString();
+        var logo = '\n' +
+                getLogo() +
+                "\n\nhttps://github.com/svenkubiak/mangooio | " +
+                MangooUtils.getVersion() +
+                '\n';
 
         LOG.info(logo);
 
