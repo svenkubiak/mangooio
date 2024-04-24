@@ -28,8 +28,8 @@
 		<log4j.version>2.23.1</log4j.version>
 		<maven.version>4.0.0-alpha-9</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>5.10.2</junit.version>
-		<junit.platform.version>1.10.2</junit.platform.version>
+		<junit.version>5.11.0-M1</junit.version>
+		<junit.platform.version>1.11.0-M1</junit.platform.version>
 		<enforcer.version>1.8.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.17.0</jackson.version>
