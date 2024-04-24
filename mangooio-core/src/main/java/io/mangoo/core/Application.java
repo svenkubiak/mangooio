@@ -132,6 +132,10 @@ public final class Application {
                 .enableFieldInfo()
                 .enableClassInfo()
                 .enableMethodInfo()
+                .disableRuntimeInvisibleAnnotations()
+                .disableJarScanning()
+                .disableNestedJarScanning()
+                .disableModuleScanning()
                 .acceptPackages(ALL_PACKAGES)
                 .scan();
     }
