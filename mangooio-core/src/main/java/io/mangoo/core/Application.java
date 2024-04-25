@@ -132,6 +132,8 @@ public final class Application {
                 .enableFieldInfo()
                 .enableClassInfo()
                 .enableMethodInfo()
+                .disableJarScanning()
+                .disableNestedJarScanning()
                 .acceptPackages(ALL_PACKAGES)
                 .scan();
     }
