@@ -113,27 +113,11 @@ public final class Application {
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
-            applicationStarted();
             do {} while (scan.isAlive());
+            applicationStarted();
             showLogo();
             started = true;
         }
-    }
-
-    private static void prepareShutdown() {
-        Runtime
-                .getRuntime()
-                .addShutdownHook(getInstance(Shutdown.class));
-    }
-
-    private static ScanResult scanClasspath() {
-        return new ClassGraph()
-                .enableAnnotationInfo()
-                .enableFieldInfo()
-                .enableClassInfo()
-                .enableMethodInfo()
-                .acceptPackages(ALL_PACKAGES)
-                .scan();
     }
 
     /**
@@ -195,8 +179,8 @@ public final class Application {
         var time = Long.parseLong(timespan);
         return switch(duration) {
             case "m" -> time * 60;
-            case "h" -> time * 60 * 60;
-            case "d" -> time * 60 * 60 * 24;
+            case "h" -> time * 3600;
+            case "d" -> time * 86400;
             default  -> time;
         };
     }
@@ -715,7 +699,7 @@ public final class Application {
     @SuppressFBWarnings(justification = "Buffer only used locally, without user input", value = "CRLF_INJECTION_LOGS")
     private static void showLogo() {
         var logo = '\n' +
-                getLogo() +
+                LOGO +
                 "\n\nhttps://github.com/svenkubiak/mangooio | " +
                 MangooUtils.getVersion() +
                 '\n';
@@ -732,15 +716,6 @@ public final class Application {
 
         String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode.toString() + " mode. Enjoy.";
         LOG.info(startup);
-    }
-
-    /**
-     * Retrieves the logo from the logo file and returns the string
-     *
-     * @return The mangoo I/O logo string
-     */
-    public static String getLogo() {
-        return LOGO;
     }
 
     private static int getBitLength(String secret) {
@@ -774,6 +749,22 @@ public final class Application {
     private static void failsafe() {
         System.out.print("Failed to start mangoo I/O application"); //NOSONAR Intentionally as we want to exit the application at this point
         System.exit(1); //NOSONAR Intentionally as we want to exit the application at this point
+    }
+
+    private static void prepareShutdown() {
+        Runtime
+                .getRuntime()
+                .addShutdownHook(getInstance(Shutdown.class));
+    }
+
+    private static ScanResult scanClasspath() {
+        return new ClassGraph()
+                .enableAnnotationInfo()
+                .enableFieldInfo()
+                .enableClassInfo()
+                .enableMethodInfo()
+                .acceptPackages(ALL_PACKAGES)
+                .scan();
     }
 
     public static void stopEmbeddedMongoDB() {
