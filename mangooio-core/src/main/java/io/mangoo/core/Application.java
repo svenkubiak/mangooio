@@ -213,7 +213,7 @@ public final class Application {
 
                 var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
                 ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.submit(cronTask), 0, TimeUnit.SECONDS);
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture));
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture, true));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
@@ -224,7 +224,7 @@ public final class Application {
             if (time > 0) {
                 var task = new Task(classInfo.loadClass(), methodInfo.getName());
                 ScheduledFuture<?> scheduledFuture = scheduler.scheduleWithFixedDelay(() -> executor.submit(task), time, time, TimeUnit.SECONDS);
-                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture));
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), "every " + at, scheduledFuture, false));
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
