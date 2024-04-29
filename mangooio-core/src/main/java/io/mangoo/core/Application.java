@@ -154,7 +154,7 @@ public final class Application {
                             }
                         }
 
-                        if (StringUtils.isNotBlank(at) && seconds > 0) {
+                        if (StringUtils.isNotBlank(at)) {
                             schedule(classInfo, methodInfo, isCron, seconds, at);
                         }
                     }
