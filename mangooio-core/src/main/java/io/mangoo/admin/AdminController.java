@@ -18,26 +18,25 @@ import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
+import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.token.TokenBuilder;
 import io.mangoo.utils.totp.TotpUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.util.Strings;
 
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -114,16 +113,7 @@ public class AdminController {
                 .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
                 .andTemplate(Template.DEFAULT.adminPath());
     }
-    
-    @FilterWith(AdminFilter.class)
-    public Response logger() {
-        var loggerContext = (LoggerContext) LogManager.getContext(false);
-        
-        return Response.withOk()
-                .andContent("loggers", loggerContext.getLoggers())
-                .andTemplate(Template.DEFAULT.loggerPath());
-    }
-    
+
     @FilterWith(AdminFilter.class)
     public Response cache() {
         Map<String, CacheStats> statistics = new HashMap<>();
@@ -193,26 +183,13 @@ public class AdminController {
         return Response.withOk()
                 .andTemplate(Template.DEFAULT.twofactorPath());
     }
-    
+
     @FilterWith(AdminFilter.class)
-    public Response loggerajax(Request request) {
-        Map<String, Object> body = request.getBodyAsJsonMap();
-        if (body != null && !body.isEmpty()) {
-            var clazz = body.get("class").toString();
-            var level = body.get("level").toString();
-            if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(level)) {
-                var loggerContext = (LoggerContext) LogManager.getContext(false);
-                loggerContext.getLoggers()
-                    .stream()
-                    .filter(logger -> clazz.equals(logger.getName()))
-                    .forEach(logger -> logger.setLevel(Level.getLevel(level)));
-            }
-        }
-        
-        return Response.withOk()
-                .andEmptyBody();
+    public Response scheduler() {
+        Scheduler scheduler = Application.getInstance(Scheduler.class);
+        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.DEFAULT.schedulerPath());
     }
-    
+
     @FilterWith(AdminFilter.class)
     public Response tools() {
         String secret = config.getApplicationAdminSecret();
@@ -230,7 +207,7 @@ public class AdminController {
     }
 
     @FilterWith(AdminFilter.class)
-    public Response toolsajax(Request request) {
+    public Response toolsrx(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         Map<String, String> response = new HashMap<>();
 
@@ -260,31 +237,7 @@ public class AdminController {
         
         return Response.withOk().andJsonBody(response);
     }
-    
-    public Response health(Request request)  {
-        if (isValidHeaderToken(request)) {
-            Map<String, Object> health = new HashMap<>();
-            health.put("cpu", getCpu());
-            health.put("memory", getMemory());
-            
-            return Response.withOk().andJsonBody(health);
-        }
-        
-        return Response.withNotFound().andEmptyBody();
-    }
-    
-    private boolean isValidHeaderToken(Request request) {
-        var valid = false;
-        String token = config.getApplicationAdminHealthToken();
-        String header = request.getHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString());
-        
-        if (StringUtils.isNotBlank(token) && StringUtils.isNotBlank(header) && token.equals(header)) {
-            valid = true;
-        }
-        
-        return valid;
-    }
-    
+
     private boolean isValidAuthentication(Form form) {
         var valid = false;
 
@@ -349,27 +302,5 @@ public class AdminController {
                       "usedMemory", (double) memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE,
                       "maxHeapMemory", (double) memoryMXBean.getHeapMemoryUsage().getMax() /MEGABYTE,
                       "committedMemory", (double) memoryMXBean.getHeapMemoryUsage().getCommitted() / MEGABYTE);
-    }
-
-    private Double getCpu() {
-        try {
-            var beanServer = ManagementFactory.getPlatformMBeanServer();
-            var objectName = ObjectName.getInstance("java.lang:type=OperatingSystem");
-            AttributeList list = beanServer.getAttributes(objectName, new String[]{"ProcessCpuLoad"});
-
-            return Optional.ofNullable(list)
-                    .map(l -> l.isEmpty() ? null : l)
-                    .map(List::iterator)
-                    .map(Iterator::next)
-                    .map(Attribute.class::cast)
-                    .map(Attribute::getValue)
-                    .map(Double.class::cast)
-                    .orElse(null);
-
-        } catch (Exception e) {
-            LOG.error("Failed to get process CPU load", e);
-        }
-        
-        return (double) 0;
     }
 }

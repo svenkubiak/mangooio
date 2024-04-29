@@ -2,8 +2,6 @@ package io.mangoo.enums;
 
 public enum Key {
     APPLICATION_ADMIN_ENABLE("application.admin.enable"),
-    APPLICATION_ADMIN_HEALTH_ENABLE("application.admin.health.enable"),
-    APPLICATION_ADMIN_HEALTH_TOKEN("application.admin.health.token"),
     APPLICATION_ADMIN_PASSWORD("application.admin.password"),
     APPLICATION_ADMIN_SECRET("application.admin.secret"),
     APPLICATION_ADMIN_USERNAME("application.admin.username"),

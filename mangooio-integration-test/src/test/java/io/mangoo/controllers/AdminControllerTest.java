@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
@@ -59,34 +58,7 @@ class AdminControllerTest {
         assertThat(response.getContent(), containsString(CACHE));
         assertThat(response.getContent(), containsString(EVICTIONS));
     }
-    
-    @Test
-    void testHealthWithHeader() {
-        //given
-        TestResponse response = login().to("/@admin/health")
-                .withHeader(Default.APPLICATION_ADMIN_HEALTH_HEADER.toString(), Application.getInstance(Config.class).getApplicationAdminHealthToken())
-                .withHTTPMethod(Methods.GET.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo("application/json; charset=UTF-8"));
-        assertThat(response.getContent(), containsString("cpu"));
-    }
-    
-    @Test
-    void testHealthWithoutHeader() {
-        //given
-        TestResponse response = login().to("/@admin/health")
-                .withHTTPMethod(Methods.GET.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
-    }
-    
+
     @Test
     void testCacheUnauthorized() {
         //given

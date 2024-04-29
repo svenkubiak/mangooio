@@ -1760,53 +1760,6 @@ class ConfigTest {
         assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN.toString()).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
-    
-    @Test
-    void testGetApplicationAdminHealthToken() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String token = UUID.randomUUID().toString();
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.admin.health.token", token);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.getApplicationAdminHealthToken(), equalTo(token));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    void testGetApplicationAdminHealthEnable() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String enable = "true";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("application.admin.health.enable", enable);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isApplicationAdminHealthEnable(), equalTo(Boolean.parseBoolean(enable)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
-    @Test
-    void testGetApplicationAdminHealthEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isApplicationAdminHealthEnable(), equalTo(Default.APPLICATION_ADMIN_HEALTH_ENABLE.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
 
     @Test
     void checkAnnotationExists() throws ClassNotFoundException {

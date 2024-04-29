@@ -27,7 +27,7 @@
         <div id="navMenu" class="navbar-menu">
             <div class="navbar-start">
                 <a class="navbar-item" href="/@admin">Dashboard</a>
-                <a class="navbar-item" href="/@admin/logger">Logger</a>
+                <a class="navbar-item" href="/@admin/scheduler">Scheduler</a>
                 <a class="navbar-item" href="/@admin/cache">Cache</a>
                 <a class="navbar-item" href="/@admin/tools">Config tools</a>  
             </div>

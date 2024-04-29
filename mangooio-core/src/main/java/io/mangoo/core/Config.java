@@ -790,18 +790,4 @@ public class Config {
     public String getSmtpProtocol() {
         return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL.toString());
     }
-
-    /**
-     * @return application.admin.health.enable or default value if undefined
-     */
-    public boolean isApplicationAdminHealthEnable() {
-        return getBoolean(Key.APPLICATION_ADMIN_HEALTH_ENABLE, Default.APPLICATION_ADMIN_HEALTH_ENABLE.toBoolean());
-    }
-
-    /**
-     * @return application.admin.health.token or null if undefined
-     */
-    public String getApplicationAdminHealthToken() {
-        return getString(Key.APPLICATION_ADMIN_HEALTH_TOKEN, null);
-    }
 }

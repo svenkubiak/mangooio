@@ -25,6 +25,8 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import io.mangoo.scheduler.CronTask;
+import io.mangoo.scheduler.Schedule;
+import io.mangoo.scheduler.Scheduler;
 import io.mangoo.scheduler.Task;
 import io.mangoo.utils.ByteUtils;
 import io.mangoo.utils.MangooUtils;
@@ -53,10 +55,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public final class Application {
@@ -154,7 +153,7 @@ public final class Application {
                             }
                         }
 
-                        if (StringUtils.isNotBlank(at) && seconds > 0) {
+                        if (StringUtils.isNotBlank(at)) {
                             schedule(classInfo, methodInfo, isCron, seconds, at);
                         }
                     }
@@ -213,7 +212,8 @@ public final class Application {
                 quartzCron.validate();
 
                 var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
-                scheduler.schedule( () -> executor.execute(cronTask), 0, TimeUnit.SECONDS);
+                ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.submit(cronTask), 0, TimeUnit.SECONDS);
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
             } catch (IllegalArgumentException e) {
@@ -223,7 +223,8 @@ public final class Application {
         } else {
             if (time > 0) {
                 var task = new Task(classInfo.loadClass(), methodInfo.getName());
-                scheduler.scheduleWithFixedDelay( () -> executor.execute(task), time, time, TimeUnit.SECONDS);
+                ScheduledFuture<?> scheduledFuture = scheduler.scheduleWithFixedDelay(() -> executor.submit(task), time, time, TimeUnit.SECONDS);
+                getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture));
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
             } else {
@@ -618,21 +619,13 @@ public final class Application {
                             On.get().to("/@admin/cache").respondeWith("cache"),
                             On.get().to("/@admin/login").respondeWith("login"),
                             On.get().to("/@admin/twofactor").respondeWith("twofactor"),
-                            On.get().to("/@admin/logger").respondeWith("logger"),
+                            On.get().to("/@admin/scheduler").respondeWith("scheduler"),
                             On.get().to("/@admin/tools").respondeWith("tools"),
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
                             On.post().to("/@admin/verify").respondeWith("verify"),
-                            On.post().to("/@admin/logger/ajax").respondeWith("loggerajax"),
-                            On.post().to("/@admin/tools/ajax").respondeWith("toolsajax")
+                            On.post().to("/@admin/tools").respondeWith("toolsrx")
                     );
-
-            if (config.isApplicationAdminHealthEnable()) {
-                Bind.controller(AdminController.class)
-                        .withRoutes(
-                                On.get().to("/@admin/health").respondeWith("health")
-                        );
-            }
         }
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {

@@ -28,7 +28,7 @@ $(document).ready(function(){
   			type: "POST",
   			processData: false,
   			contentType : 'application/json',
-  			url: "/@admin/tools/ajax",
+  			url: "/@admin/tools",
   			data: JSON.stringify({ "function": "keypair"}),
   			dataType: "json",
   			success: function(data){
@@ -47,7 +47,7 @@ $(document).ready(function(){
   			type: "POST",
   			processData: false,
   			contentType : 'application/json',
-  			url: "/@admin/tools/ajax",
+  			url: "/@admin/tools",
   			data: JSON.stringify({ "function": "encrypt", "cleartext" : cleartext, "key" : pubkey }),
   			dataType: "json",
   			success: function(data){

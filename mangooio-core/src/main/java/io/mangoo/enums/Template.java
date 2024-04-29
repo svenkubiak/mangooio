@@ -10,11 +10,10 @@ public enum Template {
     private static final String CACHE_TEMPLATE_PATH = "@admin/cache.ftl";
     private static final String FORBIDDEN_TEMPLATE_PATH = "defaults/403.html";
     private static final String INTERNAL_SERVER_ERROR_TEMPLATE_PATH = "defaults/500.html";
-    private static final String LOGGER_TEMPLATE_PATH = "@admin/logger.ftl";
+    private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
     private static final String LOGIN_TEMPLATE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String TOO_MANY_REQUESTS_TEMPLATE_PATH = "defaults/429.html";
-    private static final String ROUTES_TEMPLATE_PATH = "@admin/routes.ftl";
     private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
@@ -78,10 +77,10 @@ public enum Template {
     }
 
     /**
-     * @return The relative path of the cache template
+     * @return The relative path of the scheduler template
      */
-    public String loggerPath() {
-        return LOGGER_TEMPLATE_PATH;
+    public String schedulerPath() {
+        return SCHEDULER_TEMPLATE_PATH;
     }
     
     /**
@@ -110,13 +109,6 @@ public enum Template {
      */
     public String notFoundPath() {
         return NOT_FOUND_TEMPLATE_PATH;
-    }
-
-    /**
-     * @return The relative path of the routes template
-     */
-    public String routesPath() {
-        return ROUTES_TEMPLATE_PATH;
     }
 
     /**
