@@ -86,35 +86,7 @@ class AdminControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(CONTROL_PANEL));
     }
-    
-    @Test
-    void testLoggerUnauthorized() {
-        //given
-        TestResponse response = TestRequest.get("/@admin/logger")
-                .withDisabledRedirects()
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(LOGGER)));
-    }
-    
-    @Test
-    void testLoggerAuthorized() {
-        //given
-        TestResponse response = login().to("/@admin/logger")
-                .withHTTPMethod(Methods.GET.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
-        assertThat(response.getContent(), containsString(LOGGER));
-    }
-    
+
     @Test
     void testToolsAuthorized() {
         //given
@@ -160,7 +132,7 @@ class AdminControllerTest {
     @Test
     void testToolsAjaxAuthorized() {
         //given
-        TestResponse response = login().to("/@admin/tools/ajax")
+        TestResponse response = login().to("/@admin/tools")
                 .withHTTPMethod(Methods.POST.toString())
                 .execute();
         
@@ -173,7 +145,7 @@ class AdminControllerTest {
     @Test
     void testToolsAjaxUnauthorized() {
         //given
-        TestResponse response = TestRequest.post("/@admin/tools/ajax")
+        TestResponse response = TestRequest.post("/@admin/tools")
                 .withDisabledRedirects()
                 .execute();
         
@@ -183,34 +155,7 @@ class AdminControllerTest {
         assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
         assertThat(response.getContent(), not(containsString(SCHEDULER)));
     }
-    
-    @Test
-    void testLoggerAjaxAuthorized() {
-        //given
-        TestResponse response = login().to("/@admin/logger/ajax")
-                .withHTTPMethod(Methods.POST.toString())
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo("text/plain; charset=UTF-8"));
-    }
-    
-    @Test
-    void testLoggerAjaxUnauthorized() {
-        //given
-        TestResponse response = TestRequest.post("/@admin/logger/ajax")
-                .withDisabledRedirects()
-                .execute();
-        
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.FOUND));
-        assertThat(response.getHeader("Location"), equalTo("/@admin/login"));
-        assertThat(response.getContent(), not(containsString(SCHEDULER)));
-    }
-    
+
     @Test
     void testLogin() {
         //given
