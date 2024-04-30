@@ -13,57 +13,49 @@ import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.*;
 import io.mangoo.exceptions.MangooEncryptionException;
-import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.token.TokenBuilder;
 import io.mangoo.utils.totp.TotpUtils;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
-import java.lang.management.ManagementFactory;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+
+import static io.mangoo.admin.AdminUtils.resetLockCounter;
 
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final String ENABLED = "enabled";
     private static final String ADMIN_INDEX = "/@admin";
-    private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";
-    private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String PERIOD = "30";
     private static final String DIGITS = "6";
     private static final String METRICS = "metrics";
     private static final double HUNDRED_PERCENT = 100.0;
-    private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
-    private static final long  MEGABYTE = 1048576L;
-    private final Cache cache;
     private final CacheProvider cacheProvider;
+    private final Cache cache;
     private final Config config;
     private final Crypto crypto;
-    
+
     @Inject
-    public AdminController(Crypto crypto, Config config, Cache cache, CacheProvider cacheProvider) {
+    public AdminController(Config config, Cache cache, CacheProvider cacheProvider, Crypto crypto) {
         this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
-        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
+        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
     }
 
     @FilterWith(AdminFilter.class)
@@ -125,6 +117,61 @@ public class AdminController {
                 .andContent("statistics", statistics)
                 .andTemplate(Template.DEFAULT.cachePath());
     }
+
+
+    @FilterWith(AdminFilter.class)
+    public Response scheduler() {
+        Scheduler scheduler = Application.getInstance(Scheduler.class);
+        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.DEFAULT.schedulerPath());
+    }
+
+    @FilterWith(AdminFilter.class)
+    public Response tools() {
+        String secret = config.getApplicationAdminSecret();
+        String qrCode = null;
+
+        if (StringUtils.isBlank(secret)) {
+            secret = TotpUtils.createSecret();
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+        }
+
+        return Response.withOk()
+                .andContent("qrcode", qrCode)
+                .andContent("secret", secret)
+                .andTemplate(Template.DEFAULT.toolsPath());
+    }
+
+    @FilterWith(AdminFilter.class)
+    public Response toolsrx(Request request) {
+        Map<String, Object> body = request.getBodyAsJsonMap();
+        Map<String, String> response = new HashMap<>();
+
+        if (body != null && !body.isEmpty()) {
+            var function = body.get("function").toString();
+
+            if (("keypair").equalsIgnoreCase(function)) {
+                var keyPair = crypto.generateKeyPair();
+                var publickey = crypto.getKeyAsString(keyPair.getPublic());
+                var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
+
+                response = Map.of("publickey", publickey,  "privatekey", privatekey);
+            } else if (("encrypt").equalsIgnoreCase(function)) {
+                var cleartext = body.get("cleartext").toString();
+                var key = body.get("key").toString();
+
+                try {
+                    var publicKey = crypto.getPublicKeyFromString(key);
+                    response = Map.of("encrypted", crypto.encrypt(cleartext, publicKey));
+                } catch (MangooEncryptionException e) {
+                    LOG.error("Failed to encrypt cleartext.", e);
+                }
+            } else {
+                LOG.warn("Invalid or no function selected for AJAX request.");
+            }
+        }
+
+        return Response.withOk().andJsonBody(response);
+    }
     
     public Response login() {
         return Response.withOk()
@@ -149,12 +196,12 @@ public class AdminController {
         form.expectValue("username");
         form.expectValue("password");
         
-        if (isNotLocked() && form.isValid()) {
-            if (isValidAuthentication(form)) {
-                cache.resetCounter(MANGOOIO_ADMIN_LOCK_COUNT);
-                return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(true));
+        if (AdminUtils.isNotLocked() && form.isValid()) {
+            if (AdminUtils.isValidAuthentication(form)) {
+                resetLockCounter();
+                return Response.withRedirect(ADMIN_INDEX).andCookie(AdminUtils.getAdminCookie(true));
             } else {
-                invalidAuthentication();
+                AdminUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -166,11 +213,11 @@ public class AdminController {
     public Response verify(Form form) {
         form.expectValue("code");
         
-        if (isNotLocked() && form.isValid()) {
+        if (AdminUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
-                return Response.withRedirect(ADMIN_INDEX).andCookie(getAdminCookie(false));
+                return Response.withRedirect(ADMIN_INDEX).andCookie(AdminUtils.getAdminCookie(false));
             } else {
-                invalidAuthentication();
+                AdminUtils.invalidAuthentication();
             }
         }
         form.invalidate();
@@ -180,127 +227,6 @@ public class AdminController {
     }
     
     public Response twofactor() {
-        return Response.withOk()
-                .andTemplate(Template.DEFAULT.twofactorPath());
-    }
-
-    @FilterWith(AdminFilter.class)
-    public Response scheduler() {
-        Scheduler scheduler = Application.getInstance(Scheduler.class);
-        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.DEFAULT.schedulerPath());
-    }
-
-    @FilterWith(AdminFilter.class)
-    public Response tools() {
-        String secret = config.getApplicationAdminSecret();
-        String qrCode = null;
-        
-        if (StringUtils.isBlank(secret)) {
-            secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
-        }
-        
-        return Response.withOk()
-                .andContent("qrcode", qrCode)
-                .andContent("secret", secret)
-                .andTemplate(Template.DEFAULT.toolsPath());
-    }
-
-    @FilterWith(AdminFilter.class)
-    public Response toolsrx(Request request) {
-        Map<String, Object> body = request.getBodyAsJsonMap();
-        Map<String, String> response = new HashMap<>();
-
-        if (body != null && !body.isEmpty()) {
-            var function = body.get("function").toString();
-
-            if (("keypair").equalsIgnoreCase(function)) {
-                var keyPair = crypto.generateKeyPair();
-                var publickey = crypto.getKeyAsString(keyPair.getPublic());
-                var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
-                
-                response = Map.of("publickey", publickey,  "privatekey", privatekey);
-            } else if (("encrypt").equalsIgnoreCase(function)) {
-                var cleartext = body.get("cleartext").toString();
-                var key = body.get("key").toString();
-                
-                try {
-                    var publicKey = crypto.getPublicKeyFromString(key);
-                    response = Map.of("encrypted", crypto.encrypt(cleartext, publicKey));
-                } catch (MangooEncryptionException e) {
-                    LOG.error("Failed to encrypt cleartext.", e);
-                }
-            } else {
-                LOG.warn("Invalid or no function selected for AJAX request.");
-            }
-        }
-        
-        return Response.withOk().andJsonBody(response);
-    }
-
-    private boolean isValidAuthentication(Form form) {
-        var valid = false;
-
-        String username = config.getApplicationAdminUsername();
-        String password = config.getApplicationAdminPassword();
-        
-        if (checkAuthentication(form, username, password)) {
-            valid = true;
-        }
-        
-        return valid;
-    }
-
-    private boolean checkAuthentication(Form form, String username, String password) {
-        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) &&
-               username.equals(form.get("username")) && password.equals(form.get("password"));
-    }
-
-    private Cookie getAdminCookie(boolean includeTwoFactor) {
-        var tokenBuilder = TokenBuilder.create()
-                .withSharedSecret(config.getApplicationSecret())
-                .withExpires(LocalDateTime.now().plusMinutes(30))
-                .withClaim("uuid", MangooUtils.randomString(32));
-        
-        if (includeTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
-            tokenBuilder.withClaim("twofactor", Boolean.TRUE);
-        }
-        
-        var token = "";
-        try {
-            token = tokenBuilder.build();
-        } catch (MangooTokenException e) {
-            LOG.error("Failed to create admin cookie", e);
-        }
-    
-        return new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
-                .setValue(token)
-                .setHttpOnly(true)
-                .setSecure(Application.inProdMode())
-                .setPath("/")
-                .setSameSite(true)
-                .setSameSiteMode("Strict");
-    }
-    
-    private void invalidAuthentication() {
-        AtomicInteger counter = cache.getAndIncrementCounter(MANGOOIO_ADMIN_LOCK_COUNT);
-        if (counter.intValue() >= ADMIN_LOGIN_MAX_RETRIES) {
-            cache.put(MANGOOIO_ADMIN_LOCKED_UNTIL, LocalDateTime.now().plusMinutes(60));
-        }
-        
-        cache.put(MANGOOIO_ADMIN_LOCK_COUNT, counter);
-    }
-    
-    private boolean isNotLocked() {
-        LocalDateTime lockedUntil = cache.get(MANGOOIO_ADMIN_LOCKED_UNTIL);
-        return lockedUntil == null || lockedUntil.isBefore(LocalDateTime.now());
-    }
-    
-    private Map<String, Double> getMemory() {
-        var memoryMXBean = ManagementFactory.getMemoryMXBean();
-        return Map.of("initialMemory", (double) memoryMXBean.getHeapMemoryUsage().getInit() / MEGABYTE,
-                      "usedMemory", (double) memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE,
-                      "maxHeapMemory", (double) memoryMXBean.getHeapMemoryUsage().getMax() /MEGABYTE,
-                      "committedMemory", (double) memoryMXBean.getHeapMemoryUsage().getCommitted() / MEGABYTE);
+        return Response.withOk().andTemplate(Template.DEFAULT.twofactorPath());
     }
 }
