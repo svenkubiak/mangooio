@@ -72,7 +72,7 @@ public class PostOffice {
         try {
             var mimeMessage = new MimeMessage(session);
             mimeMessage.setSentDate(new Date());
-            mimeMessage.setSubject(mail.getMessageSubject());
+            mimeMessage.setSubject(mail.getMailSubject());
 
             setReplyTo(mail, mimeMessage);
             setHeaders(mail, mimeMessage);
@@ -95,12 +95,12 @@ public class PostOffice {
 
         if (mail.hasAttachments()) {
             BodyPart messageBodyPart = new MimeBodyPart();
-            messageBodyPart.setText(mail.getMessageText());
+            messageBodyPart.setText(mail.getMailText());
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
 
-            for (Path path : mail.getMessageAttachments()) {
+            for (Path path : mail.getMailAttachments()) {
                 messageBodyPart = new MimeBodyPart();
                 var filename = path.toRealPath().toString();
                 DataSource source = new FileDataSource(filename);
@@ -117,10 +117,10 @@ public class PostOffice {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         Objects.requireNonNull(part, Required.PART.toString());
 
-        if (mail.isMessageHtml()) {
-            part.setContent(mail.getMessageText(), "text/html; charset=utf-8");
+        if (mail.isMailHtml()) {
+            part.setContent(mail.getMailText(), "text/html; charset=utf-8");
         } else {
-            part.setText(mail.getMessageText());
+            part.setText(mail.getMailText());
         }
     }
 
@@ -128,8 +128,8 @@ public class PostOffice {
         Objects.requireNonNull(mail, Required.MAIL.toString());
         Objects.requireNonNull(mimeMessage, Required.MIME_MESSAGE.toString());
 
-        String messageFromName = mail.getMessageFromName();
-        String messageFromAddress = mail.getMessageFromAddress();
+        String messageFromName = mail.getMailFromName();
+        String messageFromAddress = mail.getMailFromAddress();
 
         if (StringUtils.isNotBlank(messageFromName) && StringUtils.isNotBlank(messageFromAddress)) {
             mimeMessage.setFrom(new InternetAddress(messageFromAddress, messageFromName));
@@ -139,31 +139,31 @@ public class PostOffice {
     }
 
     private void setBccs(Mail mail, MimeMessage mimeMessage) throws MessagingException {
-        for (String recipient : mail.getMessageBccs()) {
+        for (String recipient : mail.getMailBccs()) {
             mimeMessage.addRecipients(Message.RecipientType.BCC, recipient);
         }
     }
 
     private void setCcs(Mail mail, MimeMessage mimeMessage) throws MessagingException {
-        for (String recipient : mail.getMessageCcs()) {
+        for (String recipient : mail.getMailCcs()) {
             mimeMessage.addRecipients(Message.RecipientType.CC, recipient);
         }
     }
 
     private void setRecipients(Mail mail, MimeMessage mimeMessage) throws MessagingException { //NOSONAR
-        for (String recipient : mail.getMessageTos()) {
+        for (String recipient : mail.getMailTos()) {
             mimeMessage.addRecipients(Message.RecipientType.TO, recipient);
         }
     }
 
     private void setHeaders(Mail mail, MimeMessage mimeMessage) throws MessagingException {
-        for (Entry<String, String> entry : mail.getMessageHeaders().entrySet()) {
+        for (Entry<String, String> entry : mail.getMailHeaders().entrySet()) {
             mimeMessage.addHeader(entry.getKey(), entry.getValue());
         }
     }
 
     private void setReplyTo(Mail mail, MimeMessage mimeMessage) throws MessagingException {
-        String replyTo = mail.getMessageReplyTo();
+        String replyTo = mail.getMailReplyTo();
         if (StringUtils.isNotBlank(replyTo)) {
             InternetAddress[] replyToAddress = {new InternetAddress(replyTo)};
             mimeMessage.setReplyTo(replyToAddress);

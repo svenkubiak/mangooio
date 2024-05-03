@@ -13,17 +13,17 @@ import java.util.*;
 public class Mail {
     private static final int LOWEST_PRIORITY = 5;
     private static final int HIGHEST_PRIORITY = 1;
-    private final Map<String, String> messageHeaders = new HashMap<>();
-    private final List<String> messageTos = new ArrayList<>();
-    private final List<String> messageCcs = new ArrayList<>();
-    private final List<String> messageBccs = new ArrayList<>();
-    private final List<Path> messageAttachments = new ArrayList<>();
-    private String messageSubject;
-    private String messageReplyTo;
-    private String messageText;
-    private String messageFromName;
-    private String messageFromAddress;
-    private boolean messageHtml;
+    private final Map<String, String> mailHeaders = new HashMap<>();
+    private final List<String> mailTos = new ArrayList<>();
+    private final List<String> mailCcs = new ArrayList<>();
+    private final List<String> mailBccs = new ArrayList<>();
+    private final List<Path> mailAttachments = new ArrayList<>();
+    private String mailSubject;
+    private String mailReplyTo;
+    private String mailText;
+    private String mailFromName;
+    private String mailFromAddress;
+    private boolean mailHtml;
 
     /**
      * Creates a new mail instance
@@ -42,7 +42,7 @@ public class Mail {
      */
     public Mail to(String... tos) {
         Objects.requireNonNull(tos, Required.TOS.toString());
-        messageTos.addAll(Arrays.asList(tos));
+        mailTos.addAll(Arrays.asList(tos));
         
         return this;
     }
@@ -55,7 +55,7 @@ public class Mail {
      */
     public Mail cc(String... ccs) {
         Objects.requireNonNull(ccs, Required.CCS.toString());
-        messageCcs.addAll(Arrays.asList(ccs));
+        mailCcs.addAll(Arrays.asList(ccs));
         
         return this;
     }
@@ -68,7 +68,7 @@ public class Mail {
      */
     public Mail bcc(String... bccs) {
         Objects.requireNonNull(bccs, Required.BCCS.toString());
-        messageBccs.addAll(Arrays.asList(bccs));
+        mailBccs.addAll(Arrays.asList(bccs));
         
         return this;
     }
@@ -82,7 +82,7 @@ public class Mail {
      */
     public Mail subject(String subject) {
         Objects.requireNonNull(subject, Required.SUBJECT.toString());
-        messageSubject = subject;
+        mailSubject = subject;
             
         return this;
     }
@@ -97,8 +97,8 @@ public class Mail {
     public Mail from(String fromName, String fromAddress) {
         Objects.requireNonNull(fromName, Required.FROM.toString());
         Objects.requireNonNull(fromAddress, Required.NAME.toString());
-        messageFromName = fromName;
-        messageFromAddress = fromAddress;
+        mailFromName = fromName;
+        mailFromAddress = fromAddress;
         
         return this;
     }
@@ -111,7 +111,7 @@ public class Mail {
      */
     public Mail from(String fromAddress) {
         Objects.requireNonNull(fromAddress, Required.FROM.toString());
-        messageFromAddress = fromAddress;
+        mailFromAddress = fromAddress;
         
         return this;
     }
@@ -126,7 +126,7 @@ public class Mail {
     public Mail header(String name, String value) {
         Objects.requireNonNull(name, Required.NAME.toString());
         Objects.requireNonNull(value, Required.VALUE.toString());
-        messageHeaders.put(name, value);
+        mailHeaders.put(name, value);
         
         return this;
     }
@@ -139,7 +139,7 @@ public class Mail {
      */
     public Mail replyTo(String replyTo) {
         Objects.requireNonNull(replyTo, Required.REPLY_TO.toString());
-        messageReplyTo = replyTo;
+        mailReplyTo = replyTo;
         
         return this;
     }
@@ -153,7 +153,7 @@ public class Mail {
      */
     public Mail priority(int priority) {
         Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, Required.PRIORITY.toString());
-        messageHeaders.put("X-Priority", String.valueOf(priority));
+        mailHeaders.put("X-Priority", String.valueOf(priority));
         
         return this;
     }
@@ -168,7 +168,7 @@ public class Mail {
         Objects.requireNonNull(path, Required.PATH.toString());
         Preconditions.checkArgument(path.toFile().length() != 0, Required.CONTENT.toString());
         
-        messageAttachments.add(path);
+        mailAttachments.add(path);
         
         return this;
     }
@@ -186,7 +186,7 @@ public class Mail {
             Preconditions.checkArgument(path.toFile().length() != 0, Required.PATH.toString());
         });
         
-        messageAttachments.addAll(paths);
+        mailAttachments.addAll(paths);
         
         return this;
     }
@@ -198,7 +198,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail textMessage(String message) {
-        messageText = message;
+        mailText = message;
         
         return this;
     }
@@ -210,8 +210,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail htmlMessage(String message) {
-        messageText = message;
-        messageHtml = true;
+        mailText = message;
+        mailHtml = true;
         
         return this;
     }
@@ -227,7 +227,7 @@ public class Mail {
      */
     public Mail textMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        messageText = render(template, content);
+        mailText = render(template, content);
         
         return this;
     }
@@ -243,8 +243,8 @@ public class Mail {
      */
     public Mail htmlMessage(String template, Map<String, Object> content) throws MangooTemplateEngineException {
         Objects.requireNonNull(template, Required.TEMPLATE.toString());
-        messageText = render(template, content);
-        messageHtml = true;
+        mailText = render(template, content);
+        mailHtml = true;
         
         return this;
     }
@@ -266,51 +266,51 @@ public class Mail {
         return Application.getInstance(TemplateEngine.class).renderTemplate(templateContext);
     }
 
-    public Map<String, String> getMessageHeaders() {
-        return messageHeaders;
+    public Map<String, String> getMailHeaders() {
+        return mailHeaders;
     }
 
-    public List<String> getMessageTos() {
-        return messageTos;
+    public List<String> getMailTos() {
+        return mailTos;
     }
 
-    public List<String> getMessageCcs() {
-        return messageCcs;
+    public List<String> getMailCcs() {
+        return mailCcs;
     }
 
-    public List<String> getMessageBccs() {
-        return messageBccs;
+    public List<String> getMailBccs() {
+        return mailBccs;
     }
 
-    public List<Path> getMessageAttachments() {
-        return messageAttachments;
+    public List<Path> getMailAttachments() {
+        return mailAttachments;
     }
 
-    public String getMessageSubject() {
-        return messageSubject;
+    public String getMailSubject() {
+        return mailSubject;
     }
 
-    public String getMessageReplyTo() {
-        return messageReplyTo;
+    public String getMailReplyTo() {
+        return mailReplyTo;
     }
 
-    public String getMessageText() {
-        return messageText;
+    public String getMailText() {
+        return mailText;
     }
 
-    public String getMessageFromName() {
-        return messageFromName;
+    public String getMailFromName() {
+        return mailFromName;
     }
     
-    public String getMessageFromAddress() {
-        return messageFromAddress;
+    public String getMailFromAddress() {
+        return mailFromAddress;
     }
 
-    public boolean isMessageHtml() {
-        return messageHtml;
+    public boolean isMailHtml() {
+        return mailHtml;
     }
     
     public boolean hasAttachments() {
-        return !messageAttachments.isEmpty();
+        return !mailAttachments.isEmpty();
     }
 }

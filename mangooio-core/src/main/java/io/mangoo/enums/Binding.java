@@ -9,7 +9,7 @@ import java.util.Map;
 public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
     DOUBLE("java.lang.Double"),
-    DOUBLE_PRIMITIVE("double"),    
+    DOUBLE_PRIMITIVE("double"),
     FLASH("io.mangoo.routing.bindings.Flash"),
     FLOAT("java.lang.Float"),
     FLOAT_PRIMITIVE("float"),
@@ -28,7 +28,7 @@ public enum Binding {
     UNDEFINED("undefined");
 
     private final String value;
-    private static Map<String, Binding> values;
+    private final static Map<String, Binding> values;
     static {
         Map<String, Binding> bindings = Maps.newHashMapWithExpectedSize(Binding.values().length);
         for (Binding binding : Binding.values()) {

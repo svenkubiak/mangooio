@@ -18,12 +18,12 @@ public enum Template {
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
-    private String badRequestContent;
-    private String forbiddenContent;
-    private String notFoundContent;
-    private String serverErrorContent;
-    private String unauthorizedContent;
-    private String tooManyRequests;
+    private final String badRequestContent;
+    private final String forbiddenContent;
+    private final String notFoundContent;
+    private final String serverErrorContent;
+    private final String unauthorizedContent;
+    private final String tooManyRequests;
     
     Template () {
         this.notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
