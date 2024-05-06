@@ -1,6 +1,6 @@
 package io.mangoo.routing;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.*;
 import io.mangoo.templating.TemplateEngine;
@@ -187,22 +187,22 @@ public class Attachment {
     }
 
     public Attachment withControllerClass(Class<?> controllerClass) {
-        this.controllerClass = Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
+        this.controllerClass = Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
         return this;
     }
 
     public Attachment withControllerClassName(String controllerClassName) {
-        this.controllerClassName = Objects.requireNonNull(controllerClassName, Required.CONTROLLER_NAME.toString());
+        this.controllerClassName = Objects.requireNonNull(controllerClassName, NotNull.CONTROLLER_NAME);
         return this;
     }
 
     public Attachment withControllerInstance(Object controllerInstance) {
-        this.controllerInstance = Objects.requireNonNull(controllerInstance, Required.CONTROLLER_INSTANCE.toString());
+        this.controllerInstance = Objects.requireNonNull(controllerInstance, NotNull.CONTROLLER_INSTANCE);
         return this;
     }
 
     public Attachment withControllerMethodName(String controllerMethodName) {
-        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
+        this.controllerMethodName = Objects.requireNonNull(controllerMethodName, NotNull.CONTROLLER_METHOD);
         return this;
     }
 
@@ -212,17 +212,17 @@ public class Attachment {
     }
     
     public Attachment withLocale(Locale locale) {
-        this.locale = Objects.requireNonNull(locale, Required.LOCALE.toString());
+        this.locale = Objects.requireNonNull(locale, NotNull.LOCALE);
         return this;
     }
     
     public Attachment withMessages(Messages messages) {
-        this.messages = Objects.requireNonNull(messages, Required.MESSAGES.toString());
+        this.messages = Objects.requireNonNull(messages, NotNull.MESSAGES);
         return this;
     }
     
     public Attachment withMethod(Method method) {
-        this.method = Objects.requireNonNull(method, Required.METHOD.toString());
+        this.method = Objects.requireNonNull(method, NotNull.METHOD);
         return this;
     }
     
@@ -237,7 +237,7 @@ public class Attachment {
     }
     
     public Attachment withMethodParameters(Map<String, Class<?>> methodParameters) {
-        this.methodParameters = Objects.requireNonNull(methodParameters, Required.METHOD_PARAMETERS.toString());
+        this.methodParameters = Objects.requireNonNull(methodParameters, NotNull.METHOD_PARAMETERS);
         return this;
     }
 
@@ -254,12 +254,12 @@ public class Attachment {
     }
 
     public Attachment withRequestParameter(Map<String, String> requestParameter) {
-        this.requestParameter = Objects.requireNonNull(requestParameter, Required.REQUEST_PARAMETER.toString());
+        this.requestParameter = Objects.requireNonNull(requestParameter, NotNull.REQUEST_PARAMETER);
         return this;
     }
     
     public Attachment withTemplateEngine(TemplateEngine templateEngine) {
-        this.templateEngine = Objects.requireNonNull(templateEngine, Required.TEMPLATE_ENGINE.toString());
+        this.templateEngine = Objects.requireNonNull(templateEngine, NotNull.TEMPLATE_ENGINE);
         return this;
     }
 

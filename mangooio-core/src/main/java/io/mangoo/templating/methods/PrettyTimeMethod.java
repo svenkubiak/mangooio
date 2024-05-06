@@ -3,7 +3,7 @@ package io.mangoo.templating.methods;
 import freemarker.template.SimpleDate;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.utils.DateUtils;
 import no.api.freemarker.java8.time.LocalDateAdapter;
 import no.api.freemarker.java8.time.LocalDateTimeAdapter;
@@ -22,7 +22,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
     private final PrettyTime prettyTime;
     
     public PrettyTimeMethod (Locale locale) {
-        Objects.requireNonNull(locale, Required.LOCALE.toString());
+        Objects.requireNonNull(locale, NotNull.LOCALE);
         this.prettyTime = new PrettyTime(locale);
     }
 

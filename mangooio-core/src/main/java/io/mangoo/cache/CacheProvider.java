@@ -5,9 +5,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.constants.CacheName;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Required;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -26,7 +26,7 @@ public class CacheProvider implements Provider<Cache> {
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
     public CacheProvider(Config config) {
-        Objects.requireNonNull(config, Required.CONFIG.toString());
+        Objects.requireNonNull(config, NotNull.CONFIG);
         
         initApplicationCache();
         initAuthenticationCache();
@@ -40,7 +40,7 @@ public class CacheProvider implements Provider<Cache> {
                 .recordStats()
                 .build());
 
-        caches.put(CacheName.APPLICATION.toString(), applicationCache);
+        caches.put(CacheName.APPLICATION, applicationCache);
     }
 
     private void initAuthenticationCache() {
@@ -50,7 +50,7 @@ public class CacheProvider implements Provider<Cache> {
                 .recordStats()
                 .build());
 
-        caches.put(CacheName.AUTH.toString(), authenticationCache);
+        caches.put(CacheName.AUTH, authenticationCache);
     }
 
     private void setDefaultApplicationCache() {

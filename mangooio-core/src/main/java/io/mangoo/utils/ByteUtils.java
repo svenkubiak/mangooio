@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -19,7 +19,7 @@ public final class ByteUtils {
      * @return The number of bit
      */
     public static int bitLength(byte[] bytes) {
-        Objects.requireNonNull(bytes, Required.BYTES.toString());
+        Objects.requireNonNull(bytes, NotNull.BYTES);
         int byteLength = bytes.length;
         
         var length = 0;
@@ -37,7 +37,7 @@ public final class ByteUtils {
      * @return The number of bit
      */
     public static int bitLength(String string) {
-        Objects.requireNonNull(string, Required.STRING.toString());
+        Objects.requireNonNull(string, NotNull.STRING);
         return bitLength(string.getBytes(StandardCharsets.UTF_8));
     }
 }

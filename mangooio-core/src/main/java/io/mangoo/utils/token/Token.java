@@ -1,8 +1,8 @@
 package io.mangoo.utils.token;
 
 import dev.paseto.jpaseto.Paseto;
-import io.mangoo.enums.ClaimKey;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -12,7 +12,7 @@ public class Token {
     private final Paseto paseto;
     
     public Token(Paseto paseto) {
-        this.paseto = Objects.requireNonNull(paseto, Required.PASETO.toString());
+        this.paseto = Objects.requireNonNull(paseto, NotNull.PASETO);
     }
 
     /**
@@ -28,9 +28,9 @@ public class Token {
      * @return True if the claim exists, false otherwise
      */
     public boolean containsClaim(ClaimKey claimKey) {
-        Objects.requireNonNull(claimKey, Required.CLAIM_KEY.toString());
+        Objects.requireNonNull(claimKey, NotNull.CLAIM_KEY);
         
-        return containsClaim(claimKey.toString());
+        return containsClaim(claimKey);
     }
     
     /**
@@ -39,7 +39,7 @@ public class Token {
      * @return True if the claim exists, false otherwise
      */
     public boolean containsClaim(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         
         return paseto.getClaims().containsKey(key);
     }
@@ -51,7 +51,7 @@ public class Token {
      * @return True if the expiration is after the given localDateTime, false otherwise
      */
     public boolean expirationIsAfter(LocalDateTime localDateTime) {
-        Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME.toString());
+        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
         
         return getExpiration().isAfter(localDateTime);
     }
@@ -65,10 +65,10 @@ public class Token {
      * @return The claim value converted to the given class to convert
      */
     public <T> T getClaim(ClaimKey claimKey, Class<T> clazz) {
-        Objects.requireNonNull(claimKey, Required.CLAIM_KEY.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(claimKey, NotNull.CLAIM_KEY);
+        Objects.requireNonNull(clazz, NotNull.CLASS);
         
-        return getClaim(claimKey.toString(), clazz);
+        return getClaim(claimKey, clazz);
     }
     
     /**
@@ -80,8 +80,8 @@ public class Token {
      * @return The claim value converted to the given class to convert
      */
     public <T> T getClaim(String key, Class<T> clazz) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(clazz, NotNull.CLASS);
         
         return paseto.getClaims().get(key, clazz);
     }

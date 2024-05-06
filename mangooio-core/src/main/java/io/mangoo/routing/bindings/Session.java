@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,14 +23,14 @@ public class Session {
     }
     
     public Session withContent(Map<String, String> values) {
-        Objects.requireNonNull(values, Required.VALUES.toString());
+        Objects.requireNonNull(values, NotNull.VALUES);
         
         this.values = values;
         return this;
     }
     
     public Session withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        Objects.requireNonNull(expires, NotNull.EXPIRES);
         
         this.expires = expires;
         return this;

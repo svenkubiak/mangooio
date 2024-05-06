@@ -1,8 +1,8 @@
 package io.mangoo.i18n;
 
 import io.mangoo.TestExtension;
+import io.mangoo.constants.Validation;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Validation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -54,6 +54,6 @@ class MessagesTest {
         messages.reload(Locale.ENGLISH);
         
         //then
-        assertThat(messages.get(Validation.EMAIL_KEY.toString(), "foo"), equalTo("foo must be a valid eMail address"));
+        assertThat(messages.get(Validation.EMAIL_KEY, "foo"), equalTo("foo must be a valid eMail address"));
     }
 }

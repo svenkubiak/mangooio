@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
+import io.mangoo.constants.Default;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
 
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ public class SmtpMock {
 
     @Inject
     public SmtpMock(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
     }
 
     public void start() {

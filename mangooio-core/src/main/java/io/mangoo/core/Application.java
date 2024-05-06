@@ -12,8 +12,9 @@ import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.*;
+import io.mangoo.constants.Key;
+import io.mangoo.constants.*;
+import io.mangoo.enums.Sort;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Bind;
@@ -60,6 +61,9 @@ import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final String COLLECTION = "io.mangoo.annotations.Collection";
+    private static final String INDEXED = "io.mangoo.annotations.Indexed";
+    private static final String SCHEDULER = "io.mangoo.annotations.Run";
     private static final LocalDateTime START = LocalDateTime.now();
     private static final String LOGO = """
                                                         ___     __  ___ \s
@@ -76,7 +80,7 @@ public final class Application {
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
-    private static Mode mode;
+    private static String mode;
     private static Injector injector;
     private static PathHandler pathHandler;
     private static boolean started;
@@ -91,8 +95,8 @@ public final class Application {
     }
 
     @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
-    public static void start(Mode mode) {
-        Objects.requireNonNull(mode, Required.MODE.toString());
+    public static void start(String mode) {
+        Objects.requireNonNull(mode, NotNull.MODE);
 
         if (!started) {
             userCheck();
@@ -129,7 +133,7 @@ public final class Application {
             scheduler = Executors.newSingleThreadScheduledExecutor();
             executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
-            scanResult.getClassesWithMethodAnnotation(Annotation.SCHEDULER.toString()).forEach(classInfo ->
+            scanResult.getClassesWithMethodAnnotation(SCHEDULER).forEach(classInfo ->
                 classInfo.getMethodInfo().forEach(methodInfo -> {
                     if (!methodInfo.getAnnotationInfo().isEmpty()) {
                         var isCron = false;
@@ -240,7 +244,7 @@ public final class Application {
     private static void prepareDatastore(ScanResult scanResult) {
         var config = getInstance(Config.class);
         if (config.isPersistenceEnabled()) {
-            scanResult.getClassesWithAnnotation(Annotation.COLLECTION.toString()).forEach(classInfo -> {
+            scanResult.getClassesWithAnnotation(COLLECTION).forEach(classInfo -> {
                 String key = classInfo.getName();
 
                 AnnotationInfoList annotationInfo = classInfo.getAnnotationInfo();
@@ -249,16 +253,16 @@ public final class Application {
                 PersistenceUtils.addCollection(key, value);
             });
 
-            scanResult.getClassesWithFieldAnnotation(Annotation.INDEXED.toString()).forEach(classInfo -> {
+            scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
                 FieldInfoList annotationInfo = classInfo.getFieldInfo();
                 annotationInfo.forEach(info -> {
                     if (info.getAnnotationInfo().size() == 1) {
                         var field = info.getName();
                         if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
                             var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
-                            if ((Sort.ASCENDING.toString()).equals(value)) {
+                            if ((Sort.ASCENDING.value()).equals(value)) {
                                 Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
-                            } else if ((Sort.DESCENDING.toString()).equals(value)) {
+                            } else if ((Sort.DESCENDING.value()).equals(value)) {
                                 Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
                             }
                         }
@@ -313,7 +317,7 @@ public final class Application {
      * @return True if the application is running in dev mode, false otherwise
      */
     public static boolean inDevMode() {
-        return Mode.DEV == mode;
+        return Mode.DEV.equals(mode);
     }
 
     /**
@@ -322,7 +326,7 @@ public final class Application {
      * @return True if the application is running in prod mode, false otherwise
      */
     public static boolean inProdMode() {
-        return Mode.PROD == mode;
+        return Mode.PROD.equals(mode);
     }
 
     /**
@@ -331,7 +335,7 @@ public final class Application {
      * @return True if the application is running in test mode, false otherwise
      */
     public static boolean inTestMode() {
-        return Mode.TEST == mode;
+        return Mode.TEST.equals(mode);
     }
 
     /**
@@ -339,7 +343,7 @@ public final class Application {
      *
      * @return Enum Mode
      */
-    public static Mode getMode() {
+    public static String getMode() {
         return mode;
     }
 
@@ -402,7 +406,7 @@ public final class Application {
      * @return An instance of the requested class
      */
     public static <T> T getInstance(Class<T> clazz) {
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(clazz, NotNull.CLASS);
 
         return injector.getInstance(clazz);
     }
@@ -419,8 +423,8 @@ public final class Application {
      *
      * @param providedMode A given mode or null
      */
-    private static void prepareMode(Mode providedMode) {
-        final String applicationMode = System.getProperty(Key.APPLICATION_MODE.toString());
+    private static void prepareMode(String providedMode) {
+        final String applicationMode = System.getProperty(Key.APPLICATION_MODE);
         if (StringUtils.isNotBlank(applicationMode)) {
             mode = switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
                 case "dev"  -> Mode.DEV;
@@ -513,7 +517,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME.toString())) {
+        if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME)) {
             var warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -531,7 +535,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME.toString())) {
+        if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME)) {
             var warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -543,7 +547,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME.toString())) {
+        if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME)) {
             var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -555,7 +559,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS.toString(), warnings);
+        getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS, warnings);
     }
 
     /**
@@ -580,8 +584,8 @@ public final class Application {
      * @return True if the method exists, false otherwise
      */
     private static boolean methodExists(String controllerMethod, Class<?> controllerClass) {
-        Objects.requireNonNull(controllerMethod, Required.CONTROLLER_METHOD.toString());
-        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
+        Objects.requireNonNull(controllerMethod, NotNull.CONTROLLER_METHOD);
+        Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
 
         return Arrays.stream(controllerClass.getMethods()).anyMatch(method -> method.getName().equals(controllerMethod));
     }
@@ -641,7 +645,7 @@ public final class Application {
 
         var resourceHandler = Handlers.resource(new ClassPathResourceManager(
                 Thread.currentThread().getContextClassLoader(),
-                Default.FILES_FOLDER.toString() + '/'));
+                Default.FILES_FOLDER + '/'));
 
         Router.getFileRoutes().forEach((FileRoute fileRoute) -> routingHandler.add(Methods.GET, fileRoute.getUrl(), resourceHandler));
 
@@ -707,12 +711,12 @@ public final class Application {
             LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
         }
 
-        String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode.toString() + " mode. Enjoy.";
+        String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode + " mode. Enjoy.";
         LOG.info(startup);
     }
 
     private static int getBitLength(String secret) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(secret, NotNull.SECRET);
 
         return ByteUtils.bitLength(RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", Strings.EMPTY));
     }
@@ -722,7 +726,7 @@ public final class Application {
         try {
             module = new io.mangoo.core.Module();
             modules.add(module);
-            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS.toString()).getConstructor().newInstance());
+            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                  | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);

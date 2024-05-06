@@ -2,10 +2,10 @@ package io.mangoo.utils;
 
 import com.google.common.net.MediaType;
 import com.google.re2j.Pattern;
+import io.mangoo.constants.Header;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
@@ -49,7 +49,7 @@ public final class RequestUtils {
      * @return A single map contain both request and query parameter
      */
     public static Map<String, String> getRequestParameters(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
+        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
 
         final Map<String, String> requestParameter = new HashMap<>();
         final Map<String, Deque<String>> queryParameters = exchange.getQueryParameters();
@@ -66,7 +66,7 @@ public final class RequestUtils {
      * @return True if the request is a POST, PUT or PATCH request, false otherwise
      */
     public static boolean isPostPutPatch(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
+        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
 
         return (Methods.POST).equals(exchange.getRequestMethod()) || (Methods.PUT).equals(exchange.getRequestMethod()) || (Methods.PATCH).equals(exchange.getRequestMethod());
     }
@@ -78,11 +78,11 @@ public final class RequestUtils {
      * @return True if the request content-type contains application/json, false otherwise
      */
     public static boolean isJsonRequest(HttpServerExchange exchange) {
-        Objects.requireNonNull(exchange, Required.HTTP_SERVER_EXCHANGE.toString());
+        Objects.requireNonNull(exchange, NotNull.HTTP_SERVER_EXCHANGE);
 
         var headerMap = exchange.getRequestHeaders();
-        return headerMap != null && headerMap.get(Header.CONTENT_TYPE.toHttpString()) != null &&
-               headerMap.get(Header.CONTENT_TYPE.toHttpString()).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
+        return headerMap != null && headerMap.get(Header.CONTENT_TYPE) != null &&
+               headerMap.get(Header.CONTENT_TYPE).element().toLowerCase(Locale.ENGLISH).contains(MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 
     /**
@@ -131,9 +131,9 @@ public final class RequestUtils {
      * @return An HttpHandler wrapped through BasicAuthentication
      */
     public static HttpHandler wrapBasicAuthentication(HttpHandler httpHandler, String username, String password) {
-        Objects.requireNonNull(httpHandler, Required.HTTP_HANDLER.toString());
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(httpHandler, NotNull.HTTP_HANDLER);
+        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(password, NotNull.PASSWORD);
         
         HttpHandler wrap = new AuthenticationCallHandler(httpHandler);
         wrap = new AuthenticationConstraintHandler(wrap);

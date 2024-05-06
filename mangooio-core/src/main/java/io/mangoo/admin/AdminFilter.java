@@ -1,8 +1,8 @@
 package io.mangoo.admin;
 
+import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;

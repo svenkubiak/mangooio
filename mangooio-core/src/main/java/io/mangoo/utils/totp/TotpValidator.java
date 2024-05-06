@@ -1,7 +1,7 @@
 package io.mangoo.utils.totp;
 
 import com.google.common.base.Preconditions;
-import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.constants.Hmac;
 
 /**
  * A Time-based One-time Password (TOTP) validator.
@@ -107,7 +107,7 @@ public final class TotpValidator {
      * @param digits
      *            the number of digits a TOTP should contain
      * @param hmacShaAlgorithm
-     *            {@link HmacShaAlgorithm}
+     *            {@link Hmac}
      * @param value
      *            the TOTP value to validate
      * 
@@ -115,7 +115,7 @@ public final class TotpValidator {
      *         code value of the TOTP generated at validation, otherwise
      *         {@code false}.
      */
-    public boolean isValid(byte[] key, long timeStep, int digits, HmacShaAlgorithm hmacShaAlgorithm, String value) {
+    public boolean isValid(byte[] key, long timeStep, int digits, String hmacShaAlgorithm, String value) {
         return isValid(key, timeStep, digits, hmacShaAlgorithm, value, System.currentTimeMillis());
     }
 
@@ -130,7 +130,7 @@ public final class TotpValidator {
      * @param digits
      *            the number of digits a TOTP should contain
      * @param hmacShaAlgorithm
-     *            {@link HmacShaAlgorithm}
+     *            {@link Hmac}
      * @param value
      *            the TOTP value to validate
      * @param validationTime
@@ -140,7 +140,7 @@ public final class TotpValidator {
      *         code value of the TOTP generated at validation, otherwise
      *         {@code false}.
      */
-    public boolean isValid(byte[] key, long timeStep, int digits, HmacShaAlgorithm hmacShaAlgorithm, String value, long validationTime) {
+    public boolean isValid(byte[] key, long timeStep, int digits, String hmacShaAlgorithm, String value, long validationTime) {
         var result = false;
         TotpBuilder builder = Totp.key(key).timeStep(timeStep).digits(digits).hmacSha(hmacShaAlgorithm);
         for (int i = -window; i <= window; i++) {

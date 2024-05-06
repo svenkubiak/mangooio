@@ -1,8 +1,8 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Server;
-import io.mangoo.enums.Header;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -55,9 +55,9 @@ public class ResponseHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
 
-        exchange.getResponseHeaders().put(Header.LOCATION.toHttpString(), response.getRedirectTo());
+        exchange.getResponseHeaders().put(Header.LOCATION, response.getRedirectTo());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.endExchange();
     }
@@ -75,9 +75,9 @@ public class ResponseHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey().toHttpString(), entry.getValue()));
+            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
-        exchange.getResponseHeaders().put(Header.CONTENT_TYPE.toHttpString(), response.getContentType() + "; charset=" + response.getCharset());
+        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getResponseSender().send(response.getBody());
     }

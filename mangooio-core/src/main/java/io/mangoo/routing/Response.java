@@ -2,8 +2,8 @@ package io.mangoo.routing;
 
 import com.google.common.net.MediaType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.Header;
+import io.mangoo.constants.NotNull;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
@@ -47,7 +47,7 @@ public class Response {
     }
 
     private Response(String redirectTo) {
-        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO.toString());
+        Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO.toString());
         
         this.redirect = true;
         this.rendered = false;
@@ -115,7 +115,7 @@ public class Response {
     }
     
     public String getHeader(HttpString header) {
-        Objects.requireNonNull(header, Required.HEADER.toString());
+        Objects.requireNonNull(header, NotNull.HEADER.toString());
         return headers.get(header);
     }
 
@@ -199,7 +199,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public static Response withRedirect(String redirectTo) {
-        Objects.requireNonNull(redirectTo, Required.REDIRECT_TO.toString());
+        Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO.toString());
 
         return new Response(redirectTo);
     }
@@ -211,7 +211,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andTemplate(String template) {
-        Objects.requireNonNull(template, Required.TEMPLATE.toString());
+        Objects.requireNonNull(template, NotNull.TEMPLATE);
         this.template = template;
 
         return this;
@@ -224,9 +224,9 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContentType(String contentType) {
-        Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
+        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
         
-        headers.put(Header.CONTENT_TYPE.toHttpString(), contentType);
+        headers.put(Header.CONTENT_TYPE, contentType);
         this.contentType = contentType;
 
         return this;
@@ -239,7 +239,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andCharset(String charset) {
-        Objects.requireNonNull(charset, Required.CHARSET.toString());
+        Objects.requireNonNull(charset, NotNull.CHARSET);
         this.charset = charset;
 
         return this;
@@ -253,7 +253,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(String name, Object object) {
-        Objects.requireNonNull(name, Required.NAME.toString());
+        Objects.requireNonNull(name, NotNull.NAME.toString());
         content.put(name, object);
 
         return this;
@@ -280,7 +280,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andCookie(Cookie cookie) {
-        Objects.requireNonNull(cookie, Required.COOKIE.toString());
+        Objects.requireNonNull(cookie, NotNull.COOKIE.toString());
         cookies.add(cookie);
 
         return this;
@@ -295,7 +295,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andJsonBody(Object jsonObject) {
-        Objects.requireNonNull(jsonObject, Required.JSON_OBJECT.toString());
+        Objects.requireNonNull(jsonObject, NotNull.JSON_OBJECT.toString());
 
         this.body = JsonUtils.toJson(jsonObject);
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
@@ -312,7 +312,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andJsonBody(String json) {
-        Objects.requireNonNull(json, Required.JSON.toString());
+        Objects.requireNonNull(json, NotNull.JSON.toString());
 
         this.body = json;
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
@@ -329,7 +329,7 @@ public class Response {
      */
     @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Response andBinaryFile(Path file) {
-        Objects.requireNonNull(file, Required.FILE.toString());
+        Objects.requireNonNull(file, NotNull.FILE.toString());
 
         try (var inputStream = Files.newInputStream(file)) {
             binaryFileName = file.getFileName().toString();
@@ -350,7 +350,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andBinaryContent(byte [] content) {
-        Objects.requireNonNull(content, Required.CONTENT.toString());
+        Objects.requireNonNull(content, NotNull.CONTENT.toString());
 
         binaryContent = content.clone();
         binary = true;
@@ -398,7 +398,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeader(HttpString key, String value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
         headers.put(key, value);
 
         return this;
@@ -414,7 +414,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeader(String key, String value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
         headers.put(new HttpString(key), value);
 
         return this;
@@ -428,7 +428,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andContent(Map<String, Object> content) {
-        Objects.requireNonNull(content, Required.CONTENT.toString());
+        Objects.requireNonNull(content, NotNull.CONTENT.toString());
         this.content.putAll(content);
 
         return this;
@@ -442,7 +442,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeaders(Map<HttpString, String> headers) {
-        Objects.requireNonNull(headers, Required.HEADERS.toString());
+        Objects.requireNonNull(headers, NotNull.HEADERS.toString());
         this.headers.putAll(headers);
 
         return this;
@@ -456,7 +456,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andDisposeCookie(String cookieName) {
-        Objects.requireNonNull(cookieName, Required.COOKIE.toString());
+        Objects.requireNonNull(cookieName, NotNull.COOKIE.toString());
         
         cookies.add(new CookieImpl(cookieName)
                 .setPath("/")

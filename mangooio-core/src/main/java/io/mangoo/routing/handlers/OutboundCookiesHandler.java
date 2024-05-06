@@ -1,10 +1,10 @@
 package io.mangoo.routing.handlers;
 
 import com.google.inject.Inject;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.ClaimKey;
-import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
@@ -28,7 +28,7 @@ public class OutboundCookiesHandler implements HttpHandler {
 
     @Inject
     public OutboundCookiesHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
     }
     
     @Override

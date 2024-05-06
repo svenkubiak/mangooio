@@ -1,6 +1,6 @@
 package io.mangoo.routing.routes;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
 
@@ -17,7 +17,7 @@ public class ServerSentEventRoute implements MangooRoute {
      * @return ServerSentEventRoute instance
      */
     public ServerSentEventRoute to(String url) {
-        Objects.requireNonNull(url, Required.URL.toString());
+        Objects.requireNonNull(url, NotNull.URL);
 
         if ('/' != url.charAt(0)) {
             url = "/" + url;

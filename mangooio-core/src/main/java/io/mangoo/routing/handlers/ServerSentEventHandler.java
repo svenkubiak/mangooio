@@ -1,7 +1,7 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Header;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.routing.listeners.ServerSentEventCloseListener;
 import io.mangoo.utils.MangooUtils;
@@ -21,7 +21,7 @@ public class ServerSentEventHandler implements ServerSentEventConnectionCallback
     public void connected(ServerSentEventConnection connection, String lastEventId) {
         if (hasAuthentication) {
             String header = null;
-            var headerValues = connection.getRequestHeaders().get(Header.COOKIE.toHttpString());
+            var headerValues = connection.getRequestHeaders().get(Header.COOKIE);
             if (headerValues != null) {
                 header = headerValues.element();
             }

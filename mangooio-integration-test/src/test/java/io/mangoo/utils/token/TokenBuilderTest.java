@@ -1,7 +1,7 @@
 package io.mangoo.utils.token;
 
 import io.mangoo.TestExtension;
-import io.mangoo.enums.ClaimKey;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.MangooUtils;
@@ -46,14 +46,14 @@ class TokenBuilderTest {
     @Test
     void testWithClaim() {
         //given
-        ClaimKey claimKey = ClaimKey.DATA;
+        String claimKey = ClaimKey.DATA;
         String value = MangooUtils.randomString(32);
         
         //when
         TokenBuilder tokenBuilder = TokenBuilder.create().withClaim(claimKey, value);
         
         //then
-        assertThat(tokenBuilder.getClaims().get(claimKey.toString()), equalTo(value));
+        assertThat(tokenBuilder.getClaims().get(claimKey), equalTo(value));
     }
     
     @Test
@@ -74,7 +74,7 @@ class TokenBuilderTest {
         LocalDateTime now = LocalDateTime.now();
         String sharedSecret = MangooUtils.randomString(32);
         String subject = MangooUtils.randomString(32);
-        ClaimKey claimKey = ClaimKey.DATA;
+        String claimKey = ClaimKey.DATA;
         String value = MangooUtils.randomString(32);
         
         //when
@@ -96,7 +96,7 @@ class TokenBuilderTest {
             LocalDateTime now = LocalDateTime.now();
             String sharedSecret = MangooUtils.randomString(32);
             String subject = MangooUtils.randomString(32);
-            ClaimKey claimKey = ClaimKey.DATA;
+            String claimKey = ClaimKey.DATA;
             String value = MangooUtils.randomString(32);
             
             //when

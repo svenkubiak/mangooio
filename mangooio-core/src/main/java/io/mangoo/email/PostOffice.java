@@ -2,8 +2,8 @@ package io.mangoo.email;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Required;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -31,7 +31,7 @@ public class PostOffice {
 
     @Inject
     public PostOffice(Config config) {
-        Objects.requireNonNull(config, Required.CONFIG.toString());
+        Objects.requireNonNull(config, NotNull.CONFIG.toString());
 
         var properties = new Properties();
         properties.put("mail.smtp.host", config.getSmtpHost());
@@ -67,7 +67,7 @@ public class PostOffice {
      * @param mail The mail to send
      */
     public void send(Mail mail) {
-        Objects.requireNonNull(mail, Required.MAIL.toString());
+        Objects.requireNonNull(mail, NotNull.MAIL.toString());
 
         try {
             var mimeMessage = new MimeMessage(session);
@@ -90,8 +90,8 @@ public class PostOffice {
     }
 
     private void setAttachments(Mail mail, Part part) throws MessagingException, IOException {
-        Objects.requireNonNull(mail, Required.MAIL.toString());
-        Objects.requireNonNull(part, Required.PART.toString());
+        Objects.requireNonNull(mail, NotNull.MAIL.toString());
+        Objects.requireNonNull(part, NotNull.PART.toString());
 
         if (mail.hasAttachments()) {
             BodyPart messageBodyPart = new MimeBodyPart();
@@ -114,8 +114,8 @@ public class PostOffice {
     }
 
     private void setContent(Mail mail, Part part) throws MessagingException {
-        Objects.requireNonNull(mail, Required.MAIL.toString());
-        Objects.requireNonNull(part, Required.PART.toString());
+        Objects.requireNonNull(mail, NotNull.MAIL.toString());
+        Objects.requireNonNull(part, NotNull.PART.toString());
 
         if (mail.isMailHtml()) {
             part.setContent(mail.getMailText(), "text/html; charset=utf-8");
@@ -125,8 +125,8 @@ public class PostOffice {
     }
 
     private void setFrom(Mail mail, MimeMessage mimeMessage) throws MessagingException, UnsupportedEncodingException {
-        Objects.requireNonNull(mail, Required.MAIL.toString());
-        Objects.requireNonNull(mimeMessage, Required.MIME_MESSAGE.toString());
+        Objects.requireNonNull(mail, NotNull.MAIL.toString());
+        Objects.requireNonNull(mimeMessage, NotNull.MIME_MESSAGE.toString());
 
         String messageFromName = mail.getMailFromName();
         String messageFromAddress = mail.getMailFromAddress();

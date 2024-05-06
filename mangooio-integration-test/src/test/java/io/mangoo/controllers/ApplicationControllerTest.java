@@ -2,9 +2,9 @@ package io.mangoo.controllers;
 
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
+import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Header;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Headers;

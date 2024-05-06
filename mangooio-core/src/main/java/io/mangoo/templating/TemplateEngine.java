@@ -7,9 +7,9 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
+import io.mangoo.constants.Default;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.models.Source;
 import io.undertow.server.HttpServerExchange;
@@ -119,7 +119,7 @@ public class TemplateEngine {
     }
     
     public String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, Required.TEMPLATE_NAME.toString());
+        Objects.requireNonNull(templateName, NotNull.TEMPLATE_NAME.toString());
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
 
@@ -134,7 +134,7 @@ public class TemplateEngine {
      */
     @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
-        Objects.requireNonNull(sourcePath, Required.SOURCE_PATH.toString());
+        Objects.requireNonNull(sourcePath, NotNull.SOURCE_PATH.toString());
 
         var buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
@@ -184,7 +184,7 @@ public class TemplateEngine {
      * @return Source code filename
      */
     private String getSourceCodePath(StackTraceElement stackTraceElement) {
-        Objects.requireNonNull(stackTraceElement, Required.STACK_TRACE_ELEMENT.toString());
+        Objects.requireNonNull(stackTraceElement, NotNull.STACK_TRACE_ELEMENT.toString());
 
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');

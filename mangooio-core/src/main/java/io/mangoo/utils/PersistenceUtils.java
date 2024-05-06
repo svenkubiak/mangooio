@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -19,8 +19,8 @@ public final class PersistenceUtils {
      * @param value The value/name of the collection
      */
     public static void addCollection(String key, String value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
-        Objects.requireNonNull(value, Required.VALUE.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(value, NotNull.VALUE);
 
         COLLECTIONS.put(key, value);
     }
@@ -32,7 +32,7 @@ public final class PersistenceUtils {
      * @return The name of the collection
      */
     public static String getCollectionName(Class<?> clazz) {
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(clazz, NotNull.CLASS);
 
         return COLLECTIONS.get(clazz.getName());
     }

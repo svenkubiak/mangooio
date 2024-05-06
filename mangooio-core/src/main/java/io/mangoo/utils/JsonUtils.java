@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -43,7 +43,7 @@ public final class JsonUtils {
      * @return json string or null if conversion fails
      */
     public static String toJson(Object object) {
-        Objects.requireNonNull(object, Required.OBJECT.toString());
+        Objects.requireNonNull(object, NotNull.OBJECT.toString());
         
         String json = Strings.EMPTY;
         try {
@@ -62,7 +62,7 @@ public final class JsonUtils {
      * @return json string or null if conversion fails
      */
     public static String toPrettyJson(Object object) {
-        Objects.requireNonNull(object, Required.OBJECT.toString());
+        Objects.requireNonNull(object, NotNull.OBJECT.toString());
         
         var json = Strings.EMPTY;
         try {
@@ -87,8 +87,8 @@ public final class JsonUtils {
      */
     @Deprecated(since = "8.5.0", forRemoval = true)
     public static <T> T fromJson(String json, Class<T> clazz) {
-        Objects.requireNonNull(json, Required.JSON.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(json, NotNull.JSON.toString());
+        Objects.requireNonNull(clazz, NotNull.CLASS.toString());
 
         T object = null;
         try {
@@ -110,8 +110,8 @@ public final class JsonUtils {
      * @return The converted class or null if conversion fails
      */
     public static <T> T toObject(String json, Class<T> clazz) {
-        Objects.requireNonNull(json, Required.JSON.toString());
-        Objects.requireNonNull(clazz, Required.CLASS.toString());
+        Objects.requireNonNull(json, NotNull.JSON.toString());
+        Objects.requireNonNull(clazz, NotNull.CLASS.toString());
 
         T object = null;
         try {
@@ -131,7 +131,7 @@ public final class JsonUtils {
      * @return A flat map containing the json data
      */
     public static Map<String, String> toFlatMap(String json) {
-        Objects.requireNonNull(json, Required.JSON.toString());
+        Objects.requireNonNull(json, NotNull.JSON.toString());
 
         Map<String, String> map = new HashMap<>();
         try {

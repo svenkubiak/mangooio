@@ -2,7 +2,7 @@ package io.mangoo.utils.token;
 
 import dev.paseto.jpaseto.PasetoException;
 import dev.paseto.jpaseto.Pasetos;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.exceptions.MangooTokenException;
 
 import java.nio.charset.StandardCharsets;
@@ -21,7 +21,7 @@ public class TokenParser {
      * @return TokenParser
      */
     public TokenParser withSharedSecret(String sharedSecret) {
-        Objects.requireNonNull(sharedSecret, Required.SHARED_SECRET.toString());
+        Objects.requireNonNull(sharedSecret, NotNull.SHARED_SECRET);
         
         this.sharedSecret = sharedSecret;
         return this;
@@ -32,7 +32,7 @@ public class TokenParser {
      * @return TokenParser
      */
     public TokenParser withCookieValue(String cookieValue) {
-        Objects.requireNonNull(cookieValue, Required.COOKIE_VALUE.toString());
+        Objects.requireNonNull(cookieValue, NotNull.COOKIE_VALUE);
         
         this.cookieValue = cookieValue;
         return this;

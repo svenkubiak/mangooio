@@ -1,21 +1,20 @@
 package io.mangoo.build;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import io.mangoo.enums.Default;
+import io.mangoo.constants.Default;
 import io.mangoo.enums.Suffix;
 import io.mangoo.utils.MangooUtils;
 import net.jawr.web.minification.CSSMinifier;
 import net.jawr.web.minification.JSMin;
 import net.jawr.web.minification.JSMin.JSMinException;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 /**
  * Convenient class for minification of CSS and JS files

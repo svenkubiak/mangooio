@@ -3,7 +3,7 @@ package io.mangoo.utils;
 import io.fury.Fury;
 import io.fury.ThreadSafeFury;
 import io.fury.config.Language;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
@@ -37,8 +37,8 @@ public final class CodecUtils {
      * @return The hashed password
      */
     public static String hashArgon2(String password, String salt) {
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
-        Objects.requireNonNull(salt, Required.SALT.toString());
+        Objects.requireNonNull(password, NotNull.PASSWORD);
+        Objects.requireNonNull(salt, NotNull.SALT);
         
         var argon2Builder = (new Argon2Parameters.Builder())
                 .withVersion(Argon2Parameters.ARGON2_id)
@@ -68,9 +68,9 @@ public final class CodecUtils {
      * @return True if hashes match, false otherwise
      */
     public static boolean matchArgon2(String password, String salt, String hashedPassword) {
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
-        Objects.requireNonNull(salt, Required.SALT.toString());
-        Objects.requireNonNull(hashedPassword, Required.PASSWORD.toString());
+        Objects.requireNonNull(password, NotNull.PASSWORD);
+        Objects.requireNonNull(salt, NotNull.SALT);
+        Objects.requireNonNull(hashedPassword, NotNull.PASSWORD);
         
         return Arrays.areEqual(hashArgon2(password, salt).getBytes(StandardCharsets.UTF_8), hashedPassword.getBytes(StandardCharsets.UTF_8));
     }
@@ -84,7 +84,7 @@ public final class CodecUtils {
      * @return SHA512 hashed value
      */
     public static String hexSHA512(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
+        Objects.requireNonNull(data, NotNull.DATA.toString());
 
         return DigestUtils.sha512Hex(data);
     }
@@ -96,7 +96,7 @@ public final class CodecUtils {
      * @return The base64 encoded data string
      */
     public static String serializeToBase64(Serializable object)  {
-        Objects.requireNonNull(object, Required.OBJECT.toString());
+        Objects.requireNonNull(object, NotNull.OBJECT.toString());
         
         byte[] serialize = FURY.serialize(object);
         return BASE64ENCODER.encodeToString(serialize);
@@ -111,7 +111,7 @@ public final class CodecUtils {
      */
     @SuppressWarnings("unchecked")
     public static <T> T deserializeFromBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
+        Objects.requireNonNull(data, NotNull.DATA);
         
         byte[] bytes = BASE64DECODER.decode(data);
         return (T) FURY.deserialize(bytes);
@@ -124,7 +124,7 @@ public final class CodecUtils {
      * @return The converted byte array
      */
     public static byte[] encodeToBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
+        Objects.requireNonNull(data, NotNull.DATA);
         return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
     
@@ -135,7 +135,7 @@ public final class CodecUtils {
      * @return The converted byte array
      */
     public static byte[] decodeFromBase64(String data) {
-        Objects.requireNonNull(data, Required.DATA.toString());
+        Objects.requireNonNull(data, NotNull.DATA);
         return BASE64DECODER.decode(data);
     }
 }

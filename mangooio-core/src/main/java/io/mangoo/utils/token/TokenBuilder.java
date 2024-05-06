@@ -2,8 +2,8 @@ package io.mangoo.utils.token;
 
 import dev.paseto.jpaseto.PasetoV2LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
-import io.mangoo.enums.ClaimKey;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.NotNull;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
 
@@ -27,26 +27,26 @@ public class TokenBuilder {
     }
 
     public TokenBuilder withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        Objects.requireNonNull(expires, NotNull.EXPIRES);
         this.expires = expires;
 
         return this;
     }
     
     public TokenBuilder withSharedSecret(String sharedSecret) {
-        Objects.requireNonNull(sharedSecret, Required.SHARED_SECRET.toString());
+        Objects.requireNonNull(sharedSecret, NotNull.SHARED_SECRET);
         this.sharedSecret = sharedSecret;
 
         return this;
     }
     
     public TokenBuilder withClaim(ClaimKey claimKey, Object value) {
-        withClaim(claimKey.toString(), value);
+        withClaim(claimKey, value);
         return this;
     }
     
     public TokenBuilder withClaim(String key, Object value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         claims.put(key, value);
 
         return this;

@@ -3,8 +3,8 @@ package io.mangoo.providers;
 import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.CacheName;
 import io.mangoo.core.Application;
-import io.mangoo.enums.CacheName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -35,7 +35,7 @@ class CacheProviderTest {
         
         //when
         Cache cache = cacheProvider.getCache(CacheName.APPLICATION);
-        Cache cache2 = cacheProvider.getCache(CacheName.APPLICATION.toString());
+        Cache cache2 = cacheProvider.getCache(CacheName.APPLICATION);
         
         //then
         assertThat(cache, not(nullValue()));

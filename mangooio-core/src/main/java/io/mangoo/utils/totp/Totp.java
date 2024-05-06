@@ -1,6 +1,6 @@
 package io.mangoo.utils.totp;
 
-import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.constants.Hmac;
 
 /**
  * Class which represents a Time-based One-time Password as per RFC 6238.
@@ -13,7 +13,7 @@ import io.mangoo.enums.HmacShaAlgorithm;
 public final class Totp {
     private final String value;
     private final long time;
-    private final HmacShaAlgorithm hmacShaAlgorithm;
+    private final String hmacShaAlgorithm;
     private final int digits;
     private final long timeStep;
 
@@ -29,13 +29,13 @@ public final class Totp {
      * @param time
      *            the time (in milliseconds)
      * @param hmacShaAlgorithm
-     *            the {@link HmacShaAlgorithm}
+     *            the {@link Hmac}
      * @param digits
      *            the number of digits the generated TOTP value contains
      * @param timeStep
      *            the time step size (in milliseconds)
      */
-    Totp(String value, long time, HmacShaAlgorithm hmacShaAlgorithm, int digits, long timeStep) {
+    Totp(String value, long time, String hmacShaAlgorithm, int digits, long timeStep) {
         this.value = value;
         this.time = time;
         this.hmacShaAlgorithm = hmacShaAlgorithm;
@@ -78,11 +78,11 @@ public final class Totp {
     }
 
     /**
-     * Returns the {@link HmacShaAlgorithm} used to generate this {@code TOTP}.
+     * Returns the {@link Hmac} used to generate this {@code TOTP}.
      * 
-     * @return the {@link HmacShaAlgorithm} used to generate this {@code TOTP}.
+     * @return the {@link Hmac} used to generate this {@code TOTP}.
      */
-    public HmacShaAlgorithm hmacShaAlgorithm() {
+    public String hmacShaAlgorithm() {
         return hmacShaAlgorithm;
     }
 

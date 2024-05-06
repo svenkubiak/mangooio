@@ -1,8 +1,8 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Required;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;
@@ -39,8 +39,8 @@ public class DispatcherHandler implements HttpHandler {
     private boolean authentication;
 
     public DispatcherHandler dispatch(Class<?> controllerClass, String controllerMethodName) {
-        Objects.requireNonNull(controllerClass, Required.CONTROLLER_CLASS.toString());
-        Objects.requireNonNull(controllerMethodName, Required.CONTROLLER_METHOD.toString());
+        Objects.requireNonNull(controllerClass, NotNull.CONTROLLER_CLASS);
+        Objects.requireNonNull(controllerMethodName, NotNull.CONTROLLER_METHOD);
 
         this.templateEngine = Application.getInstance(TemplateEngine.class);
         this.messages = Application.getInstance(Messages.class);
