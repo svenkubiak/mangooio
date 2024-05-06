@@ -2,7 +2,7 @@ package io.mangoo.utils;
 
 import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
-import io.mangoo.enums.Header;
+import io.mangoo.constants.Header;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -134,7 +134,7 @@ class RequestUtilsTest {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
         HeaderMap headerMap = new HeaderMap();
-        headerMap.put(Header.CONTENT_TYPE.toHttpString(), MediaType.JSON_UTF_8.withoutParameters().toString());
+        headerMap.put(Header.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
 
         // when
         when(mockedExchange.getRequestHeaders()).thenReturn(headerMap);
@@ -149,7 +149,7 @@ class RequestUtilsTest {
         // given
         HttpServerExchange mockedExchange = Mockito.mock(HttpServerExchange.class);
         HeaderMap headerMap = new HeaderMap();
-        headerMap.put(Header.CONTENT_TYPE.toHttpString(), MediaType.CSS_UTF_8.withoutParameters().toString());
+        headerMap.put(Header.CONTENT_TYPE, MediaType.CSS_UTF_8.withoutParameters().toString());
 
         // when
         when(mockedExchange.getRequestHeaders()).thenReturn(headerMap);

@@ -1,10 +1,10 @@
 package io.mangoo.routing.bindings;
 
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.CacheName;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.CacheName;
-import io.mangoo.enums.Required;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.totp.TotpUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +26,7 @@ public class Authentication {
     }
     
     public Authentication withExpires(LocalDateTime expires) {
-        Objects.requireNonNull(expires, Required.EXPIRES.toString());
+        Objects.requireNonNull(expires, NotNull.EXPIRES);
         if (this.expires == null) {
             this.expires = expires;            
         }
@@ -100,10 +100,10 @@ public class Authentication {
      * @return True if the new hashed password matches the hash, false otherwise
      */
     public boolean validLogin(String identifier, String password, String salt, String hash) {
-        Objects.requireNonNull(identifier, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
-        Objects.requireNonNull(password, Required.SALT.toString());
-        Objects.requireNonNull(hash, Required.HASH.toString());
+        Objects.requireNonNull(identifier, NotNull.USERNAME);
+        Objects.requireNonNull(password, NotNull.PASSWORD);
+        Objects.requireNonNull(password, NotNull.SALT);
+        Objects.requireNonNull(hash, NotNull.HASH);
 
         var cache = Application.getInstance(CacheProvider.class).getCache(CacheName.AUTH);
         var authenticated = false;
@@ -166,7 +166,7 @@ public class Authentication {
      * @return true if the user has a lock, false otherwise
      */
     public boolean userHasLock(String username) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
+        Objects.requireNonNull(username, NotNull.USERNAME);
         var lock = false;
         
         var config = Application.getInstance(Config.class);
@@ -187,8 +187,8 @@ public class Authentication {
      * @return True if number is valid, false otherwise
      */
     public boolean validSecondFactor(String secret, String number) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        Objects.requireNonNull(number, Required.TOTP.toString());
+        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(number, NotNull.TOTP);
         
         return TotpUtils.verifiedTotp(secret, number);
     }

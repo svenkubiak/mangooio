@@ -1,6 +1,6 @@
 package controllers;
 
-import io.mangoo.enums.Default;
+import io.mangoo.constants.Default;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.Response;
 import io.undertow.server.handlers.Cookie;

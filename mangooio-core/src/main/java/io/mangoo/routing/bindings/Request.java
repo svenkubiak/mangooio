@@ -1,7 +1,7 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.Header;
+import io.mangoo.constants.NotNull;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -30,7 +30,7 @@ public class Request extends Validator {
     }
 
     public Request(HttpServerExchange httpServerExchange) {
-        Objects.requireNonNull(httpServerExchange, Required.HTTP_SERVER_EXCHANGE.toString());
+        Objects.requireNonNull(httpServerExchange, NotNull.HTTP_SERVER_EXCHANGE);
 
         this.httpServerExchange = httpServerExchange;
         this.httpServerExchange.requestCookies().forEach(cookie -> this.cookies.put(cookie.getName(), cookie));
@@ -125,7 +125,7 @@ public class Request extends Validator {
      * @return the string value of the clients accepted languages
      */
     public String getAcceptLanguage() {
-        return getHeader(Header.ACCEPT_LANGUAGE.toHttpString());
+        return getHeader(Header.ACCEPT_LANGUAGE);
     }
     
     /**
@@ -219,7 +219,7 @@ public class Request extends Validator {
      * @param value The value to store
      */
     public void addAttribute(String key, Object value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         attributes.put(key, value);
     }
 
@@ -262,7 +262,7 @@ public class Request extends Validator {
      */
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         return (T) attributes.get(key);
     }
     
@@ -273,7 +273,7 @@ public class Request extends Validator {
      * @return String the value from the attributes map
      */
     public String getAttributeAsString(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         var object = attributes.get(key);
         
         return object != null ? (String) object : null;

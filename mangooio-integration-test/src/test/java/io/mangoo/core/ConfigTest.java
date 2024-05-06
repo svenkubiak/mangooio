@@ -1,14 +1,11 @@
 package io.mangoo.core;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import io.mangoo.TestExtension;
-import io.mangoo.enums.Annotation;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
-import io.mangoo.enums.Mode;
+import io.mangoo.constants.Default;
+import io.mangoo.constants.Key;
+import io.mangoo.constants.Mode;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +34,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSessionCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieName() throws IOException {
         // given
         String sessionCookieName = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.name", sessionCookieName);
@@ -53,9 +50,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSessionCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieNameDefaultValue() throws IOException {
         //given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -63,15 +60,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME.toString()));
+        assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME));
         assertThat(tempConfig.delete(), equalTo(true));
     }      
 
     @Test
-    void testGetApplicationSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationSecret() throws IOException {
         // given
         String applicationSecret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", applicationSecret);
@@ -84,10 +81,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieName() throws IOException {
         // given
         String authenticationCookieName = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.name", authenticationCookieName);
@@ -100,9 +97,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieNameDefaultValue() throws IOException {
         //given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -110,14 +107,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME.toString()));
+        assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME));
         assertThat(tempConfig.delete(), equalTo(true));
     }    
   
     @Test
-    void testGetAuthenticationCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieExpires() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String expires = "42";
 
         // when
@@ -131,9 +128,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieExpiresDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -141,20 +138,20 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES.toBoolean()));
+        assertThat(config.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetSessionCookieExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieExpires() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String expires = "60";
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
         File tempConfig = createTempConfig(configValues);
-        System.setProperty("application.mode", Mode.TEST.toString());
+        System.setProperty("application.mode", Mode.TEST);
         Config config = new Config();
         
         // then
@@ -163,9 +160,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSessionCookieExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieExpiresDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -173,15 +170,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES.toLong()));
+        assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testIsSessionCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSessionCookieSecure() throws IOException {
         // given
         String secure = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
@@ -194,9 +191,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsSessionCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSessionCookieSecureDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -204,14 +201,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE.toBoolean()));
+        assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testIsAuthentcationCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthenticationCookieSecure() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String secure = "true";
 
         // when
@@ -225,9 +222,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsAuthenticationCookieSecureDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthenticationCookieSecureDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -235,15 +232,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE.toBoolean()));
+        assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE));
         assertThat(tempConfig.delete(), equalTo(true));
     }    
  
     @Test
-    void testI18nCookieName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testI18nCookieName() throws IOException {
         // given
         String name = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("i18n.cookie.name", name);
@@ -256,9 +253,9 @@ class ConfigTest {
     }
     
     @Test
-    void testI18nCookieNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testI18nCookieNameDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -266,15 +263,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME.toString()));
+        assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testIsFlashCookieSecure() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsFlashCookieSecure() throws IOException {
         // given
         String secure = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
@@ -287,9 +284,9 @@ class ConfigTest {
     }    
     
     @Test
-    void testAplicationLanguage() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAplicationLanguage() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String language = "fr";
 
         // when
@@ -303,9 +300,9 @@ class ConfigTest {
     }
     
     @Test
-    void testAplicationLanguageDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAplicationLanguageDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -313,14 +310,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE.toString()));
+        assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE));
         assertThat(tempConfig.delete(), equalTo(true));
     }  
     
     @Test
-    void testIsSchedulerEnabled() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSchedulerEnabled() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String enabled = "false";
 
         // when
@@ -334,9 +331,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsSchedulerEnabledDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSchedulerEnabledDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -344,15 +341,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE.toBoolean()));
+        assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
-    void testGetApplicationAdminUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminUsername() throws IOException {
         // given
         String username = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.username", username);
@@ -365,10 +362,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetApplicationAdminSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminSecret() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.secret", secret);
@@ -381,9 +378,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetApplicationAdminSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminSecretDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -396,10 +393,10 @@ class ConfigTest {
     } 
     
     @Test
-    void testGetApplicationAdminPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationAdminPassword() throws IOException {
         // given
         String password = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.password", password);
@@ -412,10 +409,10 @@ class ConfigTest {
     }   
     
     @Test
-    void testAuthenticationCookieRememberExpires() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationCookieRememberExpires() throws IOException {
         // given
         String expires = "6000";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.remember.expires", expires);
@@ -428,9 +425,9 @@ class ConfigTest {
     }
     
     @Test
-    void testAuthenticationCookieRememberExpiresDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationCookieRememberExpiresDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -438,14 +435,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES.toLong()));
+        assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES));
         assertThat(tempConfig.delete(), equalTo(true));
     }   
     
     @Test
-    void testGetApplicationController() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationController() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String controller = UUID.randomUUID().toString();
 
         // when
@@ -459,9 +456,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetApplicationControllerDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetApplicationControllerDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -469,14 +466,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER.toString()));
+        assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER));
         assertThat(tempConfig.delete(), equalTo(true));
     }  
 
     @Test
     void testValueFromSystemPropertyInProfile() {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Config config = Application.getInstance(Config.class);
@@ -489,7 +486,7 @@ class ConfigTest {
     @Test
     void testValueFromSystemProperty() {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Config config = Application.getInstance(Config.class);
@@ -502,7 +499,7 @@ class ConfigTest {
     @Test
     void testValueFromSystemPropertyInProfileEncrypted() {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Config config = Application.getInstance(Config.class);
@@ -515,7 +512,7 @@ class ConfigTest {
     @Test
     void testValueFromSystemPropertyEncrypted() {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Config config = Application.getInstance(Config.class);
@@ -526,9 +523,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsApplicationAdminEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsApplicationAdminEnable() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String enable = "true";
 
         // when
@@ -542,9 +539,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsApplicationAdminEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsApplicationAdminEnableDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -552,14 +549,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE.toBoolean()));
+        assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
-    void testGetSmptHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptHost() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String host = "192.168.2.24";
 
         // when
@@ -573,9 +570,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmptHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptHostDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -583,15 +580,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST.toString()));
+        assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST));
         assertThat(tempConfig.delete(), equalTo(true));
     }  
     
     @Test
-    void testGetSmptPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPort() throws IOException {
         // given
         String port = "555";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.port", port);
@@ -604,9 +601,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmptPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPortDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -614,14 +611,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT.toInt()));
+        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testIsAuthentication() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsAuthentication() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String ssl = "true";
 
         // when
@@ -635,9 +632,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsSmptAuthenticationDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmptAuthenticationDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -645,14 +642,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION.toBoolean()));
+        assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
-    void testGetSmptUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptUsername() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String username = "smtpuser";
 
         // when
@@ -666,9 +663,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmptUsernameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptUsernameDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -681,10 +678,10 @@ class ConfigTest {
     } 
     
     @Test
-    void testGetSmptPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPassword() throws IOException {
         // given
         String password = "smtppass";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.password", password);
@@ -697,9 +694,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmptPasswordDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptPasswordDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -712,10 +709,10 @@ class ConfigTest {
     }   
     
     @Test
-    void testGetSmptfrom() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptfrom() throws IOException {
         // given
         String from = "smtpform";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.from", from);
@@ -728,9 +725,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmptfromDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmptFromDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -738,15 +735,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM.toString()));
+        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetConnectorAjpHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpHost() throws IOException {
         // given
         String host = "192.168.3.24";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.ajp.host", host);
@@ -759,9 +756,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorAjpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpHostDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -774,15 +771,15 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorAjpPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpPort() throws IOException {
         // given
         String port = "2542";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.ajp.port", port);
         File tempConfig = createTempConfig(configValues);
-        System.setProperty("application.mode", Mode.TEST.toString());
+        System.setProperty("application.mode", Mode.TEST);
         Config config = new Config();
         
         // then
@@ -791,9 +788,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorAjpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorAjpPortDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -806,10 +803,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorHttpHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpHost() throws IOException {
         // given
         String host = "192.168.2.42";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.host", host);
@@ -822,9 +819,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorHttpHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpHostDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -837,10 +834,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorHttpPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpPort() throws IOException {
         // given
         String port = "2442";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.port", port);
@@ -853,9 +850,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetConnectorHttpPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetConnectorHttpPortDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -866,48 +863,17 @@ class ConfigTest {
         assertThat(config.getConnectorHttpPort(), equalTo(0));
         assertThat(tempConfig.delete(), equalTo(true));
     }
-    
-    @Test
-    void testIsCacheClusterEnable() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        String enable = "true";
 
-        // when
-        Map<String, String> configValues = ImmutableMap.of("cache.cluster.enable", enable);
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-        
-        // then
-        assertThat(config.isCacheCluserEnable(), equalTo(Boolean.valueOf(enable)));
-        assertThat(tempConfig.delete(), equalTo(true));
-    }
-    
     @Test
-    void testIsCacheClusterEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
-        
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        File tempConfig = createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isCacheCluserEnable(), equalTo(Default.CACHE_CLUSTER_ENABLE.toBoolean()));
-        assertThat(tempConfig.delete(), equalTo(true));
-    } 
-    
-    @Test
-    void testMetricsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testMetricsEnable() throws IOException {
         // given
         String enable = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("metrics.enable", enable);
         File tempConfig = createTempConfig(configValues);
-        System.setProperty("application.mode", Mode.TEST.toString());
+        System.setProperty("application.mode", Mode.TEST);
         Config config = new Config();
         
         // then
@@ -916,9 +882,9 @@ class ConfigTest {
     }
     
     @Test
-    void testMetricsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testMetricsEnableDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -926,20 +892,20 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE.toBoolean()));
+        assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 
     @Test
-    void testPersistenceEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testPersistenceEnable() throws IOException {
         // given
         String enable = "true";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("mongo.enable", enable);
         File tempConfig = createTempConfig(configValues);
-        System.setProperty("mongo.enable", Mode.TEST.toString());
+        System.setProperty("mongo.enable", Mode.TEST);
         Config config = new Config();
 
         // then
@@ -948,9 +914,9 @@ class ConfigTest {
     }
 
     @Test
-    void testPersistenceEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testPersistenceEnableDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -958,15 +924,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE.toBoolean()));
+        assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testAuthenticationLock() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationLock() throws IOException {
         // given
         String lock = "24";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.lock", lock);
@@ -979,9 +945,9 @@ class ConfigTest {
     }
     
     @Test
-    void testAuthenticationLockDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testAuthenticationLockDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -989,15 +955,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK.toInt()));
+        assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testCacheClusterUrl() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCacheClusterUrl() throws IOException {
         // given
         String url = "myclusterurl";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("cache.cluster.url", url);
@@ -1010,9 +976,9 @@ class ConfigTest {
     }
     
     @Test
-    void testCacheClusterUrlDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCacheClusterUrlDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1025,10 +991,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetUndertowMaxEntitySize() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetUndertowMaxEntitySize() throws IOException {
         // given
         String size = "4096";
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("undertow.maxentitysize", size);
@@ -1041,9 +1007,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetUndertowMaxEntitySizeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetUndertowMaxEntitySizeDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1051,15 +1017,15 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE.toLong()));
+        assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 
     @Test
-    void testGetSessionCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieSecret() throws IOException {
         // given
         String key = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secret", key);
@@ -1072,10 +1038,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSessionCookieeSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSessionCookieSecretDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
@@ -1088,10 +1054,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetFlashCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetFlashCookieSecret() throws IOException {
         // given
         String key = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
 
         // when
         Map<String, String> configValues = ImmutableMap.of("flash.cookie.secret", key);
@@ -1104,10 +1070,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetFlashCookieEncryptionKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetFlashCookieEncryptionKeyDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
@@ -1120,9 +1086,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieSignKeyDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSignKeyDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String secret = UUID.randomUUID().toString();
         
         // when
@@ -1136,7 +1102,7 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieSecret() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSecret() throws IOException {
         // given
         String key = UUID.randomUUID().toString();
 
@@ -1151,10 +1117,10 @@ class ConfigTest {
     }
     
     @Test
-    void testGetAuthenticationCookieSecretDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetAuthenticationCookieSecretDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
@@ -1169,12 +1135,12 @@ class ConfigTest {
     @Test
     void testGetString() {
         //given
-        System.setProperty(Key.APPLICATION_CONFIG.toString(), "");
+        System.setProperty(Key.APPLICATION_CONFIG, Mode.PROD.toString());
         final Config config = Application.getInstance(Config.class);
 
         //then
         assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
-        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT.toString()), equalTo("10808"));
+        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
     }
 
     @Test
@@ -1184,7 +1150,7 @@ class ConfigTest {
 
         //then
         assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
-        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808));
+        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
     }
 
     @Test
@@ -1194,7 +1160,7 @@ class ConfigTest {
 
         //then
         assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
-        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE.toString()), equalTo(true));
+        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
     }
 
     @Test
@@ -1204,7 +1170,7 @@ class ConfigTest {
 
         //then
         assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
-        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT.toString()), equalTo(10808L));
+        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
     }
 
     @Test
@@ -1257,7 +1223,7 @@ class ConfigTest {
     @Test
     void testEnvironmentValues() {
         //given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         final Config config = Application.getInstance(Config.class);
 
         //then
@@ -1298,22 +1264,22 @@ class ConfigTest {
         
         List<String> lines = new ArrayList<>();
         for (Entry<String, String> entry : values.entrySet()) {
-            lines.add(String.valueOf(entry.getKey()) + " = " + String.valueOf(entry.getValue()));
+            lines.add(entry.getKey() + " = " + entry.getValue());
         }
         
         OutputStream outputStream = new FileOutputStream(configTestFile);
         IOUtils.writeLines(lines, null, outputStream, Charsets.UTF_8);
         outputStream.close();
         
-        System.setProperty(Key.APPLICATION_CONFIG.toString(), path);
+        System.setProperty(Key.APPLICATION_CONFIG, path);
         
         return configTestFile;
     }
     
     @Test
-    void testIsSmtpDebug() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmtpDebug() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String debug = "true";
 
         // when
@@ -1327,9 +1293,9 @@ class ConfigTest {
     }
     
     @Test
-    void testIsSmtpDebugDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testIsSmtpDebugDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1337,14 +1303,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG.toBoolean()));
+        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetSmtpProtocol() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmtpProtocol() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String protocol = "smtptls";
 
         // when
@@ -1358,9 +1324,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetSmtpProtocolDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetSmtpProtocolDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1368,14 +1334,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL.toString()));
+        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetMongoAuthDB() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoAuthDB() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String authDb = "admin";
 
         // when
@@ -1389,9 +1355,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetMongoDBName() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoDBName() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String mongodb = "mongodb";
 
         // when
@@ -1405,9 +1371,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetMongoDBNameDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoDBNameDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1415,14 +1381,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME.toString()));
+        assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetMongoHost() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoHost() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String host = "127.0.0.5";
 
         // when
@@ -1436,9 +1402,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetMongoHostDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoHostDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1446,14 +1412,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST.toString()));
+        assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
-    void testGetMongoPort() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPort() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String port = "47235";
 
         // when
@@ -1467,9 +1433,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetMongoPortDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPortDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1477,14 +1443,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT.toInt()));
+        assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT));
         assertThat(tempConfig.delete(), equalTo(true));
     } 
     
     @Test
-    void testGetMongoPassword() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoPassword() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String password = "thisismypassword";
 
         // when
@@ -1498,9 +1464,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetMongoUsername() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetMongoUsername() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String username = "thisismyusername";
 
         // when
@@ -1514,9 +1480,9 @@ class ConfigTest {
     }
 
     @Test
-    void testCorsEnable() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCorsEnable() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String cors = "true";
 
         // when
@@ -1530,9 +1496,9 @@ class ConfigTest {
     }
     
     @Test
-    void testCorsEnableDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testCorsEnableDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1540,14 +1506,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE.toBoolean()));
+        assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsAllowOrigin() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsAllowOrigin() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String origin = "^http(s)?://(www.)?example.(com|org)$";
 
         // when
@@ -1561,9 +1527,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsAllowOriginDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsAllowOriginDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1571,14 +1537,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN.toString()).toString()));
+        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsHeadersAllowCredentials() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowCredentials() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String credentials = "true";
 
         // when
@@ -1592,9 +1558,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersAllowCredentialsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowCredentialsDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1607,9 +1573,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersAllowHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowHeaders() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String headers = "Authorization,Content-Type";
 
         // when
@@ -1623,9 +1589,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersAllowHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowHeadersDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1633,14 +1599,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS.toString()));
+        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsHeadersAllowMethods() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowMethods() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String headers = "GET,POST";
 
         // when
@@ -1654,9 +1620,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersAllowMethodsDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersAllowMethodsDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1664,14 +1630,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS.toString()));
+        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsHeadersExposeHeaders() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersExposeHeaders() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String headers = "Accept-Ranges,Content-Length";
 
         // when
@@ -1685,9 +1651,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersExposeHeadersDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersExposeHeadersDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1695,14 +1661,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS.toString()));
+        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsHeadersMaxAge() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersMaxAge() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String maxage = "86400";
 
         // when
@@ -1716,9 +1682,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsHeadersMaxAgeDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsHeadersMaxAgeDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1726,14 +1692,14 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE.toString()));
+        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE));
         assertThat(tempConfig.delete(), equalTo(true));
     }
     
     @Test
-    void testGetCorsUrlPattern() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsUrlPattern() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         String pattern = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
 
         // when
@@ -1747,9 +1713,9 @@ class ConfigTest {
     }
     
     @Test
-    void testGetCorsUrlPatternDefaultValue() throws JsonGenerationException, JsonMappingException, IOException {
+    void testGetCorsUrlPatternDefaultValue() throws IOException {
         // given
-        System.setProperty(Key.APPLICATION_MODE.toString(), Mode.TEST.toString());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST);
         
         // when
         Map<String, String> configValues = new HashMap<>();
@@ -1757,18 +1723,18 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN.toString()).toString()));
+        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN).toString()));
         assertThat(tempConfig.delete(), equalTo(true));
     }
 
     @Test
     void checkAnnotationExists() throws ClassNotFoundException {
         // given
-        Annotation[] annotations = Annotation.values();
+        List<String> annotations = List.of("io.mangoo.annotations.Collection", "io.mangoo.annotations.Indexed", "io.mangoo.annotations.Run");
 
         // when
-        for (Annotation annotation : annotations) {
-            Class<?> result = Class.forName(annotation.toString());
+        for (String annotation : annotations) {
+            Class<?> result = Class.forName(annotation);
 
             //then
             assertThat(result, not(nullValue()));

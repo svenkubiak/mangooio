@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.utils.MangooUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -28,7 +28,7 @@ public class Form extends Validator {
      * @return Optional of String
      */
     public Optional<String> getString(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -45,7 +45,7 @@ public class Form extends Validator {
      * @return String with the value of the form element or an empty value if blank
      */
     public String getValue(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -67,7 +67,7 @@ public class Form extends Validator {
      * @return Optional of Boolean
      */
     public Optional<Boolean> getBoolean(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
@@ -91,7 +91,7 @@ public class Form extends Validator {
      * @return Optional of Integer
      */
     public Optional<Integer> getInteger(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -108,7 +108,7 @@ public class Form extends Validator {
      * @return Optional of Double
      */
     public Optional<Double> getDouble(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -125,7 +125,7 @@ public class Form extends Validator {
      * @return Optional of Float
      */
     public Optional<Float> getFloat(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value) && NumberUtils.isCreatable(value)) {
@@ -191,7 +191,7 @@ public class Form extends Validator {
      * @param value The value to store
      */
     public void addValueList(String key, String value) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
 
         List<String> values;
         if (!valueMap.containsKey(key)) {
@@ -211,7 +211,7 @@ public class Form extends Validator {
      * @return A value list with elements
      */
     public List<String> getValueList(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY.toString());
         
         return valueMap.get(key);
     }

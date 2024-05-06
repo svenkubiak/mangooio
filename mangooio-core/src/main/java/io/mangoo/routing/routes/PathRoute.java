@@ -1,6 +1,6 @@
 package io.mangoo.routing.routes;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
 
@@ -15,7 +15,7 @@ public class PathRoute implements MangooRoute {
      * @param url The URL for this route
      */
     public void to(String url) {
-        Objects.requireNonNull(url, Required.URL.toString());
+        Objects.requireNonNull(url, NotNull.URL);
 
         if ('/' != url.charAt(0)) {
             url = "/" + url;

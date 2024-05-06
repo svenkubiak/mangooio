@@ -17,7 +17,6 @@ class EnumsTest {
     
     @Test
     void testBinding() {
-        //then
         assertThat(Binding.fromString("io.mangoo.routing.bindings.Authentication"), equalTo(Binding.AUTHENTICATION));
         assertThat(Binding.fromString("java.lang.Double"), equalTo(Binding.DOUBLE));
         assertThat(Binding.fromString("double"), equalTo(Binding.DOUBLE_PRIMITIVE));

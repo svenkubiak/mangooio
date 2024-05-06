@@ -1,10 +1,10 @@
 package io.mangoo.routing.handlers;
 
 import com.google.inject.Inject;
+import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.ClaimKey;
-import io.mangoo.enums.Required;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
@@ -33,7 +33,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
     @Inject
     public InboundCookiesHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
     }
     
     @Override
@@ -137,7 +137,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(token.getPaseto().getClaims().get(ClaimKey.DATA.toString(), Map.class)))
+                            .withContent(MangooUtils.copyMap(token.getPaseto().getClaims().get(ClaimKey.DATA, Map.class)))
                             .setDiscard(true);
                 }
             } catch (MangooTokenException e) {

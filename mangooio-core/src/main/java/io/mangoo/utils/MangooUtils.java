@@ -3,8 +3,7 @@ package io.mangoo.utils;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +26,9 @@ public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
+    private static final String VERSION_PROPERTIES = "version.properties";
+    private static final String VERSION_UNKNOWN = "unknown";
+    private static final String SMTP_SERVER_NAME = "smtp";
     private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int MAX_LENGTH = 256;
     private static final int MIN_LENGTH = 0;
@@ -42,8 +44,8 @@ public final class MangooUtils {
      */
     @SuppressFBWarnings(justification = "Only used to retrieve the version of mangoo I/O", value = "URLCONNECTION_SSRF_FD")
     public static String getVersion() {
-        var version = Default.VERSION_UNKNOWN.toString();
-        try (var inputStream = Resources.getResource(Default.VERSION_PROPERTIES.toString()).openStream()) {
+        var version = VERSION_UNKNOWN;
+        try (var inputStream = Resources.getResource(VERSION_PROPERTIES).openStream()) {
             final var properties = new Properties();
             properties.load(inputStream);
             version = String.valueOf(properties.get("version"));
@@ -61,7 +63,7 @@ public final class MangooUtils {
      * @return A new Map instance with value from originalMap
      */
     public static Map<String, String> copyMap(Map<String, String> originalMap) {
-        Objects.requireNonNull(originalMap, Required.MAP.toString());
+        Objects.requireNonNull(originalMap, NotNull.MAP);
         
         return new HashMap<>(originalMap);
     }
@@ -120,7 +122,7 @@ public final class MangooUtils {
      * @return True if the resources exists, false otherwise
      */
     public static boolean resourceExists(String name) {
-        Objects.requireNonNull(name, Required.NAME.toString());
+        Objects.requireNonNull(name, NotNull.NAME);
         
         URL resource = null;
         try {
@@ -139,7 +141,7 @@ public final class MangooUtils {
      * @return The content of the file or null
      */
     public static String readFileToString(Path path) {
-        Objects.requireNonNull(path, Required.PATH.toString());
+        Objects.requireNonNull(path, NotNull.PATH);
         
         var content = Strings.EMPTY;
         try {
@@ -158,7 +160,7 @@ public final class MangooUtils {
      * @return The content of the file or null
      */
     public static String readFileToString(String path) {
-        Objects.requireNonNull(path, Required.PATH.toString());
+        Objects.requireNonNull(path, NotNull.PATH);
 
         return readFileToString(Path.of(path));
     }
@@ -170,7 +172,7 @@ public final class MangooUtils {
      * @return The content of the resource or null
      */
     public static String readResourceToString(String resource) {
-        Objects.requireNonNull(resource, Required.RESOURCE.toString());
+        Objects.requireNonNull(resource, NotNull.RESOURCE);
         
         var content = Strings.EMPTY;
         try {

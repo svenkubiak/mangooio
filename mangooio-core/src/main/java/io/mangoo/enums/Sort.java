@@ -10,8 +10,7 @@ public enum Sort {
         this.value = value;
     }
 
-    @Override
-    public String toString() {
+    public String value() {
         return this.value;
     }
 }

@@ -5,7 +5,7 @@ import com.google.inject.name.Names;
 import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
-import io.mangoo.enums.Default;
+import io.mangoo.constants.Default;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.persistence.interfaces.Datastore;
 
@@ -14,7 +14,7 @@ public class Module extends AbstractModule {
     private EmbeddedMongoDB embeddedMongoDB;
     
     public Module() {
-        var prefix = Default.PERSISTENCE_PREFIX.toString();
+        var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && config.isMongoEmbedded(prefix)) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
                 .withHost(config.getMongoHost(prefix))

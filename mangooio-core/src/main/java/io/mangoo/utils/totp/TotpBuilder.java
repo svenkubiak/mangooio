@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.google.common.io.BaseEncoding;
-import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.constants.Hmac;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -83,7 +83,7 @@ public final class TotpBuilder {
      * The HMAC-SHA algorithm used in generating the TOTP value (defaults to
      * {@code HMAC-SHA-256}).
      */
-    private HmacShaAlgorithm hmacShaAlgorithm = HmacShaAlgorithm.HMAC_SHA_256;
+    private String hmacShaAlgorithm = Hmac.SHA256;
 
     /**
      * Creates a new instance of {@code TOTPBuilder} initialized with a shared
@@ -156,7 +156,7 @@ public final class TotpBuilder {
      * @throws NullPointerException
      *             if {@code algorithm} is {@code null}.
      */
-    public TotpBuilder hmacSha(HmacShaAlgorithm algorithm) {
+    public TotpBuilder hmacSha(String algorithm) {
         Preconditions.checkNotNull(algorithm);
         this.hmacShaAlgorithm = algorithm;
         return this;
@@ -164,24 +164,24 @@ public final class TotpBuilder {
 
     /**
      * Returns this {@code TOTPBuilder} instance initialized with the
-     * {@link HmacShaAlgorithm#HMAC_SHA_256}.
+     * {@link Hmac#SHA256}.
      * 
      * @return this {@code TOTPBuilder} instance initialized with the
-     *         {@link HmacShaAlgorithm#HMAC_SHA_256}.
+     *         {@link Hmac#SHA256}.
      */
     public TotpBuilder hmacSha256() {
-        return hmacSha(HmacShaAlgorithm.HMAC_SHA_256);
+        return hmacSha(Hmac.SHA256);
     }
 
     /**
      * Returns this {@code TOTPBuilder} instance initialized with the
-     * {@link HmacShaAlgorithm#HMAC_SHA_512}.
+     * {@link Hmac#SHA512}.
      * 
      * @return this {@code TOTPBuilder} instance initialized with the
-     *         {@link HmacShaAlgorithm#HMAC_SHA_512}.
+     *         {@link Hmac#SHA512}.
      */
     public TotpBuilder hmacSha512() {
-        return hmacSha(HmacShaAlgorithm.HMAC_SHA_512);
+        return hmacSha(Hmac.SHA512);
     }
 
     /**

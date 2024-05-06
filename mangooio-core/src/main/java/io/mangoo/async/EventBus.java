@@ -3,8 +3,8 @@ package io.mangoo.async;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
-import io.mangoo.enums.Required;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +25,8 @@ public class EventBus<T> {
      * @param subscriber The subscriber of the queue
      */
     public void register(String queue, Class<?> subscriber) {
-        Objects.requireNonNull(queue, Required.QUEUE.toString());
-        Objects.requireNonNull(subscriber, Required.SUBSCRIBER.toString());
+        Objects.requireNonNull(queue, NotNull.QUEUE);
+        Objects.requireNonNull(subscriber, NotNull.SUBSCRIBER);
 
         subscribers.put(queue, subscriber);
         numSubscribers.addAndGet(1);
@@ -40,7 +40,7 @@ public class EventBus<T> {
      */
     @SuppressWarnings("all")
     public void publish(T payload) {
-        Objects.requireNonNull(payload, Required.PAYLOAD.toString());
+        Objects.requireNonNull(payload, NotNull.PAYLOAD);
 
         Thread.ofVirtual().start(() -> {
             String queue = payload.getClass().getCanonicalName();

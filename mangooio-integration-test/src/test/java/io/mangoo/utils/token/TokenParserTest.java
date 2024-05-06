@@ -1,7 +1,7 @@
 package io.mangoo.utils.token;
 
 import io.mangoo.TestExtension;
-import io.mangoo.enums.ClaimKey;
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.MangooUtils;
@@ -49,7 +49,7 @@ class TokenParserTest {
         LocalDateTime expires = LocalDateTime.now().plusDays(1);
         String sharedSecret = MangooUtils.randomString(32);
         String subject = MangooUtils.randomString(32);
-        ClaimKey claimKey = ClaimKey.DATA;
+        String claimKey = ClaimKey.DATA;
         String claimValue = MangooUtils.randomString(32);
         String buildToken = TokenBuilder.create()
                 .withExpires(expires)
@@ -75,7 +75,7 @@ class TokenParserTest {
             LocalDateTime expires = LocalDateTime.now().plusDays(1);
             String sharedSecret = MangooUtils.randomString(32);
             String subject = MangooUtils.randomString(32);
-            ClaimKey claimKey = ClaimKey.DATA;
+            String claimKey = ClaimKey.DATA;
             String claimValue = MangooUtils.randomString(32);
             String buildToken = TokenBuilder.create()
                     .withExpires(expires)

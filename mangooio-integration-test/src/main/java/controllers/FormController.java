@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.re2j.Pattern;
-import io.mangoo.enums.Default;
+import io.mangoo.constants.Default;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.io.IOUtils;

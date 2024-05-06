@@ -1,7 +1,7 @@
 package io.mangoo.routing.routes;
 
+import io.mangoo.constants.NotNull;
 import io.mangoo.enums.Http;
-import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,12 +21,12 @@ public class RequestRoute implements MangooRoute {
     private boolean authentication;
 
     public RequestRoute(Http method) {
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
         this.method = method;
     }
     
     public RequestRoute(Http... methods) {
-        Objects.requireNonNull(methods, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(methods, NotNull.HTTP_METHOD);
         this.methods = Arrays.copyOf(methods, methods.length);
     }
 
@@ -38,7 +38,7 @@ public class RequestRoute implements MangooRoute {
      * @return RequestRoute instance
      */
     public RequestRoute to(String url) {
-        Objects.requireNonNull(url, Required.URL.toString());
+        Objects.requireNonNull(url, NotNull.URL);
         
         if ('/' != url.charAt(0)) {
             url = "/" + url;
@@ -56,7 +56,7 @@ public class RequestRoute implements MangooRoute {
      * @return RequestRoute instance
      */
     public RequestRoute respondeWith(String method) {
-        Objects.requireNonNull(method, Required.CONTROLLER_METHOD.toString());
+        Objects.requireNonNull(method, NotNull.CONTROLLER_METHOD);
         this.controllerMethod = method;
         return this;
     }
@@ -67,7 +67,7 @@ public class RequestRoute implements MangooRoute {
      * @param clazz The controller class
      */
     public void withControllerClass(Class<?> clazz) {
-        Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS.toString());
+        Objects.requireNonNull(clazz, NotNull.CONTROLLER_CLASS);
         this.controllerClass = clazz;
     }
     
@@ -77,7 +77,7 @@ public class RequestRoute implements MangooRoute {
      * @param method The controller method
      */
     public void withHttpMethod(Http method) {
-        Objects.requireNonNull(method, Required.METHOD.toString());
+        Objects.requireNonNull(method, NotNull.METHOD);
         this.method = method;
     }
     
@@ -90,8 +90,8 @@ public class RequestRoute implements MangooRoute {
      * @return RequestRoute instance
      */
     public RequestRoute withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(password, NotNull.PASSWORD);
         
         this.username = username;
         this.password = password;

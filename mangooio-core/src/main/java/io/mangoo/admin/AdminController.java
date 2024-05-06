@@ -8,10 +8,10 @@ import io.mangoo.async.EventBus;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheImpl;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.*;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.*;
 import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
@@ -52,10 +52,10 @@ public class AdminController {
 
     @Inject
     public AdminController(Config config, Cache cache, CacheProvider cacheProvider, Crypto crypto) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG.toString());
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
-        this.cacheProvider = Objects.requireNonNull(cacheProvider, Required.CACHE_PROVIDER.toString());
-        this.crypto = Objects.requireNonNull(crypto, Required.CRYPTO.toString());
+        this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER.toString());
+        this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO.toString());
     }
 
     @FilterWith(AdminFilter.class)
@@ -85,7 +85,7 @@ public class AdminController {
                     .andContent(ENABLED, Boolean.TRUE)
                     .andContent(METRICS, metrics.getResponseMetrics())
                     .andContent("uptime", Date.from(instant))
-                    .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
+                    .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS))
                     .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
                     .andContent("totalRequests", totalRequests)
                     .andContent("minRequestTime", metrics.getMinRequestTime())
@@ -94,7 +94,7 @@ public class AdminController {
                     .andContent("errorRate", errorRate)
                     .andContent("events", stream.getHandledEvents())
                     .andContent("subscribers", stream.getNumberOfSubscribers())
-                    .andTemplate(Template.DEFAULT.adminPath());
+                    .andTemplate(Template.adminPath());
         }
         
         return Response.withOk()
@@ -102,8 +102,8 @@ public class AdminController {
                 .andContent("uptime", Date.from(instant))
                 .andContent("events", stream.getHandledEvents())
                 .andContent("subscribers", stream.getNumberOfSubscribers())
-                .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS.toString()))
-                .andTemplate(Template.DEFAULT.adminPath());
+                .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS))
+                .andTemplate(Template.adminPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -115,14 +115,14 @@ public class AdminController {
         
         return Response.withOk()
                 .andContent("statistics", statistics)
-                .andTemplate(Template.DEFAULT.cachePath());
+                .andTemplate(Template.cachePath());
     }
 
 
     @FilterWith(AdminFilter.class)
     public Response scheduler() {
         Scheduler scheduler = Application.getInstance(Scheduler.class);
-        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.DEFAULT.schedulerPath());
+        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.schedulerPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -132,13 +132,13 @@ public class AdminController {
 
         if (StringUtils.isBlank(secret)) {
             secret = TotpUtils.createSecret();
-            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, HmacShaAlgorithm.HMAC_SHA_512, DIGITS, PERIOD);
+            qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, Hmac.SHA512, DIGITS, PERIOD);
         }
 
         return Response.withOk()
                 .andContent("qrcode", qrCode)
                 .andContent("secret", secret)
-                .andTemplate(Template.DEFAULT.toolsPath());
+                .andTemplate(Template.toolsPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -175,11 +175,11 @@ public class AdminController {
     
     public Response login() {
         return Response.withOk()
-                .andTemplate(Template.DEFAULT.loginPath());
+                .andTemplate(Template.loginPath());
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+        var cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME)
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
@@ -227,6 +227,6 @@ public class AdminController {
     }
     
     public Response twofactor() {
-        return Response.withOk().andTemplate(Template.DEFAULT.twofactorPath());
+        return Response.withOk().andTemplate(Template.twofactorPath());
     }
 }

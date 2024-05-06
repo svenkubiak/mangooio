@@ -1,10 +1,10 @@
 package io.mangoo.routing.handlers;
 
 import com.google.inject.Inject;
+import io.mangoo.constants.Header;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Header;
-import io.mangoo.enums.Required;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
@@ -20,7 +20,7 @@ public class LocaleHandler implements HttpHandler {
     
     @Inject
     public LocaleHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
     }
     
     @Override
@@ -31,7 +31,7 @@ public class LocaleHandler implements HttpHandler {
         if (i18nCookie != null) {
             locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
         } else {
-            var headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE.toHttpString());
+            var headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE);
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {

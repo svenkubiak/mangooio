@@ -1,8 +1,7 @@
 package io.mangoo.i18n;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Key;
+import io.mangoo.constants.Default;
 import org.apache.logging.log4j.util.Strings;
 
 import java.io.Serial;
@@ -60,17 +59,5 @@ public class Messages implements Serializable {
         }
 
         return Strings.EMPTY;
-    }
-
-    /**
-     * Returns a localized value for a given key stored in messages_xx.properties and passing the
-     * given arguments
-     *
-     * @param key The key enum to lookup up the localized value
-     * @param arguments The arguments to use
-     * @return The localized value or null value if the given key is not configured
-     */
-    public String get(Key key, Object... arguments) {
-        return get(key.toString(), arguments);
     }
 }

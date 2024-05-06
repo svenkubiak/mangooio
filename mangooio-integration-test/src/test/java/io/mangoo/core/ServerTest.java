@@ -1,7 +1,8 @@
 package io.mangoo.core;
 
 import io.mangoo.TestExtension;
-import io.mangoo.enums.Header;
+import io.mangoo.constants.Header;
+import io.undertow.util.HttpString;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -23,7 +24,7 @@ class ServerTest {
     @Test
     void testAdditionalHeader() {
         //then
-        List<Entry<Header, String>> collect = Server.headers()
+        List<Entry<HttpString, String>> collect = Server.headers()
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getKey() == Header.FEATURE_POLICY).collect(Collectors.toList());

@@ -1,6 +1,6 @@
 package io.mangoo.models;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.Credential;
 import io.undertow.security.idm.IdentityManager;
@@ -21,8 +21,8 @@ public class Identity implements IdentityManager, Serializable {
     private final char[] password;
     
     public Identity(String username, String password) {
-        this.username = Objects.requireNonNull(username, Required.USERNAME.toString());
-        this.password = Objects.requireNonNull(password.toCharArray(), Required.PASSWORD.toString());
+        this.username = Objects.requireNonNull(username, NotNull.USERNAME);
+        this.password = Objects.requireNonNull(password.toCharArray(), NotNull.PASSWORD);
     }
 
     @Override

@@ -2,9 +2,9 @@ package io.mangoo.routing.handlers;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
-import io.mangoo.enums.Default;
 import io.mangoo.exceptions.MangooTemplateEngineException;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
 import io.mangoo.routing.Attachment;

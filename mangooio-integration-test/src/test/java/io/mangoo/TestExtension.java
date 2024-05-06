@@ -1,6 +1,6 @@
 package io.mangoo;
 
-import io.mangoo.enums.Key;
+import io.mangoo.constants.Key;
 import io.mangoo.test.TestRunner;
 
 public class TestExtension extends TestRunner {

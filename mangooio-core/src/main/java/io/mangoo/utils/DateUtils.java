@@ -1,6 +1,6 @@
 package io.mangoo.utils;
 
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ public final class DateUtils {
      * @return The converted Date
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
-        Objects.requireNonNull(localDateTime, Required.LOCAL_DATE_TIME.toString());
+        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
     
@@ -30,7 +30,7 @@ public final class DateUtils {
      * @return The converted Date
      */
     public static Date localDateToDate(LocalDate localDate) {
-        Objects.requireNonNull(localDate, Required.LOCAL_DATE.toString());
+        Objects.requireNonNull(localDate, NotNull.LOCAL_DATE);
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

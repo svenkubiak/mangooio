@@ -1,7 +1,7 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
-import io.mangoo.enums.HmacShaAlgorithm;
+import io.mangoo.constants.Hmac;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.totp.TotpUtils;
 import org.hamcrest.MatcherAssert;
@@ -92,7 +92,7 @@ class TotpUtilsTest {
 	void testGetQRCode() {
         //given
 		String secret = TotpUtils.createSecret();
-		String qr = TotpUtils.getQRCode("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
+		String qr = TotpUtils.getQRCode("test", "issuer", secret, Hmac.SHA512, "6", "30");
 		
         //then
 		assertThat(qr, not(nullValue()));
@@ -103,7 +103,7 @@ class TotpUtilsTest {
 	void testGetTotpURL() {
         //given
 		String secret = "foo";
-		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
+		String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30");
 
         //then
 		assertThat(qr, not(nullValue()));
@@ -115,10 +115,10 @@ class TotpUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             String secret = "foo";
-            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30");
+            String qr = TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30");
         
             // then
-            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, HmacShaAlgorithm.HMAC_SHA_512, "6", "30"));
+            return qr.equals(TotpUtils.getOtpauthURL("test", "issuer", secret, Hmac.SHA512, "6", "30"));
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
 	}
 }

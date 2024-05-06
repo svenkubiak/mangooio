@@ -1,10 +1,10 @@
 package io.mangoo.test.http;
 
 import com.google.common.collect.Multimap;
+import io.mangoo.constants.Default;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Default;
-import io.mangoo.enums.Required;
 import io.undertow.util.Methods;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -52,8 +52,8 @@ public class TestResponse {
     }
     
     public TestResponse (String uri, String method) {
-        Objects.requireNonNull(uri, Required.URI.toString());
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(uri, NotNull.URI);
+        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
         
         this.uri = uri;
         this.method = method;
@@ -67,8 +67,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHeader(String name, String value) {
-        Objects.requireNonNull(name, Required.NAME.toString());
-        Objects.requireNonNull(value, Required.VALUE.toString());
+        Objects.requireNonNull(name, NotNull.NAME);
+        Objects.requireNonNull(value, NotNull.VALUE);
         
         this.httpRequest.header(name, value);
         
@@ -83,7 +83,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withHTTPMethod(String method) {
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
         
         this.method = method;
         
@@ -101,8 +101,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withTimeout(long amount, TemporalUnit unit) {
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
-        Objects.requireNonNull(method, Required.UNIT.toString());
+        Objects.requireNonNull(method, NotNull.HTTP_METHOD);
+        Objects.requireNonNull(method, NotNull.UNIT);
 
         this.httpRequest.timeout(Duration.of(amount, unit));
         
@@ -118,8 +118,8 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(password, NotNull.PASSWORD);
 
         this.authenticator = new Authenticator() {
             @Override
@@ -141,7 +141,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse to(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI);
 
         this.uri = uri;
         return this;
@@ -155,7 +155,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withCookie(HttpCookie cookie) {
-        Objects.requireNonNull(cookie, Required.COOKIE.toString());
+        Objects.requireNonNull(cookie, NotNull.COOKIE);
 
         this.cookieManager.getCookieStore().add(null, cookie);
         
@@ -185,7 +185,7 @@ public class TestResponse {
      * @return TestResponse instance
      */
     public TestResponse withContentType(String contentType) {
-        Objects.requireNonNull(contentType, Required.CONTENT_TYPE.toString());
+        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
 
         this.httpRequest.header(CONTENT_TYPE, contentType);
         

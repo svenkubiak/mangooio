@@ -1,7 +1,7 @@
 package io.mangoo.routing.routes;
 
+import io.mangoo.constants.NotNull;
 import io.mangoo.enums.Http;
-import io.mangoo.enums.Required;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ public class ControllerRoute {
      * @param clazz The controller class to bind to
      */
     public ControllerRoute(Class<?> clazz) {
-        Objects.requireNonNull(clazz, Required.CONTROLLER_CLASS.toString());
+        Objects.requireNonNull(clazz, NotNull.CONTROLLER_CLASS);
         
         controllerClass = clazz;
     }
@@ -33,7 +33,7 @@ public class ControllerRoute {
      * @param routes The routes to be configured for the controller
      */
     public void withRoutes(MangooRoute... routes) {
-        Objects.requireNonNull(routes, Required.ROUTE.toString());
+        Objects.requireNonNull(routes, NotNull.ROUTE);
         
         for (MangooRoute route : routes) {
             var requestRoute = (RequestRoute) route;
@@ -71,8 +71,8 @@ public class ControllerRoute {
      * @return controller route instance
      */
     public ControllerRoute withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, Required.USERNAME.toString());
-        Objects.requireNonNull(password, Required.PASSWORD.toString());
+        Objects.requireNonNull(username, NotNull.USERNAME);
+        Objects.requireNonNull(password, NotNull.PASSWORD);
         
         this.username = username;
         this.password = password;

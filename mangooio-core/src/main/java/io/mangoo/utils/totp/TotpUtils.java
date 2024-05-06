@@ -1,13 +1,10 @@
 package io.mangoo.utils.totp;
 
-import io.mangoo.enums.HmacShaAlgorithm;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.Hmac;
+import io.mangoo.constants.NotNull;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.RegExUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -16,10 +13,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class TotpUtils {
-    private static final Logger LOG = LogManager.getLogger(TotpUtils.class);
     private static final Base32 base32 = new Base32();
     private static final Random random = new SecureRandom();
-    private static final HmacShaAlgorithm ALGORITHM = HmacShaAlgorithm.HMAC_SHA_512;
+    private static final String ALGORITHM = Hmac.SHA512;
     private static final int DIGITS = 6;
     private static final int MAX_CHARACTERS = 32;
     private static final int PERIOD = 30;
@@ -57,22 +53,15 @@ public class TotpUtils {
      * @return The totp value or null if generation failed
      */
     public static String getTotp(String secret) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
+        Objects.requireNonNull(secret, NotNull.SECRET);
         
-        String value = null;
-        try {
-            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
-                    .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
-                    .digits(DIGITS)
-                    .hmacSha(ALGORITHM)
-                    .build();
-            
-            value = builder.value();
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to create TOTP",  e);
-        }
-        
-        return value;
+        Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII))
+                .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
+                .digits(DIGITS)
+                .hmacSha(ALGORITHM)
+                .build();
+
+        return builder.value();
     }
     
     /**
@@ -85,24 +74,18 @@ public class TotpUtils {
      * 
      * @return The totp value or null if generation failed
      */
-    public static String getTotp(String secret, HmacShaAlgorithm algorithm, int digits, int period) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
+    public static String getTotp(String secret, String algorithm, int digits, int period) {
+        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(algorithm, NotNull.ALGORITHM);
         
-        String value = null;
-        try {
-            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
-                    .timeStep(TimeUnit.SECONDS.toMillis(period))
-                    .digits(digits)
-                    .hmacSha(algorithm)
-                    .build();
-            
-            value = builder.value();
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to create TOTP",  e);
-        }
-        
-        return value;
+        Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII))
+                .timeStep(TimeUnit.SECONDS.toMillis(period))
+                .digits(digits)
+                .hmacSha(algorithm)
+                .build();
+
+
+        return builder.value();
     }
     
     /**
@@ -115,23 +98,16 @@ public class TotpUtils {
      * @return True if the TOTP is valid, false otherwise
      */
     public static boolean verifiedTotp(String secret, String totp) {
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        Objects.requireNonNull(totp, Required.TOTP.toString());
+        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(totp, NotNull.TOTP);
         
-        String value = null;
-        try {
-            Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII.name()))
-                .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
-                .digits(DIGITS)
-                .hmacSha(ALGORITHM)
-                .build();
-            
-            value = builder.value();
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Failed to verify TOTP",  e);
-        }
-        
-        return totp.equals(value);
+        Totp builder = Totp.key(secret.getBytes(StandardCharsets.US_ASCII))
+            .timeStep(TimeUnit.SECONDS.toMillis(PERIOD))
+            .digits(DIGITS)
+            .hmacSha(ALGORITHM)
+            .build();
+
+        return totp.equals(builder.value());
     }
     
     /**
@@ -146,13 +122,13 @@ public class TotpUtils {
      * 
      * @return A URL to Google charts API with the QR code
      */
-    public static String getQRCode(String name, String issuer, String secret, HmacShaAlgorithm algorithm, String digits, String period) {
-        Objects.requireNonNull(name, Required.ACCOUNT_NAME.toString());
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        Objects.requireNonNull(issuer, Required.ISSUER.toString());
-        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
-        Objects.requireNonNull(digits, Required.DIGITS.toString());
-        Objects.requireNonNull(period, Required.PERIOD.toString());
+    public static String getQRCode(String name, String issuer, String secret, String algorithm, String digits, String period) {
+        Objects.requireNonNull(name, NotNull.ACCOUNT_NAME);
+        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(issuer, NotNull.ISSUER);
+        Objects.requireNonNull(algorithm, NotNull.ALGORITHM);
+        Objects.requireNonNull(digits, NotNull.DIGITS);
+        Objects.requireNonNull(period, NotNull.PERIOD);
         
         var buffer = new StringBuilder();
             buffer
@@ -174,13 +150,13 @@ public class TotpUtils {
      * 
      * @return An otpauth url
      */
-    public static String getOtpauthURL(String name, String issuer, String secret, HmacShaAlgorithm algorithm, String digits, String period) {
-        Objects.requireNonNull(name, Required.ACCOUNT_NAME.toString());
-        Objects.requireNonNull(secret, Required.SECRET.toString());
-        Objects.requireNonNull(issuer, Required.ISSUER.toString());
-        Objects.requireNonNull(algorithm, Required.ALGORITHM.toString());
-        Objects.requireNonNull(digits, Required.DIGITS.toString());
-        Objects.requireNonNull(period, Required.PERIOD.toString());
+    public static String getOtpauthURL(String name, String issuer, String secret, String algorithm, String digits, String period) {
+        Objects.requireNonNull(name, NotNull.ACCOUNT_NAME);
+        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(issuer, NotNull.ISSUER);
+        Objects.requireNonNull(algorithm, NotNull.ALGORITHM);
+        Objects.requireNonNull(digits, NotNull.DIGITS);
+        Objects.requireNonNull(period, NotNull.PERIOD);
         
         var buffer = new StringBuilder();
         buffer.append("otpauth://totp/")
@@ -188,7 +164,7 @@ public class TotpUtils {
             .append("?secret=")
             .append(RegExUtils.replaceAll(base32.encodeAsString(secret.getBytes(StandardCharsets.UTF_8)), "=", ""))
             .append("&algorithm=")
-            .append(algorithm.getAlgorithm())
+            .append(algorithm)
             .append("&issuer=")
             .append(issuer)
             .append("&digits=")

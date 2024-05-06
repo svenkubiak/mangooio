@@ -2,7 +2,7 @@ package io.mangoo.routing;
 
 import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.routes.FileRoute;
 import io.mangoo.routing.routes.PathRoute;
@@ -30,7 +30,7 @@ public final class Router {
      * @param route The route to add
      */
     public static void addRoute(MangooRoute route) {
-        Objects.requireNonNull(route, Required.ROUTE.toString());
+        Objects.requireNonNull(route, NotNull.ROUTE);
         Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
         
         routes.add(route);
@@ -98,7 +98,7 @@ public final class Router {
      * @return A route object based on the given controller and method or null if none found
      */
     public static RequestRoute getReverseRoute(String key) {
-        Objects.requireNonNull(key, Required.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         return reverseRoutes.get(key.toLowerCase(Locale.ENGLISH));
     }
     

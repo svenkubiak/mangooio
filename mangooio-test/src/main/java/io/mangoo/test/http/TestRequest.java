@@ -1,9 +1,9 @@
 package io.mangoo.test.http;
 
-import java.util.Objects;
-
-import io.mangoo.enums.Required;
+import io.mangoo.constants.NotNull;
 import io.undertow.util.Methods;
+
+import java.util.Objects;
 
 /**
  * 
@@ -15,8 +15,8 @@ public final class TestRequest {
     }
 
     public static TestResponse create(String uri, String method) {
-        Objects.requireNonNull(uri, Required.URI.toString());
-        Objects.requireNonNull(method, Required.HTTP_METHOD.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
+        Objects.requireNonNull(method, NotNull.HTTP_METHOD.toString());
         
         return new TestResponse(uri, method);
     }
@@ -28,7 +28,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse get(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.GET.toString());
     }
@@ -40,7 +40,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse post(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.POST.toString());
     }
@@ -52,7 +52,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse put(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.PUT.toString());
     }
@@ -64,7 +64,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse delete(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.DELETE.toString());
     }
@@ -76,7 +76,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse head(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.HEAD.toString());
     }
@@ -88,7 +88,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse patch(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.PATCH.toString());
     }
@@ -100,7 +100,7 @@ public final class TestRequest {
      * @return A MangooResponse
      */
     public static TestResponse options(String uri) {
-        Objects.requireNonNull(uri, Required.URI.toString());
+        Objects.requireNonNull(uri, NotNull.URI.toString());
         
         return new TestResponse(uri, Methods.OPTIONS.toString());
     }

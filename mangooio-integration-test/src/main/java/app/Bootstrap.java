@@ -2,12 +2,11 @@ package app;
 
 import controllers.*;
 import controllers.subcontrollers.SubController;
+import io.mangoo.constants.Header;
 import io.mangoo.core.Server;
-import io.mangoo.enums.Header;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
-
 
 @SuppressWarnings("all")
 public class Bootstrap implements MangooBootstrap {

@@ -1,9 +1,9 @@
 package io.mangoo.routing.handlers;
 
 import com.google.inject.Inject;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.enums.Required;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
@@ -23,7 +23,7 @@ public class CorsHandler implements HttpHandler {
     
     @Inject
     public CorsHandler(Config config) {
-        this.config = Objects.requireNonNull(config, Required.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
     }
     
     @Override
