@@ -84,7 +84,7 @@ public final class CodecUtils {
      * @return SHA512 hashed value
      */
     public static String hexSHA512(String data) {
-        Objects.requireNonNull(data, NotNull.DATA.toString());
+        Objects.requireNonNull(data, NotNull.DATA);
 
         return DigestUtils.sha512Hex(data);
     }
@@ -96,7 +96,7 @@ public final class CodecUtils {
      * @return The base64 encoded data string
      */
     public static String serializeToBase64(Serializable object)  {
-        Objects.requireNonNull(object, NotNull.OBJECT.toString());
+        Objects.requireNonNull(object, NotNull.OBJECT);
         
         byte[] serialize = FURY.serialize(object);
         return BASE64ENCODER.encodeToString(serialize);
