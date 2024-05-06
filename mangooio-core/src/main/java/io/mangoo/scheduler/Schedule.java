@@ -37,7 +37,7 @@ public class Schedule {
 
     public LocalDateTime next() {
         if (cron) {
-            ExecutionTime executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(runAt));
+            var executionTime = ExecutionTime.forCron(new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)).parse(runAt));
             long seconds = executionTime
                     .timeToNextExecution(ZonedDateTime.now())
                     .orElse(Duration.ofSeconds(-1))

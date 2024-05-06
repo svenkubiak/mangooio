@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.mangoo.core.Application.getInstance;
 
 public final class AdminUtils {
-    private static final Logger LOG = LogManager.getLogger(AdminController.class);
+    private static final Logger LOG = LogManager.getLogger(AdminUtils.class);
     private static final int ADMIN_LOGIN_MAX_RETRIES = 10;
     private static final String MANGOOIO_ADMIN_LOCKED_UNTIL = "mangooio-admin-locked-until";
     private static final String MANGOOIO_ADMIN_LOCK_COUNT = "mangooio-admin-lock-count";

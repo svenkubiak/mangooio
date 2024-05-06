@@ -25,7 +25,6 @@ public final class MangooUtils {
     private static final String [] UNITS = new String[] { "B", "kB", "MB", "GB", "TB" };
     private static final String VERSION_PROPERTIES = "version.properties";
     private static final String VERSION_UNKNOWN = "unknown";
-    private static final String SMTP_SERVER_NAME = "smtp";
     private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final int MAX_LENGTH = 256;
     private static final int MIN_LENGTH = 0;

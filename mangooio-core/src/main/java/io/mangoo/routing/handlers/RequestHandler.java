@@ -17,6 +17,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -203,7 +204,7 @@ public class RequestHandler implements HttpHandler {
      *
      * @param annotations An array of @FilterWith annotated classes and methods
      * @param response The response to use
-     * @return True if the request should continue after filter execution, false otherwise
+     * @return The updated response
      *
      * @throws NoSuchMethodException when the method is not found
      * @throws IllegalAccessException when an illegal access occurs
@@ -216,7 +217,7 @@ public class RequestHandler implements HttpHandler {
                 if (response.isEndResponse()) {
                     return response;
                 } else {
-                    final var classMethod = clazz.getMethod(Default.FILTER_METHOD.toString(), Request.class, Response.class);
+                    final var classMethod = clazz.getMethod(Default.FILTER_METHOD, Request.class, Response.class);
                     response = (Response) classMethod.invoke(Application.getInstance(clazz), attachment.getRequest(), response);
                 }
             }
@@ -234,10 +235,10 @@ public class RequestHandler implements HttpHandler {
      * @throws IOException when setting the body fails
      */
     protected String getRequestBody(HttpServerExchange exchange) throws IOException {
-        var body = "";
+        var body = Strings.EMPTY;
         if (RequestUtils.isPostPutPatch(exchange)) {
             exchange.startBlocking();
-            body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING.toString());
+            body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING);
         }
 
         return body;

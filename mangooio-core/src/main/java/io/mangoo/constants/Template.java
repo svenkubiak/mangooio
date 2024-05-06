@@ -16,19 +16,19 @@ public final class Template {
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
-    private static final String badRequestContent;
-    private static final String forbiddenContent;
-    private static final String notFoundContent;
-    private static final String serverErrorContent;
-    private static final String unauthorizedContent;
-    private static final String tooManyRequests;
+    private static final String BAD_REQUEST_CONTENT;
+    private static final String FORBIDDEN_CONTENT;
+    private static final String NOT_FOUND_CONTENT;
+    private static final String SERVER_ERROR_CONTENT;
+    private static final String UNAUTHORIZED_CONTENT;
+    private static final String TOO_MANY_REQUESTS_CONTENT;
     static {
-        notFoundContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
-        badRequestContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
-        unauthorizedContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
-        forbiddenContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
-        serverErrorContent = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);
-        tooManyRequests = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
+        NOT_FOUND_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
+        BAD_REQUEST_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
+        UNAUTHORIZED_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
+        FORBIDDEN_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
+        SERVER_ERROR_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);
+        TOO_MANY_REQUESTS_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
     }
 
     private Template () {
@@ -45,7 +45,7 @@ public final class Template {
      * @return The content of the default bad request template
      */
     public static String badRequest() {
-        return badRequestContent;
+        return BAD_REQUEST_CONTENT;
     }
 
     /**
@@ -66,7 +66,7 @@ public final class Template {
      * @return The content of the default forbidden template
      */
     public static String forbidden() {
-        return forbiddenContent;
+        return FORBIDDEN_CONTENT;
     }
 
     /**
@@ -101,7 +101,7 @@ public final class Template {
      * @return The content of the default not found template
      */
     public static String notFound() {
-        return notFoundContent;
+        return NOT_FOUND_CONTENT;
     }
 
     /**
@@ -115,14 +115,14 @@ public final class Template {
      * @return The content of the default internal server error template
      */
     public static String serverError() {
-        return serverErrorContent;
+        return SERVER_ERROR_CONTENT;
     }
 
     /**
      * @return The content of the default too many requests error template
      */
     public static String tooManyRequests() {
-        return tooManyRequests;
+        return TOO_MANY_REQUESTS_CONTENT;
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Template {
      * @return The content of the default unauthorized template
      */
     public static String unauthorized() {
-        return unauthorizedContent;
+        return UNAUTHORIZED_CONTENT;
     }
 
     /**

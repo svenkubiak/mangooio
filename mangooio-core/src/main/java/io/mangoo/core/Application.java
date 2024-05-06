@@ -517,7 +517,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieName().equals(Default.AUTHENTICATION_COOKIE_NAME)) {
+        if (Default.AUTHENTICATION_COOKIE_NAME.equals(config.getAuthenticationCookieName())) {
             var warning = "Authentication cookie name has default value. Consider changing authentication.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -535,7 +535,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieName().equals(Default.SESSION_COOKIE_NAME)) {
+        if (Default.SESSION_COOKIE_NAME.equals(config.getSessionCookieName())) {
             var warning = "Session cookie name has default value. Consider changing session.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
@@ -547,7 +547,7 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieName().equals(Default.FLASH_COOKIE_NAME)) {
+        if (Default.FLASH_COOKIE_NAME.equals(config.getFlashCookieName())) {
             var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);

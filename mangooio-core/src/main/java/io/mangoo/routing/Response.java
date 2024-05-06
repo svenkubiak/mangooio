@@ -398,7 +398,7 @@ public class Response {
      * @return A response object {@link io.mangoo.routing.Response}
      */
     public Response andHeader(HttpString key, String value) {
-        Objects.requireNonNull(key, NotNull.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         headers.put(key, value);
 
         return this;
