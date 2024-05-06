@@ -42,7 +42,7 @@ public class Crypto {
     
     @Inject
     public Crypto(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
         Security.addProvider(new BouncyCastleProvider());
     }
     
@@ -53,7 +53,7 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encryptedText) {
-        Objects.requireNonNull(encryptedText, NotNull.ENCRYPTED_TEXT.toString());
+        Objects.requireNonNull(encryptedText, NotNull.ENCRYPTED_TEXT);
         return decrypt(encryptedText, getSizedSecret(config.getApplicationSecret()));
     }
 
@@ -65,8 +65,8 @@ public class Crypto {
      * @return The clear text or null if decryption fails
      */
     public String decrypt(String encryptedText, String key) {
-        Objects.requireNonNull(encryptedText, NotNull.ENCRYPTED_TEXT.toString());
-        Objects.requireNonNull(key, NotNull.KEY.toString());
+        Objects.requireNonNull(encryptedText, NotNull.ENCRYPTED_TEXT);
+        Objects.requireNonNull(key, NotNull.KEY);
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
         paddedBufferedBlockCipher.init(false, cipherParameters);
@@ -83,7 +83,7 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(String plainText) {
-        Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT.toString());
+        Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT);
 
         return encrypt(plainText, getSizedSecret(config.getApplicationSecret()));
     }
@@ -98,8 +98,8 @@ public class Crypto {
      * @return The encrypted text or null if encryption fails
      */
     public String encrypt(final String plainText, final String key) {
-        Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT.toString());
-        Objects.requireNonNull(key, NotNull.KEY.toString());
+        Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT);
+        Objects.requireNonNull(key, NotNull.KEY);
 
         CipherParameters cipherParameters = new ParametersWithRandom(new KeyParameter(getSizedSecret(key).getBytes(StandardCharsets.UTF_8)));
         paddedBufferedBlockCipher.init(true, cipherParameters);
@@ -131,7 +131,7 @@ public class Crypto {
     }
 
     public String getSizedSecret(String secret) {
-        Objects.requireNonNull(secret, NotNull.SECRET.toString());
+        Objects.requireNonNull(secret, NotNull.SECRET);
         
         String key = RegExUtils.replaceAll(secret, "[^\\x00-\\x7F]", "");
         return key.length() < MAX_KEY_LENGTH ? key : key.substring(KEY_INDEX_START, MAX_KEY_LENGTH);
@@ -165,8 +165,8 @@ public class Crypto {
      * @throws MangooEncryptionException if encryption fails
      */
     public byte[] encrypt(byte[] text, PublicKey key) throws MangooEncryptionException {
-        Objects.requireNonNull(text, NotNull.PLAIN_TEXT.toString());
-        Objects.requireNonNull(text, NotNull.PUBLIC_KEY.toString());
+        Objects.requireNonNull(text, NotNull.PLAIN_TEXT);
+        Objects.requireNonNull(text, NotNull.PUBLIC_KEY);
         
         byte[] encrypt = null;
         try {
@@ -190,8 +190,8 @@ public class Crypto {
      * @throws MangooEncryptionException if encryption fails
      */
     public String encrypt(String text, PublicKey key) throws MangooEncryptionException {
-        Objects.requireNonNull(text, NotNull.PLAIN_TEXT.toString());
-        Objects.requireNonNull(text, NotNull.PUBLIC_KEY.toString());
+        Objects.requireNonNull(text, NotNull.PLAIN_TEXT);
+        Objects.requireNonNull(text, NotNull.PUBLIC_KEY);
         
         var encrypt = "";
         try {
@@ -214,8 +214,8 @@ public class Crypto {
      * @throws MangooEncryptionException if decryption fails
      */
     public byte[] decrypt(byte[] text, PrivateKey key) throws MangooEncryptionException {
-        Objects.requireNonNull(text, NotNull.ENCRYPTED_TEXT.toString());
-        Objects.requireNonNull(text, NotNull.PRIVATE_KEY.toString());
+        Objects.requireNonNull(text, NotNull.ENCRYPTED_TEXT);
+        Objects.requireNonNull(text, NotNull.PRIVATE_KEY);
 
         byte[] decrypt = null;
         try {
@@ -239,8 +239,8 @@ public class Crypto {
      * @throws MangooEncryptionException if decryption fails
      */
     public String decrypt(String text, PrivateKey key) throws MangooEncryptionException {
-        Objects.requireNonNull(text, NotNull.ENCRYPTED_TEXT.toString());
-        Objects.requireNonNull(text, NotNull.PRIVATE_KEY.toString());
+        Objects.requireNonNull(text, NotNull.ENCRYPTED_TEXT);
+        Objects.requireNonNull(text, NotNull.PRIVATE_KEY);
         
         var decrypt = "";
         try {
@@ -260,7 +260,7 @@ public class Crypto {
      * @return A string representation of the key
      */
     public String getKeyAsString(Key key) {
-        Objects.requireNonNull(key, NotNull.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         
         return encodeBase64(key.getEncoded());
     }
@@ -274,7 +274,7 @@ public class Crypto {
      * @throws MangooEncryptionException if getting private key from string fails
      */
     public PrivateKey getPrivateKeyFromString(String key) throws MangooEncryptionException {
-        Objects.requireNonNull(key, NotNull.KEY.toString());
+        Objects.requireNonNull(key, NotNull.KEY);
         
         try {
             return KeyFactory.getInstance(ALGORITHM).generatePrivate(new PKCS8EncodedKeySpec(decodeBase64(key)));

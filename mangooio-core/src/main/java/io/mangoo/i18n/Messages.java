@@ -18,7 +18,7 @@ public class Messages implements Serializable {
     private transient ResourceBundle bundle;
 
     public Messages() {
-        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), Locale.getDefault());
+        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, Locale.getDefault());
     }
 
     /**
@@ -27,7 +27,7 @@ public class Messages implements Serializable {
      * @param locale The locale to use
      */
     public void reload(Locale locale) {
-        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME.toString(), locale);
+        bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale);
     }
 
     /**

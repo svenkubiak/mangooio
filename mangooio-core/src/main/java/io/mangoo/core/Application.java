@@ -604,7 +604,7 @@ public final class Application {
 
         Router.getPathRoutes().forEach((PathRoute pathRoute) ->
                 pathHandler.addPrefixPath(pathRoute.getUrl(),
-                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER.toString() + pathRoute.getUrl())))
+                        new ResourceHandler(new ClassPathResourceManager(Thread.currentThread().getContextClassLoader(), Default.FILES_FOLDER + pathRoute.getUrl())))
         );
 
         pathHandler.addPrefixPath("/@admin/assets/",

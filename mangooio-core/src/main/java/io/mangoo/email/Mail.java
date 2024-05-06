@@ -41,7 +41,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail to(String... tos) {
-        Objects.requireNonNull(tos, NotNull.TOS.toString());
+        Objects.requireNonNull(tos, NotNull.TOS);
         mailTos.addAll(Arrays.asList(tos));
         
         return this;
@@ -54,7 +54,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail cc(String... ccs) {
-        Objects.requireNonNull(ccs, NotNull.CCS.toString());
+        Objects.requireNonNull(ccs, NotNull.CCS);
         mailCcs.addAll(Arrays.asList(ccs));
         
         return this;
@@ -95,8 +95,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail from(String fromName, String fromAddress) {
-        Objects.requireNonNull(fromName, NotNull.FROM.toString());
-        Objects.requireNonNull(fromAddress, NotNull.NAME.toString());
+        Objects.requireNonNull(fromName, NotNull.FROM);
+        Objects.requireNonNull(fromAddress, NotNull.NAME);
         mailFromName = fromName;
         mailFromAddress = fromAddress;
         
@@ -110,7 +110,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail from(String fromAddress) {
-        Objects.requireNonNull(fromAddress, NotNull.FROM.toString());
+        Objects.requireNonNull(fromAddress, NotNull.FROM);
         mailFromAddress = fromAddress;
         
         return this;
@@ -124,8 +124,8 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail header(String name, String value) {
-        Objects.requireNonNull(name, NotNull.NAME.toString());
-        Objects.requireNonNull(value, NotNull.VALUE.toString());
+        Objects.requireNonNull(name, NotNull.NAME);
+        Objects.requireNonNull(value, NotNull.VALUE);
         mailHeaders.put(name, value);
         
         return this;
@@ -138,7 +138,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail replyTo(String replyTo) {
-        Objects.requireNonNull(replyTo, NotNull.REPLY_TO.toString());
+        Objects.requireNonNull(replyTo, NotNull.REPLY_TO);
         mailReplyTo = replyTo;
         
         return this;
@@ -152,7 +152,7 @@ public class Mail {
      * @return A mail object instance
      */
     public Mail priority(int priority) {
-        Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, NotNull.PRIORITY.toString());
+        Preconditions.checkArgument(priority >= HIGHEST_PRIORITY && priority <= LOWEST_PRIORITY, NotNull.PRIORITY);
         mailHeaders.put("X-Priority", String.valueOf(priority));
         
         return this;
@@ -165,8 +165,8 @@ public class Mail {
      * @return A mail object instance   
      */
     public Mail attachment(Path path) {
-        Objects.requireNonNull(path, NotNull.PATH.toString());
-        Preconditions.checkArgument(path.toFile().length() != 0, NotNull.CONTENT.toString());
+        Objects.requireNonNull(path, NotNull.PATH);
+        Preconditions.checkArgument(path.toFile().length() != 0, NotNull.CONTENT);
         
         mailAttachments.add(path);
         
@@ -180,10 +180,10 @@ public class Mail {
      * @return A mail object instance   
      */
     public Mail attachments(List<Path> paths) {
-        Objects.requireNonNull(paths, NotNull.PATH.toString());
+        Objects.requireNonNull(paths, NotNull.PATH);
         paths.forEach(path -> {
-            Objects.requireNonNull(path, NotNull.PATH.toString());
-            Preconditions.checkArgument(path.toFile().length() != 0, NotNull.PATH.toString());
+            Objects.requireNonNull(path, NotNull.PATH);
+            Preconditions.checkArgument(path.toFile().length() != 0, NotNull.PATH);
         });
         
         mailAttachments.addAll(paths);

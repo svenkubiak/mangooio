@@ -17,10 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
@@ -163,6 +160,13 @@ public final class MangooUtils {
         Objects.requireNonNull(path, NotNull.PATH);
 
         return readFileToString(Path.of(path));
+    }
+
+    /**
+     * @return a type 4 pseudo randomly generated uuid
+     */
+    public static String uuid() {
+        return UUID.randomUUID().toString();
     }
     
     /**

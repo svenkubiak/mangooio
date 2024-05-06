@@ -52,10 +52,10 @@ public class AdminController {
 
     @Inject
     public AdminController(Config config, Cache cache, CacheProvider cacheProvider, Crypto crypto) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG.toString());
+        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
-        this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER.toString());
-        this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO.toString());
+        this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER);
+        this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO);
     }
 
     @FilterWith(AdminFilter.class)

@@ -1,11 +1,11 @@
 package io.mangoo.models;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+import io.mangoo.annotations.Collection;
+import io.mangoo.records.Source;
 import org.junit.jupiter.api.Test;
 
-import io.mangoo.annotations.Collection;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @Collection(name = "test")
 class SourceTest {

@@ -19,7 +19,7 @@ public class AdminFilter implements PerRequestFilter {
     @Override
     public Response execute(Request request, Response response) {
         var config = Application.getInstance(Config.class);
-        var cookie = request.getCookie(Default.ADMIN_COOKIE_NAME.toString());
+        var cookie = request.getCookie(Default.ADMIN_COOKIE_NAME);
         
         if (cookie != null) {
             String value = cookie.getValue();

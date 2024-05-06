@@ -62,7 +62,7 @@ public final class AdminUtils {
             LOG.error("Failed to create admin cookie", e);
         }
 
-        return new CookieImpl(Default.ADMIN_COOKIE_NAME.toString())
+        return new CookieImpl(Default.ADMIN_COOKIE_NAME)
                 .setValue(token)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())

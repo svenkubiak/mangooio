@@ -11,7 +11,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
-import io.mangoo.models.Source;
+import io.mangoo.records.Source;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.apache.commons.lang3.StringUtils;
@@ -105,7 +105,7 @@ public class TemplateEngine {
         }
 
         var config = new Configuration(VERSION);
-        config.setClassForTemplateLoading(getClass(), Default.DEFAULT_TEMPLATES_DIR.toString());
+        config.setClassForTemplateLoading(getClass(), Default.DEFAULT_TEMPLATES_DIR);
 
         Writer writer = new StringWriter();
         Template template;
@@ -120,7 +120,7 @@ public class TemplateEngine {
     }
     
     public String getTemplateName(String templateName) {
-        Objects.requireNonNull(templateName, NotNull.TEMPLATE_NAME.toString());
+        Objects.requireNonNull(templateName, NotNull.TEMPLATE_NAME);
         return templateName.endsWith(TEMPLATE_SUFFIX) ? templateName : (templateName + TEMPLATE_SUFFIX);
     }
 
@@ -135,7 +135,7 @@ public class TemplateEngine {
      */
     @SuppressFBWarnings(value = "PATH_TRAVERSAL_IN")
     private List<Source> getSources(int errorLine, String sourcePath) throws IOException {
-        Objects.requireNonNull(sourcePath, NotNull.SOURCE_PATH.toString());
+        Objects.requireNonNull(sourcePath, NotNull.SOURCE_PATH);
 
         var buffer = new StringBuilder();
         buffer.append(System.getProperty("user.dir"))
@@ -185,7 +185,7 @@ public class TemplateEngine {
      * @return Source code filename
      */
     private String getSourceCodePath(StackTraceElement stackTraceElement) {
-        Objects.requireNonNull(stackTraceElement, NotNull.STACK_TRACE_ELEMENT.toString());
+        Objects.requireNonNull(stackTraceElement, NotNull.STACK_TRACE_ELEMENT);
 
         String packageName = stackTraceElement.getClassName();
         int position = packageName.lastIndexOf('.');

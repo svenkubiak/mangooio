@@ -38,7 +38,7 @@ public class Config {
     private boolean decrypted = true;
     
     public Config() {
-        this.mode = Application.getMode().toString();
+        this.mode = Application.getMode();
         load();
     }
     
@@ -67,7 +67,7 @@ public class Config {
         } 
         
         Map<String, String> profileProps = new HashMap<>();
-        props.extractProps(profileProps, Application.getMode().toString());
+        props.extractProps(profileProps, Application.getMode());
         profileProps.forEach(this::parse);
 
         System.setProperty(Key.APPLICATION_SECRET, Strings.EMPTY);
@@ -89,12 +89,12 @@ public class Config {
             }
 
             if (StringUtils.isNotBlank(value)) {
-                props.setValue(propKey, value, Application.getMode().toString());
+                props.setValue(propKey, value, Application.getMode());
             }
         }
 
         if (propValue.startsWith(CRYPTEX_TAG)) {
-            props.setValue(propKey, decrypt(propValue), Application.getMode().toString());
+            props.setValue(propKey, decrypt(propValue), Application.getMode());
         }
     }
 
