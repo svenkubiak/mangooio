@@ -51,7 +51,7 @@ public class AdminController {
     private final Crypto crypto;
 
     @Inject
-    public AdminController(Config config, Cache cache, CacheProvider cacheProvider, Crypto crypto) {
+    public AdminController(Config config, CacheProvider cacheProvider, Crypto crypto) {
         this.config = Objects.requireNonNull(config, NotNull.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER);
@@ -142,7 +142,7 @@ public class AdminController {
     }
 
     @FilterWith(AdminFilter.class)
-    public Response toolsrx(Request request) {
+    public Response toolsRx(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         Map<String, String> response = new HashMap<>();
 
@@ -151,10 +151,10 @@ public class AdminController {
 
             if (("keypair").equalsIgnoreCase(function)) {
                 var keyPair = crypto.generateKeyPair();
-                var publickey = crypto.getKeyAsString(keyPair.getPublic());
-                var privatekey = crypto.getKeyAsString(keyPair.getPrivate());
+                var publicKey = crypto.getKeyAsString(keyPair.getPublic());
+                var privateKey = crypto.getKeyAsString(keyPair.getPrivate());
 
-                response = Map.of("publickey", publickey,  "privatekey", privatekey);
+                response = Map.of("publickey", publicKey,  "privatekey", privateKey);
             } else if (("encrypt").equalsIgnoreCase(function)) {
                 var cleartext = body.get("cleartext").toString();
                 var key = body.get("key").toString();

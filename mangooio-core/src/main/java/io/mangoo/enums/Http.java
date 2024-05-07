@@ -7,5 +7,5 @@ public enum Http {
     OPTIONS,
     PATCH,
     POST,
-    PUT;
+    PUT
 }

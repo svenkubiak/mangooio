@@ -54,7 +54,23 @@ class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
-    
+
+    @Test
+    void testAnyOf() {
+        //given
+        final TestResponse deleteResponse = TestRequest.delete("/").execute();
+        final TestResponse patchResponse = TestRequest.patch("/").execute();
+        final TestResponse putResponse = TestRequest.put("/").execute();
+
+        //then
+        assertThat(deleteResponse, not(nullValue()));
+        assertThat(patchResponse, not(nullValue()));
+        assertThat(putResponse, not(nullValue()));
+        assertThat(deleteResponse.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(patchResponse.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(putResponse.getStatusCode(), equalTo(StatusCodes.METHOD_NOT_ALLOWED));
+    }
+
     @Test
     void testRoute() {
         //given

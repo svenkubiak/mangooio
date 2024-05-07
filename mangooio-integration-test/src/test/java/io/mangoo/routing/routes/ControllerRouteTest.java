@@ -1,19 +1,18 @@
 package io.mangoo.routing.routes;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import controllers.ApplicationController;
+import io.mangoo.TestExtension;
+import io.mangoo.routing.On;
+import io.mangoo.routing.Router;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import controllers.ApplicationController;
-import io.mangoo.TestExtension;
-import io.mangoo.routing.On;
-import io.mangoo.routing.Router;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith({TestExtension.class})
 class ControllerRouteTest {
@@ -93,28 +92,7 @@ class ControllerRouteTest {
         
         assertThat(requestRoute.hasAuthentication(), equalTo(true));
     }
-    
-    @Test
-    void testWithAuthorization() {
-        //given
-        String route1 = UUID.randomUUID().toString();
-        
-        //when
-        ControllerRoute route = new ControllerRoute(ApplicationController.class);
-        route.withAuthorization().withRoutes(
-                On.get().to("/route1").respondeWith(route1)
-        );
-        
-        //then
-        Set<RequestRoute> collectedRoutes = Router.getRequestRoutes()
-                .filter(r -> r.getControllerMethod().equals(route1))
-                .collect(Collectors.toSet());
-        
-        RequestRoute requestRoute = collectedRoutes.iterator().next();
-        
-        assertThat(requestRoute.hasAuthentication(), equalTo(true));
-    }
-    
+
     @Test
     void testWithNonBlocking() {
         //given

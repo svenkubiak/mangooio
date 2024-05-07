@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.constants.NotNull;
 import io.mangoo.constants.Validation;
+import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
@@ -20,10 +21,17 @@ public class Validator implements Serializable {
     @Serial
     private static final long serialVersionUID = -714400230978999709L;
     private final Map<String, String> errors = new HashMap<>();
+    private final Messages messages;
     protected Map<String, String> values = new HashMap<>(); // NOSONAR Intentionally not transient
 
     @Inject
-    private Messages messages;
+    public Validator(Messages messages) {
+        this.messages = Objects.requireNonNull(messages, NotNull.MESSAGES);
+    }
+
+    public Validator() {
+        this.messages = Application.getInstance(Messages.class);
+    }
 
     /**
      * Checks if a give field has a validation error

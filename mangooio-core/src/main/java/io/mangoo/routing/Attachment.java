@@ -10,7 +10,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class Attachment {
-    private final long start = System.currentTimeMillis();
     private Authentication authentication;
     private String controllerClassName;
     private String controllerMethodName;
@@ -125,10 +124,6 @@ public class Attachment {
         return this.response;
     }
 
-    public long getResponseTime() {
-        return System.currentTimeMillis() - this.start;
-    }
-    
     public Session getSession() {
         return this.session;
     }
@@ -143,10 +138,6 @@ public class Attachment {
 
     public boolean hasAuthentication() {
         return this.requiresAuthentication;
-    }
-
-    public boolean hasLimit() {
-        return this.limit > 0;
     }
 
     public boolean hasRequestFilter() {

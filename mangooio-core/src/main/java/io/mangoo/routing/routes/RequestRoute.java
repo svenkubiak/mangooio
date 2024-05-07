@@ -16,7 +16,6 @@ public class RequestRoute implements MangooRoute {
     private String controllerMethod;
     private String username;
     private String password;
-    private long maxEntitySize;
     private boolean blocking;
     private boolean authentication;
 
@@ -119,21 +118,6 @@ public class RequestRoute implements MangooRoute {
     public RequestRoute withNonBlocking() {
         this.blocking = true;
         return this;
-    }
-
-    /**
-     * Sets the max size of a body entity
-     * 
-     * @param size the size in bytes
-     * @return RequestRoute instance
-     */
-    public RequestRoute withMaxPostSize(long size) {
-        this.maxEntitySize = size;
-        return this;
-    }
-    
-    public long getMaxEntitySize() {
-        return maxEntitySize;
     }
 
     @Override

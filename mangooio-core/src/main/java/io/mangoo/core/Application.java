@@ -632,7 +632,7 @@ public final class Application {
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
                             On.post().to("/@admin/verify").respondeWith("verify"),
-                            On.post().to("/@admin/tools").respondeWith("toolsrx")
+                            On.post().to("/@admin/tools").respondeWith("toolsRx")
                     );
         }
 
@@ -640,7 +640,6 @@ public final class Application {
             var dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
-                    .withMaxEntitySize(requestRoute.getMaxEntitySize())
                     .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                     .withAuthentication(requestRoute.hasAuthentication());
 

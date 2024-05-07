@@ -110,7 +110,7 @@ public class Session {
     }
 
     /**
-     * @return True if a session values has change, be removed or the session has been cleared, false otherwise
+     * @return True if a session values has changed, be removed or the session has been cleared, false otherwise
      */
     public boolean hasChanges() {
         return changed;

@@ -9,8 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 
@@ -724,5 +723,20 @@ class ValidatorTest {
         // then
         assertThat(validator.hasErrors(), equalTo(true));
         assertThat(validator.hasError(NUMERIC), equalTo(true));
+    }
+
+    @Test
+    void testGetErrors() {
+        // given
+        Validator validator = Application.getInstance(Validator.class);
+
+        // when
+        String foo = "fdfdsfd";
+        validator.addValue(NUMERIC, "2342");
+        validator.expectNull(NUMERIC, foo);
+
+        // then
+        assertThat(validator.getErrors(), not(nullValue()));
+        assertThat(validator.getErrors().size(), equalTo(1));
     }
 }

@@ -10,5 +10,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface FilterWith {
+    /**
+     * Specifies that the given filter is used before the method or class is called
+     *
+     * @return Tbe name of the filter class
+     */
     Class<? extends PerRequestFilter>[] value();
 }

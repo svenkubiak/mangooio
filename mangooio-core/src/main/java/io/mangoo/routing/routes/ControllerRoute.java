@@ -13,7 +13,6 @@ public class ControllerRoute {
     private String username;
     private String password;
     private boolean authentication;
-    private boolean authorization;
     private boolean blocking;
     
     /**
@@ -89,19 +88,7 @@ public class ControllerRoute {
         authentication = true;
         return this;
     }
-    
-    /**
-     * Sets authentication to true for all provided routes, default is false
-     * Also sets authentication to true, default is false
-     * 
-     * @return controller route instance
-     */
-    public ControllerRoute withAuthorization() {
-        authorization = true;
-        authentication = true;
-        return this;
-    }
-    
+
     /**
      * Configures this request as long-running request that is
      * executed in a different thread pool to not block the
@@ -117,11 +104,7 @@ public class ControllerRoute {
     public boolean hasAuthentication() {
         return authentication;
     }
-    
-    public boolean hasAuthorization() {
-        return authorization;
-    }
-    
+
     public boolean hasBlocking() {
         return blocking;
     }

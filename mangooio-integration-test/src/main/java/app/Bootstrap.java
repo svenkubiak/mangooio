@@ -4,6 +4,7 @@ import controllers.*;
 import controllers.subcontrollers.SubController;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Server;
+import io.mangoo.enums.Http;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.routing.Bind;
 import io.mangoo.routing.On;
@@ -100,6 +101,7 @@ public class Bootstrap implements MangooBootstrap {
          // ApplicationController
          Bind.controller(ApplicationController.class).withRoutes(
                 On.get().to("/").respondeWith("index").withNonBlocking(),
+                On.anyOf(Http.DELETE, Http.PATCH).to("/").respondeWith("index").withNonBlocking(),
                 On.get().to("/error").respondeWith("error"),
                 On.get().to("/named").respondeWith("named"),
                 On.get().to("/route").respondeWith("route"),

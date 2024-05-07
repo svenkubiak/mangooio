@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Singleton
 public class Scheduler {
-    private Set<Schedule> schedules = new HashSet<>();
+    private final Set<Schedule> schedules = new HashSet<>();
 
     public Scheduler() {
     }

@@ -21,7 +21,7 @@ public class CacheProvider implements Provider<Cache> {
     private Cache cache;
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
-    private static final long FOURTY_THOUSAND = 40000;
+    private static final long FORTY_THOUSAND = 40000;
 
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
@@ -35,7 +35,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initApplicationCache() {
         Cache applicationCache = new CacheImpl(Caffeine.newBuilder()
-                .maximumSize(FOURTY_THOUSAND)
+                .maximumSize(FORTY_THOUSAND)
                 .expireAfterAccess(Duration.of(THIRTY, ChronoUnit.DAYS))
                 .recordStats()
                 .build());
@@ -45,7 +45,7 @@ public class CacheProvider implements Provider<Cache> {
 
     private void initAuthenticationCache() {
         Cache authenticationCache = new CacheImpl( Caffeine.newBuilder()
-                .maximumSize(FOURTY_THOUSAND)
+                .maximumSize(FORTY_THOUSAND)
                 .expireAfterAccess(Duration.of(SIXTY, ChronoUnit.MINUTES))
                 .recordStats()
                 .build());

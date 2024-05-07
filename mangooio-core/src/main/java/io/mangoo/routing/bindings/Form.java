@@ -57,7 +57,7 @@ public class Form extends Validator {
 
     /**
      * Retrieves an optional boolean value corresponding to the name of the form element
-     *
+     * <p></p>
      * 0 maps to false
      * 1 maps to true
      * "true" maps to true

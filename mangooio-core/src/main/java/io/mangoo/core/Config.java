@@ -243,7 +243,7 @@ public class Config {
      * @param key The key of the configuration value (e.g. application.name)
      * @return The configured value as boolean or false if the key is not configured
      */
-    public boolean getBoolean(String key) {
+    public Boolean getBoolean(String key) {
         final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return false;

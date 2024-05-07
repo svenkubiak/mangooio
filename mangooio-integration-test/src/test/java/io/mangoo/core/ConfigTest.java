@@ -23,7 +23,8 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class ConfigTest {
-    
+    private static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKmFEH4KlpImZslFc+hxpaYfKcbzpoOcHQw2TryCN74ovPZTNPuIXc2upUXcOQWEuyqYQm8zKjZtbmiO1HTr/ChbCbX8Dz0uG6/2kmnLyv9hOC+g0jEG9F8mS1R8tY7Xh16fVVtAZSbLXIzhx1S/wPPi9D0ZVR85VBKntq5SUqIiBAxHxt5ze6CJu3yq6sxWKSU3EFvJmGdDjPIPadEkxUAX4AriQuL+GaWiyB66vK2u7Q5BnXF5XcGN3CwUrA2zgrnpA6EBPtcXMRH4Miu2Fa2dL4JzjbiCxY7BPdTC3Ie9pJZu2KPVihRLTRmIOc4QGkmLwj29/IaBGUxyHhMn6QIDAQAB";
+
     @Test
     void testFlashCookieName() {
         // given
@@ -37,7 +38,7 @@ class ConfigTest {
     void testGetSessionCookieName() throws IOException {
         // given
         String sessionCookieName = UUID.randomUUID().toString();
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase().toString().toLowerCase());
+        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.name", sessionCookieName);
@@ -1725,7 +1726,7 @@ class ConfigTest {
     }
 
     @Test
-    void checkAnnotationExists() throws ClassNotFoundException {
+    void testCheckAnnotationExists() throws ClassNotFoundException {
         // given
         List<String> annotations = List.of("io.mangoo.annotations.Collection", "io.mangoo.annotations.Indexed", "io.mangoo.annotations.Run");
 
@@ -1736,5 +1737,14 @@ class ConfigTest {
             //then
             assertThat(result, not(nullValue()));
         }
+    }
+
+    @Test
+    void testGetApplicationPublicKey() {
+        // given
+        String key = Application.getInstance(Config.class).getApplicationPublicKey();
+
+        // then
+        assertThat(key, equalTo(PUBLIC_KEY));
     }
 }

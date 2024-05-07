@@ -1,32 +1,25 @@
 package io.mangoo.routing;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.mock;
+import com.google.common.net.MediaType;
+import io.mangoo.TestExtension;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.StatusCodes;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import com.google.common.net.MediaType;
-
-import io.mangoo.TestExtension;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.util.Headers;
-import io.undertow.util.StatusCodes;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * 
@@ -37,7 +30,7 @@ import io.undertow.util.StatusCodes;
 class ResponseTest {
     
     @Test
-    void testAndConent() {
+    void testAndContent() {
         //given
         Response response = new Response();
         
@@ -58,6 +51,24 @@ class ResponseTest {
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+
+    @Test
+    void testWithInternalServerError() {
+        //given
+        Response response = Response.withInternalServerError();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
+    }
+
+    @Test
+    void testGetHeader() {
+        //given
+        Response response = Response.withOk().andHeader("foo", "bar");
+
+        //then
+        assertThat(response.getHeader(new HttpString("foo")), equalTo("bar"));
     }
     
     @Test

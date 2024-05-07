@@ -151,9 +151,9 @@ public class Request extends Validator {
     /**
      * The original request URI. This will include the host name, protocol etc.
      * if it was specified by the client.
-     *
+     * <p></p>
      * This is not decoded in any way, and does not include the query string.
-     *
+     * <p></p>
      * Examples:
      * GET http://localhost:8080/myFile.jsf?foo=bar HTTP/1.1 -&gt; 'http://localhost:8080/myFile.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my+File.jsf'
@@ -167,7 +167,7 @@ public class Request extends Validator {
     /**
      * Reconstructs the complete URL as seen by the user. This includes scheme, host name etc.
      * but does not include query string.
-     *
+     * <p></p>
      * This is not decoded.
      *
      * @return The request URL
@@ -241,9 +241,9 @@ public class Request extends Validator {
 
     /**
      * The request path. This will be decoded by the server, and does not include the query string.
-     *
+     * <p></p>
      * This path is not canonical, so care must be taken to ensure that escape attacks are not possible.
-     *
+     * <p></p>
      * Examples:
      * GET http://localhost:8080/b/../my+File.jsf?foo=bar HTTP/1.1 -&gt; '/b/../my+File.jsf'
      * POST /my+File.jsf?foo=bar HTTP/1.1 -&gt; '/my File.jsf'

@@ -6,12 +6,14 @@ import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
+import io.mangoo.utils.MangooUtils;
 import org.bson.Document;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -76,7 +78,39 @@ class DatastoreTest {
 
         assertThat(datastore.find(TestModel.class, eq("name", name)), not(nullValue()));
     }
-    
+
+    @Test
+    void testFindFirst() {
+        //given
+        String name = MangooUtils.uuid();
+        String name2 = MangooUtils.uuid();
+        datastore.dropDatabase();
+        TestModel model = new TestModel(name, LocalDateTime.now());
+        TestModel model2 = new TestModel(name2, LocalDateTime.now().plusMinutes(25));
+
+        //when
+        datastore.save(model);
+        datastore.save(model2);
+
+        assertThat(datastore.findFirst(TestModel.class, Sorts.ascending()).getName(), equalTo(name));
+    }
+
+    @Test
+    void testFindAllLimit() {
+        //given
+        datastore.dropDatabase();
+        TestModel model = new TestModel("foo", LocalDateTime.now());
+        TestModel model2 = new TestModel("foo", LocalDateTime.now());
+        TestModel model3 = new TestModel("foo", LocalDateTime.now());
+        TestModel model4 = new TestModel(MangooUtils.uuid(), LocalDateTime.now());
+        TestModel model5 = new TestModel(MangooUtils.uuid(), LocalDateTime.now());
+
+        //when
+        datastore.saveAll(List.of(model, model2, model3, model4, model5));
+
+        assertThat(datastore.findAll(TestModel.class, eq("name", "foo"), Sorts.ascending("timestamp"), 2).size(), equalTo(2));
+    }
+
     @Test
     void testConcurrentFind() {
         //given

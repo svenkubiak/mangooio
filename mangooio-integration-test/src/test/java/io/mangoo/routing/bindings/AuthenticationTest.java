@@ -37,4 +37,31 @@ class AuthenticationTest {
         //then
         assertThat(authentication.userHasLock("foobar"), equalTo(true));
     }
+
+    @Test
+    void testRemeberMe() {
+        //given
+        Authentication authentication = Application.getInstance(Authentication.class);
+
+        //then
+        assertThat(authentication.isRememberMe(), equalTo(false));
+
+        //when
+        authentication.rememberMe();
+
+        //then
+        assertThat(authentication.isRememberMe(), equalTo(true));
+
+        //when
+        authentication.rememberMe(false);
+
+        //then
+        assertThat(authentication.isRememberMe(), equalTo(false));
+
+        //when
+        authentication.rememberMe(true);
+
+        //then
+        assertThat(authentication.isRememberMe(), equalTo(true));
+    }
 }
