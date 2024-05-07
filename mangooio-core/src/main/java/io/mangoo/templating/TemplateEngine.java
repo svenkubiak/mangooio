@@ -7,7 +7,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
-import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.exceptions.MangooTemplateEngineException;
@@ -29,6 +28,8 @@ import java.util.*;
 
 public class TemplateEngine {
     private final Configuration configuration = new Configuration(VERSION);
+    private static final String NUMBER_FORMAT = "0.######";
+    private static final String DEFAULT_TEMPLATES_DIR = "/templates/defaults/";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TEMPLATE_SUFFIX = ".ftl";
     private static final String REGEX = "\n";
@@ -44,7 +45,7 @@ public class TemplateEngine {
         configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         configuration.setOutputEncoding(StandardCharsets.UTF_8.name());
         configuration.setLocalizedLookup(false);
-        configuration.setNumberFormat(Default.NUMBER_FORMAT);
+        configuration.setNumberFormat(NUMBER_FORMAT);
         configuration.setAPIBuiltinEnabled(true);
         configuration.setObjectWrapper(new Java8ObjectWrapper(VERSION));
         configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
@@ -105,7 +106,7 @@ public class TemplateEngine {
         }
 
         var config = new Configuration(VERSION);
-        config.setClassForTemplateLoading(getClass(), Default.DEFAULT_TEMPLATES_DIR);
+        config.setClassForTemplateLoading(getClass(), DEFAULT_TEMPLATES_DIR);
 
         Writer writer = new StringWriter();
         Template template;

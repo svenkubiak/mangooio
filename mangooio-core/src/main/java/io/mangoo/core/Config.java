@@ -8,6 +8,7 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.enums.Mode;
 import io.mangoo.exceptions.MangooEncryptionException;
 import jodd.props.Props;
 import org.apache.commons.lang3.StringUtils;
@@ -19,19 +20,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
+    private static final String CONFIGURATION_FILE = "config.props";
     private static final String CRYPTEX_TAG = "cryptex{";
     private static final String ARG_TAG = "arg{}";
-    private final String mode;
+    private final Mode mode;
     private final Props props = Props.create();
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
@@ -42,13 +41,13 @@ public class Config {
         load();
     }
     
-    public Config(String mode) {
+    public Config(Mode mode) {
         this.mode = Objects.requireNonNull(mode, NotNull.MODE);
     }
     
     @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private void load() {
-        props.setActiveProfiles(mode);
+        props.setActiveProfiles(mode.toString().toLowerCase(Locale.ENGLISH));
         props.setSkipEmptyProps(false);
         final String configPath = System.getProperty(Key.APPLICATION_CONFIG);
         
@@ -59,7 +58,7 @@ public class Config {
                 LOG.error("Failed to load config.props from {}", configPath, e);
             }
         } else {
-            try (var inputStream = Resources.getResource(Default.CONFIGURATION_FILE).openStream()){
+            try (var inputStream = Resources.getResource(CONFIGURATION_FILE).openStream()){
                 props.load(inputStream);
             } catch (IOException e) {
                 LOG.error("Failed to load config.props from /src/main/resources/config.props", e);
@@ -67,7 +66,7 @@ public class Config {
         } 
         
         Map<String, String> profileProps = new HashMap<>();
-        props.extractProps(profileProps, Application.getMode());
+        props.extractProps(profileProps, Application.getMode().toString().toLowerCase(Locale.ENGLISH));
         profileProps.forEach(this::parse);
 
         System.setProperty(Key.APPLICATION_SECRET, Strings.EMPTY);
@@ -89,12 +88,12 @@ public class Config {
             }
 
             if (StringUtils.isNotBlank(value)) {
-                props.setValue(propKey, value, Application.getMode());
+                props.setValue(propKey, value, Application.getMode().toString().toLowerCase(Locale.ENGLISH));
             }
         }
 
         if (propValue.startsWith(CRYPTEX_TAG)) {
-            props.setValue(propKey, decrypt(propValue), Application.getMode());
+            props.setValue(propKey, decrypt(propValue), Application.getMode().toString().toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -639,7 +638,7 @@ public class Config {
      * @param prefix The prefix to use
      */
     public boolean isMongoAuth(String prefix) {
-        return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Default.PERSISTENCE_MONGO_AUTH);
+        return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Boolean.FALSE);
     }
 
     /**
@@ -655,14 +654,14 @@ public class Config {
      * @param prefix The prefix to use
      */
     public boolean isMongoEmbedded(String prefix) {
-        return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Default.PERSISTENCE_MONGO_EMBEDDED);
+        return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Boolean.FALSE);
     }
 
     /**
      * @return session.cookie.expires or default value if undefined
      */
     public boolean isSessionCookieExpires() {
-        return getBoolean(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES);
+        return getBoolean(Key.SESSION_COOKIE_EXPIRES, Boolean.FALSE);
     }
 
     /**
@@ -676,7 +675,7 @@ public class Config {
      * @return authentication.cookie.expires or default value if undefined
      */
     public long getAuthenticationCookieTokenExpires() {
-        return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES);
+        return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, 60L);
     }
 
     /**

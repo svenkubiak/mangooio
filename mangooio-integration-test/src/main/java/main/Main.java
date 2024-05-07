@@ -1,7 +1,7 @@
 package main;
 
-import io.mangoo.constants.Mode;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Mode;
 
 /**
  *

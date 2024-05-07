@@ -12,8 +12,11 @@ import io.mangoo.admin.AdminController;
 import io.mangoo.async.EventBus;
 import io.mangoo.async.Subscriber;
 import io.mangoo.cache.CacheProvider;
+import io.mangoo.constants.CacheName;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.*;
+import io.mangoo.constants.NotNull;
+import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.interfaces.Datastore;
@@ -64,6 +67,7 @@ public final class Application {
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
+    private static final String MODULE_CLASS = "app.Module";
     private static final LocalDateTime START = LocalDateTime.now();
     private static final String LOGO = """
                                                         ___     __  ___ \s
@@ -80,7 +84,7 @@ public final class Application {
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
-    private static String mode;
+    private static Mode mode;
     private static Injector injector;
     private static PathHandler pathHandler;
     private static boolean started;
@@ -95,7 +99,7 @@ public final class Application {
     }
 
     @SuppressWarnings({"StatementWithEmptyBody", "LoopConditionNotUpdatedInsideLoop"})
-    public static void start(String mode) {
+    public static void start(Mode mode) {
         Objects.requireNonNull(mode, NotNull.MODE);
 
         if (!started) {
@@ -343,7 +347,7 @@ public final class Application {
      *
      * @return Enum Mode
      */
-    public static String getMode() {
+    public static Mode getMode() {
         return mode;
     }
 
@@ -423,7 +427,7 @@ public final class Application {
      *
      * @param providedMode A given mode or null
      */
-    private static void prepareMode(String providedMode) {
+    private static void prepareMode(Mode providedMode) {
         final String applicationMode = System.getProperty(Key.APPLICATION_MODE);
         if (StringUtils.isNotBlank(applicationMode)) {
             mode = switch (applicationMode.toLowerCase(Locale.ENGLISH)) {
@@ -726,7 +730,7 @@ public final class Application {
         try {
             module = new io.mangoo.core.Module();
             modules.add(module);
-            modules.add((AbstractModule) Class.forName(Default.MODULE_CLASS).getConstructor().newInstance());
+            modules.add((AbstractModule) Class.forName(MODULE_CLASS).getConstructor().newInstance());
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                  | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
             LOG.error("Failed to load modules. Check that app/Module.java exists in your application", e);

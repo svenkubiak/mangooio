@@ -2,7 +2,6 @@ package io.mangoo.maven;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.build.Minification;
-import io.mangoo.constants.Default;
 import io.mangoo.enums.Suffix;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,6 +24,7 @@ requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
 defaultPhase = LifecyclePhase.NONE,
 threadSafe = true)
 public class MinifyMojo extends AbstractMojo {
+    private static final String FILES_PATH = "src/main/resources/files/";
 
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
@@ -39,7 +39,7 @@ public class MinifyMojo extends AbstractMojo {
     @SuppressFBWarnings(value = "ISB_TOSTRING_APPENDING", justification = "toString is called on an enum")
     public void minifyFiles(String directoryName){
         var buffer = new StringBuilder();
-        buffer.append(directoryName).append('/').append(Default.FILES_PATH.toString());
+        buffer.append(directoryName).append('/').append(FILES_PATH);
         
         File directory = new File(buffer.toString()); //NOSONAR
         File[] files = directory.listFiles();

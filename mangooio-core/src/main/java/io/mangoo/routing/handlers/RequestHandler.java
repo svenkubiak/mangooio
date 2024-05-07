@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class RequestHandler implements HttpHandler {
+    private static final String FILTER_METHOD = "execute";
     private Attachment attachment;
     
     @Override
@@ -217,7 +218,7 @@ public class RequestHandler implements HttpHandler {
                 if (response.isEndResponse()) {
                     return response;
                 } else {
-                    final var classMethod = clazz.getMethod(Default.FILTER_METHOD, Request.class, Response.class);
+                    final var classMethod = clazz.getMethod(FILTER_METHOD, Request.class, Response.class);
                     response = (Response) classMethod.invoke(Application.getInstance(clazz), attachment.getRequest(), response);
                 }
             }

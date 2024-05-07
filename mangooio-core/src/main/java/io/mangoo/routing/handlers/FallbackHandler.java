@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import io.mangoo.constants.Default;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Template;
 import io.mangoo.core.Server;
@@ -18,7 +17,7 @@ public class FallbackHandler implements HttpHandler {
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
-        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, Default.CONTENT_TYPE);
+        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, "text/html; charset=UTF-8");
         exchange.setStatusCode(StatusCodes.NOT_FOUND);
         exchange.getResponseSender().send(Template.notFound());
     }
