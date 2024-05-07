@@ -82,7 +82,7 @@ public class DatastoreImpl implements Datastore {
         var buffer = new StringBuilder();
         buffer.append("mongodb://");
         
-        if (config.isMongoAuth(prefix)) {
+        if (Boolean.TRUE.equals(config.isMongoAuth(prefix))) {
             buffer
                 .append(config.getMongoUsername(prefix))
                 .append(':')
@@ -95,7 +95,7 @@ public class DatastoreImpl implements Datastore {
             .append(':')
             .append(config.getMongoPort(prefix));
         
-        if (config.isMongoAuth(prefix)) {
+        if (Boolean.TRUE.equals(config.isMongoAuth(prefix))) {
             buffer
                 .append("/?authSource=")
                 .append(config.getMongoAuthDB(prefix));

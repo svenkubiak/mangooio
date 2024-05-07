@@ -249,7 +249,7 @@ public class Config {
             return Boolean.FALSE;
         }
 
-        return Boolean.parseBoolean(value);
+        return Boolean.valueOf(value);
     }
 
     /**

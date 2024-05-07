@@ -77,7 +77,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setPath("/")
                         .setSecure(config.isSessionCookieSecure());
                 
-                if (config.isSessionCookieExpires()) {
+                if (Boolean.TRUE.equals(config.isSessionCookieExpires())) {
                     cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
                 }
 
