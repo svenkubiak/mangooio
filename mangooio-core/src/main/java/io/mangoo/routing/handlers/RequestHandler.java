@@ -2,7 +2,6 @@ package io.mangoo.routing.handlers;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.exceptions.MangooTemplateEngineException;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.util.Strings;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -239,7 +239,7 @@ public class RequestHandler implements HttpHandler {
         var body = Strings.EMPTY;
         if (RequestUtils.isPostPutPatch(exchange)) {
             exchange.startBlocking();
-            body = IOUtils.toString(exchange.getInputStream(), Default.ENCODING);
+            body = IOUtils.toString(exchange.getInputStream(), StandardCharsets.UTF_8);
         }
 
         return body;

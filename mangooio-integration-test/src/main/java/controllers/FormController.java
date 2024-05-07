@@ -1,7 +1,6 @@
 package controllers;
 
 import com.google.re2j.Pattern;
-import io.mangoo.constants.Default;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import org.apache.commons.io.IOUtils;
@@ -11,6 +10,7 @@ import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ public class FormController {
         if (formFile.isPresent()) {
             InputStream file = formFile.get();
             try {
-                content = IOUtils.toString(file, Default.ENCODING.toString());
+                content = IOUtils.toString(file, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 LOG.error("Failed to read single file", e);
             }
@@ -49,7 +49,7 @@ public class FormController {
         List<InputStream> files = form.getFiles();
         for (InputStream file : files) {
             try {
-                content = content + IOUtils.toString(file, Default.ENCODING.toString());
+                content = content + IOUtils.toString(file, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 LOG.error("Failed to one of multiple files", e);
             }

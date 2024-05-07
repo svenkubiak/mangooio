@@ -1,7 +1,6 @@
 package io.mangoo.test.http;
 
 import com.google.common.collect.Multimap;
-import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -18,7 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -219,7 +218,7 @@ public class TestResponse {
     public TestResponse withForm(Multimap<String, String> parameters) {
         String form = parameters.entries()
                 .stream()
-                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), Charset.forName(Default.ENCODING.toString())))
+                .map(entry -> entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
         
         this.httpRequest.header(CONTENT_TYPE, "application/x-www-form-urlencoded");

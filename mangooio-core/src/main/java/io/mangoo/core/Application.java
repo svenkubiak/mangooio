@@ -109,7 +109,7 @@ public final class Application {
             applicationInitialized();
             prepareConfig();
             Thread scan = Thread.ofVirtual().start(() -> {
-                try (ScanResult scanResult = scanClasspath()) {
+                try (var scanResult = scanClasspath()) {
                     prepareScheduler(scanResult);
                     prepareDatastore(scanResult);
                     prepareSubscriber(scanResult);
@@ -281,8 +281,8 @@ public final class Application {
         scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
             MethodInfo methodInfo = classInfo.getMethodInfo().getFirst();
             if (("receive").equals(methodInfo.getName())) {
-                MethodParameterInfo methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
-                String descriptor = methodParameterInfo.getTypeDescriptor().toString();
+                var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
+                var descriptor = methodParameterInfo.getTypeDescriptor().toString();
                 Application.getInstance(EventBus.class).register(descriptor, classInfo.loadClass());
             }
         });

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -100,10 +101,10 @@ public final class Minification {
             final StringBuffer stringBuffer = new StringBuffer();
             final CSSMinifier cssMinifier = new CSSMinifier();
 
-            stringBuffer.append(FileUtils.readFileToString(inputFile, Default.ENCODING.toString()));
+            stringBuffer.append(FileUtils.readFileToString(inputFile, StandardCharsets.UTF_8));
             final StringBuffer minifyCSS = cssMinifier.minifyCSS(stringBuffer);
 
-            FileUtils.write(outputFile, minifyCSS.toString(), Default.ENCODING.toString());
+            FileUtils.write(outputFile, minifyCSS.toString(), StandardCharsets.UTF_8);
 
             logMinification(inputFile, outputFile);
         } catch (final IOException e) {
