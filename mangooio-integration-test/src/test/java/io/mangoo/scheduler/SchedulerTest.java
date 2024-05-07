@@ -24,11 +24,14 @@ public class SchedulerTest {
             }
         }, 0, 1, TimeUnit.MILLISECONDS);
 
+        assertThat(scheduler, not(nullValue()));
+        assertThat(scheduler.getSchedules().size(), equalTo(6));
+
         //when
         scheduler.addSchedule(Schedule.of("TestModel.class", "foo", "null", scheduledFuture, false));
 
         //then
         assertThat(scheduler, not(nullValue()));
-        assertThat(scheduler.getSchedules().size(), greaterThan(1));
+        assertThat(scheduler.getSchedules().size(), equalTo(7));
     }
 }
