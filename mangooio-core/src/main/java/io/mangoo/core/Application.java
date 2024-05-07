@@ -64,11 +64,13 @@ import java.util.stream.Collectors;
 
 public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
+    private static final LocalDateTime START = LocalDateTime.now();
+    private static final int KEY_MIN_BIT_LENGTH = 512;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
     private static final String MODULE_CLASS = "app.Module";
-    private static final LocalDateTime START = LocalDateTime.now();
+    private static final String ALL_PACKAGES = "*";
     private static final String LOGO = """
                                                         ___     __  ___ \s
          _ __ ___    __ _  _ __    __ _   ___    ___   |_ _|   / / / _ \\\s
@@ -76,11 +78,10 @@ public final class Application {
         | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
         |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
                                   |___/                                 \s""";
-    private static final String ALL_PACKAGES = "*";
-    private static final int KEY_MIN_BIT_LENGTH = 512;
+
     private static io.mangoo.core.Module module;
-    private static ScheduledExecutorService scheduler;
-    private static ExecutorService executor;
+    private static ScheduledExecutorService scheduledExecutorService;
+    private static ExecutorService executorService;
     private static String httpHost;
     private static String ajpHost;
     private static Undertow undertow;
@@ -134,8 +135,8 @@ public final class Application {
         var config = getInstance(Config.class);
 
         if (config.isSchedulerEnabled()) {
-            scheduler = Executors.newSingleThreadScheduledExecutor();
-            executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
+            scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+            executorService = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().factory());
 
             scanResult.getClassesWithMethodAnnotation(SCHEDULER).forEach(classInfo ->
                 classInfo.getMethodInfo().forEach(methodInfo -> {
@@ -220,7 +221,7 @@ public final class Application {
                 quartzCron.validate();
 
                 var cronTask = new CronTask(classInfo.loadClass(), methodInfo.getName(), at);
-                ScheduledFuture<?> scheduledFuture = scheduler.schedule(() -> executor.submit(cronTask), 0, TimeUnit.SECONDS);
+                ScheduledFuture<?> scheduledFuture = scheduledExecutorService.schedule(() -> executorService.submit(cronTask), 0, TimeUnit.SECONDS);
                 getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), at, scheduledFuture, true));
 
                 LOG.info("Successfully scheduled cron task from class '{}' with method '{}' and cron '{}'", classInfo.getName(), methodInfo.getName(), at);
@@ -231,7 +232,7 @@ public final class Application {
         } else {
             if (time > 0) {
                 var task = new Task(classInfo.loadClass(), methodInfo.getName());
-                ScheduledFuture<?> scheduledFuture = scheduler.scheduleWithFixedDelay(() -> executor.submit(task), time, time, TimeUnit.SECONDS);
+                ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleWithFixedDelay(() -> executorService.submit(task), time, time, TimeUnit.SECONDS);
                 getInstance(Scheduler.class).addSchedule(Schedule.of(classInfo.loadClass().toString(), methodInfo.getName(), "every " + at, scheduledFuture, false));
 
                 LOG.info("Successfully scheduled task from class '{}' with method '{}' at rate 'Every {}'", classInfo.getName(), methodInfo.getName(), at);
@@ -356,8 +357,8 @@ public final class Application {
      *
      * @return ScheduledExecutorService
      */
-    public static ScheduledExecutorService getScheduler() {
-        return scheduler;
+    public static ScheduledExecutorService getScheduledExecutorService() {
+        return scheduledExecutorService;
     }
 
     /**
@@ -366,8 +367,8 @@ public final class Application {
      *
      * @return ExecutorService
      */
-    public static ExecutorService getExecutor() {
-        return executor;
+    public static ExecutorService getExecutorService() {
+        return executorService;
     }
 
     /**

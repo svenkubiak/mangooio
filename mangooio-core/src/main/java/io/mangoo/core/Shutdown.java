@@ -23,8 +23,8 @@ public class Shutdown extends Thread {
 
     private static void stopScheduler() {
         if (Application.getInstance(Config.class).isSchedulerEnabled()) {
-            Application.getScheduler().shutdown();
-            Application.getExecutor().shutdown();
+            Application.getScheduledExecutorService().shutdown();
+            Application.getExecutorService().shutdown();
         }
     }
 

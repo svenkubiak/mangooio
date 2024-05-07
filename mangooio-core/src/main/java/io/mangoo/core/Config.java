@@ -246,7 +246,7 @@ public class Config {
     public Boolean getBoolean(String key) {
         final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
-            return false;
+            return Boolean.FALSE;
         }
 
         return Boolean.parseBoolean(value);

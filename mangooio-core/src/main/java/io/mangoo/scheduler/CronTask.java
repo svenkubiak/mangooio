@@ -37,7 +37,7 @@ public class CronTask implements Runnable {
             long delay = delay();
             if (delay > 0) {
                 Task task = new Task(clazz, methodName);
-                Application.getScheduler().schedule(task, delay, TimeUnit.SECONDS).get();
+                Application.getScheduledExecutorService().schedule(task, delay, TimeUnit.SECONDS).get();
             }
         } catch (Exception e) {
             LOG.error("Failed to execute scheduled cron task on class '{}' with annotated method '{}'", clazz.getName(), methodName, e);
