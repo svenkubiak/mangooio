@@ -12,6 +12,7 @@ import io.undertow.util.StatusCodes;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ public class Response {
     private String redirectTo;
     private String contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
     private String charset = StandardCharsets.UTF_8.name();
-    private String body = "";
+    private String body = Strings.EMPTY;
     private String template;
     private String binaryFileName;
     private byte[] binaryContent;

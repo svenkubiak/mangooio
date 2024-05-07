@@ -1,12 +1,11 @@
 package io.mangoo.utils;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+import io.mangoo.TestExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import io.mangoo.TestExtension;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith({TestExtension.class})
 class ByteUtilsTest {
@@ -19,6 +18,7 @@ class ByteUtilsTest {
         //then
         assertThat(ByteUtils.bitLength(string.getBytes()), equalTo(184));
     }
+
     
     @Test
     void testBitLengthAsString() {

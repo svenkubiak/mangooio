@@ -321,7 +321,7 @@ public final class Application {
      * @return True if the application is running in dev mode, false otherwise
      */
     public static boolean inDevMode() {
-        return Mode.DEV.equals(mode);
+        return Mode.DEV == mode;
     }
 
     /**
@@ -330,7 +330,7 @@ public final class Application {
      * @return True if the application is running in prod mode, false otherwise
      */
     public static boolean inProdMode() {
-        return Mode.PROD.equals(mode);
+        return Mode.PROD == mode;
     }
 
     /**
@@ -339,7 +339,7 @@ public final class Application {
      * @return True if the application is running in test mode, false otherwise
      */
     public static boolean inTestMode() {
-        return Mode.TEST.equals(mode);
+        return Mode.TEST == mode;
     }
 
     /**

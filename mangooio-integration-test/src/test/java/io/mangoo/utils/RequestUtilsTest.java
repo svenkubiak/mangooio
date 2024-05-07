@@ -182,7 +182,7 @@ class RequestUtilsTest {
             HttpHandler security = RequestUtils.wrapBasicAuthentication(handler, "foo", "bar");
             
             // then
-            return security != null && security.getClass().getSimpleName().equals("SecurityInitialHandler");
+            return security.getClass().getSimpleName().equals("SecurityInitialHandler");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

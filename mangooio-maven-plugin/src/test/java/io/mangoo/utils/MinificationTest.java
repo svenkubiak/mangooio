@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,8 +32,8 @@ class MinificationTest {
         Minification.setBasePath(TEMP);
         Minification.setAssetPath(ASSET_PATH);
         
-        File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER.toString());
-        File dir2 = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString());
+        File dir1 = new File(TEMP + ASSET_PATH + Default.JAVASCRIPT_FOLDER);
+        File dir2 = new File(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER);
         dir1.mkdir();
         dir2.mkdir();
     }
@@ -42,7 +41,7 @@ class MinificationTest {
     @Test
     void testMinifyCSS() throws IOException {
         //given
-        String uuid = UUID.randomUUID().toString();
+        String uuid = MangooUtils.uuid();
         StringBuilder buffer = new StringBuilder();
         buffer.append("p {");
         buffer.append("    font: normal 14px/20px helvetica, arial, sans-serif;");
@@ -60,7 +59,7 @@ class MinificationTest {
         Path inputFile = Files.createFile(Paths.get(TEMP + uuid + ".css"));
         Files.writeString(inputFile, buffer.toString(), StandardOpenOption.TRUNCATE_EXISTING);
         Minification.minify(inputFile.toAbsolutePath().toString());
-        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER.toString() + File.separator + uuid + ".min.css");
+        Path outputFile = Paths.get(TEMP + ASSET_PATH + Default.STYLESHEET_FOLDER + File.separator + uuid + ".min.css");
         
         //then
         assertThat(Files.readString(outputFile), equalTo(CSS));

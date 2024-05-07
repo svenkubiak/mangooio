@@ -637,7 +637,7 @@ public class Config {
      * @return persistence.mongo.auth or default value if undefined
      * @param prefix The prefix to use
      */
-    public boolean isMongoAuth(String prefix) {
+    public Boolean isMongoAuth(String prefix) {
         return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Boolean.FALSE);
     }
 
@@ -653,14 +653,14 @@ public class Config {
      * @return persistence.mongo.embedded or default value if undefined
      * @param prefix The prefix to use
      */
-    public boolean isMongoEmbedded(String prefix) {
+    public Boolean isMongoEmbedded(String prefix) {
         return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Boolean.FALSE);
     }
 
     /**
      * @return session.cookie.expires or default value if undefined
      */
-    public boolean isSessionCookieExpires() {
+    public Boolean isSessionCookieExpires() {
         return getBoolean(Key.SESSION_COOKIE_EXPIRES, Boolean.FALSE);
     }
 

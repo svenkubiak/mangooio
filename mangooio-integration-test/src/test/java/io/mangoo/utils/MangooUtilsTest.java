@@ -2,6 +2,7 @@ package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
 import io.mangoo.test.concurrent.ConcurrentRunner;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -200,7 +201,7 @@ class MangooUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             File file = new File(UUID.randomUUID().toString());
-            String uuid = UUID.randomUUID().toString();
+            String uuid = MangooUtils.uuid();
             Files.write(file.toPath(), uuid.getBytes());
             
             //when
@@ -224,6 +225,26 @@ class MangooUtilsTest {
             
             // then
             return content.equals(uuid) && file.delete();
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+
+    @Test
+    void testUUID() {
+        //when
+        String uuid = MangooUtils.uuid();
+
+        //then
+        assertThat(uuid, not(nullValue()));
+    }
+
+    @Test
+    void testUUIDConcurrent() {
+        MatcherAssert.assertThat(t -> {
+            //when
+            String uuid = MangooUtils.uuid();
+
+            // then
+            return StringUtils.isNotBlank(uuid);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }
