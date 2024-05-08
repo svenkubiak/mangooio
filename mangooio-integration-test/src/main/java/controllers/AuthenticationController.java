@@ -10,49 +10,48 @@ public class AuthenticationController {
     private static final String AUTHENTICATIONREQUIRED = "/authenticationrequired";
 
     public Response notauthenticated(Authentication authentication) {
-        return Response.withOk()
-                .andTextBody(authentication.getSubject());
+        return Response.ok()
+                .bodyText(authentication.getSubject());
     }
 
     public Response login() {
-        return Response.withOk().andEmptyBody();
+        return Response.ok().bodyEmpty();
     }
 
     public Response authenticate(Authentication authentication) {
         if (authentication.isValid()) {
             authentication.login(SUBJECT);
-            return Response.withRedirect(AUTHENTICATIONREQUIRED);
+            return Response.redirect(AUTHENTICATIONREQUIRED);
         }
 
-        return Response.withOk().andEmptyBody();
+        return Response.ok().bodyEmpty();
     }
 
     public Response doLogin(Authentication authentication) {
         authentication.login(SUBJECT);
-        return Response.withRedirect(AUTHENTICATIONREQUIRED);
+        return Response.redirect(AUTHENTICATIONREQUIRED);
     }
     
     public Response doLoginTwoFactor(Authentication authentication) {
         authentication.login(SUBJECT).twoFactorAuthentication(true);
         
-        return Response.withRedirect("/");
+        return Response.redirect("/");
     }
     
     public Response factorize(Form form, Authentication authentication) {
         if (authentication.isValid() && authentication.validSecondFactor(SECRET, form.getString("twofactor").orElse(""))) {
-            return Response.withRedirect(AUTHENTICATIONREQUIRED);
+            return Response.redirect(AUTHENTICATIONREQUIRED);
         }
         
-        return Response.withRedirect("/");
+        return Response.redirect("/");
     }
 
     public Response logout(Authentication authentication) {
         authentication.logout();
-        return Response.withOk().andEmptyBody();
+        return Response.ok().bodyEmpty();
     }
     
     public Response subject(Authentication authentication) {
-        return Response.withOk()
-                .andContent("identifier", authentication.getSubject());
+        return Response.ok().render("identifier", authentication.getSubject());
     }
 }

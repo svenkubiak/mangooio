@@ -10,6 +10,8 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.StatusCodes;
 import org.apache.commons.lang3.StringUtils;
 
+import java.nio.charset.StandardCharsets;
+
 public class ResponseHandler implements HttpHandler {
     
     @Override
@@ -77,7 +79,7 @@ public class ResponseHandler implements HttpHandler {
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
-        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + response.getCharset());
+        exchange.getResponseHeaders().put(Header.CONTENT_TYPE, response.getContentType() + "; charset=" + StandardCharsets.UTF_8.name());
         response.getHeaders().forEach((key, value) -> exchange.getResponseHeaders().add(key, value));
         exchange.getResponseSender().send(response.getBody());
     }

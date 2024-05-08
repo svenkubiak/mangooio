@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -27,7 +26,6 @@ public class Response {
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
     private String contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
-    private String charset = StandardCharsets.UTF_8.name();
     private String body = Strings.EMPTY;
     private String template;
     private String binaryFileName;
@@ -61,10 +59,6 @@ public class Response {
 
     public String getContentType() {
         return contentType;
-    }
-
-    public String getCharset() {
-        return charset;
     }
 
     public String getBody() {
@@ -122,84 +116,185 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 200
+     * @deprecated As of release 8.6.0, replaced by {@link #ok()}
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withOk() {
         return new Response(StatusCodes.OK);
     }
 
     /**
-     * Creates a response object with HTTP status code 201
+     * Creates a response object with HTTP status code 200
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    public static Response ok() {
+        return new Response(StatusCodes.OK);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 201
+     * @deprecated As of release 8.6.0, replaced by {@link #created()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withCreated() {
         return new Response(StatusCodes.CREATED);
     }
 
     /**
-     * Creates a response object with HTTP status code 404
+     * Creates a response object with HTTP status code 201
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    public static Response created() {
+        return new Response(StatusCodes.CREATED);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 404
+     * @deprecated As of release 8.6.0, replaced by {@link #notFound()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withNotFound() {
         return new Response(StatusCodes.NOT_FOUND);
     }
 
     /**
-     * Creates a response object with HTTP status code 401
+     * Creates a response object with HTTP status code 404
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    public static Response notFound() {
+        return new Response(StatusCodes.NOT_FOUND);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 401
+     * @deprecated As of release 8.6.0, replaced by {@link #forbidden()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withForbidden() {
         return new Response(StatusCodes.FORBIDDEN);
     }
 
     /**
-     * Creates a response object with HTTP status code 403
+     * Creates a response object with HTTP status code 401
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    public static Response forbidden() {
+        return new Response(StatusCodes.FORBIDDEN);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 403
+     * @deprecated As of release 8.6.0, replaced by {@link #unauthorized()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withUnauthorized() {
         return new Response(StatusCodes.UNAUTHORIZED);
     }
 
     /**
+     * Creates a response object with HTTP status code 403
+     *
+     * @return The response object
+     */
+    public static Response unauthorized() {
+        return new Response(StatusCodes.UNAUTHORIZED);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 400
+     * @deprecated As of release 8.6.0, replaced by {@link #badRequest()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public static Response withBadRequest() {
+        return new Response(StatusCodes.BAD_REQUEST);
+    }
+
+    /**
      * Creates a response object with HTTP status code 400
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public static Response withBadRequest() {
+    public static Response badRequest() {
         return new Response(StatusCodes.BAD_REQUEST);
     }
     
     /**
      * Creates a response object with HTTP status code 500
+     * @deprecated As of release 8.6.0, replaced by {@link #internalServerError()}
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withInternalServerError() {
         return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 500
+     *
+     * @return The response object
+     */
+    public static Response internalServerError() {
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a response object with a given HTTP status code
+     * @deprecated As of release 8.6.0, replaced by {@link #status(int)}
+     *
+     * @param statusCode The status code to set
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public static Response withStatusCode(int statusCode) {
+        return new Response(statusCode);
     }
 
     /**
      * Creates a response object with a given HTTP status code
      *
      * @param statusCode The status code to set
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public static Response withStatusCode(int statusCode) {
+    public static Response status(int statusCode) {
         return new Response(statusCode);
+    }
+
+    /**
+     * Creates a response object with a given url to redirect to
+     * @deprecated As of release 8.6.0, replaced by {@link #redirect(String)}
+     *
+     * @param redirectTo The URL to redirect to
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public static Response withRedirect(String redirectTo) {
+        return redirect(redirectTo);
     }
 
     /**
      * Creates a response object with a given url to redirect to
      *
      * @param redirectTo The URL to redirect to
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public static Response withRedirect(String redirectTo) {
+    public static Response redirect(String redirectTo) {
         Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO);
 
         return new Response(redirectTo);
@@ -207,10 +302,12 @@ public class Response {
 
     /**
      * Sets a specific template to use for the response
+     * @deprecated As of release 8.6.0, replaced by {@link #template(String)}
      *
      * @param template The path to the template (e.g. /mytemplate/template.ftl)
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andTemplate(String template) {
         Objects.requireNonNull(template, NotNull.TEMPLATE);
         this.template = template;
@@ -219,11 +316,26 @@ public class Response {
     }
 
     /**
+     * Sets a specific template to use for the response
+     *
+     * @param template The path to the template (e.g. /path-to-template/template.ftl)
+     * @return The response object
+     */
+    public Response template(String template) {
+        Objects.requireNonNull(template, NotNull.TEMPLATE);
+        this.template = template;
+
+        return this;
+    }
+
+    /**
      * Sets a specific content type to use for the response. Default is "text/html"
+     * @deprecated As of release 8.6.0, replaced by {@link #contentType(String)}
      *
      * @param contentType The content type to use
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andContentType(String contentType) {
         Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
         
@@ -234,14 +346,32 @@ public class Response {
     }
 
     /**
-     * Sets a specific charset to the response
+     * Sets a specific content type to use for the response. Default is "text/html"
      *
-     * @param charset The charset to use
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @param contentType The content type to use
+     * @return The response object
      */
-    public Response andCharset(String charset) {
-        Objects.requireNonNull(charset, NotNull.CHARSET);
-        this.charset = charset;
+    public Response contentType(String contentType) {
+        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+
+        headers.put(Header.CONTENT_TYPE, contentType);
+        this.contentType = contentType;
+
+        return this;
+    }
+
+    /**
+     * Adds a value to the template that can be accessed using ${name} in the template
+     * @deprecated As of release 8.6.0, replaced by {@link #render(String, Object)}
+     *
+     * @param name The name of the value
+     * @param object The actual value
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andContent(String name, Object object) {
+        Objects.requireNonNull(name, NotNull.NAME);
+        content.put(name, object);
 
         return this;
     }
@@ -251,9 +381,9 @@ public class Response {
      *
      * @param name The name of the value
      * @param object The actual value
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public Response andContent(String name, Object object) {
+    public Response render(String name, Object object) {
         Objects.requireNonNull(name, NotNull.NAME);
         content.put(name, object);
 
@@ -263,13 +393,44 @@ public class Response {
     /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The default content type "text/html" will be used.
+     * @deprecated As of release 8.6.0, replaced by {@link #bodyHtml(String)}
      *
-     * @param body The body for the response
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @param html The html for the body
+     * @return The response object
      */
-    public Response andHtmlBody(String body) {
-        this.body = body;
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andHtmlBody(String html) {
+        this.body = html;
         rendered = false;
+
+        return this;
+    }
+
+    /**
+     * Sets the body of the response. If a body is added, no template rendering will be
+     * performed. The default content type "text/html" will be used.
+     *
+     * @param html The html for the body
+     * @return The response object
+     */
+    public Response bodyHtml(String html) {
+        this.body = html;
+        rendered = false;
+
+        return this;
+    }
+
+    /**
+     * Adds a Cookie to the response which is passed to the client
+     * @deprecated As of release 8.6.0, replaced by {@link #cookie(Cookie)}
+     *
+     * @param cookie The cookie to add
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andCookie(Cookie cookie) {
+        Objects.requireNonNull(cookie, NotNull.COOKIE);
+        cookies.add(cookie);
 
         return this;
     }
@@ -278,9 +439,9 @@ public class Response {
      * Adds a Cookie to the response which is passed to the client
      *
      * @param cookie The cookie to add
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public Response andCookie(Cookie cookie) {
+    public Response cookie(Cookie cookie) {
         Objects.requireNonNull(cookie, NotNull.COOKIE);
         cookies.add(cookie);
 
@@ -291,10 +452,12 @@ public class Response {
      * Converts a given Object to JSON and passing it to the response. If an object is given, no
      * template rendering will be performed and the content type for the response will be set to
      * "application/json"
+     * @deprecated As of release 8.6.0, replaced by {@link #bodyJson(Object)}
      *
      * @param jsonObject The object to convert to JSON
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andJsonBody(Object jsonObject) {
         Objects.requireNonNull(jsonObject, NotNull.JSON_OBJECT);
 
@@ -304,14 +467,34 @@ public class Response {
 
         return this;
     }
+
+    /**
+     * Converts a given Object to JSON and passing it to the response. If an object is given, no
+     * template rendering will be performed and the content type for the response will be set to
+     * "application/json"
+     *
+     * @param object The object to convert to JSON
+     * @return The response object
+     */
+    public Response bodyJson(Object object) {
+        Objects.requireNonNull(object, NotNull.OBJECT);
+
+        this.body = JsonUtils.toJson(object);
+        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
+
+        return this;
+    }
     
     /**
      * Sets a given JSON string as body. If a String is given, no template rendering will be
      * performed and the content type for the response will be set to "application/json"
+     * @deprecated As of release 8.6.0, replaced by {@link #bodyJson(String)}
      *
      * @param json The String to set as JSON
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andJsonBody(String json) {
         Objects.requireNonNull(json, NotNull.JSON);
 
@@ -320,14 +503,33 @@ public class Response {
         rendered = false;
 
         return this;
-    }    
+    }
+
+    /**
+     * Sets a given JSON string as body. If a String is given, no template rendering will be
+     * performed and the content type for the response will be set to "application/json"
+     *
+     * @param json The String to set as JSON
+     * @return The response object
+     */
+    public Response bodyJson(String json) {
+        Objects.requireNonNull(json, NotNull.JSON);
+
+        this.body = json;
+        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
+
+        return this;
+    }
 
     /**
      * Sends a binary file to the client skipping rendering
+     * @deprecated As of release 8.6.0, replaced by {@link #file(Path)}
      *
      * @param file The file to send
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Response andBinaryFile(Path file) {
         Objects.requireNonNull(file, NotNull.FILE);
@@ -345,11 +547,35 @@ public class Response {
     }
 
     /**
+     * Sends a binary file to the client skipping rendering
+     *
+     * @param file The file to send
+     * @return The response object
+     */
+    @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
+    public Response file(Path file) {
+        Objects.requireNonNull(file, NotNull.FILE);
+
+        try (var inputStream = Files.newInputStream(file)) {
+            binaryFileName = file.getFileName().toString();
+            binaryContent = IOUtils.toByteArray(inputStream);
+            binary = true;
+            rendered = false;
+        } catch (final IOException e) {
+            LOG.error("Failed to handle binary file", e);
+        }
+
+        return this;
+    }
+
+    /**
      * Sends binary content to the client skipping rendering
+     * @deprecated As of release 8.6.0 without replacement
      *
      * @param content The content to send
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andBinaryContent(byte [] content) {
         Objects.requireNonNull(content, NotNull.CONTENT);
 
@@ -363,13 +589,46 @@ public class Response {
     /**
      * Sets the body of the response. If a body is added, no template rendering will be
      * performed. The content type "text/plain" will be used.
+     * @deprecated As of release 8.6.0, replaced by {@link #bodyText(String)}
      *
      * @param body The text for the response
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andTextBody(String body) {
         this.body = body;
+        contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+        rendered = false;
+
+        return this;
+    }
+
+    /**
+     * Sets the body of the response. If a body is added, no template rendering will be
+     * performed. The content type "text/plain" will be used.
+     *
+     * @param text The text for the body
+     *
+     * @return The response object
+     */
+    public Response bodyText(String text) {
+        this.body = text;
+        contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+        rendered = false;
+
+        return this;
+    }
+
+    /**
+     * Disables template rendering, sending an empty body with content-type
+     * text/plain in the response
+     * @deprecated As of release 8.6.0, replaced by {@link #bodyEmpty()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andEmptyBody() {
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -380,9 +639,9 @@ public class Response {
      * Disables template rendering, sending an empty body with content-type
      * text/plain in the response
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public Response andEmptyBody() {
+    public Response bodyEmpty() {
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
         rendered = false;
 
@@ -392,19 +651,21 @@ public class Response {
     /**
      * Adds a header to the request response. If a header
      * key already exists, it will be overwritten with the latest value.
+     * @deprecated As of release 8.6.0, replaced by {@link #header(String, String)}
      *
-     * @param key The header constant from Headers class (e.g. Header.CONTENT_TYPE.toString())
+     * @param key The header key
      * @param value The header value
-     * 
-     * @return A response object {@link io.mangoo.routing.Response}
+     *
+     * @return The response object
      */
-    public Response andHeader(HttpString key, String value) {
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andHeader(String key, String value) {
         Objects.requireNonNull(key, NotNull.KEY);
-        headers.put(key, value);
+        headers.put(new HttpString(key), value);
 
         return this;
     }
-    
+
     /**
      * Adds a header to the request response. If a header
      * key already exists, it will be overwritten with the latest value.
@@ -412,9 +673,9 @@ public class Response {
      * @param key The header key
      * @param value The header value
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public Response andHeader(String key, String value) {
+    public Response header(String key, String value) {
         Objects.requireNonNull(key, NotNull.KEY);
         headers.put(new HttpString(key), value);
 
@@ -424,11 +685,27 @@ public class Response {
     /**
      * Adds a content map to the content rendered in the template.
      * Already existing values with the same key are overwritten.
+     * @deprecated As of release 8.6.0, replaced by {@link #render(Map)}
      *
      * @param content The content map to add
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andContent(Map<String, Object> content) {
+        Objects.requireNonNull(content, NotNull.CONTENT);
+        this.content.putAll(content);
+
+        return this;
+    }
+
+    /**
+     * Adds a content map to the content rendered in the template.
+     * Already existing values with the same key are overwritten.
+     *
+     * @param content The content map to add
+     * @return The response object
+     */
+    public Response render(Map<String, Object> content) {
         Objects.requireNonNull(content, NotNull.CONTENT);
         this.content.putAll(content);
 
@@ -438,10 +715,12 @@ public class Response {
     /**
      * Adds a header map to the response.
      * Already existing values with the same key are overwritten.
+     * @deprecated As of release 8.6.0 without replacement
      *
      * @param headers The headers map to add
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andHeaders(Map<HttpString, String> headers) {
         Objects.requireNonNull(headers, NotNull.HEADERS);
         this.headers.putAll(headers);
@@ -452,10 +731,12 @@ public class Response {
     /**
      * Disposes a cookie by setting the expired date of the give cookie name
      * to a date in the past, max age to -1 and an empty value
+     * @deprecated As of release 8.6.0, replaced by {@link #disposeCookie(String)}
      * 
-     * @param cookieName The cookie name to dispose
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @param cookieName The name of the cookie to dispose
+     * @return The response object
      */
+    @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andDisposeCookie(String cookieName) {
         Objects.requireNonNull(cookieName, NotNull.COOKIE);
         
@@ -470,13 +751,48 @@ public class Response {
     }
 
     /**
+     * Disposes a cookie by setting the expired date of the give cookie name
+     * to a date in the past, max age to -1 and an empty value
+     *
+     * @param cookieName The name of the cookie to dispose
+     * @return The response object
+     */
+    public Response disposeCookie(String cookieName) {
+        Objects.requireNonNull(cookieName, NotNull.COOKIE);
+
+        cookies.add(new CookieImpl(cookieName)
+                .setPath("/")
+                .setValue("")
+                .setMaxAge(-1)
+                .setDiscard(true)
+                .setExpires(new Date(1)));
+
+        return this;
+    }
+
+    /**
+     * Tells a filter that the response ends and that the request handler
+     * should not execute further filters by sending the current response
+     * to the client. This is only used within a filter.
+     * @deprecated As of release 8.6.0, replaced by {@link #end()}
+     *
+     * @return The response object
+     */
+    @Deprecated(since = "8.6.0", forRemoval = true)
+    public Response andEndResponse() {
+        endResponse = true;
+
+        return this;
+    }
+
+    /**
      * Tells a filter that the response ends and that the request handler
      * should not execute further filters by sending the current response
      * to the client. This is only used within a filter.
      *
-     * @return A response object {@link io.mangoo.routing.Response}
+     * @return The response object
      */
-    public Response andEndResponse() {
+    public Response end() {
         endResponse = true;
 
         return this;

@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -115,7 +116,7 @@ class ApplicationControllerTest {
     })
     void testLocation(String parameter, String result) {
         //given
-    	if (parameter == null) {parameter = "";    	};
+    	if (parameter == null) {parameter = Strings.EMPTY;};
         final TestResponse response = TestRequest.get("/location" + parameter).execute();
 
         //then

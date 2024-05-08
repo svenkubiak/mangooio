@@ -21,7 +21,7 @@ public class ApplicationController {
     private String named;
     
     public Response index() {
-        return Response.withOk();
+        return Response.ok();
     }
     
     @SuppressWarnings("null")
@@ -29,35 +29,35 @@ public class ApplicationController {
         String foo = null;
         foo.length(); //NOSONAR
         
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response route() {
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response api() {
-        return Response.withOk().andEmptyBody();
+        return Response.ok().bodyEmpty();
     }
 
     public Response redirect() {
-        return Response.withRedirect("/");
+        return Response.redirect("/");
     }
     
     public Response text() {
-        return Response.withOk().andTextBody("foo");
+        return Response.ok().bodyText("foo");
     }
     
     public Response named() {
-        return Response.withOk().andTextBody(named);
+        return Response.ok().bodyText(named);
     }
     
     public Response limit() {
-        return Response.withOk().andEmptyBody();
+        return Response.ok().bodyEmpty();
     }
     
     public Response reverse() {
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response prettytime() {
@@ -65,14 +65,14 @@ public class ApplicationController {
         var localDate = LocalDate.now();
         Date date = new Date(); //NOSONAR
         
-        return Response.withOk()
-                .andContent("localDateTime", localDateTime)
-                .andContent("localDate", localDate)
-                .andContent("date", date); //NOSONAR
+        return Response.ok()
+                .render("localDateTime", localDateTime)
+                .render("localDate", localDate)
+                .render("date", date); //NOSONAR
     }
 
     public Response forbidden() {
-        return Response.withForbidden().andEmptyBody();
+        return Response.forbidden().bodyEmpty();
     }
     
     public Response unrenderedText() {
@@ -83,64 +83,64 @@ public class ApplicationController {
             // Intentionally left blank
         }
 
-        return Response.withOk().andHtmlBody(body);
+        return Response.ok().bodyHtml(body);
     }
     
     public Response badrequest() {
-        return Response.withBadRequest().andEmptyBody();
+        return Response.badRequest().bodyEmpty();
     }
 
     public Response unauthorized() {
-        return Response.withUnauthorized().andEmptyBody();
+        return Response.unauthorized().bodyEmpty();
     }
 
     public Response binary() throws URISyntaxException {
         final var url = this.getClass().getResource("/attachment.txt");
         final var file = Paths.get(url.toURI());
         
-        return Response.withOk().andBinaryFile(file);
+        return Response.ok().file(file);
     }
 
     public Response request(Request request) {
-        return Response.withOk().andTextBody(request.getURI());
+        return Response.ok().bodyText(request.getURI());
     }
 
     public Response post(Request request) {
-        return Response.withOk().andTextBody(request.getBody());
+        return Response.ok().bodyText(request.getBody());
     }
 
     public Response patch(Request request) {
-        return Response.withOk().andTextBody(request.getBody());
+        return Response.ok().bodyText(request.getBody());
     }
     
     public Response put(Request request) {
-        return Response.withOk().andTextBody(request.getBody());
+        return Response.ok().bodyText(request.getBody());
     }
 
     public Response jsonBoonPost(Request request) {
-        return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
+        return Response.ok().bodyText(request.getBodyAsJsonMap().toString());
     }
 
     public Response jsonBoonPut(Request request) {
-        return Response.withOk().andTextBody(request.getBodyAsJsonMap().toString());
+        return Response.ok().bodyText(request.getBodyAsJsonMap().toString());
     }
     
     public Response location(String myloc) {
-        return Response.withOk().andContent("myloc", myloc);
+        return Response.ok().render("myloc", myloc);
     }
     
     public Response controller() {
-        return Response.withOk().andTemplate("/ApplicationController/location.ftl");
+        return Response.ok().template("/ApplicationController/location.ftl");
     }
     
     public Response freemarker() {
-        return Response.withOk();
+        return Response.ok();
     }
 
     public Response header() {
         return Response
-                .withOk()
-                .andEmptyBody()
-                .andHeader("Access-Control-Allow-Origin", "https://mangoo.io");
+                .ok()
+                .bodyEmpty()
+                .header("Access-Control-Allow-Origin", "https://mangoo.io");
     }
 }

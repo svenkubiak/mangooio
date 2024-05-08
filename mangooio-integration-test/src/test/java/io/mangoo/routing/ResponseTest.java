@@ -10,7 +10,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,8 +37,8 @@ class ResponseTest {
         Response response = new Response();
         
         //when
-        response.andContent("foo", null);
-        response.andContent("foo2", "bar");
+        response.render("foo", null);
+        response.render("foo2", "bar");
         
         //then
         assertThat(response.getContent(), not(nullValue()));
@@ -47,7 +49,7 @@ class ResponseTest {
     @Test
     void testWithOk() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
@@ -56,7 +58,7 @@ class ResponseTest {
     @Test
     void testWithInternalServerError() {
         //given
-        Response response = Response.withInternalServerError();
+        Response response = Response.internalServerError();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
@@ -65,7 +67,7 @@ class ResponseTest {
     @Test
     void testGetHeader() {
         //given
-        Response response = Response.withOk().andHeader("foo", "bar");
+        Response response = Response.ok().header("foo", "bar");
 
         //then
         assertThat(response.getHeader(new HttpString("foo")), equalTo("bar"));
@@ -74,7 +76,7 @@ class ResponseTest {
     @Test
     void testWithNotFound() {
         //given
-        Response response = Response.withNotFound();
+        Response response = Response.notFound();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
@@ -83,7 +85,7 @@ class ResponseTest {
     @Test
     void testWithForbidden() {
         //given
-        Response response = Response.withForbidden();
+        Response response = Response.forbidden();
        
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
@@ -92,7 +94,7 @@ class ResponseTest {
     @Test
     void testWithUnauthorized() {
         //given
-        Response response = Response.withUnauthorized();
+        Response response = Response.unauthorized();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
@@ -101,7 +103,7 @@ class ResponseTest {
     @Test
     void testWithBadRequest() {
         //given
-        Response response = Response.withBadRequest();
+        Response response = Response.badRequest();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
@@ -110,7 +112,7 @@ class ResponseTest {
     @Test
     void testWithCreated() {
         //given
-        Response response = Response.withCreated();
+        Response response = Response.created();
         
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.CREATED));
@@ -119,7 +121,7 @@ class ResponseTest {
     @Test
     void testStatusCode() {
         //given
-        Response response = Response.withStatusCode(305);
+        Response response = Response.status(305);
         
         //then
         assertThat(response.getStatusCode(), equalTo(305));
@@ -128,7 +130,7 @@ class ResponseTest {
     @Test
     void testWithRedirect() {
         //given
-        Response response = Response.withRedirect("/foo");
+        Response response = Response.redirect("/foo");
         
         //then
         assertThat(response.getStatusCode(), equalTo(200));
@@ -140,10 +142,10 @@ class ResponseTest {
     @Test
     void testAndTemplate() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andTemplate("mytemplate/foo.ftl");
+        response.template("mytemplate/foo.ftl");
         
         //then
         assertThat(response.getTemplate(), equalTo("mytemplate/foo.ftl"));
@@ -152,59 +154,47 @@ class ResponseTest {
     @Test
     void testAndContentTypes() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andContentType("application/json");
+        response.contentType("application/json");
         
         //then
         assertThat(response.getContentType(), equalTo("application/json"));
     }
-    
+
     @Test
-    void testAndCharset() {
+    void testAndHtmlBody() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andCharset("UTF-8");
+        response.bodyHtml("This is a Body! Remember: Winter is coming!");
         
         //then
-        assertThat(response.getCharset(), equalTo("UTF-8"));
-    }
-    
-    @Test
-    void testAndBody() {
-        //given
-        Response response = Response.withOk();
-        
-        //when
-        response.andCharset("This is a Body! Remember: Winter is coming!");
-        
-        //then
-        assertThat(response.getCharset(), equalTo("This is a Body! Remember: Winter is coming!"));
+        assertThat(response.getBody(), equalTo("This is a Body! Remember: Winter is coming!"));
     }
     
     @Test
     void testAndCookie() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         Cookie cookie = mock(Cookie.class);
         
         //when
-        response.andCookie(cookie);
+        response.cookie(cookie);
         
         //then
-        assertThat(response.getCookies().get(0), equalTo(cookie));
+        assertThat(response.getCookies().getFirst(), equalTo(cookie));
     }
     
     @Test
     void testAndJsonBody() {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andJsonBody(List.of("foo", "bar"));
+        response.bodyJson(List.of("foo", "bar"));
         
         //then
         assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
@@ -215,49 +205,30 @@ class ResponseTest {
     @Test
     void testAndBinaryFile() throws FileNotFoundException, IOException {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         Path file = Paths.get(UUID.randomUUID().toString());
         Files.createFile(file);
-        InputStream fileInpuStream = Files.newInputStream(file);
+        InputStream fileInputStream = Files.newInputStream(file);
         
         //when
-        response.andBinaryFile(file);
+        response.file(file);
         
         //then
         assertThat(response.getBinaryFileName(), equalTo(file.getFileName().toString()));
         assertThat(response.isBinary(), equalTo(true));
         assertThat(response.isRendered(), equalTo(false));
-        assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInpuStream)));
-        fileInpuStream.close();
-        Files.delete(file);
-    }
-    
-    @Test
-    void testAndBinaryConent() throws IOException {
-        //given
-        Response response = Response.withOk();
-        File file = new File(UUID.randomUUID().toString());
-        file.createNewFile();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        
-        //when
-        response.andBinaryContent(IOUtils.toByteArray(fileInputStream));
-        
-        //then
-        assertThat(response.isBinary(), equalTo(true));
-        assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInputStream)));
         fileInputStream.close();
-        assertThat(file.delete(), equalTo(true));
+        Files.delete(file);
     }
-    
+
     @Test
     void testAndTextBody() throws IOException {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andTextBody("This is a text body!");
+        response.bodyText("This is a text body!");
         
         //then
         assertThat(response.isRendered(), equalTo(false));
@@ -268,10 +239,10 @@ class ResponseTest {
     @Test
     void testAndEmptyBody() throws IOException {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andEmptyBody();
+        response.bodyEmpty();
         
         //then
         assertThat(response.isRendered(), equalTo(false));
@@ -282,10 +253,10 @@ class ResponseTest {
     @Test
     void testAndHeader() throws IOException {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andHeader("gzip", "true");
+        response.header("gzip", "true");
         
         //then
         assertThat(response.getHeaders().get(Headers.GZIP), equalTo("true"));
@@ -294,10 +265,10 @@ class ResponseTest {
     @Test
     void testAndEnd() throws IOException {
         //given
-        Response response = Response.withOk();
+        Response response = Response.ok();
         
         //when
-        response.andEndResponse();
+        response.end();
         
         //then
         assertThat(response.isEndResponse(), equalTo(true));
@@ -306,7 +277,7 @@ class ResponseTest {
     @Test
     void testAndUnrenderedText() {
         //given
-        Response response = Response.withOk().andTextBody("");
+        Response response = Response.ok().bodyText("");
         
         //then
         assertThat(response.isRendered(), equalTo(false));
@@ -315,7 +286,7 @@ class ResponseTest {
     @Test
     void testAndUnrenderedHtml() {
         //given
-        Response response = Response.withOk().andHtmlBody("");
+        Response response = Response.ok().bodyHtml("");
         
         //then
         assertThat(response.isRendered(), equalTo(false));

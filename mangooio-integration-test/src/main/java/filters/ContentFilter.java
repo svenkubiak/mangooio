@@ -8,6 +8,6 @@ public class ContentFilter implements PerRequestFilter {
 
     @Override
     public Response execute(Request request, Response response) {
-        return response.andContent("foo", "bar");
+        return response.render("foo", "bar");
     }
 }

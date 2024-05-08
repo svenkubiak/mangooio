@@ -21,11 +21,11 @@ public class FormController {
     private static final int MAX_SIZE = 12;
 
     public Response form() {
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response multivalued(Form form) {
-        return Response.withOk().andContent("values", form.getValueList("foo"));
+        return Response.ok().render("values", form.getValueList("foo"));
     }
     
     public Response singlefile(Form form) {
@@ -40,7 +40,7 @@ public class FormController {
             }
         }
 
-        return Response.withOk().andTextBody(content);
+        return Response.ok().bodyText(content);
     }
     
     @SuppressWarnings("all")
@@ -70,19 +70,19 @@ public class FormController {
         form.expectMinLength("fax", MIN_SIZE);
 
         if (form.isValid()) {
-            return Response.withOk().andTextBody("Fancy that!");
+            return Response.ok().andTextBody("Fancy that!");
         }
 
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response flashify() {
-        return Response.withOk();
+        return Response.ok();
     }
     
     public Response submit(Form form) {
         form.keep();
         
-        return Response.withRedirect("/flashify");
+        return Response.redirect("/flashify");
     }
 }

@@ -10,6 +10,6 @@ import io.mangoo.routing.Response;
 
 public class BasicAuthenticationController {
     public Response basicauth() {
-        return Response.withOk().andTextBody("authenticated");
+        return Response.ok().bodyText("authenticated");
     }
 }

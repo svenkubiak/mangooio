@@ -15,10 +15,10 @@ public class FlashController {
         flash.setWarning(WARNING);
         flash.setSuccess(SUCCESS);
 
-        return Response.withRedirect("/flashed");
+        return Response.redirect("/flashed");
     }
 
     public Response flashed() {
-        return Response.withOk();
+        return Response.ok();
     }
 }

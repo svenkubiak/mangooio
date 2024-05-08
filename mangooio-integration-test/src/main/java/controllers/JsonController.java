@@ -10,25 +10,25 @@ public class JsonController {
 
     public Response render() {
         var person = new Person("Peter", "Parker", AGE);
-        return Response.withOk().andJsonBody(person);
+        return Response.ok().bodyJson(person);
     }
     
     public Response jsonBody() {
         var person = new Person("Peter", "Parker", AGE);
         String json = JsonUtils.toJson(person);
         
-        return Response.withOk().andJsonBody(json);
+        return Response.ok().bodyJson(json);
     }
 
     public Response parse(Person person) {
-        return Response.withOk().andContent("person", person);
+        return Response.ok().render("person", person);
     }
 
     public Response body(Request request) {
-        return Response.withOk().andTextBody(request.getURI());
+        return Response.ok().bodyText(request.getURI());
     }
 
     public Response requestAndJson(Request request, Person person) {
-        return Response.withOk().andTextBody(request.getURI() + person.getFirstname());
+        return Response.ok().bodyText(request.getURI() + person.getFirstname());
     }
 }
