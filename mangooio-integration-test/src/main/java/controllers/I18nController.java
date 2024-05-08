@@ -13,7 +13,7 @@ public class I18nController {
     }
     
     public Response localize() {
-        Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME.toString(), "en");
+        Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME, "en");
         return Response.ok().cookie(cookie);
     }
     

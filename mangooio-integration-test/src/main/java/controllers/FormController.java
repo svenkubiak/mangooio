@@ -55,7 +55,7 @@ public class FormController {
             }
         }
         
-        return Response.withOk().andTextBody(content + files.size());
+        return Response.ok().bodyText(content + files.size());
     }
 
     public Response validateform(Form form) {
@@ -70,7 +70,7 @@ public class FormController {
         form.expectMinLength("fax", MIN_SIZE);
 
         if (form.isValid()) {
-            return Response.ok().andTextBody("Fancy that!");
+            return Response.ok().bodyText("Fancy that!");
         }
 
         return Response.ok();
