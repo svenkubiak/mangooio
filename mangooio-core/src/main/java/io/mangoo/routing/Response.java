@@ -40,9 +40,9 @@ public class Response {
         //Empty constructor for Google Guice
     }
 
-    private Response(int statusCode) {
+    private Response(int statusCode, boolean rendered) {
         this.statusCode = statusCode;
-        this.rendered = true;
+        this.rendered = rendered;
     }
 
     private Response(String redirectTo) {
@@ -122,16 +122,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withOk() {
-        return new Response(StatusCodes.OK);
+        return new Response(StatusCodes.OK, true);
     }
 
     /**
      * Creates a response object with HTTP status code 200
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response ok() {
-        return new Response(StatusCodes.OK);
+        return new Response(StatusCodes.OK, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 200
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response okEmpty() {
+        return new Response(StatusCodes.OK, false);
     }
 
     /**
@@ -142,16 +153,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withCreated() {
-        return new Response(StatusCodes.CREATED);
+        return new Response(StatusCodes.CREATED, true);
     }
 
     /**
      * Creates a response object with HTTP status code 201
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response created() {
-        return new Response(StatusCodes.CREATED);
+        return new Response(StatusCodes.CREATED, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 201
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response createdEmpty() {
+        return new Response(StatusCodes.CREATED, false);
     }
 
     /**
@@ -162,16 +184,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withNotFound() {
-        return new Response(StatusCodes.NOT_FOUND);
+        return new Response(StatusCodes.NOT_FOUND, true);
     }
 
     /**
      * Creates a response object with HTTP status code 404
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response notFound() {
-        return new Response(StatusCodes.NOT_FOUND);
+        return new Response(StatusCodes.NOT_FOUND, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 404
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response notFoundEmpty() {
+        return new Response(StatusCodes.NOT_FOUND, false);
     }
 
     /**
@@ -182,16 +215,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withForbidden() {
-        return new Response(StatusCodes.FORBIDDEN);
+        return new Response(StatusCodes.FORBIDDEN, true);
     }
 
     /**
      * Creates a response object with HTTP status code 401
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response forbidden() {
-        return new Response(StatusCodes.FORBIDDEN);
+        return new Response(StatusCodes.FORBIDDEN, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 401
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response forbiddenEmpty() {
+        return new Response(StatusCodes.FORBIDDEN, true);
     }
 
     /**
@@ -202,16 +246,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withUnauthorized() {
-        return new Response(StatusCodes.UNAUTHORIZED);
+        return new Response(StatusCodes.UNAUTHORIZED, true);
     }
 
     /**
      * Creates a response object with HTTP status code 403
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response unauthorized() {
-        return new Response(StatusCodes.UNAUTHORIZED);
+        return new Response(StatusCodes.UNAUTHORIZED, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 403
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response unauthorizedEmpty() {
+        return new Response(StatusCodes.UNAUTHORIZED, false);
     }
 
     /**
@@ -222,16 +277,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withBadRequest() {
-        return new Response(StatusCodes.BAD_REQUEST);
+        return new Response(StatusCodes.BAD_REQUEST, true);
     }
 
     /**
      * Creates a response object with HTTP status code 400
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response badRequest() {
-        return new Response(StatusCodes.BAD_REQUEST);
+        return new Response(StatusCodes.BAD_REQUEST, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 400
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response badRequestEmpty() {
+        return new Response(StatusCodes.BAD_REQUEST, false);
     }
     
     /**
@@ -242,16 +308,27 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withInternalServerError() {
-        return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR, true);
     }
 
     /**
      * Creates a response object with HTTP status code 500
+     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response internalServerError() {
-        return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR, true);
+    }
+
+    /**
+     * Creates a response object with HTTP status code 500
+     * and an empty body without rendering a template
+     *
+     * @return The response object
+     */
+    public static Response internalServerErrorEmpty() {
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR, false);
     }
 
     /**
@@ -263,17 +340,29 @@ public class Response {
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public static Response withStatusCode(int statusCode) {
-        return new Response(statusCode);
+        return new Response(statusCode, true);
     }
 
     /**
      * Creates a response object with a given HTTP status code
+     * and rendering a response body from a template
      *
      * @param statusCode The status code to set
      * @return The response object
      */
     public static Response status(int statusCode) {
-        return new Response(statusCode);
+        return new Response(statusCode, true);
+    }
+
+    /**
+     * Creates a response object with a given HTTP status code
+     * and an empty body without rendering a template
+     *
+     * @param statusCode The status code to set
+     * @return The response object
+     */
+    public static Response statusEmpty(int statusCode) {
+        return new Response(statusCode, false);
     }
 
     /**
