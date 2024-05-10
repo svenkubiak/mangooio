@@ -524,7 +524,7 @@ public class Response {
 
     /**
      * Sends a binary file to the client skipping rendering
-     * @deprecated As of release 8.6.0, replaced by {@link #file(Path)}
+     * @deprecated As of release 8.6.0 with not replacement
      *
      * @param file The file to send
      * @return The response object
@@ -532,28 +532,6 @@ public class Response {
     @Deprecated(since = "8.6.0", forRemoval = true)
     @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public Response andBinaryFile(Path file) {
-        Objects.requireNonNull(file, NotNull.FILE);
-
-        try (var inputStream = Files.newInputStream(file)) {
-            binaryFileName = file.getFileName().toString();
-            binaryContent = IOUtils.toByteArray(inputStream);
-            binary = true;
-            rendered = false;
-        } catch (final IOException e) {
-            LOG.error("Failed to handle binary file", e);
-        }
-
-        return this;
-    }
-
-    /**
-     * Sends a binary file to the client skipping rendering
-     *
-     * @param file The file to send
-     * @return The response object
-     */
-    @SuppressFBWarnings(justification = "null check of file on entry point of method", value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
-    public Response file(Path file) {
         Objects.requireNonNull(file, NotNull.FILE);
 
         try (var inputStream = Files.newInputStream(file)) {

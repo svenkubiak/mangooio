@@ -211,7 +211,7 @@ class ResponseTest {
         InputStream fileInputStream = Files.newInputStream(file);
         
         //when
-        response.file(file);
+        response.andBinaryFile(file);
         
         //then
         assertThat(response.getBinaryFileName(), equalTo(file.getFileName().toString()));

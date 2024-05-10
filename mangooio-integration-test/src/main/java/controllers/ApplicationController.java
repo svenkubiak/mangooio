@@ -98,7 +98,7 @@ public class ApplicationController {
         final var url = this.getClass().getResource("/attachment.txt");
         final var file = Paths.get(url.toURI());
         
-        return Response.ok().file(file);
+        return Response.ok().andBinaryFile(file);
     }
 
     public Response request(Request request) {
