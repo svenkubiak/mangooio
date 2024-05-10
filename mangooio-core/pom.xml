@@ -36,6 +36,10 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
 					<artifactId>jboss-logging-processor</artifactId>
 				</exclusion>
 				<exclusion>
