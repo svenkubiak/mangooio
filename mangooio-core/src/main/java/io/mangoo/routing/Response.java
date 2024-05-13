@@ -136,16 +136,6 @@ public class Response {
     }
 
     /**
-     * Creates a response object with HTTP status code 200
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response okEmpty() {
-        return new Response(StatusCodes.OK, false);
-    }
-
-    /**
      * Creates a response object with HTTP status code 201
      * @deprecated As of release 8.6.0, replaced by {@link #created()}
      *
@@ -164,16 +154,6 @@ public class Response {
      */
     public static Response created() {
         return new Response(StatusCodes.CREATED, true);
-    }
-
-    /**
-     * Creates a response object with HTTP status code 201
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response createdEmpty() {
-        return new Response(StatusCodes.CREATED, false);
     }
 
     /**
@@ -198,16 +178,6 @@ public class Response {
     }
 
     /**
-     * Creates a response object with HTTP status code 404
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response notFoundEmpty() {
-        return new Response(StatusCodes.NOT_FOUND, false);
-    }
-
-    /**
      * Creates a response object with HTTP status code 401
      * @deprecated As of release 8.6.0, replaced by {@link #forbidden()}
      *
@@ -225,16 +195,6 @@ public class Response {
      * @return The response object
      */
     public static Response forbidden() {
-        return new Response(StatusCodes.FORBIDDEN, true);
-    }
-
-    /**
-     * Creates a response object with HTTP status code 401
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response forbiddenEmpty() {
         return new Response(StatusCodes.FORBIDDEN, true);
     }
 
@@ -260,16 +220,6 @@ public class Response {
     }
 
     /**
-     * Creates a response object with HTTP status code 403
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response unauthorizedEmpty() {
-        return new Response(StatusCodes.UNAUTHORIZED, false);
-    }
-
-    /**
      * Creates a response object with HTTP status code 400
      * @deprecated As of release 8.6.0, replaced by {@link #badRequest()}
      *
@@ -291,16 +241,6 @@ public class Response {
     }
 
     /**
-     * Creates a response object with HTTP status code 400
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response badRequestEmpty() {
-        return new Response(StatusCodes.BAD_REQUEST, false);
-    }
-    
-    /**
      * Creates a response object with HTTP status code 500
      * @deprecated As of release 8.6.0, replaced by {@link #internalServerError()}
      *
@@ -319,16 +259,6 @@ public class Response {
      */
     public static Response internalServerError() {
         return new Response(StatusCodes.INTERNAL_SERVER_ERROR, true);
-    }
-
-    /**
-     * Creates a response object with HTTP status code 500
-     * and an empty body without rendering a template
-     *
-     * @return The response object
-     */
-    public static Response internalServerErrorEmpty() {
-        return new Response(StatusCodes.INTERNAL_SERVER_ERROR, false);
     }
 
     /**
@@ -352,17 +282,6 @@ public class Response {
      */
     public static Response status(int statusCode) {
         return new Response(statusCode, true);
-    }
-
-    /**
-     * Creates a response object with a given HTTP status code
-     * and an empty body without rendering a template
-     *
-     * @param statusCode The status code to set
-     * @return The response object
-     */
-    public static Response statusEmpty(int statusCode) {
-        return new Response(statusCode, false);
     }
 
     /**
