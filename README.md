@@ -6,7 +6,7 @@ mangoo I/O
 
 mangoo I/O is a Modern, Intuitive, Lightweight, High Performance Full Stack Java Web Framework.
 
-It is a classic MVC-Framework. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no magic whatsoever. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1200 checks. Additionally each build is checked against [Loader.io](http://loader.io/) to ensure, that code changes do not decrease the framework performance.
+It is a classic MVC-Framework. The foundation of mangoo I/O is the high performant [Undertow web server](http://undertow.io/) from JBoss. On top of that, standard, production ready Java libraries are used - no reinventing of the wheel, no actual magic. Constantly checked against [SonarQube](http://www.sonarqube.org/) with a rule set of more than 1.300 checks. 
 
 mangoo I/O focuses on having a developer friendly, fluent and easy to understand web framework with a small learning curve for the Java ecosystem.
 
@@ -26,7 +26,7 @@ Here are some key features of mangoo I/O in a nutshell:
 * Simple and self-explaining form handling and validation
 * Plain scheduling for recurring tasks  
 * Build-in authentication
-* Programmatically routing configuration
+* Programmatic routing configuration
 * Easy handling of JSON in- and output
 * Simple global or per request filters
 * Strong cryptography and enforced security
@@ -50,7 +50,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Caffeine](https://github.com/ben-manes/caffeine) – Caching
 * [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
 * [Freemarker](http://freemarker.org/) – Template engine
-* [Jackson](https://github.com/FasterXML/jackson) – JSON Handling
+* [Jackson](https://github.com/FasterXML/jackson) – JSON handling
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
 * [Bouncy Castle](https://www.bouncycastle.org/) – Strong hashing and cryptography
 * And many more …
