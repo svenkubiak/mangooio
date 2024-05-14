@@ -81,29 +81,29 @@ public class AdminController {
                 errorRate = (HUNDRED_PERCENT / totalRequests) * errorRequests;
             }
             
-            return Response.withOk()
-                    .andContent(ENABLED, Boolean.TRUE)
-                    .andContent(METRICS, metrics.getResponseMetrics())
-                    .andContent("uptime", Date.from(instant))
-                    .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS))
-                    .andContent("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
-                    .andContent("totalRequests", totalRequests)
-                    .andContent("minRequestTime", metrics.getMinRequestTime())
-                    .andContent("avgRequestTime", metrics.getAvgRequestTime())
-                    .andContent("maxRequestTime", metrics.getMaxRequestTime())
-                    .andContent("errorRate", errorRate)
-                    .andContent("events", stream.getHandledEvents())
-                    .andContent("subscribers", stream.getNumberOfSubscribers())
-                    .andTemplate(Template.adminPath());
+            return Response.ok()
+                    .render(ENABLED, Boolean.TRUE)
+                    .render(METRICS, metrics.getResponseMetrics())
+                    .render("uptime", Date.from(instant))
+                    .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
+                    .render("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
+                    .render("totalRequests", totalRequests)
+                    .render("minRequestTime", metrics.getMinRequestTime())
+                    .render("avgRequestTime", metrics.getAvgRequestTime())
+                    .render("maxRequestTime", metrics.getMaxRequestTime())
+                    .render("errorRate", errorRate)
+                    .render("events", stream.getHandledEvents())
+                    .render("subscribers", stream.getNumberOfSubscribers())
+                    .template(Template.adminPath());
         }
         
-        return Response.withOk()
-                .andContent(ENABLED, Boolean.FALSE)
-                .andContent("uptime", Date.from(instant))
-                .andContent("events", stream.getHandledEvents())
-                .andContent("subscribers", stream.getNumberOfSubscribers())
-                .andContent("warnings", cache.get(Key.MANGOOIO_WARNINGS))
-                .andTemplate(Template.adminPath());
+        return Response.ok()
+                .render(ENABLED, Boolean.FALSE)
+                .render("uptime", Date.from(instant))
+                .render("events", stream.getHandledEvents())
+                .render("subscribers", stream.getNumberOfSubscribers())
+                .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
+                .template(Template.adminPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -113,16 +113,16 @@ public class AdminController {
             statistics.put(entry.getKey(), ((CacheImpl) entry.getValue()).getStats()); //NOSONAR
         }
         
-        return Response.withOk()
-                .andContent("statistics", statistics)
-                .andTemplate(Template.cachePath());
+        return Response.ok()
+                .render("statistics", statistics)
+                .template(Template.cachePath());
     }
 
 
     @FilterWith(AdminFilter.class)
     public Response scheduler() {
         Scheduler scheduler = Application.getInstance(Scheduler.class);
-        return Response.withOk().andContent("scheduler", scheduler).andTemplate(Template.schedulerPath());
+        return Response.ok().render("scheduler", scheduler).template(Template.schedulerPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -135,10 +135,10 @@ public class AdminController {
             qrCode = TotpUtils.getQRCode("mangoo_IO_Admin", PATTERN.matcher(config.getApplicationName()).replaceAll(""), secret, Hmac.SHA512, DIGITS, PERIOD);
         }
 
-        return Response.withOk()
-                .andContent("qrcode", qrCode)
-                .andContent("secret", secret)
-                .andTemplate(Template.toolsPath());
+        return Response.ok()
+                .render("qrcode", qrCode)
+                .render("secret", secret)
+                .template(Template.toolsPath());
     }
 
     @FilterWith(AdminFilter.class)
@@ -170,12 +170,12 @@ public class AdminController {
             }
         }
 
-        return Response.withOk().andJsonBody(response);
+        return Response.ok().bodyJson(response);
     }
     
     public Response login() {
-        return Response.withOk()
-                .andTemplate(Template.loginPath());
+        return Response.ok()
+                .template(Template.loginPath());
     }
     
     public Response logout() {
@@ -189,7 +189,7 @@ public class AdminController {
                 .setSameSite(true)
                 .setSameSiteMode("Strict");
         
-        return Response.withRedirect(ADMIN_INDEX).andCookie(cookie);
+        return Response.redirect(ADMIN_INDEX).cookie(cookie);
     }
     
     public Response authenticate(Form form) {
@@ -199,7 +199,7 @@ public class AdminController {
         if (AdminUtils.isNotLocked() && form.isValid()) {
             if (AdminUtils.isValidAuthentication(form)) {
                 resetLockCounter();
-                return Response.withRedirect(ADMIN_INDEX).andCookie(AdminUtils.getAdminCookie(true));
+                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(true));
             } else {
                 AdminUtils.invalidAuthentication();
             }
@@ -207,7 +207,7 @@ public class AdminController {
         form.invalidate();
         form.keep();
         
-        return Response.withRedirect("/@admin/login");
+        return Response.redirect("/@admin/login");
     }
 
     public Response verify(Form form) {
@@ -215,7 +215,7 @@ public class AdminController {
         
         if (AdminUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
-                return Response.withRedirect(ADMIN_INDEX).andCookie(AdminUtils.getAdminCookie(false));
+                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
             } else {
                 AdminUtils.invalidAuthentication();
             }
@@ -223,10 +223,10 @@ public class AdminController {
         form.invalidate();
         form.keep();
         
-        return Response.withRedirect("/@admin/twofactor");
+        return Response.redirect("/@admin/twofactor");
     }
     
     public Response twofactor() {
-        return Response.withOk().andTemplate(Template.twofactorPath());
+        return Response.ok().template(Template.twofactorPath());
     }
 }

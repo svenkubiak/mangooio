@@ -265,7 +265,7 @@ public class Config {
             return defaultValue;
         }
 
-        return Boolean.parseBoolean(value);
+        return Boolean.valueOf(value);
     }
 
     /**
