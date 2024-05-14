@@ -1,7 +1,6 @@
 package io.mangoo.utils.token;
 
 import dev.paseto.jpaseto.Paseto;
-import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.NotNull;
 
 import java.time.LocalDateTime;
@@ -21,27 +20,16 @@ public class Token {
     public LocalDateTime getExpiration() {
         return LocalDateTime.ofInstant(paseto.getClaims().getExpiration(), ZoneOffset.UTC);
     }
-
+    
     /**
      * @param claimKey The claim key to check
      * 
      * @return True if the claim exists, false otherwise
      */
-    public boolean containsClaim(ClaimKey claimKey) {
-        Objects.requireNonNull(claimKey, NotNull.CLAIM_KEY);
+    public boolean containsClaim(String claimKey) {
+        Objects.requireNonNull(claimKey, NotNull.KEY);
         
-        return containsClaim(claimKey);
-    }
-    
-    /**
-     * @param key The claim key to check
-     * 
-     * @return True if the claim exists, false otherwise
-     */
-    public boolean containsClaim(String key) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        
-        return paseto.getClaims().containsKey(key);
+        return paseto.getClaims().containsKey(claimKey);
     }
 
     /**
@@ -59,31 +47,16 @@ public class Token {
     /**
      * 
      * @param <T> undefined
-     * @param claimKey The claim key to check
+     * @param claimKey The key to check
      * @param clazz The class to convert to
      * 
      * @return The claim value converted to the given class to convert
      */
-    public <T> T getClaim(ClaimKey claimKey, Class<T> clazz) {
-        Objects.requireNonNull(claimKey, NotNull.CLAIM_KEY);
+    public <T> T getClaim(String claimKey, Class<T> clazz) {
+        Objects.requireNonNull(claimKey, NotNull.KEY);
         Objects.requireNonNull(clazz, NotNull.CLASS);
         
-        return getClaim(claimKey, clazz);
-    }
-    
-    /**
-     * 
-     * @param <T> undefined
-     * @param key The key to check
-     * @param clazz The class to convert to
-     * 
-     * @return The claim value converted to the given class to convert
-     */
-    public <T> T getClaim(String key, Class<T> clazz) {
-        Objects.requireNonNull(key, NotNull.KEY);
-        Objects.requireNonNull(clazz, NotNull.CLASS);
-        
-        return paseto.getClaims().get(key, clazz);
+        return paseto.getClaims().get(claimKey, clazz);
     }
 
     /**

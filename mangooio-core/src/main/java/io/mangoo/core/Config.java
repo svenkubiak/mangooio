@@ -259,7 +259,7 @@ public class Config {
      * @param defaultValue The default value to return of no key is found
      * @return The configured value as boolean or the passed defautlValue if the key is not configured
      */
-    public boolean getBoolean(String key, boolean defaultValue) {
+    public Boolean getBoolean(String key, boolean defaultValue) {
         final String value = props.getValue(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;

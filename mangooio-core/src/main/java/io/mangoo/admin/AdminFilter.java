@@ -1,5 +1,6 @@
 package io.mangoo.admin;
 
+import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -31,11 +32,11 @@ public class AdminFilter implements PerRequestFilter {
                         .parse();
 
                     if (token.expirationIsAfter(LocalDateTime.now())) {
-                        if (token.containsClaim("twofactor") && token.getClaim("twofactor", Boolean.class)) {
-                            return Response.withRedirect("/@admin/twofactor").andEndResponse();
+                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaim(ClaimKey.TWO_FACTOR, Boolean.class)) {
+                            return Response.redirect("/@admin/twofactor").end();
                         }
                         
-                        response.andContent("version", VERSION_TAG);
+                        response.render("version", VERSION_TAG);
                         return response;
                     }
                 } catch (MangooTokenException e) {
@@ -44,6 +45,6 @@ public class AdminFilter implements PerRequestFilter {
             }
         }
         
-        return Response.withRedirect("/@admin/login").andEndResponse();
+        return Response.redirect("/@admin/login").end();
     }
 }
