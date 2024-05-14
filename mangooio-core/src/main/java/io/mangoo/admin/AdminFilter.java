@@ -32,7 +32,7 @@ public class AdminFilter implements PerRequestFilter {
                         .parse();
 
                     if (token.expirationIsAfter(LocalDateTime.now())) {
-                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaim(ClaimKey.TWO_FACTOR, boolean.class)) {
+                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaim(ClaimKey.TWO_FACTOR, Boolean.class)) {
                             return Response.redirect("/@admin/twofactor").end();
                         }
                         
