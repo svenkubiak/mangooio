@@ -1,13 +1,13 @@
 package io.mangoo.utils;
 
-import io.mangoo.TestExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-@ExtendWith({TestExtension.class})
+@Execution(ExecutionMode.CONCURRENT)
 class ByteUtilsTest {
     
     @Test

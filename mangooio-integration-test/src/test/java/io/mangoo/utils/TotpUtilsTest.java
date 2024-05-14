@@ -6,14 +6,15 @@ import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.totp.TotpUtils;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@ExtendWith({TestExtension.class})
+@Execution(ExecutionMode.CONCURRENT)
 class TotpUtilsTest {
 	private static final int PASSWORD_LENGTH = 6;
 	private static final int SECRET_LENGTH = 64;

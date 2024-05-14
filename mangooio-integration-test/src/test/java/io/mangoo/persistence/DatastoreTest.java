@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class DatastoreTest {
-    private static final int THREADS = 50;
     private static Datastore datastore;
 
     @BeforeAll
@@ -44,7 +43,7 @@ class DatastoreTest {
             
             // then
             return datastore.query(TestModel.class).find(eq("name", name)).first() != null;
-        }, new ConcurrentRunner<>(new AtomicInteger(), THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test
@@ -126,7 +125,7 @@ class DatastoreTest {
             
             // then
             return datastore.find(TestModel.class, eq("name", name)) != null;
-        }, new ConcurrentRunner<>(new AtomicInteger(), THREADS));
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
     @Test

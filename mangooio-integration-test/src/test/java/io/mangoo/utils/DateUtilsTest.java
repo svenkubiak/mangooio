@@ -4,7 +4,8 @@ import io.mangoo.TestExtension;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@ExtendWith({TestExtension.class})
+@Execution(ExecutionMode.CONCURRENT)
 class DateUtilsTest {
     
     @Test
