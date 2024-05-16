@@ -117,7 +117,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>9.1.0</version>
+					<version>9.2.0</version>
 					<configuration>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
@@ -588,7 +588,7 @@
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
-				<version>1.3.1</version>
+				<version>1.3.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
