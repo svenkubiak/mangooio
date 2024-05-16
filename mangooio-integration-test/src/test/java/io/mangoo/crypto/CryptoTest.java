@@ -8,6 +8,8 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -26,6 +28,7 @@ import static org.hamcrest.Matchers.*;
  */
 @ExtendWith({TestExtension.class})
 @SuppressWarnings("unchecked")
+@Execution(ExecutionMode.SAME_THREAD)
 class CryptoTest {
     private static final String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
     private static final String plainText = "This is a super secret message!";

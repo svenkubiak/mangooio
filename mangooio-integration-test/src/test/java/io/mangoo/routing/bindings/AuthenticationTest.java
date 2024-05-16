@@ -4,6 +4,8 @@ import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
  *
  */
 @ExtendWith({TestExtension.class})
+@Execution(ExecutionMode.SAME_THREAD)
 class AuthenticationTest {
     private static final String SALT = "6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";
     private static final String VALID_HASH = "$2a$12$Vyb9AT6IeDg6szfIfJKOsuhfZHtqWU4W7O6BpvNFhfI8Kjb64p9Pi";

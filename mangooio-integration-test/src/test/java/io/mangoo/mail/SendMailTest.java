@@ -16,6 +16,8 @@ import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +39,7 @@ import static org.hamcrest.Matchers.equalTo;
  *
  */
 @ExtendWith({TestExtension.class})
+@Execution(ExecutionMode.SAME_THREAD)
 class SendMailTest {
     private static GreenMail greenMail;
     private static SmtpMock smtp;
