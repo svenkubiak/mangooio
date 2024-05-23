@@ -280,7 +280,7 @@ public final class Application {
     @SuppressWarnings("unchecked")
     private static void prepareSubscriber(ScanResult scanResult) {
         scanResult.getClassesImplementing(Subscriber.class).forEach(classInfo -> {
-            MethodInfo methodInfo = classInfo.getMethodInfo().getFirst();
+            var methodInfo = classInfo.getMethodInfo().getFirst();
             if (("receive").equals(methodInfo.getName())) {
                 var methodParameterInfo = Arrays.asList(methodInfo.getParameterInfo()).getFirst();
                 var descriptor = methodParameterInfo.getTypeDescriptor().toString();

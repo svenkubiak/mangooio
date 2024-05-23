@@ -28,7 +28,7 @@ public enum Binding {
     UNDEFINED("undefined");
 
     private final String value;
-    private final static Map<String, Binding> values;
+    private static final Map<String, Binding> values;
     static {
         Map<String, Binding> bindings = Maps.newHashMapWithExpectedSize(Binding.values().length);
         for (Binding binding : Binding.values()) {

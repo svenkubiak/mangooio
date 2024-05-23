@@ -2,7 +2,6 @@ package io.mangoo.utils.token;
 
 import dev.paseto.jpaseto.PasetoV2LocalBuilder;
 import dev.paseto.jpaseto.Pasetos;
-import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.NotNull;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.utils.MangooUtils;
@@ -39,12 +38,7 @@ public class TokenBuilder {
 
         return this;
     }
-    
-    public TokenBuilder withClaim(ClaimKey claimKey, Object value) {
-        withClaim(claimKey, value);
-        return this;
-    }
-    
+
     public TokenBuilder withClaim(String key, Object value) {
         Objects.requireNonNull(key, NotNull.KEY);
         claims.put(key, value);
