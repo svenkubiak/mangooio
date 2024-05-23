@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<properties>
-		<mangooio.version>8.5.0</mangooio.version>
+		<mangooio.version>8.6.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>21</jdk.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -36,7 +36,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.13.0</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -59,7 +59,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
+				<version>3.4.1</version>
 				<configuration>
 					<excludes>
 						<exclude>**/log4j2-test*</exclude>
@@ -69,7 +69,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.5.2</version>
+				<version>3.5.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -179,7 +179,7 @@
 					<dependency>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>extra-enforcer-rules</artifactId>
-						<version>1.7.0</version>
+						<version>1.8.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>
