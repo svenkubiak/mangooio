@@ -641,6 +641,15 @@
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<systemPropertyVariables>
+								<de.flapdoodle.os.override>Linux|ARM_64|Ubuntu|Ubuntu_22_04</de.flapdoodle.os.override>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<version>3.3.1</version>
 						<executions>
