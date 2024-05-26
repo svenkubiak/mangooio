@@ -191,11 +191,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>3.2.5</version>
-					<configuration>
-						<systemPropertyVariables>
-							<de.flapdoodle.os.override>Linux|ARM_64|Ubuntu|Ubuntu_22_04</de.flapdoodle.os.override>
-						</systemPropertyVariables>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -331,7 +326,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.0</version>
+				<version>8.1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
