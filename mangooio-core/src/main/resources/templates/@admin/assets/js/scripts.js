@@ -1,85 +1,51 @@
-// The following code is based off a toggle menu by @Bradcomp
-// source: https://gist.github.com/Bradcomp/a9ef2ef322a8e8017443b626208999c1
-(function() {
-    var burger = document.querySelector('.burger');
-    var menu = document.querySelector('#'+burger.dataset.target);
-    burger.addEventListener('click', function() {
-        burger.classList.toggle('is-active');
-        menu.classList.toggle('is-active');
-    });
+(function () {
+	let burger = document.querySelector('.burger');
+	let menu = document.querySelector('#' + burger.dataset.target);
+	burger.addEventListener('click', function () {
+		burger.classList.toggle('is-active');
+		menu.classList.toggle('is-active');
+	});
 })();
 
-$(document).ready(function(){
-  var $table = $("table").stupidtable();
-	var $th_to_sort = $table.find("thead th").eq(0);
+$(document).ready(function () {
+	let $table = $("table").stupidtable();
+	let $th_to_sort = $table.find("thead th").eq(0);
 	$th_to_sort.stupidsort();
-  	(function ($) {
-          $('#filter').keyup(function () {
-              var rex = new RegExp($(this).val(), 'i');
-              $('.searchable tr').hide();
-              $('.searchable tr').filter(function () {
-                  return rex.test($(this).text());
-              }).show();
-          })
-      }(jQuery));
-
-      $("#keypair").click(function() {
-		$.ajax({
-  			type: "POST",
-  			processData: false,
-  			contentType : 'application/json',
-  			url: "/@admin/tools",
-  			data: JSON.stringify({ "function": "keypair"}),
-  			dataType: "json",
-  			success: function(data){
-				var keypair = data;
-				$("#publickey").val(keypair.publickey);
-				$("#privatekey").val(keypair.privatekey);
-  			}
-		});
-	  });
-
-	  $("#encrypt").click(function() {
-	  	var cleartext = $("#cleartext").val();
-	  	var pubkey = $("#pubkey").val();
-
-		$.ajax({
-  			type: "POST",
-  			processData: false,
-  			contentType : 'application/json',
-  			url: "/@admin/tools",
-  			data: JSON.stringify({ "function": "encrypt", "cleartext" : cleartext, "key" : pubkey }),
-  			dataType: "json",
-  			success: function(data){
-				$("#encryptedvalue").val(data.encrypted);
-  			}
-		});
-	  });
-
-	$( ".loglevel" ).change(function() {
-		var $this = $(this);
-		var level = $this.val();
-		var clazz = $(this).data("class");
-
-		$.ajax({
-	  			type: "POST",
-	  			processData: false,
-	  			contentType : 'application/json',
-	  			url: "/@admin/logger/ajax",
-	  			data: JSON.stringify({ "class": clazz, "level" : level }),
-	  			dataType: "text",
-	  			success: function(data){
-	  				$(".logger-notification").show();
-	  				$(".logger-notification").delay(5000).fadeOut("slow");
-	  			}
-		});
-    });
+	(function ($) {
+		$('#filter').keyup(function () {
+			let rex = new RegExp($(this).val(), 'i');
+			$('.searchable tr').hide();
+			$('.searchable tr').filter(function () {
+				return rex.test($(this).text());
+			}).show();
+		})
+	}(jQuery));
 });
 
-var elems = document.getElementsByClassName('confirmation');
-var confirmIt = function (e) {
-    if (!confirm('Are you sure you want to ' + this.getAttribute('confirm-data') + ' ?')) e.preventDefault();
-};
-for (var i = 0, l = elems.length; i < l; i++) {
-    elems[i].addEventListener('click', confirmIt, false);
-}
+document.getElementById("keypair").addEventListener('click', () => {
+	fetch("/@admin/tools", {
+		method: "POST",
+		body: JSON.stringify({"function": "keypair"}),
+		headers: {
+			"Content-type": "application/json"
+		}
+	}).then(response => response.json().then(data => {
+		document.getElementById("publickey").value = data.publickey;
+		document.getElementById("privatekey").value = data.privatekey;
+	}))
+});
+
+document.getElementById("encrypt").addEventListener('click', () => {
+	let cleartext = document.getElementById("cleartext").value;
+	let pubkey = document.getElementById("pubkey").value;
+
+	fetch("/@admin/tools", {
+		method: "POST",
+		body: JSON.stringify({"function": "encrypt", "cleartext": cleartext, "key": pubkey}),
+		headers: {
+			"Content-type": "application/json"
+		}
+	}).then(response => response.json().then(data => {
+		document.getElementById("encryptedvalue").value = data.encrypted;
+	}))
+});
