@@ -382,7 +382,7 @@
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
 				<artifactId>org.eclipse.sisu.inject</artifactId>
-				<version>0.9.0.M2</version>
+				<version>0.9.0.M3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
