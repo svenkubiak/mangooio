@@ -18,12 +18,12 @@ public class ApplicationController {
     
     public Response index() {
         String hello = "Hello World!";
-        return Response.withOk().andContent("hello", hello);
+        return Response.ok().render("hello", hello);
     }
     
     public Response persons() {
         List<Person> persons = this.datastore.findAll(Person.class);
         
-        return Response.withOk().andContent("persons", persons);
+        return Response.ok().render("persons", persons);
     }
 }
