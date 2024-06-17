@@ -227,6 +227,6 @@ public class AdminController {
     }
     
     public Response twofactor() {
-        return Response.ok().template(Template.twofactorPath());
+        return Response.ok().template(Template.twoFactorPath());
     }
 }

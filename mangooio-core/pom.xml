@@ -434,6 +434,18 @@
 							<fail>true</fail>
 						</configuration>
 					</execution>
+					<execution>
+						<id>ban-dynamic-versions</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<banDynamicVersions />
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
 				</executions>
 				<dependencies>
 					<dependency>
