@@ -11,7 +11,6 @@ public final class Template {
     private static final String SCHEDULER_TEMPLATE_PATH = "@admin/scheduler.ftl";
     private static final String LOGIN_TEMPLATE_PATH = "@admin/login.ftl";
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
-    private static final String TOO_MANY_REQUESTS_TEMPLATE_PATH = "defaults/429.html";
     private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twofactor.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
     private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
@@ -21,14 +20,12 @@ public final class Template {
     private static final String NOT_FOUND_CONTENT;
     private static final String SERVER_ERROR_CONTENT;
     private static final String UNAUTHORIZED_CONTENT;
-    private static final String TOO_MANY_REQUESTS_CONTENT;
     static {
         NOT_FOUND_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + NOT_FOUND_TEMPLATE_PATH);
         BAD_REQUEST_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + BAD_REQUEST_TEMPLATE_PATH);
         UNAUTHORIZED_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + UNAUTHORIZED_TEMPLATE_PATH);
         FORBIDDEN_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + FORBIDDEN_TEMPLATE_PATH);
         SERVER_ERROR_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + INTERNAL_SERVER_ERROR_TEMPLATE_PATH);
-        TOO_MANY_REQUESTS_CONTENT = MangooUtils.readResourceToString(TEMPLATES_FOLDER + TOO_MANY_REQUESTS_TEMPLATE_PATH);
     }
 
     private Template () {
@@ -116,13 +113,6 @@ public final class Template {
      */
     public static String serverError() {
         return SERVER_ERROR_CONTENT;
-    }
-
-    /**
-     * @return The content of the default too many requests error template
-     */
-    public static String tooManyRequests() {
-        return TOO_MANY_REQUESTS_CONTENT;
     }
 
     /**
