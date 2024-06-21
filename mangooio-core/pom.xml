@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.mangoo</groupId>
 		<artifactId>mangooio</artifactId>
-		<version>8.6.2-SNAPSHOT</version>
+		<version>8.7.0-Beta4-SNAPSHOT</version>
 	</parent>
 	<artifactId>mangooio-core</artifactId>
 	<packaging>jar</packaging>
@@ -199,7 +199,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-afterburner</artifactId>
+			<artifactId>jackson-module-blackbird</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>
@@ -430,6 +430,18 @@
 						<configuration>
 							<rules>
 								<banCircularDependencies />
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+					<execution>
+						<id>ban-dynamic-versions</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<banDynamicVersions />
 							</rules>
 							<fail>true</fail>
 						</configuration>

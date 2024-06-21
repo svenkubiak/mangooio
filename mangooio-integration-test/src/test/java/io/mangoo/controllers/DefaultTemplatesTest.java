@@ -1,18 +1,14 @@
 package io.mangoo.controllers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
 import io.mangoo.TestExtension;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.StatusCodes;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class DefaultTemplatesTest {
@@ -29,7 +25,7 @@ class DefaultTemplatesTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
         assertThat(response.getContent(), containsString("The server has not found anything matching the Request-URI."));
     }
-    
+
     @Test
     void testInternalServerError() {
         //given

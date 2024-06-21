@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
-	<version>8.6.2-SNAPSHOT</version>
+	<version>8.7.0-Beta4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mangoo I/O</name>
 	<description>mangoo I/O is a Modern, Intuitive, Lightweight, High
@@ -33,7 +33,7 @@
 		<enforcer.version>1.8.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.17.1</jackson.version>
-		<maven.javadoc.version>3.6.3</maven.javadoc.version>
+		<maven.javadoc.version>3.7.0</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
  		<jna.version>5.14.0</jna.version>
 	</properties>
@@ -69,17 +69,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.3.2</version>
+					<version>3.4.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.4.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>4.0.0-M14</version>
+					<version>4.0.0-M15</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -144,7 +144,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.11.0.3922</version>
+					<version>4.0.0.4121</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -175,7 +175,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.1.0</version>
 					<configuration>
 						<releaseProfiles>mangooio-release</releaseProfiles>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
@@ -185,27 +185,27 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-scm-publish-plugin</artifactId>
-					<version>3.2.1</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.2.5</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.5.3</version>
+					<version>3.6.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
-					<version>3.4.1</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.13.0</version>
+					<version>3.13.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
@@ -215,7 +215,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.7.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -246,7 +246,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>2.3.13.Final</version>
+				<version>2.3.14.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
@@ -291,7 +291,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.27.1</version>
+				<version>2.28.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
@@ -311,7 +311,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>3.13.0</version>
+				<version>3.13.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
@@ -326,12 +326,12 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.3</version>
+				<version>8.2.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>5.1.0</version>
+				<version>5.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -382,7 +382,7 @@
 			<dependency>
 				<groupId>org.eclipse.sisu</groupId>
 				<artifactId>org.eclipse.sisu.inject</artifactId>
-				<version>0.9.0.M2</version>
+				<version>0.9.0.M3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
@@ -443,7 +443,7 @@
 			<dependency>
 				<groupId>com.icegreen</groupId>
 				<artifactId>greenmail-standalone</artifactId>
-				<version>2.1.0-alpha-3</version>
+				<version>2.1.0-rc-1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -452,7 +452,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.module</groupId>
-				<artifactId>jackson-module-afterburner</artifactId>
+				<artifactId>jackson-module-blackbird</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
@@ -508,12 +508,12 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>33.2.0-jre</version>
+				<version>33.2.1-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.172</version>
+				<version>4.8.174</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
@@ -523,7 +523,12 @@
 			<dependency>
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
-				<version>2.3.32</version>
+				<version>2.3.33</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jdbi.jackson-contrib</groupId>
+				<artifactId>jackson-module-blackbird</artifactId>
+				<version>0.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mchange</groupId>
@@ -583,7 +588,7 @@
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
-				<version>1.8.0</version>
+				<version>1.9.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-logging</groupId>

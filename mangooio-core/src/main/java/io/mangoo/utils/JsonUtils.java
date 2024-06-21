@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import io.mangoo.constants.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +25,11 @@ public final class JsonUtils {
     private static final Logger LOG = LogManager.getLogger(JsonUtils.class);
     private static final ObjectMapper MAPPER = JsonMapper.builder()
             .findAndAddModules()
-            .addModule(new AfterburnerModule())
-            .addModule(new JavaTimeModule())
-            .build();
-    
-    static {
-        MAPPER.setSerializationInclusion(Include.NON_NULL);
-    }
-    
+            .build()
+            .registerModule(new JavaTimeModule())
+            .registerModule(new BlackbirdModule())
+            .setSerializationInclusion(Include.NON_NULL);
+
     private JsonUtils(){
     }
     

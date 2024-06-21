@@ -77,7 +77,7 @@ public class AuthenticationHandler implements HttpHandler {
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
         
-        exchange.getResponseSender().send(Template.forbidden());
+        exchange.getResponseSender().send(Template.unauthorized());
     }
     
     /**

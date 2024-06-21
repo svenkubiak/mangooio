@@ -38,7 +38,7 @@ public class TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 30);
+    private static final Version VERSION = new Version(2, 3, 33);
     
     public TemplateEngine() {
         configuration.setClassForTemplateLoading(getClass(), "/" + TEMPLATES_FOLDER);
