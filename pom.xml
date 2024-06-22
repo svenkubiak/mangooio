@@ -34,6 +34,7 @@
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.17.1</jackson.version>
 		<maven.javadoc.version>3.7.0</maven.javadoc.version>
+		<maven.javadoc.version>3.7.0</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
  		<jna.version>5.14.0</jna.version>
 	</properties>
@@ -162,7 +163,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>${maven.javadoc.version}</version>
+					<version>3.7.0</version>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
@@ -215,7 +216,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.7.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
