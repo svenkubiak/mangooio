@@ -33,8 +33,6 @@
 		<enforcer.version>1.8.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.17.1</jackson.version>
-		<maven.javadoc.version>3.7.0</maven.javadoc.version>
-		<maven.javadoc.version>3.7.0</maven.javadoc.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
  		<jna.version>5.14.0</jna.version>
 	</properties>
@@ -634,19 +632,6 @@
 								<phase>verify</phase>
 								<goals>
 									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>${maven.javadoc.version}</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
 								</goals>
 							</execution>
 						</executions>
