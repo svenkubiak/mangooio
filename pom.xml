@@ -621,7 +621,7 @@
 	</distributionManagement>
 	<profiles>
 		<profile>
-			<id>mangooio-release</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>
