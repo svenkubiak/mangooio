@@ -1,3 +1,4 @@
+#!/bin/bash
 mvn clean verify
 mvn versions:set
 STATUS=$?
