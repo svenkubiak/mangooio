@@ -13,7 +13,7 @@ public @interface Indexed {
     /**
      * Specifies that a given field is used as an index in the database
      *
-     * @return The filter (either ascending or descending)
+     * @return The filter (either ascending or descending), default ascending
      */
-    public Sort sort();
+    public Sort sort() default Sort.ASCENDING;
 }
