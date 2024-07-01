@@ -3,8 +3,11 @@ package controllers;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.mangoo.core.Application;
+import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import models.Person;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,6 +25,12 @@ public class ApplicationController {
     
     public Response index() {
         return Response.ok();
+    }
+
+    public Response person() {
+        Person person = new Person("foo", "bar", 42);
+        Application.getInstance(Datastore.class).save(person);
+        return Response.redirect("/");
     }
     
     @SuppressWarnings("null")

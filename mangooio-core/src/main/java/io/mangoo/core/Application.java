@@ -760,10 +760,7 @@ public final class Application {
 
     private static ScanResult scanClasspath() {
         return new ClassGraph()
-                .enableAnnotationInfo()
-                .enableFieldInfo()
-                .enableClassInfo()
-                .enableMethodInfo()
+                .enableAllInfo()
                 .acceptPackages(ALL_PACKAGES)
                 .scan();
     }

@@ -100,6 +100,7 @@ public class Bootstrap implements MangooBootstrap {
         
          // ApplicationController
          Bind.controller(ApplicationController.class).withRoutes(
+                On.get().to("/person").respondeWith("person"),
                 On.get().to("/").respondeWith("index").withNonBlocking(),
                 On.anyOf(Http.DELETE, Http.PATCH).to("/").respondeWith("index").withNonBlocking(),
                 On.get().to("/error").respondeWith("error"),

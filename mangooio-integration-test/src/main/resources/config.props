@@ -79,11 +79,27 @@
 	admin.health = true
 	admin.username = admin
 	admin.password = admin
+
 [connector<dev>]
 	http.host = localhost
 	http.port = 50000
 	ajp.host = localhost
-	ajp.port = 50001	
+	ajp.port = 50001
+
 [smtp<dev>]
 	port = 3125
+
+[persistence<dev>]
+    mongo.enable = true
+    mongo.embedded = true
+	mongo.host = localhost
+	mongo.port = 29019
+	mongo.package = models
+	mongo.dbname = test
+
+	myprefix.mongo.embedded = true
+	myprefix.mongo.host = localhost
+	myprefix.mongo.port = 29019
+	myprefix.mongo.package = models
+	myprefix.mongo.dbname = test
 []

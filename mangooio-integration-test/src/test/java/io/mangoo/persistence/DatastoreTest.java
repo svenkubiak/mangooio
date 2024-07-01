@@ -7,6 +7,7 @@ import io.mangoo.models.TestModel;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.mangoo.utils.MangooUtils;
+import models.Person;
 import org.bson.Document;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
@@ -76,6 +77,53 @@ class DatastoreTest {
         datastore.save(model);
 
         assertThat(datastore.find(TestModel.class, eq("name", name)), not(nullValue()));
+    }
+
+    @Test
+    void testIndexesExist() {
+        //given
+        String firstname = null;
+        String lastname = null;
+        String address = null;
+        String age = null;
+        String id = null;
+
+        //when
+        for (Object object : datastore.query(Person.class).listIndexes()) {
+            Document document = (Document) ((Document) object).get("key");
+
+            if (document.get("firstname") != null) {
+                firstname = document.get("firstname").toString();
+            }
+
+            if (document.get("lastname") != null) {
+                lastname = document.get("lastname").toString();
+            }
+
+            if (document.get("address") != null) {
+                address = document.get("address").toString();
+            }
+
+            if (document.get("age") != null) {
+                age = document.get("age").toString();
+            }
+
+            if (document.get("_id") != null) {
+                id = document.get("_id").toString();
+            }
+        }
+
+        //then
+        assertThat(firstname, not(nullValue()));
+        assertThat(firstname, equalTo("1"));
+        assertThat(lastname, not(nullValue()));
+        assertThat(lastname, equalTo("-1"));
+        assertThat(address, not(nullValue()));
+        assertThat(address, equalTo("-1"));
+        assertThat(age, not(nullValue()));
+        assertThat(age, equalTo("-1"));
+        assertThat(id, not(nullValue()));
+        assertThat(id, equalTo("1"));
     }
 
     @Test
