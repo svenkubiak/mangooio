@@ -1,4 +1,5 @@
 #!/bin/bash
+mvn release:clean
 mvn clean verify
 mvn versions:set
 STATUS=$?
@@ -20,3 +21,8 @@ else
 fi
 
 rm pom.xml.versionsBackup
+rm /mangooio-core/pom.xml.versionsBackup
+rm /mangooio-integration-test/pom.xml.versionsBackup
+rm /mangooio-maven-archetype/pom.xml.versionsBackup
+rm /mangooio-maven-plugin/pom.xml.versionsBackup
+rm /mangooio-test/pom.xml.versionsBackup

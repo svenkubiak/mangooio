@@ -116,7 +116,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>9.2.0</version>
+					<version>10.0.0</version>
 					<configuration>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
@@ -331,7 +331,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.6</version>
+				<version>8.2.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
