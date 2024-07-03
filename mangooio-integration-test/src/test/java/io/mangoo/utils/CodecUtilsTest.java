@@ -53,6 +53,33 @@ class CodecUtilsTest {
         //then
         assertThat(hash, not(nullValue()));
     }
+
+    @Test
+    void testUuid() {
+        //given
+        String uuid;
+
+        //when
+        uuid = CodecUtils.uuid();
+
+        //then
+        assertThat(uuid, not(nullValue()));
+        assertThat(UUID.fromString(uuid).version(), equalTo(5));
+        assertThat(UUID.fromString(uuid).variant(), equalTo(2));
+    }
+
+    @Test
+    void testConcurrentUuid() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String uuid;
+
+            //when
+            uuid = CodecUtils.uuid();
+
+            return StringUtils.isNotBlank(uuid) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 5;
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
     
     @Test
     void testConcurrentHashArgon2() {
