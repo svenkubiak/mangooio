@@ -27,15 +27,17 @@ public final class CodecUtils {
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
             .buildThreadSafeFury();
-    private static final int ITERATIONS = 20;
-    private static final int MEMORY = 16777;
-    private static final int PARALLELISM = 4;
-    
+    private static final Argon2Parameters.Builder ARGON_2_PARAMETERS = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+            .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+            .withIterations(20)
+            .withMemoryAsKB(16777)
+            .withParallelism(4);
+
     private CodecUtils() {
     }
     
     /**
-     * Hashes a given clear text password with salt using Argon2Id password hashing
+     * Hashes a given clear text password with a given salt using Argon2Id password hashing
      * 
      * @param password The clear text password
      * @param salt The salt
@@ -45,14 +47,8 @@ public final class CodecUtils {
     public static String hashArgon2(String password, String salt) {
         Objects.requireNonNull(password, NotNull.PASSWORD);
         Objects.requireNonNull(salt, NotNull.SALT);
-        
-        var argon2Builder = (new Argon2Parameters.Builder())
-                .withVersion(Argon2Parameters.ARGON2_id)
-                .withIterations(ITERATIONS)
-                .withMemoryAsKB(MEMORY)
-                .withParallelism(PARALLELISM)
-                .withSecret(password.getBytes(StandardCharsets.UTF_8))
-                .withSalt(salt.getBytes(StandardCharsets.UTF_8));
+
+        var argon2Builder = ARGON_2_PARAMETERS.withSalt(salt.getBytes(StandardCharsets.UTF_8));
 
         var argon2Generator = new Argon2BytesGenerator();
         argon2Generator.init(argon2Builder.build());
@@ -77,7 +73,7 @@ public final class CodecUtils {
         Objects.requireNonNull(password, NotNull.PASSWORD);
         Objects.requireNonNull(salt, NotNull.SALT);
         Objects.requireNonNull(hashedPassword, NotNull.PASSWORD);
-        
+
         return Arrays.areEqual(hashArgon2(password, salt).getBytes(StandardCharsets.UTF_8), hashedPassword.getBytes(StandardCharsets.UTF_8));
     }
     
