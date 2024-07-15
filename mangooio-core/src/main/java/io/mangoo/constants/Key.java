@@ -10,8 +10,8 @@ public final class Key {
     public static final String APPLICATION_LANGUAGE = "application.language";
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
-    public static final String APPLICATION_PRIVATEKEY = "application.privatekey";
-    public static final String APPLICATION_PUBLICKEY = "application.publickey";
+    public static final String APPLICATION_PRIVATE_KEY = "application.privatekey";
+    public static final String APPLICATION_PUBLIC_KEY = "application.publickey";
     public static final String APPLICATION_SECRET = "application.secret";
     public static final String AUTHENTICATION_COOKIE_EXPIRES = "authentication.cookie.expires";
     public static final String AUTHENTICATION_COOKIE_NAME = "authentication.cookie.name";

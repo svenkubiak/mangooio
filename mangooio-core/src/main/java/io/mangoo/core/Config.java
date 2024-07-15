@@ -105,7 +105,7 @@ public class Config {
     private String decrypt(String value) {
         var crypto = new Crypto(this);
         
-        String keyFile = System.getProperty(Key.APPLICATION_PRIVATEKEY);
+        String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
         if (StringUtils.isNotBlank(keyFile)) {
             try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
                 String key = lines.findFirst().orElse(null);
@@ -310,7 +310,7 @@ public class Config {
      * @return application.publicKey from config.props
      */
     public String getApplicationPublicKey() {
-        return getString(Key.APPLICATION_PUBLICKEY);
+        return getString(Key.APPLICATION_PUBLIC_KEY);
     }
 
     /**

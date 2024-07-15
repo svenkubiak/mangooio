@@ -4,6 +4,8 @@ import io.fury.Fury;
 import io.fury.ThreadSafeFury;
 import io.fury.config.Language;
 import io.mangoo.constants.NotNull;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
@@ -27,60 +29,60 @@ public final class CodecUtils {
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
             .buildThreadSafeFury();
-    private static final Argon2Parameters.Builder ARGON_2_PARAMETERS = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-            .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-            .withIterations(20)
-            .withMemoryAsKB(16777)
-            .withParallelism(4);
+    private static final Argon2Parameters.Builder ARGON2_BUILDER = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+            .withSecret(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+            .withParallelism(4)
+            .withMemoryAsKB(65536)
+            .withIterations(20);
 
     private CodecUtils() {
     }
     
     /**
-     * Hashes a given clear text password with a given salt using Argon2Id password hashing
+     * Hashes a given clear text  with a given salt using Argon2Id hashing
      * 
-     * @param password The clear text password
+     * @param cleartext The clear text
      * @param salt The salt
      * 
-     * @return The hashed password
+     * @return A Base64 encoded String
      */
-    public static String hashArgon2(String password, String salt) {
-        Objects.requireNonNull(password, NotNull.PASSWORD);
+    public static String hashArgon2(String cleartext, String salt) {
+        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
         Objects.requireNonNull(salt, NotNull.SALT);
 
-        var argon2Builder = ARGON_2_PARAMETERS.withSalt(salt.getBytes(StandardCharsets.UTF_8));
+        var argon2Builder = ARGON2_BUILDER
+                .withSalt(salt.getBytes(StandardCharsets.UTF_8))
+                .build();
 
         var argon2Generator = new Argon2BytesGenerator();
-        argon2Generator.init(argon2Builder.build());
+        argon2Generator.init(argon2Builder);
 
         var hash = new byte[32];
-        argon2Generator.generateBytes(password.getBytes(StandardCharsets.UTF_8), hash);
+        argon2Generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
 
         return BASE64ENCODER.encodeToString(hash);
     }
     
     /**
-     * Matches a given clear text password with salt using Argon2Id against an already
-     * Argon2Id hashed password
+     * Matches a given clear text  with salt using Argon2Id against an already Argon2Id hashed value
      * 
-     * @param password The clear text password
+     * @param cleartext The clear text
      * @param salt The salt
-     * @param hashedPassword The already hashed password
+     * @param hash The hashed value for comparison (must be Base64 encoded)
      * 
      * @return True if hashes match, false otherwise
      */
-    public static boolean matchArgon2(String password, String salt, String hashedPassword) {
-        Objects.requireNonNull(password, NotNull.PASSWORD);
+    public static boolean matchArgon2(String cleartext, String salt, String hash) {
+        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
         Objects.requireNonNull(salt, NotNull.SALT);
-        Objects.requireNonNull(hashedPassword, NotNull.PASSWORD);
+        Objects.requireNonNull(hash, NotNull.HASH);
 
-        return Arrays.areEqual(hashArgon2(password, salt).getBytes(StandardCharsets.UTF_8), hashedPassword.getBytes(StandardCharsets.UTF_8));
+        return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }
     
     /**
      * Hashes a given clear text data with SHA512
      * For simple hashing tasks
-     * Use {@link #hashArgon2(String, String) hashArgon2} for password hashing
      * 
      * @param data The clear text data
      * @return SHA512 hashed value

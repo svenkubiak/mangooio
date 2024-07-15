@@ -216,7 +216,7 @@ class CodecUtilsTest {
     }
     
     @Test
-    void testBase64Dencoder() {
+    void testBase64Decoder() {
         //given
         String foo = UUID.randomUUID().toString();
 

@@ -8,9 +8,8 @@ public final class NotNull {
     public static final String CACHE = "cache can not be null";
     public static final String CACHE_PROVIDER = "cacheProvider can not be null";
     public static final String CCS = "ccs can not be null";
-    public static final String CHARSET = "charset can not be null";
-    public static final String CLAIM_KEY = "claim key can not be null";
     public static final String CLASS = "class can not be null";
+    public static final String CLEARTEXT = "cleartext can not be null";
     public static final String CONFIG = "config can not be null";
     public static final String CONNECTION = "connection can not be null";
     public static final String CONTENT = "content can not be null";
@@ -80,7 +79,7 @@ public final class NotNull {
     public static final String ROUTE = "route can not be null";
     public static final String SALT = "salt can not be null";
     public static final String SECRET = "secret can not be null";
-    public static final String SHARED_SECRET = "sharedCecret can not be null";
+    public static final String SHARED_SECRET = "shared secret can not be null";
     public static final String SOURCE_PATH = "source path can not be null";
     public static final String SORT = "sort can not be null";
     public static final String STACK_TRACE_ELEMENT = "stack trace element can not be null";
@@ -90,7 +89,7 @@ public final class NotNull {
     public static final String TEMPLATE = "template can not be null";
     public static final String TEMPLATE_ENGINE = "template engine can not be null";
     public static final String TEMPLATE_NAME = "template name can not be null";
-    public static final String TEMPORAL_UNIT = "temporalunit can not be null";
+    public static final String TEMPORAL_UNIT = "temporal unit can not be null";
     public static final String TOS = "tos can not be null";
     public static final String TOTP = "totp can not be null";
     public static final String UNIT = "unit can not be null";
