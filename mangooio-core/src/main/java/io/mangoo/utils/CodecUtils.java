@@ -29,12 +29,6 @@ public final class CodecUtils {
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
             .buildThreadSafeFury();
-    private static final Argon2Parameters.Builder ARGON2_BUILDER = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-            .withAdditional(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
-            .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-            .withParallelism(4)
-            .withMemoryAsKB(65536)
-            .withIterations(20);
 
     private CodecUtils() {
     }
@@ -51,12 +45,17 @@ public final class CodecUtils {
         Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
         Objects.requireNonNull(salt, NotNull.SALT);
 
-        var argon2Builder = ARGON2_BUILDER
+        var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
+                .withSecret(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+                .withVersion(Argon2Parameters.ARGON2_VERSION_13)
+                .withParallelism(4)
+                .withMemoryAsKB(65536)
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8))
+                .withIterations(20)
                 .build();
 
         var argon2Generator = new Argon2BytesGenerator();
-        argon2Generator.init(argon2Builder);
+        argon2Generator.init(argon2);
 
         var hash = new byte[32];
         argon2Generator.generateBytes(cleartext.getBytes(StandardCharsets.UTF_8), hash);
