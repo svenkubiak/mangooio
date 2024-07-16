@@ -30,7 +30,7 @@ public final class CodecUtils {
             .requireClassRegistration(false)
             .buildThreadSafeFury();
     private static final Argon2Parameters.Builder ARGON2_BUILDER = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-            .withSecret(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
+            .withAdditional(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
             .withVersion(Argon2Parameters.ARGON2_VERSION_13)
             .withParallelism(4)
             .withMemoryAsKB(65536)
