@@ -4,8 +4,6 @@ import io.fury.Fury;
 import io.fury.ThreadSafeFury;
 import io.fury.config.Language;
 import io.mangoo.constants.NotNull;
-import io.mangoo.core.Application;
-import io.mangoo.core.Config;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
@@ -46,7 +44,6 @@ public final class CodecUtils {
         Objects.requireNonNull(salt, NotNull.SALT);
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
-                .withSecret(Application.getInstance(Config.class).getApplicationSecret().getBytes(StandardCharsets.UTF_8))
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
                 .withParallelism(4)
                 .withMemoryAsKB(65536)
