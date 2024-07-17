@@ -14,6 +14,7 @@ import io.mangoo.utils.JsonUtils;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -74,7 +75,7 @@ public class RequestHandler implements HttpHandler {
      */
     protected Response getResponse(HttpServerExchange exchange) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, MangooTemplateEngineException {
         //execute global request filter
-        var response = Response.withOk();
+        var response = Response.ok();
         if (attachment.hasRequestFilter()) {
             final OncePerRequestFilter mangooRequestFilter = Application.getInstance(OncePerRequestFilter.class);
             response = mangooRequestFilter.execute(attachment.getRequest(), response);
@@ -99,7 +100,7 @@ public class RequestHandler implements HttpHandler {
         if (response.isRedirect()) {
             return response;
         }
-        
+
         return invokeController(exchange, response);
     }
 
@@ -124,8 +125,8 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance(), convertedParameters);
         }
 
-        invokedResponse.andContent(response.getContent());
-        invokedResponse.andHeaders(response.getHeaders());
+        invokedResponse.render(response.getContent());
+        invokedResponse.headers(response.getHeaders());
         
         if (invokedResponse.isRendered()) {
             var templateContext = new TemplateContext(invokedResponse.getContent())
@@ -137,7 +138,11 @@ public class RequestHandler implements HttpHandler {
                     .withPrettyTime(attachment.getLocale())
                     .withTemplatePath(getTemplatePath(invokedResponse));
             
-            invokedResponse.andHtmlBody(attachment.getTemplateEngine().renderTemplate(templateContext));
+            invokedResponse.bodyHtml(attachment.getTemplateEngine().renderTemplate(templateContext));
+        }
+
+        for (Cookie cookie : response.getCookies()) {
+            invokedResponse.cookie(cookie);
         }
 
         return invokedResponse;

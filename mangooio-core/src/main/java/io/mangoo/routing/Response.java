@@ -53,67 +53,6 @@ public class Response {
         this.redirectTo = redirectTo;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public List<Cookie> getCookies() {
-        return new ArrayList<>(cookies);
-    }
-
-    public byte[] getBinaryContent() {
-        return binaryContent.clone();
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public String getBinaryFileName() {
-        return binaryFileName;
-    }
-
-    public Map<String, Object> getContent() {
-        return content;
-    }
-
-    public boolean isRedirect() {
-        return redirect;
-    }
-
-    public boolean isBinary() {
-        return binary;
-    }
-
-    public boolean isRendered() {
-        return rendered;
-    }
-
-    public boolean isEndResponse() {
-        return endResponse;
-    }
-    
-    public String getRedirectTo() {
-        return redirectTo;
-    }
-
-    public Map<HttpString, String> getHeaders() {
-        return headers;
-    }
-    
-    public String getHeader(HttpString header) {
-        Objects.requireNonNull(header, NotNull.HEADER);
-        return headers.get(header);
-    }
-
     /**
      * Creates a response object with HTTP status code 200
      * @deprecated As of release 8.6.0, replaced by {@link #ok()}
@@ -239,7 +178,7 @@ public class Response {
     public static Response badRequest() {
         return new Response(StatusCodes.BAD_REQUEST, true);
     }
-
+    
     /**
      * Creates a response object with HTTP status code 500
      * @deprecated As of release 8.6.0, replaced by {@link #internalServerError()}
@@ -260,7 +199,7 @@ public class Response {
     public static Response internalServerError() {
         return new Response(StatusCodes.INTERNAL_SERVER_ERROR, true);
     }
-
+    
     /**
      * Creates a response object with a given HTTP status code
      * @deprecated As of release 8.6.0, replaced by {@link #status(int)}
@@ -306,6 +245,67 @@ public class Response {
         Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO);
 
         return new Response(redirectTo);
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public List<Cookie> getCookies() {
+        return new ArrayList<>(cookies);
+    }
+
+    public byte[] getBinaryContent() {
+        return binaryContent.clone();
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public String getBinaryFileName() {
+        return binaryFileName;
+    }
+
+    public Map<String, Object> getContent() {
+        return content;
+    }
+
+    public boolean isRedirect() {
+        return redirect;
+    }
+
+    public boolean isBinary() {
+        return binary;
+    }
+
+    public boolean isRendered() {
+        return rendered;
+    }
+
+    public boolean isEndResponse() {
+        return endResponse;
+    }
+
+    public String getRedirectTo() {
+        return redirectTo;
+    }
+
+    public Map<HttpString, String> getHeaders() {
+        return headers;
+    }
+
+    public String getHeader(HttpString header) {
+        Objects.requireNonNull(header, NotNull.HEADER);
+        return headers.get(header);
     }
 
     /**
@@ -701,13 +701,27 @@ public class Response {
     /**
      * Adds a header map to the response.
      * Already existing values with the same key are overwritten.
-     * @deprecated As of release 8.6.0 without replacement
+     * @deprecated As of release 8.6.0, replaced by {@link #headers(Map)}
      *
      * @param headers The headers map to add
      * @return The response object
      */
     @Deprecated(since = "8.6.0", forRemoval = true)
     public Response andHeaders(Map<HttpString, String> headers) {
+        Objects.requireNonNull(headers, NotNull.HEADERS);
+        this.headers.putAll(headers);
+
+        return this;
+    }
+
+    /**
+     * Adds a header map to the response.
+     * Already existing values with the same key are overwritten.
+     *
+     * @param headers The headers map to add
+     * @return The response object
+     */
+    public Response headers(Map<HttpString, String> headers) {
         Objects.requireNonNull(headers, NotNull.HEADERS);
         this.headers.putAll(headers);
 
