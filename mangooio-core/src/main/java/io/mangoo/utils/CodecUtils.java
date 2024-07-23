@@ -45,10 +45,10 @@ public final class CodecUtils {
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-                .withParallelism(4)
+                .withParallelism(1)
                 .withMemoryAsKB(65536)
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8))
-                .withIterations(20)
+                .withIterations(16)
                 .build();
 
         var argon2Generator = new Argon2BytesGenerator();

@@ -163,7 +163,9 @@ public final class MangooUtils {
 
     /**
      * @return A type 4 pseudo randomly generated uuid
+     * @deprecated As of release 8.8.0, replaced by {@link CodecUtils#uuid()}
      */
+    @Deprecated(since = "8.8.0", forRemoval = true)
     public static String uuid() {
         return UUID.randomUUID().toString();
     }
