@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<properties>
-		<mangooio.version>8.7.0</mangooio.version>
+		<mangooio.version>8.8.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>21</jdk.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -45,6 +45,7 @@
 					<showDeprecation>true</showDeprecation>
 					<fork>true</fork>
 					<compilerArgument>-parameters</compilerArgument>
+					<compilerArgument>-proc:full</compilerArgument>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -55,12 +56,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.5</version>
+				<version>3.3.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.1</version>
+				<version>3.4.2</version>
 				<configuration>
 					<excludes>
 						<exclude>**/log4j2-test*</exclude>
@@ -70,7 +71,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.5.3</version>
+				<version>3.6.0</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -134,7 +135,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.4.1</version>
+				<version>3.5.0</version>
 				<configuration>
 					<rules>
 						<DependencyConvergence>
@@ -158,7 +159,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.8.0</version>
+									<version>3.9.0</version>
 								</requireMavenVersion>
 							</rules>
 						</configuration>
