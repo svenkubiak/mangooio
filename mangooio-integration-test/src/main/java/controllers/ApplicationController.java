@@ -10,9 +10,7 @@ import io.mangoo.routing.bindings.Request;
 import models.Person;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -101,13 +99,6 @@ public class ApplicationController {
 
     public Response unauthorized() {
         return Response.unauthorized().bodyEmpty();
-    }
-
-    public Response binary() throws URISyntaxException {
-        final var url = this.getClass().getResource("/attachment.txt");
-        final var file = Paths.get(url.toURI());
-        
-        return Response.ok().andBinaryFile(file);
     }
 
     public Response request(Request request) {

@@ -1,10 +1,11 @@
 package io.mangoo.utils;
 
-import io.fury.Fury;
-import io.fury.ThreadSafeFury;
-import io.fury.config.Language;
 import io.mangoo.constants.NotNull;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.fury.Fury;
+import org.apache.fury.ThreadSafeFury;
+import org.apache.fury.config.Language;
+import org.apache.logging.log4j.util.Strings;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
@@ -143,7 +144,7 @@ public final class CodecUtils {
     /**
      * Creates a UUIDv5 random String
      *
-     * @return UUIDv5 String or null if generation fails
+     * @return UUIDv5 String or an empty String if generation fails
      */
     public static String uuid() {
         try {
@@ -175,6 +176,6 @@ public final class CodecUtils {
             //Intentionally left blank
         }
 
-        return null;
+        return Strings.EMPTY;
     }
 }

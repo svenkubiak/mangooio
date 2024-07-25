@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -59,10 +59,10 @@
 					<configuration>
 						<source>${jdk.version}</source>
 						<target>${jdk.version}</target>
-						<compilerArgument>-parameters</compilerArgument>
 						<debug>false</debug>
 						<showDeprecation>true</showDeprecation>
 						<fork>true</fork>
+						<compilerArgument>-parameters</compilerArgument>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -415,9 +415,9 @@
 				<version>${log4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.furyio</groupId>
+				<groupId>org.apache.fury</groupId>
 				<artifactId>fury-core</artifactId>
-				<version>0.4.1</version>
+				<version>0.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -427,7 +427,7 @@
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest</artifactId>
-				<version>2.2</version>
+				<version>3.0-rc1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.wildfly.common</groupId>

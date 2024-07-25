@@ -4,29 +4,16 @@ import io.mangoo.TestExtension;
 import io.mangoo.cache.Cache;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
-import io.mangoo.core.Config;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -241,28 +228,6 @@ class ApplicationControllerTest {
         assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("https://mangoo.io"));
-    }
-
-    @Test
-    void testBinaryDownload(@TempDir Path tempDir) throws IOException {
-        //given
-        final Config config = Application.getInjector().getInstance(Config.class);
-        final String host = config.getConnectorHttpHost();
-        final int port = config.getConnectorHttpPort();
-        final Path path = tempDir.resolve(UUID.randomUUID().toString());
-        final OutputStream fileOutputStream = Files.newOutputStream(path);
-
-        //when
-        final CloseableHttpClient httpclient = HttpClients.custom().build();
-        final HttpGet httpget = new HttpGet("http://" + host + ":" + port + "/binary");
-        final CloseableHttpResponse response = httpclient.execute(httpget);
-        fileOutputStream.write(EntityUtils.toByteArray(response.getEntity()));
-        fileOutputStream.close();
-        response.close();
-
-        //then
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(Files.readString(path), equalTo("This is an attachment"));
     }
 
     @Test

@@ -6,7 +6,7 @@ import io.mangoo.core.Application;
 import io.mangoo.models.TestModel;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.test.concurrent.ConcurrentRunner;
-import io.mangoo.utils.MangooUtils;
+import io.mangoo.utils.CodecUtils;
 import models.Person;
 import org.bson.Document;
 import org.hamcrest.MatcherAssert;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -36,7 +35,7 @@ class DatastoreTest {
     void testConcurrentSave() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
-            String name = UUID.randomUUID().toString();
+            String name = CodecUtils.uuid();
             TestModel model = new TestModel(name);
             
             //when
@@ -129,8 +128,8 @@ class DatastoreTest {
     @Test
     void testFindFirst() {
         //given
-        String name = MangooUtils.uuid();
-        String name2 = MangooUtils.uuid();
+        String name = CodecUtils.uuid();
+        String name2 = CodecUtils.uuid();
         datastore.dropDatabase();
         TestModel model = new TestModel(name, LocalDateTime.now());
         TestModel model2 = new TestModel(name2, LocalDateTime.now().plusMinutes(25));
@@ -149,8 +148,8 @@ class DatastoreTest {
         TestModel model = new TestModel("foo", LocalDateTime.now());
         TestModel model2 = new TestModel("foo", LocalDateTime.now());
         TestModel model3 = new TestModel("foo", LocalDateTime.now());
-        TestModel model4 = new TestModel(MangooUtils.uuid(), LocalDateTime.now());
-        TestModel model5 = new TestModel(MangooUtils.uuid(), LocalDateTime.now());
+        TestModel model4 = new TestModel(CodecUtils.uuid(), LocalDateTime.now());
+        TestModel model5 = new TestModel(CodecUtils.uuid(), LocalDateTime.now());
 
         //when
         datastore.saveAll(List.of(model, model2, model3, model4, model5));
@@ -165,7 +164,7 @@ class DatastoreTest {
         
         MatcherAssert.assertThat(t -> {
             //given
-            String name = UUID.randomUUID().toString();
+            String name = CodecUtils.uuid();
             TestModel model = new TestModel(name);
             
             //when

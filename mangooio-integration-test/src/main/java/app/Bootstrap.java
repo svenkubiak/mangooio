@@ -123,7 +123,6 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/forbidden").respondeWith("forbidden"),
                 On.get().to("/badrequest").respondeWith("badrequest"),
                 On.get().to("/unauthorized").respondeWith("unauthorized"),
-                On.get().to("/binary").respondeWith("binary"),
                 On.get().to("/header").respondeWith("header").withNonBlocking(),
                 On.get().to("/request").respondeWith("request"),
                 On.post().to("/post").respondeWith("post"),

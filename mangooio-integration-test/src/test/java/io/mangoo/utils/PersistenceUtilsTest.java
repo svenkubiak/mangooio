@@ -14,7 +14,7 @@ class PersistenceUtilsTest {
     void testCollection() {
         //given
         String key = this.getClass().getName();
-        String value = MangooUtils.uuid();
+        String value = CodecUtils.uuid();
 
         //when
         PersistenceUtils.addCollection(key, value);

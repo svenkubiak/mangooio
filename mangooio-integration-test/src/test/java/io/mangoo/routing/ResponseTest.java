@@ -6,18 +6,11 @@ import io.undertow.server.handlers.Cookie;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.StatusCodes;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -200,26 +193,6 @@ class ResponseTest {
         assertThat(response.getContentType(), equalTo(MediaType.JSON_UTF_8.withoutParameters().toString()));
         assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo("[\"foo\",\"bar\"]"));
-    }
-    
-    @Test
-    void testAndBinaryFile() throws FileNotFoundException, IOException {
-        //given
-        Response response = Response.ok();
-        Path file = Paths.get(UUID.randomUUID().toString());
-        Files.createFile(file);
-        InputStream fileInputStream = Files.newInputStream(file);
-        
-        //when
-        response.andBinaryFile(file);
-        
-        //then
-        assertThat(response.getBinaryFileName(), equalTo(file.getFileName().toString()));
-        assertThat(response.isBinary(), equalTo(true));
-        assertThat(response.isRendered(), equalTo(false));
-        assertThat(response.getBinaryContent(), equalTo(IOUtils.toByteArray(fileInputStream)));
-        fileInputStream.close();
-        Files.delete(file);
     }
 
     @Test

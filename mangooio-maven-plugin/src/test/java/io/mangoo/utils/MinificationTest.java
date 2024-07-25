@@ -41,7 +41,7 @@ class MinificationTest {
     @Test
     void testMinifyCSS() throws IOException {
         //given
-        String uuid = MangooUtils.uuid();
+        String uuid = CodecUtils.uuid();
         StringBuilder buffer = new StringBuilder();
         buffer.append("p {");
         buffer.append("    font: normal 14px/20px helvetica, arial, sans-serif;");
