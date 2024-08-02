@@ -427,7 +427,7 @@
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest</artifactId>
-				<version>3.0-rc1</version>
+				<version>3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.wildfly.common</groupId>
