@@ -35,6 +35,6 @@ class DefaultTemplatesTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getContentType(), equalTo("text/html"));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
-        assertThat(response.getContent(), containsString("The server encountered an unexpected condition which prevented it from fulfilling the request."));
+        assertThat(response.getContent(), containsString("The server encountered something it didn't expect and was unable to complete the request."));
     }
 }

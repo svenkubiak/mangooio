@@ -273,6 +273,104 @@ class ApplicationControllerTest {
     }
 
     @Test
+    void testDefault200() {
+        //given
+        final TestResponse response = TestRequest.get("/default-200")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("200"));
+        assertThat(response.getContent(), containsString("The server successfully processed the request."));
+    }
+
+    @Test
+    void testDefault400() {
+        //given
+        final TestResponse response = TestRequest.get("/default-400")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("400"));
+        assertThat(response.getContent(), containsString("The server didn't understand the syntax of the request."));
+    }
+
+    @Test
+    void testDefault401() {
+        //given
+        final TestResponse response = TestRequest.get("/default-401")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("401"));
+        assertThat(response.getContent(), containsString("The request requires user authentication."));
+    }
+
+    @Test
+    void testDefault403() {
+        //given
+        final TestResponse response = TestRequest.get("/default-403")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("403"));
+        assertThat(response.getContent(), containsString("The server is refusing the request."));
+    }
+
+    @Test
+    void testDefault404() {
+        //given
+        final TestResponse response = TestRequest.get("/default-404")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("404"));
+        assertThat(response.getContent(), containsString("The server has not found anything matching the Request-URI."));
+    }
+
+    @Test
+    void testDefault500() {
+        //given
+        final TestResponse response = TestRequest.get("/default-500")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("500"));
+        assertThat(response.getContent(), containsString("The server encountered something it didn't expect and was unable to complete the request."));
+    }
+
+    @Test
+    void testDefaultXXX() {
+        //given
+        final TestResponse response = TestRequest.get("/default-xxx")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContent(), containsString("429"));
+        assertThat(response.getContent(), containsString("The server returned HTTP status code 429."));
+    }
+
+    @Test
     void testJsonBoonWithPut() {
         //given
         final TestResponse response = TestRequest.put("/jsonboonput")

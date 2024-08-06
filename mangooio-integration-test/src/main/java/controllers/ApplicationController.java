@@ -143,4 +143,32 @@ public class ApplicationController {
                 .bodyEmpty()
                 .header("Access-Control-Allow-Origin", "https://mangoo.io");
     }
+
+    public Response default200() {
+        return Response.ok().bodyDefault();
+    }
+
+    public Response default400() {
+        return Response.badRequest().bodyDefault();
+    }
+
+    public Response default401() {
+        return Response.unauthorized().bodyDefault();
+    }
+
+    public Response default403() {
+        return Response.forbidden().bodyDefault();
+    }
+
+    public Response default404() {
+        return Response.notFound().bodyDefault();
+    }
+
+    public Response default500() {
+        return Response.internalServerError().bodyDefault();
+    }
+
+    public Response defaultXXX() {
+        return Response.status(429).bodyDefault();
+    }
 }

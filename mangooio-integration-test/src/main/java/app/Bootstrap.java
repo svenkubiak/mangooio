@@ -130,7 +130,14 @@ public class Bootstrap implements MangooBootstrap {
                 On.post().to("/jsonboonpost").respondeWith("jsonBoonPost"),
                 On.put().to("/jsonboonput").respondeWith("jsonBoonPut"),
                 On.get().to("/freemarker").respondeWith("freemarker"),
-                On.get().to("/unrendered/text").respondeWith("unrenderedText")
+                On.get().to("/unrendered/text").respondeWith("unrenderedText"),
+                On.get().to("/default-200").respondeWith("default200"),
+                On.get().to("/default-400").respondeWith("default400"),
+                On.get().to("/default-401").respondeWith("default401"),
+                On.get().to("/default-403").respondeWith("default403"),
+                On.get().to("/default-404").respondeWith("default404"),
+                On.get().to("/default-500").respondeWith("default500"),
+                On.get().to("/default-xxx").respondeWith("defaultXXX")
          );
          
          // SubController

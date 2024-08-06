@@ -36,14 +36,14 @@ public class ExceptionHandler implements HttpHandler {
             if (Application.inDevMode()) {
                 var templateEngine = new TemplateEngine();
                 if (throwable == null) {
-                    exchange.getResponseSender().send(Template.serverError());
+                    exchange.getResponseSender().send(Template.internalServerError());
                 } else if (throwable.getCause() == null) {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable, true));
                 } else {
                     exchange.getResponseSender().send(templateEngine.renderException(exchange, throwable.getCause(), false));
                 }
             } else {
-                exchange.getResponseSender().send(Template.serverError());
+                exchange.getResponseSender().send(Template.internalServerError());
             }
         } catch (Exception e) { // NOSONAR Intentionally catching Exception
             LOG.error("Failed to pass an exception to the frontend", e); 

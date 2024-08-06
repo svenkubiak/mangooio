@@ -4,6 +4,7 @@ import com.google.common.net.MediaType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
+import io.mangoo.constants.Template;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
@@ -423,6 +424,41 @@ public class Response {
      */
     public Response bodyHtml(String html) {
         this.body = html;
+        rendered = false;
+
+        ok();
+        unauthorized();
+        forbidden();
+        internalServerError();
+        badRequest();
+
+        return this;
+    }
+
+    public Response bodyDefault() {
+        System.out.println(statusCode);
+        switch (statusCode) {
+            case StatusCodes.OK:
+                this.body = Template.ok();
+                break;
+            case StatusCodes.UNAUTHORIZED:
+                this.body = Template.unauthorized();
+                break;
+            case StatusCodes.NOT_FOUND:
+                this.body = Template.notFound();
+                break;
+            case StatusCodes.FORBIDDEN:
+                this.body = Template.forbidden();
+                break;
+            case StatusCodes.INTERNAL_SERVER_ERROR:
+                this.body = Template.internalServerError();
+                break;
+            case StatusCodes.BAD_REQUEST:
+                this.body = Template.badRequest();
+                break;
+            default:
+                this.body = Template.xxx().replaceAll("###xxx###", String.valueOf(statusCode));
+        }
         rendered = false;
 
         return this;
