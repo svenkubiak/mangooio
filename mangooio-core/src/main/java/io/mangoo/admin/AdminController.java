@@ -18,6 +18,7 @@ import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.totp.TotpUtils;
 import io.undertow.server.handlers.CookieImpl;
@@ -26,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,9 +60,9 @@ public class AdminController {
 
     @FilterWith(AdminFilter.class)
     public Response index() {
-        var instant = Application.getStart().atZone(ZoneId.systemDefault()).toInstant();
         boolean enabled = config.isMetricsEnable();
         var stream = Application.getInstance(EventBus.class);
+
         
         if (enabled) {
             var metrics = Application.getInstance(Metrics.class);
@@ -84,7 +84,7 @@ public class AdminController {
             return Response.ok()
                     .render(ENABLED, Boolean.TRUE)
                     .render(METRICS, metrics.getResponseMetrics())
-                    .render("uptime", Date.from(instant))
+                    .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
                     .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))
                     .render("dataSend", MangooUtils.readableFileSize(metrics.getDataSend()))
                     .render("totalRequests", totalRequests)
@@ -99,7 +99,7 @@ public class AdminController {
         
         return Response.ok()
                 .render(ENABLED, Boolean.FALSE)
-                .render("uptime", Date.from(instant))
+                .render("uptime", DateUtils.getPrettyTime(Application.getStart()))
                 .render("events", stream.getHandledEvents())
                 .render("subscribers", stream.getNumberOfSubscribers())
                 .render("warnings", cache.get(Key.MANGOOIO_WARNINGS))

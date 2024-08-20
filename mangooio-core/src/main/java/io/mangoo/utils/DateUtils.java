@@ -1,14 +1,17 @@
 package io.mangoo.utils;
 
 import io.mangoo.constants.NotNull;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public final class DateUtils {
+    private static final PrettyTime PRETTY_TIME = new PrettyTime(Locale.forLanguageTag("en-EN"));
     private DateUtils() {
     }
 
@@ -32,5 +35,17 @@ public final class DateUtils {
     public static Date localDateToDate(LocalDate localDate) {
         Objects.requireNonNull(localDate, NotNull.LOCAL_DATE);
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Returns a human readable, relative timestamps like "moments ago"
+     *
+     * @param localDateTime The LocalDateTime to base the parsing on
+     * @return timestamps like "moments ago"
+     */
+    public static String getPrettyTime(LocalDateTime localDateTime) {
+        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+
+        return PRETTY_TIME.format(localDateTime);
     }
 }

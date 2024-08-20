@@ -21,7 +21,7 @@
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">${prettytime(uptime)}</p>
+                    <p class="title">${uptime}</p>
                 </div>
                 <footer class="card-footer">
                     <p class="card-footer-item"><span>Application started</span></p>
@@ -86,7 +86,12 @@
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">${minRequestTime} ms</p>
+                    <#if minRequestTime gte 1000>
+                        <#assign mrt = minRequestTime / 1000>
+                        <p class="title">${mrt?string["0.##"]} s</p>
+                    <#else>
+                        <p class="title">${minRequestTime} ms</p>
+                    </#if>
                 </div>
                 <footer class="card-footer">
                     <p class="card-footer-item"><span>Min process time</span></p>
@@ -96,7 +101,12 @@
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">${avgRequestTime} ms</p>
+                    <#if avgRequestTime gte 1000>
+                        <#assign art = avgRequestTime / 1000>
+                        <p class="title">${art?string["0.##"]} s</p>
+                    <#else>
+                        <p class="title">${avgRequestTime} ms</p>
+                    </#if>
                 </div>
                 <footer class="card-footer">
                     <p class="card-footer-item"><span>Avg process time</span></p>
@@ -106,7 +116,12 @@
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <p class="title">${maxRequestTime} ms</p>
+                    <#if maxRequestTime gte 1000>
+                        <#assign mrt = maxRequestTime / 1000>
+                        <p class="title">${mrt?string["0.##"]} s</p>
+                    <#else>
+                        <p class="title">${maxRequestTime} ms</p>
+                    </#if>
                 </div>
                 <footer class="card-footer">
                     <p class="card-footer-item"><span>Max process time</span></p>
