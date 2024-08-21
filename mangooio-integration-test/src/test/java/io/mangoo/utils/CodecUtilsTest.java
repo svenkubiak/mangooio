@@ -64,7 +64,7 @@ class CodecUtilsTest {
 
         //then
         assertThat(uuid, not(nullValue()));
-        assertThat(UUID.fromString(uuid).version(), equalTo(5));
+        assertThat(UUID.fromString(uuid).version(), equalTo(6));
         assertThat(UUID.fromString(uuid).variant(), equalTo(2));
     }
 
@@ -77,7 +77,7 @@ class CodecUtilsTest {
             //when
             uuid = CodecUtils.uuid();
 
-            return StringUtils.isNotBlank(uuid) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 5;
+            return StringUtils.isNotBlank(uuid) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 6;
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     

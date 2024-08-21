@@ -1,29 +1,25 @@
 package io.mangoo.utils;
 
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
 import io.mangoo.constants.NotNull;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
-import org.apache.logging.log4j.util.Strings;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Objects;
-import java.util.UUID;
 
 public final class CodecUtils {
     private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
-    private static final byte[] NAMESPACE = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
-            .toString()
-            .getBytes(StandardCharsets.UTF_8);
+    private static final TimeBasedReorderedGenerator UUID_GENERATOR = Generators.timeBasedReorderedGenerator();
     private static final ThreadSafeFury FURY = Fury.builder()
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
@@ -142,40 +138,11 @@ public final class CodecUtils {
     }
 
     /**
-     * Creates a UUIDv5 random String
+     * Creates a UUIDv6 random String
      *
-     * @return UUIDv5 String or an empty String if generation fails
+     * @return UUIDv6 String
      */
     public static String uuid() {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-            messageDigest.update(NAMESPACE);
-
-            byte[] data = messageDigest.digest();
-            data[6] = (byte) (data[6] & 0x0f);
-            data[6] = (byte) (data[6] | 0x50); // set version 5
-            data[8] = (byte) (data[8] & 0x3f);
-            data[8] = (byte) (data[8] | 0x80);
-
-            long msb = 0L;
-            long lsb = 0L;
-
-            for (int i = 0; i <= 7; i++) {
-                msb = (msb << 8) | (data[i] & 0xff);
-            }
-
-            for (int i = 8; i <= 15; i++) {
-                lsb = (lsb << 8) | (data[i] & 0xff);
-            }
-
-            long mostSigBits = msb;
-            long leastSigBits = lsb;
-
-            return new UUID(mostSigBits, leastSigBits).toString();
-        } catch (NoSuchAlgorithmException e) {
-            //Intentionally left blank
-        }
-
-        return Strings.EMPTY;
+        return UUID_GENERATOR.generate().toString();
     }
 }
