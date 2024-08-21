@@ -38,7 +38,7 @@ public final class DateUtils {
     }
 
     /**
-     * Returns a human readable, relative timestamps like "moments ago"
+     * Returns a human-readable, relative timestamps like "moments ago", default to en-EN
      *
      * @param localDateTime The LocalDateTime to base the parsing on
      * @return timestamps like "moments ago"
@@ -47,5 +47,19 @@ public final class DateUtils {
         Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
 
         return PRETTY_TIME.format(localDateTime);
+    }
+
+    /**
+     * Returns a human-readable, relative timestamps like "moments ago" localized based on the given locale
+     *
+     * @param locale The local to use
+     * @param localDateTime like "moments ago"
+     * @return timestamps like "moments ago"
+     */
+    public static String getPrettyTime(Locale locale, LocalDateTime localDateTime) {
+        Objects.requireNonNull(locale, NotNull.LOCALE);
+        Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+
+        return new PrettyTime(locale).format(localDateTime);
     }
 }

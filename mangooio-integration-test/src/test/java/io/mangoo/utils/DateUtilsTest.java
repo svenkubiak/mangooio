@@ -9,6 +9,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -74,6 +75,26 @@ class DateUtilsTest {
 
             // then
             return DateUtils.getPrettyTime(localDateTime) != null;
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+
+    @Test
+    void testLocalizedPrettyTime() {
+        //given
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        //then
+        assertThat(DateUtils.getPrettyTime(Locale.forLanguageTag("de-DE"), localDateTime), not(equalTo(nullValue())));
+    }
+
+    @Test
+    void testConcurrentLocalizedPrettyTime() throws InterruptedException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            // then
+            return DateUtils.getPrettyTime(Locale.forLanguageTag("de-DE"), localDateTime) != null;
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }
