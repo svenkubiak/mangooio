@@ -9,6 +9,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,9 +34,10 @@ class DateUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             LocalDateTime localDateTime = LocalDateTime.now();
+            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             
             // then
-            return DateUtils.localDateTimeToDate(localDateTime) != null;
+            return DateUtils.localDateTimeToDate(localDateTime).equals(date);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     
@@ -52,9 +55,10 @@ class DateUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             LocalDateTime localDateTime = LocalDateTime.now();
+            Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
             
             // then
-            return DateUtils.localDateTimeToDate(localDateTime) != null;
+            return DateUtils.localDateTimeToDate(localDateTime).equals(date);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 
