@@ -56,4 +56,24 @@ class DateUtilsTest {
             return DateUtils.localDateTimeToDate(localDateTime) != null;
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
+
+    @Test
+    void testPrettyTime() {
+        //given
+        LocalDateTime localDateTime = LocalDateTime.now();
+
+        //then
+        assertThat(DateUtils.getPrettyTime(localDateTime), not(equalTo(nullValue())));
+    }
+
+    @Test
+    void testConcurrentPrettyTime() throws InterruptedException {
+        MatcherAssert.assertThat(t -> {
+            //given
+            LocalDateTime localDateTime = LocalDateTime.now();
+
+            // then
+            return DateUtils.getPrettyTime(localDateTime) != null;
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
 }

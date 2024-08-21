@@ -1,4 +1,5 @@
 <#include "header.ftl">
+<#setting locale="de_DE">
 <div class="container">
     <div class="columns">
         <div class="column">
@@ -86,45 +87,30 @@
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <#if minRequestTime gte 1000>
-                        <#assign mrt = minRequestTime / 1000>
-                        <p class="title">${mrt?string["0.##"]} s</p>
-                    <#else>
-                        <p class="title">${minRequestTime} ms</p>
-                    </#if>
+                    <p class="title">${minRequestTime} ms</p>
                 </div>
                 <footer class="card-footer">
-                    <p class="card-footer-item"><span>Min process time</span></p>
+                    <p class="card-footer-item"><span>Min processing time</span></p>
                 </footer>
             </div>
         </div>
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <#if avgRequestTime gte 1000>
-                        <#assign art = avgRequestTime / 1000>
-                        <p class="title">${art?string["0.##"]} s</p>
-                    <#else>
-                        <p class="title">${avgRequestTime} ms</p>
-                    </#if>
+                    <p class="title">${avgRequestTime} ms</p>
                 </div>
                 <footer class="card-footer">
-                    <p class="card-footer-item"><span>Avg process time</span></p>
+                    <p class="card-footer-item"><span>Avg processing time</span></p>
                 </footer>
             </div>
         </div>
         <div class="column">
             <div class="card">
                 <div class="card-content">
-                    <#if maxRequestTime gte 1000>
-                        <#assign mrt = maxRequestTime / 1000>
-                        <p class="title">${mrt?string["0.##"]} s</p>
-                    <#else>
-                        <p class="title">${maxRequestTime} ms</p>
-                    </#if>
+                    <p class="title">${maxRequestTime} ms</p>
                 </div>
                 <footer class="card-footer">
-                    <p class="card-footer-item"><span>Max process time</span></p>
+                    <p class="card-footer-item"><span>Max processing time</span></p>
                 </footer>
             </div>
         </div>
