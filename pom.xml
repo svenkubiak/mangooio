@@ -220,7 +220,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.7.1</version>
+					<version>3.8.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -336,7 +336,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.11</version>
+				<version>8.2.12</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
