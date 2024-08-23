@@ -436,7 +436,6 @@ public class Response {
     }
 
     public Response bodyDefault() {
-        System.out.println(statusCode);
         switch (statusCode) {
             case StatusCodes.OK:
                 this.body = Template.ok();
