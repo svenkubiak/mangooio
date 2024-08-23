@@ -58,9 +58,12 @@ public class AuthenticationHandler implements HttpHandler {
             .entrySet()
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
-            .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
-        
-        exchange.getResponseHeaders().put(Header.LOCATION, redirect);
+            .forEach(entry -> exchange.getResponseHeaders().put(entry.getKey(), entry.getValue()));
+
+        if (config.isAuthOrigin()) {
+            redirect = redirect + "?origin=" + exchange.getRequestURI();
+        }
+        exchange.getResponseHeaders().put(Header.LOCATION,redirect);
         exchange.endExchange();
     }
     

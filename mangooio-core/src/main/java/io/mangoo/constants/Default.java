@@ -13,6 +13,7 @@ public final class Default {
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 1209600L;
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
     public static final int AUTHENTICATION_LOCK = 10;
+    public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
     public static final String CORS_ALLOW_ORIGIN = "^http(s)?://(www\\.)?example\\.(com|org)$";
     public static final Boolean CORS_ENABLE = Boolean.FALSE;
@@ -44,11 +45,8 @@ public final class Default {
     public static final String SMTP_PROTOCOL = "smtps";
     public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
-
-    private Default() {
-    }
-
     private static final Map<String, String> messages = new HashMap<>();
+
 
     static {
         messages.put(Validation.REQUIRED_KEY, Validation.REQUIRED);
@@ -69,6 +67,10 @@ public final class Default {
         messages.put(Validation.NUMERIC_KEY, Validation.NUMERIC);
         messages.put(Validation.DOMAIN_NAME_KEY, Validation.DOMAIN_NAME);
     }
+
+    private Default() {
+    }
+
     public static Map<String, String> getMessages() {
         return messages;
     }

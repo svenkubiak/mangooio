@@ -698,4 +698,11 @@ public class Config {
     public String getSmtpProtocol() {
         return getString(Key.SMTP_PROTOCOL, Default.SMTP_PROTOCOL);
     }
+
+    /**
+     * @return authentication.origin or default value if undefined
+     */
+    public boolean isAuthOrigin() {
+        return getBoolean(Key.AUTHENTICATION_ORIGIN, Default.AUTHENTICATION_ORIGIN);
+    }
 }

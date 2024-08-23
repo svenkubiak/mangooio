@@ -21,6 +21,7 @@ public final class Key {
     public static final String AUTHENTICATION_COOKIE_TOKEN_EXPIRES = "authentication.cookie.token.expires";
     public static final String AUTHENTICATION_LOCK = "authentication.lock";
     public static final String AUTHENTICATION_REDIRECT = "authentication.redirect";
+    public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
     public static final String CACHE_CLUSTER_URL = "cache.cluster.url";
     public static final String CONNECTOR_AJP_HOST = "connector.ajp.host";
     public static final String CONNECTOR_AJP_PORT = "connector.ajp.port";
