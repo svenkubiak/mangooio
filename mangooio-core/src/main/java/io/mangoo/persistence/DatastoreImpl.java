@@ -315,6 +315,13 @@ public class DatastoreImpl implements Datastore {
         getCollection(clazz).ifPresent(collection -> Stream.of(indexes).forEach(collection::dropIndex));
     }
 
+    @Override
+    public void dropAllIndexes() {
+        mongoDatabase.listCollectionNames().forEach(c -> {
+            mongoDatabase.getCollection(c).dropIndexes();
+        });
+    }
+
     @SuppressWarnings("rawtypes")
     private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, NotNull.CLASS);

@@ -187,4 +187,9 @@ public interface Datastore {
      * @param indexes One or multiple Indexes (e.g. Indexes.ascending("foo")) to remove
      */
     <T> void dropIndex(Class<T> clazz, Bson... indexes);
+
+    /**
+     * Drops all indexes in all collections of the connected database
+     */
+    void dropAllIndexes();
 }
