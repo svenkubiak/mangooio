@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static io.mangoo.admin.AdminUtils.resetLockCounter;
 
+@FilterWith(AdminFilter.class)
 public class AdminController {
     private static final Logger LOG = LogManager.getLogger(AdminController.class);
     private static final Pattern PATTERN = Pattern.compile("[^a-zA-Z0-9]");
@@ -58,7 +59,6 @@ public class AdminController {
         this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO);
     }
 
-    @FilterWith(AdminFilter.class)
     public Response index() {
         boolean enabled = config.isMetricsEnable();
         var stream = Application.getInstance(EventBus.class);
@@ -106,7 +106,6 @@ public class AdminController {
                 .template(Template.adminPath());
     }
 
-    @FilterWith(AdminFilter.class)
     public Response cache() {
         Map<String, CacheStats> statistics = new HashMap<>();
         for (Entry<String, Cache> entry : cacheProvider.getCaches().entrySet()) {
@@ -118,14 +117,11 @@ public class AdminController {
                 .template(Template.cachePath());
     }
 
-
-    @FilterWith(AdminFilter.class)
     public Response scheduler() {
         Scheduler scheduler = Application.getInstance(Scheduler.class);
         return Response.ok().render("scheduler", scheduler).template(Template.schedulerPath());
     }
 
-    @FilterWith(AdminFilter.class)
     public Response tools() {
         String secret = config.getApplicationAdminSecret();
         String qrCode = null;
@@ -141,7 +137,6 @@ public class AdminController {
                 .template(Template.toolsPath());
     }
 
-    @FilterWith(AdminFilter.class)
     public Response toolsRx(Request request) {
         Map<String, Object> body = request.getBodyAsJsonMap();
         Map<String, String> response = new HashMap<>();

@@ -16,12 +16,24 @@ import java.time.LocalDateTime;
 
 public class AdminFilter implements PerRequestFilter {
     private static final String VERSION_TAG = MangooUtils.getVersion();
-    
+    private static final String[] ALLOWED = {
+            "/@admin/login",
+            "/@admin/logout",
+            "/@admin/authenticate",
+            "/@admin/twofactor",
+            "/@admin/verify"};
+
     @Override
     public Response execute(Request request, Response response) {
         var config = Application.getInstance(Config.class);
+        response.render("mangooioAdminLocale", config.getApplicationAdminLocale());
+
+        var uri = request.getURI();
+        if (StringUtils.isNotBlank(uri) && StringUtils.equalsAny(uri, ALLOWED)) {
+            return response;
+        }
+
         var cookie = request.getCookie(Default.ADMIN_COOKIE_NAME);
-        
         if (cookie != null) {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {

@@ -5,6 +5,7 @@ public final class Key {
     public static final String APPLICATION_ADMIN_PASSWORD = "application.admin.password";
     public static final String APPLICATION_ADMIN_SECRET = "application.admin.secret";
     public static final String APPLICATION_ADMIN_USERNAME = "application.admin.username";
+    public static final String APPLICATION_ADMIN_LOCALE = "application.admin.locale";
     public static final String APPLICATION_CONFIG = "application.config";
     public static final String APPLICATION_CONTROLLER = "application.controller";
     public static final String APPLICATION_LANGUAGE = "application.language";
@@ -22,7 +23,6 @@ public final class Key {
     public static final String AUTHENTICATION_LOCK = "authentication.lock";
     public static final String AUTHENTICATION_REDIRECT = "authentication.redirect";
     public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
-    public static final String CACHE_CLUSTER_URL = "cache.cluster.url";
     public static final String CONNECTOR_AJP_HOST = "connector.ajp.host";
     public static final String CONNECTOR_AJP_PORT = "connector.ajp.port";
     public static final String CONNECTOR_HTTP_HOST = "connector.http.host";

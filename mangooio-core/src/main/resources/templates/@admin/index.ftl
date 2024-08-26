@@ -1,5 +1,5 @@
 <#include "header.ftl">
-<#setting locale="de_DE">
+<#setting locale="${mangooioAdminLocale}">
 <div class="container">
     <div class="columns">
         <div class="column">

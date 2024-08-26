@@ -31,12 +31,12 @@ public class LocationMethod implements TemplateMethodModelEx {
     
     private boolean matches(List arguments) {
         String route = ((SimpleScalar) arguments.getFirst()).getAsString().toLowerCase(Locale.ENGLISH);
-        boolean equals = this.controller.equalsIgnoreCase(route);
+        boolean equals = controller.equalsIgnoreCase(route);
         
         if (equals) {
             return true;
         } else if (!route.contains(":")){
-            return route.equalsIgnoreCase(StringUtils.substringBefore(this.controller, ":"));
+            return route.equalsIgnoreCase(StringUtils.substringBefore(controller, ":"));
         }
         
         return false;

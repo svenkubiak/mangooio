@@ -44,25 +44,25 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
             switch (object) {
                 case LocalDateTimeAdapter localDateTimeAdapter -> {
                     Date date = DateUtils.localDateTimeToDate(localDateTimeAdapter.getObject());
-                    result = this.prettyTime.format(date);
+                    result = prettyTime.format(date);
                 }
                 case LocalDateAdapter localDateAdapter -> {
                     Date date = DateUtils.localDateToDate(localDateAdapter.getObject());
-                    result = this.prettyTime.format(date);
+                    result = prettyTime.format(date);
                 }
                 case LocalDateTime localDateTime -> {
                     Date date = DateUtils.localDateTimeToDate(localDateTime);
-                    result = this.prettyTime.format(date);
+                    result = prettyTime.format(date);
                 }
                 case LocalDate localDate -> {
                     Date date = DateUtils.localDateToDate(localDate);
-                    result = this.prettyTime.format(date);
+                    result = prettyTime.format(date);
                 }
                 case SimpleDate simpleDate -> {
                     Date date = simpleDate.getAsDate();
-                    result = this.prettyTime.format(date);
+                    result = prettyTime.format(date);
                 }
-                case Date date -> result = this.prettyTime.format(date);
+                case Date date -> result = prettyTime.format(date);
                 case null, default ->
                         throw new TemplateModelException("Invalid object found for prettytime function. Must be of type: SimpleDate, Date, LocalDateTime or LocalDate - Is: " + object.getClass());
             }

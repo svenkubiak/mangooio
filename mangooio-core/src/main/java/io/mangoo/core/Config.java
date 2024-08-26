@@ -475,13 +475,6 @@ public class Config {
     }
 
     /**
-     * @return cache.cluster.url or null if undefined
-     */
-    public String getCacheClusterUrl() {
-        return getString(Key.CACHE_CLUSTER_URL, null);
-    }
-
-    /**
      * @return undertow.maxentitysize or default value if undefined
      */
     public long getUndertowMaxEntitySize() {
@@ -704,5 +697,12 @@ public class Config {
      */
     public boolean isAuthOrigin() {
         return getBoolean(Key.AUTHENTICATION_ORIGIN, Default.AUTHENTICATION_ORIGIN);
+    }
+
+    /**
+     * @return application.admin.locale or default value if undefined
+     */
+    public Object getApplicationAdminLocale() {
+        return getString(Key.APPLICATION_ADMIN_LOCALE, Default.APPLICATION_ADMIN_LOCALE);
     }
 }

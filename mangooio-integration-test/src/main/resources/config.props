@@ -35,6 +35,7 @@
 	bar = cryptex{YHNTrnkJsj2Nob7XQtmEwTT9MeYWE8JMXWXgPzZaKMv2MbGkITuq0gvBjrE6NeiOyyeca0Sc9hDOCnFUYNx99TI0eVNYlSeWpnbzIUX/C62VDCWYvB7XdDtJXgKEBvEJ99T7TYhttKGuTaM78wGHeuukiypyOKONlEvy7Upu1ND4T6ga8/H1i0kh9cEpNa77xwcrqvBvTLG3tNkagMmPj1lNXDUOhuW6R3qVbpEVoQuKDMjEh0vVgMejJfxPaTgkbWp+h6WDrA4N52Z/SAShG67HxYDmpsRUZiMUN96T0HaKepHtEtkTVfsYZx0KJp+Tzlm/AnE61BIVVymvHGbcxg==}
 	foobar = cryptex{lZfqJp1ogY7weVbmJTPp6qVdQAG4aZNURfs6qZE5tj3Nl5CSf/GcB4UCPs7VJgmoK2+hibmfv6OWxrY03KdyaKhkJZUui1F1L/u1S7yhlnKLVobPNSeozLxENpBJ8yDwSM3u8W/M7Ky994JkuA1xqMcqsJRbTAPOXOYvEDpYePjWDjcnB2wwtgwoEB7PD+HMKw0E2VvLyW6fA6/r0XMtbQf7WEhK0zQX9IIOrU4nKuvv7SCBAGf+RCOVEbU7jIY4q49eyPYoxgNOnTqX9q21RJ1wgZQUKj8+P1e77lPMx4WPNZhXkd/HVWB8ttF4FzeaNFLDm5jt1kUgRZK+7YniSg==}
 	admin.enable = true
+	admin.locale = de_DE
 	test = arg{}
     named = injected
 	profil = arg{}
@@ -79,6 +80,7 @@
 	admin.health = true
 	admin.username = admin
 	admin.password = admin
+	admin.locale = de_DE
 
 [connector<dev>]
 	http.host = localhost

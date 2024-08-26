@@ -45,6 +45,7 @@ public final class Default {
     public static final String SMTP_PROTOCOL = "smtps";
     public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
+    public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
     private static final Map<String, String> messages = new HashMap<>();
 
 
