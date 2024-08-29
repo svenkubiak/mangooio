@@ -162,7 +162,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>${jackson.version}</version>
+					<version>${javadoc.version}</version>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
