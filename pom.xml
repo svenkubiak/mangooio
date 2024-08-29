@@ -35,6 +35,7 @@
 		<jackson.version>2.17.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
  		<jna.version>5.14.0</jna.version>
+		<javadoc.version>3.10.0</javadoc.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -161,7 +162,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.8.0</version>
+					<version>${jackson.version}</version>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
@@ -195,7 +196,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.5.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -210,7 +211,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-plugin-plugin</artifactId>
-					<version>3.14.0</version>
+					<version>3.15.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.plexus</groupId>
@@ -301,7 +302,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.30.0</version>
+				<version>2.31.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
@@ -644,7 +645,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.8.0</version>
+						<version>${javadoc.version}</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
