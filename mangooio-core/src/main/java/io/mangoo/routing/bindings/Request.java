@@ -8,11 +8,13 @@ import io.undertow.server.handlers.Cookie;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.HttpString;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Request extends Validator {
     @Serial
@@ -22,7 +24,7 @@ public class Request extends Validator {
     private transient Authentication authentication;
     private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
-    private String body;
+    private String body = Strings.EMPTY;
     private Map<String, String> parameter;
 
     public Request(){
@@ -53,7 +55,7 @@ public class Request extends Validator {
     }
     
     public Request withBody(String body) {
-        this.body = body;
+        this.body = (body != null) ? body : Strings.EMPTY;
         return this;
     }
     
@@ -70,6 +72,14 @@ public class Request extends Validator {
      */
     public String getBody() {
         return body;
+    }
+
+    /**
+     *
+     * @return The request body only if the body is not blank, otherwise and Optional.empty()
+     */
+    public Optional<String> getBodyIfPresent() {
+        return (StringUtils.isNotBlank(body)) ? Optional.of(body) : Optional.empty();
     }
 
     /**
