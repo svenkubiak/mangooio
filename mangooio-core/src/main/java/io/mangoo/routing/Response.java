@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
 import io.mangoo.constants.Template;
+import io.mangoo.models.Error;
 import io.mangoo.utils.JsonUtils;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
@@ -523,6 +524,21 @@ public class Response {
         Objects.requireNonNull(object, NotNull.OBJECT);
 
         this.body = JsonUtils.toJson(object);
+        contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
+
+        return this;
+    }
+
+    /**
+     * Sets a JSON error string as body
+     * @param message The error message to return
+     * @return The response object
+     */
+    public Response bodyJsonError(String message) {
+        Objects.requireNonNull(message, NotNull.MESSAGE);
+
+        this.body = JsonUtils.toJson(Error.of(message, statusCode));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
         rendered = false;
 
