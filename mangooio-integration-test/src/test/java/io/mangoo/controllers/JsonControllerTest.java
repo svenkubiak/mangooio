@@ -53,11 +53,11 @@ class JsonControllerTest {
     @Test
     void testJsonError() {
         //given
-        TestResponse response = TestRequest.get("/error").execute();
+        TestResponse response = TestRequest.get("/json-error").execute();
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
         assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
         assertThat(response.getContent(), containsString("An error occurred. Please have a look."));
     }
