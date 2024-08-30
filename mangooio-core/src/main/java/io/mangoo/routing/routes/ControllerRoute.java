@@ -53,10 +53,10 @@ public class ControllerRoute {
             if (requestRoute.hasMultipleMethods()) {
                 for (Http method : requestRoute.getMethods()) {
                     requestRoute.withHttpMethod(method);
-                    Router.addRoute(requestRoute);
+                    Router.addRoute(requestRoute, method.name());
                 }
             } else {
-                Router.addRoute(requestRoute);
+                Router.addRoute(requestRoute, ((RequestRoute) route).getMethod().name());
             }
         }
     }

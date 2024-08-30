@@ -27,7 +27,7 @@ public class PathRoute implements MangooRoute {
         
         this.url = url;
         
-        Router.addRoute(this);         
+        Router.addRoute(this, "path");
     }
 
     @Override

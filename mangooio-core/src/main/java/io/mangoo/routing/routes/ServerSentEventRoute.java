@@ -24,7 +24,7 @@ public class ServerSentEventRoute implements MangooRoute {
         }
         this.url = url;
         
-        Router.addRoute(this);  
+        Router.addRoute(this, "sse");
         
         return this;
     }

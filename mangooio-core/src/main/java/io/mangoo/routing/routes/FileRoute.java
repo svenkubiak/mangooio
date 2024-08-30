@@ -23,7 +23,7 @@ public class FileRoute implements MangooRoute {
         
         this.url = url;
         
-        Router.addRoute(this);        
+        Router.addRoute(this, "file");
     }
 
     @Override

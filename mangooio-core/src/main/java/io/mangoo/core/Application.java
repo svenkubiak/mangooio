@@ -118,6 +118,7 @@ public final class Application {
             });
             prepareRoutes();
             createRoutes();
+            validateUrls();
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
@@ -125,6 +126,12 @@ public final class Application {
             applicationStarted();
             showLogo();
             started = true;
+        }
+    }
+
+    private static void validateUrls() {
+        if (!Router.validUrls()) {
+            failsafe();
         }
     }
 

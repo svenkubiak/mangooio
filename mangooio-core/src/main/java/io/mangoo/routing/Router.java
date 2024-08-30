@@ -9,6 +9,8 @@ import io.mangoo.routing.routes.PathRoute;
 import io.mangoo.routing.routes.RequestRoute;
 import io.mangoo.routing.routes.ServerSentEventRoute;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,9 +19,11 @@ import java.util.stream.Stream;
 
 @SuppressFBWarnings(value = "PMB_POSSIBLE_MEMORY_BLOAT", justification = "Route size is limited")
 public final class Router {
+    private static final Logger LOG = LogManager.getLogger(Router.class);
+    private static final int MAX_ROUTES = 100000;
+    private static final List<String> urls = new ArrayList<>();
     private static Set<MangooRoute> routes = ConcurrentHashMap.newKeySet();
     private static Map<String, RequestRoute> reverseRoutes = new ConcurrentHashMap<>();
-    private static final int MAX_ROUTES = 100000;
 
     private Router(){
     }
@@ -29,15 +33,31 @@ public final class Router {
      *
      * @param route The route to add
      */
-    public static void addRoute(MangooRoute route) {
+    public static void addRoute(MangooRoute route, String type) {
         Objects.requireNonNull(route, NotNull.ROUTE);
+        Objects.requireNonNull(type, NotNull.TYPE);
         Preconditions.checkArgument(routes.size() <= MAX_ROUTES, "Maximum of " + MAX_ROUTES + " routes reached");
-        
+
+        urls.add(type.toUpperCase() + " " + route.getUrl());
         routes.add(route);
 
         if (route instanceof RequestRoute requestRoute && requestRoute.getControllerClass() != null && StringUtils.isNotBlank(requestRoute.getControllerMethod())) {
             reverseRoutes.put((requestRoute.getControllerClass().getSimpleName().toLowerCase(Locale.ENGLISH) + ":" + requestRoute.getControllerMethod()).toLowerCase(Locale.ENGLISH), requestRoute);
         }
+    }
+
+    public static boolean validUrls() {
+        HashSet<String> uniqueUrls = new HashSet<>();
+        List<String> duplicates = urls.stream()
+                .filter(url -> !uniqueUrls.add(url))
+                .toList();
+
+        if (!duplicates.isEmpty()) {
+            duplicates.forEach(duplicate -> LOG.error("Found multiple mappings of URL mapping '{}'", duplicate));
+            return false;
+        }
+
+        return true;
     }
 
     /**
