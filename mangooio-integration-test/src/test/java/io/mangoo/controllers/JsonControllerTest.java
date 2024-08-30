@@ -51,6 +51,18 @@ class JsonControllerTest {
     }
 
     @Test
+    void testJsonError() {
+        //given
+        TestResponse response = TestRequest.get("/error").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
+        assertThat(response.getHeader("content-type"), equalTo(APPLICATION_JSON_CHARSET_UTF_8));
+        assertThat(response.getContent(), containsString("An error occurred. Please have a look."));
+    }
+
+    @Test
     void testJsonParsingPost() {
         //given
         TestResponse response = TestRequest.post("/parse")

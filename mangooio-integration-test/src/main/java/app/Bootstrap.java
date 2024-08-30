@@ -48,6 +48,7 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(JsonController.class).withRoutes(
                 On.get().to("/json-body").respondeWith("jsonBody"),
                 On.get().to("/render").respondeWith("render"),
+                On.get().to("/error").respondeWith("error"),
                 On.post().to("/parse").respondeWith("parse"),
                 On.put().to("/parse").respondeWith("parse"),
                 On.patch().to("/parse").respondeWith("parse"),

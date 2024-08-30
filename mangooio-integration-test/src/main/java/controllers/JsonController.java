@@ -28,6 +28,11 @@ public class JsonController {
         return Response.ok().bodyText(request.getURI());
     }
 
+    public Response error(Request request) {
+        return Response.badRequest().bodyJsonError("An error occurred. Please have a look.");
+    }
+
+
     public Response requestAndJson(Request request, Person person) {
         return Response.ok().bodyText(request.getURI() + person.getFirstname());
     }
