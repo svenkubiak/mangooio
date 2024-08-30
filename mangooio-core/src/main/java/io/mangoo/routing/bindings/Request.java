@@ -14,7 +14,6 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Request extends Validator {
     @Serial
@@ -72,14 +71,6 @@ public class Request extends Validator {
      */
     public String getBody() {
         return body;
-    }
-
-    /**
-     *
-     * @return The request body only if the body is not blank, otherwise and Optional.empty()
-     */
-    public Optional<String> getBodyIfPresent() {
-        return (StringUtils.isNotBlank(body)) ? Optional.of(body) : Optional.empty();
     }
 
     /**
