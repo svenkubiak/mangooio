@@ -28,7 +28,7 @@ public class JsonController {
         return Response.ok().bodyText(request.getURI());
     }
 
-    public Response error(Request request) {
+    public Response error() {
         return Response.badRequest().bodyJsonError("An error occurred. Please have a look.");
     }
 

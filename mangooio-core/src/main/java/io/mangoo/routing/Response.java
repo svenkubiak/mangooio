@@ -457,7 +457,7 @@ public class Response {
                 this.body = Template.badRequest();
                 break;
             default:
-                this.body = Template.xxx().replaceAll("###xxx###", String.valueOf(statusCode));
+                this.body = Template.xxx().replace("###xxx###", String.valueOf(statusCode));
         }
         rendered = false;
 

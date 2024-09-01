@@ -122,7 +122,7 @@ public final class Application {
             prepareUndertow();
             prepareShutdown();
             sanityChecks();
-            do {} while (scan.isAlive());
+            do {} while (scan.isAlive()); //NOSONAR
             applicationStarted();
             showLogo();
             started = true;

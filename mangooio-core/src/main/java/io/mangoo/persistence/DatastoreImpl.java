@@ -318,9 +318,7 @@ public class DatastoreImpl implements Datastore {
 
     @Override
     public void dropAllIndexes() {
-        mongoDatabase.listCollectionNames().forEach(c -> {
-            mongoDatabase.getCollection(c).dropIndexes();
-        });
+        mongoDatabase.listCollectionNames().forEach(c -> mongoDatabase.getCollection(c).dropIndexes());
     }
 
     @SuppressWarnings("rawtypes")

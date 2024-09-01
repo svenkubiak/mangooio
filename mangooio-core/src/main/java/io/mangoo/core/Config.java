@@ -257,7 +257,7 @@ public class Config {
      *
      * @param key The key of the configuration value (e.g. application.name)
      * @param defaultValue The default value to return of no key is found
-     * @return The configured value as boolean or the passed defautlValue if the key is not configured
+     * @return The configured value as boolean or the passed defaultValue if the key is not configured
      */
     public Boolean getBoolean(String key, Boolean defaultValue) {
         final String value = props.getValue(key);
