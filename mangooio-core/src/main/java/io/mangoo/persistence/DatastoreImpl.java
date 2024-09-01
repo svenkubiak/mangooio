@@ -53,6 +53,7 @@ public class DatastoreImpl implements Datastore {
         connect();
     }
 
+    @SuppressWarnings("java:S2095")
     private void connect() {
        if (config.isPersistenceEnabled()) {
            var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
@@ -67,7 +68,7 @@ public class DatastoreImpl implements Datastore {
                    .build();
 
            mongoDatabase = MongoClients
-                   .create(settings) //NOSONAR
+                   .create(settings)
                    .getDatabase(config.getMongoDbName(prefix));
 
            LOG.info("Created MongoClient connected to {}:{} with credentials = {} on database '{}'",
