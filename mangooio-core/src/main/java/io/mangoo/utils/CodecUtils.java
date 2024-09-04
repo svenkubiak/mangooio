@@ -125,6 +125,17 @@ public final class CodecUtils {
         Objects.requireNonNull(data, NotNull.DATA);
         return BASE64ENCODER.encode(data.getBytes(StandardCharsets.UTF_8));
     }
+
+    /**
+     * Encodes a given string to a Base64 byte array
+     *
+     * @param data The data to convert
+     * @return The converted byte array
+     */
+    public static byte[] encodeToBase64(byte[] data) {
+        Objects.requireNonNull(data, NotNull.DATA);
+        return BASE64ENCODER.encode(data);
+    }
     
     /**
      * Decodes a given Base64 encoded string to a byte array

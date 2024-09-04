@@ -2,10 +2,12 @@ package io.mangoo.utils.totp;
 
 import io.mangoo.constants.Hmac;
 import io.mangoo.constants.NotNull;
+import io.mangoo.utils.CodecUtils;
+import net.glxn.qrgen.QRCode;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.lang3.RegExUtils;
 
-import java.net.URLEncoder;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Objects;
@@ -109,35 +111,38 @@ public class TotpUtils {
 
         return totp.equals(builder.value());
     }
-    
+
     /**
-     * Generates a QR code link from Google charts API to share a secret with a user
-     * 
+     * Generates a QR code image as a base64 PNG
+     *
      * @param name The name of the account
      * @param issuer The name of the issuer
      * @param secret The secret to use
      * @param algorithm The algorithm to use
      * @param digits The number of digits to use
      * @param period The period to use
-     * 
-     * @return A URL to Google charts API with the QR code
+     *
+     * @return The QR code as a base64 PNG image
      */
     public static String getQRCode(String name, String issuer, String secret, String algorithm, String digits, String period) {
-        Objects.requireNonNull(name, NotNull.ACCOUNT_NAME);
-        Objects.requireNonNull(secret, NotNull.SECRET);
+        Objects.requireNonNull(name, NotNull.NAME);
         Objects.requireNonNull(issuer, NotNull.ISSUER);
+        Objects.requireNonNull(secret, NotNull.SECRET);
         Objects.requireNonNull(algorithm, NotNull.ALGORITHM);
         Objects.requireNonNull(digits, NotNull.DIGITS);
         Objects.requireNonNull(period, NotNull.PERIOD);
-        
-        var buffer = new StringBuilder();
-            buffer
-                .append("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=")
-                .append(getOtpauthURL(name, issuer, secret, algorithm, digits, period));
 
-        return buffer.toString();
+        String text = getOtpauthURL(name, issuer, secret, algorithm, digits, period);
+        ByteArrayOutputStream qrCodeOutputStream = QRCode.from(text)
+                .withSize(250, 250)
+                .stream();
+
+        // Convert byte array output stream to a byte array
+        byte[] qrCodeBytes = qrCodeOutputStream.toByteArray();
+
+        return new String(CodecUtils.encodeToBase64(qrCodeBytes), StandardCharsets.UTF_8);
     }
-    
+
     /**
      * Generates an otpauth code to share a secret with a user
      * 
@@ -171,10 +176,7 @@ public class TotpUtils {
             .append(digits)
             .append("&period=")
             .append(period);
-        
-        var url = "";
-        url = URLEncoder.encode(buffer.toString(), StandardCharsets.UTF_8);
 
-        return url;
+        return buffer.toString();
     }
 }

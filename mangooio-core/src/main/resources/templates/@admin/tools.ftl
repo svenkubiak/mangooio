@@ -88,7 +88,7 @@
                             <div class="content">
                                 <form>
                                     <div class="field">
-                                        <img src="${qrcode}" alt="qrcode">
+                                        <img src="data:image/png;base64,${qrcode}" alt="QR Code" />
                                     </div>
                                     <div class="field">
                                         <label class="label">Secret</label>
