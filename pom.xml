@@ -34,7 +34,7 @@
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.18.0-rc1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
- 		<jna.version>5.14.0</jna.version>
+ 		<jna.version>5.15.0</jna.version>
 		<javadoc.version>3.10.0</javadoc.version>
 	</properties>
 	<modules>
@@ -636,7 +636,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.2.5</version>
+						<version>3.2.6</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
