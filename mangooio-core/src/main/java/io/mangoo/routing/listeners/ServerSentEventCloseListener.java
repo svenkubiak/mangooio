@@ -8,6 +8,6 @@ import org.xnio.ChannelListener;
 public class ServerSentEventCloseListener implements ChannelListener<ServerSentEventConnection> {
     @Override
     public void handleEvent(ServerSentEventConnection connection) {
-        Thread.ofVirtual().start(() -> Application.getInstance(ServerSentEventManager.class).removeConnection(connection.getRequestURI()));
+        Thread.ofVirtual().start(() -> Application.getInstance(ServerSentEventManager.class).removeConnection(connection));
     }
 }
