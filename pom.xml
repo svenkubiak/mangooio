@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -30,7 +30,7 @@
 		<required.maven.version>3.9.0</required.maven.version>
 		<junit.version>5.11.0</junit.version>
 		<junit.platform.version>1.11.0</junit.platform.version>
-		<enforcer.version>1.8.0</enforcer.version>
+		<enforcer.version>1.9.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.18.0-rc1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>

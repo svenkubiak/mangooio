@@ -18,42 +18,32 @@ public class ServerSentEventManager {
         Objects.requireNonNull(uri, NotNull.URI);
         Objects.requireNonNull(connection, NotNull.CONNECTION);
 
-        List<ServerSentEventConnection> connections = SERVER_SENT_EVENT_CONNECTIONS.get(uri);
-        if (connections == null) {
-            connections = new ArrayList<>();
-        }
-        connections.add(connection);
-
-        SERVER_SENT_EVENT_CONNECTIONS.put(uri, connections);
+        SERVER_SENT_EVENT_CONNECTIONS
+                .computeIfAbsent(uri, key -> new ArrayList<>())
+                .add(connection);
     }
 
     public void removeConnection(ServerSentEventConnection connection) {
         Objects.requireNonNull(connection, NotNull.CONNECTION);
         String uri = connection.getRequestURI();
 
-        List<ServerSentEventConnection> connections = SERVER_SENT_EVENT_CONNECTIONS.get(uri);
-        if (connections != null && !connections.isEmpty()) {
+        SERVER_SENT_EVENT_CONNECTIONS.computeIfPresent(uri, (key, connections) -> {
             connections.remove(connection);
-            SERVER_SENT_EVENT_CONNECTIONS.put(uri, connections);
-        }
-
-        if (connections != null && connections.isEmpty()) {
-            SERVER_SENT_EVENT_CONNECTIONS.remove(uri);
-        }
+            return connections.isEmpty() ? null : connections;
+        });
     }
 
     public void send(String uri, String data) {
         Objects.requireNonNull(uri, NotNull.URI);
+        Objects.requireNonNull(uri, NotNull.DATA);
 
-        Thread.ofVirtual().start(() -> {
-            List<ServerSentEventConnection> connections = SERVER_SENT_EVENT_CONNECTIONS.get(uri);
-            if (connections != null && !connections.isEmpty()) {
-                for (ServerSentEventConnection connection : connections) {
-                    if (connection.isOpen()) {
-                        connection.send(data);
-                    }
-                }
-            }
-        });
+        Thread.ofVirtual().start(() ->
+                SERVER_SENT_EVENT_CONNECTIONS
+                        .getOrDefault(uri, List.of())
+                        .stream()
+                        .filter(ServerSentEventConnection::isOpen)
+                        .forEach(connection -> connection.send(data))
+        );
+
     }
 }
