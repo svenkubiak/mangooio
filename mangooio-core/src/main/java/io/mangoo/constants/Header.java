@@ -15,6 +15,7 @@ public final class Header {
     public static final HttpString X_CONTENT_TYPE_OPTIONS = new HttpString("X-Content-Type-Options");
     public static final HttpString X_FRAME_OPTIONS = new HttpString("X-Frame-Options");
     public static final HttpString X_XSS_PROTECTION = new HttpString("X-XSS-Protection");
+    public static final HttpString PERMISSIONS_POLICY = new HttpString("Permissions-Policy");
 
     private Header() {
     }

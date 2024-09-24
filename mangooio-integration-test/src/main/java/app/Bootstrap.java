@@ -15,6 +15,7 @@ public class Bootstrap implements MangooBootstrap {
     @Override
     public void initializeRoutes() {
         Server.header(Header.FEATURE_POLICY, "myFeaturePolicy");
+        Server.header(Header.PERMISSIONS_POLICY, "myPermissionsPolicy");
 
         // SessionController
         Bind.controller(SessionController.class).withRoutes(

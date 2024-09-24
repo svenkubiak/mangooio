@@ -423,6 +423,7 @@ class ApplicationControllerTest {
         assertThat(response.getHeader(Header.CONTENT_SECURITY_POLICY.toString()), equalTo(""));
         assertThat(response.getHeader(Header.FEATURE_POLICY.toString()), equalTo("myFeaturePolicy"));
         assertThat(response.getHeader(Header.REFERER_POLICY.toString()), equalTo("no-referrer"));
+        assertThat(response.getHeader(Header.PERMISSIONS_POLICY.toString()), equalTo("myPermissionsPolicy"));
     }
     
     @Test
