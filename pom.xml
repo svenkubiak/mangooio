@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -28,8 +28,8 @@
 		<log4j.version>2.24.0</log4j.version>
 		<maven.version>4.0.0-alpha-9</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>5.11.0</junit.version>
-		<junit.platform.version>1.11.0</junit.platform.version>
+		<junit.version>5.11.1</junit.version>
+		<junit.platform.version>1.11.1</junit.platform.version>
 		<enforcer.version>1.9.0</enforcer.version>
 		<jpasteo.version>0.7.0</jpasteo.version>
 		<jackson.version>2.18.0-rc1</jackson.version>
@@ -317,7 +317,7 @@
 			<dependency>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-utils</artifactId>
-				<version>4.0.1</version>
+				<version>4.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
@@ -342,7 +342,7 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>5.1.4</version>
+				<version>5.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>net.glxn</groupId>
