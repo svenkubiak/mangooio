@@ -5,6 +5,7 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 import com.google.inject.Module;
 import com.google.inject.*;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.*;
@@ -265,22 +266,25 @@ public final class Application {
                 PersistenceUtils.addCollection(key, value);
             });
 
+            Datastore datastore = Application.getInstance(Datastore.class);
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                FieldInfoList annotationInfo = classInfo.getFieldInfo();
-                annotationInfo.forEach(info -> {
-                    if (info.getAnnotationInfo().size() == 1) {
-                        var field = info.getName();
-                        if (StringUtils.isNotBlank(field) && info.getAnnotationInfo() != null) {
-                            var value = info.getAnnotationInfo().getFirst().getParameterValues().getFirst().getValue().toString();
-                            if ((Sort.ASCENDING.value()).equals(value)) {
-                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.ascending(field));
-                            } else if ((Sort.DESCENDING.value()).equals(value)) {
-                                Application.getInstance(Datastore.class).addIndex(classInfo.loadClass(), Indexes.descending(field));
+                FieldInfoList fieldInfoList = classInfo.getFieldInfo();
+                fieldInfoList.stream()
+                        .filter(info -> info.getAnnotationInfo().size() == 1)
+                        .filter(info -> StringUtils.isNotBlank(info.getName()))
+                        .forEach(info -> {
+                            List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
+                            boolean unique = (annotationParams.size() > 1) && (boolean) annotationParams.get(1).getValue();
+                            String sortOrder = annotationParams.get(0).getValue().toString();
+
+                            if (Sort.ASCENDING.value().equals(sortOrder)) {
+                                datastore.addIndex(classInfo.loadClass(), Indexes.ascending(info.getName()), new IndexOptions().unique(unique));
+                            } else if (Sort.DESCENDING.value().equals(sortOrder)) {
+                                datastore.addIndex(classInfo.loadClass(), Indexes.descending(info.getName()), new IndexOptions().unique(unique));
                             }
-                        }
-                    }
-                });
+                        });
             });
+
         }
     }
 

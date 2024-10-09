@@ -16,4 +16,5 @@ public @interface Indexed {
      * @return The filter (either ascending or descending), default ascending
      */
     public Sort sort() default Sort.ASCENDING;
+    public boolean unique() default false;
 }

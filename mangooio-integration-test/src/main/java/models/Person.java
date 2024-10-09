@@ -17,14 +17,12 @@ public class Person extends Entity {
     @Indexed(sort = Sort.ASCENDING)
     private final String firstname;
 
-    @Indexed(sort = Sort.DESCENDING)
+    @Indexed(sort = Sort.DESCENDING, unique = true)
     private final String lastname;
-
-    @Indexed(sort = Sort.DESCENDING)
-    private String address;
-
     @Indexed(sort = Sort.DESCENDING)
     private final int age;
+    @Indexed(sort = Sort.DESCENDING)
+    private String address;
 
     @JsonCreator
     public Person(@JsonProperty("firstname") String firstname, @JsonProperty("lastname") String lastname, @JsonProperty("age") int age) {
