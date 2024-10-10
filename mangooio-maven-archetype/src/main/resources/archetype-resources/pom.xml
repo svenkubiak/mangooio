@@ -45,7 +45,6 @@
 					<showDeprecation>true</showDeprecation>
 					<fork>true</fork>
 					<compilerArgument>-parameters</compilerArgument>
-					<compilerArgument>-proc:full</compilerArgument>
 				</configuration>
 			</plugin>
 			<plugin>
