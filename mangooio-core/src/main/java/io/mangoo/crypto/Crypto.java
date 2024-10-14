@@ -30,14 +30,14 @@ import java.util.Objects;
 
 public class Crypto {
     private static final Logger LOG = LogManager.getLogger(Crypto.class);
-    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(CBCBlockCipher.newInstance(new AESLightEngine()));
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     private static final Base64.Decoder base64Decoder = Base64.getDecoder();
     private static final String TRANSFORMATION = "RSA/None/OAEPWITHSHA-512ANDMGF1PADDING";
     private static final String ALGORITHM = "RSA";
-    private static final int KEY_LENGTH = 2048;
+    private static final int KEY_LENGTH = 3072;
     private static final int KEY_INDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
+    private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(CBCBlockCipher.newInstance(new AESLightEngine()));
     private final Config config;
     
     @Inject
@@ -146,7 +146,7 @@ public class Crypto {
         KeyPair keyPair = null;
         try {
             var keyPairGenerator = KeyPairGenerator.getInstance(ALGORITHM);
-            keyPairGenerator.initialize(KEY_LENGTH);
+            keyPairGenerator.initialize(KEY_LENGTH, new SecureRandom());
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             LOG.error("Failed to create public/private key pair", e);
