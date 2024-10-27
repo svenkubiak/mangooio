@@ -117,7 +117,7 @@
 				<plugin>
 					<groupId>org.owasp</groupId>
 					<artifactId>dependency-check-maven</artifactId>
-					<version>10.0.4</version>
+					<version>11.0.0</version>
 					<configuration>
 						<failBuildOnCVSS>1</failBuildOnCVSS>
 						<suppressionFiles>
@@ -257,7 +257,7 @@
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
-				<version>2.3.17.Final</version>
+				<version>2.3.18.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.jna</groupId>
@@ -302,7 +302,7 @@
 			<dependency>
 				<groupId>com.google.errorprone</groupId>
 				<artifactId>error_prone_annotations</artifactId>
-				<version>2.33.0</version>
+				<version>2.35.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jodd</groupId>
@@ -322,7 +322,7 @@
 			<dependency>
 				<groupId>org.apache.maven.plugin-tools</groupId>
 				<artifactId>maven-plugin-annotations</artifactId>
-				<version>3.15.0</version>
+				<version>3.15.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.mail</groupId>
@@ -448,7 +448,7 @@
 			<dependency>
 				<groupId>org.apache.maven.resolver</groupId>
 				<artifactId>maven-resolver</artifactId>
-				<version>2.0.1</version>
+				<version>2.0.2</version>
 				<type>pom</type>
 			</dependency>
 			<dependency>
@@ -509,7 +509,7 @@
 			<dependency>
 				<groupId>org.cactoos</groupId>
 				<artifactId>cactoos</artifactId>
-				<version>0.55.0</version>
+				<version>0.56.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.llorllale</groupId>
