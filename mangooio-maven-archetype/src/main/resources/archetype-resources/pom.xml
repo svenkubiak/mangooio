@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 	<url>https://github.com/svenkubiak/mangooio</url>
 	<properties>
-		<mangooio.version>8.10.0</mangooio.version>
+		<mangooio.version>9.0.0</mangooio.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>21</jdk.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -55,7 +55,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.5.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
