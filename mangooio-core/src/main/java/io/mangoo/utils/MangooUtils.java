@@ -17,7 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
@@ -161,15 +164,6 @@ public final class MangooUtils {
         return readFileToString(Path.of(path));
     }
 
-    /**
-     * @return A type 4 pseudo randomly generated uuid
-     * @deprecated As of release 8.8.0, replaced by {@link CodecUtils#uuid()}
-     */
-    @Deprecated(since = "8.8.0", forRemoval = true)
-    public static String uuid() {
-        return UUID.randomUUID().toString();
-    }
-    
     /**
      * Reads the content of a local resource to String
      * 
