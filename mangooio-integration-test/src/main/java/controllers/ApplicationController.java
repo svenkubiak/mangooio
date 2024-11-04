@@ -40,7 +40,7 @@ public class ApplicationController {
     }
     
     public Response route() {
-        return Response.ok();
+        return Response.ok().render();
     }
     
     public Response api() {
@@ -64,7 +64,7 @@ public class ApplicationController {
     }
     
     public Response reverse() {
-        return Response.ok();
+        return Response.ok().render();
     }
     
     public Response prettytime() {
@@ -134,7 +134,7 @@ public class ApplicationController {
     }
     
     public Response freemarker() {
-        return Response.ok();
+        return Response.ok().render();
     }
 
     public Response header() {

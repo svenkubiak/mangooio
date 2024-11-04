@@ -201,7 +201,7 @@ public class AdminController {
         }
         form.invalidate();
         form.keep();
-        
+
         return Response.redirect("/@admin/login");
     }
 

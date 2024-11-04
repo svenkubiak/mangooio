@@ -21,7 +21,7 @@ public class FormController {
     private static final int MAX_SIZE = 12;
 
     public Response form() {
-        return Response.ok();
+        return Response.ok().render();
     }
     
     public Response multivalued(Form form) {
@@ -73,11 +73,11 @@ public class FormController {
             return Response.ok().bodyText("Fancy that!");
         }
 
-        return Response.ok();
+        return Response.ok().render();
     }
     
     public Response flashify() {
-        return Response.ok();
+        return Response.ok().render();
     }
     
     public Response submit(Form form) {

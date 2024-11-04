@@ -125,10 +125,12 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance(), convertedParameters);
         }
 
-        invokedResponse.render(response.getContent());
+        if (response.getContent() != null && !response.getContent().isEmpty()) {
+            invokedResponse.render(response.getContent());
+        }
         invokedResponse.headers(response.getHeaders());
-        
-        if (invokedResponse.isRendered()) {
+
+        if (!invokedResponse.isRedirect() && invokedResponse.isRendered()) {
             var templateContext = new TemplateContext(invokedResponse.getContent())
                     .withFlash(attachment.getFlash())
                     .withSession(attachment.getSession())

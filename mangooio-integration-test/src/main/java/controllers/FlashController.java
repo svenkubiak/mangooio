@@ -19,6 +19,6 @@ public class FlashController {
     }
 
     public Response flashed() {
-        return Response.ok();
+        return Response.ok().render();
     }
 }

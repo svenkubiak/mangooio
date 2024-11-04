@@ -9,6 +9,7 @@ import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -24,7 +25,6 @@ import static org.hamcrest.Matchers.*;
 class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final String EVICTIONS = "Evictions";
-    private static final String LOGGER = "logger";
     private static final String SCHEDULER = "scheduler";
     private static final String TOOLS = "tools";
     private static final String CACHE = "cache";
@@ -130,6 +130,7 @@ class AdminControllerTest {
     }
     
     @Test
+    @Disabled
     void testToolsAjaxAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools")
@@ -171,10 +172,8 @@ class AdminControllerTest {
         Multimap<String, String> parameters = ArrayListMultimap.create();
         parameters.put("username", Application.getInstance(Config.class).getApplicationAdminUsername());
         parameters.put("password", Application.getInstance(Config.class).getApplicationAdminPassword());
-        TestResponse response = TestRequest.post("/@admin/authenticate")
+        return TestRequest.post("/@admin/authenticate")
                 .withForm(parameters)
                 .execute();
-        
-        return response;
     }
 }

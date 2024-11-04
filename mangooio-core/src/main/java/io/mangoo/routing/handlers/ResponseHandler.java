@@ -1,7 +1,6 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.Header;
-import io.mangoo.core.Application;
 import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.mangoo.utils.RequestUtils;
@@ -21,8 +20,6 @@ public class ResponseHandler implements HttpHandler {
 
         if (response.isRedirect()) {
             handleRedirectResponse(exchange, response);
-        } else if (response.isBinary()) {
-            handleBinaryResponse(exchange, response);
         } else {
             handleRenderedResponse(exchange, response);
         }
@@ -31,17 +28,6 @@ public class ResponseHandler implements HttpHandler {
         if (form != null) {
             form.discard();
         }
-    }
-
-    /**
-     * Handles a binary response to the client by sending the binary content from the response
-     * to the undertow output stream
-     *
-     * @param exchange The Undertow HttpServerExchange
-     * @param response The response object
-     */
-    protected void handleBinaryResponse(HttpServerExchange exchange, Response response) {
-        exchange.dispatch(exchange.getDispatchExecutor(), Application.getInstance(BinaryHandler.class).withResponse(response));
     }
 
     /**

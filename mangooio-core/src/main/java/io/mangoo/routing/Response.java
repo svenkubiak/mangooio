@@ -25,10 +25,7 @@ public class Response {
     private String contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
     private String body = Strings.EMPTY;
     private String template;
-    private String binaryFileName;
-    private byte[] binaryContent;
     private boolean endResponse;
-    private boolean binary;
     private boolean rendered;
     private boolean redirect;
     private int statusCode = StatusCodes.OK;
@@ -37,98 +34,88 @@ public class Response {
         //Empty constructor for Google Guice
     }
 
-    private Response(int statusCode, boolean rendered) {
+    private Response(int statusCode) {
         this.statusCode = statusCode;
-        this.rendered = rendered;
     }
 
     private Response(String redirectTo) {
         Objects.requireNonNull(redirectTo, NotNull.REDIRECT_TO);
         
         this.redirect = true;
-        this.rendered = false;
         this.redirectTo = redirectTo;
     }
 
     /**
      * Creates a response object with HTTP status code 200
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response ok() {
-        return new Response(StatusCodes.OK, true);
+        return new Response(StatusCodes.OK);
     }
 
     /**
      * Creates a response object with HTTP status code 201
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response created() {
-        return new Response(StatusCodes.CREATED, true);
+        return new Response(StatusCodes.CREATED);
     }
 
     /**
      * Creates a response object with HTTP status code 404
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response notFound() {
-        return new Response(StatusCodes.NOT_FOUND, true);
+        return new Response(StatusCodes.NOT_FOUND);
     }
 
     /**
      * Creates a response object with HTTP status code 401
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response forbidden() {
-        return new Response(StatusCodes.FORBIDDEN, true);
+        return new Response(StatusCodes.FORBIDDEN);
     }
 
     /**
      * Creates a response object with HTTP status code 403
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response unauthorized() {
-        return new Response(StatusCodes.UNAUTHORIZED, true);
+        return new Response(StatusCodes.UNAUTHORIZED);
     }
 
     /**
      * Creates a response object with HTTP status code 400
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response badRequest() {
-        return new Response(StatusCodes.BAD_REQUEST, true);
+        return new Response(StatusCodes.BAD_REQUEST);
     }
 
     /**
      * Creates a response object with HTTP status code 500
-     * and rendering a response body from a template
      *
      * @return The response object
      */
     public static Response internalServerError() {
-        return new Response(StatusCodes.INTERNAL_SERVER_ERROR, true);
+        return new Response(StatusCodes.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a response object with a given HTTP status code
-     * and rendering a response body from a template
      *
      * @param statusCode The status code to set
      * @return The response object
      */
     public static Response status(int statusCode) {
-        return new Response(statusCode, true);
+        return new Response(statusCode);
     }
 
     /**
@@ -159,16 +146,8 @@ public class Response {
         return new ArrayList<>(cookies);
     }
 
-    public byte[] getBinaryContent() {
-        return binaryContent.clone();
-    }
-
     public String getTemplate() {
         return template;
-    }
-
-    public String getBinaryFileName() {
-        return binaryFileName;
     }
 
     public Map<String, Object> getContent() {
@@ -177,10 +156,6 @@ public class Response {
 
     public boolean isRedirect() {
         return redirect;
-    }
-
-    public boolean isBinary() {
-        return binary;
     }
 
     public boolean isRendered() {
@@ -213,6 +188,7 @@ public class Response {
     public Response template(String template) {
         Objects.requireNonNull(template, NotNull.TEMPLATE);
         this.template = template;
+        rendered = true;
 
         return this;
     }
@@ -242,6 +218,7 @@ public class Response {
     public Response render(String name, Object object) {
         Objects.requireNonNull(name, NotNull.NAME);
         content.put(name, object);
+        rendered = true;
 
         return this;
     }
@@ -255,7 +232,6 @@ public class Response {
      */
     public Response bodyHtml(String html) {
         this.body = html;
-        rendered = false;
 
         ok();
         unauthorized();
@@ -289,7 +265,6 @@ public class Response {
             default:
                 this.body = Template.xxx().replace("###xxx###", String.valueOf(statusCode));
         }
-        rendered = false;
 
         return this;
     }
@@ -320,7 +295,6 @@ public class Response {
 
         this.body = JsonUtils.toJson(object);
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
 
         return this;
     }
@@ -335,7 +309,6 @@ public class Response {
 
         this.body = JsonUtils.toJson(Error.of(message, statusCode));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
 
         return this;
     }
@@ -352,7 +325,6 @@ public class Response {
 
         this.body = json;
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
-        rendered = false;
 
         return this;
     }
@@ -368,7 +340,6 @@ public class Response {
     public Response bodyText(String text) {
         this.body = text;
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-        rendered = false;
 
         return this;
     }
@@ -381,7 +352,6 @@ public class Response {
      */
     public Response bodyEmpty() {
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-        rendered = false;
 
         return this;
     }
@@ -412,6 +382,18 @@ public class Response {
     public Response render(Map<String, Object> content) {
         Objects.requireNonNull(content, NotNull.CONTENT);
         this.content.putAll(content);
+        rendered = true;
+
+        return this;
+    }
+
+    /**
+     * Sets that this response is rendered by a freemarker template
+     *
+     * @return The response object
+     */
+    public Response render() {
+        rendered = true;
 
         return this;
     }
