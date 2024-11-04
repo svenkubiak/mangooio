@@ -4,14 +4,11 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.enums.Http;
 import io.mangoo.interfaces.MangooRoute;
 import io.mangoo.routing.Router;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
 public class ControllerRoute {
     private final Class<?> controllerClass;
-    private String username;
-    private String password;
     private boolean authentication;
     private boolean blocking;
     
@@ -38,10 +35,6 @@ public class ControllerRoute {
             var requestRoute = (RequestRoute) route;
             requestRoute.withControllerClass(controllerClass);
 
-            if (hasBasicAuthentication()) {
-                requestRoute.withBasicAuthentication(username, password);
-            }
-            
             if (hasAuthentication()) {
                 requestRoute.withAuthentication();
             }
@@ -59,24 +52,6 @@ public class ControllerRoute {
                 Router.addRoute(requestRoute, ((RequestRoute) route).getMethod().name());
             }
         }
-    }
-
-    /**
-     * Sets Basic HTTP authentication to all method on the given controller class
-     * 
-     * @param username The username for basic authentication in clear text
-     * @param password The password for basic authentication in clear text
-     * 
-     * @return controller route instance
-     */
-    public ControllerRoute withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
-        
-        this.username = username;
-        this.password = password;
-        
-        return this;
     }
 
     /**
@@ -108,20 +83,8 @@ public class ControllerRoute {
     public boolean hasBlocking() {
         return blocking;
     }
-    
-    public boolean hasBasicAuthentication() {
-        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password);
-    }
 
     public Class<?> getControllerClass() {
         return controllerClass;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }

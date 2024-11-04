@@ -49,29 +49,7 @@ class ControllerRouteTest {
         
         assertThat(collectedRoutes.size(), equalTo(2));
     }
-    
-    @Test
-    void testWithBasicAuthentication() {
-        //given
-        String route1 = UUID.randomUUID().toString();
-        
-        //when
-        ControllerRoute route = new ControllerRoute(ApplicationController.class);
-        route.withBasicAuthentication("foo", "bar").withRoutes(
-                On.get().to("/route1").respondeWith(route1)
-        );
-        
-        //then
-        Set<RequestRoute> collectedRoutes = Router.getRequestRoutes()
-                .filter(r -> r.getControllerMethod().equals(route1))
-                .collect(Collectors.toSet());
-        
-        RequestRoute requestRoute = collectedRoutes.iterator().next();
-        
-        assertThat(requestRoute.getUsername(), equalTo("foo"));
-        assertThat(requestRoute.getPassword(), equalTo("bar"));
-    }
-    
+
     @Test
     void testWithAuthentication() {
         //given

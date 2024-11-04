@@ -14,8 +14,6 @@ public class Attachment {
     private String controllerClassName;
     private String controllerMethodName;
     private String body;
-    private String username;
-    private String password;
     private List<Annotation> classAnnotations;
     private Class<?> controllerClass;
     private Object controllerInstance;
@@ -44,8 +42,16 @@ public class Attachment {
         return this.authentication;
     }
 
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+    }
+
     public String getBody() {
         return this.body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public List<Annotation> getClassAnnotations() {
@@ -67,7 +73,7 @@ public class Attachment {
     public Object getControllerInstance() {
         return this.controllerInstance;
     }
-
+    
     public String getControllerMethodName() {
         return this.controllerMethodName;
     }
@@ -75,11 +81,19 @@ public class Attachment {
     public Flash getFlash() {
         return this.flash;
     }
+
+    public void setFlash(Flash flash) {
+        this.flash = flash;
+    }
     
     public Form getForm() {
         return this.form;
     }
-
+    
+    public void setForm(Form form) {
+        this.form = form;
+    }
+    
     public int getLimit() {
         return this.limit;
     }
@@ -95,7 +109,7 @@ public class Attachment {
     public Method getMethod() {
         return this.method;
     }
-    
+
     public List<Annotation> getMethodAnnotations() {
         return new ArrayList<>(this.methodAnnotations);
     }
@@ -103,17 +117,17 @@ public class Attachment {
     public Map<String, Class<?>> getMethodParameters() {
         return this.methodParameters;
     }
-    
+
     public int getMethodParametersCount() {
         return this.methodParametersCount;
-    }
-    
-    public String getPassword() {
-        return this.password;
     }
 
     public Request getRequest() {
         return this.request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
     public  Map<String, String> getRequestParameter() {
@@ -124,16 +138,20 @@ public class Attachment {
         return this.response;
     }
 
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
     public Session getSession() {
         return this.session;
     }
 
-    public TemplateEngine getTemplateEngine() {
-        return this.templateEngine;
+    public void setSession(Session session) {
+        this.session = session;
     }
 
-    public String getUsername() {
-        return this.username;
+    public TemplateEngine getTemplateEngine() {
+        return this.templateEngine;
     }
 
     public boolean hasAuthentication() {
@@ -142,34 +160,6 @@ public class Attachment {
 
     public boolean hasRequestFilter() {
         return this.requestFilter;
-    }
-
-    public void setAuthentication(Authentication authentication) {
-        this.authentication = authentication;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public void setFlash(Flash flash) {
-        this.flash = flash;
-    }
-
-    public void setForm(Form form) {
-        this.form = form;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
     }
 
     public Attachment withClassAnnotations(Collection<Annotation> classAnnotations) {
@@ -232,13 +222,6 @@ public class Attachment {
         return this;
     }
 
-    public Attachment withBasicAuthentication(String username, String password) {
-        this.username = username;
-        this.password = password;
-        
-        return this;
-    }
-    
     public Attachment withRequestFilter(boolean hasRequestFilter) {
         this.requestFilter = hasRequestFilter;
         return this;

@@ -3,7 +3,6 @@ package io.mangoo.routing.routes;
 import io.mangoo.constants.NotNull;
 import io.mangoo.enums.Http;
 import io.mangoo.interfaces.MangooRoute;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,8 +13,6 @@ public class RequestRoute implements MangooRoute {
     private Http method;
     private String url;
     private String controllerMethod;
-    private String username;
-    private String password;
     private boolean blocking;
     private boolean authentication;
 
@@ -79,24 +76,6 @@ public class RequestRoute implements MangooRoute {
         Objects.requireNonNull(method, NotNull.METHOD);
         this.method = method;
     }
-    
-    /**
-     * Sets HTTP Basic authentication to this request on the defined controller class
-     * 
-     * @param username The username for basic authentication in cleartext
-     * @param password The password for basic authentication in cleartext
-     * 
-     * @return RequestRoute instance
-     */
-    public RequestRoute withBasicAuthentication(String username, String password) {
-        Objects.requireNonNull(username, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
-        
-        this.username = username;
-        this.password = password;
-        
-        return this;
-    }
 
     /**
      * Sets authentication to true for this route, default is false
@@ -127,18 +106,6 @@ public class RequestRoute implements MangooRoute {
     
     public boolean hasAuthentication() {
         return authentication;
-    }
-    
-    public boolean hasBasicAuthentication() {
-        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password);
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public boolean hasMultipleMethods() {

@@ -652,7 +652,6 @@ public final class Application {
             var dispatcherHandler = Application.getInstance(DispatcherHandler.class)
                     .dispatch(requestRoute.getControllerClass(), requestRoute.getControllerMethod())
                     .isBlocking(requestRoute.isBlocking())
-                    .withBasicAuthentication(requestRoute.getUsername(), requestRoute.getPassword())
                     .withAuthentication(requestRoute.hasAuthentication());
 
             routingHandler.add(requestRoute.getMethod().toString(), requestRoute.getUrl(), dispatcherHandler);

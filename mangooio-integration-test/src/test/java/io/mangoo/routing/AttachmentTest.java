@@ -35,7 +35,6 @@ class AttachmentTest {
         attachment.withMethodAnnotations(new ArrayList<Annotation>());
         attachment.withMethodParameterCount(42);
         attachment.withMethodParameters(new HashMap<>());
-        attachment.withBasicAuthentication("peter", "foobar");
         attachment.withRequestFilter(true);
         attachment.withRequestParameter(new HashMap<>());
         attachment.withTemplateEngine(Application.getInstance(TemplateEngine.class));
@@ -51,10 +50,8 @@ class AttachmentTest {
         assertThat(attachment.getMethodAnnotations(), instanceOf(ArrayList.class));
         assertThat(attachment.getMethodParametersCount(), equalTo(42));
         assertThat(attachment.getMethodParameters(), instanceOf(HashMap.class));
-        assertThat(attachment.getPassword(), equalTo("foobar"));
         assertThat(attachment.hasRequestFilter(), equalTo(true));
         assertThat(attachment.getRequestParameter(), instanceOf(HashMap.class));
         assertThat(attachment.getTemplateEngine(), instanceOf(TemplateEngine.class));
-        assertThat(attachment.getUsername(), equalTo("peter"));
     }
 }

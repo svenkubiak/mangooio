@@ -146,12 +146,7 @@ public class Bootstrap implements MangooBootstrap {
          Bind.controller(SubController.class).withRoutes(
                  On.get().to("/subcontroller").respondeWith("check")
          );
-         
-         // BasicAuthenticationController
-         Bind.controller(BasicAuthenticationController.class).withRoutes(
-                 On.get().to("/basicauth").respondeWith("basicauth").withBasicAuthentication("foo", "bar")
-         );
-         
+
          Bind.serverSentEvent().to("/sse");
          Bind.serverSentEvent().to("/sseauth").withAuthentication();
 

@@ -1,13 +1,12 @@
 package io.mangoo.routing.routes;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-
+import io.mangoo.TestExtension;
+import io.mangoo.enums.Http;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import io.mangoo.TestExtension;
-import io.mangoo.enums.Http;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith({TestExtension.class})
 class RequestRouteTest {
@@ -42,19 +41,7 @@ class RequestRouteTest {
         //then
         assertThat(requestRoute.hasAuthentication(), equalTo(true));
     }
-    
-    @Test
-    void testBasicAuthentication() {
-        //given
-        RequestRoute requestRoute = new RequestRoute(Http.GET);
-        
-        //when
-        requestRoute.withBasicAuthentication("foo", "bar");
-        
-        //then
-        assertThat(requestRoute.hasBasicAuthentication(), equalTo(true));
-    }
-    
+
     @Test
     void testNonBlocking() {
         //given

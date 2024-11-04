@@ -4,7 +4,6 @@ import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Header;
 import io.mangoo.test.concurrent.ConcurrentRunner;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Methods;
@@ -157,32 +156,5 @@ class RequestUtilsTest {
 
         // then
         assertThat(isJson, equalTo(false));
-    }
-
-    @Test
-    void testWrapSecurity() {
-        // given
-        HttpHandler handler = Mockito.mock(HttpHandler.class);
-
-        // when
-        HttpHandler security = RequestUtils.wrapBasicAuthentication(handler, "foo", "bar");
-
-        // then
-        assertThat(security, not(equalTo(null)));
-        assertThat(security.getClass().getSimpleName(), equalTo("SecurityInitialHandler"));
-    }
-    
-    @Test
-    void testWrapSecurityConcurrent() throws InterruptedException {
-        MatcherAssert.assertThat(t -> {
-            // given
-            HttpHandler handler = Mockito.mock(HttpHandler.class);
-
-            // when
-            HttpHandler security = RequestUtils.wrapBasicAuthentication(handler, "foo", "bar");
-            
-            // then
-            return security.getClass().getSimpleName().equals("SecurityInitialHandler");
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

@@ -10,7 +10,6 @@ import io.mangoo.templating.TemplateEngine;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,8 +28,6 @@ public class DispatcherHandler implements HttpHandler {
     private Class<?> controllerClass;
     private String controllerClassName;
     private String controllerMethodName;
-    private String username;
-    private String password;
     private int limit;
     private int methodParametersCount;
     private boolean requestFilter;
@@ -77,13 +74,6 @@ public class DispatcherHandler implements HttpHandler {
         this.blocking = blocking;
         return this;
     }
-    
-    public DispatcherHandler withBasicAuthentication(String username, String password) {
-        this.username = username;
-        this.password = password;
-        
-        return this;
-    }
 
     public DispatcherHandler withAuthentication(boolean authentication) {
         this.authentication = authentication;
@@ -117,7 +107,6 @@ public class DispatcherHandler implements HttpHandler {
             .withMessages(this.messages)
             .withLimit(this.limit)
             .withAuthentication(this.authentication)
-            .withBasicAuthentication(this.username, this.password)
             .withTemplateEngine(this.templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
@@ -148,15 +137,6 @@ public class DispatcherHandler implements HttpHandler {
      * @throws Exception Thrown when an exception occurs
      */
     private void nextHandler(HttpServerExchange exchange) throws Exception {
-        if (StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.password)) {
-            var httpHandler = RequestUtils.wrapBasicAuthentication(
-                    Application.getInstance(LocaleHandler.class),
-                    this.username,
-                    this.password);
-            
-            httpHandler.handleRequest(exchange);
-        } else {
-            Application.getInstance(LocaleHandler.class).handleRequest(exchange);    
-        }
+        Application.getInstance(LocaleHandler.class).handleRequest(exchange);
     }
 }

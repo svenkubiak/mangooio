@@ -7,16 +7,8 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
-import io.mangoo.models.Identity;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.token.TokenParser;
-import io.undertow.security.api.AuthenticationMode;
-import io.undertow.security.handlers.AuthenticationCallHandler;
-import io.undertow.security.handlers.AuthenticationConstraintHandler;
-import io.undertow.security.handlers.AuthenticationMechanismsHandler;
-import io.undertow.security.handlers.SecurityInitialHandler;
-import io.undertow.security.impl.BasicAuthenticationMechanism;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
@@ -120,25 +112,5 @@ public final class RequestUtils {
         }
         
         return valid;
-    }
-
-    /**
-     * Adds a Wrapper to the handler when the request requires authentication
-     * 
-     * @param httpHandler The Handler to wrap
-     * @param username The username to use
-     * @param password The password to use
-     * @return An HttpHandler wrapped through BasicAuthentication
-     */
-    public static HttpHandler wrapBasicAuthentication(HttpHandler httpHandler, String username, String password) {
-        Objects.requireNonNull(httpHandler, NotNull.HTTP_HANDLER);
-        Objects.requireNonNull(username, NotNull.USERNAME);
-        Objects.requireNonNull(password, NotNull.PASSWORD);
-        
-        HttpHandler wrap = new AuthenticationCallHandler(httpHandler);
-        wrap = new AuthenticationConstraintHandler(wrap);
-        wrap = new AuthenticationMechanismsHandler(wrap, Collections.singletonList(new BasicAuthenticationMechanism("Authentication required")));
-        
-        return new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, new Identity(username, password), wrap);
     }
 }
