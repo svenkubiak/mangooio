@@ -15,7 +15,7 @@ public class AuthenticationController {
     }
 
     public Response login() {
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
 
     public Response authenticate(Authentication authentication) {
@@ -24,7 +24,7 @@ public class AuthenticationController {
             return Response.redirect(AUTHENTICATIONREQUIRED);
         }
 
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
 
     public Response doLogin(Authentication authentication) {
@@ -48,7 +48,7 @@ public class AuthenticationController {
 
     public Response logout(Authentication authentication) {
         authentication.logout();
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
     
     public Response subject(Authentication authentication) {

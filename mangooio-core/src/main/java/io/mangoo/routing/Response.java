@@ -231,18 +231,14 @@ public class Response {
      * @return The response object
      */
     public Response bodyHtml(String html) {
+        rendered = false;
         this.body = html;
-
-        ok();
-        unauthorized();
-        forbidden();
-        internalServerError();
-        badRequest();
 
         return this;
     }
 
     public Response bodyDefault() {
+        rendered = false;
         switch (statusCode) {
             case StatusCodes.OK:
                 this.body = Template.ok();
@@ -295,6 +291,7 @@ public class Response {
 
         this.body = JsonUtils.toJson(object);
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -309,6 +306,7 @@ public class Response {
 
         this.body = JsonUtils.toJson(Error.of(message, statusCode));
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -325,6 +323,7 @@ public class Response {
 
         this.body = json;
         contentType = MediaType.JSON_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }
@@ -340,18 +339,7 @@ public class Response {
     public Response bodyText(String text) {
         this.body = text;
         contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
-
-        return this;
-    }
-
-    /**
-     * Disables template rendering, sending an empty body with content-type
-     * text/plain in the response
-     *
-     * @return The response object
-     */
-    public Response bodyEmpty() {
-        contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
+        rendered = false;
 
         return this;
     }

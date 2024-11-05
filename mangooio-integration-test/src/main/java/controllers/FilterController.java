@@ -9,12 +9,12 @@ public class FilterController {
 
     @FilterWith(ContentFilter.class)
     public Response filter() {
-        return Response.ok();
+        return Response.ok().render();
     }
 
     @FilterWith(HeaderFilter.class)
     public Response headerfilter() {
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
     
     @FilterWith({FilterOne.class, FilterTwo.class, FilterThree.class})

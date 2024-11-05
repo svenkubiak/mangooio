@@ -7,12 +7,12 @@ public class SessionController {
     public Response session(Session session) {
         session.put("foo", "this is a session value");
 
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
     
     public Response valued(String uuid, Session session) {
         session.put("uuid", uuid);
 
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
 }

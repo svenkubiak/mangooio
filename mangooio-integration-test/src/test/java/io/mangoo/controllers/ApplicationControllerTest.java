@@ -192,7 +192,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
     }
 
@@ -203,7 +203,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
 
@@ -214,7 +214,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
     }
 
@@ -225,7 +225,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getHeader("Access-Control-Allow-Origin"), equalTo("https://mangoo.io"));
     }

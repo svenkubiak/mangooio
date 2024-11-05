@@ -125,7 +125,7 @@ public class RequestHandler implements HttpHandler {
             invokedResponse = (Response) attachment.getMethod().invoke(attachment.getControllerInstance(), convertedParameters);
         }
 
-        if (response.getContent() != null && !response.getContent().isEmpty()) {
+        if (invokedResponse.isRendered() && response.getContent() != null && !response.getContent().isEmpty()) {
             invokedResponse.render(response.getContent());
         }
         invokedResponse.headers(response.getHeaders());

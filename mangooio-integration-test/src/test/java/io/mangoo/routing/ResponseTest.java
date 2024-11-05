@@ -213,14 +213,11 @@ class ResponseTest {
     void testAndEmptyBody() throws IOException {
         //given
         Response response = Response.ok();
-        
-        //when
-        response.bodyEmpty();
-        
+
         //then
         assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo(""));
-        assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
+        assertThat(response.getContentType(), equalTo(MediaType.HTML_UTF_8.withoutParameters().toString()));
     }
     
     @Test

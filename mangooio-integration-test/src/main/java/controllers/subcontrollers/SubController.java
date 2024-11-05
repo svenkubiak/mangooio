@@ -4,6 +4,6 @@ import io.mangoo.routing.Response;
 
 public class SubController {
     public Response check() {
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
 }

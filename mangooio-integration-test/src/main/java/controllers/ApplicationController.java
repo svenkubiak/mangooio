@@ -44,7 +44,7 @@ public class ApplicationController {
     }
     
     public Response api() {
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
 
     public Response redirect() {
@@ -60,7 +60,7 @@ public class ApplicationController {
     }
     
     public Response limit() {
-        return Response.ok().bodyEmpty();
+        return Response.ok();
     }
     
     public Response reverse() {
@@ -79,7 +79,7 @@ public class ApplicationController {
     }
 
     public Response forbidden() {
-        return Response.forbidden().bodyEmpty();
+        return Response.forbidden();
     }
     
     public Response unrenderedText() {
@@ -94,11 +94,11 @@ public class ApplicationController {
     }
     
     public Response badrequest() {
-        return Response.badRequest().bodyEmpty();
+        return Response.badRequest();
     }
 
     public Response unauthorized() {
-        return Response.unauthorized().bodyEmpty();
+        return Response.unauthorized();
     }
 
     public Response request(Request request) {
@@ -140,7 +140,6 @@ public class ApplicationController {
     public Response header() {
         return Response
                 .ok()
-                .bodyEmpty()
                 .header("Access-Control-Allow-Origin", "https://mangoo.io");
     }
 

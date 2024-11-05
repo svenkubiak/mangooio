@@ -9,7 +9,6 @@ import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Methods;
 import io.undertow.util.StatusCodes;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -130,7 +129,6 @@ class AdminControllerTest {
     }
     
     @Test
-    @Disabled
     void testToolsAjaxAuthorized() {
         //given
         TestResponse response = login().to("/@admin/tools")
