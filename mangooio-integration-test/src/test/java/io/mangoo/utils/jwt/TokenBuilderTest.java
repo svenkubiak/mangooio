@@ -1,4 +1,4 @@
-package io.mangoo.utils.token;
+package io.mangoo.utils.jwt;
 
 import io.mangoo.TestExtension;
 import io.mangoo.constants.ClaimKey;
@@ -25,7 +25,7 @@ class TokenBuilderTest {
         LocalDateTime now = LocalDateTime.now();
         
         //when
-        TokenBuilder tokenBuilder = TokenBuilder.create().withExpires(now);
+        JwtBuilder tokenBuilder = JwtBuilder.create().withExpires(now);
         
         //then
         assertThat(tokenBuilder.getExpires(), equalTo(now));
@@ -37,7 +37,7 @@ class TokenBuilderTest {
         String sharedSecret = MangooUtils.randomString(32);
         
         //when
-        TokenBuilder tokenBuilder = TokenBuilder.create().withSharedSecret(sharedSecret);
+        JwtBuilder tokenBuilder = JwtBuilder.create().withSharedSecret(sharedSecret);
         
         //then
         assertThat(tokenBuilder.getSharedSecret(), equalTo(sharedSecret));
@@ -50,7 +50,7 @@ class TokenBuilderTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        TokenBuilder tokenBuilder = TokenBuilder.create().withClaim(claimKey, value);
+        JwtBuilder tokenBuilder = JwtBuilder.create().withClaim(claimKey, value);
         
         //then
         assertThat(tokenBuilder.getClaims().get(claimKey), equalTo(value));
@@ -62,7 +62,7 @@ class TokenBuilderTest {
         String subject = MangooUtils.randomString(32);
         
         //when
-        TokenBuilder tokenBuilder = TokenBuilder.create().withSubject(subject);
+        JwtBuilder tokenBuilder = JwtBuilder.create().withSubject(subject);
         
         //then
         assertThat(tokenBuilder.getSubject(), equalTo(subject));
@@ -78,7 +78,7 @@ class TokenBuilderTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        String token = TokenBuilder.create()
+        String token = JwtBuilder.create()
                 .withExpires(now)
                 .withSharedSecret(sharedSecret)
                 .withClaim(claimKey, value)
@@ -100,7 +100,7 @@ class TokenBuilderTest {
             String value = MangooUtils.randomString(32);
             
             //when
-            String token = TokenBuilder.create()
+            String token = JwtBuilder.create()
                     .withExpires(now)
                     .withSharedSecret(sharedSecret)
                     .withClaim(claimKey, value)

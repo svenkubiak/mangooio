@@ -7,7 +7,7 @@ import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.token.TokenBuilder;
+import io.mangoo.utils.jwt.JwtBuilder;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -46,13 +46,13 @@ public final class AdminUtils {
     }
 
     public static Cookie getAdminCookie(boolean includeTwoFactor) {
-        var tokenBuilder = TokenBuilder.create()
+        var tokenBuilder = JwtBuilder.create()
                 .withSharedSecret(getInstance(Config.class).getApplicationSecret())
                 .withExpires(LocalDateTime.now().plusMinutes(30))
                 .withClaim("uuid", MangooUtils.randomString(32));
 
         if (includeTwoFactor && StringUtils.isNotBlank(getInstance(Config.class).getApplicationAdminSecret())) {
-            tokenBuilder.withClaim("twofactor", Boolean.TRUE);
+            tokenBuilder.withClaim("twofactor", "true");
         }
 
         var token = "";

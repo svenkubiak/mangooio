@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<name>mangoo I/O core</name>
 	<parent>
@@ -206,6 +206,14 @@
 			<artifactId>jackson-module-blackbird</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
@@ -228,34 +236,8 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>dev.paseto</groupId>
-			<artifactId>jpaseto-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>dev.paseto</groupId>
-			<artifactId>jpaseto-impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>dev.paseto</groupId>
-			<artifactId>jpaseto-bouncy-castle</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>dev.paseto</groupId>
-			<artifactId>jpaseto-jackson</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
-					<artifactId>jackson-databind</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>io.github.nbaars</groupId>
+			<artifactId>paseto4j-version4</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>

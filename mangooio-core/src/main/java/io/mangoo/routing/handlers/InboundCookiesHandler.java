@@ -14,7 +14,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.token.TokenParser;
+import io.mangoo.utils.jwt.JwtParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class InboundCookiesHandler implements HttpHandler {
@@ -53,7 +52,6 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    @SuppressWarnings("unchecked")
     protected Session getSessionCookie(HttpServerExchange exchange) {
         var session = Session.create()
             .withContent(new HashMap<>())
@@ -62,15 +60,15 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = TokenParser.create()
+                var token = JwtParser.create()
                         .withSharedSecret(config.getSessionCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 
-                if (token.expirationIsAfter(LocalDateTime.now())) {
+                if (token.getExpires().isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .withContent(MangooUtils.copyMap(token.getClaim(ClaimKey.DATA, Map.class)))
-                            .withExpires(token.getExpiration()); 
+                            .withContent(MangooUtils.copyMap(token.getClaims()))
+                            .withExpires(token.getExpires());
                 }
             } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse session cookie", e);
@@ -94,16 +92,16 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = TokenParser.create()
+                var token = JwtParser.create()
                         .withSharedSecret(config.getAuthenticationCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 
-                if (token.expirationIsAfter(LocalDateTime.now())) {
+                if (token.getExpires().isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
-                            .withExpires(token.getExpiration())
+                            .withExpires(token.getExpires())
                             .withSubject(token.getSubject())
-                            .twoFactorAuthentication(Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR, String.class)));
+                            .twoFactorAuthentication(Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR)));
                 }
             } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse authentication cookie", e);
@@ -119,25 +117,24 @@ public class InboundCookiesHandler implements HttpHandler {
      *
      * @param exchange The Undertow HttpServerExchange
      */
-    @SuppressWarnings("unchecked")
     protected Flash getFlashCookie(HttpServerExchange exchange) {
         var flash = Flash.create();
         
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = TokenParser.create()
+                var token = JwtParser.create()
                         .withSharedSecret(config.getFlashCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 
-                if (token.expirationIsAfter(LocalDateTime.now())) {
+                if (token.getExpires().isAfter(LocalDateTime.now())) {
                     if (token.containsClaim(ClaimKey.FORM)) {
-                        form = CodecUtils.deserializeFromBase64(token.getClaim(ClaimKey.FORM, String.class));
+                        form = CodecUtils.deserializeFromBase64(token.getClaim(ClaimKey.FORM));
                     } 
                     
                     flash = Flash.create()
-                            .withContent(MangooUtils.copyMap(token.getPaseto().getClaims().get(ClaimKey.DATA, Map.class)))
+                            .withContent(MangooUtils.copyMap(token.getClaims()))
                             .setDiscard(true);
                 }
             } catch (MangooTokenException e) {

@@ -9,7 +9,7 @@ import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.token.TokenParser;
+import io.mangoo.utils.jwt.JwtParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -38,13 +38,14 @@ public class AdminFilter implements PerRequestFilter {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    var token = TokenParser.create()
+                    var token = JwtParser.create()
                         .withSharedSecret(config.getApplicationSecret())
                         .withCookieValue(value)
                         .parse();
 
-                    if (token.expirationIsAfter(LocalDateTime.now())) {
-                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaim(ClaimKey.TWO_FACTOR, Boolean.class)) {
+                    //FIXME
+                    if (token.getExpires().isAfter(LocalDateTime.now())) {
+                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR))) {
                             return Response.redirect("/@admin/twofactor").end();
                         }
                         

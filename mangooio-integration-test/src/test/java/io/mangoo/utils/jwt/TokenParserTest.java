@@ -1,4 +1,4 @@
-package io.mangoo.utils.token;
+package io.mangoo.utils.jwt;
 
 import io.mangoo.TestExtension;
 import io.mangoo.constants.ClaimKey;
@@ -25,7 +25,7 @@ class TokenParserTest {
         String sharedSecret = MangooUtils.randomString(32);
         
         //when
-        TokenParser parser = TokenParser.create().withSharedSecret(sharedSecret);
+        JwtParser parser = JwtParser.create().withSharedSecret(sharedSecret);
         
         //then
         assertThat(parser.getSharedSecret(), equalTo(sharedSecret));
@@ -37,7 +37,7 @@ class TokenParserTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        TokenParser parser = TokenParser.create().withCookieValue(value);
+        JwtParser parser = JwtParser.create().withCookieValue(value);
         
         //then
         assertThat(parser.getCookieValue(), equalTo(value));
@@ -51,7 +51,7 @@ class TokenParserTest {
         String subject = MangooUtils.randomString(32);
         String claimKey = ClaimKey.DATA;
         String claimValue = MangooUtils.randomString(32);
-        String buildToken = TokenBuilder.create()
+        String buildToken = JwtBuilder.create()
                 .withExpires(expires)
                 .withSharedSecret(sharedSecret)
                 .withClaim(claimKey, claimValue)
@@ -59,13 +59,13 @@ class TokenParserTest {
                 .build();
         
         //when
-        Token token = TokenParser.create().withCookieValue(buildToken).withSharedSecret(sharedSecret).parse();
+        Jwt token = JwtParser.create().withCookieValue(buildToken).withSharedSecret(sharedSecret).parse();
         
         //then
         assertThat(token, not(equalTo(null)));
-        assertThat(token.getExpiration(), equalTo(expires));
+        assertThat(token.getExpires(), equalTo(expires));
         assertThat(token.getSubject(), equalTo(subject));
-        assertThat(token.getClaim(claimKey, String.class), equalTo(claimValue));
+        assertThat(token.getClaim(claimKey), equalTo(claimValue));
     }
     
     @Test
@@ -77,7 +77,7 @@ class TokenParserTest {
             String subject = MangooUtils.randomString(32);
             String claimKey = ClaimKey.DATA;
             String claimValue = MangooUtils.randomString(32);
-            String buildToken = TokenBuilder.create()
+            String buildToken = JwtBuilder.create()
                     .withExpires(expires)
                     .withSharedSecret(sharedSecret)
                     .withClaim(claimKey, claimValue)
@@ -85,13 +85,13 @@ class TokenParserTest {
                     .build();
             
             //when
-            Token token = TokenParser.create().withCookieValue(buildToken).withSharedSecret(sharedSecret).parse();
+            Jwt token = JwtParser.create().withCookieValue(buildToken).withSharedSecret(sharedSecret).parse();
             
             //then
             return token != null &&
-                   token.getExpiration().equals(expires) &&
+                   token.getExpires().equals(expires) &&
                    token.getSubject().equals(subject) &&
-                   token.getClaim(claimKey, String.class).equals(claimValue);
+                   token.getClaim(claimKey).equals(claimValue);
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
 }

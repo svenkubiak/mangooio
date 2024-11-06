@@ -9,7 +9,7 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.token.TokenBuilder;
+import io.mangoo.utils.jwt.JwtBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
@@ -63,10 +63,10 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanges()) {
             try {
-                String token = TokenBuilder.create()
+                String token = JwtBuilder.create()
                         .withExpires(session.getExpires())
                         .withSharedSecret(config.getSessionCookieSecret())
-                        .withClaim(ClaimKey.DATA, session.getValues())
+                        .withClaims(session.getValues())
                         .build();
                 
                 var cookie = new CookieImpl(config.getSessionCookieName())
@@ -115,7 +115,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             } 
             
             try {
-                String token = TokenBuilder.create()
+                String token = JwtBuilder.create()
                         .withExpires(authentication.getExpires())
                         .withSharedSecret(config.getAuthenticationCookieSecret())
                         .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
@@ -167,10 +167,10 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (flash.hasContent() || form.isKept()) {
             try {
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                var tokenBuilder = TokenBuilder.create()
+                var tokenBuilder = JwtBuilder.create()
                         .withExpires(expires)
                         .withSharedSecret(config.getFlashCookieSecret())
-                        .withClaim(ClaimKey.DATA, flash.getValues());
+                        .withClaims(flash.getValues());
                 
                 if (form.isKept()) {
                     tokenBuilder.withClaim(ClaimKey.FORM, CodecUtils.serializeToBase64(form));

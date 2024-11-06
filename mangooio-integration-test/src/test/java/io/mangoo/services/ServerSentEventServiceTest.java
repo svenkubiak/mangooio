@@ -12,7 +12,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.manager.ServerSentEventManager;
-import io.mangoo.utils.token.TokenBuilder;
+import io.mangoo.utils.jwt.JwtBuilder;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,11 +37,19 @@ import static org.hamcrest.Matchers.not;
 class ServerSentEventServiceTest {
     private final static Pattern UUID_REGEX_PATTERN = Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
      
+    private static boolean isValidUUID(String str) {
+        if (str == null) {
+            return false;
+        }
+
+        return UUID_REGEX_PATTERN.matcher(str).matches();
+    }
+
 	@Test
 	void testSendData() throws InterruptedException {
         //given
         Config config = Application.getInstance(Config.class);
-        
+
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sse");
         BackgroundEventHandler eventHandler = new SimpleEventHandler();
         BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(URI.create(url)));
@@ -53,56 +61,48 @@ class ServerSentEventServiceTest {
             await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.OPEN)));
 
             Application.getInstance(ServerSentEventManager.class).send("/sse", UUID.randomUUID().toString());
-              
+
             //then
             await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), equalTo(true)));
-        } 	    
+        }
 	}
-
+	
     @Test
     void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, MangooTokenException {
         //given
         Config config = Application.getInstance(Config.class);
-        
-        String token = TokenBuilder.create()
+
+        String token = JwtBuilder.create()
             .withSubject("foo")
-            .withClaim(ClaimKey.TWO_FACTOR, false)
+            .withClaim(ClaimKey.TWO_FACTOR, "false")
             .withExpires(LocalDateTime.now().plusHours(1))
             .withSharedSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
             .build();
-        
+
         String cookie = config.getAuthenticationCookieName() + "=" + token;
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
-        
+
         Headers headers = new Headers.Builder()
                 .add("Accept", "text/event-stream")
                 .add("Cache-Control", "no-cache")
                 .add("Set-Cookie", cookie)
                 .build();
-        
+
         HttpConnectStrategy connectStrategy = ConnectStrategy.http(URI.create(url));
         connectStrategy.connectTimeout(5, TimeUnit.SECONDS);
         connectStrategy.headers(headers);
-        
+
         BackgroundEventHandler eventHandler = new SimpleEventHandler();
         BackgroundEventSource.Builder builder = new BackgroundEventSource.Builder(eventHandler, new EventSource.Builder(connectStrategy));
-        
+
         try (BackgroundEventSource backgroundEventSource = builder.build()) {
             backgroundEventSource.start();
 
             //then
             await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(backgroundEventSource.getEventSource().getState(), equalTo(ReadyState.CLOSED)));
-              
+
             //then
             await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertThat(isValidUUID(EventData.data), not(equalTo(true))));
-        } 
-    }
-	
-    private static boolean isValidUUID(String str) {
-        if (str == null) {
-            return false;
         }
-        
-        return UUID_REGEX_PATTERN.matcher(str).matches();
     }
 }
