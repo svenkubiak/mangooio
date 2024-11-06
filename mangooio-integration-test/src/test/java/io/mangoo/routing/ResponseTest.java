@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -217,7 +218,7 @@ class ResponseTest {
         //then
         assertThat(response.isRendered(), equalTo(false));
         assertThat(response.getBody(), equalTo(""));
-        assertThat(response.getContentType(), equalTo(MediaType.HTML_UTF_8.withoutParameters().toString()));
+        assertThat(response.getContentType(), equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString()));
     }
     
     @Test
@@ -230,6 +231,26 @@ class ResponseTest {
         
         //then
         assertThat(response.getHeaders().get(Headers.GZIP), equalTo("true"));
+    }
+
+    @Test
+    void testInvalidStatusCode() {
+        //when
+        assertThrowsExactly(IllegalArgumentException.class, () -> Response.status(99));
+        assertThrowsExactly(IllegalArgumentException.class, () -> Response.status(600));
+    }
+
+    @Test
+    void testContentType() {
+        //given
+        String contentType = "application/json";
+
+        //when
+        Response response = Response.status(200, contentType);
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(200));
+        assertThat(response.getContentType(), equalTo(contentType));
     }
     
     @Test

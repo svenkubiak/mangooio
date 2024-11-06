@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith({TestExtension.class})
 class AdminControllerTest {
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
+    private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
     private static final String EVICTIONS = "Evictions";
     private static final String SCHEDULER = "scheduler";
     private static final String TOOLS = "tools";
@@ -53,7 +54,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), containsString(CACHE));
         assertThat(response.getContent(), containsString(EVICTIONS));
     }
@@ -82,7 +83,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), containsString(CONTROL_PANEL));
     }
 
@@ -96,7 +97,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), containsString(TOOLS));
     }
     
@@ -110,7 +111,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_HTML));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
         assertThat(response.getContent(), containsString("Two Factor Authentication"));
     }
     

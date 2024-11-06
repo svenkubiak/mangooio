@@ -1,5 +1,6 @@
 package io.mangoo.routing;
 
+import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
@@ -22,7 +23,7 @@ public class Response {
     private final Map<String, Object> content = new HashMap<>();
     private final List<Cookie> cookies = new ArrayList<>();
     private String redirectTo;
-    private String contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
+    private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
     private String body = Strings.EMPTY;
     private String template;
     private boolean endResponse;
@@ -35,7 +36,14 @@ public class Response {
     }
 
     private Response(int statusCode) {
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
         this.statusCode = statusCode;
+    }
+
+    private Response(int statusCode, String contentType) {
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        this.statusCode = statusCode;
+        this.contentType = Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
     }
 
     private Response(String redirectTo) {
@@ -47,6 +55,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 200
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -56,6 +65,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 201
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -65,6 +75,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 404
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -74,6 +85,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 401
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -83,6 +95,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 403
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -92,6 +105,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 400
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -101,6 +115,7 @@ public class Response {
 
     /**
      * Creates a response object with HTTP status code 500
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @return The response object
      */
@@ -110,16 +125,34 @@ public class Response {
 
     /**
      * Creates a response object with a given HTTP status code
+     * with default Content-Type "text/plain; charset=UTF-8"
      *
      * @param statusCode The status code to set
      * @return The response object
      */
     public static Response status(int statusCode) {
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
         return new Response(statusCode);
     }
 
     /**
+     * Creates a response object with a given HTTP status code
+     *
+     * @param statusCode The status code to set
+     * @param contentType The status code to set
+     *
+     * @return The response object
+     */
+    public static Response status(int statusCode, String contentType) {
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
+
+        return new Response(statusCode, contentType);
+    }
+
+    /**
      * Creates a response object with a given url to redirect to
+     * with default Content-Type "text/plain"
      *
      * @param redirectTo The URL to redirect to
      * @return The response object
