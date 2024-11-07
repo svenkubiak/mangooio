@@ -47,7 +47,7 @@ public final class AdminUtils {
 
     public static Cookie getAdminCookie(boolean includeTwoFactor) {
         var tokenBuilder = PasetoBuilder.create()
-                .withSharedSecret(getInstance(Config.class).getApplicationSecret())
+                .withSecret(getInstance(Config.class).getApplicationSecret())
                 .withExpires(LocalDateTime.now().plusMinutes(30))
                 .withClaim("uuid", MangooUtils.randomString(32));
 

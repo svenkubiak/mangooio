@@ -3,20 +3,25 @@ package io.mangoo.utils;
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
 import io.mangoo.constants.NotNull;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.bouncycastle.util.Arrays;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Objects;
 
 public final class CodecUtils {
+    private static final Logger LOG = LogManager.getLogger(CodecUtils.class);
     private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
     private static final TimeBasedReorderedGenerator UUID_GENERATOR = Generators.timeBasedReorderedGenerator();
@@ -42,8 +47,8 @@ public final class CodecUtils {
 
         var argon2 = new Argon2Parameters.Builder(Argon2Parameters.ARGON2_id)
                 .withVersion(Argon2Parameters.ARGON2_VERSION_13)
-                .withParallelism(1)
-                .withMemoryAsKB(65536)
+                .withParallelism(2)
+                .withMemoryAsKB(128000)
                 .withSalt(salt.getBytes(StandardCharsets.UTF_8))
                 .withIterations(16)
                 .build();
@@ -75,16 +80,25 @@ public final class CodecUtils {
     }
     
     /**
-     * Hashes a given clear text data with SHA512
+     * Hashes a given clear text data with SHA3-512
      * For simple hashing tasks
      * 
      * @param data The clear text data
-     * @return SHA512 hashed value
+     * @return SHA512 hashed value or null if hashing failed
      */
     public static String hexSHA512(String data) {
         Objects.requireNonNull(data, NotNull.DATA);
 
-        return DigestUtils.sha512Hex(data);
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA3-512");
+            byte[] hashBytes = digest.digest(data.getBytes());
+
+            return Hex.encodeHexString(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            LOG.error("Failed to create hash of data", e);
+        }
+
+        return null;
     }
     
     /**

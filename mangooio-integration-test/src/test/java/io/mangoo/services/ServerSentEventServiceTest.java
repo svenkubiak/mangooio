@@ -76,7 +76,7 @@ class ServerSentEventServiceTest {
             .withSubject("foo")
             .withClaim(ClaimKey.TWO_FACTOR, "false")
             .withExpires(LocalDateTime.now().plusHours(1))
-            .withSharedSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
+            .withSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
             .build();
 
         String cookie = config.getAuthenticationCookieName() + "=" + token;

@@ -65,7 +65,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 String token = PasetoBuilder.create()
                         .withExpires(session.getExpires())
-                        .withSharedSecret(config.getSessionCookieSecret())
+                        .withSecret(config.getSessionCookieSecret())
                         .withClaims(session.getValues())
                         .build();
                 
@@ -117,7 +117,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 String token = PasetoBuilder.create()
                         .withExpires(authentication.getExpires())
-                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                        .withSecret(config.getAuthenticationCookieSecret())
                         .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
                         .withSubject(authentication.getSubject())
                         .build();
@@ -169,7 +169,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
                 var tokenBuilder = PasetoBuilder.create()
                         .withExpires(expires)
-                        .withSharedSecret(config.getFlashCookieSecret())
+                        .withSecret(config.getFlashCookieSecret())
                         .withClaims(flash.getValues());
                 
                 if (form.isKept()) {

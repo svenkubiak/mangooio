@@ -37,7 +37,7 @@ class PasetoBuilderTest {
         String sharedSecret = MangooUtils.randomString(32);
         
         //when
-        PasetoBuilder tokenBuilder = PasetoBuilder.create().withSharedSecret(sharedSecret);
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withSecret(sharedSecret);
         
         //then
         assertThat(tokenBuilder.getSecret(), equalTo(sharedSecret));
@@ -105,7 +105,7 @@ class PasetoBuilderTest {
         //when
         String token = PasetoBuilder.create()
                 .withExpires(now)
-                .withSharedSecret(sharedSecret)
+                .withSecret(sharedSecret)
                 .withClaim(claimKey, value)
                 .withSubject(subject)
                 .build();
@@ -127,7 +127,7 @@ class PasetoBuilderTest {
             //when
             String token = PasetoBuilder.create()
                     .withExpires(now)
-                    .withSharedSecret(sharedSecret)
+                    .withSecret(sharedSecret)
                     .withClaim(claimKey, value)
                     .withSubject(subject)
                     .build();

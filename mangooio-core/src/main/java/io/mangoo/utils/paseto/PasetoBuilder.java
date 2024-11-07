@@ -34,7 +34,7 @@ public class PasetoBuilder {
         return this;
     }
     
-    public PasetoBuilder withSharedSecret(String secret) {
+    public PasetoBuilder withSecret(String secret) {
         Objects.requireNonNull(secret, NotNull.SECRET);
         this.secret = secret;
 

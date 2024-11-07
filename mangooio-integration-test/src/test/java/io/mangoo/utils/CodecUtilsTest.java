@@ -31,7 +31,7 @@ class CodecUtilsTest {
         
         //then
         assertThat(hex, not(nullValue()));
-        assertThat(hex, equalTo("39e668e353a0b4caf7e8e3c7093e30be8c0a29db739bf86bd5243d11d1bfe040ad2a712be1a96b405233ce13cbd7c3db9bcc40f2f2e70c6a344a0898208347e4"));
+        assertThat(hex, equalTo("131674e01e84e7dc3a1cb190440a0c730c2ec800d03a24cb63587a38f05aa827ee6458af8f3a503f633159af4eedaeca6bd2165f9ef918c0b7223d5e1fcdfb06"));
     }
     
     @Test
@@ -41,7 +41,7 @@ class CodecUtilsTest {
             String hex = CodecUtils.hexSHA512(PLAIN);
             
             // then
-            return hex.equals("39e668e353a0b4caf7e8e3c7093e30be8c0a29db739bf86bd5243d11d1bfe040ad2a712be1a96b405233ce13cbd7c3db9bcc40f2f2e70c6a344a0898208347e4");
+            return hex.equals("131674e01e84e7dc3a1cb190440a0c730c2ec800d03a24cb63587a38f05aa827ee6458af8f3a503f633159af4eedaeca6bd2165f9ef918c0b7223d5e1fcdfb06");
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     

@@ -53,7 +53,7 @@ class PasetoParserTest {
         String claimValue = MangooUtils.randomString(32);
         String buildToken = PasetoBuilder.create()
                 .withExpires(expires)
-                .withSharedSecret(sharedSecret)
+                .withSecret(sharedSecret)
                 .withClaim(claimKey, claimValue)
                 .withSubject(subject)
                 .build();
@@ -79,7 +79,7 @@ class PasetoParserTest {
             String claimValue = MangooUtils.randomString(32);
             String buildToken = PasetoBuilder.create()
                     .withExpires(expires)
-                    .withSharedSecret(sharedSecret)
+                    .withSecret(sharedSecret)
                     .withClaim(claimKey, claimValue)
                     .withSubject(subject)
                     .build();
