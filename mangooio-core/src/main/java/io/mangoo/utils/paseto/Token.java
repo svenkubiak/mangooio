@@ -1,19 +1,19 @@
-package io.mangoo.utils.jwt;
+package io.mangoo.utils.paseto;
 
 import io.mangoo.constants.NotNull;
+import org.apache.fury.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
-public class Jwt {
+public class Token {
     private String id;
     private String issuer;
     private String subject;
-    private List<String> audience = new ArrayList<>();
     private Map<String, String> claims = new HashMap<>();
     private LocalDateTime expires;
-    private LocalDateTime notBefore;
-    private LocalDateTime issuedAt;
 
     public String getId() {
         return id;
@@ -29,30 +29,6 @@ public class Jwt {
 
     public void setExpires(LocalDateTime expires) {
         this.expires = expires;
-    }
-
-    public LocalDateTime getIssuedAt() {
-        return issuedAt;
-    }
-
-    public void setIssuedAt(LocalDateTime issuedAt) {
-        this.issuedAt = issuedAt;
-    }
-
-    public LocalDateTime getNotBefore() {
-        return notBefore;
-    }
-
-    public void setNotBefore(LocalDateTime notBefore) {
-        this.notBefore = notBefore;
-    }
-
-    public List<String> getAudience() {
-        return audience;
-    }
-
-    public void setAudience(List<String> audience) {
-        this.audience = audience;
     }
 
     public String getSubject() {
@@ -87,5 +63,12 @@ public class Jwt {
     public boolean containsClaim(String key) {
         Objects.requireNonNull(key, NotNull.KEY);
         return claims.containsKey(key);
+    }
+
+    public boolean getClaimAsBoolean(String key) {
+        Objects.requireNonNull(key, NotNull.KEY);
+        String value = claims.get(key);
+
+        return StringUtils.isNotBlank(value) && Boolean.parseBoolean(value);
     }
 }

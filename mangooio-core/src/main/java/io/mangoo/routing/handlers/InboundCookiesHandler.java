@@ -14,7 +14,7 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.jwt.JwtParser;
+import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import org.apache.commons.lang3.StringUtils;
@@ -60,8 +60,8 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = JwtParser.create()
-                        .withSharedSecret(config.getSessionCookieSecret())
+                var token = PasetoParser.create()
+                        .withSecret(config.getSessionCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 
@@ -92,8 +92,8 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = JwtParser.create()
-                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                var token = PasetoParser.create()
+                        .withSecret(config.getAuthenticationCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 
@@ -101,7 +101,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     authentication = Authentication.create()
                             .withExpires(token.getExpires())
                             .withSubject(token.getSubject())
-                            .twoFactorAuthentication(Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR)));
+                            .twoFactorAuthentication(token.getClaimAsBoolean(ClaimKey.TWO_FACTOR));
                 }
             } catch (MangooTokenException e) {
                 LOG.debug("Failed to parse authentication cookie", e);
@@ -123,8 +123,8 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var token = JwtParser.create()
-                        .withSharedSecret(config.getFlashCookieSecret())
+                var token = PasetoParser.create()
+                        .withSecret(config.getFlashCookieSecret())
                         .withCookieValue(cookieValue)
                         .parse();
                 

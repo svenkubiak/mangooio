@@ -9,6 +9,7 @@ public final class NotNull {
     public static final String CACHE_PROVIDER = "cacheProvider can not be null";
     public static final String CCS = "ccs can not be null";
     public static final String CLASS = "class can not be null";
+    public static final String CLAIMS = "claims can not be null";
     public static final String CLEARTEXT = "cleartext can not be null";
     public static final String CONFIG = "config can not be null";
     public static final String CONNECTION = "connection can not be null";
@@ -29,20 +30,18 @@ public final class NotNull {
     public static final String ENCRYPTED_TEXT = "encrypted text can not be null";
     public static final String EXPIRES = "expires can not be null";
     public static final String FALLBACK = "fallback can not be null";
-    public static final String FILE = "file can not be null";
     public static final String FROM = "from can not be null";
     public static final String HASH = "hash can not be null";
     public static final String HEADER = "header can not be null";
     public static final String HEADERS = "headers can not be null";
-    public static final String HTTP_HANDLER = "httpHandler can not be null";
     public static final String HTTP_METHOD = "HTTP method can not be null";
     public static final String HTTP_SERVER_EXCHANGE = "httpServerExchange can not be null";
+    public static final String ID = "id can not be null";
     public static final String INDEX = "index can not be null";
     public static final String INDEX_OPTIONS = "indexOptions can not be null";
     public static final String INDEXES = "indexes van not be null";
     public static final String ISSUER = "issuer can not be null";
     public static final String JSON = "json can not be null";
-    public static final String JSON_OBJECT = "json object can not be null";
     public static final String KEY = "key can not be null";
     public static final String LOCAL_DATE = "localDate can not be null";
     public static final String LOCAL_DATE_TIME = "localDateTime can not be null";
@@ -59,7 +58,6 @@ public final class NotNull {
     public static final String OBJECT = "object can not be null";
     public static final String OBJECTS = "objects can not be null";
     public static final String PART = "part can not be null";
-    public static final String PASETO = "paseto can not be null";
     public static final String PASSWORD = "password can not be null";
     public static final String PATH = "path can not be null";
     public static final String PAYLOAD = "payload can not be null";
@@ -75,7 +73,6 @@ public final class NotNull {
     public static final String REPLY_TO = "replyTo can not be null";
     public static final String REQUEST_PARAMETER = "request parameter can not be null";
     public static final String RESOURCE = "resource can not be null";
-    public static final String RESPONSE = "response can not be null";
     public static final String ROUTE = "route can not be null";
     public static final String SALT = "salt can not be null";
     public static final String SECRET = "secret can not be null";

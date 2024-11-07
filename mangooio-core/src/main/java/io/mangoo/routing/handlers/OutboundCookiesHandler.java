@@ -9,7 +9,7 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.jwt.JwtBuilder;
+import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
@@ -63,7 +63,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanges()) {
             try {
-                String token = JwtBuilder.create()
+                String token = PasetoBuilder.create()
                         .withExpires(session.getExpires())
                         .withSharedSecret(config.getSessionCookieSecret())
                         .withClaims(session.getValues())
@@ -115,7 +115,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             } 
             
             try {
-                String token = JwtBuilder.create()
+                String token = PasetoBuilder.create()
                         .withExpires(authentication.getExpires())
                         .withSharedSecret(config.getAuthenticationCookieSecret())
                         .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
@@ -167,7 +167,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (flash.hasContent() || form.isKept()) {
             try {
                 LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
-                var tokenBuilder = JwtBuilder.create()
+                var tokenBuilder = PasetoBuilder.create()
                         .withExpires(expires)
                         .withSharedSecret(config.getFlashCookieSecret())
                         .withClaims(flash.getValues());

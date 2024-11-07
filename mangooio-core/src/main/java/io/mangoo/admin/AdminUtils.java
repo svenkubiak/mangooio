@@ -7,7 +7,7 @@ import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.jwt.JwtBuilder;
+import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +46,7 @@ public final class AdminUtils {
     }
 
     public static Cookie getAdminCookie(boolean includeTwoFactor) {
-        var tokenBuilder = JwtBuilder.create()
+        var tokenBuilder = PasetoBuilder.create()
                 .withSharedSecret(getInstance(Config.class).getApplicationSecret())
                 .withExpires(LocalDateTime.now().plusMinutes(30))
                 .withClaim("uuid", MangooUtils.randomString(32));

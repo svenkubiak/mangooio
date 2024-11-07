@@ -1,4 +1,4 @@
-package io.mangoo.utils.jwt;
+package io.mangoo.utils.paseto;
 
 import io.mangoo.constants.NotNull;
 import io.mangoo.exceptions.MangooTokenException;
@@ -11,22 +11,24 @@ import org.paseto4j.version4.PasetoLocal;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-public class JwtParser {
-    private String sharedSecret;
+public class PasetoParser {
+    private String secret;
     private String cookieValue;
-    
-    public static JwtParser create() {
-        return new JwtParser();
+
+    private PasetoParser() {}
+
+    public static PasetoParser create() {
+        return new PasetoParser();
     }
 
     /**
-     * @param sharedSecret The shared secret the Token was created with
+     * @param Secret The shared secret the Token was created with
      * @return TokenParser
      */
-    public JwtParser withSharedSecret(String sharedSecret) {
-        Objects.requireNonNull(sharedSecret, NotNull.SHARED_SECRET);
+    public PasetoParser withSecret(String Secret) {
+        Objects.requireNonNull(Secret, NotNull.SECRET);
         
-        this.sharedSecret = sharedSecret;
+        this.secret = Secret;
         return this;
     }
     
@@ -34,7 +36,7 @@ public class JwtParser {
      * @param cookieValue The cookie value to parse the token of
      * @return TokenParser
      */
-    public JwtParser withCookieValue(String cookieValue) {
+    public PasetoParser withCookieValue(String cookieValue) {
         Objects.requireNonNull(cookieValue, NotNull.COOKIE_VALUE);
         
         this.cookieValue = cookieValue;
@@ -46,32 +48,24 @@ public class JwtParser {
      * @return A Token
      * @throws MangooTokenException if parsing fails
      */
-    public Jwt parse() throws MangooTokenException {
+    public Token parse() throws MangooTokenException {
         try {
             String jwt = PasetoLocal.decrypt(
-                    new SecretKey(sharedSecret.substring(0, 32).getBytes(StandardCharsets.UTF_8), Version.V4),
+                    new SecretKey(secret.substring(0, 32).getBytes(StandardCharsets.UTF_8), Version.V4),
                     cookieValue,
                     Strings.EMPTY);
 
-            return JsonUtils.toObject(jwt, Jwt.class);
+            return JsonUtils.toObject(jwt, Token.class);
         } catch (Exception e) {
             throw new MangooTokenException(e);
         }
     }
 
-    public String getSharedSecret() {
-        return sharedSecret;
-    }
-
-    public void setSharedSecret(String sharedSecret) {
-        this.sharedSecret = sharedSecret;
+    public String getSecret() {
+        return secret;
     }
 
     public String getCookieValue() {
         return cookieValue;
-    }
-
-    public void setCookieValue(String cookieValue) {
-        this.cookieValue = cookieValue;
     }
 }

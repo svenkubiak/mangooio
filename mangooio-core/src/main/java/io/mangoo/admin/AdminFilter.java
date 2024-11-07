@@ -9,7 +9,7 @@ import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.MangooUtils;
-import io.mangoo.utils.jwt.JwtParser;
+import io.mangoo.utils.paseto.PasetoParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -38,8 +38,8 @@ public class AdminFilter implements PerRequestFilter {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    var token = JwtParser.create()
-                        .withSharedSecret(config.getApplicationSecret())
+                    var token = PasetoParser.create()
+                        .withSecret(config.getApplicationSecret())
                         .withCookieValue(value)
                         .parse();
 

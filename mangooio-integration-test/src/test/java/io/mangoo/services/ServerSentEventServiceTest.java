@@ -12,7 +12,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.manager.ServerSentEventManager;
-import io.mangoo.utils.jwt.JwtBuilder;
+import io.mangoo.utils.paseto.PasetoBuilder;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,7 +72,7 @@ class ServerSentEventServiceTest {
         //given
         Config config = Application.getInstance(Config.class);
 
-        String token = JwtBuilder.create()
+        String token = PasetoBuilder.create()
             .withSubject("foo")
             .withClaim(ClaimKey.TWO_FACTOR, "false")
             .withExpires(LocalDateTime.now().plusHours(1))

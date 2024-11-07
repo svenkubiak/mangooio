@@ -1,4 +1,4 @@
-package io.mangoo.utils.jwt;
+package io.mangoo.utils.paseto;
 
 import io.mangoo.TestExtension;
 import io.mangoo.constants.ClaimKey;
@@ -17,18 +17,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 
 @ExtendWith({TestExtension.class})
-class TokenBuilderTest {
+class PasetoBuilderTest {
     
     @Test
-    void testWithExpipres() {
+    void testWithExpires() {
         //given
         LocalDateTime now = LocalDateTime.now();
         
         //when
-        JwtBuilder tokenBuilder = JwtBuilder.create().withExpires(now);
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withExpires(now);
         
         //then
-        assertThat(tokenBuilder.getExpires(), equalTo(now));
+        assertThat(tokenBuilder.getToken().getExpires(), equalTo(now));
     }
     
     @Test
@@ -37,10 +37,10 @@ class TokenBuilderTest {
         String sharedSecret = MangooUtils.randomString(32);
         
         //when
-        JwtBuilder tokenBuilder = JwtBuilder.create().withSharedSecret(sharedSecret);
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withSharedSecret(sharedSecret);
         
         //then
-        assertThat(tokenBuilder.getSharedSecret(), equalTo(sharedSecret));
+        assertThat(tokenBuilder.getSecret(), equalTo(sharedSecret));
     }
     
     @Test
@@ -50,10 +50,10 @@ class TokenBuilderTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        JwtBuilder tokenBuilder = JwtBuilder.create().withClaim(claimKey, value);
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withClaim(claimKey, value);
         
         //then
-        assertThat(tokenBuilder.getClaims().get(claimKey), equalTo(value));
+        assertThat(tokenBuilder.getToken().getClaims().get(claimKey), equalTo(value));
     }
     
     @Test
@@ -62,12 +62,37 @@ class TokenBuilderTest {
         String subject = MangooUtils.randomString(32);
         
         //when
-        JwtBuilder tokenBuilder = JwtBuilder.create().withSubject(subject);
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withSubject(subject);
         
         //then
-        assertThat(tokenBuilder.getSubject(), equalTo(subject));
+        assertThat(tokenBuilder.getToken().getSubject(), equalTo(subject));
     }
-    
+
+    @Test
+    void testWithId() {
+        //given
+        String id = MangooUtils.randomString(32);
+
+        //when
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withId(id);
+
+        //then
+        assertThat(tokenBuilder.getToken().getId(), equalTo(id));
+    }
+
+    @Test
+    void testWithIssue() {
+        //given
+        String issuer = MangooUtils.randomString(32);
+
+        //when
+        PasetoBuilder tokenBuilder = PasetoBuilder.create().withIssuer(issuer);
+
+        //then
+        assertThat(tokenBuilder.getToken().getIssuer(), equalTo(issuer));
+    }
+
+
     @Test
     void testBuild() throws MangooTokenException {
         //given
@@ -78,7 +103,7 @@ class TokenBuilderTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        String token = JwtBuilder.create()
+        String token = PasetoBuilder.create()
                 .withExpires(now)
                 .withSharedSecret(sharedSecret)
                 .withClaim(claimKey, value)
@@ -100,7 +125,7 @@ class TokenBuilderTest {
             String value = MangooUtils.randomString(32);
             
             //when
-            String token = JwtBuilder.create()
+            String token = PasetoBuilder.create()
                     .withExpires(now)
                     .withSharedSecret(sharedSecret)
                     .withClaim(claimKey, value)

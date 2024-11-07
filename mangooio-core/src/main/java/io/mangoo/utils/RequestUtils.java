@@ -8,7 +8,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.Attachment;
-import io.mangoo.utils.jwt.JwtParser;
+import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
@@ -99,8 +99,8 @@ public final class RequestUtils {
             
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    JwtParser.create()
-                        .withSharedSecret(config.getAuthenticationCookieSecret())
+                    PasetoParser.create()
+                        .withSecret(config.getAuthenticationCookieSecret())
                         .withCookieValue(value)
                         .parse();
                     
