@@ -268,7 +268,7 @@ public final class Application {
 
             Datastore datastore = Application.getInstance(Datastore.class);
             scanResult.getClassesWithFieldAnnotation(INDEXED).forEach(classInfo -> {
-                FieldInfoList fieldInfoList = classInfo.getFieldInfo();
+                var fieldInfoList = classInfo.getFieldInfo();
                 fieldInfoList.stream()
                         .filter(info -> info.getAnnotationInfo().size() == 1)
                         .filter(info -> StringUtils.isNotBlank(info.getName()))

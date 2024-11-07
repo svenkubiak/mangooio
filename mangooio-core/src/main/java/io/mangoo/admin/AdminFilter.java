@@ -43,9 +43,8 @@ public class AdminFilter implements PerRequestFilter {
                         .withCookieValue(value)
                         .parse();
 
-                    //FIXME
                     if (token.getExpires().isAfter(LocalDateTime.now())) {
-                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && Boolean.parseBoolean(token.getClaim(ClaimKey.TWO_FACTOR))) {
+                        if (token.containsClaim(ClaimKey.TWO_FACTOR) && token.getClaimAsBoolean(ClaimKey.TWO_FACTOR)) {
                             return Response.redirect("/@admin/twofactor").end();
                         }
                         

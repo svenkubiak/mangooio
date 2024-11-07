@@ -91,7 +91,7 @@ public final class CodecUtils {
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA3-512");
-            byte[] hashBytes = digest.digest(data.getBytes());
+            byte[] hashBytes = digest.digest(data.getBytes(StandardCharsets.UTF_8));
 
             return Hex.encodeHexString(hashBytes);
         } catch (NoSuchAlgorithmException e) {

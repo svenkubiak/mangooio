@@ -25,7 +25,7 @@ public class PasetoParser {
      * @param Secret The shared secret the Token was created with
      * @return TokenParser
      */
-    public PasetoParser withSecret(String Secret) {
+    public PasetoParser withSecret(String secret) {
         Objects.requireNonNull(Secret, NotNull.SECRET);
         
         this.secret = Secret;
