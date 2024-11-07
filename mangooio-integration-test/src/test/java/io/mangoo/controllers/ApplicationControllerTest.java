@@ -68,7 +68,7 @@ class ApplicationControllerTest {
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("/route"));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
     @Test
@@ -92,7 +92,7 @@ class ApplicationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), Matchers.anyOf(equalTo("/string\n/int/23\n/multiple/11/42"), equalTo("/string\r\n/int/23\r\n/multiple/11/42")));
         
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
     }
     
     @ParameterizedTest
@@ -108,7 +108,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo(result));
     }
@@ -122,7 +122,7 @@ class ApplicationControllerTest {
 
         //then
         assertThat(response, not(nullValue()));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), containsString("vor"));
         assertThat(response.getContent(), containsString("Stunden"));
@@ -281,7 +281,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("200"));
         assertThat(response.getContent(), containsString("The server successfully processed the request."));
     }
@@ -295,7 +295,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("400"));
         assertThat(response.getContent(), containsString("The server didn't understand the syntax of the request."));
     }
@@ -309,7 +309,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("401"));
         assertThat(response.getContent(), containsString("The request requires user authentication."));
     }
@@ -323,7 +323,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("403"));
         assertThat(response.getContent(), containsString("The server is refusing the request."));
     }
@@ -337,7 +337,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_FOUND));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("404"));
         assertThat(response.getContent(), containsString("The server has not found anything matching the Request-URI."));
     }
@@ -351,7 +351,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.INTERNAL_SERVER_ERROR));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("500"));
         assertThat(response.getContent(), containsString("The server encountered something it didn't expect and was unable to complete the request."));
     }
@@ -365,7 +365,7 @@ class ApplicationControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.TOO_MANY_REQUESTS));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("429"));
         assertThat(response.getContent(), containsString("The server returned HTTP status code 429."));
     }
@@ -385,7 +385,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testUnrenderedText() {
+    void testUnhinderedText() {
         //given
         final TestResponse response = TestRequest.get("/unrendered/text")
                 .execute();

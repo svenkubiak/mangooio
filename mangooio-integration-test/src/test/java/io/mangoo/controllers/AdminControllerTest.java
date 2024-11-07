@@ -54,7 +54,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(CACHE));
         assertThat(response.getContent(), containsString(EVICTIONS));
     }
@@ -83,7 +83,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(CONTROL_PANEL));
     }
 
@@ -97,7 +97,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString(TOOLS));
     }
     
@@ -111,7 +111,7 @@ class AdminControllerTest {
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getContentType(), equalTo(TEXT_HTML));
         assertThat(response.getContent(), containsString("Two Factor Authentication"));
     }
     
