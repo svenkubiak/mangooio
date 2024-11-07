@@ -252,6 +252,7 @@ public class Response {
         Objects.requireNonNull(name, NotNull.NAME);
         content.put(name, object);
         rendered = true;
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
 
         return this;
     }
@@ -264,6 +265,7 @@ public class Response {
      * @return The response object
      */
     public Response bodyHtml(String html) {
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
         this.body = html;
 
@@ -271,6 +273,7 @@ public class Response {
     }
 
     public Response bodyDefault() {
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
         switch (statusCode) {
             case StatusCodes.OK:
@@ -401,6 +404,7 @@ public class Response {
      * @return The response object
      */
     public Response render(Map<String, Object> content) {
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         Objects.requireNonNull(content, NotNull.CONTENT);
         this.content.putAll(content);
         rendered = true;
@@ -414,6 +418,7 @@ public class Response {
      * @return The response object
      */
     public Response render() {
+        this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = true;
 
         return this;
