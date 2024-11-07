@@ -90,7 +90,7 @@ public final class CodecUtils {
         Objects.requireNonNull(data, NotNull.DATA);
 
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA3-512");
+            var digest = MessageDigest.getInstance("SHA3-512");
             byte[] hashBytes = digest.digest(data.getBytes(StandardCharsets.UTF_8));
 
             return Hex.encodeHexString(hashBytes);

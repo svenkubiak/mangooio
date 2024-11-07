@@ -16,6 +16,7 @@ import org.apache.logging.log4j.util.Strings;
 import java.util.*;
 
 public class Response {
+    private static final String VALID_HTTP = "Valid HTTP status codes are between 100 and 599 inclusive";
     private final Map<HttpString, String> headers = new HashMap<>();
     private final Map<String, Object> content = new HashMap<>();
     private final List<Cookie> cookies = new ArrayList<>();
@@ -33,12 +34,12 @@ public class Response {
     }
 
     private Response(int statusCode) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         this.statusCode = statusCode;
     }
 
     private Response(int statusCode, String contentType) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         this.statusCode = statusCode;
         this.contentType = Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
     }
@@ -128,7 +129,7 @@ public class Response {
      * @return The response object
      */
     public static Response status(int statusCode) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP_STATUS_CODES_ARE_BETWEEN_100_AND_599_INCLUSIVE);
         return new Response(statusCode);
     }
 
@@ -141,7 +142,7 @@ public class Response {
      * @return The response object
      */
     public static Response status(int statusCode, String contentType) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, "Valid HTTP status codes are between 100 and 599 inclusive");
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP_STATUS_CODES_ARE_BETWEEN_100_AND_599_INCLUSIVE);
         Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
 
         return new Response(statusCode, contentType);
