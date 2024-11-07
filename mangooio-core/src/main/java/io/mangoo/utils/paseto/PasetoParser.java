@@ -22,13 +22,13 @@ public class PasetoParser {
     }
 
     /**
-     * @param Secret The shared secret the Token was created with
+     * @param secret The shared secret the Token was created with
      * @return TokenParser
      */
     public PasetoParser withSecret(String secret) {
-        Objects.requireNonNull(Secret, NotNull.SECRET);
+        Objects.requireNonNull(secret, NotNull.SECRET);
         
-        this.secret = Secret;
+        this.secret = secret;
         return this;
     }
     
