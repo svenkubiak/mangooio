@@ -129,7 +129,7 @@ public class Response {
      * @return The response object
      */
     public static Response status(int statusCode) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP_STATUS_CODES_ARE_BETWEEN_100_AND_599_INCLUSIVE);
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         return new Response(statusCode);
     }
 
@@ -142,7 +142,7 @@ public class Response {
      * @return The response object
      */
     public static Response status(int statusCode, String contentType) {
-        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP_STATUS_CODES_ARE_BETWEEN_100_AND_599_INCLUSIVE);
+        Preconditions.checkArgument(statusCode >= 100 && statusCode <= 599, VALID_HTTP);
         Objects.requireNonNull(contentType, NotNull.CONTENT_TYPE);
 
         return new Response(statusCode, contentType);
