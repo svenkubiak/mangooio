@@ -1,17 +1,16 @@
 package io.mangoo.routing.routes;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import io.mangoo.TestExtension;
+import io.mangoo.routing.Router;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import io.mangoo.TestExtension;
-import io.mangoo.routing.Router;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @ExtendWith({TestExtension.class})
 class ServerSentEventRouteTest {

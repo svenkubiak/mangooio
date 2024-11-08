@@ -44,6 +44,5 @@ public class ServerSentEventManager {
                         .filter(ServerSentEventConnection::isOpen)
                         .forEach(connection -> connection.send(data))
         );
-
     }
 }

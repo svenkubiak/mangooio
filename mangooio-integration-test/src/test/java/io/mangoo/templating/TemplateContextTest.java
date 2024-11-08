@@ -1,17 +1,5 @@
 package io.mangoo.templating;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-
 import io.mangoo.TestExtension;
 import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
@@ -20,6 +8,17 @@ import io.mangoo.routing.bindings.Session;
 import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 
 @ExtendWith({TestExtension.class})
 class TemplateContextTest {
