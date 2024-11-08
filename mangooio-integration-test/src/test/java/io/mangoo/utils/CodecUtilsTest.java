@@ -55,6 +55,15 @@ class CodecUtilsTest {
     }
 
     @Test
+    void testHashArgon2WithApplicationSecret() {
+        //given
+        String hash = CodecUtils.hashArgon2(PLAIN);
+
+        //then
+        assertThat(hash, not(nullValue()));
+    }
+
+    @Test
     void testUuid() {
         //given
         String uuid;
@@ -101,6 +110,18 @@ class CodecUtilsTest {
         //when
         boolean valid = CodecUtils.matchArgon2(PLAIN, salt, hash);
         
+        //then
+        assertThat(valid, equalTo(true));
+    }
+
+    @Test
+    void testMatchArgon2WithApplicationSecret() {
+        //given
+        String hash = CodecUtils.hashArgon2(PLAIN);
+
+        //when
+        boolean valid = CodecUtils.matchArgon2(PLAIN, hash);
+
         //then
         assertThat(valid, equalTo(true));
     }

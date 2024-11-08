@@ -275,7 +275,7 @@ public final class Application {
                         .forEach(info -> {
                             List<AnnotationParameterValue> annotationParams = info.getAnnotationInfo().getFirst().getParameterValues();
                             boolean unique = (annotationParams.size() > 1) && (boolean) annotationParams.get(1).getValue();
-                            String sortOrder = annotationParams.get(0).getValue().toString();
+                            var sortOrder = annotationParams.get(0).getValue().toString();
 
                             if (Sort.ASCENDING.value().equals(sortOrder)) {
                                 datastore.addIndex(classInfo.loadClass(), Indexes.ascending(info.getName()), new IndexOptions().unique(unique));

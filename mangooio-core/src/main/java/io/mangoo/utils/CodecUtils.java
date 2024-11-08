@@ -2,7 +2,10 @@ package io.mangoo.utils;
 
 import com.fasterxml.uuid.Generators;
 import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
+import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
+import io.mangoo.core.Application;
+import io.mangoo.core.Config;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
@@ -61,9 +64,23 @@ public final class CodecUtils {
 
         return BASE64ENCODER.encodeToString(hash);
     }
+
+    /**
+     * Hashes a given clear text with the application secret as salt using Argon2Id hashing
+     *
+     * @param cleartext The clear text
+     *
+     * @return A Base64 encoded String
+     */
+    public static String hashArgon2(String cleartext) {
+        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
+
+        String salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
+        return hashArgon2(cleartext, salt);
+    }
     
     /**
-     * Matches a given clear text  with salt using Argon2Id against an already Argon2Id hashed value
+     * Matches a given clear text with salt using Argon2Id against an already Argon2Id hashed value
      * 
      * @param cleartext The clear text
      * @param salt The salt
@@ -75,6 +92,23 @@ public final class CodecUtils {
         Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
         Objects.requireNonNull(salt, NotNull.SALT);
         Objects.requireNonNull(hash, NotNull.HASH);
+
+        return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Matches a given clear text using the application secret as salt using Argon2Id against an already Argon2Id hashed value
+     *
+     * @param cleartext The clear text
+     * @param hash The hashed value for comparison (must be Base64 encoded)
+     *
+     * @return True if hashes match, false otherwise
+     */
+    public static boolean matchArgon2(String cleartext, String hash) {
+        Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
+        Objects.requireNonNull(hash, NotNull.HASH);
+
+        String salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
         return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }

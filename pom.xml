@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -33,7 +33,6 @@
 		<enforcer.version>1.9.0</enforcer.version>
 		<jackson.version>2.18.1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
- 		<jna.version>5.15.0</jna.version>
 		<javadoc.version>3.11.1</javadoc.version>
 	</properties>
 	<modules>
@@ -257,16 +256,6 @@
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
 				<version>2.3.18.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>net.java.dev.jna</groupId>
-				<artifactId>jna</artifactId>
-				<version>${jna.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.java.dev.jna</groupId>
-				<artifactId>jna-platform</artifactId>
-				<version>${jna.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.cronutils</groupId>
@@ -528,11 +517,6 @@
 				<groupId>org.freemarker</groupId>
 				<artifactId>freemarker</artifactId>
 				<version>2.3.33</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jdbi.jackson-contrib</groupId>
-				<artifactId>jackson-module-blackbird</artifactId>
-				<version>0.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mchange</groupId>
