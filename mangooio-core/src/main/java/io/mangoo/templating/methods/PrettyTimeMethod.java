@@ -27,6 +27,7 @@ public class PrettyTimeMethod implements TemplateMethodModelEx {
     }
 
     @Override
+    @SuppressWarnings("java:S6212")
     public String exec(List arguments) throws TemplateModelException {
         String result = null;
         if (arguments != null && arguments.size() == NUM_ARGUMENTS) {

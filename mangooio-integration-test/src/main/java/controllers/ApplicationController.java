@@ -26,7 +26,7 @@ public class ApplicationController {
     }
 
     public Response person() {
-        Person person = new Person("foo", "bar", 42);
+        Person person = new Person("foo", "bar", 42); //NOSONAR
         Application.getInstance(Datastore.class).save(person);
         return Response.redirect("/");
     }
