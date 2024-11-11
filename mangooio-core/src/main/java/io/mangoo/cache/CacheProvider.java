@@ -17,11 +17,11 @@ import java.util.Objects;
 
 @Singleton
 public class CacheProvider implements Provider<Cache> {
-    private final Map<String, Cache> caches = new HashMap<>();
-    private Cache cache;
     private static final long SIXTY = 60;
     private static final long THIRTY = 30;
     private static final long FORTY_THOUSAND = 40000;
+    private final Map<String, Cache> caches = new HashMap<>();
+    private Cache cache;
 
     @Inject
     @SuppressFBWarnings(value = "FII_USE_FUNCTION_IDENTITY", justification = "Required by cache creation function")
@@ -56,16 +56,6 @@ public class CacheProvider implements Provider<Cache> {
     private void setDefaultApplicationCache() {
         cache = getCache(CacheName.APPLICATION);
     }
-    
-    /**
-     * Retrieves a cache by its name from the cache pool
-     * 
-     * @param name The name of the cache
-     * @return A Cache instance
-     */
-    public Cache getCache(CacheName name) {
-        return getCache(name.toString());
-    }
 
     /**
      * Retrieves a cache by its name from the cache pool
@@ -74,6 +64,7 @@ public class CacheProvider implements Provider<Cache> {
      * @return A Cache instance
      */
     public Cache getCache(String name) {
+        Objects.requireNonNull(name, NotNull.NAME);
         return caches.get(name);
     }
     

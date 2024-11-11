@@ -156,7 +156,7 @@ public class PostOffice {
         }
     }
 
-    private void setHeaders(Mail mail, MimeMessage mimeMessage) throws MessagingException {
+    private void setHeaders(Mail mail, Part mimeMessage) throws MessagingException {
         for (Entry<String, String> entry : mail.getMailHeaders().entrySet()) {
             mimeMessage.addHeader(entry.getKey(), entry.getValue());
         }

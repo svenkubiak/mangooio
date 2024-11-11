@@ -71,14 +71,11 @@ public class Form extends Validator {
 
         String value = values.get(key);
         if (StringUtils.isNotBlank(value)) {
-            switch (value) {
-                case "1", "true" -> {
-                    return Optional.of(Boolean.TRUE);
-                }
-                case "0", "false" -> {
-                    return Optional.of(Boolean.FALSE);
-                }
-            }
+            return switch (value) {
+                case "1", "true" -> Optional.of(Boolean.TRUE);
+                case "0", "false" -> Optional.of(Boolean.FALSE);
+                default -> Optional.empty();
+            };
         }
 
         return Optional.empty();

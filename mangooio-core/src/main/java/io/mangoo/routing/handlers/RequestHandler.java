@@ -219,7 +219,7 @@ public class RequestHandler implements HttpHandler {
      * @throws InvocationTargetException when the target is not found
      */
     protected Response executeFilter(List<Annotation> annotations, Response response) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        for (final Annotation annotation : annotations) {
+        for (final Annotation annotation : annotations) { //NOSONAR
             final var filterWith = (FilterWith) annotation;
             for (final Class<?> clazz : filterWith.value()) {
                 if (response.isEndResponse()) {

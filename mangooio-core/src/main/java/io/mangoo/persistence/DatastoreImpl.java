@@ -47,8 +47,8 @@ public class DatastoreImpl implements Datastore {
     }
 
     public DatastoreImpl(String prefix) {
+        Objects.requireNonNull(prefix, NotNull.PREFIX);
         this.config = new Config();
-        this.prefix = Objects.requireNonNull(prefix, NotNull.PREFIX);
         this.prefix = Default.PERSISTENCE_PREFIX + prefix + ".";
         connect();
     }
@@ -231,7 +231,7 @@ public class DatastoreImpl implements Datastore {
             if (id == null) {
                 InsertOneResult insertResult = collection.insertOne(object);
                 if (insertResult.getInsertedId() != null) {
-                    return insertResult.getInsertedId().asObjectId().getValue().toString();
+                    return insertResult.getInsertedId().asObjectId().getValue().toString(); //NOSONAR
                 }
             } else {
                 collection.replaceOne(eq("_id", id), object);
