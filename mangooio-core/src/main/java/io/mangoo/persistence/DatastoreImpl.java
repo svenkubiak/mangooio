@@ -53,7 +53,7 @@ public class DatastoreImpl implements Datastore {
         connect();
     }
 
-    @SuppressWarnings("java:S2095")
+    @SuppressWarnings({"java:S2095", "java:S2629"})
     private void connect() {
        if (config.isPersistenceEnabled()) {
            var codecRegistry = MongoClientSettings.getDefaultCodecRegistry();
