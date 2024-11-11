@@ -66,6 +66,7 @@ public class Form extends Validator {
      * @param key The name of the form element
      * @return Optional of Boolean
      */
+    @SuppressWarnings("fb-contrib:BL_BURYING_LOGIC")
     public Optional<Boolean> getBoolean(String key) {
         Objects.requireNonNull(key, NotNull.KEY);
 

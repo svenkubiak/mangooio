@@ -31,6 +31,7 @@ public class Schedule {
         return new Schedule(clazz, method, runAt, scheduledFuture, cron);
     }
 
+    @SuppressWarnings("java:S1452")
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
     }

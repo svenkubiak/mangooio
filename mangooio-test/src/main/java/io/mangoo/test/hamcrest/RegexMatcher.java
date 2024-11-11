@@ -22,7 +22,7 @@ public class RegexMatcher extends BaseMatcher {
 
     @Override
     public boolean matches(Object object){
-        return ((String) object).matches(regex);
+        return ((String) object).matches(regex); //NOSONAR
     }
     
     @Override
