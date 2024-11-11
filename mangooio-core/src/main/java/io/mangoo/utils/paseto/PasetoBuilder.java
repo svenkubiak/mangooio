@@ -36,7 +36,7 @@ public class PasetoBuilder {
     
     public PasetoBuilder withSecret(String secret) {
         Objects.requireNonNull(secret, NotNull.SECRET);
-        this.secret = secret;
+        this.secret = secret.substring(0, 32);
 
         return this;
     }
@@ -79,7 +79,7 @@ public class PasetoBuilder {
     public String build() throws MangooTokenException {
         try {
             return PasetoLocal.encrypt(
-                    new SecretKey(secret.substring(0, 32).getBytes(StandardCharsets.UTF_8), Version.V4),
+                    new SecretKey(secret.getBytes(StandardCharsets.UTF_8), Version.V4),
                     JsonUtils.toJson(token),
                     Strings.EMPTY,
                     Strings.EMPTY);

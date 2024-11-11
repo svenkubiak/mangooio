@@ -33,7 +33,7 @@ public class Schedule {
 
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
-    } //NOSONAR
+    }
 
     public LocalDateTime next() {
         if (cron) {

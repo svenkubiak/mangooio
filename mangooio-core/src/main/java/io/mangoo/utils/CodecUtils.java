@@ -75,7 +75,7 @@ public final class CodecUtils {
     public static String hashArgon2(String cleartext) {
         Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
 
-        String salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
+        var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
         return hashArgon2(cleartext, salt);
     }
     
@@ -108,7 +108,7 @@ public final class CodecUtils {
         Objects.requireNonNull(cleartext, NotNull.CLEARTEXT);
         Objects.requireNonNull(hash, NotNull.HASH);
 
-        String salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
+        var salt = Application.getInstance(Config.class).getString(Key.APPLICATION_SECRET);
 
         return Arrays.areEqual(hashArgon2(cleartext, salt).getBytes(StandardCharsets.UTF_8), hash.getBytes(StandardCharsets.UTF_8));
     }

@@ -28,7 +28,7 @@ public class PasetoParser {
     public PasetoParser withSecret(String secret) {
         Objects.requireNonNull(secret, NotNull.SECRET);
         
-        this.secret = secret;
+        this.secret = secret.substring(0, 32);
         return this;
     }
     
@@ -51,7 +51,7 @@ public class PasetoParser {
     public Token parse() throws MangooTokenException {
         try {
             String jwt = PasetoLocal.decrypt(
-                    new SecretKey(secret.substring(0, 32).getBytes(StandardCharsets.UTF_8), Version.V4),
+                    new SecretKey(secret.getBytes(StandardCharsets.UTF_8), Version.V4),
                     cookieValue,
                     Strings.EMPTY);
 

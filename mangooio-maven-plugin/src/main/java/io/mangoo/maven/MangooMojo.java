@@ -65,37 +65,26 @@ public class MangooMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
-
-    @Parameter(property = "mangoo.skip", defaultValue="false", required = true)
-    private boolean skip;
-
-    @Parameter(property = "mangoo.jpdaPort", defaultValue="0", required = true)
-    private int jpdaPort;
-
-    @Parameter(property = "mangoo.jvmArgs", required = false)
-    private String jvmArgs;
-
-    @Parameter(property = "mangoo.outputDirectory", defaultValue = "${project.build.outputDirectory}", required = true)
-    private String buildOutputDirectory;
-
-    @Parameter(property = "mangoo.watchDirs", required = false)
-    private File[] watchDirs;
-
-    @Parameter(property = "mangoo.watchAllClassPathDirs", defaultValue = "false", required = true)
-    private boolean watchAllClassPathDirs;
-
-    @Parameter(property = "mangoo.watchAllClassPathJars", defaultValue = "false", required = true)
-    private boolean watchAllClassPathJars;
-
     @Parameter(property = "mangoo.includes", required = false)
     protected List<String> includes;
-
-    @Parameter(property = "mangoo.excludes", required = false)
-    private List<String> excludes;
-
     @Parameter(property = "mangoo.useDefaultExcludes", defaultValue = "true", required = true)
     protected boolean useDefaultExcludes;
-
+    @Parameter(property = "mangoo.skip", defaultValue="false", required = true)
+    private boolean skip;
+    @Parameter(property = "mangoo.jpdaPort", defaultValue="0", required = true)
+    private int jpdaPort;
+    @Parameter(property = "mangoo.jvmArgs", required = false)
+    private String jvmArgs;
+    @Parameter(property = "mangoo.outputDirectory", defaultValue = "${project.build.outputDirectory}", required = true)
+    private String buildOutputDirectory;
+    @Parameter(property = "mangoo.watchDirs", required = false)
+    private File[] watchDirs;
+    @Parameter(property = "mangoo.watchAllClassPathDirs", defaultValue = "false", required = true)
+    private boolean watchAllClassPathDirs;
+    @Parameter(property = "mangoo.watchAllClassPathJars", defaultValue = "false", required = true)
+    private boolean watchAllClassPathJars;
+    @Parameter(property = "mangoo.excludes", required = false)
+    private List<String> excludes;
     @Parameter(property = "mangoo.settleDownMillis", defaultValue="500", required = false)
     private Long settleDownMillis;
 
@@ -156,7 +145,7 @@ public class MangooMojo extends AbstractMojo {
             machine.restart();
             watcher.run(); //NOSONAR
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOSONAR
         }
     }
 
