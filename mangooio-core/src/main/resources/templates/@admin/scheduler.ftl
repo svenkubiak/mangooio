@@ -11,23 +11,18 @@
 	</div>
 	<div class="columns">
 		<div class="column">
-			<input id="filter" type="text" name="table_search" class="input" placeholder="Start typing what you are looking for...">
-		</div>
-	</div>
-	<div class="columns">
-		<div class="column">
 			<div class="table-container">
 				<table class="table is-fullwidth">
 					<thead>
 					<tr>
-						<th data-sort="string"><b>Class</b></th>
-						<th data-sort="string"><b>Method</b></th>
-						<th data-sort="string"><b>Run at</b></th>
-						<th data-sort="string"><b>Next</b></th>
-						<th data-sort="string"><b>State</b></th>
+						<th><b>Class</b></th>
+						<th><b>Method</b></th>
+						<th><b>Run at</b></th>
+						<th><b>Next</b></th>
+						<th><b>State</b></th>
 					</tr>
 					</thead>
-					<tbody class="searchable">
+					<tbody>
 					<#list scheduler.schedules as schedule>
 						<tr>
 							<td>${schedule.clazz}</td>

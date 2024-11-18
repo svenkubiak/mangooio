@@ -12,21 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 });
 
-$(document).ready(function () {
-	let $table = $("table").stupidtable();
-	let $th_to_sort = $table.find("thead th").eq(0);
-	$th_to_sort.stupidsort();
-	(function ($) {
-		$('#filter').keyup(function () {
-			let rex = new RegExp($(this).val(), 'i');
-			$('.searchable tr').hide();
-			$('.searchable tr').filter(function () {
-				return rex.test($(this).text());
-			}).show();
-		})
-	}(jQuery));
-});
-
 document.getElementById("keypair").addEventListener('click', () => {
 	fetch("/@admin/tools", {
 		method: "POST",

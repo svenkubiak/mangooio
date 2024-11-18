@@ -11,27 +11,22 @@
 	</div>
 	<div class="columns">
 		<div class="column">
-			<input id="filter" type="text" name="table_search" class="input" placeholder="Start typing what you are looking for...">
-		</div>
-	</div>
-	<div class="columns">
-		<div class="column">
 			<div class="table-container">
 				<table class="table is-fullwidth">
 					<thead>
 					<tr>
-						<th data-sort="string"><b>Cache name</b></th>
-						<th data-sort="string"><b>Evictions</b></th>
-						<th data-sort="string"><b>Requests</b></th>
-						<th data-sort="string"><b>Hits</b></th>
-						<th data-sort="string"><b>Hit rate</b></th>
-						<th data-sort="string"><b>Misses</b></th>
-						<th data-sort="string"><b>Miss rate</b></th>
-						<th data-sort="string"><b>Load successes</b></th>
-						<th data-sort="string"><b>Load failures</b></th>
+						<th><b>Cache name</b></th>
+						<th><b>Evictions</b></th>
+						<th><b>Requests</b></th>
+						<th><b>Hits</b></th>
+						<th><b>Hit rate</b></th>
+						<th><b>Misses</b></th>
+						<th><b>Miss rate</b></th>
+						<th><b>Load successes</b></th>
+						<th><b>Load failures</b></th>
 					</tr>
 					</thead>
-					<tbody class="searchable">
+					<tbody>
 					<#list statistics as name, statistic>
 						<tr>
 							<td>${name}</td>
