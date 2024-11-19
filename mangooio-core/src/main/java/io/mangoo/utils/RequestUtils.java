@@ -101,7 +101,7 @@ public final class RequestUtils {
                 try {
                     PasetoParser.create()
                         .withSecret(config.getAuthenticationCookieSecret())
-                        .withCookieValue(value)
+                        .withValue(value)
                         .parse();
                     
                     valid = true;

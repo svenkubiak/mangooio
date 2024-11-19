@@ -40,7 +40,7 @@ public class AdminFilter implements PerRequestFilter {
                 try {
                     var token = PasetoParser.create()
                         .withSecret(config.getApplicationSecret())
-                        .withCookieValue(value)
+                        .withValue(value)
                         .parse();
 
                     if (token.getExpires().isAfter(LocalDateTime.now())) {

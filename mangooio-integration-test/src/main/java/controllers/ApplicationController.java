@@ -3,7 +3,9 @@ package controllers;
 import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
+import io.mangoo.filters.TokenFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -44,6 +46,11 @@ public class ApplicationController {
     }
     
     public Response api() {
+        return Response.ok();
+    }
+
+    @FilterWith(TokenFilter.class)
+    public Response tokenFilter() {
         return Response.ok();
     }
 

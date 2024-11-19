@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class PasetoParser {
     private String secret;
-    private String cookieValue;
+    private String value;
 
     private PasetoParser() {}
 
@@ -33,13 +33,13 @@ public class PasetoParser {
     }
     
     /**
-     * @param cookieValue The cookie value to parse the token of
+     * @param value The paseto value to parse the actual token
      * @return TokenParser
      */
-    public PasetoParser withCookieValue(String cookieValue) {
-        Objects.requireNonNull(cookieValue, NotNull.COOKIE_VALUE);
+    public PasetoParser withValue(String value) {
+        Objects.requireNonNull(value, NotNull.VALUE);
         
-        this.cookieValue = cookieValue;
+        this.value = value;
         return this;
     }
 
@@ -52,7 +52,7 @@ public class PasetoParser {
         try {
             String jwt = PasetoLocal.decrypt(
                     new SecretKey(secret.getBytes(StandardCharsets.UTF_8), Version.V4),
-                    cookieValue,
+                    value,
                     Strings.EMPTY);
 
             return JsonUtils.toObject(jwt, Token.class);
@@ -65,7 +65,7 @@ public class PasetoParser {
         return secret;
     }
 
-    public String getCookieValue() {
-        return cookieValue;
+    public String getValue() {
+        return value;
     }
 }

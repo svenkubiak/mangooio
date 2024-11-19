@@ -35,6 +35,9 @@
 	cookie.secret = authentication.cookie.secret
 	cookie.secure = true
 
+[token]
+	secret = token.secret
+
 [flash]
 	cookie.name = ${application-name}-flash
 	cookie.secret = flash.cookie.secret

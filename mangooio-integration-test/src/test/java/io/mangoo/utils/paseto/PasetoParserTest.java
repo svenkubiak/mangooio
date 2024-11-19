@@ -37,10 +37,10 @@ class PasetoParserTest {
         String value = MangooUtils.randomString(32);
         
         //when
-        PasetoParser parser = PasetoParser.create().withCookieValue(value);
+        PasetoParser parser = PasetoParser.create().withValue(value);
         
         //then
-        assertThat(parser.getCookieValue(), equalTo(value));
+        assertThat(parser.getValue(), equalTo(value));
     }
     
     @Test
@@ -59,7 +59,7 @@ class PasetoParserTest {
                 .build();
         
         //when
-        Token token = PasetoParser.create().withCookieValue(buildToken).withSecret(sharedSecret).parse();
+        Token token = PasetoParser.create().withValue(buildToken).withSecret(sharedSecret).parse();
         
         //then
         assertThat(token, not(equalTo(null)));
@@ -85,7 +85,7 @@ class PasetoParserTest {
                     .build();
             
             //when
-            Token token = PasetoParser.create().withCookieValue(buildToken).withSecret(sharedSecret).parse();
+            Token token = PasetoParser.create().withValue(buildToken).withSecret(sharedSecret).parse();
             
             //then
             return token != null &&

@@ -21,6 +21,7 @@ public class PasetoBuilder {
     private PasetoBuilder() {
         token.setId(MangooUtils.randomString(32));
         token.setSubject(MangooUtils.randomString(32));
+        token.setExpires(LocalDateTime.now().plusMinutes(30));
     }
 
     public static PasetoBuilder create() {

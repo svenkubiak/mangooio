@@ -63,6 +63,7 @@ public final class Key {
     public static final String SMTP_PORT = "smtp.port";
     public static final String SMTP_PROTOCOL = "smtp.protocol";
     public static final String SMTP_USERNAME = "smtp.username";
+    public static final String TOKEN_SECRET = "token.secret";
     public static final String UNDERTOW_MAX_ENTITY_SIZE = "undertow.maxentitysize";
 
     private Key() {

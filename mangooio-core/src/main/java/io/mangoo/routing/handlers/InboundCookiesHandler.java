@@ -62,7 +62,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var token = PasetoParser.create()
                         .withSecret(config.getSessionCookieSecret())
-                        .withCookieValue(cookieValue)
+                        .withValue(cookieValue)
                         .parse();
                 
                 if (token.getExpires().isAfter(LocalDateTime.now())) {
@@ -94,7 +94,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var token = PasetoParser.create()
                         .withSecret(config.getAuthenticationCookieSecret())
-                        .withCookieValue(cookieValue)
+                        .withValue(cookieValue)
                         .parse();
                 
                 if (token.getExpires().isAfter(LocalDateTime.now())) {
@@ -125,7 +125,7 @@ public class InboundCookiesHandler implements HttpHandler {
             try {
                 var token = PasetoParser.create()
                         .withSecret(config.getFlashCookieSecret())
-                        .withCookieValue(cookieValue)
+                        .withValue(cookieValue)
                         .parse();
                 
                 if (token.getExpires().isAfter(LocalDateTime.now())) {

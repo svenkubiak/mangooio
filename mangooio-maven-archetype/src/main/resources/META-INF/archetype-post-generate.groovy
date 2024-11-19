@@ -21,8 +21,12 @@ replacePatternInFile(new File(path)){
     it.replaceAll("authentication.cookie.secret", key.join())
 }
 
-
 key = (1..64).collect { pool[random.nextInt(pool.size())] }
 replacePatternInFile(new File(path)){
     it.replaceAll("flash.cookie.secret", key.join())
+}
+
+key = (1..32).collect { pool[random.nextInt(pool.size())] }
+replacePatternInFile(new File(path)){
+    it.replaceAll("token.secret", key.join())
 }

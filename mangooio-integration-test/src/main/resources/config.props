@@ -20,6 +20,8 @@
 	cookie.secret = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
 [metrics]
 	enable = true
+[token]
+	secret = QLxhAXDh6PjAhFVY2kMMrQrdlaWDUP7E1PC4pBuDe9zSCH2Suvv
 [authentication]
 	redirect = /login
 	cookie.name = test-authentication

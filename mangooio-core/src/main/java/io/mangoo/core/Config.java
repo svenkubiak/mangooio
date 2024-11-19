@@ -705,4 +705,11 @@ public class Config {
     public Object getApplicationAdminLocale() {
         return getString(Key.APPLICATION_ADMIN_LOCALE, Default.APPLICATION_ADMIN_LOCALE);
     }
+
+    /**
+     * @return token.secret or null if undefined
+     */
+    public String getTokenSecret() {
+        return getString(Key.TOKEN_SECRET, null);
+    }
 }
