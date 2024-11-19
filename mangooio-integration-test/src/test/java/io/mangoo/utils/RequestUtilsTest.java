@@ -3,6 +3,7 @@ package io.mangoo.utils;
 import com.google.common.net.MediaType;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Header;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.test.concurrent.ConcurrentRunner;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderMap;
@@ -156,5 +157,21 @@ class RequestUtilsTest {
 
         // then
         assertThat(isJson, equalTo(false));
+    }
+
+    @Test
+    void testGetAuthorizationHeader() {
+        // given
+        Request request = Mockito.mock(Request.class);
+        String authorization = UUID.randomUUID().toString();
+        String header = "Bearer " + authorization + "       ";
+
+        // when
+        when(request.getHeader(Header.AUTHORIZATION)).thenReturn(header);
+
+        // then
+        assertThat(RequestUtils.getAuthorizationHeader(request), not(nullValue()));
+        assertThat(RequestUtils.getAuthorizationHeader(request).isPresent(), equalTo(true));
+        assertThat(RequestUtils.getAuthorizationHeader(request).get(), equalTo(authorization));
     }
 }

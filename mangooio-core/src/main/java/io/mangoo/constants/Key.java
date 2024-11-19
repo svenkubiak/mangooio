@@ -1,6 +1,7 @@
 package io.mangoo.constants;
 
 public final class Key {
+    public static final String API_KEY = "api.key";
     public static final String APPLICATION_ADMIN_ENABLE = "application.admin.enable";
     public static final String APPLICATION_ADMIN_PASSWORD = "application.admin.password";
     public static final String APPLICATION_ADMIN_SECRET = "application.admin.secret";
@@ -40,6 +41,7 @@ public final class Key {
     public static final String I18N_COOKIE_NAME = "i18n.cookie.name";
     public static final String MANGOOIO_WARNINGS = "MANGOOIO-WARNINGS";
     public static final String METRICS_ENABLE = "metrics.enable";
+    public static final String PASETO_SECRET = "paseto.secret";
     public static final String PERSISTENCE_ENABLE = "persistence.enable";
     public static final String PERSISTENCE_MONGO_AUTH = "mongo.auth";
     public static final String PERSISTENCE_MONGO_AUTHDB = "mongo.authdb";
@@ -63,7 +65,6 @@ public final class Key {
     public static final String SMTP_PORT = "smtp.port";
     public static final String SMTP_PROTOCOL = "smtp.protocol";
     public static final String SMTP_USERNAME = "smtp.username";
-    public static final String TOKEN_SECRET = "token.secret";
     public static final String UNDERTOW_MAX_ENTITY_SIZE = "undertow.maxentitysize";
 
     private Key() {

@@ -4,10 +4,10 @@ import io.undertow.util.HttpString;
 
 public final class Header {
     public static final HttpString ACCEPT_LANGUAGE = new HttpString("Accept-Language");
-    public static final HttpString CONTENT_DISPOSITION = new HttpString("Content-Disposition");
     public static final HttpString CONTENT_SECURITY_POLICY = new HttpString("Content-Security-Policy");
     public static final HttpString CONTENT_TYPE = new HttpString("Content-Type");
     public static final HttpString COOKIE = new HttpString("Cookie");
+    public static final HttpString AUTHORIZATION = new HttpString("Authorization");
     public static final HttpString FEATURE_POLICY = new HttpString("Feature-Policy");
     public static final HttpString LOCATION = new HttpString("Location");
     public static final HttpString REFERER_POLICY = new HttpString("Referrer-Policy");

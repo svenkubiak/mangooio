@@ -20,7 +20,6 @@ public final class NotNull {
     public static final String CONTROLLER_METHOD = "controller method can not be null";
     public static final String CONTROLLER_NAME = "controller name can not be null";
     public static final String COOKIE = "cookie can not be null";
-    public static final String COOKIE_VALUE = "cookievalue can not be null";
     public static final String COLLECTION = "collection can not be null";
     public static final String CRON = "cron can no be null";
     public static final String CRYPTO = "crypto can not be null";
@@ -71,12 +70,12 @@ public final class NotNull {
     public static final String QUERY = "query can not be null";
     public static final String REDIRECT_TO = "redirect to can not be null";
     public static final String REPLY_TO = "replyTo can not be null";
+    public static final String REQUEST = "request can not be null" ;
     public static final String REQUEST_PARAMETER = "request parameter can not be null";
     public static final String RESOURCE = "resource can not be null";
     public static final String ROUTE = "route can not be null";
     public static final String SALT = "salt can not be null";
     public static final String SECRET = "secret can not be null";
-    public static final String SHARED_SECRET = "shared secret can not be null";
     public static final String SOURCE_PATH = "source path can not be null";
     public static final String SORT = "sort can not be null";
     public static final String STACK_TRACE_ELEMENT = "stack trace element can not be null";

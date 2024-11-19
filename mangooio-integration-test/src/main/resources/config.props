@@ -7,25 +7,35 @@
 	minify.css = true
 	encrypted = arg{}
 	named = shouldnotbedisplayed
+
 [connector]
 	http.host = localhost
 	http.port = 9898
 	ajp.host = 
 	ajp.port = 9899
+
 [session]
 	cookie.name = test-session
 	cookie.secret = o5orE4lGoOM66HpOxuE9VVt1xuIefbmi7D6HFTpcDCwt4PoXH41wSi50jy8NkAcL
+
 [flash]
 	cookie.name = test-flash
 	cookie.secret = lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
+
 [metrics]
 	enable = true
-[token]
+
+[paseto]
 	secret = QLxhAXDh6PjAhFVY2kMMrQrdlaWDUP7E1PC4pBuDe9zSCH2Suvv
+
+[api]
+    key = ZU799ZHnRwPEzBUfkG49VWbtmIlhhqWsY2kMMrQrdlardlaWDUP7E1PC4prdlaWDUP7E1PC4p
+
 [authentication]
 	redirect = /login
 	cookie.name = test-authentication
 	cookie.secret = oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB
+
 [smtp]
 	host = localhost
 	port = 25

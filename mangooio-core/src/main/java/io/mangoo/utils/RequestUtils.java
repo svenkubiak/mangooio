@@ -8,6 +8,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.Attachment;
+import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
@@ -112,5 +113,16 @@ public final class RequestUtils {
         }
         
         return valid;
+    }
+
+    public static Optional<String> getAuthorizationHeader(Request request) {
+        Objects.requireNonNull(request, NotNull.REQUEST);
+
+        String authorization = request.getHeader(Header.AUTHORIZATION);
+        if (StringUtils.isNotBlank(authorization)) {
+            authorization = authorization.replace("Bearer", "").trim();
+        }
+
+        return Optional.ofNullable(authorization);
     }
 }

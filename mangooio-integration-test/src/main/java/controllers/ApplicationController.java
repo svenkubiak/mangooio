@@ -5,7 +5,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.core.Application;
-import io.mangoo.filters.TokenFilter;
+import io.mangoo.filters.ApiFilter;
+import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -49,7 +50,12 @@ public class ApplicationController {
         return Response.ok();
     }
 
-    @FilterWith(TokenFilter.class)
+    @FilterWith(ApiFilter.class)
+    public Response apiFilter() {
+        return Response.ok();
+    }
+
+    @FilterWith(PasetoFilter.class)
     public Response tokenFilter() {
         return Response.ok();
     }

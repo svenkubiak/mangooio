@@ -67,6 +67,7 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final LocalDateTime START = LocalDateTime.now();
     private static final int KEY_MIN_BIT_LENGTH = 512;
+    private static final int PASETO_SECRET_MIN_LENGTH = 256;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
@@ -79,7 +80,6 @@ public final class Application {
         | | | | | || (_| || | | || (_| || (_) || (_) |  | |  / /  | |_| |
         |_| |_| |_| \\__,_||_| |_| \\__, | \\___/  \\___/  |___|/_/    \\___/\s
                                   |___/                                 \s""";
-
     private static io.mangoo.core.Module module;
     private static ScheduledExecutorService scheduledExecutorService;
     private static ExecutorService executorService;
@@ -474,49 +474,65 @@ public final class Application {
 
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bit.", bitLength);
+            LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getAuthenticationCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.secret has only {} bit.", bitLength);
+            LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getAuthenticationCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bit.", bitLength);
+            LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getSessionCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie secret a 512 bit encryption key. The current property for session.cookie.secret has only {} bit.", bitLength);
+            LOG.error("Session cookie secret a 512 bit encryption key. The current property for session.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getSessionCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bit.", bitLength);
+            LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getFlashCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bit.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getFlashCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.secret has only {} bit.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
         if (!config.isDecrypted()) {
             LOG.error("Found encrypted config values in config.props but decryption was not successful!");
             failsafe();
+        }
+
+        if (StringUtils.isNotBlank(config.getString(Key.PASETO_SECRET))) {
+            bitLength = getBitLength(config.getString(Key.PASETO_SECRET));
+            if (bitLength < PASETO_SECRET_MIN_LENGTH) {
+                LOG.error("Paseto secret requires a 256 bit secret length. The current property for paseto.secret has only {} bits.", bitLength);
+                failsafe();
+            }
+        }
+
+        if (StringUtils.isNotBlank(config.getString(Key.API_KEY))) {
+            bitLength = getBitLength(config.getString(Key.API_KEY));
+            if (bitLength < KEY_MIN_BIT_LENGTH) {
+                LOG.error("API key requires a 512 bit key length. The current property for api.length has only {} bits.", bitLength);
+                failsafe();
+            }
         }
     }
 

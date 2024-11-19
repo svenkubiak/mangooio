@@ -710,6 +710,6 @@ public class Config {
      * @return token.secret or null if undefined
      */
     public String getTokenSecret() {
-        return getString(Key.TOKEN_SECRET, null);
+        return getString(Key.PASETO_SECRET, null);
     }
 }

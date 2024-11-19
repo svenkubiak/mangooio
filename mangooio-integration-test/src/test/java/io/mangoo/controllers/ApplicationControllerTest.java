@@ -98,6 +98,29 @@ class ApplicationControllerTest {
     }
 
     @Test
+    void testApiFilterUnauthorized() {
+        //given
+        final TestResponse response = TestRequest.get("/token-filter").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
+    }
+
+    @Test
+    void testApiFilterAuthorized() throws MangooTokenException {
+        //given
+        final TestResponse response = TestRequest
+                .get("/api-filter")
+                .withHeader("Authorization", Application.getInstance(Config.class).getString("api.key"))
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+
+    @Test
     void testTokenFilterAuthorized() throws MangooTokenException {
         //given
         String token = PasetoBuilder.create()
