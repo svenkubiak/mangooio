@@ -2,15 +2,16 @@ package io.mangoo.filters;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.mangoo.constants.Key;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.RequestUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class ApiFilter implements PerRequestFilter {
+public class ApiKeyFilter implements PerRequestFilter {
     @Inject
-    @Named("api.key")
+    @Named(Key.API_KEY)
     private String key;
 
     @Override

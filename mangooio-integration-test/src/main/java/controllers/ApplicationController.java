@@ -4,8 +4,9 @@ import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.mangoo.annotations.FilterWith;
+import io.mangoo.constants.Key;
 import io.mangoo.core.Application;
-import io.mangoo.filters.ApiFilter;
+import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
@@ -21,7 +22,7 @@ import java.util.Date;
 public class ApplicationController {
     
     @Inject
-    @Named("application.named")
+    @Named(Key.APPLICATION_NAMED)
     private String named;
     
     public Response index() {
@@ -50,7 +51,7 @@ public class ApplicationController {
         return Response.ok();
     }
 
-    @FilterWith(ApiFilter.class)
+    @FilterWith(ApiKeyFilter.class)
     public Response apiFilter() {
         return Response.ok();
     }
