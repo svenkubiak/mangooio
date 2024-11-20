@@ -20,22 +20,24 @@ public class PasetoFilter implements PerRequestFilter {
     @Override
     public Response execute(Request request, Response response) {
         return RequestUtils.getAuthorizationHeader(request)
-                .map(authorization -> {
-                    try {
-                        var token = PasetoParser.create()
-                                .withValue(authorization)
-                                .withSecret(secret)
-                                .parse();
+                .map(authorization -> authorize(authorization, secret, response))
+                .orElseGet(() -> Response.unauthorized().end());
+    }
 
-                        if (token != null && token.getExpires().isAfter(LocalDateTime.now())) {
-                            return response;
-                        }
-                    } catch (MangooTokenException e) {
-                        // Intentionally left blank
-                    }
-                    return Response.unauthorized().end();
-                })
-                .orElse(Response.unauthorized().end());
+    private Response authorize(String authorization, String secret, Response response) {
+        try {
+            var token = PasetoParser.create()
+                    .withValue(authorization)
+                    .withSecret(secret)
+                    .parse();
 
+            if (token != null && token.getExpires().isAfter(LocalDateTime.now())) {
+                return response;
+            }
+        } catch (MangooTokenException e) {
+            // Intentionally left blank
+        }
+
+        return Response.unauthorized().end();
     }
 }

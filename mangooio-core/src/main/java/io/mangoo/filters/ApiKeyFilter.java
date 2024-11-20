@@ -17,13 +17,15 @@ public class ApiKeyFilter implements PerRequestFilter {
     @Override
     public Response execute(Request request, Response response) {
         return RequestUtils.getAuthorizationHeader(request)
-                .map(authorization -> {
-                    if (StringUtils.isNotBlank(authorization) && StringUtils.isNotBlank(key) && authorization.equals(key)) {
-                        return response;
-                    }
-                    return Response.unauthorized().end();
-                })
+                .filter(auth -> authorize(auth, key))
+                .map(auth -> response)
                 .orElse(Response.unauthorized().end());
+    }
+
+    private boolean authorize(String authorization, String key) {
+        return StringUtils.isNotBlank(authorization) &&
+               StringUtils.isNotBlank(key) &&
+               authorization.equals(key);
     }
 }
 
