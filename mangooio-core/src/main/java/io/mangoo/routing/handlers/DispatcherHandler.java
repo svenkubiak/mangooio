@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 public class DispatcherHandler implements HttpHandler {
@@ -87,27 +88,27 @@ public class DispatcherHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        if ( (RequestUtils.isPostPutPatch(exchange) || this.blocking) && exchange.isInIoThread()) {
+        if ( (RequestUtils.isPostPutPatch(exchange) || blocking) && exchange.isInIoThread()) {
             exchange.dispatch(this);
             return;
         }
 
         final var attachment = Attachment.build()
-            .withControllerInstance(Application.getInstance(this.controllerClass))
-            .withControllerClass(this.controllerClass)
-            .withControllerClassName(this.controllerClassName)
-            .withControllerMethodName(this.controllerMethodName)
-            .withClassAnnotations(this.classAnnotations)
-            .withMethodAnnotations(this.methodAnnotations)
-            .withMethodParameters(this.methodParameters)
-            .withMethod(this.method)
-            .withMethodParameterCount(this.methodParametersCount)
-            .withRequestFilter(this.requestFilter)
+            .withControllerInstance(Application.getInstance(controllerClass))
+            .withControllerClass(controllerClass)
+            .withControllerClassName(controllerClassName)
+            .withControllerMethodName(controllerMethodName)
+            .withClassAnnotations(classAnnotations)
+            .withMethodAnnotations(methodAnnotations)
+            .withMethodParameters(methodParameters)
+            .withMethod(method)
+            .withMethodParameterCount(methodParametersCount)
+            .withRequestFilter(requestFilter)
             .withRequestParameter(RequestUtils.getRequestParameters(exchange))
-            .withMessages(this.messages)
-            .withLimit(this.limit)
-            .withAuthentication(this.authentication)
-            .withTemplateEngine(this.templateEngine);
+            .withMessages(messages)
+            .withLimit(limit)
+            .withAuthentication(authentication)
+            .withTemplateEngine(templateEngine);
 
         exchange.putAttachment(RequestUtils.getAttachmentKey(), attachment);
         nextHandler(exchange);
@@ -120,10 +121,15 @@ public class DispatcherHandler implements HttpHandler {
      */
     private Map<String, Class<?>> getMethodParameters() {
         final Map<String, Class<?>> parameters = new LinkedHashMap<>();
-        for (final Method declaredMethod : this.controllerClass.getDeclaredMethods()) {
-            if (declaredMethod.getName().equals(this.controllerMethodName) && declaredMethod.getParameterCount() > 0) {
-                Arrays.stream(declaredMethod.getParameters()).forEach(parameter -> parameters.put(parameter.getName(), parameter.getType()));
-                break;
+
+        Method targetMethod = Arrays.stream(controllerClass.getDeclaredMethods())
+                .filter(method -> method.getName().equals(controllerMethodName) && method.getParameterCount() > 0)
+                .findFirst()
+                .orElse(null);
+
+        if (targetMethod != null) {
+            for (Parameter parameter : targetMethod.getParameters()) {
+                parameters.put(parameter.getName(), parameter.getType());
             }
         }
 
