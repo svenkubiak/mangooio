@@ -1,8 +1,6 @@
 package io.mangoo.crypto;
 
-import com.google.inject.Inject;
 import io.mangoo.constants.NotNull;
-import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooEncryptionException;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,23 +36,9 @@ public class Crypto {
     private static final int KEY_INDEX_START = 0;
     private static final int MAX_KEY_LENGTH = 32;
     private final PaddedBufferedBlockCipher paddedBufferedBlockCipher = new PaddedBufferedBlockCipher(CBCBlockCipher.newInstance(new AESLightEngine()));
-    private final Config config;
-    
-    @Inject
-    public Crypto(Config config) {
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
+
+    public Crypto() {
         Security.addProvider(new BouncyCastleProvider());
-    }
-    
-    /**
-     * Decrypts a given encrypted text using the application secret property (application.secret) as key
-     *
-     * @param encryptedText The encrypted text
-     * @return The clear text or null if decryption fails
-     */
-    public String decrypt(String encryptedText) {
-        Objects.requireNonNull(encryptedText, NotNull.ENCRYPTED_TEXT);
-        return decrypt(encryptedText, getSizedSecret(config.getApplicationSecret()));
     }
 
     /**
@@ -75,20 +59,6 @@ public class Crypto {
     }
 
     /**
-     * Encrypts a given plain text using the application secret property (application.secret) as key
-     * <p>
-     * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
-     *
-     * @param plainText The plain text to encrypt
-     * @return The encrypted text or null if encryption fails
-     */
-    public String encrypt(String plainText) {
-        Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT);
-
-        return encrypt(plainText, getSizedSecret(config.getApplicationSecret()));
-    }
-
-    /**
      * Encrypts a given plain text using the given key
      * <p>
      * Encryption is done by using AES and CBC Cipher and a key length of 256 bit
@@ -97,7 +67,7 @@ public class Crypto {
      * @param key The key to use for encryption
      * @return The encrypted text or null if encryption fails
      */
-    public String encrypt(final String plainText, final String key) {
+    public String encrypt(String plainText, String key) {
         Objects.requireNonNull(plainText, NotNull.PLAIN_TEXT);
         Objects.requireNonNull(key, NotNull.KEY);
 
@@ -113,7 +83,7 @@ public class Crypto {
      * @param data The data to encrypt or decrypt
      * @return A clear text or encrypted byte array
      */
-    private byte[] cipherData(final byte[] data) {
+    private byte[] cipherData(byte[] data) {
         byte[] result = null;
         try {
             final var buffer = new byte[paddedBufferedBlockCipher.getOutputSize(data.length)];

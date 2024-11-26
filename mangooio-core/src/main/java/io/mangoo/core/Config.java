@@ -6,7 +6,6 @@ import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.constants.NotNull;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.enums.Mode;
 import io.mangoo.exceptions.MangooEncryptionException;
@@ -20,7 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -40,11 +42,7 @@ public class Config {
         this.mode = Application.getMode();
         load();
     }
-    
-    public Config(Mode mode) {
-        this.mode = Objects.requireNonNull(mode, NotNull.MODE);
-    }
-    
+
     @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private void load() {
         props.setActiveProfiles(mode.toString().toLowerCase(Locale.ENGLISH));
@@ -103,7 +101,7 @@ public class Config {
      * @param value The encrypted value to decrypt
      */
     private String decrypt(String value) {
-        var crypto = new Crypto(this);
+        var crypto = new Crypto();
         
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
         if (StringUtils.isNotBlank(keyFile)) {

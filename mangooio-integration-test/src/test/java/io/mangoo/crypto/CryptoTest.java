@@ -2,9 +2,6 @@ package io.mangoo.crypto;
 
 import io.mangoo.TestExtension;
 import io.mangoo.core.Application;
-import io.mangoo.test.concurrent.ConcurrentRunner;
-import io.mangoo.utils.MangooUtils;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +12,6 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.test.hamcrest.RegexMatcher.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,33 +31,7 @@ class CryptoTest {
     private static final String key33 = "123456789012345678901234567890123";
     private static final String key32 = "12345678901234567890123456789012";
     private static final String key31 = "1234567890123456789012345678901";
-    
-    @Test
-    void testEncryption() {
-        //when
-        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
 
-        //then
-        assertThat(encrypt, not(nullValue()));
-        assertThat(encrypt, matches(base64Pattern));
-        assertThat(encrypt, not(equalTo(plainText)));
-    }
-    
-    @Test
-    void testEncryptionConcurrent() {
-        MatcherAssert.assertThat(t -> {
-            //given
-            String text = MangooUtils.randomString(32);
-            
-            //when
-            String encrypt = Application.getInstance(Crypto.class).encrypt(text);
-            String decrypt = Application.getInstance(Crypto.class).decrypt(encrypt);
-           
-            //when
-            return decrypt.equals(text);
-        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
-    }
-    
     @Test
     void testLongKey() {
         //when
@@ -90,20 +60,7 @@ class CryptoTest {
         assertThat(encrypt, matches(base64Pattern));
         assertThat(encrypt, not(equalTo(plainText)));
     }
-    
-    @Test
-    void testDecryption() {
-        //given
-        String encrypt = Application.getInstance(Crypto.class).encrypt(plainText);
-        
-        //when
-        String decrypt = Application.getInstance(Crypto.class).decrypt(encrypt);
 
-        //then
-        assertThat(decrypt, not(nullValue()));
-        assertThat(decrypt, equalTo(plainText));
-    }
-    
     @Test
     void testDecryptionWithKey() {
         //given
