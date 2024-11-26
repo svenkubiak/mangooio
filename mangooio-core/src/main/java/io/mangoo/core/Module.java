@@ -18,13 +18,6 @@ public class Module extends AbstractModule {
     
     public Module() {
         var prefix = Default.PERSISTENCE_PREFIX;
-        if (config.isPersistenceEnabled() && config.isMongoEmbedded(prefix)) {
-            this.embeddedMongoDB = EmbeddedMongoDB.create()
-                .withHost(config.getMongoHost(prefix))
-                .withPort(config.getMongoPort(prefix))
-                .start();
-        }
-
         if (beta) {
             yamlConfig = new YamlConfig();
             if (yamlConfig.isPersistenceEnabled() && yamlConfig.isMongoEmbedded(prefix)) {
@@ -33,14 +26,22 @@ public class Module extends AbstractModule {
                         .withPort(yamlConfig.getMongoPort(prefix))
                         .start();
             }
+        } else {
+            if (config.isPersistenceEnabled() && config.isMongoEmbedded(prefix)) {
+                this.embeddedMongoDB = EmbeddedMongoDB.create()
+                        .withHost(config.getMongoHost(prefix))
+                        .withPort(config.getMongoPort(prefix))
+                        .start();
+            }
         }
     }
     
     @Override
     protected void configure() {
-        Names.bindProperties(binder(), config.toProperties());
         if (beta) {
             Names.bindProperties(binder(), yamlConfig.toProperties());
+        } else {
+            Names.bindProperties(binder(), config.toProperties());
         }
         
         bind(Cache.class).toProvider(CacheProvider.class);
