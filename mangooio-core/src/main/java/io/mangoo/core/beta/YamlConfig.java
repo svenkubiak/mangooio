@@ -102,7 +102,7 @@ public class YamlConfig {
             if (value instanceof Map) {
                 flattenMapHelper((Map<String, Object>) value, newKey, flatMap);
             } else {
-                flatMap.put(newKey, value.toString());
+                flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
             }
         });
     }
