@@ -6,14 +6,21 @@ import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.enums.Mode;
 import io.mangoo.utils.CodecUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.Writer;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,15 +33,45 @@ class ConfigTest {
     @TempDir
     Path tempDir;
 
+    /**
+     * Adds a dot-separated key into a nested map structure.
+     *
+     * @param map  The map to which the key-value pair is added.
+     * @param key  The dot-separated key (e.g., "application.name").
+     * @param value The value to associate with the key.
+     */
+    private static void addDotSeparatedKey(Map<String, Object> map, String key, Object value) {
+        String[] parts = key.split("\\.");
+        Map<String, Object> currentMap = map;
+
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+
+            if (i == parts.length - 1) {
+                // Final part of the key: set the value
+                currentMap.put(part, value);
+            } else {
+                // Intermediate part: ensure the map exists
+                currentMap = (Map<String, Object>) currentMap.computeIfAbsent(part, k -> new HashMap<>());
+            }
+        }
+    }
+
+    @AfterAll
+    public static void cleanUp(){
+        System.clearProperty(Key.APPLICATION_CONFIG);
+    }
+
     @Test
     void testFlashCookieName() {
         // given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         // then
-        assertThat(config.getFlashCookieName(), equalTo("test-flash"));
+        assertThat(yamlConfig.getFlashCookieName(), equalTo("test-flash"));
     }
-    
+
     @Test
     void testGetSessionCookieName() throws IOException {
         // given
@@ -44,24 +81,24 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.name", sessionCookieName);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSessionCookieName(), equalTo(sessionCookieName));
+        assertThat(yamlConfig.getSessionCookieName(), equalTo(sessionCookieName));
     }
-    
+
     @Test
     void testGetSessionCookieNameDefaultValue() throws IOException {
         //given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME));
+        assertThat(yamlConfig.getSessionCookieName(), equalTo(Default.SESSION_COOKIE_NAME));
     }
 
     @Test
@@ -73,12 +110,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", applicationSecret);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getApplicationSecret(), equalTo(applicationSecret));
+        assertThat(yamlConfig.getApplicationSecret(), equalTo(applicationSecret));
     }
-    
+
     @Test
     void testGetAuthenticationCookieName() throws IOException {
         // given
@@ -88,26 +125,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.name", authenticationCookieName);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getAuthenticationCookieName(), equalTo(authenticationCookieName));
+        assertThat(yamlConfig.getAuthenticationCookieName(), equalTo(authenticationCookieName));
     }
-    
+
     @Test
     void testGetAuthenticationCookieNameDefaultValue() throws IOException {
         //given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME));
-    }    
-  
+        assertThat(yamlConfig.getAuthenticationCookieName(), equalTo(Default.AUTHENTICATION_COOKIE_NAME));
+    }
+
     @Test
     void testGetAuthenticationCookieExpires() throws IOException {
         // given
@@ -117,26 +154,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.expires", expires);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isAuthenticationCookieExpires(), equalTo(Boolean.valueOf(expires)));
+        assertThat(yamlConfig.isAuthenticationCookieExpires(), equalTo(Boolean.valueOf(expires)));
     }
-    
+
     @Test
     void testGetAuthenticationCookieExpiresDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES));
+        assertThat(yamlConfig.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES));
     }
-    
+
     @Test
     void testGetSessionCookieExpires() throws IOException {
         // given
@@ -147,26 +184,26 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSessionCookieTokenExpires(), equalTo(Long.valueOf(expires)));
+        assertThat(yamlConfig.getSessionCookieTokenExpires(), equalTo(Long.valueOf(expires)));
     }
-    
+
     @Test
     void testGetSessionCookieExpiresDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES));
+        assertThat(yamlConfig.getSessionCookieTokenExpires(), equalTo(Default.SESSION_COOKIE_TOKEN_EXPIRES));
     }
-    
+
     @Test
     void testIsSessionCookieSecure() throws IOException {
         // given
@@ -176,26 +213,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Boolean.valueOf(secure)));
+        assertThat(yamlConfig.isSessionCookieSecure(), equalTo(Boolean.valueOf(secure)));
     }
-    
+
     @Test
     void testIsSessionCookieSecureDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE));
+        assertThat(yamlConfig.isSessionCookieSecure(), equalTo(Default.SESSION_COOKIE_SECURE));
     }
-    
+
     @Test
     void testIsAuthenticationCookieSecure() throws IOException {
         // given
@@ -205,26 +242,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isAuthenticationCookieSecure(), equalTo(Boolean.valueOf(secure)));
+        assertThat(yamlConfig.isAuthenticationCookieSecure(), equalTo(Boolean.valueOf(secure)));
     }
-    
+
     @Test
     void testIsAuthenticationCookieSecureDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE));
-    }    
- 
+        assertThat(yamlConfig.isSessionCookieSecure(), equalTo(Default.AUTHENTICATION_COOKIE_SECURE));
+    }
+
     @Test
     void testI18nCookieName() throws IOException {
         // given
@@ -234,26 +271,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("i18n.cookie.name", name);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getI18nCookieName(), equalTo(name));
+        assertThat(yamlConfig.getI18nCookieName(), equalTo(name));
     }
-    
+
     @Test
     void testI18nCookieNameDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME));
+        assertThat(yamlConfig.getI18nCookieName(), equalTo(Default.I18N_COOKIE_NAME));
     }
-    
+
     @Test
     void testIsFlashCookieSecure() throws IOException {
         // given
@@ -263,12 +300,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secure", secure);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isFlashCookieSecure(), equalTo(Boolean.valueOf(secure)));
-    }    
-    
+        assertThat(yamlConfig.isFlashCookieSecure(), equalTo(Boolean.valueOf(secure)));
+    }
+
     @Test
     void testAplicationLanguage() throws IOException {
         // given
@@ -278,26 +315,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.language", language);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationLanguage(), equalTo(language));
+        assertThat(yamlConfig.getApplicationLanguage(), equalTo(language));
     }
-    
+
     @Test
     void testApplicationLanguageDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE));
-    }  
-    
+        assertThat(yamlConfig.getApplicationLanguage(), equalTo(Default.APPLICATION_LANGUAGE));
+    }
+
     @Test
     void testIsSchedulerEnabled() throws IOException {
         // given
@@ -307,26 +344,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("scheduler.enable", enabled);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isSchedulerEnabled(), equalTo(Boolean.valueOf(enabled)));
+        assertThat(yamlConfig.isSchedulerEnabled(), equalTo(Boolean.valueOf(enabled)));
     }
-    
+
     @Test
     void testIsSchedulerEnabledDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE));
-    } 
-    
+        assertThat(yamlConfig.isSchedulerEnabled(), equalTo(Default.SCHEDULER_ENABLE));
+    }
+
     @Test
     void testGetApplicationAdminUsername() throws IOException {
         // given
@@ -336,12 +373,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.username", username);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationAdminUsername(), equalTo(username));
+        assertThat(yamlConfig.getApplicationAdminUsername(), equalTo(username));
     }
-    
+
     @Test
     void testGetApplicationAdminSecret() throws IOException {
         // given
@@ -351,12 +388,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationAdminSecret(), equalTo(secret));
+        assertThat(yamlConfig.getApplicationAdminSecret(), equalTo(secret));
     }
-    
+
     @Test
     void testGetApplicationAdminSecretDefaultValue() throws IOException {
         // given
@@ -365,12 +402,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationAdminSecret(), equalTo(null));
-    } 
-    
+        assertThat(yamlConfig.getApplicationAdminSecret(), equalTo(null));
+    }
+
     @Test
     void testGetApplicationAdminPassword() throws IOException {
         // given
@@ -380,12 +417,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.password", password);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationAdminPassword(), equalTo(password));
-    }   
-    
+        assertThat(yamlConfig.getApplicationAdminPassword(), equalTo(password));
+    }
+
     @Test
     void testAuthenticationCookieRememberExpires() throws IOException {
         // given
@@ -395,26 +432,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.remember.expires", expires);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Long.valueOf(expires)));
+        assertThat(yamlConfig.getAuthenticationCookieRememberExpires(), equalTo(Long.valueOf(expires)));
     }
-    
+
     @Test
     void testAuthenticationCookieRememberExpiresDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES));
-    }   
-    
+        assertThat(yamlConfig.getAuthenticationCookieRememberExpires(), equalTo(Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES));
+    }
+
     @Test
     void testGetApplicationController() throws IOException {
         // given
@@ -424,78 +461,82 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.controller", controller);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getApplicationController(), equalTo(controller));
+        assertThat(yamlConfig.getApplicationController(), equalTo(controller));
     }
-    
+
     @Test
     void testGetApplicationControllerDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER));
-    }  
+        assertThat(yamlConfig.getApplicationController(), equalTo(Default.APPLICATION_CONTROLLER));
+    }
 
     @Test
     void testValueFromSystemPropertyInProfile() {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+        System.clearProperty(Key.APPLICATION_CONFIG);
 
         // when
-        Config config = Application.getInstance(Config.class);
-        String value = config.getString("application.test");
-        
+        Config yamlConfig = Application.getInstance(Config.class);
+        String value = yamlConfig.getString("application.test");
+
         // then
         assertThat(value, equalTo("valuefromarg"));
     }
-    
+
     @Test
     void testValueFromSystemProperty() {
         // given
+        System.clearProperty(Key.APPLICATION_CONFIG);
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
-        Config config = Application.getInstance(Config.class);
-        String applicationName = config.getApplicationName();
-        
+        Config yamlConfig = Application.getInstance(Config.class);
+        String applicationName = yamlConfig.getApplicationName();
+
         // then
         assertThat(applicationName, equalTo("namefromarg"));
     }
-    
+
     @Test
     void testValueFromSystemPropertyInProfileEncrypted() {
         // given
+        System.clearProperty(Key.APPLICATION_CONFIG);
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
-        Config config = Application.getInstance(Config.class);
-        String value = config.getString("application.profil");
-        
+        Config yamlConfig = Application.getInstance(Config.class);
+        String value = yamlConfig.getString("application.profil");
+
         // then
         assertThat(value, equalTo("admin"));
     }
-    
+
     @Test
     void testValueFromSystemPropertyEncrypted() {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
+        System.clearProperty(Key.APPLICATION_CONFIG);
 
         // when
-        Config config = Application.getInstance(Config.class);
-        String value = config.getString("application.encrypted");
-        
+        Config yamlConfig = Application.getInstance(Config.class);
+        String value = yamlConfig.getString("application.encrypted");
+
         // then
         assertThat(value, equalTo("admin"));
     }
-    
+
     @Test
     void testIsApplicationAdminEnable() throws IOException {
         // given
@@ -505,26 +546,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.enable", enable);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isApplicationAdminEnable(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yamlConfig.isApplicationAdminEnable(), equalTo(Boolean.valueOf(enable)));
     }
-    
+
     @Test
     void testIsApplicationAdminEnableDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE));
-    } 
-    
+        assertThat(yamlConfig.isApplicationAdminEnable(), equalTo(Default.APPLICATION_ADMIN_ENABLE));
+    }
+
     @Test
     void testGetSmptHost() throws IOException {
         // given
@@ -534,26 +575,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.host", host);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpHost(), equalTo(host));
+        assertThat(yamlConfig.getSmtpHost(), equalTo(host));
     }
-    
+
     @Test
     void testGetSmptHostDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpHost(), equalTo(Default.SMTP_HOST));
-    }  
-    
+        assertThat(yamlConfig.getSmtpHost(), equalTo(Default.SMTP_HOST));
+    }
+
     @Test
     void testGetSmtpPort() throws IOException {
         // given
@@ -563,26 +604,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.port", port);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yamlConfig.getSmtpPort(), equalTo(Integer.valueOf(port)));
     }
-    
+
     @Test
     void testGetSmtpPortDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpPort(), equalTo(Default.SMTP_PORT));
+        assertThat(yamlConfig.getSmtpPort(), equalTo(Default.SMTP_PORT));
     }
-    
+
     @Test
     void testIsAuthentication() throws IOException {
         // given
@@ -592,26 +633,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.authentication", ssl);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isSmtpAuthentication(), equalTo(Boolean.valueOf(ssl)));
+        assertThat(yamlConfig.isSmtpAuthentication(), equalTo(Boolean.valueOf(ssl)));
     }
-    
+
     @Test
     void testIsSmtpAuthenticationDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION));
-    } 
-    
+        assertThat(yamlConfig.isSmtpAuthentication(), equalTo(Default.SMTP_AUTHENTICATION));
+    }
+
     @Test
     void testGetSmtpUsername() throws IOException {
         // given
@@ -621,26 +662,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.username", username);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpUsername(), equalTo(username));
+        assertThat(yamlConfig.getSmtpUsername(), equalTo(username));
     }
-    
+
     @Test
     void testGetSmtpUsernameDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpUsername(), equalTo(null));
-    } 
-    
+        assertThat(yamlConfig.getSmtpUsername(), equalTo(null));
+    }
+
     @Test
     void testGetSmtpPassword() throws IOException {
         // given
@@ -650,26 +691,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.password", password);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpPassword(), equalTo(password));
+        assertThat(yamlConfig.getSmtpPassword(), equalTo(password));
     }
-    
+
     @Test
     void testGetSmtpPasswordDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpUsername(), equalTo(null));
-    }   
-    
+        assertThat(yamlConfig.getSmtpUsername(), equalTo(null));
+    }
+
     @Test
     void testGetSmtpFrom() throws IOException {
         // given
@@ -679,26 +720,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.from", from);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpFrom(), equalTo(from));
+        assertThat(yamlConfig.getSmtpFrom(), equalTo(from));
     }
-    
+
     @Test
     void testGetSmtpFromDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpFrom(), equalTo(Default.SMTP_FROM));
+        assertThat(yamlConfig.getSmtpFrom(), equalTo(Default.SMTP_FROM));
     }
-    
+
     @Test
     void testGetConnectorAjpHost() throws IOException {
         // given
@@ -708,26 +749,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.ajp.host", host);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getConnectorAjpHost(), equalTo(host));
+        assertThat(yamlConfig.getConnectorAjpHost(), equalTo(host));
     }
-    
+
     @Test
     void testGetConnectorAjpHostDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getConnectorAjpHost(), equalTo(null));
+        assertThat(yamlConfig.getConnectorAjpHost(), equalTo(null));
     }
-    
+
     @Test
     void testGetConnectorAjpPort() throws IOException {
         // given
@@ -738,55 +779,55 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("connector.ajp.port", port);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getConnectorAjpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yamlConfig.getConnectorAjpPort(), equalTo(Integer.valueOf(port)));
     }
-    
+
     @Test
     void testGetConnectorAjpPortDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getConnectorAjpPort(), equalTo(0));
+        assertThat(yamlConfig.getConnectorAjpPort(), equalTo(0));
     }
-    
+
     @Test
     void testGetConnectorHttpHost() throws IOException {
         // given
         String host = "192.168.2.42";
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.host", host);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getConnectorHttpHost(), equalTo(host));
+        assertThat(yamlConfig.getConnectorHttpHost(), equalTo(host));
     }
-    
+
     @Test
     void testGetConnectorHttpHostDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getConnectorHttpHost(), equalTo(null));
+        assertThat(yamlConfig.getConnectorHttpHost(), equalTo(null));
     }
-    
+
     @Test
     void testGetConnectorHttpPort() throws IOException {
         // given
@@ -796,24 +837,24 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("connector.http.port", port);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(yamlConfig.getConnectorHttpPort(), equalTo(Integer.valueOf(port)));
     }
-    
+
     @Test
     void testGetConnectorHttpPortDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getConnectorHttpPort(), equalTo(0));
+        assertThat(yamlConfig.getConnectorHttpPort(), equalTo(0));
     }
 
     @Test
@@ -826,24 +867,24 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("metrics.enable", enable);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isMetricsEnable(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yamlConfig.isMetricsEnable(), equalTo(Boolean.valueOf(enable)));
     }
-    
+
     @Test
     void testMetricsEnableDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isMetricsEnable(), equalTo(Default.METRICS_ENABLE));
+        assertThat(yamlConfig.isMetricsEnable(), equalTo(Default.METRICS_ENABLE));
     }
 
     @Test
@@ -856,10 +897,10 @@ class ConfigTest {
         Map<String, String> configValues = ImmutableMap.of("mongo.enable", enable);
         createTempConfig(configValues);
         System.setProperty("mongo.enable", Mode.TEST.toString().toLowerCase());
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isPersistenceEnabled(), equalTo(Boolean.valueOf(enable)));
+        assertThat(yamlConfig.isPersistenceEnabled(), equalTo(Boolean.valueOf(enable)));
     }
 
     @Test
@@ -870,12 +911,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE));
+        assertThat(yamlConfig.isPersistenceEnabled(), equalTo(Default.PERSISTENCE_ENABLE));
     }
-    
+
     @Test
     void testAuthenticationLock() throws IOException {
         // given
@@ -885,26 +926,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.lock", lock);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getAuthenticationLock(), equalTo(Integer.valueOf(lock)));
+        assertThat(yamlConfig.getAuthenticationLock(), equalTo(Integer.valueOf(lock)));
     }
-    
+
     @Test
     void testAuthenticationLockDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK));
+        assertThat(yamlConfig.getAuthenticationLock(), equalTo(Default.AUTHENTICATION_LOCK));
     }
-    
+
     @Test
     void testGetUndertowMaxEntitySize() throws IOException {
         // given
@@ -914,24 +955,24 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("undertow.maxentitysize", size);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getUndertowMaxEntitySize(), equalTo(Long.valueOf(size)));
+        assertThat(yamlConfig.getUndertowMaxEntitySize(), equalTo(Long.valueOf(size)));
     }
-    
+
     @Test
     void testGetUndertowMaxEntitySizeDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE));
+        assertThat(yamlConfig.getUndertowMaxEntitySize(), equalTo(Default.UNDERTOW_MAX_ENTITY_SIZE));
     }
 
     @Test
@@ -943,27 +984,27 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSessionCookieSecret(), equalTo(key));
+        assertThat(yamlConfig.getSessionCookieSecret(), equalTo(key));
     }
-    
+
     @Test
     void testGetSessionCookieSecretDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSessionCookieSecret(), equalTo(secret));
+        assertThat(yamlConfig.getSessionCookieSecret(), equalTo(secret));
     }
-    
+
     @Test
     void testGetFlashCookieSecret() throws IOException {
         // given
@@ -973,42 +1014,42 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("flash.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getFlashCookieSecret(), equalTo(key));
+        assertThat(yamlConfig.getFlashCookieSecret(), equalTo(key));
     }
-    
+
     @Test
     void testGetFlashCookieEncryptionKeyDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getFlashCookieSecret(), equalTo(secret));
+        assertThat(yamlConfig.getFlashCookieSecret(), equalTo(secret));
     }
-    
+
     @Test
     void testGetAuthenticationCookieSignKeyDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
         String secret = UUID.randomUUID().toString();
-        
+
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
+        assertThat(yamlConfig.getAuthenticationCookieSecret(), equalTo(secret));
     }
-    
+
     @Test
     void testGetAuthenticationCookieSecret() throws IOException {
         // given
@@ -1017,148 +1058,157 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.cookie.secret", key);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(key));
+        assertThat(yamlConfig.getAuthenticationCookieSecret(), equalTo(key));
     }
-    
+
     @Test
     void testGetAuthenticationCookieSecretDefaultValue() throws IOException {
         // given
         String secret = UUID.randomUUID().toString();
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = ImmutableMap.of("application.secret", secret);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getAuthenticationCookieSecret(), equalTo(secret));
-    }     
-    
+        assertThat(yamlConfig.getAuthenticationCookieSecret(), equalTo(secret));
+    }
+
     @Test
     void testGetString() {
         //given
-        System.setProperty(Key.APPLICATION_CONFIG, Mode.PROD.toString());
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        System.setProperty(Key.APPLICATION_MODE, Mode.PROD.toString());
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
-        assertThat(config.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
+        assertThat(yamlConfig.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
+        assertThat(yamlConfig.getString(Key.CONNECTOR_HTTP_PORT), equalTo("10808"));
     }
 
     @Test
     void testGetInt() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
+        assertThat(yamlConfig.getInt(Key.CONNECTOR_HTTP_PORT), equalTo(10808));
     }
 
     @Test
     void testGetBoolean() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
+        assertThat(yamlConfig.getBoolean(Key.APPLICATION_ADMIN_ENABLE), equalTo(true));
     }
 
     @Test
     void testGetLong() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
+        assertThat(yamlConfig.getLong(Key.CONNECTOR_HTTP_PORT), equalTo(10808L));
     }
 
     @Test
     void testGetStringDefaultValue() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("foo", "bar"), equalTo("bar"));
+        assertThat(yamlConfig.getString("foo", "bar"), equalTo("bar"));
     }
 
     @Test
     void testGetIntDefaultValue() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getInt("foo", 42), equalTo(42));
+        assertThat(yamlConfig.getInt("foo", 42), equalTo(42));
     }
 
     @Test
     void testGetBooleanDefaultValue() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getBoolean("foo", true), equalTo(true));
-        assertThat(config.getBoolean("foo", false), equalTo(false));
+        assertThat(yamlConfig.getBoolean("foo", true), equalTo(true));
+        assertThat(yamlConfig.getBoolean("foo", false), equalTo(false));
     }
 
     @Test
     void testGetLongDefaultValue() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getLong("foo", 42), equalTo(42L));
+        assertThat(yamlConfig.getLong("foo", 42), equalTo(42L));
     }
 
     @Test
     void testGetAllConfigurationValues() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getAllConfigurations(), not(nullValue()));
-        assertThat(config.getAllConfigurations().size(), greaterThan(12));
+        assertThat(yamlConfig.getAllConfigurations(), not(nullValue()));
+        assertThat(yamlConfig.getAllConfigurations().size(), greaterThan(12));
     }
 
     @Test
     void testEnvironmentValues() {
         //given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("smtp.username"), equalTo("bla"));
-        assertThat(config.getString("smtp.port"), equalTo("3025"));
+        assertThat(yamlConfig.getString("smtp.username"), equalTo("bla"));
+        assertThat(yamlConfig.getString("smtp.port"), equalTo("3025"));
     }
-    
+
     @Test
     void testEncryptedValue() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("application.foo"), equalTo("admin"));
+        assertThat(yamlConfig.getString("application.foo"), equalTo("admin"));
     }
-    
+
     @Test
     void testEncryptedValueMultiKeyLineTwo() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("application.bar"), equalTo("westeros"));
+        assertThat(yamlConfig.getString("application.bar"), equalTo("westeros"));
     }
-    
+
     @Test
     void testEncryptedValueMultiKeyLineThree() {
         //given
-        final Config config = Application.getInstance(Config.class);
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config yamlConfig = Application.getInstance(Config.class);
 
         //then
-        assertThat(config.getString("application.foobar"), equalTo("essos"));
+        assertThat(yamlConfig.getString("application.foobar"), equalTo("essos"));
     }
 
     @Test
@@ -1170,26 +1220,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.debug", debug);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isSmtpDebug(), equalTo(Boolean.valueOf(debug)));
+        assertThat(yamlConfig.isSmtpDebug(), equalTo(Boolean.valueOf(debug)));
     }
-    
+
     @Test
     void testIsSmtpDebugDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isSmtpDebug(), equalTo(Default.SMTP_DEBUG));
+        assertThat(yamlConfig.isSmtpDebug(), equalTo(Default.SMTP_DEBUG));
     }
-    
+
     @Test
     void testGetSmtpProtocol() throws IOException {
         // given
@@ -1199,27 +1249,27 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("smtp.protocol", protocol);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getSmtpProtocol(), equalTo(protocol));
-        
+        assertThat(yamlConfig.getSmtpProtocol(), equalTo(protocol));
+
     }
-    
+
     @Test
     void testGetSmtpProtocolDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
+        assertThat(yamlConfig.getSmtpProtocol(), equalTo(Default.SMTP_PROTOCOL));
     }
-    
+
     @Test
     void testGetMongoAuthDB() throws IOException {
         // given
@@ -1229,12 +1279,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.authdb", authDb);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoAuthDB("persistence."), equalTo(authDb));
+        assertThat(yamlConfig.getMongoAuthDB("persistence."), equalTo(authDb));
     }
-    
+
     @Test
     void testGetMongoDBName() throws IOException {
         // given
@@ -1244,26 +1294,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.dbname", mongodb);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoDbName("persistence."), equalTo(mongodb));
+        assertThat(yamlConfig.getMongoDbName("persistence."), equalTo(mongodb));
     }
-    
+
     @Test
     void testGetMongoDBNameDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME));
+        assertThat(yamlConfig.getMongoDbName("persistence."), equalTo(Default.PERSISTENCE_MONGO_DBNAME));
     }
-    
+
     @Test
     void testGetMongoHost() throws IOException {
         // given
@@ -1273,26 +1323,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.host", host);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoHost("persistence."), equalTo(host));
+        assertThat(yamlConfig.getMongoHost("persistence."), equalTo(host));
     }
-    
+
     @Test
     void testGetMongoHostDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST));
-    } 
-    
+        assertThat(yamlConfig.getMongoHost(""), equalTo(Default.PERSISTENCE_MONGO_HOST));
+    }
+
     @Test
     void testGetMongoPort() throws IOException {
         // given
@@ -1302,26 +1352,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.port", port);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoPort("persistence."), equalTo(Integer.parseInt(port)));
+        assertThat(yamlConfig.getMongoPort("persistence."), equalTo(Integer.parseInt(port)));
     }
-    
+
     @Test
     void testGetMongoPortDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT));
-    } 
-    
+        assertThat(yamlConfig.getMongoPort("persistence."), equalTo(Default.PERSISTENCE_MONGO_PORT));
+    }
+
     @Test
     void testGetMongoPassword() throws IOException {
         // given
@@ -1331,12 +1381,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.password", password);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoPassword("persistence."), equalTo(password));
+        assertThat(yamlConfig.getMongoPassword("persistence."), equalTo(password));
     }
-    
+
     @Test
     void testGetMongoUsername() throws IOException {
         // given
@@ -1346,10 +1396,10 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("persistence.mongo.username", username);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getMongoUsername("persistence."), equalTo(username));
+        assertThat(yamlConfig.getMongoUsername("persistence."), equalTo(username));
     }
 
     @Test
@@ -1361,26 +1411,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.enable", cors);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.isCorsEnable(), equalTo(Boolean.valueOf(cors)));
+        assertThat(yamlConfig.isCorsEnable(), equalTo(Boolean.valueOf(cors)));
     }
-    
+
     @Test
     void testCorsEnableDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isCorsEnable(), equalTo(Default.CORS_ENABLE));
+        assertThat(yamlConfig.isCorsEnable(), equalTo(Default.CORS_ENABLE));
     }
-    
+
     @Test
     void testGetCorsAllowOrigin() throws IOException {
         // given
@@ -1390,26 +1440,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.alloworigin", origin);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(origin).toString()));
+        assertThat(yamlConfig.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(origin).toString()));
     }
-    
+
     @Test
     void testGetCorsAllowOriginDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN).toString()));
+        assertThat(yamlConfig.getCorsAllowOrigin().toString(), equalTo(Pattern.compile(Default.CORS_ALLOW_ORIGIN).toString()));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowCredentials() throws IOException {
         // given
@@ -1419,26 +1469,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowcredentials", credentials);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(credentials));
+        assertThat(yamlConfig.getCorsHeadersAllowCredentials(), equalTo(credentials));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowCredentialsDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString()));
+        assertThat(yamlConfig.getCorsHeadersAllowCredentials(), equalTo(Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString()));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowHeaders() throws IOException {
         // given
@@ -1448,24 +1498,24 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowheaders", headers);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(headers));
+        assertThat(yamlConfig.getCorsHeadersAllowHeaders(), equalTo(headers));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowHeadersDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS));
+        assertThat(yamlConfig.getCorsHeadersAllowHeaders(), equalTo(Default.CORS_HEADERS_ALLOW_HEADERS));
     }
 
     @Test
@@ -1477,10 +1527,10 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("authentication.origin", authOrigin);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isAuthOrigin(), equalTo(Boolean.valueOf(authOrigin)));
+        assertThat(yamlConfig.isAuthOrigin(), equalTo(Boolean.valueOf(authOrigin)));
     }
 
     @Test
@@ -1491,10 +1541,10 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.isAuthOrigin(), equalTo(Default.AUTHENTICATION_ORIGIN));
+        assertThat(yamlConfig.isAuthOrigin(), equalTo(Default.AUTHENTICATION_ORIGIN));
     }
 
     @Test
@@ -1506,10 +1556,10 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("application.admin.locale", adminLocale);
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getApplicationAdminLocale(), equalTo(adminLocale));
+        assertThat(yamlConfig.getApplicationAdminLocale(), equalTo(adminLocale));
     }
 
     @Test
@@ -1520,12 +1570,12 @@ class ConfigTest {
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getApplicationAdminLocale(), equalTo(Default.APPLICATION_ADMIN_LOCALE));
+        assertThat(yamlConfig.getApplicationAdminLocale(), equalTo(Default.APPLICATION_ADMIN_LOCALE));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowMethods() throws IOException {
         // given
@@ -1535,26 +1585,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.allowmethods", headers);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsHeadersAllowMethods(), equalTo(headers));
+        assertThat(yamlConfig.getCorsHeadersAllowMethods(), equalTo(headers));
     }
-    
+
     @Test
     void testGetCorsHeadersAllowMethodsDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS));
+        assertThat(yamlConfig.getCorsHeadersAllowMethods(), equalTo(Default.CORS_HEADERS_ALLOW_METHODS));
     }
-    
+
     @Test
     void testGetCorsHeadersExposeHeaders() throws IOException {
         // given
@@ -1564,26 +1614,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.exposeheaders", headers);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(headers));
+        assertThat(yamlConfig.getCorsHeadersExposeHeaders(), equalTo(headers));
     }
-    
+
     @Test
     void testGetCorsHeadersExposeHeadersDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS));
+        assertThat(yamlConfig.getCorsHeadersExposeHeaders(), equalTo(Default.CORS_HEADERS_EXPOSE_HEADERS));
     }
-    
+
     @Test
     void testGetCorsHeadersMaxAge() throws IOException {
         // given
@@ -1593,26 +1643,26 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.headers.maxage", maxage);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsHeadersMaxAge(), equalTo(maxage));
+        assertThat(yamlConfig.getCorsHeadersMaxAge(), equalTo(maxage));
     }
-    
+
     @Test
     void testGetCorsHeadersMaxAgeDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE));
+        assertThat(yamlConfig.getCorsHeadersMaxAge(), equalTo(Default.CORS_HEADERS_MAX_AGE));
     }
-    
+
     @Test
     void testGetCorsUrlPattern() throws IOException {
         // given
@@ -1622,24 +1672,24 @@ class ConfigTest {
         // when
         Map<String, String> configValues = ImmutableMap.of("cors.urlpattern", pattern);
         createTempConfig(configValues);
-        Config config = new Config();
-        
+        Config yamlConfig = new Config();
+
         // then
-        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(pattern).toString()));
+        assertThat(yamlConfig.getCorsUrlPattern().toString(), equalTo(Pattern.compile(pattern).toString()));
     }
-    
+
     @Test
     void testGetCorsUrlPatternDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        
+
         // when
         Map<String, String> configValues = new HashMap<>();
         createTempConfig(configValues);
-        Config config = new Config();
+        Config yamlConfig = new Config();
 
         // then
-        assertThat(config.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN).toString()));
+        assertThat(yamlConfig.getCorsUrlPattern().toString(), equalTo(Pattern.compile(Default.CORS_URL_PATTERN).toString()));
     }
 
     @Test
@@ -1659,18 +1709,59 @@ class ConfigTest {
     @Test
     void testGetApplicationPublicKey() {
         // given
+        System.clearProperty(Key.APPLICATION_CONFIG);
         String key = Application.getInstance(Config.class).getApplicationPublicKey();
 
         // then
         assertThat(key, equalTo(PUBLIC_KEY));
     }
 
-    private void createTempConfig(Map<String, String> values) throws IOException {
+    private void createTempConfig(Map<String, String> values) {
         Path configTempFile = tempDir.resolve(CodecUtils.uuid());
-        List<String> lines = new ArrayList<>();
-        values.forEach((key, value) -> lines.add(key + "=" + value));
 
-        Files.write(configTempFile, lines);
-        System.setProperty(Key.APPLICATION_CONFIG, configTempFile.toAbsolutePath().toString());
+        try {
+            // Create the main configuration map
+            Map<String, Object> config = new HashMap<>();
+
+            // Add the default section
+            Map<String, Object> defaultConfig = new HashMap<>();
+            config.put("default", defaultConfig);
+
+            // Add a key like "application.name" under the default entry
+            values.forEach((key, value) -> {
+                addDotSeparatedKey(defaultConfig, key, value);
+            });
+
+            // Add environments section
+            Map<String, Object> environments = new HashMap<>();
+            config.put("environments", environments);
+
+            // Add development environment
+            Map<String, Object> developmentConfig = new HashMap<>();
+            environments.put("test", developmentConfig);
+            addDotSeparatedKey(developmentConfig, "application.debug", "true");
+
+            // Add production environment
+            Map<String, Object> productionConfig = new HashMap<>();
+            environments.put("prod", productionConfig);
+            addDotSeparatedKey(productionConfig, "application.debug", "false");
+
+            // Configure YAML DumperOptions
+            DumperOptions options = new DumperOptions();
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // Use block style
+            options.setPrettyFlow(true);
+
+            // Create Yaml instance
+            Yaml yaml = new Yaml(options);
+
+            // Write YAML to a file
+            try (Writer writer = new FileWriter(configTempFile.toAbsolutePath().toString())) {
+                yaml.dump(config, writer);
+            }
+
+            System.setProperty(Key.APPLICATION_CONFIG, configTempFile.toAbsolutePath().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

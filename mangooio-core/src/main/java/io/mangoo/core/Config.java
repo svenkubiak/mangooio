@@ -3,20 +3,18 @@ package io.mangoo.core;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.google.re2j.Pattern;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.crypto.Crypto;
-import io.mangoo.enums.Mode;
 import io.mangoo.exceptions.MangooEncryptionException;
-import jodd.props.Props;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -29,86 +27,126 @@ import java.util.stream.Stream;
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private static final String CONFIGURATION_FILE = "config.props";
+    private static final String CONFIG_FILE = "config.yaml";
     private static final String CRYPTEX_TAG = "cryptex{";
     private static final String ARG_TAG = "arg{}";
-    private final Mode mode;
-    private final Props props = Props.create();
+    private final Map<String, String> values = new ConcurrentHashMap<>();
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
     private boolean decrypted = true;
-    
+
     public Config() {
-        this.mode = Application.getMode();
         load();
     }
 
-    @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
+    @SuppressWarnings("unchecked")
     private void load() {
-        props.setActiveProfiles(mode.toString().toLowerCase(Locale.ENGLISH));
-        props.setSkipEmptyProps(false);
-        final String configPath = System.getProperty(Key.APPLICATION_CONFIG);
-        
-        if (StringUtils.isNotBlank(configPath)) {
-            try {
-                props.load(new File(configPath)); //NOSONAR ConfigPath can intentionally come from user input
-            } catch (IOException e) {
-                LOG.error("Failed to load config.props from {}", configPath, e);
-            }
-        } else {
-            try (var inputStream = Resources.getResource(CONFIGURATION_FILE).openStream()){
-                props.load(inputStream);
-            } catch (IOException e) {
-                LOG.error("Failed to load config.props from /src/main/resources/config.props", e);
-            }
-        } 
-        
-        Map<String, String> profileProps = new HashMap<>();
-        props.extractProps(profileProps, Application.getMode().toString().toLowerCase(Locale.ENGLISH));
-        profileProps.forEach(this::parse);
+        try (InputStream inputStream = getConfigInputstream()){
+            Yaml yaml = new Yaml();
+            Map<String, Object> config = yaml.load(inputStream);
 
-        System.setProperty(Key.APPLICATION_SECRET, Strings.EMPTY);
+            Map<String, Object> defaultConfig = (Map<String, Object>) config.get("default");
+            Map<String, Object> environments = (Map<String, Object>) config.get("environments");
+
+            String activeEnv = Application.getMode().toString().toLowerCase(Locale.ENGLISH);
+
+            Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
+            if (activeEnvironment == null) {
+                throw new IllegalArgumentException("Environment '" + activeEnv + "' not found in config.yaml");
+            }
+
+            Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
+            mergeMaps(mergedConfig, activeEnvironment);
+
+            Map<String, String> falttenedMap = flattenMap(mergedConfig);
+            falttenedMap.forEach(this::parse);
+        } catch (Exception e) {
+            LOG.error("Failed to load config.yaml", e);
+        }
     }
-    
+
+    private InputStream getConfigInputstream() throws IOException {
+        String configPath = System.getProperty(Key.APPLICATION_CONFIG);
+        InputStream inputStream;
+
+        if (StringUtils.isNotBlank(configPath)) {
+            inputStream = Files.newInputStream(Paths.get(configPath));
+        } else {
+            inputStream = Resources.getResource(CONFIG_FILE).openStream();
+        }
+
+        return inputStream;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {
+        overrideMap.forEach((key, value) -> {
+            if (value instanceof Map && baseMap.get(key) instanceof Map) {
+                mergeMaps((Map<String, Object>) baseMap.get(key), (Map<String, Object>) value);
+            } else {
+                baseMap.put(key, value);
+            }
+        });
+    }
+
+    private Map<String, String> flattenMap(Map<String, Object> map) {
+        Map<String, String> flatMap = new HashMap<>();
+        flattenMapHelper(map, "", flatMap);
+        return flatMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void flattenMapHelper(Map<String, Object> map, String prefix, Map<String, String> flatMap) {
+        map.forEach((key, value) -> {
+            String newKey = prefix.isEmpty() ? key : prefix + "." + key;
+
+            if (value instanceof Map) {
+                flattenMapHelper((Map<String, Object>) value, newKey, flatMap);
+            } else {
+                flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
+            }
+        });
+    }
+
     /**
      * Parses a given property key and value and checks if the value comes from
      * a system property and maybe decrypts the value
-     * 
-     * @param propKey The property key
-     * @param propValue The property value
+     *
+     * @param key The property key
+     * @param value The property value
      */
-    private void parse(String propKey, String propValue) {
-        if (ARG_TAG.equals(propValue)) {
-            String value = System.getProperty(propKey);
+    private void parse(String key, String value) {
+        if (ARG_TAG.equals(value)) {
+            String propertyValue = System.getProperty(key);
 
-            if (StringUtils.isNotBlank(value) && value.startsWith(CRYPTEX_TAG)) {
-                value = decrypt(value);
+            if (StringUtils.isNotBlank(propertyValue) && propertyValue.startsWith(CRYPTEX_TAG)) {
+                propertyValue = decrypt(key, propertyValue);
             }
 
-            if (StringUtils.isNotBlank(value)) {
-                props.setValue(propKey, value, Application.getMode().toString().toLowerCase(Locale.ENGLISH));
+            if (StringUtils.isNotBlank(propertyValue)) {
+                values.put(key, propertyValue);
             }
-        }
-
-        if (propValue.startsWith(CRYPTEX_TAG)) {
-            props.setValue(propKey, decrypt(propValue), Application.getMode().toString().toLowerCase(Locale.ENGLISH));
+        } else if (value.startsWith(CRYPTEX_TAG)) {
+            values.put(key, decrypt(key, value));
+        } else {
+            values.put(key, value);
         }
     }
 
     /**
      * Decrypts a given property key and rewrites it to props
-     * 
+     *
      * @param value The encrypted value to decrypt
      */
-    private String decrypt(String value) {
+    private String decrypt(String key, String value) {
         var crypto = new Crypto();
-        
+
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
         if (StringUtils.isNotBlank(keyFile)) {
             try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
-                String key = lines.findFirst().orElse(null);
-                if (StringUtils.isNotBlank(key)) {
-                    var privateKey = crypto.getPrivateKeyFromString(key);
+                String encryptionKey = lines.findFirst().orElse(null);
+                if (StringUtils.isNotBlank(encryptionKey)) {
+                    var privateKey = crypto.getPrivateKeyFromString(encryptionKey);
                     var cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
@@ -123,28 +161,25 @@ public class Config {
                 decrypted = false;
             }
         } else {
-            LOG.error("Found an encrypted value in config file but private key for decryption is missing");
+            LOG.error("{} has an encrypted value in config.yaml but private key for decryption is missing", key);
             decrypted = false;
         }
-        
+
         return Strings.EMPTY;
     }
-    
+
     /**
      * Converts config values to standard java properties
-     * 
+     *
      * @return Properties instance with config values
      */
     public Properties toProperties() {
-        var map = new HashMap<>();
-        props.extractProps(map);
-        
         var properties = new Properties();
-        properties.putAll(map);
-        
+        properties.putAll(values);
+
         return properties;
     }
-    
+
     /**
      * @return True if decryption of config values was successful, false otherwise
      */
@@ -159,7 +194,7 @@ public class Config {
      * @return The configured value as String or null if the key is not configured
      */
     public String getString(String key) {
-        return props.getValue(key);
+        return values.get(key);
     }
 
     /**
@@ -170,7 +205,7 @@ public class Config {
      * @return The configured value as String or the passed defaultValue if the key is not configured
      */
     public String getString(String key, String defaultValue) {
-        return props.getValueOrDefault(key, defaultValue);
+        return values.getOrDefault(key, defaultValue);
     }
 
     /**
@@ -180,7 +215,7 @@ public class Config {
      * @return The configured value as int or 0 if the key is not configured
      */
     public int getInt(String key) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -195,7 +230,7 @@ public class Config {
      * @return The configured value as long or 0 if the key is not configured
      */
     public long getLong(String key) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return 0;
         }
@@ -211,7 +246,7 @@ public class Config {
      * @return The configured value as int or the passed defaultValue if the key is not configured
      */
     public long getLong(String key, long defaultValue) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -227,7 +262,7 @@ public class Config {
      * @return The configured value as int or the passed defautlValue if the key is not configured
      */
     public int getInt(String key, int defaultValue) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -242,7 +277,7 @@ public class Config {
      * @return The configured value as boolean or false if the key is not configured
      */
     public Boolean getBoolean(String key) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return Boolean.FALSE;
         }
@@ -258,7 +293,7 @@ public class Config {
      * @return The configured value as boolean or the passed defaultValue if the key is not configured
      */
     public Boolean getBoolean(String key, Boolean defaultValue) {
-        final String value = props.getValue(key);
+        final String value = values.get(key);
         if (StringUtils.isBlank(value)) {
             return defaultValue;
         }
@@ -270,10 +305,7 @@ public class Config {
      * @return All configuration options of the current environment
      */
     public Map<String, String> getAllConfigurations() {
-        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();        
-        props.entries().forEach(entry -> map.put(entry.getKey(), entry.getValue()));
-        
-        return map;
+        return new ConcurrentHashMap<>(values);
     }
 
     /**
@@ -303,7 +335,7 @@ public class Config {
     public String getApplicationSecret() {
         return getString(Key.APPLICATION_SECRET);
     }
-    
+
     /**
      * @return application.publicKey from config.props
      */
@@ -520,14 +552,14 @@ public class Config {
     public boolean isSmtpDebug() {
         return getBoolean(Key.SMTP_DEBUG, Default.SMTP_DEBUG);
     }
-    
+
     /**
      * @return cors.enable or default value if undefined
      */
     public boolean isCorsEnable() {
         return getBoolean(Key.CORS_ENABLE, Default.CORS_ENABLE);
     }
-    
+
     /**
      * @return cors.urlpattern as compiled pattern or default value if undefined
      */
@@ -537,7 +569,7 @@ public class Config {
         }
         return corsUrl;
     }
-    
+
     /**
      * @return cors.policyclass as compiled pattern or default value if undefined
      */
@@ -545,31 +577,31 @@ public class Config {
         if (corsAllowOrigin == null) {
             corsAllowOrigin = Pattern.compile(getString(Key.CORS_ALLOW_ORIGIN, Default.CORS_ALLOW_ORIGIN));
         }
-        
+
         return corsAllowOrigin;
     }
-    
+
     /**
      * @return cors.headers.allowcredentials or default value if undefined
      */
     public String getCorsHeadersAllowCredentials() {
         return getString(Key.CORS_HEADERS_ALLOW_CREDENTIALS, Default.CORS_HEADERS_ALLOW_CREDENTIALS.toString());
     }
-    
+
     /**
      * @return cors.headers.allowheaders or default value if undefined
      */
     public String getCorsHeadersAllowHeaders() {
         return getString(Key.CORS_HEADERS_ALLOW_HEADERS, Default.CORS_HEADERS_ALLOW_HEADERS);
     }
-    
+
     /**
      * @return cors.headers.allowheaders or default value if undefined
      */
     public String getCorsHeadersAllowMethods() {
         return getString(Key.CORS_HEADERS_ALLOW_METHODS, Default.CORS_HEADERS_ALLOW_METHODS);
     }
-    
+
     /**
      * @return cors.headers.exposeheaders or default value if undefined
      */

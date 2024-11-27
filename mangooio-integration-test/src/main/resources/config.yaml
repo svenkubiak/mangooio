@@ -63,7 +63,7 @@ environments:
         port: 10808
       ajp:
         host: localhost
-        port: 108009
+        port: 10809
     smtp:
       port: 3025
       username: bla
