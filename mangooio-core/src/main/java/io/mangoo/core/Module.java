@@ -15,7 +15,7 @@ public class Module extends AbstractModule {
     
     public Module() {
         var prefix = Default.PERSISTENCE_PREFIX;
-        if (config.isPersistenceEnabled() && config.isMongoEmbedded(prefix)) {
+        if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
             this.embeddedMongoDB = EmbeddedMongoDB.create()
                     .withHost(config.getMongoHost(prefix))
                     .withPort(config.getMongoPort(prefix))

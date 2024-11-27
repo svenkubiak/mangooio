@@ -122,7 +122,7 @@ public class DispatcherHandler implements HttpHandler {
     private Map<String, Class<?>> getMethodParameters() {
         final Map<String, Class<?>> parameters = new LinkedHashMap<>();
 
-        Method targetMethod = Arrays.stream(controllerClass.getDeclaredMethods())
+        var targetMethod = Arrays.stream(controllerClass.getDeclaredMethods())
                 .filter(m -> m.getName().equals(controllerMethodName) && m.getParameterCount() > 0)
                 .findFirst()
                 .orElse(null);
