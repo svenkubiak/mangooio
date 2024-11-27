@@ -34,6 +34,7 @@ public class Config {
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
     private boolean decrypted = true;
+    private boolean valid;
 
     public Config() {
         load();
@@ -51,15 +52,17 @@ public class Config {
             String activeEnv = Application.getMode().toString().toLowerCase(Locale.ENGLISH);
 
             Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
-            if (activeEnvironment == null) {
-                throw new IllegalArgumentException("Environment '" + activeEnv + "' not found in config.yaml");
+            if (activeEnvironment != null) {
+                Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
+                mergeMaps(mergedConfig, activeEnvironment);
+
+                Map<String, String> falttenedMap = flattenMap(mergedConfig);
+                falttenedMap.forEach(this::parse);
+
+                valid = true;
+            } else {
+                LOG.error("Active environment '{}' not found in config.yaml", activeEnv);
             }
-
-            Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-            mergeMaps(mergedConfig, activeEnvironment);
-
-            Map<String, String> falttenedMap = flattenMap(mergedConfig);
-            falttenedMap.forEach(this::parse);
         } catch (Exception e) {
             LOG.error("Failed to load config.yaml", e);
         }
@@ -741,5 +744,9 @@ public class Config {
      */
     public String getTokenSecret() {
         return getString(Key.PASETO_SECRET, null);
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 }

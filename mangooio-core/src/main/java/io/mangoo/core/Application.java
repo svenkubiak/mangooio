@@ -472,6 +472,11 @@ public final class Application {
     private static void prepareConfig() {
         var config = getInstance(Config.class);
 
+        if (!config.isValid()) {
+            LOG.error("Application configuration is invalid");
+            failsafe();
+        }
+
         int bitLength = getBitLength(config.getApplicationSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
             LOG.error("Application requires a 512 bit application secret. The current property for application.secret has currently only {} bits.", bitLength);
