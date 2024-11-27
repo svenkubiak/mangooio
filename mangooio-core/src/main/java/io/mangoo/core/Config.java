@@ -3,6 +3,7 @@ package io.mangoo.core;
 import com.google.common.io.Resources;
 import com.google.inject.Singleton;
 import com.google.re2j.Pattern;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.crypto.Crypto;
@@ -42,8 +43,8 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     private void load() {
-        try (InputStream inputStream = getConfigInputstream()){
-            Yaml yaml = new Yaml();
+        try (var inputStream = getConfigInputstream()){
+            var yaml = new Yaml();
             Map<String, Object> config = yaml.load(inputStream);
 
             Map<String, Object> defaultConfig = (Map<String, Object>) config.get("default");
@@ -68,6 +69,7 @@ public class Config {
         }
     }
 
+    @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "URLCONNECTION_SSRF_FD")
     private InputStream getConfigInputstream() throws IOException {
         String configPath = System.getProperty(Key.APPLICATION_CONFIG);
         InputStream inputStream;

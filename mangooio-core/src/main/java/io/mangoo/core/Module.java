@@ -11,7 +11,6 @@ import io.mangoo.persistence.interfaces.Datastore;
 
 public class Module extends AbstractModule {
     private final Config config = new Config();
-    private Config yamlConfig;
     private EmbeddedMongoDB embeddedMongoDB;
     
     public Module() {
