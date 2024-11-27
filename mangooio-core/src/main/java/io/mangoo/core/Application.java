@@ -515,7 +515,7 @@ public final class Application {
         }
 
         if (!config.isDecrypted()) {
-            LOG.error("Found encrypted config values in config.props but decryption was not successful!");
+            LOG.error("Found encrypted config values in config.yaml but decryption was not successful!");
             failsafe();
         }
 
@@ -718,7 +718,7 @@ public final class Application {
             undertow = builder.build();
             undertow.start();
         } else {
-            LOG.error("No connector found! Please configure a HTTP and/or an AJP connector in your config.props file");
+            LOG.error("No connector found! Please configure a HTTP and/or an AJP connector in your config.yaml file");
             failsafe();
         }
     }

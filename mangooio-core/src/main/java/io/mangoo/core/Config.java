@@ -309,7 +309,7 @@ public class Config {
     }
 
     /**
-     * @return application.name from config.props
+     * @return application.name from config.yaml
      */
     public String getApplicationName() {
         return getString(Key.APPLICATION_NAME);
@@ -323,56 +323,56 @@ public class Config {
     }
 
     /**
-     * @return session.cookie.name from config.props or default value if undefined
+     * @return session.cookie.name from config.yaml or default value if undefined
      */
     public String getSessionCookieName() {
         return getString(Key.SESSION_COOKIE_NAME, Default.SESSION_COOKIE_NAME);
     }
 
     /**
-     * @return application.secret from config.props
+     * @return application.secret from config.yaml
      */
     public String getApplicationSecret() {
         return getString(Key.APPLICATION_SECRET);
     }
 
     /**
-     * @return application.publicKey from config.props
+     * @return application.publicKey from config.yaml
      */
     public String getApplicationPublicKey() {
         return getString(Key.APPLICATION_PUBLIC_KEY);
     }
 
     /**
-     * @return authentication.cookie.name from config.props or default value if undefined
+     * @return authentication.cookie.name from config.yaml or default value if undefined
      */
     public String getAuthenticationCookieName() {
         return getString(Key.AUTHENTICATION_COOKIE_NAME, Default.AUTHENTICATION_COOKIE_NAME);
     }
 
     /**
-     * @return session.cookie.token.expires from config.props or default value if undefined
+     * @return session.cookie.token.expires from config.yaml or default value if undefined
      */
     public long getSessionCookieTokenExpires() {
         return getLong(Key.SESSION_COOKIE_TOKEN_EXPIRES, Default.SESSION_COOKIE_TOKEN_EXPIRES);
     }
 
     /**
-     * @return session.cookie.secure from config.props or default value if undefined
+     * @return session.cookie.secure from config.yaml or default value if undefined
      */
     public boolean isSessionCookieSecure() {
         return getBoolean(Key.SESSION_COOKIE_SECURE, Default.SESSION_COOKIE_SECURE);
     }
 
     /**
-     * @return authentication.cookie.secure from config.props or default value if undefined
+     * @return authentication.cookie.secure from config.yaml or default value if undefined
      */
     public boolean isAuthenticationCookieSecure() {
         return getBoolean(Key.AUTHENTICATION_COOKIE_SECURE, Default.AUTHENTICATION_COOKIE_SECURE);
     }
 
     /**
-     * @return i18n.cookie.name from config.props or default value if undefined
+     * @return i18n.cookie.name from config.yaml or default value if undefined
      */
     public String getI18nCookieName() {
         return getString(Key.I18N_COOKIE_NAME, Default.I18N_COOKIE_NAME);
@@ -386,35 +386,35 @@ public class Config {
     }
 
     /**
-     * @return application.language from config.props or default value if undefined
+     * @return application.language from config.yaml or default value if undefined
      */
     public String getApplicationLanguage() {
         return getString(Key.APPLICATION_LANGUAGE, Default.APPLICATION_LANGUAGE);
     }
 
     /**
-     * @return application.admin.username from config.props or null if undefined
+     * @return application.admin.username from config.yaml or null if undefined
      */
     public String getApplicationAdminUsername() {
         return getString(Key.APPLICATION_ADMIN_USERNAME);
     }
 
     /**
-     * @return application.admin.password from config.props or null if undefined
+     * @return application.admin.password from config.yaml or null if undefined
      */
     public String getApplicationAdminPassword() {
         return getString(Key.APPLICATION_ADMIN_PASSWORD);
     }
 
     /**
-     * @return authentication.cookie.remember.expires from config.props or default value if undefined
+     * @return authentication.cookie.remember.expires from config.yaml or default value if undefined
      */
     public long getAuthenticationCookieRememberExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES, Default.AUTHENTICATION_COOKIE_REMEMBER_EXPIRES);
     }
 
     /**
-     * @return application.controller from config.props or default value if undefined
+     * @return application.controller from config.yaml or default value if undefined
      */
     public String getApplicationController() {
         return getString(Key.APPLICATION_CONTROLLER, Default.APPLICATION_CONTROLLER);
