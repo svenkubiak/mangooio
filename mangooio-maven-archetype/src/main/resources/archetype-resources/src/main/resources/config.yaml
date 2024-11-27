@@ -1,0 +1,102 @@
+# Application configuration
+#
+# The confugration consists of default values that are common in all environments and
+# environment specific values for dev, test, and prod.
+#
+# Values in an active environment overwrite default values
+#
+# Default configuration:
+
+default:
+  application:
+    name: ${application-name}
+    secret: application.secret
+    language: en
+  connector:
+    http:
+      host: localhost
+      port: 8080
+  session:
+    cookie:
+      name: ${application-name}-session
+      secret: session.cookie.secret
+      secure: true
+  authenication:
+    redirect: /login
+    cookie:
+      name: ${application-name}-authentication
+      secret: authentication.cookie.secret
+      secure: true
+  token:
+    secret: token.secret
+  flash:
+    cookie:
+      name: ${application-name}-flash
+      secret: flash.cookie.secret
+      secure: true
+  smtp:
+    host: localhost
+    port: 25
+
+# Environments configuration:
+
+environments:
+  test:
+    connector:
+      http:
+        port: 9090
+    session:
+      cookie:
+        secure: false
+    flash:
+      cookie:
+        secure: false
+    authentication:
+      cookie:
+        secure: false
+    persistence:
+      mongo:
+        embedded: true
+        host: localhost
+        port: 29019
+        package: models
+    
+  dev:
+    connector:
+      http:
+        port: 9090
+    session:
+      cookie:
+        secure: false
+    flash:
+      cookie:
+        secure: false
+    authentication:
+      cookie:
+        secure: false
+    persistence:
+      mongo:
+        embedded: true
+        host: localhost
+        port: 29019
+        package: models
+
+  prod:
+    connector:
+      http:
+        port: 9090
+    session:
+      cookie:
+        secure: false
+    flash:
+      cookie:
+        secure: false
+    authentication:
+      cookie:
+        secure: false
+    persistence:
+      mongo:
+        embedded: true
+        host: localhost
+        port: 29019
+        package: models

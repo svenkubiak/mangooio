@@ -119,14 +119,14 @@ public class YamlConfig {
             String propertyValue = System.getProperty(key);
 
             if (StringUtils.isNotBlank(propertyValue) && propertyValue.startsWith(CRYPTEX_TAG)) {
-                propertyValue = decrypt(propertyValue);
+                propertyValue = decrypt(key, propertyValue);
             }
 
             if (StringUtils.isNotBlank(propertyValue)) {
                 values.put(key, propertyValue);
             }
         } else if (value.startsWith(CRYPTEX_TAG)) {
-            values.put(key, decrypt(value));
+            values.put(key, decrypt(key, value));
         } else {
             values.put(key, value);
         }
@@ -137,15 +137,15 @@ public class YamlConfig {
      *
      * @param value The encrypted value to decrypt
      */
-    private String decrypt(String value) {
+    private String decrypt(String key, String value) {
         var crypto = new Crypto();
 
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
         if (StringUtils.isNotBlank(keyFile)) {
             try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
-                String key = lines.findFirst().orElse(null);
-                if (StringUtils.isNotBlank(key)) {
-                    var privateKey = crypto.getPrivateKeyFromString(key);
+                String encryptionKey = lines.findFirst().orElse(null);
+                if (StringUtils.isNotBlank(encryptionKey)) {
+                    var privateKey = crypto.getPrivateKeyFromString(encryptionKey);
                     var cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
 
                     if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
@@ -160,7 +160,7 @@ public class YamlConfig {
                 decrypted = false;
             }
         } else {
-            LOG.error("Found an encrypted value in config file but private key for decryption is missing");
+            LOG.error("{} has an encrypted value in config.yaml but private key for decryption is missing", key);
             decrypted = false;
         }
 
