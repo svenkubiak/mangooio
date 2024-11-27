@@ -69,7 +69,7 @@ public class Config {
         }
     }
 
-    @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "PATH_TRAVERSAL_IN")
+    @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = "PATH_TRAVERSAL_IN, URLCONNECTION_SSRF_FD")
     private InputStream getConfigInputstream() throws IOException {
         String configPath = System.getProperty(Key.APPLICATION_CONFIG);
         InputStream inputStream;
