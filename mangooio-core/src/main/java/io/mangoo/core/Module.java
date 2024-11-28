@@ -12,7 +12,7 @@ import io.mangoo.persistence.interfaces.Datastore;
 public class Module extends AbstractModule {
     private final Config config = new Config();
     private EmbeddedMongoDB embeddedMongoDB;
-    
+
     public Module() {
         var prefix = Default.PERSISTENCE_PREFIX;
         if (config.isPersistenceEnabled() && Boolean.TRUE.equals(config.isMongoEmbedded(prefix))) {
@@ -22,15 +22,16 @@ public class Module extends AbstractModule {
                     .start();
         }
     }
-    
+
     @Override
     protected void configure() {
         Names.bindProperties(binder(), config.toProperties());
-        
+
+        bind(Config.class).toInstance(config);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);
     }
-    
+
     public void stopEmbeddedMongoDB() {
         if (embeddedMongoDB != null) {
             embeddedMongoDB.stop();
