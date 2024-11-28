@@ -10,7 +10,7 @@ default:
     encrypted: arg{}
     named: shouldnotbedisplayed
     admin:
-      secret: Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
+      secret: ""
   connector:
     http:
       host: localhost
