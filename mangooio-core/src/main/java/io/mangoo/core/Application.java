@@ -472,6 +472,7 @@ public final class Application {
     private static void prepareConfig() {
         var config = getInstance(Config.class);
 
+        config.validate();
         if (!config.isValid()) {
             LOG.error("Application configuration is invalid");
             failsafe();

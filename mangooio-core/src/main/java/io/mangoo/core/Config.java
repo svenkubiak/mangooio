@@ -174,6 +174,20 @@ public class Config {
     }
 
     /**
+     * Validates if each config value has been decrypted and parsed correctly
+     */
+    public void validate() {
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            if (entry.getValue() != null) {
+                if (entry.getValue().startsWith(CRYPTEX_TAG) || entry.getValue().startsWith(ARG_TAG)){
+                    LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
+                    valid = false;
+                }
+            }
+        }
+    }
+
+    /**
      * Converts config values to standard java properties
      *
      * @return Properties instance with config values

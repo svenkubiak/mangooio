@@ -92,6 +92,7 @@ public class AdminController {
                     .render("avgRequestTime", metrics.getAvgRequestTime())
                     .render("maxRequestTime", metrics.getMaxRequestTime())
                     .render("errorRate", errorRate)
+                    .render("mode", Application.getMode())
                     .render("events", stream.getHandledEvents())
                     .render("subscribers", stream.getNumberOfSubscribers())
                     .template(Template.adminPath());
