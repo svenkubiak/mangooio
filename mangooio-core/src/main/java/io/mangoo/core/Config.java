@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -43,8 +44,12 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     private void load() {
-        try (var inputStream = getConfigInputstream()){
-            var yaml = new Yaml();
+        try (var inputStream = getConfigInputStream()){
+            LoaderOptions options = new LoaderOptions();
+            options.setAllowDuplicateKeys(false);
+            options.setMaxAliasesForCollections(5);
+
+            var yaml = new Yaml(options);
             Map<String, Object> config = yaml.load(inputStream);
 
             Map<String, Object> defaultConfig = (Map<String, Object>) config.get("default");
@@ -70,7 +75,7 @@ public class Config {
     }
 
     @SuppressFBWarnings(justification = "Intentionally used to access the file system", value = {"PATH_TRAVERSAL_IN", "URLCONNECTION_SSRF_FD"})
-    private InputStream getConfigInputstream() throws IOException {
+    private InputStream getConfigInputStream() throws IOException {
         String configPath = System.getProperty(Key.APPLICATION_CONFIG);
         InputStream inputStream;
 
