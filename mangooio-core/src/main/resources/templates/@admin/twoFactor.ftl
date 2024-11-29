@@ -21,18 +21,19 @@
                     <p class="subtitle has-text-black">Please enter your TOTP.</p>
                     <#if form.hasErrors()><p class="has-text-danger has-text-weight-bold">Invalid Code. <a href="/@admin/logout">Cancel?</a></p></#if>
                     <div class="box">
-                        <form action="/@admin/verify" method="post">
+                        <form action="/@admin/verify" method="post" id="login-form">
                             <div class="field">
                                 <div class="control">
                                     <input class="input is-large" type="text" maxlength="6" name="code" placeholder="6 digit code" autofocus="">
                                 </div>
                             </div>
-                            <button class="button is-block is-info is-large is-fullwidth">Verify <i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                            <button class="button is-block is-info is-large is-fullwidth" id="login">Verify <i class="fa fa-sign-in" aria-hidden="true"></i></button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <script src="/@admin/assets/js/admin.min.js" type="text/javascript" defer></script>
 </body>
 </html>
