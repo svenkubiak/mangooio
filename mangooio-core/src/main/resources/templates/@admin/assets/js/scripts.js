@@ -1,4 +1,4 @@
-const copyIcons = document.querySelectorAll('.copy-icon');
+const copyIcons = document.querySelectorAll('.gg-copy');
 copyIcons.forEach(icon => {
 	icon.addEventListener('click', () => {
 		const targetId = icon.getAttribute('data-copy-target');

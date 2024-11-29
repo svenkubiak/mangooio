@@ -108,14 +108,45 @@ nav.navbar {
     display: none
 }
 
-.copy-icon {
-    width: 24px;
-    height: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M13 7H7V5H13V7Z' fill='currentColor'/%3E%3Cpath d='M13 11H7V9H13V11Z' fill='currentColor'/%3E%3Cpath d='M7 15H13V13H7V15Z' fill='currentColor'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M3 19V1H17V5H21V23H7V19H3ZM15 17V3H5V17H15ZM17 7V19H9V21H19V7H17Z' fill='currentColor'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    color: #000;
+.gg-copy {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    transform: scale(var(--ggs, 1));
+    width: 14px;
+    height: 18px;
+    border: 2px solid;
     margin-left: 5px;
+    margin-top: -4px;
+}
+.gg-copy::after,
+.gg-copy::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+}
+.gg-copy::before {
+    background:
+            linear-gradient(to left, currentColor 5px, transparent 0) no-repeat right
+            top/5px 2px,
+            linear-gradient(to left, currentColor 5px, transparent 0) no-repeat left
+            bottom/ 2px 5px;
+    box-shadow: inset -4px -4px 0 -2px;
+    bottom: -6px;
+    right: -6px;
+    width: 14px;
+    height: 18px;
+}
+.gg-copy::after {
+    width: 6px;
+    height: 2px;
+    background: currentColor;
+    left: 2px;
+    top: 2px;
+    box-shadow:
+            0 4px 0,
+            0 8px 0;
 }
 
 .field-label {
@@ -124,6 +155,6 @@ nav.navbar {
 }
 
 .copy-status {
-    margin-left: 5px;
+    margin-left: 10px;
     color: green;
 }

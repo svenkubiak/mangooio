@@ -21,7 +21,7 @@
                                     <div class="field">
                                         <div class="field-label">
                                             <label for="input"><b>Public key</b></label>
-                                            <div class="copy-icon" role="button" title="Copy public key to clipboard" aria-label="Copy public key to clipboard" data-copy-target="publickey"></div>
+                                            <div class="gg-copy" role="button" title="Copy public key to clipboard" aria-label="Copy public key to clipboard" data-copy-target="publickey"></div>
                                             <p class="copy-status" id="publickey-copy-status"></p>
                                         </div>
                                         <div class="control">
@@ -31,7 +31,7 @@
                                     <div class="field">
                                         <div class="field-label">
                                             <label for="input"><b>Private key</b></label>
-                                            <div class="copy-icon" role="button" title="Copy private key to clipboard" aria-label="Copy private key to clipboard" data-copy-target="privatekey"></div>
+                                            <div class="gg-copy" role="button" title="Copy private key to clipboard" aria-label="Copy private key to clipboard" data-copy-target="privatekey"></div>
                                             <p class="copy-status" id="privatekey-copy-status"></p>
                                         </div>
                                         <div class="control">
@@ -71,7 +71,7 @@
                                     <div class="field">
                                         <div class="field-label">
                                             <label for="input"><b>Encrypted value</b></label>
-                                            <div class="copy-icon" role="button" title="Copy encrypted value to clipboard" aria-label="Copy encrypted value to clipboard" data-copy-target="encryptedvalue"></div>
+                                            <div class="gg-copy" role="button" title="Copy encrypted value to clipboard" aria-label="Copy encrypted value to clipboard" data-copy-target="encryptedvalue"></div>
                                             <p class="copy-status" id="encryptedvalue-copy-status"></p>
                                         </div>
                                         <div class="control">
@@ -103,7 +103,7 @@
                                     <div class="field">
                                         <div class="field-label">
                                             <label for="input"><b>Secret</b></label>
-                                            <div class="copy-icon" role="button" title="Copy secret to clipboard" aria-label="Copy secret to clipboard" data-copy-target="secret"></div>
+                                            <div class="gg-copy" role="button" title="Copy secret to clipboard" aria-label="Copy secret to clipboard" data-copy-target="secret"></div>
                                             <p class="copy-status" id="secret-copy-status"></p>
                                         </div>
                                         <div class="control">
