@@ -125,6 +125,7 @@ public class DatastoreImpl implements Datastore {
         return (T) query(clazz)
                 .find()
                 .sort(sort)
+                .limit(1)
                 .first();
     }
 
