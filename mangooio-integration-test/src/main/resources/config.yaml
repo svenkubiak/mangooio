@@ -95,6 +95,7 @@ environments:
 
   dev:
     application:
+      name: integration-test
       admin:
         enable: true
         health: true

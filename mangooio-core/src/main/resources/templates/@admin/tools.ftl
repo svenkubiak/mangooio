@@ -19,20 +19,20 @@
                             <div class="content">
                                 <form>
                                     <div class="field">
-                                        <div style="display: inline-flex; align-items: center;">
+                                        <div class="field-label">
                                             <label for="input"><b>Public key</b></label>
-                                            <div class="copy-icon" style="color: #000; margin-left: 5px;" role="button" title="Copy public key to clipboard" aria-label="Copy public key to clipboard" data-copy-target="publickey"></div>
-                                            <p id="publickey-copy-status" style="color: green;"></p>
+                                            <div class="copy-icon" role="button" title="Copy public key to clipboard" aria-label="Copy public key to clipboard" data-copy-target="publickey"></div>
+                                            <p class="copy-status" id="publickey-copy-status"></p>
                                         </div>
                                         <div class="control">
                                             <textarea class="textarea" rows="3" disabled="" name="publickey" id="publickey"></textarea>
                                         </div>
                                     </div>
                                     <div class="field">
-                                        <div style="display: inline-flex; align-items: center;">
+                                        <div class="field-label">
                                             <label for="input"><b>Private key</b></label>
-                                            <div class="copy-icon" style="color: #000; margin-left: 5px;" role="button" title="Copy private key to clipboard" aria-label="Copy private key to clipboard" data-copy-target="privatekey"></div>
-                                            <p id="privatekey-copy-status" style="color: green;"></p>
+                                            <div class="copy-icon" role="button" title="Copy private key to clipboard" aria-label="Copy private key to clipboard" data-copy-target="privatekey"></div>
+                                            <p class="copy-status" id="privatekey-copy-status"></p>
                                         </div>
                                         <div class="control">
                                             <textarea class="textarea" rows="9" disabled="" name="privatekey" id="privatekey"></textarea>
@@ -69,10 +69,10 @@
                                         </div>
                                     </div>
                                     <div class="field">
-                                        <div style="display: inline-flex; align-items: center;">
+                                        <div class="field-label">
                                             <label for="input"><b>Encrypted value</b></label>
-                                            <div class="copy-icon" style="color: #000; margin-left: 5px;" role="button" title="Copy encrypted value to clipboard" aria-label="Copy encrypted value to clipboard" data-copy-target="encryptedvalue"></div>
-                                            <p id="encryptedvalue-copy-status" style="color: green;"></p>
+                                            <div class="copy-icon" role="button" title="Copy encrypted value to clipboard" aria-label="Copy encrypted value to clipboard" data-copy-target="encryptedvalue"></div>
+                                            <p class="copy-status" id="encryptedvalue-copy-status"></p>
                                         </div>
                                         <div class="control">
                                             <textarea class="textarea" rows="5" id="encryptedvalue" name="encryptedvalue" disabled=""></textarea>
@@ -101,9 +101,13 @@
                                         <img src="data:image/png;base64,${qrcode}" alt="QR Code" />
                                     </div>
                                     <div class="field">
-                                        <label class="label">Secret</label>
+                                        <div class="field-label">
+                                            <label for="input"><b>Secret</b></label>
+                                            <div class="copy-icon" role="button" title="Copy secret to clipboard" aria-label="Copy secret to clipboard" data-copy-target="secret"></div>
+                                            <p class="copy-status" id="secret-copy-status"></p>
+                                        </div>
                                         <div class="control">
-                                            <textarea class="textarea" rows="3" name="pubkey" id="pubkey">${secret}</textarea>
+                                            <textarea class="textarea" rows="3" name="secret" id="secret">${secret}</textarea>
                                         </div>
                                     </div>
                                 </form>
