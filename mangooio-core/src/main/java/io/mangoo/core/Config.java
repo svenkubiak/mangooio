@@ -45,11 +45,11 @@ public class Config {
     @SuppressWarnings("unchecked")
     private void load() {
         try (var inputStream = getConfigInputStream()){
-            LoaderOptions options = new LoaderOptions();
-            options.setAllowDuplicateKeys(false);
-            options.setMaxAliasesForCollections(5);
+            var loaderOptions = new LoaderOptions();
+            loaderOptions.setAllowDuplicateKeys(false);
+            loaderOptions.setMaxAliasesForCollections(5);
 
-            var yaml = new Yaml(options);
+            var yaml = new Yaml(loaderOptions);
             Map<String, Object> config = yaml.load(inputStream);
 
             Map<String, Object> defaultConfig = (Map<String, Object>) config.get("default");
@@ -183,11 +183,10 @@ public class Config {
      */
     public void validate() {
         for (Map.Entry<String, String> entry : values.entrySet()) {
-            if (entry.getValue() != null) {
-                if (entry.getValue().startsWith(CRYPTEX_TAG) || entry.getValue().startsWith(ARG_TAG)){
-                    LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
-                    valid = false;
-                }
+            String value = entry.getValue();
+            if (value != null && (value.startsWith(CRYPTEX_TAG) || value.startsWith(ARG_TAG)) ) {
+                LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
+                valid = false;
             }
         }
     }
