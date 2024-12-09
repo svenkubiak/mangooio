@@ -604,7 +604,7 @@ public final class Application {
      * Validate if the routes that are defined in the router are valid
      */
     private static void prepareRoutes() {
-        injector.getInstance(MangooBootstrap.class).initializeRoutes();
+        getInstance(MangooBootstrap.class).initializeRoutes();
 
         Router.getRequestRoutes().forEach((RequestRoute requestRoute) -> {
             if (!methodExists(requestRoute.getControllerMethod(), requestRoute.getControllerClass())) {
