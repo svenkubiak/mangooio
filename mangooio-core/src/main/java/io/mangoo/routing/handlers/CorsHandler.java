@@ -1,6 +1,6 @@
 package io.mangoo.routing.handlers;
 
-import com.google.inject.Inject;
+import jakarta.inject.Inject;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;

@@ -1,6 +1,6 @@
 package controllers;
 
-import com.google.inject.Inject;
+import jakarta.inject.Inject;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import models.Person;

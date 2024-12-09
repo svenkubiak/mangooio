@@ -1,7 +1,7 @@
 package app;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import controllers.ApplicationController;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.persistence.interfaces.Datastore;

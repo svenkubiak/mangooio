@@ -1,7 +1,7 @@
 package io.mangoo.test.email;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import io.mangoo.constants.NotNull;
@@ -18,8 +18,8 @@ import java.util.Objects;
 @Singleton
 public class SmtpMock {
     private static final String SMTP_SERVER_NAME = "smtp";
-    private GreenMail greenMail;
     private final Config config;
+    private GreenMail greenMail;
 
 
     @Inject

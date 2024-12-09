@@ -1,8 +1,8 @@
 package controllers;
 
 import com.google.common.io.Resources;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Key;
 import io.mangoo.core.Application;

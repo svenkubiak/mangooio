@@ -1,7 +1,7 @@
 package io.mangoo.admin;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import com.google.inject.Inject;
+import jakarta.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.async.EventBus;

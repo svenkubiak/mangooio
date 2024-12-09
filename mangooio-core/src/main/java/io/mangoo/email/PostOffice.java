@@ -1,7 +1,7 @@
 package io.mangoo.email;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
 import jakarta.activation.DataHandler;

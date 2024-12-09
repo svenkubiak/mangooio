@@ -1,10 +1,10 @@
 package io.mangoo.persistence;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.mangoo.persistence.interfaces.Datastore;
+import jakarta.inject.Provider;
 
 import java.util.HashMap;
 import java.util.Map;

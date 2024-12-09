@@ -1,6 +1,6 @@
 package io.mangoo.manager;
 
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
 

@@ -5,12 +5,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Range;
 import com.google.common.io.BaseEncoding;
 import io.mangoo.constants.Hmac;
+import io.mangoo.constants.NotNull;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -97,7 +99,8 @@ public final class TotpBuilder {
      *             if {@code key} is {@code null}.
      */
     TotpBuilder(byte[] key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key, NotNull.KEY);
+
         this.key = new byte[key.length];
         System.arraycopy(key, 0, this.key, 0, key.length);
     }
@@ -157,7 +160,8 @@ public final class TotpBuilder {
      *             if {@code algorithm} is {@code null}.
      */
     public TotpBuilder hmacSha(String algorithm) {
-        Preconditions.checkNotNull(algorithm);
+        Objects.requireNonNull(algorithm, NotNull.ALGORITHM);
+
         this.hmacShaAlgorithm = algorithm;
         return this;
     }

@@ -1,6 +1,6 @@
 package io.mangoo.scheduler;
 
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import java.util.HashSet;
 import java.util.Objects;

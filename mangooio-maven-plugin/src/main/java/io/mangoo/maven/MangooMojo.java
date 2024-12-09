@@ -22,7 +22,6 @@ import io.mangoo.build.Trigger;
 import io.mangoo.build.Watcher;
 import io.mangoo.core.Application;
 import io.mangoo.utils.MangooUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -127,7 +126,7 @@ public class MangooMojo extends AbstractMojo {
         try {
             var machine = new Runner(
                     Application.class.getName(),
-                    StringUtils.join(classpathItems, File.pathSeparator),
+                    String.join(File.pathSeparator, classpathItems),
                     project.getBasedir(),
                     jpdaPort,
                     jvmArgs);

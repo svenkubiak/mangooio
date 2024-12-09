@@ -1,7 +1,7 @@
 package io.mangoo.filters;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import io.mangoo.constants.Key;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;

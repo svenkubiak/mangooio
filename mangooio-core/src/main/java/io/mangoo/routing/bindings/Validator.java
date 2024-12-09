@@ -1,6 +1,6 @@
 package io.mangoo.routing.bindings;
 
-import com.google.inject.Inject;
+import jakarta.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.constants.NotNull;
 import io.mangoo.constants.Validation;

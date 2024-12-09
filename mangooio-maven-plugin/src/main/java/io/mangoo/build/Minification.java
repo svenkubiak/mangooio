@@ -9,6 +9,7 @@ import net.jawr.web.minification.JSMin.JSMinException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +95,7 @@ public final class Minification {
         }
     }
 
+    @SuppressModernizer
     private static void minifyCSS(File inputFile) {
         try {
             final File outputFile = getOutputFile(inputFile, Suffix.CSS_MIN);

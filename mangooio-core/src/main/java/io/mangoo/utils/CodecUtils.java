@@ -6,7 +6,6 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 import org.apache.fury.config.Language;
@@ -21,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.Objects;
 
 public final class CodecUtils {
@@ -127,7 +127,7 @@ public final class CodecUtils {
             var digest = MessageDigest.getInstance("SHA3-512");
             byte[] hashBytes = digest.digest(data.getBytes(StandardCharsets.UTF_8));
 
-            return Hex.encodeHexString(hashBytes);
+            return HexFormat.of().formatHex(hashBytes);
         } catch (NoSuchAlgorithmException e) {
             LOG.error("Failed to create hash of data", e);
         }

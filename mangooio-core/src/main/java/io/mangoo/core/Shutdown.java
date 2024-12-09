@@ -1,20 +1,12 @@
 package io.mangoo.core;
 
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 import io.mangoo.interfaces.MangooBootstrap;
 
 @Singleton
 public class Shutdown extends Thread {
     public Shutdown() {
         // Empty constructor for Google Guice
-    }
-
-    @Override
-    public void run() {
-        invokeLifecycle();
-        stopUndertow();
-        stopScheduler();
-        stopEmbeddedMongoDB();
     }
 
     private static void invokeLifecycle() {
@@ -31,8 +23,16 @@ public class Shutdown extends Thread {
     private static void stopUndertow() {
         Application.stopUndertow();
     }
-    
+
     private static void stopEmbeddedMongoDB() {
         Application.stopEmbeddedMongoDB();
+    }
+    
+    @Override
+    public void run() {
+        invokeLifecycle();
+        stopUndertow();
+        stopScheduler();
+        stopEmbeddedMongoDB();
     }
 }

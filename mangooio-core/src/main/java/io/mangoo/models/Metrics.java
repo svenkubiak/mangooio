@@ -1,6 +1,6 @@
 package io.mangoo.models;
 
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

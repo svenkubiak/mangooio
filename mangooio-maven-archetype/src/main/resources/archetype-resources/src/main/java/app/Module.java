@@ -1,7 +1,7 @@
 package app;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import io.mangoo.interfaces.MangooBootstrap;
 

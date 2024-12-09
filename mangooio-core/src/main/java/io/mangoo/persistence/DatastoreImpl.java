@@ -1,7 +1,7 @@
 package io.mangoo.persistence;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
+import jakarta.inject.Inject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;

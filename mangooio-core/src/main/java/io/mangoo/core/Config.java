@@ -1,7 +1,7 @@
 package io.mangoo.core;
 
 import com.google.common.io.Resources;
-import com.google.inject.Singleton;
+import jakarta.inject.Singleton;
 import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
