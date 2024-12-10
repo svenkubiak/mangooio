@@ -1,16 +1,17 @@
 package controllers;
 
 import com.google.common.io.Resources;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.constants.Key;
+import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import models.Person;
 
 import java.io.IOException;
@@ -18,13 +19,16 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 public class ApplicationController {
-    
+    private final String named;
+
     @Inject
-    @Named(Key.APPLICATION_NAMED)
-    private String named;
-    
+    public ApplicationController(@Named(Key.APPLICATION_NAMED) String named) {
+        this.named = Objects.requireNonNull(named, NotNull.NAMED);
+    }
+
     public Response index() {
         return Response.ok();
     }

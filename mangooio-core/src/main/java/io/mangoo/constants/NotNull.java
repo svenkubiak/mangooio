@@ -54,6 +54,7 @@ public final class NotNull {
     public static final String MIME_MESSAGE = "mimeMessage can not be null";
     public static final String MODE = "mode can not be null";
     public static final String NAME = "name can not be null";
+    public static final String NAMED = "named can not be null";
     public static final String OBJECT = "object can not be null";
     public static final String OBJECTS = "objects can not be null";
     public static final String PART = "part can not be null";

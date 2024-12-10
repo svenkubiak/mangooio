@@ -1,21 +1,26 @@
 package io.mangoo.filters;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import io.mangoo.constants.Key;
+import io.mangoo.constants.NotNull;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.paseto.PasetoParser;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class PasetoFilter implements PerRequestFilter {
+    private final String secret;
+
     @Inject
-    @Named(Key.PASETO_SECRET)
-    private String secret;
+    public PasetoFilter(@Named(Key.PASETO_SECRET) String secret) {
+        this.secret = Objects.requireNonNull(secret, NotNull.SECRET);
+    }
 
     @Override
     public Response execute(Request request, Response response) {

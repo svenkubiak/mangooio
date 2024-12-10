@@ -1,18 +1,24 @@
 package io.mangoo.filters;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import io.mangoo.constants.Key;
+import io.mangoo.constants.NotNull;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.utils.RequestUtils;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 public class ApiKeyFilter implements PerRequestFilter {
+    private final String key;
+
     @Inject
-    @Named(Key.API_KEY)
-    private String key;
+    public ApiKeyFilter(@Named(Key.API_KEY) String key) {
+        this.key = Objects.requireNonNull(key, NotNull.KEY);
+    }
 
     @Override
     public Response execute(Request request, Response response) {
