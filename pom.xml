@@ -34,6 +34,7 @@
 		<jackson.version>2.18.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.11.2</javadoc.version>
+		<modernizer.version>2.9.0</modernizer.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -82,7 +83,7 @@
 				<plugin>
 					<groupId>org.gaul</groupId>
 					<artifactId>modernizer-maven-plugin</artifactId>
-					<version>2.9.0</version>
+					<version>${modernizer.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -251,7 +252,7 @@
 			<dependency>
 				<groupId>org.gaul</groupId>
 				<artifactId>modernizer-maven-annotations</artifactId>
-				<version>2.7.0</version>
+				<version>${modernizer.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.cronutils</groupId>

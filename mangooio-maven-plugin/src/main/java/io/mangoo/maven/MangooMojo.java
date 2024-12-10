@@ -16,6 +16,7 @@
 
 package io.mangoo.maven;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.build.Minification;
 import io.mangoo.build.Runner;
 import io.mangoo.build.Trigger;
@@ -122,6 +123,7 @@ public class MangooMojo extends AbstractMojo {
         MangooUtils.closeQuietly(fileSystem);
     }
 
+    @SuppressFBWarnings(value = "fb-contrib:OCP_OVERLY_CONCRETE_PARAMETER", justification = "sour")
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
         try {
             var machine = new Runner(
