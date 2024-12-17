@@ -67,14 +67,20 @@ class CodecUtilsTest {
     void testUuid() {
         //given
         String uuid;
+        String uuid2;
 
         //when
         uuid = CodecUtils.uuid();
+        uuid2 = CodecUtils.uuid();
 
         //then
         assertThat(uuid, not(nullValue()));
+        assertThat(uuid2, not(nullValue()));
+        assertThat(uuid, not(equalTo(uuid2)));
         assertThat(UUID.fromString(uuid).version(), equalTo(6));
         assertThat(UUID.fromString(uuid).variant(), equalTo(2));
+        assertThat(UUID.fromString(uuid2).version(), equalTo(6));
+        assertThat(UUID.fromString(uuid2).variant(), equalTo(2));
     }
 
     @Test
@@ -82,11 +88,13 @@ class CodecUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid;
+            String uuid2;
 
             //when
             uuid = CodecUtils.uuid();
+            uuid2 = CodecUtils.uuid();
 
-            return StringUtils.isNotBlank(uuid) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 6;
+            return StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(uuid2) && !uuid.equals(uuid2) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 6;
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
     }
     

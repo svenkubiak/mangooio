@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import com.fasterxml.uuid.Generators;
-import com.fasterxml.uuid.impl.TimeBasedReorderedGenerator;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -27,7 +26,6 @@ public final class CodecUtils {
     private static final Logger LOG = LogManager.getLogger(CodecUtils.class);
     private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
     private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
-    private static final TimeBasedReorderedGenerator UUID_GENERATOR = Generators.timeBasedReorderedGenerator();
     private static final ThreadSafeFury FURY = Fury.builder()
             .withLanguage(Language.JAVA)
             .requireClassRegistration(false)
@@ -202,6 +200,6 @@ public final class CodecUtils {
      * @return UUIDv6 String
      */
     public static String uuid() {
-        return UUID_GENERATOR.generate().toString();
+        return Generators.timeBasedReorderedGenerator().generate().toString();
     }
 }
