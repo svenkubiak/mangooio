@@ -29,7 +29,7 @@
 		<maven.version>4.0.0-rc-2</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
 		<junit.version>5.11.4</junit.version>
-		<junit.platform.version>1.11.4s</junit.platform.version>
+		<junit.platform.version>1.11.4</junit.platform.version>
 		<enforcer.version>1.9.0</enforcer.version>
 		<jackson.version>2.18.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
