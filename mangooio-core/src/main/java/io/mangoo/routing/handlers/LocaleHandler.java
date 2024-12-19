@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import jakarta.inject.Inject;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -10,6 +9,7 @@ import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.LocaleUtils;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
@@ -25,7 +25,7 @@ public class LocaleHandler implements HttpHandler {
     
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        var locale = Locale.forLanguageTag(config.getApplicationLanguage());
+        Locale locale = null;
         
         var i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
         if (i18nCookie != null) {
@@ -38,6 +38,10 @@ public class LocaleHandler implements HttpHandler {
                     locale = LocaleUtils.getLocaleFromString(acceptLanguage);
                 }
             }
+        }
+
+        if (locale == null) {
+            locale = Locale.forLanguageTag(config.getApplicationLanguage());
         }
 
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
