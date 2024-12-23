@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class TemplateEngine {
-    private final Configuration configuration = new Configuration(VERSION);
     private static final String NUMBER_FORMAT = "0.######";
     private static final String DEFAULT_TEMPLATES_DIR = "/templates/defaults/";
     private static final String TEMPLATES_FOLDER = "templates/";
@@ -38,7 +37,8 @@ public class TemplateEngine {
     private static final int MAX_CHARS = 65_536;
     private static final int ONE_SECOND_MS = 1000;
     private static final int STRONG_SIZE_LIMIT = 20;
-    private static final Version VERSION = new Version(2, 3, 33);
+    private static final Version VERSION = new Version(2, 3, 34);
+    private final Configuration configuration = new Configuration(VERSION);
     
     public TemplateEngine() {
         configuration.setClassForTemplateLoading(getClass(), "/" + TEMPLATES_FOLDER);
