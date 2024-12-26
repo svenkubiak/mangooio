@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import jakarta.inject.Inject;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
@@ -12,7 +11,9 @@ import io.mangoo.routing.Attachment;
 import io.mangoo.utils.RequestUtils;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -79,7 +80,8 @@ public class AuthenticationHandler implements HttpHandler {
             .stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
             .forEach(entry -> exchange.getResponseHeaders().add(entry.getKey(), entry.getValue()));
-        
+
+        exchange.getResponseHeaders().add(Headers.CONTENT_TYPE, "text/html; charset=utf-8");
         exchange.getResponseSender().send(Template.unauthorized());
     }
     
