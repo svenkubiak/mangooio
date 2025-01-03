@@ -1,13 +1,13 @@
 package io.mangoo.core;
 
 import com.google.common.io.Resources;
-import jakarta.inject.Singleton;
 import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.exceptions.MangooEncryptionException;
+import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class Config {
         InputStream inputStream;
 
         if (StringUtils.isNotBlank(configPath)) {
-            inputStream = Files.newInputStream(Paths.get(configPath));
+            inputStream = Files.newInputStream(Path.of(configPath));
         } else {
             inputStream = Resources.getResource(CONFIG_FILE).openStream();
         }
@@ -153,7 +153,7 @@ public class Config {
 
         String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
         if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Paths.get(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
+            try (Stream<String> lines = Files.lines(Path.of(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
                 String encryptionKey = lines.findFirst().orElse(null);
                 if (StringUtils.isNotBlank(encryptionKey)) {
                     var privateKey = crypto.getPrivateKeyFromString(encryptionKey);

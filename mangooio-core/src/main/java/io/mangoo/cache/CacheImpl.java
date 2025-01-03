@@ -1,7 +1,6 @@
 package io.mangoo.cache;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import com.google.common.collect.Maps;
 import io.mangoo.constants.NotNull;
 
 import java.time.LocalDateTime;
@@ -92,7 +91,7 @@ public class CacheImpl implements Cache {
     public Map<String, Object> getAll(String... keys) {
         Objects.requireNonNull(keys, NotNull.KEY);
         
-        Map<String, Object> values = Maps.newHashMapWithExpectedSize(keys.length + 1);
+        Map<String, Object> values = new HashMap<>(keys.length + 1);
         for (String key : keys) {
             values.put(key, get(key));
         }

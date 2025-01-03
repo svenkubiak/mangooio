@@ -1,8 +1,7 @@
 package io.mangoo.enums;
 
-import com.google.common.collect.Maps;
-
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,16 +26,18 @@ public enum Binding {
     STRING("java.lang.String"),
     UNDEFINED("undefined");
 
-    private final String value;
     private static final Map<String, Binding> values;
+
     static {
-        Map<String, Binding> bindings = Maps.newHashMapWithExpectedSize(Binding.values().length);
+        Map<String, Binding> bindings = new HashMap<>(Binding.values().length);
         for (Binding binding : Binding.values()) {
             bindings.put(binding.value().toLowerCase(Locale.ENGLISH), binding);
         }
 
         values = Collections.unmodifiableMap(bindings);
     }
+
+    private final String value;
 
     Binding (String value) {
         this.value = value;

@@ -23,7 +23,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class TemplateEngine {
@@ -102,7 +101,7 @@ public class TemplateEngine {
             content.put("line", stackTraceElement.getLineNumber());
             content.put("causeSource", cause.toString());
             content.put("stackTraces", cause.getStackTrace());
-            content.put("sourceCodePath", StringUtils.substringAfter(Paths.get(getBaseDirectory()).resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
+            content.put("sourceCodePath", StringUtils.substringAfter(Path.of(getBaseDirectory()).resolve(sourceCodePath).toFile().getPath(), "src/main/java") + " around line " + stackTraceElement.getLineNumber());
         }
 
         var config = new Configuration(VERSION);
@@ -148,7 +147,7 @@ public class TemplateEngine {
             .append("java");
 
         List<Source> sources = new ArrayList<>();
-        Path templateFile = Paths.get(buffer.toString()).resolve(sourcePath);
+        Path templateFile = Path.of(buffer.toString()).resolve(sourcePath);
         if (Files.exists(templateFile)) {
             List<String> lines = Files.readAllLines(templateFile);
 
