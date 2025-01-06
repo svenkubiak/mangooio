@@ -12,6 +12,7 @@ else
   STATUS=$?
   if [ $STATUS -ne 0 ]; then
     echo "Failed to release!"
+    exit 1
   else
     git tag $VERSION
     mvn release:update-versions
