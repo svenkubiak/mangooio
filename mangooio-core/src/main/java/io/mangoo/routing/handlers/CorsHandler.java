@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import jakarta.inject.Inject;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -8,6 +7,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HeaderValues;
 import io.undertow.util.HttpString;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;

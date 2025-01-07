@@ -1,12 +1,12 @@
 package io.mangoo.email;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;

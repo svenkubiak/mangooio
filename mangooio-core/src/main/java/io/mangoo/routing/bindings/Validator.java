@@ -1,11 +1,11 @@
 package io.mangoo.routing.bindings;
 
-import jakarta.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.constants.NotNull;
 import io.mangoo.constants.Validation;
 import io.mangoo.core.Application;
 import io.mangoo.i18n.Messages;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;

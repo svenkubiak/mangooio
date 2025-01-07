@@ -1,7 +1,7 @@
 package io.mangoo.core;
 
-import jakarta.inject.Singleton;
 import io.mangoo.interfaces.MangooBootstrap;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class Shutdown extends Thread {

@@ -1,7 +1,6 @@
 package io.mangoo.admin;
 
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
-import jakarta.inject.Inject;
 import com.google.re2j.Pattern;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.async.EventBus;
@@ -22,6 +21,7 @@ import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.totp.TotpUtils;
 import io.undertow.server.handlers.CookieImpl;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

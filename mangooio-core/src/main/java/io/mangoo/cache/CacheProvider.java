@@ -1,13 +1,13 @@
 package io.mangoo.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.CacheName;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
+import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;

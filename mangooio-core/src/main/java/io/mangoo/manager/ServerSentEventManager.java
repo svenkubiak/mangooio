@@ -1,8 +1,8 @@
 package io.mangoo.manager;
 
-import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.undertow.server.handlers.sse.ServerSentEventConnection;
+import jakarta.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.List;

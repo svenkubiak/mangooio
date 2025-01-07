@@ -2,9 +2,9 @@ package io.mangoo.async;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import jakarta.inject.Singleton;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
+import jakarta.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
