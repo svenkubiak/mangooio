@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import jakarta.inject.Inject;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -12,7 +11,9 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
+import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -110,33 +111,37 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (authentication.isValid()) {
-            if (authentication.isRememberMe()) {
-                authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
-            } 
-            
-            try {
-                String token = PasetoBuilder.create()
-                        .withExpires(authentication.getExpires())
-                        .withSecret(config.getAuthenticationCookieSecret())
-                        .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
-                        .withSubject(authentication.getSubject())
-                        .build();
-                
-                var cookie = new CookieImpl(config.getAuthenticationCookieName())
-                        .setValue(token)
-                        .setSecure(config.isAuthenticationCookieSecure())
-                        .setHttpOnly(true)
-                        .setSameSite(true)
-                        .setPath("/")
-                        .setSameSiteMode(SAME_SITE_MODE);
-                            
-                if (config.isAuthenticationCookieExpires()) {
-                    cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
-                } 
-                
-                exchange.setResponseCookie(cookie);
-            } catch (Exception e) { //NOSONAR Intentionally catching exception here
-                LOG.error("Failed to generate authentication cookie", e);
+            Cookie authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
+            if (authCookie == null) {
+                if (authentication.isRememberMe()) {
+                    authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
+                }
+
+                try {
+                    String token = PasetoBuilder.create()
+                            .withExpires(authentication.getExpires())
+                            .withSecret(config.getAuthenticationCookieSecret())
+                            .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
+                            .withClaim(ClaimKey.REMEMBER_ME, String.valueOf(authentication.isRememberMe()))
+                            .withSubject(authentication.getSubject())
+                            .build();
+
+                    var cookie = new CookieImpl(config.getAuthenticationCookieName())
+                            .setValue(token)
+                            .setSecure(config.isAuthenticationCookieSecure())
+                            .setHttpOnly(true)
+                            .setSameSite(true)
+                            .setPath("/")
+                            .setSameSiteMode(SAME_SITE_MODE);
+
+                    if (authentication.isRememberMe() || config.isAuthenticationCookieExpires()) {
+                        cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
+                    }
+
+                    exchange.setResponseCookie(cookie);
+                } catch (Exception e) { //NOSONAR Intentionally catching exception here
+                    LOG.error("Failed to generate authentication cookie", e);
+                }
             }
         } else {
             //Ignore and send no cookie to the client

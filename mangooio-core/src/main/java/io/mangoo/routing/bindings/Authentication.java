@@ -27,10 +27,8 @@ public class Authentication {
     
     public Authentication withExpires(LocalDateTime expires) {
         Objects.requireNonNull(expires, NotNull.EXPIRES);
-        if (this.expires == null) {
-            this.expires = expires;            
-        }
-        
+        this.expires = expires;
+
         return this;
     }
     

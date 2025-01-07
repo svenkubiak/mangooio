@@ -10,7 +10,7 @@ public final class Default {
     public static final String APPLICATION_LANGUAGE = "en";
     public static final Boolean AUTHENTICATION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
-    public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 1209600L;
+    public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 720L;
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;

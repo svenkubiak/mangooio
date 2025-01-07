@@ -93,6 +93,5 @@ public class AuthenticationHandler implements HttpHandler {
      */
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
         Application.getInstance(FormHandler.class).handleRequest(exchange);
-
     }
 }

@@ -42,7 +42,7 @@ class AuthenticationTest {
     }
 
     @Test
-    void testRemeberMe() {
+    void testRememberMe() {
         //given
         Authentication authentication = Application.getInstance(Authentication.class);
 

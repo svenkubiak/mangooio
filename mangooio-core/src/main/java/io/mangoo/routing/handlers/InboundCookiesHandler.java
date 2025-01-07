@@ -1,6 +1,5 @@
 package io.mangoo.routing.handlers;
 
-import jakarta.inject.Inject;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -17,6 +16,7 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -99,6 +99,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 
                 if (token.getExpires().isAfter(LocalDateTime.now())) {
                     authentication = Authentication.create()
+                            .rememberMe(token.getClaimAsBoolean(ClaimKey.REMEMBER_ME))
                             .withExpires(token.getExpires())
                             .withSubject(token.getSubject())
                             .twoFactorAuthentication(token.getClaimAsBoolean(ClaimKey.TWO_FACTOR));
