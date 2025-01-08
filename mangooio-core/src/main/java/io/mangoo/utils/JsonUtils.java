@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -92,6 +93,36 @@ public final class JsonUtils {
         }
 
         return object;
+    }
+
+    /**
+     * Converts a given Json string to a given Class and
+     * tries to create an "empty" instance of the class if conversion fails
+     *
+     * @param json The json string to convert
+     * @param clazz The Class to convert to
+     * @param <T> JavaDoc wants this, just ignore it
+     *
+     * @return The converted class or null if conversion and fallback fails
+     */
+    public static <T> T toObjectWithFallback(String json, Class<T> clazz) {
+        Objects.requireNonNull(json, NotNull.JSON);
+        Objects.requireNonNull(clazz, NotNull.CLASS);
+
+        T object = null;
+        try {
+            object = MAPPER.readValue(json, clazz);
+        } catch (IOException e) {
+            LOG.error("Failed to convert json to object class, providing fallback...",  e);
+        }
+
+        try {
+            return (object != null) ? object : clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.error("Fallback failed",  e);
+        }
+
+        return null;
     }
 
     /**
