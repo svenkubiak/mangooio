@@ -27,6 +27,33 @@ class ParameterControllerTest {
     private static final String TEXT_PLAIN = "text/plain; charset=UTF-8";
 
     @Test
+    void testBooleanParameter() {
+        //given
+        TestResponse response = TestRequest.get("/boolean?foo=true").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("true"));
+
+        //given
+        response = TestRequest.get("/boolean?foo=false").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("false"));
+
+        //given
+        response = TestRequest.get("/boolean?foo=bar").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("false"));
+    }
+
+    @Test
     void testStringParameter() {
         //given
         TestResponse response = TestRequest.get("/string/bar").execute();

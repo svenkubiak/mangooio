@@ -7,6 +7,8 @@ import java.util.Map;
 
 public enum Binding {
     AUTHENTICATION("io.mangoo.routing.bindings.Authentication"),
+    BOOLEAN("java.lang.Boolean"),
+    BOOLEAN_PRIMITIVE("boolean"),
     DOUBLE("java.lang.Double"),
     DOUBLE_PRIMITIVE("double"),
     FLASH("io.mangoo.routing.bindings.Flash"),

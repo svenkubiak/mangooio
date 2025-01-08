@@ -83,6 +83,7 @@ public class Bootstrap implements MangooBootstrap {
         // ParameterController
         Bind.controller(ParameterController.class)
         .withRoutes(
+                On.get().to("/boolean").respondeWith("booleanParam"),
                 On.get().to("/string/{foo}").respondeWith("stringParam"),
                 On.get().to("/optional/{foo}").respondeWith("optionalParam"),
                 On.get().to("/string").respondeWith("stringParam"),

@@ -197,6 +197,8 @@ public class RequestHandler implements HttpHandler {
                 case LONG_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? 0 : Long.parseLong(attachment.getRequestParameter().get(key));
                 case LONG -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? null : Long.valueOf(attachment.getRequestParameter().get(key));
                 case OPTIONAL -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Optional.empty() : Optional.of(attachment.getRequestParameter().get(key));
+                case BOOLEAN_PRIMITIVE -> StringUtils.isBlank(attachment.getRequestParameter().get(key)) ? Boolean.FALSE : Boolean.parseBoolean(attachment.getRequestParameter().get(key));
+                case BOOLEAN -> !StringUtils.isBlank(attachment.getRequestParameter().get(key)) && Boolean.parseBoolean(attachment.getRequestParameter().get(key));
                 case UNDEFINED -> RequestUtils.isJsonRequest(exchange) ? JsonUtils.toObject(attachment.getBody(), clazz) : null;
                 default -> null;
             };

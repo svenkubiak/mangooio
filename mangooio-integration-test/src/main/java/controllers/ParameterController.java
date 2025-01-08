@@ -28,6 +28,14 @@ public class ParameterController {
         return Response.ok().bodyText(String.valueOf(foo));
     }
 
+    public Response booleanParam(Boolean foo) {
+        return Response.ok().bodyText(String.valueOf(foo));
+    }
+
+    public Response booleanPrimitiveParam(boolean foo) {
+        return Response.ok().bodyText(String.valueOf(foo));
+    }
+
     public Response intParam(int foo) {
         return Response.ok().template(PARAM_TEMPLATE).render(FOO, foo);
     }
