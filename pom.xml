@@ -322,7 +322,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.15</version>
+				<version>8.2.16</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
