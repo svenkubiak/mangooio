@@ -112,6 +112,16 @@ public class Response {
     }
 
     /**
+     * Creates a response object with HTTP status code 304
+     * with default Content-Type "text/plain; charset=UTF-8"
+     *
+     * @return The response object
+     */
+    public static Response notModified() {
+        return new Response(StatusCodes.NOT_MODIFIED);
+    }
+
+    /**
      * Creates a response object with HTTP status code 500
      * with default Content-Type "text/plain; charset=UTF-8"
      *

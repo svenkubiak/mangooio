@@ -119,6 +119,10 @@ public class ApplicationController {
         return Response.unauthorized();
     }
 
+    public Response notmodified() {
+        return Response.notModified();
+    }
+
     public Response request(Request request) {
         return Response.ok().bodyText(request.getURI());
     }

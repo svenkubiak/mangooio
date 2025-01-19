@@ -264,6 +264,17 @@ class ApplicationControllerTest {
     }
 
     @Test
+    void testNotModified() {
+        //given
+        final TestResponse response = TestRequest.get("/not-modified").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.NOT_MODIFIED));
+    }
+
+    @Test
     void testBadRequest() {
         //given
         final TestResponse response = TestRequest.get("/badrequest").execute();
