@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class LocaleHandler implements HttpHandler {
@@ -26,22 +27,27 @@ public class LocaleHandler implements HttpHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         Locale locale = null;
-        
+
         var i18nCookie = exchange.getRequestCookie(config.getI18nCookieName());
-        if (i18nCookie != null) {
-            locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue());
+        Map<String, String> parameter = RequestUtils.getRequestParameters(exchange);
+        String lang = parameter.get("lang");
+
+        if (StringUtils.isNotBlank(lang)) {
+            locale = LocaleUtils.getLocaleFromString(lang.toLowerCase());
+        } else if (i18nCookie != null) {
+            locale = LocaleUtils.getLocaleFromString(i18nCookie.getValue().toLowerCase());
         } else {
             var headerValues = exchange.getRequestHeaders().get(Header.ACCEPT_LANGUAGE);
             if (headerValues != null) {
                 String acceptLanguage = headerValues.element();
                 if (StringUtils.isNotBlank(acceptLanguage)) {
-                    locale = LocaleUtils.getLocaleFromString(acceptLanguage);
+                    locale = LocaleUtils.getLocaleFromString(acceptLanguage.toLowerCase());
                 }
             }
         }
 
         if (locale == null) {
-            locale = Locale.forLanguageTag(config.getApplicationLanguage());
+            locale = Locale.forLanguageTag(config.getApplicationLanguage().toLowerCase());
         }
 
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
