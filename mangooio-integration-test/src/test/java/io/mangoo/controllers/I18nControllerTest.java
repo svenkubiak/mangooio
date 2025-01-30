@@ -44,6 +44,42 @@ class I18nControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("Côte d&#39;Ivoire"));
     }
+
+    @Test
+    void testLangParameter() {
+        //given
+        TestResponse response = TestRequest.get("/translation?lang=de")
+                .withHeader("Accept-Language", "fr-FR")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("willkommen"));
+
+        //given
+        response = TestRequest.get("/translation?lang=en")
+                .withHeader("Accept-Language", "fr-FR")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("welcome"));
+    }
+
+    @Test
+    void testFallback() {
+        //given
+        TestResponse response = TestRequest.get("/fallback?lang=pl")
+                .withHeader("Accept-Language", "fr-FR")
+                .execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+        assertThat(response.getContent(), equalTo("default"));
+    }
     
     @Test
     void testUmlaute() {

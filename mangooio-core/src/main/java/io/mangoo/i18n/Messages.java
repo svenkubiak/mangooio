@@ -2,6 +2,8 @@ package io.mangoo.i18n;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Default;
+import io.mangoo.constants.NotNull;
+import jakarta.inject.Singleton;
 import org.apache.logging.log4j.util.Strings;
 
 import java.io.Serial;
@@ -9,8 +11,10 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
+@Singleton
 public class Messages implements Serializable {
     @Serial
     private static final long serialVersionUID = -1713264225655435037L;
@@ -27,6 +31,9 @@ public class Messages implements Serializable {
      * @param locale The locale to use
      */
     public void reload(Locale locale) {
+        Objects.requireNonNull(locale, NotNull.LOCALE);
+
+        Locale.setDefault(Locale.ROOT);
         bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale);
     }
 

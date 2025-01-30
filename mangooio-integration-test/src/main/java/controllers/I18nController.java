@@ -16,6 +16,10 @@ public class I18nController {
         Cookie cookie = new CookieImpl(Default.I18N_COOKIE_NAME, "en");
         return Response.ok().cookie(cookie).render();
     }
+
+    public Response fallback() {
+        return Response.ok().render();
+    }
     
     public Response special() {
         return Response.ok().render();

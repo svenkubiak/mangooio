@@ -34,6 +34,7 @@ public class Bootstrap implements MangooBootstrap {
         Bind.controller(I18nController.class).withRoutes(
                 On.get().to("/translation").respondeWith("translation"),
                 On.get().to("/messages").respondeWith("messages"),
+                On.get().to("/fallback").respondeWith("fallback"),
                 On.get().to("/special").respondeWith("special"),
                 On.get().to("/umlaute").respondeWith("umlaute"),
                 On.get().to("/localize").respondeWith("localize")
