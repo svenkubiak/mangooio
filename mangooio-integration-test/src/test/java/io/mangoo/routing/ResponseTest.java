@@ -102,7 +102,16 @@ class ResponseTest {
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.BAD_REQUEST));
     }
-    
+
+    @Test
+    void testWithAccepted() {
+        //given
+        Response response = Response.accepted();
+
+        //then
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.ACCEPTED));
+    }
+
     @Test
     void testWithCreated() {
         //given
