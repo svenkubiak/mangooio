@@ -72,6 +72,16 @@ public class Response {
     }
 
     /**
+     * Creates a response object with HTTP status code 202
+     * with default Content-Type "text/plain; charset=UTF-8"
+     *
+     * @return The response object
+     */
+    public static Response accepted() {
+        return new Response(StatusCodes.ACCEPTED);
+    }
+
+    /**
      * Creates a response object with HTTP status code 404
      * with default Content-Type "text/plain; charset=UTF-8"
      *
@@ -87,8 +97,8 @@ public class Response {
      *
      * @return The response object
      */
-    public static Response forbidden() {
-        return new Response(StatusCodes.FORBIDDEN);
+    public static Response unauthorized() {
+        return new Response(StatusCodes.UNAUTHORIZED);
     }
 
     /**
@@ -97,8 +107,8 @@ public class Response {
      *
      * @return The response object
      */
-    public static Response unauthorized() {
-        return new Response(StatusCodes.UNAUTHORIZED);
+    public static Response forbidden() {
+        return new Response(StatusCodes.FORBIDDEN);
     }
 
     /**
