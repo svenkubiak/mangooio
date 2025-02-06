@@ -33,7 +33,8 @@ default:
   api:
     key: ZU799ZHnRwPEzBUfkG49VWbtmIlhhqWsY2kMMrQrdlardlaWDUP7E1PC4prdlaWDUP7E1PC4p
   authentication:
-    redirect: /login
+    redirect:
+      login: /login
     cookie:
       name: test-authentication
       secret: oObVaXmpokhImaLyCtg8lzL1PC4pBuDe9zSCH2Suvv2eSN2b4UUDtBcFlyq5JEHB

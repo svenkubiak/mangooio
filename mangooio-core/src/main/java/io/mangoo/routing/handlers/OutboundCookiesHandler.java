@@ -112,7 +112,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (authentication.isValid()) {
             Cookie authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
-            if (authCookie == null) {
+            if (authCookie == null || authentication.isUpdate()) {
                 if (authentication.isRememberMe()) {
                     authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
                 }

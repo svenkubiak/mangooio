@@ -20,6 +20,7 @@ public class Authentication {
     private boolean remember;
     private boolean loggedOut;
     private boolean invalid;
+    private boolean update;
     
     public static Authentication create() {
         return new Authentication();
@@ -197,7 +198,14 @@ public class Authentication {
     public void logout() {
         loggedOut = true;
     }
-    
+
+    /**
+     * Triggers a resend of the authentication cookie to the client
+     */
+    public void update() {
+        update = true;
+    }
+
     /**
      * Checks if the authentication class contains an authentication
      *
@@ -209,5 +217,9 @@ public class Authentication {
     
     public boolean isInvalid() {
         return invalid;
+    }
+
+    public boolean isUpdate() {
+        return update;
     }
 }
