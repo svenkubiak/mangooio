@@ -105,8 +105,8 @@ public class Session {
      * Clears the complete session
      */
     public void clear() {
-        changed = true;
         values = new HashMap<>();
+        invalid = true;
     }
 
     /**

@@ -100,6 +100,14 @@ public class Flash {
         return values.get(key);
     }
 
+    /**
+     * Remove a specific value from the flash
+     * @param key The key
+     */
+    public String remove(String key) {
+        return values.remove(key);
+    }
+
     public Map<String, String> getValues() {
         return values;
     }
@@ -108,14 +116,14 @@ public class Flash {
         return discard;
     }
     
-    public boolean isInvalid() {
-        return invalid;
-    }
-
     public Flash setDiscard(boolean discard) {
         this.discard = discard;
-        
+
         return this;
+    }
+
+    public boolean isInvalid() {
+        return invalid;
     }
 
     public boolean hasContent() {
