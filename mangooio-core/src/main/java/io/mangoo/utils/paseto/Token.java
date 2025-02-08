@@ -1,7 +1,7 @@
 package io.mangoo.utils.paseto;
 
 import io.mangoo.constants.NotNull;
-import org.apache.fury.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
