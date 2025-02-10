@@ -1,6 +1,7 @@
 default:
   application:
     name: arg{}
+    url: arg{http://localhost:4223}
     secret: Jb3MenqcohfVQNi3mYBBoYGk8JQ94u5cvEWz9rZMR1EED9t3l8eWwuF1jyXLDzvvZpMznuWeOlnfcNss0qlimeK8MA5McCCPeo2fhC
     publickey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKmFEH4KlpImZslFc+hxpaYfKcbzpoOcHQw2TryCN74ovPZTNPuIXc2upUXcOQWEuyqYQm8zKjZtbmiO1HTr/ChbCbX8Dz0uG6/2kmnLyv9hOC+g0jEG9F8mS1R8tY7Xh16fVVtAZSbLXIzhx1S/wPPi9D0ZVR85VBKntq5SUqIiBAxHxt5ze6CJu3yq6sxWKSU3EFvJmGdDjPIPadEkxUAX4AriQuL+GaWiyB66vK2u7Q5BnXF5XcGN3CwUrA2zgrnpA6EBPtcXMRH4Miu2Fa2dL4JzjbiCxY7BPdTC3Ie9pJZu2KPVihRLTRmIOc4QGkmLwj29/IaBGUxyHhMn6QIDAQAB
     language: en

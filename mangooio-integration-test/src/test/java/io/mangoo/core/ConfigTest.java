@@ -73,6 +73,17 @@ class ConfigTest {
     }
 
     @Test
+    void testArgDefaultValue() {
+        // given
+        System.clearProperty(Key.APPLICATION_CONFIG);
+        final Config config = Application.getInstance(Config.class);
+
+        // then
+        assertThat(config.isValid(), equalTo(true));
+        assertThat(config.getString("application.url"), equalTo("http://localhost:4223s"));
+    }
+
+    @Test
     void testFlashCookieName() {
         // given
         System.clearProperty(Key.APPLICATION_CONFIG);

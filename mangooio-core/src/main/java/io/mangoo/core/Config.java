@@ -136,6 +136,12 @@ public class Config {
             if (StringUtils.isNotBlank(propertyValue)) {
                 values.put(key, propertyValue);
             }
+        } else if (value.startsWith("arg{")) {
+            value = StringUtils.substringBetween(value, "arg{", "}");
+
+            if (StringUtils.isNotBlank(value)) {
+                values.put(key, value);
+            }
         } else if (value.startsWith(CRYPTEX_TAG)) {
             values.put(key, decrypt(key, value));
         } else {
