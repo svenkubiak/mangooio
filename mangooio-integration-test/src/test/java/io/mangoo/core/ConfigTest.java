@@ -80,7 +80,7 @@ class ConfigTest {
 
         // then
         assertThat(config.isValid(), equalTo(true));
-        assertThat(config.getString("application.url"), equalTo("http://localhost:4223s"));
+        assertThat(config.getString("application.url"), equalTo("http://localhost:4223"));
     }
 
     @Test
