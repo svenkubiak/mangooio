@@ -48,7 +48,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * [Google Guice](https://github.com/google/guice) – Dependency injection
 * [Classgraph](https://github.com/classgraph/classgraph) – Classpath scanning
 * [Caffeine](https://github.com/ben-manes/caffeine) – Caching
-* [Log4j 2](http://logging.apache.org/log4j/2.x/) – Logging
+* [Log4j](http://logging.apache.org/log4j/2.x/) – Logging
 * [Freemarker](http://freemarker.org/) – Template engine
 * [Jackson](https://github.com/FasterXML/jackson) – JSON handling
 * [JUnit](http://junit.org/junit4/), [Mockito](http://site.mockito.org/) – Testing
@@ -60,7 +60,7 @@ Here are some used libraries and their purpose in mangoo I/O.
 * 1.307 Sonar rules
 * 7.206 Lines of core code
 * 4.582 Commits
-* 577 Unit tests
+* 582 Unit tests
 * 9+ years development maturity
 * 223 cups of coffee (estimated)
 
