@@ -11,7 +11,6 @@ import io.mangoo.utils.RequestUtils;
 import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
@@ -111,7 +110,7 @@ public class OutboundCookiesHandler implements HttpHandler {
             
             exchange.setResponseCookie(cookie);
         } else if (authentication.isValid()) {
-            Cookie authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
+            var authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
             if (authCookie == null || authentication.isUpdate()) {
                 if (authentication.isRememberMe()) {
                     authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
