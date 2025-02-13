@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -28,8 +28,8 @@
 		<log4j.version>2.24.3</log4j.version>
 		<maven.version>4.0.0-rc-2</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>5.12.0-RC1</junit.version>
-		<junit.platform.version>1.12.0-RC1</junit.platform.version>
+		<junit.version>5.12.0-RC2</junit.version>
+		<junit.platform.version>1.12.0-RC2</junit.platform.version>
 		<enforcer.version>1.9.0</enforcer.version>
 		<jackson.version>2.18.2</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -518,7 +518,7 @@
 			<dependency>
 				<groupId>com.mchange</groupId>
 				<artifactId>c3p0</artifactId>
-				<version>0.10.2</version>
+				<version>0.11.0-pre1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.exparity</groupId>
