@@ -91,7 +91,7 @@ public class CacheImpl implements Cache {
     public Map<String, Object> getAll(String... keys) {
         Objects.requireNonNull(keys, NotNull.KEY);
         
-        Map<String, Object> values = new HashMap<>(keys.length + 1);
+        Map<String, Object> values = HashMap.newHashMap(keys.length + 1);
         for (String key : keys) {
             values.put(key, get(key));
         }
