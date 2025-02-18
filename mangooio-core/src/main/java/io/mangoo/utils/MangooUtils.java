@@ -2,9 +2,11 @@ package io.mangoo.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Resources;
+import com.google.common.reflect.ClassPath;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.NotNull;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -17,10 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
@@ -183,4 +182,31 @@ public final class MangooUtils {
         return content;
     }
 
+    /**
+     * Checks the translations folder and retrieves all configured languages / messages bundles
+     *
+     * @return A set of configure messages bundles
+     */
+    public static Set<String> getLanguages() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Set<String> languages = new HashSet<>();
+
+        try {
+            ClassPath classPath = ClassPath.from(classLoader);
+            for (ClassPath.ResourceInfo resourceInfo : classPath.getResources()) {
+                String resourceName = resourceInfo.getResourceName();
+                if (resourceName.startsWith("translations/") && resourceName.endsWith(".properties")) {
+                    String fileName = resourceName.replace("translations/", "");
+                    String langCode = StringUtils.substringBetween(fileName, "messages_", ".properties");
+                    if (StringUtils.isNotBlank(langCode)) {
+                        languages.add(langCode);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return languages;
+    }
 }

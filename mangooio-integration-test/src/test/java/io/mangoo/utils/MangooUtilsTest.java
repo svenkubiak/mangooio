@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -73,6 +74,20 @@ class MangooUtilsTest {
         //then
         assertThat(string, not(nullValue()));
         assertThat(string.length(), equalTo(32));
+    }
+
+    @Test
+    void testGetLanguages() {
+        //given
+        Set<String> languages = MangooUtils.getLanguages();
+
+        //then
+        assertThat(languages, not(nullValue()));
+        assertThat(languages.size(), equalTo(3));
+        assertThat(languages.contains("de"), equalTo(true));
+        assertThat(languages.contains("en"), equalTo(true));
+        assertThat(languages.contains("fr"), equalTo(true));
+        assertThat(languages.contains("es"), equalTo(false));
     }
     
     @Test
