@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Default {
+    public static final String LANGUAGE = "en";
     public static final String ADMIN_COOKIE_NAME = "mangooio-admin";
     public static final Boolean APPLICATION_ADMIN_ENABLE = Boolean.FALSE;
     public static final String APPLICATION_CONTROLLER = "controllers.";

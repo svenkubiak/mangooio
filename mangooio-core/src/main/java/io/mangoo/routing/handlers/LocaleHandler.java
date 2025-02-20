@@ -1,5 +1,6 @@
 package io.mangoo.routing.handlers;
 
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -48,6 +49,10 @@ public class LocaleHandler implements HttpHandler {
 
         if (locale == null) {
             locale = Locale.forLanguageTag(config.getApplicationLanguage().toLowerCase());
+        }
+
+        if (locale == null) {
+            locale = Locale.forLanguageTag(Default.LANGUAGE);
         }
 
         Attachment attachment = exchange.getAttachment(RequestUtils.getAttachmentKey());
