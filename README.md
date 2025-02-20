@@ -70,10 +70,13 @@ Here are some used libraries and their purpose in mangoo I/O.
 [https://github.com/svenkubiak/mangooio](https://github.com/svenkubiak/mangooio)
 
 **Documentation**   
-[https://github.com/svenkubiak/mangooio/wiki](https://github.com/svenkubiak/mangooio/wiki)  
+[https://svenkubiak.github.io/mangooio](https://svenkubiak.github.io/mangooio)  
 
 **Changelog**   
-[https://github.com/svenkubiak/mangooio/wiki/Changelog](https://github.com/svenkubiak/mangooio/wiki/Changelog)  
+[https://svenkubiak.github.io/mangooio/changelog/](https://svenkubiak.github.io/mangooio/changelog/)  
+
+**Migrations**   
+[https://svenkubiak.github.io/mangooio/migrations/](https://svenkubiak.github.io/mangooio/migrations/)
 
 **Support**   
 [https://github.com/svenkubiak/mangooio/issues](https://github.com/svenkubiak/mangooio/issues)  
