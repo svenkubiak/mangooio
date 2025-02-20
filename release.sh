@@ -18,6 +18,7 @@ else
     mvn release:update-versions
     git commit -am "Updated version after release"
     git push origin main
+    mkdocs gh-deploy
   fi
 fi
 
