@@ -1,0 +1,64 @@
+site_name: mangoo I/O docs
+site_author: 'Sven Kubiak'
+site_url: https://svenkubiak.github.io/mangooio/
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+    - search.share
+    - search.suggest
+copyright: |
+  &copy; Sven Kubiak
+nav:
+  - Home: index.md
+  - Changelog: changelog.md
+  - Migrations: migrations.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Routing: routing.md
+  - Bootstrap: bootstrap.md
+  - Controllers: controllers.md
+  - Dependency Injection: dependency-injection.md
+  - Templating: templating.md
+  - Working with JSON: working-with-json.md
+  - Persistence: persistence.md
+  - CORS: cors.md
+  - Authentication: authentication.md
+  - Scheduler: scheduler.md
+  - Async: async.md
+  - Filters: filters.md
+  - Forms: forms.md
+  - Sessions: sessions.md
+  - Flash: flash.md
+  - Internationalization: internationalization.md
+  - Caching: caching.md
+  - Emails: emails.md
+  - Asset Management: asset-management.md
+  - Logging: logging.md
+  - Testing: testing.md
+  - Debugging: debugging.md
+  - Administration: administration.md
+  - Operating: operating.md
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
