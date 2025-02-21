@@ -18,6 +18,7 @@ else
     mvn release:update-versions
     git commit -am "Updated version after release"
     git push origin main
+    sed -i -E "s/(site_name:.*\()[0-9]+\.[0-9]+\.[0-9]+(\))/\1$VERSION\2/" mkdocs.yml
     mkdocs gh-deploy
   fi
 fi

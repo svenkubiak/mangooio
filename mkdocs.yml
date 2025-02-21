@@ -1,6 +1,8 @@
-site_name: mangoo I/O docs
+site_name: "mangoo I/O (9.3.0-Beta1)"
 site_author: 'Sven Kubiak'
 site_url: https://svenkubiak.github.io/mangooio/
+extra_javascript:
+  - js/scripts.js
 theme:
   name: material
   language: en
@@ -59,6 +61,11 @@ nav:
   - Debugging: debugging.md
   - Administration: administration.md
   - Operating: operating.md
+  - Archived:
+      - Changelog: changelog-archived.md
+      - Migrations: migrations-archived.md
 markdown_extensions:
+  - admonition
+  - tables
   - pymdownx.highlight
   - pymdownx.superfences
