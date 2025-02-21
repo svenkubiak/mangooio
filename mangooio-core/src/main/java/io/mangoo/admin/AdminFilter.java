@@ -33,7 +33,7 @@ public class AdminFilter implements PerRequestFilter {
             return response;
         }
 
-        var cookie = request.getCookie(Default.ADMIN_COOKIE_NAME);
+        var cookie = request.getCookie(Default.APPLICATION_ADMIN_COOKIE_NAME);
         if (cookie != null) {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {

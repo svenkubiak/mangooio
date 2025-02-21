@@ -175,7 +175,7 @@ public class AdminController {
     }
     
     public Response logout() {
-        var cookie = new CookieImpl(Default.ADMIN_COOKIE_NAME)
+        var cookie = new CookieImpl(Default.APPLICATION_ADMIN_COOKIE_NAME)
                 .setValue(Strings.EMPTY)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())

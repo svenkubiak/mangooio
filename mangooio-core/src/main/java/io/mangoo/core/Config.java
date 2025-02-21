@@ -341,7 +341,7 @@ public class Config {
      * @return application.name from config.yaml
      */
     public String getApplicationName() {
-        return getString(Key.APPLICATION_NAME);
+        return getString(Key.APPLICATION_NAME, Default.APPLICATION_NAME);
     }
 
     /**
@@ -425,14 +425,14 @@ public class Config {
      * @return application.admin.username from config.yaml or null if undefined
      */
     public String getApplicationAdminUsername() {
-        return getString(Key.APPLICATION_ADMIN_USERNAME);
+        return getString(Key.APPLICATION_ADMIN_USERNAME, null);
     }
 
     /**
      * @return application.admin.password from config.yaml or null if undefined
      */
     public String getApplicationAdminPassword() {
-        return getString(Key.APPLICATION_ADMIN_PASSWORD);
+        return getString(Key.APPLICATION_ADMIN_PASSWORD, null);
     }
 
     /**
@@ -690,7 +690,7 @@ public class Config {
      * @param prefix The prefix to use
      */
     public Boolean isMongoAuth(String prefix) {
-        return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Boolean.FALSE);
+        return getBoolean(prefix + Key.PERSISTENCE_MONGO_AUTH, Default.PERSISTENCE_MONGO_AUTH);
     }
 
     /**
@@ -706,14 +706,14 @@ public class Config {
      * @param prefix The prefix to use
      */
     public Boolean isMongoEmbedded(String prefix) {
-        return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Boolean.FALSE);
+        return getBoolean(prefix + Key.PERSISTENCE_MONGO_EMBEDDED, Default.PERSISTENCE_MONGO_EMBEDDED);
     }
 
     /**
      * @return session.cookie.expires or default value if undefined
      */
     public Boolean isSessionCookieExpires() {
-        return getBoolean(Key.SESSION_COOKIE_EXPIRES, Boolean.FALSE);
+        return getBoolean(Key.SESSION_COOKIE_EXPIRES, Default.SESSION_COOKIE_EXPIRES);
     }
 
     /**
@@ -727,7 +727,7 @@ public class Config {
      * @return authentication.cookie.expires or default value if undefined
      */
     public long getAuthenticationCookieTokenExpires() {
-        return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, 60L);
+        return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES);
     }
 
     /**
@@ -769,7 +769,7 @@ public class Config {
      * @return token.secret or null if undefined
      */
     public String getTokenSecret() {
-        return getString(Key.PASETO_SECRET, null);
+        return getString(Key.APPLICATION_PASETO_SECRET, null);
     }
 
     public boolean isValid() {
