@@ -10,13 +10,13 @@
         <meta name="author" content="Sven Kubiak">
       
       
-        <link rel="canonical" href="https://svenkubiak.github.io/mangooio/9.3.0-Beta1/persistence/">
+        <link rel="canonical" href="https://svenkubiak.github.io/mangooio/sse/">
       
       
-        <link rel="prev" href="../working-with-json/">
+        <link rel="prev" href="../authentication/">
       
       
-        <link rel="next" href="../cors/">
+        <link rel="next" href="../scheduler/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Persistence - mangoo I/O</title>
+        <title>Server-Sent Events - mangoo I/O</title>
       
     
     
@@ -75,11 +75,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#persistence" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -128,7 +123,7 @@ You're not viewing the latest version.
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Persistence
+              Server-Sent Events
             
           </span>
         </div>
@@ -506,31 +501,10 @@ You're not viewing the latest version.
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Persistence
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -540,62 +514,6 @@ You're not viewing the latest version.
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#entity-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Entity Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#datastore" class="md-nav__link">
-    <span class="md-ellipsis">
-      Datastore
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multiple-connections-and-users" class="md-nav__link">
-    <span class="md-ellipsis">
-      Multiple Connections and Users
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -646,10 +564,17 @@ You're not viewing the latest version.
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../sse/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -659,6 +584,7 @@ You're not viewing the latest version.
   
 
       </a>
+      
     </li>
   
 
@@ -1103,52 +1029,6 @@ You're not viewing the latest version.
   
   
   
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#entity-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Entity Configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#datastore" class="md-nav__link">
-    <span class="md-ellipsis">
-      Datastore
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multiple-connections-and-users" class="md-nav__link">
-    <span class="md-ellipsis">
-      Multiple Connections and Users
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -1167,82 +1047,9 @@ You're not viewing the latest version.
   
 
 
-<h1 id="persistence">Persistence</h1>
-<p>Mangoo I/O provides a ready-to-use integration with <a href="https://www.mongodb.com/">MongoDB</a> using the <a href="https://www.mongodb.com/docs/drivers/java/sync/current/quick-start/">Java Sync Driver</a>.</p>
-<h2 id="configuration">Configuration</h2>
-<p>To set up a MongoDB connection, use the following configuration values:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">persistence</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">mongo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
-<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">27017</span>
-<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myUsername</span>
-<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myPassword</span>
-<span class="w">    </span><span class="nt">dbname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myDBname</span><span class="w">  </span><span class="c1"># Database to connect to</span>
-<span class="w">    </span><span class="nt">authdb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myAuthDB</span><span class="w">  </span><span class="c1"># Authentication database</span>
-<span class="w">    </span><span class="nt">auth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">        </span><span class="c1"># Enable authentication (true/false)</span>
-<span class="w">    </span><span class="nt">embedded</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">    </span><span class="c1"># Start in-memory instance</span>
-<span class="w">    </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">models</span><span class="w">   </span><span class="c1"># Package containing Morphia models</span>
-</code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Setting <code>mongo.embedded = true</code> starts an embedded MongoDB instance for local development and testing. Ensure this is set to <code>false</code> in production environments.</p>
-</div>
-<h2 id="entity-configuration">Entity Configuration</h2>
-<p>To map a class to the persistence datastore, add the <code>@Collection</code> annotation to your POJO:</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@Collection</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;people&quot;</span><span class="p">)</span>
-<span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">Entity</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="c1">// Class implementation</span>
-<span class="p">}</span>
-</code></pre></div>
-<p>Extending <code>Entity</code> is optional but provides methods to retrieve the entity ID.</p>
-<h2 id="datastore">Datastore</h2>
-<p>Once configured and models are mapped, the ready-to-use datastore can be injected:</p>
-<div class="highlight"><pre><span></span><code><span class="kd">private</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Datastore</span><span class="w"> </span><span class="n">datastore</span><span class="p">;</span>
+  <h1>Server-Sent Events</h1>
 
-<span class="nd">@Inject</span>
-<span class="kd">public</span><span class="w"> </span><span class="nf">DataService</span><span class="p">(</span><span class="n">Datastore</span><span class="w"> </span><span class="n">datastore</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">datastore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">datastore</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;datastore cannot be null&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-<p>The datastore provides essential methods for working with entities:</p>
-<div class="highlight"><pre><span></span><code><span class="n">findById</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
-<span class="n">findAll</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
-<span class="n">countAll</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
-<span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">object</span><span class="p">);</span>
-<span class="n">delete</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="n">object</span><span class="p">);</span>
-<span class="n">deleteAll</span><span class="p">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">clazz</span><span class="p">);</span>
-<span class="n">dropDatabase</span><span class="p">();</span>
-</code></pre></div>
-<p>For specific queries, use the fluent MongoDB API with the <code>query()</code> method:</p>
-<div class="highlight"><pre><span></span><code><span class="n">List</span><span class="o">&lt;</span><span class="n">Booking</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bookings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">datastore</span>
-<span class="w">    </span><span class="p">.</span><span class="na">query</span><span class="p">(</span><span class="n">Booking</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="na">find</span><span class="p">(</span><span class="n">and</span><span class="p">(</span><span class="n">gte</span><span class="p">(</span><span class="s">&quot;booked&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">fromDate</span><span class="p">),</span><span class="w"> </span><span class="n">lte</span><span class="p">(</span><span class="s">&quot;booked&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">toDate</span><span class="p">)))</span>
-<span class="w">    </span><span class="p">.</span><span class="na">into</span><span class="p">(</span><span class="n">bookings</span><span class="p">);</span>
-</code></pre></div>
-<p>Using <code>query()</code> grants access to all MongoDB Java client methods.</p>
-<h2 id="multiple-connections-and-users">Multiple Connections and Users</h2>
-<p>For multiple connections with different users, adjust how you retrieve the datastore:</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@Inject</span>
-<span class="kd">public</span><span class="w"> </span><span class="nf">DataService</span><span class="p">(</span><span class="n">DatastoreProvider</span><span class="w"> </span><span class="n">datastoreProvider</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Objects</span><span class="p">.</span><span class="na">requireNonNull</span><span class="p">(</span><span class="n">datastoreProvider</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;datastoreProvider cannot be null&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">datastore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">datastoreProvider</span><span class="p">.</span><span class="na">getDatastore</span><span class="p">(</span><span class="s">&quot;readonly&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-<p>The <code>"readonly"</code> string corresponds to a prefix set in the configuration:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">persistence</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">mongo</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">readonly</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
-<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">27017</span>
-<span class="w">      </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myUsername</span>
-<span class="w">      </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myPassword</span>
-<span class="w">      </span><span class="nt">dbname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myDBname</span><span class="w">  </span><span class="c1"># Database to connect to</span>
-<span class="w">      </span><span class="nt">authdb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myAuthDB</span><span class="w">  </span><span class="c1"># Authentication database</span>
-<span class="w">      </span><span class="nt">auth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">        </span><span class="c1"># Enable authentication (true/false)</span>
-<span class="w">      </span><span class="nt">embedded</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">    </span><span class="c1"># Start in-memory instance</span>
-<span class="w">      </span><span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">models</span><span class="w">   </span><span class="c1"># Package containing Morphia models</span>
-</code></pre></div>
-<p>This configuration enables separate connections for different user roles.</p>
+
 
 
 

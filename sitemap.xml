@@ -2,118 +2,134 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://svenkubiak.github.io/mangooio/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/administration/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/asset-management/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/async/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/authentication/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/bootstrap/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/caching/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
+    </url>
+    <url>
+         <loc>https://svenkubiak.github.io/mangooio/changelog-archived/</loc>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/changelog/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/configuration/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/controllers/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/cors/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/debugging/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/dependency-injection/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/emails/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/filters/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/flash/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/forms/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/getting-started/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/internationalization/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/logging/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
+    </url>
+    <url>
+         <loc>https://svenkubiak.github.io/mangooio/migrations-archived/</loc>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/migrations/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/operating/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/persistence/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/routing/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/scheduler/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/sessions/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
+    </url>
+    <url>
+         <loc>https://svenkubiak.github.io/mangooio/sse/</loc>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/templating/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/testing/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
+    </url>
+    <url>
+         <loc>https://svenkubiak.github.io/mangooio/utils/</loc>
+         <lastmod>2025-02-23</lastmod>
     </url>
     <url>
          <loc>https://svenkubiak.github.io/mangooio/working-with-json/</loc>
-         <lastmod>2025-02-20</lastmod>
+         <lastmod>2025-02-23</lastmod>
     </url>
 </urlset>
