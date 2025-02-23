@@ -1,22 +1,27 @@
-One of the main pieces of a mangoo I/O application is the mapping of request URLs to controller classes and their methods. Whether you are rendering a template, sending JSON or just a HTTP 200 OK, every request has to be mapped. This mapping is done in the Bootstra.java class, which you’ll find in the /src/main/java/app package of your application.
+# Routing
 
-Here is an example of how a routing might look like.
+One of the core components of a Mangoo I/O application is mapping request URLs to controller classes and their methods. Whether rendering a template, sending JSON, or returning an HTTP 200 OK, every request must be mapped. This mapping is handled in the `Bootstrap.java` class, located in the `/src/main/java/app` package of your application.
+
+## Routing Example
+
+Below is an example of how routing is defined:
 
 ```java
 @Override
 public void initializeRoutes() {
-    // ApplicationController
     Bind.controller(ApplicationController.class).withRoutes(
-    	On.get().to("/").respondeWith("index")
-	);
+        On.get().to("/").respondWith("index")
+    );
 }
 ```
 
-This example maps a GET request to “/” to the index method of the ApplicationController class. Thus, when you open your browser and open the “/” of your application the index method in the ApplicationController class will be called.
+This example maps a `GET` request to `/` to the `index` method of the `ApplicationController` class. When a user accesses `/` in a browser, the `index` method in `ApplicationController` is called.
 
-You can use the following request methods to define your mappings
+## Supported Request Methods
 
-```java
+You can use the following request methods to define your mappings:
+
+```
 GET
 POST
 OPTIONS
@@ -26,54 +31,67 @@ DELETE
 PATCH
 ```
 
-The underlying Undertow server handles all request by using non-blocking I/O. However, there might be situations where you need a long running request. To allow blocking in a request, simply at the blocking attribute to your request mapping.
+## Handling Long-Running Requests
+
+Mangoo I/O uses Undertow for non-blocking I/O. However, some situations may require a long-running request. To allow blocking in a request, add the `blocking` attribute to your request mapping:
 
 ```java
 @Override
 public void initializeRoutes() {
-    // ApplicationController
     Bind.controller(ApplicationController.class).withRoutes(
-    	On.get().to("/").respondeWith("index").withNonBlocking()
-	);
+        On.get().to("/").respondWith("index").withNonBlocking()
+    );
 }
 ```
 
-## Static files
+## Authentication
 
-If you want to serve static files \(e.g. assets\) you can map those files from your routes.yaml. You can map either a specific file or a complete folder and all its sub-content.
+Authentication can be applied at both the controller and method levels:
+
+```java
+@Override
+public void initializeRoutes() {
+    Bind.controller(ApplicationController.class).withAuthentication().withRoutes(
+        On.get().to("/").respondWith("index")
+    );
+
+    Bind.controller(DashboardController.class).withRoutes(
+        On.get().to("/").respondWith("index").withAuthentication(),
+        On.get().to("/login").respondWith("login")
+    );
+}
+```
+
+## Serving Static Files
+
+To serve static files (e.g., assets), map them in your `routes.yaml`. You can specify individual files or entire directories:
 
 ```java
 Bind.pathResource().to("/assets/");
 Bind.fileResource().to("/robots.txt");
 ```
 
-The file or path mapping is bound to the src/main/resources/files folder in your application. The above mappings would server the following files accordingly.
+The mappings correspond to files in the `src/main/resources/files` folder:
 
 ```properties
 /src/main/resources/files/robots.txt
 /src/main/resources/files/assets/
 ```
 
-## Server Sent Events and WebSocket
+## Server-Sent Events (SSE)
 
-Mappings for Server-Sent Events and WebSockets are also defined in the routes.yaml. As the Server-Sent Event is a uni-directional protocol, it does not have a controller it needs mapping to. You would map a Server-Sent Event as follows
+Mappings for Server-Sent Events (SSE) are defined in the `Bootstrap.java` class. Since SSE is a unidirectional protocol, it does not require a controller:
 
 ```java
 Bind.serverSentEvent().to("/mysse");
 ```
 
-As a WebSocket comes with a pre-defined interface, you just need to add you implementing class
-
-```java
-Bind.webSocket().onController(WebSocketController.class).to("/websocket");
-```
-
-There might be situations where your Server-Sent Events and/or WebSockets are only available for authenticated users. If this is the case, you can simply add the authentication attribute to your mappings.
+If authentication is required for SSE or WebSockets, simply add the authentication attribute:
 
 ```java
 Bind.serverSentEvent().to("/sseauth").withAuthentication();
 ```
 
-This will require an authentication cookie in the request to the Server-Sent Event or WebSocket, which is based on the [build-in authentication mechanism](https://docs.mangoo.io/custom-authentication.html). If the request does not have such a cookie, the Server-Sent Event or WebSocket connection will be rejected.
+This requires an authentication cookie in the request. If the cookie is missing, the SSE connection will be rejected. More details on authentication can be found in the [custom authentication guide](https://docs.mangoo.io/custom-authentication.html).
 
-Check the page for [Server-Sent Events ](https://docs.mangoo.io/server-sent-events.html) and [WebSocket](https://docs.mangoo.io/websockets.html) on how to handled the SSE and WSS requests.
+For further details, refer to the [Server-Sent Events documentation](https://docs.mangoo.io/server-sent-events.html).

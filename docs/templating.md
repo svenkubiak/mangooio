@@ -10,8 +10,6 @@ i18n
 Route
 Location
 Prettytime
-Authenticity
-AuthenticityForm
 ```
 
 Please note, that these variable name can not be passed as such a variable from your controller would overwrite the out-of-the-box ones. If you assign such a variable, the template will not be rendered and result in an exception.

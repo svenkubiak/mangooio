@@ -37,6 +37,8 @@ public class ApplicationController {
         Person person = new Person("foo", "bar", 42); //NOSONAR
         Application.getInstance(Datastore.class).save(person);
         return Response.redirect("/");
+
+        return Response.notModified().
     }
     
     @SuppressWarnings("null")

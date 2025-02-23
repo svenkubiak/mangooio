@@ -1,4 +1,6 @@
-Every controller method, wether it renders a template, sends JSON or just returns a HTTP Status, must return a Response object. This is handled by using the Response class of mangoo I/O. Here is an example of how a controller method may look like.
+# Controllers
+
+Every controller method, whether it renders a template, sends JSON, or just returns an HTTP status, must return a `Response` object. This is handled using the `Response` class of **mangoo I/O**. Below is an example of a controller method:
 
 ```java
 package controllers;
@@ -7,87 +9,121 @@ import io.mangoo.routing.Response;
 
 public class ApplicationController {
     public Response index() {
-        String foo = "Hello world!";
-        return Response.withOk().andContent("foo", foo);
+        return Response.ok();
     }
 }
 ```
 
-This controller method would lookup a method named corresponding file, which is by convention expected to be in the following path
+The example above returns a blank HTML page without any rendering.
+
+## Predefined HTML Templates
+Mangoo I/O provides predefined HTML templates for standard responses:
+
+```java
+package controllers;
+
+import io.mangoo.routing.Response;
+
+public class ApplicationController {
+    public Response index() {
+        return Response.ok().bodyDefault();
+    }
+}
+```
+
+To trigger rendering of a **Freemarker template**, use `render()`:
+
+```java
+package controllers;
+
+import io.mangoo.routing.Response;
+
+public class ApplicationController {
+    public Response index() {
+        return Response.ok().render();
+    }
+
+    public Response foo() {
+        return Response.ok().render("bar", "value");
+    }
+}
+```
+
+By convention, the corresponding Freemarker template is expected to be in:
 
 ```
 /src/main/resources/templates/CONTROLLER_NAME/METHOD_NAME.ftl
 ```
 
-or more concrete
+For example:
 
 ```
 /src/main/resources/templates/ApplicationController/index.ftl
 ```
 
-With the previously mapped request in the Bootstrap.java file, a request to “/” will render the index.ftl template and send the template along with a HTTP Status OK to the browser.
+!!! note
+    Mapping of controller methods to templates is **case-sensitive**.
 
-## Request and query parameters
+With the previously mapped request in the `Bootstrap.java` file, a request to `/` will render the `index.ftl` template and send it along with an HTTP **200 OK** response.
 
+---
 
-mangoo I/O makes it very easy to handle request or query parameter. Lets imagine you have the following mapping in your Bootstrap class.
+## Request and Query Parameters
+
+Mangoo I/O makes handling request or query parameters straightforward. Assume the following mapping in your `Bootstrap` class:
 
 ```java
 Bind.controller(MyController.class).withRoutes(
-	On.get().to("/foo/{id}").respondeWith("myMethod")
+    On.get().to("/foo/{id}").respondWith("myMethod")
 );
 ```
 
-Note the {id} in the URL, that defines that this part of the URL is a request parameter.
+Here, `{id}` in the URL defines a **request parameter**.
 
-Now lets imagine you execute the following request
+For example, given the request:
 
 ```
 /user/1?foo=bar
 ```
 
-For this example we are also adding a query parameter.
-
-To access both the request and query parameter, you can simply add the names of the parameters along with the required data type to your controller method
+Both **request** and **query** parameters can be accessed in the controller method:
 
 ```java
 public Response index(int id, String foo) {
-    //Do something useful with id and foo
-    return Response.withOk();
+    // Process id and foo
+    return Response.ok().render();
 }
 ```
 
-mangoo I/O will automatically convert the passed parameters into your required data types based on their names.
+Mangoo I/O automatically converts passed parameters into the required data types.
 
-The following method parameters are available in mangoo I/O controller methods by default and can be used as a request or query parameter.
+### **Supported Parameter Types**
+The following parameter types are supported by default:
 
 ```java
 String
-Integer/int
-Float/float
-Double/double
-Long/long
+Integer / int
+Float / float
+Double / double
+Long / long
 LocalDate
 LocalDateTime
+Optional
 ```
 
-Double and Float values are always passed with “.” delimiter, either if you pass the query or request parameter with “,” delimiter.
+- **Double and Float values** must use a `.` delimiter, even if the query parameter is passed with `,`.
+- **All parameters are case-sensitive**. For example, if a method parameter is `localDateTime`, it must be mapped exactly in Bootstrap URL mapping, like so:
 
-All parameters are parsed case-sensitive, which means, that if you have a method parameter “localDateTime” you have to map the request parameter in your routes.yaml accordingly, e.g. /foo/{localDateTime}.
+  ```
+  /foo/{localDateTime}
+  ```
 
-LocalDate is parsed as
+- **Date Formats**
+    - `LocalDate`: `yyyy-MM-dd` (`ISO_LOCAL_DATE`)
+    - `LocalDateTime`: `yyyy-MM-ddThh:mm:ss` (`ISO_LOCAL_DATE_TIME`)
 
-```
-ISO_LOCAL_DATE "yyyy-MM-dd"
-```
-
-and LocalDateTime is parsed as
-
-```
-ISO_LOCAL_DATE_TIME "yyyy-MM-ddThh:mm:ss"
-```
-
-The following classes can also be used directly in controller methods, but **can not** be used as a request or query parameter
+### **Unsupported Parameter Types**
+The following classes **cannot** be used as request or query parameters but can still be used in controller methods:
 
 ```java
 Request
@@ -98,114 +134,88 @@ Authentication
 Messages
 ```
 
-It will be explained how this classes can be used in the next chapters.
+These will be explained in the next chapters.
 
-## Request chain
+---
 
+## Custom Handlers
 
-The heart of mangoo I/O \(and probably of all web frameworks\) is the handling of requests. As mangoo I/O is based on Undertow for serving request, this is done by so called handlers. mangoo I/O has a number of handlers which all perform a specific task when a request is served. The handlers are chained to each other from the first receive of a request until sending out the response.
-
-A DispatcherHandler is created at framework startup for each mapped controller from the routes.yaml file, waiting to receive a request. From the DispatcherHandler the request chain is as follows:
-
-```java
-LimitHandler
-LocaleHandler
-InboundCookiesHandler
-AuthenticationHandler
-AuthorizationHandler
-FormHandler
-RequestHandler
-OutboundCookiesHandler
-ResponseHandler
-```
-
-By using Google Guice features you have the option to customized each handler and change the request chain for your own needs.
-
-To overwrite a handler, first bind the handler to you custom handler in your Modules class.
+Using **Google Guice**, you can customize request handlers as needed. To override a handler, first bind your custom handler in your `Modules` class:
 
 ```java
 bind(LocaleHandler.class).to(MyLocaleHandler.class);
 ```
 
-In your custom handler you need to extend the handler class and overwrite the methods from the default handlers as you want.
+Then, extend the default handler class:
 
 ```java
 public class MyLocaleHandler extends LocaleHandler {
 
     @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
-        //do something different
+        // Custom handling logic
     }
 
     @Override
     protected void nextHandler(HttpServerExchange exchange) throws Exception {
-        //call another handler than the default one
+        // Call a different handler instead of the default one
     }
 }
 ```
 
-## Request validation
+---
 
+## Request Validation
 
-As an additional feature on the request object, you can validate incoming parameters.
-
-```java
-public Response index(Request request) {
-  request.expectValue("bar");
-  request.expectEmail("foo");
-
-  if (request.isValid()) {
-     //Handle request
-  } else {
-     //Do nothing
-  }
-  ...
-}
-```
-
-With this validation you can check an incoming request and return specific error messages, for e.g. as JSON.
+Mangoo I/O allows **validation of incoming request parameters**.
 
 ```java
 public Response index(Request request) {
-  request.expectValue("bar");
-  request.expectEmail("foo");
+    request.expectValue("bar");
+    request.expectEmail("foo");
 
-  if (request.isValid()) {
-     //Handle request
-  } else {
-     return Response.withBadRequest()
-        .andJSONBody(request.getErrors());
-  }
-  ...
+    if (request.isValid()) {
+        // Process request
+    } else {
+        // Handle invalid request
+    }
 }
 ```
 
-## Request values
-
-
-The request class is a special object which can be passed into a controller method. It enables you access to header and URL values a long with additional information about the request. To gain access to the request object, simply pass it to your controller method.
+### **Returning Validation Errors as JSON**
+You can return validation errors as a JSON response:
 
 ```java
 public Response index(Request request) {
-    //Do something useful with the request
-    return Response.withOk();
+    request.expectValue("bar");
+    request.expectEmail("foo");
+
+    if (!request.isValid()) {
+        return Response.badRequest().bodyJson(request.getErrors());
+    }
+
+    return Response.ok();
 }
 ```
 
-The request class is also useful when you have multiple query or request parameter which you don’t all want to name in your controller method header. To access a query or request parameter simply call the getter for the parameter.
+---
+
+## Request Object and Values
+
+The `Request` object provides access to headers, URL values, and additional request data. It can be passed directly into a controller method:
+
+```java
+public Response index(Request request) {
+    // Process request
+    return Response.ok();
+}
+```
+
+When dealing with multiple query or request parameters, instead of listing them explicitly, you can access them using:
 
 ```java
 public Response index(Request request) {
     String foo = request.getParameter("foo");
-    return Response.withOk();
+    return Response.ok();
 }
 ```
-
-## Response headers
-
-mangoo I/O ships with some predifined headers that are send with the response to the client. For example:
-```
-X-ContentType = nosniff
-X-Frame-Options = DENY
-```
-These headers can customized through your config.props file using the appropriate config keys. Check the default values on how to set custom headers.

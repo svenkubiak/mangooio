@@ -46,6 +46,7 @@ nav:
   - Persistence: persistence.md
   - CORS: cors.md
   - Authentication: authentication.md
+  - Server-Sent Events: sse.md
   - Scheduler: scheduler.md
   - Async: async.md
   - Filters: filters.md
