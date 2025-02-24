@@ -31,12 +31,24 @@ theme:
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
+    - content.footer
     - search.highlight
     - search.share
     - search.suggest
 plugins:
-  - search
-  - git-revision-date-localized
+- search
+- git-revision-date-localized:
+    enable_creation_date: true
+    type: timeago
+    locale: en
+    timezone: UTC
+    fallback_to_build_date: true
+    exclude:
+      - index.md
+      - changelog.md
+      - migrations.md
+      - changelog-archived.md
+      - migrations-archived.md
 copyright: |
   &copy; Sven Kubiak
 nav:
@@ -83,3 +95,9 @@ extra:
       link: https://social.kubiak.me/@sven
   version:
     provider: mike
+  git_revision_date:
+    enabled: true
+    type: date
+  git_creation_date:
+    enabled: true
+    type: date
