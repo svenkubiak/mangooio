@@ -1,32 +1,41 @@
-mangoo I/O ships with a pre-configured application Cache based on [Caffeine](https://github.com/ben-manes/caffeine). To use the cache in your application, simply inject the cache class.
+# Cache
+
+mangoo I/O comes with a pre-configured application cache powered by [Caffeine](https://github.com/ben-manes/caffeine). To utilize caching in your application, inject the `Cache` class:
 
 ```java
 @Inject
 private Cache cache;
 ```
 
-The cache offers some convenient functions for adding and removing values from the cache.
+## Cache Operations
 
-To use the cache, simply add or remove an entry by a specific key.
+The `Cache` class provides essential functions for managing cached values, including adding, retrieving, and removing entries.
 
+### Adding a Value to the Cache
 ```java
-cache.put("foo", "bar);
+cache.put("foo", "bar");
 ```
 
+### Retrieving a Cached Value
 ```java
 String value = cache.get("foo");
 ```
 
+### Removing a Value from the Cache
 ```java
 cache.remove("foo");
 ```
 
-The cache has a expiration of of 30 days after access. So, if you neither read or write a specific value of the cache it will be evicted after 30 days.
+## Cache Expiration
 
-Besides population the cache as seen above, you can also use a get call incorporated by a fallback method
+Cached entries expire **30 days after the last access**. If a value is neither read nor updated within this period, it will be automatically evicted.
+
+## Using a Fallback Method
+
+In addition to standard cache operations, you can use a **get** call with a fallback method:
 
 ```java
 String value = cache.get("foo", v -> getValue());
 ```
 
-This call will try to lookup the value from key "foo" and if not found will call the method getValue(), return that value and populate the cache with the returned value.
+If the key `"foo"` exists in the cache, its value is returned. If not, the fallback method `getValue()` is invoked, its return value is cached under the key `"foo"`, and then returned.

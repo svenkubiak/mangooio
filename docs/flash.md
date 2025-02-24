@@ -1,6 +1,10 @@
-Specially when working with forms it is useful to pass certain informations \(e.g. error- or success messages\) to the next request. To do this in a stateless environment, mangoo I/O uses the Flash class. This is basically the same mechanism as a session, but all informations are stored in a special flash cookie which is disposed once the request is finished.
+# Flash
 
-Just pass the Flash class to your controller as follows:
+When working with forms, it is often necessary to pass information such as error or success messages to the next request. In a stateless environment, mangoo I/O provides the `Flash` class for this purpose. The `Flash` class functions similarly to a session but stores data in a temporary flash cookie, which is automatically discarded after the request is completed.
+
+## Using Flash Messages in Controllers
+
+To use flash messages, pass the `Flash` class to your controller method:
 
 ```java
 package controllers;
@@ -10,9 +14,9 @@ import io.mangoo.routing.bindings.Flash;
 
 public class FlashController {
     public Response flash(Flash flash) {
-        flash.success("this is a success");
-        flash.warning("this is a warning");
-        flash.error("this is an error");
+        flash.success("This is a success message");
+        flash.warning("This is a warning message");
+        flash.error("This is an error message");
         flash.add("foo", "bar");
 
        return Response.withRedirect("/");
@@ -20,18 +24,28 @@ public class FlashController {
 }
 ```
 
-The Flash class has three convenient methods for commonly used scenarios: success, warning and error. This methods will automatically create a key “success”, “warning” or “error” in the flash class. Besides that, you can pass custom keys and values to the flash class.
+### Built-in Flash Methods
 
-**Flash in templates**
+The `Flash` class provides three predefined methods for commonly used scenarios:
+- `success(String message)`: Stores a success message under the key `success`
+- `warning(String message)`: Stores a warning message under the key `warning`
+- `error(String message)`: Stores an error message under the key `error`
 
-To access the flash values, simply call the appropriate key in your template.
+Additionally, you can add custom key-value pairs to the flash storage using:
 
+```java
+flash.add("key", "value");
 ```
+
+## Accessing Flash Messages in Templates
+
+Flash messages are automatically available in templates, without needing to pass the class explicitly. You can retrieve values using:
+
+```html
 ${flash.success}
 ${flash.warning}
 ${flash.error}
 ${flash.foo}
 ```
 
-The Flash class is automatically available in the template so you don’t have to pass the class to the template via a controller.
-
+This allows seamless handling of flash messages in your views.

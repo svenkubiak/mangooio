@@ -1,37 +1,43 @@
-mangoo I/O comes with a build in administrative interface, which enables you acces to certain data of the Framework like metrics, cache, scheduler, logger configuration, etc.
+# Administration
 
-The administrative interface is disabled by default and needs to be enabled through the following configuration value in the config.props file.
+mangoo I/O includes a built-in **administrative interface**, providing access to framework data such as **metrics, cache, scheduler, and logger configuration**.
 
-```properties
-[application]
-	admin.enable = true
+## Enabling the Administrative Interface
+
+By default, the administrative interface is **disabled**. To enable it, update the `config.yaml` file:
+
+```yaml
+application:
+  admin:
+    enable: true
 ```
 
-The administrative interface is protected by a HTTP Basic authentication. The credentials for this authentication have to be set in the config.props fileas follows
+## Authentication
 
-```properties
-[application]
-	admin.username: admin
-	amidn.password: admin
+Access to the interface is secured with **HTTP Basic Authentication**. The credentials must be specified in the `config.yaml` file:
+
+```yaml
+application:
+  admin:
+    username: admin
+    password: admin
 ```
 
-Once enabled, the administrative interface is available under the following URL
+## Accessing the Interface
+
+Once enabled, the administrative interface is accessible at:
 
 ```properties
 <host>:<port>/@admin
 ```
 
-The admin interfaces also display the metrics of you application, by counting the requests and calculating the process time. Metrics are not enabled by default. In order to enable metrics, set the following config value.
+## Enabling Metrics
+
+The **admin interface** includes request counting and process time calculation metrics. By default, metrics are **disabled**. To enable them, modify `config.yaml`:
 
 ```properties
-[metrics]
-	enable = true
+metrics:
+  enable: true
 ```
 
-The admin interfaces also contain a JSON based health check which gives you information on the application health. When the admin interfaces are enabled, you can fetch the health information from the following URL:
-
-```properties
-<host>:<port>/@admin/health
-```
-
-This URL requires also authentication via the previously defined Basic HTTP authentication.
+This ensures that system performance and request handling statistics are available through the administrative dashboard.

@@ -1,21 +1,12 @@
-mangoo I/O comes with two authentication implementations out of the box: HTTP Basic authentication and build-in functionalities for for authentication.
+# Authentication
 
-## Basic authentication
+mangoo I/O provides built-in authentication support, including two-factor authentication, ensuring secure access control.
 
-The HTTP Basic authentication in mangoo I/O can be handled on a per controller method basis or on a per request method. This gives you the option to use different credentials. To add Basic authentication to your request, just add a username and password to the request in your Bootstrap.java as done in the following example:
+## Custom Authentication
 
-```java
-Bind.controller(BasicAuthenticationController.class).withRoutes(   								On.get().to("/").respondeWith("index").withBasicAuthentication("foo", "bar")
-);
-```
+mangoo I/O allows for custom registration and login processes. While it does not store user credentials, it provides functions to simplify authentication handling.
 
-It is recommended to encrypt at least the password using the build in public/private key encryption.
-
-## Custom authentication
-
-mangoo I/O supports you when a custom registration with a custom login process is required. Although mangoo I/O does not store any credentials or user data for you, it gives you some handy functions to make handling of authentication as easy as possible.
-
-mangoo I/O offers the Authentication class which can be simply injected into a controller class.
+The `Authentication` class can be injected into a controller class for streamlined authentication management:
 
 ```java
 public Response login(Authentication authentication) {
@@ -24,36 +15,54 @@ public Response login(Authentication authentication) {
 }
 ```
 
-The authentication uses BCrypt provided by jBCrypt for password hashing. This means, that you don’t have to store a salt along with the user data, just the hashed password. This hashed value can be created with the following method
+### Password Hashing
+
+Built-in authentication in mangoo I/O utilizes Argon2 for password hashing. You can generate a hashed password using:
 
 ```java
-CodecUtils.hexJBcrypt(...);
+CodecUtils.hashArgon2("password", "salt");
 ```
 
-After you have created the hash of the cleartext password of your user, you have to store it with your user data. mangoo I/O does not do that for you.
+Once you have hashed the password during registration, store it securely with your user data. mangoo I/O does not manage password storage.
 
-The Authentication class offers convenient functions to perform authentication. The main methods are
+### User Authentication
+
+To authenticate users, compare the stored hashed password with the provided clear-text password:
 
 ```java
-getAuthenticatedUser()
-validLogin(String username, String password, String hash)
-logout()
-remember(boolean remember)
+if (authentication.validLogin("subject", "password", "salt", "hash")) {
+    authentication.login("subject");
+}
 ```
 
-To protect class and methods to require an authenticated user, mangoo I/O offers a predefined method that can be used when defining routes in your Bootstrap.java file.
+### Authentication Methods
+
+The `Authentication` class provides essential methods for managing user authentication:
 
 ```java
-Bind.controller(BasicAuthenticationController.class).withRoutes(   								On.get().to("/").respondeWith("index").withAuthentication()
+getAuthenticatedUser(); // Retrieves the logged-in user
+logout(); // Logs out the user
+remember(boolean remember); // Extends cookie and token lifetime
+```
+
+### Route Protection
+
+To secure specific classes or methods, use the predefined authentication method in `Bootstrap.java`:
+
+```java
+Bind.controller(BasicAuthenticationController.class).withRoutes(
+        On.get().to("/").respondWith("index").withAuthentication()
 );
 ```
 
-Authentication can be handled on a per controller as well as a per request level.
+Authentication can be enforced at both the controller and request levels.
 
-#### Two Factor Authentication
+## Two-Factor Authentication
 
-The Authentication class also provides some convinent methods for Two Factor Authentication which can be integrated into your authentication workflow. For example:
+The `Authentication` class supports Two-Factor Authentication (2FA) for enhanced security. You can integrate it into your authentication workflow with methods such as:
 
 ```java
-validSecondFactor(String secret, int number)
+validSecondFactor(String secret, int number);
 ```
+
+This feature provides an additional layer of security, ensuring robust authentication mechanisms in your application.

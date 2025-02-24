@@ -1,33 +1,43 @@
-mangoo I/O uses plain Java methods for creating and executing periodic tasks. The integration comes in two flavours: You can either create a repeating task (e.g. every 3m) or schedule a cron task. 
+# Scheduler
 
-## Reaping task
+mangoo I/O enables task scheduling using plain Java methods. It supports two types of scheduled tasks: periodic (e.g., every 3 minutes) and cron-based execution.
 
-To create a new task, create a simple Pojo and use the @Run annotation on the method you want to be executed.
+## Repeating Task
+
+To create a repeating task, define a simple POJO and annotate the method with `@Run` specifying the execution interval.
 
 ```java
 public class InfoJob {
     @Run(at = "Every 3m")
     public void execute() {
-        //Do nothing for now
+        // Task logic here
     }
 }
 ```
 
-The "at" parameter configures the repeating of the task. You can either use
+### Interval Configuration
 
-* s = seconds ("Every 5s")
-* m = minutes ("Every 15m")
-* h = hours ("Every 4h")
+Use the `at` parameter to specify the execution frequency:
 
-## Cron task
+- **s** = seconds (e.g., `"Every 5s"`)
+- **m** = minutes (e.g., `"Every 15m"`)
+- **h** = hours (e.g., `"Every 4h"`)
 
-To create a new cron task, create a simple Pojo and use the @Run annotation on the method you want to be executed.
+## Cron Task
+
+To create a cron-based task, define a POJO and annotate the method with `@Run`, providing a cron expression.
 
 ```java
 public class InfoJobCron {
     @Run(at = "0/1 * * * *")
     public void execute() {
-        //do nothing for now
+        // Task logic here
     }
 }
 ```
+
+### Cron Expression
+
+Cron expressions follow the standard format: `"seconds minutes hours day month day-of-week"`.
+
+This approach provides flexible scheduling for tasks that require execution at specific times or intervals.

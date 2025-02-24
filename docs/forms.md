@@ -1,4 +1,6 @@
-To access a form submitted to a controller class, you can simply pass the mangoo I/O Form class. Here is an example of how this might look like
+# Form Handling in mangoo I/O
+
+To access a submitted form in a controller class, you can pass the mangoo I/O `Form` class as a parameter. Example:
 
 ```java
 public Response index(Form form) {
@@ -6,42 +8,43 @@ public Response index(Form form) {
 }
 ```
 
-The Form class offers you convenient methods for accessing form values from your template.
+The `Form` class provides convenient methods to retrieve form values:
 
 ```java
 public Response index(Form form) {
     File file = form.getFile();
-    List = form.getFiles();
+    List<File> files = form.getFiles();
     String firstname = form.get("firstname");
     ...
 }
 ```
 
-The Form class is only available if the request is mapped as a POST or PUT method, otherwise the Form class will be null.
+### Important Notes
+- The `Form` class is only available for `POST` or `PUT` requests; otherwise, it will be `null`.
+- The `Form` class is automatically accessible in templates without explicitly passing it.
 
-The Form class is automatically available in the template so you don’t have to pass the class to your template when working in the template.
-
-By default form values are not passed to a redirected request. In order to keep your form values, you have to call the keep method.
+### Retaining Form Values After Redirects
+By default, form values are not retained after a redirect. To persist form values across redirects, use:
 
 ```java
-form.keep()
+form.keep();
 ```
 
-This will tell mangoo I/O to store the form values if the request is redirect. This is useful if you have validation errors and want to keep valid form values.
+This is useful when handling validation errors while maintaining previously entered values.
 
-## Form validation
+## Form Validation
 
-Lets image you have the following form in a template
+Consider the following form in a template:
 
-```HTML
-<form method="/save" method="post">
+```html
+<form action="/save" method="post">
     <input type="text" name="firstname" />
     <input type="text" name="lastname" />
     <input type="text" name="email" />
 </form>
 ```
 
-No lets imagine that you want to validate, that the firstname and lastname from the request is not empty. mangoo I/O offers some convenient functions to validate the submitted values.
+To validate the `firstname` and `lastname` fields, use the built-in validation functions:
 
 ```java
 public Response form(Form form) {
@@ -50,74 +53,74 @@ public Response form(Form form) {
     form.expectValue("lastname");
 
     if (form.isValid()) {
-        //Handle form
+        // Handle form
     }
     ...
 }
 ```
 
-With the form class you can check if a field exists, check an eMail address, etc. The hasErrors\(\) method shows you if the form is valid and can be handled or not.
+The `Form` class allows checks for field existence, email validation, and more. Use `hasErrors()` to determine if the form is valid.
 
-mangoo I/O supports the following validations out-of-the-box
+### Built-in Validations
+mangoo I/O provides various validation rules:
 
-* Required
-* Minimum
-* Maximum
-* Match \(case-insensitive\)
-* Exact match \(case-sensitive\)
-* E-Mail
-* IPv4
-* IPv6
-* Range
-* Regular expression
-* Numeric
+- **Required**
+- **Minimum length**
+- **Maximum length**
+- **Match (case-insensitive)**
+- **Exact match (case-sensitive)**
+- **Email format**
+- **IPv4 format**
+- **IPv6 format**
+- **Range check**
+- **Regular expressions**
+- **Numeric values**
 
-There are also additional validation that can be bound to a specific form field but validate a given value rather than the actual form value.
+Additionally, validations can be bound to a specific field to check values beyond form input:
 
-* Validate true
-* Validate false
-* Validate Null
-* Validate not Null
+- `validateTrue`
+- `validateFalse`
+- `validateNull`
+- `validateNotNull`
 
-These functions can, e.g., be used to check if a username exists and pass an error message to the appropriate form field.
+These are useful for checking existing usernames or passing custom error messages to form fields.
 
-## Form errors
+## Handling Form Errors
 
-To show an error in a template, simply check for an error on a spcific field
+To display an error in a template, check for errors in a specific field:
 
-```
+```html
 <#if form.hasError("myField")>
 ```
 
-This is useful if you want to change the CSS style or display an error message when the submitted form is invalid.
+This is useful for modifying CSS styles or displaying error messages when validation fails.
 
-To display a form specific error you can use the error method on a form field
+To retrieve a specific error message:
 
-```
+```html
 ${form.getError("myField")}
 ```
 
-This will display e.g.
+For example, it may display:
 
 ```
-Firstname can not be blank
+Firstname cannot be blank
 ```
 
-The error messages are defined in your messages.properties file \(or for each language\). There are some default error messages, but they can be overwritten with custom error messages.
+## Customizing Error Messages
+Error messages are defined in `messages.properties` (or language-specific message files). Default messages can be customized as follows:
 
-If you overwrite a validation message you have to use the appropriate key in your messages file as follows:
-
-```
+```properties
 validation.required={0} is required
 validation.min={0} must be at least {1} characters
-validation.max={0} can be max {1} characters
+validation.max={0} can be a maximum of {1} characters
 validation.exactMatch={0} must exactly match {1}
 validation.match={0} must match {1}
-validation.email={0} must be a valid eMail address
+validation.email={0} must be a valid email address
 validation.ipv4={0} must be a valid IPv4 address
 validation.ipv6={0} must be a valid IPv6 address
 validation.range={0} must be between {1} and {2} characters
 validation.url={0} must be a valid URL
 validation.regex={0} is invalid
-validation.numeric={0} must be an numeric value
+validation.numeric={0} must be a numeric value
 ```

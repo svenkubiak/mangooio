@@ -82,7 +82,8 @@ my.translation=This is a translation
 my.othertranslation=This is a translation with the parameter: {0}
 ```
 
-Note: `{0}` is a placeholder that will be replaced by the passed parameter (`"foo"`).
+!!! note
+    `{0}` is a placeholder that will be replaced by the passed parameter (`"foo"`).
 
 ## Translation in Templates
 

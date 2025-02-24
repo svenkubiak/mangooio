@@ -1,94 +1,36 @@
-The following script is an example of how to start, stop and restart a mangoo I/O application as a deamon on Debian.
+# Operating
 
-```bash
-#!/bin/sh
-### BEGIN INIT INFO
-# Provides:          mangoo I/O
-# Required-Start:    $syslog
-# Required-Stop:     $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Start/Stop mangoo I/O Application
-### END INIT INFO
+The built-in **maven-shade-plugin** packages the application as a **Fat-Jar**, making it deployable in multiple ways. Below are two common methods.
 
-### CONFIGURATION ###
+## Using Supervisord
 
-NAME=MyApplication
-APPLICATION_PATH=/path/to/application/app.jar
+[Supervisor](https://supervisord.org/) is a process control system that helps manage and monitor long-running applications on UNIX-like systems. It ensures processes automatically start, restart on failure, and provides control through a command-line or web interface. It is commonly used for running background services, offering logging, process grouping, and easy configuration through `.conf` files.
 
-XMX=128m
-XMS=64m
+### Setting Up Supervisord
 
-DAEMON=/usr/bin/java
+After copying your **JAR** file to the server, configure `supervisord` with the following settings:
 
-chown www-data:www-data /path/to/application/app.jar
-### CONFIGURATION ###
-
-PIDFILE=/var/run/$NAME.pid
-USER=www-data
-
-case "$1" in
-  start)
-        echo -n "Starting "$NAME" ..."
-        start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE --chuid ${USER} --background --exec $DAEMON -- $DAEMON_OPTS
-        RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-                echo " Success"
-            else
-                echo " Failed"
-        fi
-        ;;
-  stop)
-        echo -n "Stopping "$NAME" ..."
-        start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
-        RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-                echo " Success"
-            else
-                echo " Failed"
-        fi
-        rm -f $PIDFILE
-        ;;
-  restart)
-        echo -n "Stopping "$NAME" ..."
-        start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
-        RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-                echo " Success"
-            else
-                echo " Failed"
-        fi
-        rm -f $PIDFILE
-        echo -n "Starting "$NAME" ..."
-        start-stop-daemon --start --quiet --make-pidfile --pidfile $PIDFILE --chuid ${USER} --background --exec $DAEMON -- $DAEMON_OPTS
-        RETVAL=$?
-        if [ $RETVAL -eq 0 ]; then
-                echo " Success"
-            else
-                echo " Failed"
-        fi
-        ;;
-   status)
-        if [ -f $PIDFILE ]; then
-                echo $NAME" is running"
-        else
-                echo $NAME" is NOT not running"
-        fi
-        ;;
-*)
-        echo "Usage: "$1" {start|stop|restart|status}"
-        exit 1
-esac
-
-exit 0
+```ini
+[program:myapp]
+command=/usr/bin/java -jar /opt/myapp/my-fat-jar.jar
+directory=/opt/myapp
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/myapp.err.log
+stdout_logfile=/var/log/myapp.out.log
+user=myuser
+environment=JAVA_OPTS="-Xms512m -Xmx1024m"
 ```
 
-Place this script in /etc/init.d and use it as follows
+## Containerization
 
-```bash
-chmod +x /etc/init.d/MyScript
-/etc/init.d/MyScript (start|stop|restart|status)
+To run the **JAR** file in a Docker container, use the following **Dockerfile**:
+
+```dockerfile
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY target/myapp.jar myapp.jar
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/myapp.jar"]
 ```
 
-If you are using Debian, than [Supervisord](http://supervisord.org/) might be an alternative to the init.d Script.
-
+This setup ensures the application runs efficiently in both supervised environments and containerized deployments.

@@ -2,8 +2,6 @@ site_name: "mangoo I/O"
 site_author: 'Sven Kubiak'
 site_url: https://svenkubiak.github.io/mangooio/
 repo_url: https://github.com/svenkubiak/mangooio
-extra_javascript:
-  - js/scripts.js
 theme:
   name: material
   language: en
@@ -25,12 +23,20 @@ theme:
     text: Roboto
     code: Roboto Mono
   features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
     - content.code.annotate
     - content.code.copy
     - content.tabs.link
     - search.highlight
     - search.share
     - search.suggest
+plugins:
+  - search
+  - git-revision-date-localized
 copyright: |
   &copy; Sven Kubiak
 nav:
@@ -58,11 +64,9 @@ nav:
   - Internationalization: internationalization.md
   - Caching: caching.md
   - Emails: emails.md
-  - Asset Management: asset-management.md
   - Utils: utils.md
   - Logging: logging.md
   - Testing: testing.md
-  - Debugging: debugging.md
   - Administration: administration.md
   - Operating: operating.md
   - Archived:
