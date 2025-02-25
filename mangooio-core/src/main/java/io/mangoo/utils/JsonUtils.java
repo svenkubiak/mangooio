@@ -145,13 +145,6 @@ public final class JsonUtils {
         return map;
     }
 
-    /**
-     * @return The used Jackson ObjectMapper
-     */
-    public static ObjectMapper getMapper() {
-        return MAPPER;
-    }
-
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
         if (jsonNode.isObject()) {
             var objectNode = (ObjectNode) jsonNode;
