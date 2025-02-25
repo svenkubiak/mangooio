@@ -9,7 +9,7 @@ mangoo I/O 9.0.0 is a major release and contains code that will break API compat
 
 **Removed Basic HTTP authentication**
 
-The basic HTTP authentication that came with mangoo I/O bas been removed. This should be done in a HTTP Proxy in front of your application.
+The basic HTTP authentication that came with mangoo I/O has been removed. This should be done in a HTTP Proxy in front of your application.
 
 **Refactored Response class**
 
@@ -21,7 +21,7 @@ The @admin/health endpoint is not available anymore.
 
 **Switched from props based configuration yaml based configuration**
 
-Please check the [updated documentation](https://github.com/svenkubiak/mangooio/wiki/Configuration) for further details.
+Please check the [updated documentation](https://svenkubiak.github.com/mangooio/configuration) for further details.
 
 ## From 8.10.0 to 8.11.0
 This is a drop-in replacement.

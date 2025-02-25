@@ -92,6 +92,6 @@ If authentication is required for SSE or WebSockets, simply add the authenticati
 Bind.serverSentEvent().to("/sseauth").withAuthentication();
 ```
 
-This requires an authentication cookie in the request. If the cookie is missing, the SSE connection will be rejected. More details on authentication can be found in the [custom authentication guide](https://docs.mangoo.io/custom-authentication.html).
+This requires an authentication cookie in the request. If the cookie is missing, the SSE connection will be rejected.
 
 For further details, refer to the [Server-Sent Events documentation](https://docs.mangoo.io/server-sent-events.html).

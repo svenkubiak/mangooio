@@ -7,7 +7,7 @@ application:
   foo: bar
 ```
 
-Mangoo I/O provides a set of default property values that configure the application. See [default values](https://docs.mangoo.io/default-values.html) for a full list of configuration options and their defaults.
+Mangoo I/O provides a set of default property values that configure the application. See [default values](https://svenkubiak.github.com/mangooio/configuration/#default-values) for a full list of configuration options and their defaults.
 
 ## Accessing Configuration Values
 
