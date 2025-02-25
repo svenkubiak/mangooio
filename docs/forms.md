@@ -55,7 +55,7 @@ public Response form(Form form) {
     if (form.isValid()) {
         // Handle form
     }
-    ...
+    return Response.ok().render();
 }
 ```
 

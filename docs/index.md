@@ -48,7 +48,6 @@ With **mangoo I/O**, you get a framework that prioritizes **developer experience
 - **First-class JSON handling** for seamless API integration
 - **Server-Sent Events (SSE)** support for real-time communication
 - **Programmatic routing configuration** for flexibility
-- **Asset minification** for optimized frontend performance
 
 ### 🛠 **Tooling & Deployment**
 - **Built-in scheduling** for recurring tasks

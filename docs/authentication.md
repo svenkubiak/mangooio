@@ -11,7 +11,7 @@ The `Authentication` class can be injected into a controller class for streamlin
 ```java
 public Response login(Authentication authentication) {
     ...
-    return Response.withOk();
+    return Response.ok();
 }
 ```
 
