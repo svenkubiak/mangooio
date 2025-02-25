@@ -13,7 +13,7 @@ The basic HTTP authentication that came with mangoo I/O has been removed. This s
 
 **Refactored Response class**
 
-The Response class and the handling of a response in a controller has been changed. Previously when a Response was returned in a controller, mangoo I/O automatically looked up the corresponding .ftl template and rendered it. No when returning a Response.ok() it returns an empty response. Rendering only takes place when calling Response.ok().render() or when passing a variable to the template via Response.ok().render ("foo", "bar").
+The Response class and the handling of a response in a controller has been changed. Previously when a Response was returned in a controller, mangoo I/O automatically looked up the corresponding .ftl template and rendered it. Now when returning a Response.ok() it returns an empty response. Rendering only takes place when calling Response.ok().render() or when passing a variable to the template via Response.ok().render ("foo", "bar").
 
 **Removed @admin/health endpoint**
 
@@ -21,7 +21,7 @@ The @admin/health endpoint is not available anymore.
 
 **Switched from props based configuration yaml based configuration**
 
-Please check the [updated documentation](https://svenkubiak.github.com/mangooio/configuration) for further details.
+Please check the [updated documentation](configuration.md) for further details.
 
 ## From 8.10.0 to 8.11.0
 This is a drop-in replacement.

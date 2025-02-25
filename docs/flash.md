@@ -19,7 +19,7 @@ public class FlashController {
         flash.error("This is an error message");
         flash.add("foo", "bar");
 
-       return Response.redirect("/");
+       return Response.ok().redirect("/");
     }
 }
 ```

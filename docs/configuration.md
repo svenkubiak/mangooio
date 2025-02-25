@@ -1,13 +1,13 @@
 # Configuration
 
-Mangoo I/O relies on a single configuration file for your application, based on [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/). The `config.yaml` file is located in the `src/main/resources` folder, along with other non-Java files. You can customize settings by adding values to `config.yaml`. For example:
+mangoo I/O relies on a single configuration file for your application, based on [SnakeYAML](https://bitbucket.org/snakeyaml/snakeyaml/src/master/). The `config.yaml` file is located in the `src/main/resources` folder, along with other non-Java files. You can customize settings by adding values to `config.yaml`. For example:
 
 ```yaml
 application:
   foo: bar
 ```
 
-Mangoo I/O provides a set of default property values that configure the application. See [default values](https://svenkubiak.github.com/mangooio/configuration/#default-values) for a full list of configuration options and their defaults.
+mangoo I/O provides a set of default property values that configure the application. See [default values](#default-values) for a full list of configuration options and their defaults.
 
 ## Accessing Configuration Values
 
@@ -43,7 +43,7 @@ private MyClass(Config config) {
 }
 ```
 
-You can retrieve configuration values either by specifying a key or using predefined constants from Mangoo I/O:
+You can retrieve configuration values either by specifying a key or using predefined constants from mangoo I/O:
 ```java
 config.getString("application.minify.js");
 config.getString(Key.APPLICATION_MINIFY_JS);
@@ -51,7 +51,7 @@ config.getString(Key.APPLICATION_MINIFY_JS);
 
 ## Configuration Modes
 
-Mangoo I/O offers three configuration modes: **dev**, **test**, and **prod**.
+mangoo I/O offers three configuration modes: **dev**, **test**, and **prod**.
 
 - **Dev mode** is activated automatically when starting the application using the Maven plugin:
   ```shell
@@ -94,13 +94,13 @@ environments:
       url:  https://mydomain.com
 ```
 
-By default, Mangoo I/O uses values from the `default` section, which are overridden by environment-specific values when the corresponding mode is active.
+By default, mangoo I/O uses values from the `default` section, which are overridden by environment-specific values when the corresponding mode is active.
 
 ## Encrypted Configuration Values
 
 Configuration values in `config.yaml` can be encrypted using public/private key encryption. Encrypted values are decrypted at runtime and stored in-memory.
 
-To use encryption, generate a key pair via the Mangoo I/O administrative backend. Once generated, you can encrypt configuration values and set them in `config.yaml` as follows:
+To use encryption, generate a key pair via the mangoo I/O administrative backend. Once generated, you can encrypt configuration values and set them in `config.yaml` as follows:
 
 ```yaml
 application:
@@ -172,7 +172,7 @@ This is an overview of the out-of-the box configuration options for the config.y
 | connector.ajp.port                     | AJP port                                                                                                     | 0                                                                         |
 | connector.http.host                    | HTTP host                                                                                                    | -                                                                         |
 | connector.http.port                    | HTTP port                                                                                                    | -                                                                         |
-| cors.alloworigin                       | Header value for Access-Control-Allow-Origin                                                                 | ^http(s)?://(www\.)?example\.(com                                         |org)$                                                                          |
+| cors.alloworigin                       | Header value for Access-Control-Allow-Origin                                                                 | ^http(s)?://(www\.)?example\.(com\|org)$                                  |
 | cors.enable                            | Activate sending of CORS headers                                                                             | false                                                                     |
 | cors.headers.allowcredentials          | Header value for Access-Control-Allow-Credentials                                                            | true                                                                      |
 | cors.headers.allowheaders              | Header value for Access-Control-Allow-Headers                                                                | Authorization,Content-Type,Link,X-Total-Count,Range                       |
