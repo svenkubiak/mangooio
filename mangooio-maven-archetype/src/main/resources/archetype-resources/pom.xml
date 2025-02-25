@@ -36,15 +36,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
+				<version>3.14.0</version>
 				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
 					<release>${jdk.version}</release>
 					<debug>false</debug>
 					<showDeprecation>true</showDeprecation>
 					<fork>true</fork>
-					<compilerArgument>-parameters</compilerArgument>
+					<compilerArgs>
+						<arg>-parameters</arg>
+						<arg>-J-Xmx2G</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
