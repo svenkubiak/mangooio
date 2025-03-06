@@ -18,7 +18,7 @@ public class PasetoFilter implements PerRequestFilter {
     private final String secret;
 
     @Inject
-    public PasetoFilter(@Named(Key.PASETO_SECRET) String secret) {
+    public PasetoFilter(@Named(Key.APPLICATION_PASETO_SECRET) String secret) {
         this.secret = Objects.requireNonNull(secret, NotNull.SECRET);
     }
 

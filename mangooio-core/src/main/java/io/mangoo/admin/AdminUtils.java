@@ -28,21 +28,11 @@ public final class AdminUtils {
     private AdminUtils() {}
 
     public static boolean isValidAuthentication(Form form) {
-        var valid = false;
-
         String username = getInstance(Config.class).getApplicationAdminUsername();
         String password = getInstance(Config.class).getApplicationAdminPassword();
 
-        if (checkAuthentication(form, username, password)) {
-            valid = true;
-        }
-
-        return valid;
-    }
-
-    private static boolean checkAuthentication(Form form, String username, String password) {
-        return StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) &&
-                username.equals(form.get("username")) && password.equals(form.get("password"));
+        return StringUtils.isNoneBlank(username, password) &&
+               username.equals(form.get("username")) && password.equals(form.get("password"));
     }
 
     public static Cookie getAdminCookie(boolean includeTwoFactor) {
@@ -62,7 +52,7 @@ public final class AdminUtils {
             LOG.error("Failed to create admin cookie", e);
         }
 
-        return new CookieImpl(Default.ADMIN_COOKIE_NAME)
+        return new CookieImpl(Default.APPLICATION_ADMIN_COOKIE_NAME)
                 .setValue(token)
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())

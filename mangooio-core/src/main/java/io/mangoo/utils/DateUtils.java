@@ -23,6 +23,7 @@ public final class DateUtils {
      */
     public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         Objects.requireNonNull(localDateTime, NotNull.LOCAL_DATE_TIME);
+
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
     
@@ -34,6 +35,7 @@ public final class DateUtils {
      */
     public static Date localDateToDate(LocalDate localDate) {
         Objects.requireNonNull(localDate, NotNull.LOCAL_DATE);
+
         return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     }
 

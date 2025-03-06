@@ -126,7 +126,7 @@ public class MangooMojo extends AbstractMojo {
     @SuppressFBWarnings(value = "fb-contrib:OCP_OVERLY_CONCRETE_PARAMETER", justification = "sour")
     private void startRunner(List<String> classpathItems, Set<String> includesSet, Set<String> excludesSet, Set<Path> watchDirectories) {
         try {
-            var machine = new Runner(
+            var machine = new Runner( //NOSONAR
                     Application.class.getName(),
                     String.join(File.pathSeparator, classpathItems),
                     project.getBasedir(),

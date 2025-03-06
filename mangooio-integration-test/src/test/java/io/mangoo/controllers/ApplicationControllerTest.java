@@ -112,7 +112,7 @@ class ApplicationControllerTest {
         //given
         final TestResponse response = TestRequest
                 .get("/api-filter")
-                .withHeader("Authorization", Application.getInstance(Config.class).getString("api.key"))
+                .withHeader("Authorization", Application.getInstance(Config.class).getString("application.api.key"))
                 .execute();
 
         //then

@@ -31,7 +31,7 @@ public enum Binding {
     private static final Map<String, Binding> values;
 
     static {
-        Map<String, Binding> bindings = new HashMap<>(Binding.values().length);
+        Map<String, Binding> bindings = HashMap.newHashMap(Binding.values().length);
         for (Binding binding : Binding.values()) {
             bindings.put(binding.value().toLowerCase(Locale.ENGLISH), binding);
         }

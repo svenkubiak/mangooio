@@ -16,7 +16,7 @@ public class ApiKeyFilter implements PerRequestFilter {
     private final String key;
 
     @Inject
-    public ApiKeyFilter(@Named(Key.API_KEY) String key) {
+    public ApiKeyFilter(@Named(Key.APPLICATION_API_KEY) String key) {
         this.key = Objects.requireNonNull(key, NotNull.KEY);
     }
 

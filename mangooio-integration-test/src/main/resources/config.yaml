@@ -12,6 +12,10 @@ default:
     named: shouldnotbedisplayed
     admin:
       secret: ""
+    paseto:
+      secret: QLxhAXDh6PjAhFVY2kMMrQrdlaWDUP7E1PC4pBuDe9zSCH2Suvv
+    api:
+      key: ZU799ZHnRwPEzBUfkG49VWbtmIlhhqWsY2kMMrQrdlardlaWDUP7E1PC4prdlaWDUP7E1PC4p
   connector:
     http:
       host: localhost
@@ -29,10 +33,6 @@ default:
       secret: lbJ4VKPcAeyqGmHjGt2YiQKTLRRxdHHKbrL2cEwPGIgfoHWGjViNLkOYGpPJ8dI3
   metrics:
     enable: true
-  paseto:
-    secret: QLxhAXDh6PjAhFVY2kMMrQrdlaWDUP7E1PC4pBuDe9zSCH2Suvv
-  api:
-    key: ZU799ZHnRwPEzBUfkG49VWbtmIlhhqWsY2kMMrQrdlardlaWDUP7E1PC4prdlaWDUP7E1PC4p
   authentication:
     redirect:
       login: /login

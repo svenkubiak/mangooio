@@ -33,7 +33,7 @@ public class Messages implements Serializable {
     public void reload(Locale locale) {
         Objects.requireNonNull(locale, NotNull.LOCALE);
 
-        Locale.setDefault(Locale.ROOT);
+        Locale.setDefault(Locale.ROOT); //NOSONAR
         bundle = ResourceBundle.getBundle(Default.BUNDLE_NAME, locale);
     }
 

@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Default {
-    public static final String ADMIN_COOKIE_NAME = "mangooio-admin";
+    public static final String APPLICATION_ADMIN_COOKIE_NAME = "mangooio-admin";
     public static final Boolean APPLICATION_ADMIN_ENABLE = Boolean.FALSE;
+    public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
     public static final String APPLICATION_CONTROLLER = "controllers.";
     public static final String APPLICATION_LANGUAGE = "en";
+    public static final String APPLICATION_NAME = "mangooio-application";
     public static final Boolean AUTHENTICATION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 720L;
@@ -27,8 +29,11 @@ public final class Default {
     public static final String FLASH_COOKIE_NAME = "mangooio-flash";
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";
     public static final String JAVASCRIPT_FOLDER = "javascript";
+    public static final String LANGUAGE = "en";
     public static final Boolean METRICS_ENABLE = Boolean.FALSE;
     public static final Boolean PERSISTENCE_ENABLE = Boolean.TRUE;
+    public static final Boolean PERSISTENCE_MONGO_AUTH = Boolean.FALSE;
+    public static final Boolean PERSISTENCE_MONGO_EMBEDDED = Boolean.FALSE;
     public static final String PERSISTENCE_MONGO_DBNAME = "mangoo-io-mongodb";
     public static final String PERSISTENCE_MONGO_HOST = "localhost";
     public static final int PERSISTENCE_MONGO_PORT = 27017;
@@ -45,9 +50,9 @@ public final class Default {
     public static final String SMTP_PROTOCOL = "smtps";
     public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
-    public static final String APPLICATION_ADMIN_LOCALE = "en_EN";
+    public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
+    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 60L;
     private static final Map<String, String> messages = new HashMap<>();
-
 
     static {
         messages.put(Validation.REQUIRED_KEY, Validation.REQUIRED);

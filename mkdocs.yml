@@ -1,0 +1,103 @@
+site_name: "mangoo I/O"
+site_author: 'Sven Kubiak'
+site_url: https://svenkubiak.github.io/mangooio/
+repo_url: https://github.com/svenkubiak/mangooio
+theme:
+  name: material
+  language: en
+  custom_dir: docs/overrides
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.footer
+    - search.highlight
+    - search.share
+    - search.suggest
+plugins:
+- search
+- git-revision-date-localized:
+    enable_creation_date: true
+    type: timeago
+    locale: en
+    timezone: UTC
+    fallback_to_build_date: true
+    exclude:
+      - index.md
+      - changelog.md
+      - migrations.md
+      - changelog-archived.md
+      - migrations-archived.md
+copyright: |
+  &copy; Sven Kubiak
+nav:
+  - Home: index.md
+  - Changelog: changelog.md
+  - Migrations: migrations.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - Routing: routing.md
+  - Bootstrap: bootstrap.md
+  - Controllers: controllers.md
+  - Dependency Injection: dependency-injection.md
+  - Templating: templating.md
+  - Working with JSON: working-with-json.md
+  - Persistence: persistence.md
+  - CORS: cors.md
+  - Authentication: authentication.md
+  - Server-Sent Events: sse.md
+  - Scheduler: scheduler.md
+  - Async: async.md
+  - Filters: filters.md
+  - Forms: forms.md
+  - Sessions: sessions.md
+  - Flash: flash.md
+  - Internationalization: internationalization.md
+  - Caching: caching.md
+  - Emails: emails.md
+  - Utils: utils.md
+  - Logging: logging.md
+  - Testing: testing.md
+  - Administration: administration.md
+  - Operating: operating.md
+  - Archived:
+      - Changelog: changelog-archived.md
+      - Migrations: migrations-archived.md
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+extra:
+  social:
+    - icon: fontawesome/brands/mastodon
+      link: https://social.kubiak.me/@sven
+  version:
+    provider: mike
+  git_revision_date:
+    enabled: true
+    type: date
+  git_creation_date:
+    enabled: true
+    type: date

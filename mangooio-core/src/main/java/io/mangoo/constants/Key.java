@@ -1,18 +1,19 @@
 package io.mangoo.constants;
 
 public final class Key {
-    public static final String API_KEY = "api.key";
     public static final String APPLICATION_ADMIN_ENABLE = "application.admin.enable";
+    public static final String APPLICATION_ADMIN_LOCALE = "application.admin.locale";
     public static final String APPLICATION_ADMIN_PASSWORD = "application.admin.password";
     public static final String APPLICATION_ADMIN_SECRET = "application.admin.secret";
     public static final String APPLICATION_ADMIN_USERNAME = "application.admin.username";
-    public static final String APPLICATION_ADMIN_LOCALE = "application.admin.locale";
+    public static final String APPLICATION_API_KEY = "application.api.key";
     public static final String APPLICATION_CONFIG = "application.config";
     public static final String APPLICATION_CONTROLLER = "application.controller";
     public static final String APPLICATION_LANGUAGE = "application.language";
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
     public static final String APPLICATION_NAMED = "application.named";
+    public static final String APPLICATION_PASETO_SECRET = "application.paseto.secret";
     public static final String APPLICATION_PRIVATE_KEY = "application.privatekey";
     public static final String APPLICATION_PUBLIC_KEY = "application.publickey";
     public static final String APPLICATION_SECRET = "application.secret";
@@ -23,9 +24,9 @@ public final class Key {
     public static final String AUTHENTICATION_COOKIE_SECURE = "authentication.cookie.secure";
     public static final String AUTHENTICATION_COOKIE_TOKEN_EXPIRES = "authentication.cookie.token.expires";
     public static final String AUTHENTICATION_LOCK = "authentication.lock";
+    public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
     public static final String AUTHENTICATION_REDIRECT = "authentication.redirect.login";
     public static final String AUTHENTICATION_REDIRECT_MFA = "authentication.redirect.mfa";
-    public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
     public static final String CONNECTOR_AJP_HOST = "connector.ajp.host";
     public static final String CONNECTOR_AJP_PORT = "connector.ajp.port";
     public static final String CONNECTOR_HTTP_HOST = "connector.http.host";
@@ -43,7 +44,6 @@ public final class Key {
     public static final String I18N_COOKIE_NAME = "i18n.cookie.name";
     public static final String MANGOOIO_WARNINGS = "MANGOOIO-WARNINGS";
     public static final String METRICS_ENABLE = "metrics.enable";
-    public static final String PASETO_SECRET = "paseto.secret";
     public static final String PERSISTENCE_ENABLE = "persistence.enable";
     public static final String PERSISTENCE_MONGO_AUTH = "mongo.auth";
     public static final String PERSISTENCE_MONGO_AUTHDB = "mongo.authdb";

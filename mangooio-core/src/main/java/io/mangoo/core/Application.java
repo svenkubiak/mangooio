@@ -525,16 +525,16 @@ public final class Application {
             failsafe();
         }
 
-        if (StringUtils.isNotBlank(config.getString(Key.PASETO_SECRET))) {
-            bitLength = getBitLength(config.getString(Key.PASETO_SECRET));
+        if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_PASETO_SECRET))) {
+            bitLength = getBitLength(config.getString(Key.APPLICATION_PASETO_SECRET));
             if (bitLength < PASETO_SECRET_MIN_LENGTH) {
                 LOG.error("Paseto secret requires a 256 bit secret length. The current property for paseto.secret has only {} bits.", bitLength);
                 failsafe();
             }
         }
 
-        if (StringUtils.isNotBlank(config.getString(Key.API_KEY))) {
-            bitLength = getBitLength(config.getString(Key.API_KEY));
+        if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY))) {
+            bitLength = getBitLength(config.getString(Key.APPLICATION_API_KEY));
             if (bitLength < KEY_MIN_BIT_LENGTH) {
                 LOG.error("API key requires a 512 bit key length. The current property for api.length has only {} bits.", bitLength);
                 failsafe();
