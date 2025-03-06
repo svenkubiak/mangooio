@@ -9,6 +9,8 @@ Unreleased
 * Version bumps (svenkubiak)
     * snakeyaml 2.3 -&gt; 2.4
     * fury-core 0.9.0 -&gt; 0.10.0
+    * jackson 2.18.2 -&gt; 2.18.3
+    * mockito-core 5.15.2 -&gt; 5.16.0
 
 ## Version 9.2.0
 
