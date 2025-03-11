@@ -7,7 +7,13 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 
-public class Entity implements BaseEntity {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Entity implements BaseEntity, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @BsonId
     @BsonProperty("_id")
     @JsonSerialize(using = ToStringSerializer.class)
