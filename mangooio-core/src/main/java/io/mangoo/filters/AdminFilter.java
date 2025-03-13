@@ -1,4 +1,4 @@
-package io.mangoo.admin;
+package io.mangoo.filters;
 
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Default;

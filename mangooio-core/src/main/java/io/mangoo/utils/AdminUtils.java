@@ -1,4 +1,4 @@
-package io.mangoo.admin;
+package io.mangoo.utils;
 
 import io.mangoo.cache.Cache;
 import io.mangoo.constants.Default;
@@ -6,7 +6,6 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooTokenException;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;

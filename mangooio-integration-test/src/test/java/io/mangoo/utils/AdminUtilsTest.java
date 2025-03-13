@@ -1,7 +1,6 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
-import io.mangoo.admin.AdminUtils;
 import io.mangoo.routing.bindings.Form;
 import io.undertow.server.handlers.Cookie;
 import org.junit.jupiter.api.Test;

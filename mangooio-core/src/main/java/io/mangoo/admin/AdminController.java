@@ -12,11 +12,13 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.filters.AdminFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
+import io.mangoo.utils.AdminUtils;
 import io.mangoo.utils.DateUtils;
 import io.mangoo.utils.MangooUtils;
 import io.mangoo.utils.totp.TotpUtils;
@@ -34,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.atomic.LongAdder;
 
-import static io.mangoo.admin.AdminUtils.resetLockCounter;
+import static io.mangoo.utils.AdminUtils.resetLockCounter;
 
 @FilterWith(AdminFilter.class)
 public class AdminController {
