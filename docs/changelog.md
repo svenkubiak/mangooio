@@ -1,6 +1,16 @@
-## Version 9.3.0
+## Version 9.4.0
 
 Unreleased
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.3.0...9.4.0)
+
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+  * mockito-core 5.15.2 -&gt; 5.16.0
+
+## Version 9.3.0
+
+Released at 06.03.2025
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.2.0...9.3.0)
 
