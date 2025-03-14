@@ -6,7 +6,6 @@ Unreleased
 
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
-  * mockito-core 5.15.2 -&gt; 5.16.0
 
 ## Version 9.3.0
 

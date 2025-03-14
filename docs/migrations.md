@@ -1,3 +1,9 @@
+## From 9.3.0 to 9.4.0
+This is a drop-in replacement.
+
+## From 9.2.0 to 9.3.0
+This is a drop-in replacement.
+
 ## From 9.1.0 to 9.2.0
 This is a drop-in replacement.
 
