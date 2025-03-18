@@ -6,6 +6,9 @@ Unreleased
 
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
+    * junit 5.12.0 -&gt; 5.12.1
+    * mockito-core 5.16.0 -&gt; 5.16.1
+    * cactoos 0.56.1 -&gt; 0.57.0
 
 ## Version 9.3.0
 
