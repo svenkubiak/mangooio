@@ -10,6 +10,7 @@ Unreleased
     * mockito-core 5.16.0 -&gt; 5.16.1
     * cactoos 0.56.1 -&gt; 0.57.0
     * guava 33.4.0-jre -&gt; 33.4.5-jre
+    * mongo-driver-sync 5.3.1 -&gt; 5.4.0
 
 ## Version 9.3.0
 
