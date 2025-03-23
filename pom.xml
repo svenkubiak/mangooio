@@ -28,8 +28,8 @@
 		<log4j.version>2.24.3</log4j.version>
 		<maven.version>4.0.0-rc-3</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>5.12.1</junit.version>
-		<junit.platform.version>1.12.1</junit.platform.version>
+		<junit.version>5.13.0-M1</junit.version>
+		<junit.platform.version>1.13.0-M1</junit.platform.version>
 		<enforcer.version>1.9.0</enforcer.version>
 		<jackson.version>2.18.3</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -324,7 +324,7 @@
 			<dependency>
 				<groupId>de.svenkubiak</groupId>
 				<artifactId>embedded-mongodb</artifactId>
-				<version>8.2.17</version>
+				<version>8.2.18</version>
 			</dependency>
 			<dependency>
 				<groupId>org.mongodb</groupId>
