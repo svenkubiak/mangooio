@@ -136,7 +136,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>5.0.0.4389</version>
+					<version>5.1.0.4751</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -500,7 +500,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>33.4.5-jre</version>
+				<version>33.4.6-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
