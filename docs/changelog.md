@@ -11,6 +11,7 @@ Unreleased
     * cactoos 0.56.1 -&gt; 0.57.0
     * guava 33.4.0-jre -&gt; 33.4.7-jre
     * mongo-driver-sync 5.3.1 -&gt; 5.4.0
+    * commons-io 2.18.0 -&gt; 2.19.0
 
 ## Version 9.3.0
 
