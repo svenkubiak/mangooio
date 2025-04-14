@@ -1,6 +1,6 @@
 ## Version 9.4.0
 
-Unreleased
+Released at 14.04.2025
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.3.0...9.4.0)
 
