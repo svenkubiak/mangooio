@@ -1,3 +1,13 @@
+## Version 9.5.0
+
+Unreleased
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
+
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+  * guava 33.4.7-jre -&gt; 33.4.8-jre
+
 ## Version 9.4.0
 
 Released at 14.04.2025
