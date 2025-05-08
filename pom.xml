@@ -329,7 +329,7 @@
 			<dependency>
 				<groupId>org.mongodb</groupId>
 				<artifactId>mongodb-driver-sync</artifactId>
-				<version>5.4.0</version>
+				<version>5.5.0</version>
 			</dependency>
 			<dependency>
 				<groupId>net.glxn</groupId>
@@ -394,7 +394,7 @@
 			<dependency>
 				<groupId>org.apache.fury</groupId>
 				<artifactId>fury-core</artifactId>
-				<version>0.10.1</version>
+				<version>0.10.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>

@@ -7,7 +7,8 @@ Unreleased
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
   * guava 33.4.7-jre -&gt; 33.4.8-jre
-  * fury-core 0.10.0 -&gt; 0.10.1
+  * fury-core 0.10.0 -&gt; 0.10.2
+  * mongo-driver-sync 5.4.0 -&gt; 5.5.0
 
 ## Version 9.4.0
 
