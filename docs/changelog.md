@@ -1,3 +1,13 @@
+## Version 9.6.0
+
+Unreleased
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
+
+* Sonar refactorings (svenkubiak)
+* Version bumps (svenkubiak)
+  * fury-core 0.10.2 -&gt; 0.10.3
+
 ## Version 9.5.0
 
 Released at 20.05.2025
