@@ -24,9 +24,11 @@ public class Response {
     private String contentType = MediaType.PLAIN_TEXT_UTF_8.withoutParameters().toString();
     private String body = Strings.EMPTY;
     private String template;
+    private byte[] binaryBody;
     private boolean endResponse;
     private boolean rendered;
     private boolean redirect;
+    private boolean binary;
     private int statusCode = StatusCodes.OK;
 
     public Response() {
@@ -193,6 +195,10 @@ public class Response {
         return body;
     }
 
+    public byte[] getBinaryBody() {
+        return binaryBody;
+    }
+
     public List<Cookie> getCookies() {
         return new ArrayList<>(cookies);
     }
@@ -211,6 +217,10 @@ public class Response {
 
     public boolean isRendered() {
         return rendered;
+    }
+
+    public boolean isBinary() {
+        return binary;
     }
 
     public boolean isEndResponse() {
@@ -286,6 +296,22 @@ public class Response {
         this.contentType = MediaType.HTML_UTF_8.withoutParameters().toString();
         rendered = false;
         this.body = html;
+
+        return this;
+    }
+
+    /**
+     * Sets the body of the response. If a body is added, it will be sent
+     * as a binary byte array. No rendering will be performed.
+     * Content-Type will be automatically detected if not set.
+     *
+     * @param data The html for the body
+     * @return The response object
+     */
+    public Response bodyBinary(byte[] data) {
+        this.binaryBody = Objects.requireNonNull(data, NotNull.DATA);
+        rendered = false;
+        binary = true;
 
         return this;
     }
