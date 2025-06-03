@@ -322,6 +322,11 @@ public class DatastoreImpl implements Datastore {
         mongoDatabase.listCollectionNames().forEach(c -> mongoDatabase.getCollection(c).dropIndexes());
     }
 
+    @Override
+    public MongoDatabase getMongoDatabase() {
+        return mongoDatabase;
+    }
+
     @SuppressWarnings("rawtypes")
     private <T> Optional<MongoCollection> getCollection(Class<T> clazz) {
         Objects.requireNonNull(clazz, NotNull.CLASS);

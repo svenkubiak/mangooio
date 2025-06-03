@@ -1,6 +1,7 @@
 package io.mangoo.persistence.interfaces;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.result.DeleteResult;
 import org.bson.conversions.Bson;
@@ -192,4 +193,6 @@ public interface Datastore {
      * Drops all indexes in all collections of the connected database
      */
     void dropAllIndexes();
+
+    MongoDatabase getMongoDatabase();
 }
