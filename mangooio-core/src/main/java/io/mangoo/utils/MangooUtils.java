@@ -80,7 +80,7 @@ public final class MangooUtils {
         Preconditions.checkArgument(length > MIN_LENGTH, "random string length must be at least 1 character");
         Preconditions.checkArgument(length <= MAX_LENGTH, "random string length must be at most 256 character");
 
-        return RandomStringUtils.random(length, 0, CHARACTERS.length-1, false, false, CHARACTERS, SECURE_RANDOM);
+        return RandomStringUtils.random(length, 0, CHARACTERS.length, false, false, CHARACTERS, SECURE_RANDOM);
     }
 
     /**
