@@ -4,9 +4,13 @@ Unreleased
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
 
+* Added new response method to return a binary stream (svenkubiak)
+* Added option to directly access the mongodatabase (svenkubiak)
+* Refactored uuid generation methods (svenkubiak)
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
   * fury-core 0.10.2 -&gt; 0.10.3
+  * bouncy-castle 1.80 -&gt; 1.81
 
 ## Version 9.5.0
 
