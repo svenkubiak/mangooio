@@ -6,6 +6,7 @@ import io.mangoo.core.Server;
 import io.mangoo.routing.Response;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 
@@ -32,6 +33,8 @@ public class BinaryHandler implements HttpHandler {
         if (StringUtils.isNotBlank(mimeType)) {
             exchange.getResponseHeaders().put(Header.CONTENT_TYPE, mimeType);
         }
+
+        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, response.getBinaryBody().length);
 
         Server.headers()
                 .entrySet()
