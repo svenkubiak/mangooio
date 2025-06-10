@@ -2,6 +2,10 @@
 
 Unreleased
 
+* Version bumps (svenkubiak)
+  * caffeine 3.2.0 -&gt; 3.2.1
+  * mongo-driver-sync 5.5.0 -&gt; 5.5.1
+
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
 
 * Added new response method to return a binary stream (svenkubiak)
