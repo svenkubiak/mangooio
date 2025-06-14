@@ -31,7 +31,7 @@
 		<junit.version>5.13.1</junit.version>
 		<junit.platform.version>1.13.1</junit.platform.version>
 		<enforcer.version>1.10.0</enforcer.version>
-		<jackson.version>2.19.0</jackson.version>
+		<jackson.version>2.19.1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.11.2</javadoc.version>
 		<modernizer.version>3.1.0</modernizer.version>
@@ -47,7 +47,6 @@
 		<connection>scm:git:git@github.com:svenkubiak/mangooio.git</connection>
 		<developerConnection>scm:git:git@github.com:svenkubiak/mangooio.git</developerConnection>
 		<url>github.com:svenkubiak/mangooio.git</url>
-		<tag>8.0.0-Beta5</tag>
 	</scm>
 	<build>
 		<pluginManagement>
@@ -348,7 +347,7 @@
 			<dependency>
 				<groupId>com.squareup.okio</groupId>
 				<artifactId>okio</artifactId>
-				<version>3.12.0</version>
+				<version>3.13.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
