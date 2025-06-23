@@ -188,16 +188,16 @@ public final class MangooUtils {
      * @return A set of configure messages bundles
      */
     public static Set<String> getLanguages() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        var classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> languages = new HashSet<>();
 
         try {
-            ClassPath classPath = ClassPath.from(classLoader);
+            var classPath = ClassPath.from(classLoader);
             for (ClassPath.ResourceInfo resourceInfo : classPath.getResources()) {
                 String resourceName = resourceInfo.getResourceName();
                 if (resourceName.startsWith("translations/") && resourceName.endsWith(".properties")) {
                     String fileName = resourceName.replace("translations/", "");
-                    String langCode = StringUtils.substringBetween(fileName, "messages_", ".properties");
+                    var langCode = StringUtils.substringBetween(fileName, "messages_", ".properties");
                     if (StringUtils.isNotBlank(langCode)) {
                         languages.add(langCode);
                     }

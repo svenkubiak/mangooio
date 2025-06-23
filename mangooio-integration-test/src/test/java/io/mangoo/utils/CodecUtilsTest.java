@@ -12,6 +12,8 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -64,35 +66,66 @@ class CodecUtilsTest {
     }
 
     @Test
-    void testUuid() {
-        //given
-        String uuid;
-        String uuid2;
-
-        //when
-        uuid = CodecUtils.uuid();
-        uuid2 = CodecUtils.uuid();
-
-        //then
+    public void testUuidV4Format() {
+        String uuid = CodecUtils.uuidV4();
         assertThat(uuid, not(nullValue()));
-        assertThat(uuid2, not(nullValue()));
-        assertThat(uuid, not(equalTo(uuid2)));
-        assertThat(UUID.fromString(uuid).version(), equalTo(6));
-        assertThat(UUID.fromString(uuid).variant(), equalTo(2));
-        assertThat(UUID.fromString(uuid2).version(), equalTo(6));
-        assertThat(UUID.fromString(uuid2).variant(), equalTo(2));
     }
 
     @Test
-    void testConcurrentUuid() {
+    public void testUuidV6Format() {
+        String uuid = CodecUtils.uuidV6();
+        assertThat(uuid, not(nullValue()));
+    }
+
+    @Test
+    public void testUuidV4IsVersion4() {
+        String uuidStr = CodecUtils.uuidV4();
+        UUID uuid = UUID.fromString(uuidStr);
+        assertThat(uuid.version(), equalTo(4));
+    }
+
+    @Test
+    public void testUuidV6IsVersion6() {
+        String uuidStr = CodecUtils.uuidV6();
+        UUID uuid = UUID.fromString(uuidStr);
+        assertThat(uuid.version(), equalTo(6));
+    }
+
+    @Test
+    public void testUuidUniqueness() {
+        Set<String> uuids = new HashSet<>();
+        for (int i = 0; i < 1000; i++) {
+            uuids.add(CodecUtils.uuidV4());
+            uuids.add(CodecUtils.uuidV6());
+        }
+        assertThat(uuids.size(), equalTo(2000));
+    }
+
+    @Test
+    void testConcurrentUuidV4() {
         MatcherAssert.assertThat(t -> {
             //given
             String uuid;
             String uuid2;
 
             //when
-            uuid = CodecUtils.uuid();
-            uuid2 = CodecUtils.uuid();
+            uuid = CodecUtils.uuidV4();
+            uuid2 = CodecUtils.uuidV4();
+
+            return StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(uuid2) && !uuid.equals(uuid2) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 4;
+        }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));
+    }
+
+    @Test
+    void testConcurrentUuidV6() {
+        MatcherAssert.assertThat(t -> {
+            //given
+            String uuid;
+            String uuid2;
+
+            //when
+            uuid = CodecUtils.uuidV6();
+            uuid2 = CodecUtils.uuidV6();
 
             return StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(uuid2) && !uuid.equals(uuid2) && UUID.fromString(uuid).variant() == 2 && UUID.fromString(uuid).version() == 6;
         }, new ConcurrentRunner<>(new AtomicInteger(), TestExtension.THREADS));

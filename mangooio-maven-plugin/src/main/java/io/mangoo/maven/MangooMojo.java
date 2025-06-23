@@ -96,7 +96,7 @@ public class MangooMojo extends AbstractMojo {
 
         initMojo();
 
-        Minification.setBasePath(project.getBasedir().getAbsolutePath());
+        Minification.setBasePath(project.getBaseDirectory().toAbsolutePath().toString());
 
         List<String> classpathItems = new ArrayList<>();
         classpathItems.add(buildOutputDirectory);
@@ -129,7 +129,7 @@ public class MangooMojo extends AbstractMojo {
             var machine = new Runner( //NOSONAR
                     Application.class.getName(),
                     String.join(File.pathSeparator, classpathItems),
-                    project.getBasedir(),
+                    project.getBaseDirectory().toFile(),
                     jpdaPort,
                     jvmArgs);
 

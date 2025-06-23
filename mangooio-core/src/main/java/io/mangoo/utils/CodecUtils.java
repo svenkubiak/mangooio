@@ -196,7 +196,7 @@ public final class CodecUtils {
 
     /**
      * Creates a UUIDv6 random String
-     * @deprecated Use {@link #UUIDv6()} instead.
+     * @deprecated Use {@link #uuidV6()} instead.
      *
      * @return UUIDv6 String
      */
@@ -210,7 +210,7 @@ public final class CodecUtils {
      *
      * @return UUIDv6 String
      */
-    public static String UUIDv6() {
+    public static String uuidV6() {
         return Generators.timeBasedReorderedGenerator().generate().toString();
     }
 
@@ -219,7 +219,7 @@ public final class CodecUtils {
      *
      * @return UUIDv4 String
      */
-    public static String UUIDv4() {
+    public static String uuidV4() {
         return Generators.randomBasedGenerator().generate().toString();
     }
 }
