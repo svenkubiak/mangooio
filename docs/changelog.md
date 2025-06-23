@@ -2,6 +2,7 @@
 
 Unreleased
 
+* Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
   * caffeine 3.2.0 -&gt; 3.2.1
   * mongo-driver-sync 5.5.0 -&gt; 5.5.1
