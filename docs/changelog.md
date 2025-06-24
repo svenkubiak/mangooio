@@ -8,6 +8,7 @@ Unreleased
   * mongo-driver-sync 5.5.0 -&gt; 5.5.1
   * freemarker-java8 3.0.1 -&gt; 3.0.3
   * log4j 2.24.3 -&gt; 2.25.0
+  * classgraph 4.8.179 -&gt; 4.8.180
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
 
