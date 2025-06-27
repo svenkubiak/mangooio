@@ -1,6 +1,6 @@
 ## Version 9.6.0
 
-Unreleased
+Released at 27.06.2025
 
 * Sonar refactorings (svenkubiak)
 * Version bumps (svenkubiak)
