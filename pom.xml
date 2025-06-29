@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mangoo</groupId>
 	<artifactId>mangooio</artifactId>
@@ -28,8 +28,7 @@
 		<log4j.version>2.25.0</log4j.version>
 		<maven.version>4.0.0-rc-4</maven.version>
 		<required.maven.version>3.9.0</required.maven.version>
-		<junit.version>5.13.2</junit.version>
-		<junit.platform.version>1.13.2</junit.platform.version>
+		<junit.version>6.0.0-M1</junit.version>
 		<enforcer.version>1.10.0</enforcer.version>
 		<jackson.version>2.19.1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
@@ -347,7 +346,7 @@
 			<dependency>
 				<groupId>com.squareup.okio</groupId>
 				<artifactId>okio</artifactId>
-				<version>3.13.0</version>
+				<version>3.14.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.launchdarkly</groupId>
@@ -458,12 +457,12 @@
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-launcher</artifactId>
-				<version>${junit.platform.version}</version>
+				<version>${junit.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.platform</groupId>
 				<artifactId>junit-platform-suite-engine</artifactId>
-				<version>${junit.platform.version}</version>
+				<version>${junit.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.annotation</groupId>
