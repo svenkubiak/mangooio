@@ -1,3 +1,10 @@
+## Version 9.7.0
+
+Unreleased
+
+* Version bumps (svenkubiak)
+
+
 ## Version 9.6.0
 
 Released at 27.06.2025
