@@ -2,6 +2,7 @@
 
 Unreleased
 
+* LocalDateTime/LocalDate is now serialized as ISO-8601 string (svenkubiak)
 * Version bumps (svenkubiak)
 
 
