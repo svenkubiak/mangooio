@@ -4,7 +4,9 @@ Unreleased
 
 * LocalDateTime/LocalDate is now serialized as ISO-8601 string (svenkubiak)
 * Version bumps (svenkubiak)
-
+  * tika-core 3.2.0 -&gt; 3.2.1
+  * commons-lang3 3.17.0 -&gt; 3.18.0
+  * commons-validator 1.9.0 -&gt; 1.10.
 
 ## Version 9.6.0
 
