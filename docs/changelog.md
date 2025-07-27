@@ -6,7 +6,14 @@ Unreleased
 * Version bumps (svenkubiak)
   * tika-core 3.2.0 -&gt; 3.2.1
   * commons-lang3 3.17.0 -&gt; 3.18.0
-  * commons-validator 1.9.0 -&gt; 1.10.
+  * commons-validator 1.9.0 -&gt; 1.10.0
+  * log4j 2.25.0 -&gt; 2.25.1
+  * jackson 2.19.1 -&gt; 2.19.2
+  * commons-codec 1.18.0 -&gt; 1.19.0
+  * greenmail 2.1.3 -&gt; 2.1.4
+  * classgraph 4.8.180 -&gt; 4.8.181
+  * commons-io 2.19.0 -&gt; 2.20.0
+  * caffeine 3.2.1 -&gt; 3.2.2
 
 ## Version 9.6.0
 
