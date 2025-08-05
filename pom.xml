@@ -30,7 +30,7 @@
 		<required.maven.version>3.9.0</required.maven.version>
 		<junit.version>6.0.0-M2</junit.version>
 		<enforcer.version>1.10.0</enforcer.version>
-		<jackson.version>2.19.2</jackson.version>
+		<jackson.version>2.20.0-rc1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
 		<javadoc.version>3.11.2</javadoc.version>
 		<modernizer.version>3.1.0</modernizer.version>
