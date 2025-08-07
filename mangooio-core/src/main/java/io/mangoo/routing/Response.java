@@ -489,15 +489,30 @@ public class Response {
      * @param cookieName The name of the cookie to dispose
      * @return The response object
      */
-    public Response disposeCookie(String cookieName) {
+    public Response disposeCookie(String cookieName, boolean secure) {
         Objects.requireNonNull(cookieName, NotNull.COOKIE);
 
         cookies.add(new CookieImpl(cookieName)
                 .setPath("/")
+                .setSecure(secure)
                 .setValue("")
                 .setMaxAge(-1)
                 .setDiscard(true)
                 .setExpires(new Date(1)));
+
+        return this;
+    }
+
+    /**
+     * Disposes a cookie by setting the expired date of the give cookie name
+     * to a date in the past, max age to -1 and an empty value
+     *
+     * @param cookieName The name of the cookie to dispose
+     * @return The response object
+     */
+    public Response disposeCookie(String cookieName) {
+        Objects.requireNonNull(cookieName, NotNull.COOKIE);
+        disposeCookie(cookieName, true);
 
         return this;
     }
