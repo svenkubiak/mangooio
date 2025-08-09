@@ -13,7 +13,9 @@ public final class Default {
     public static final Boolean AUTHENTICATION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
     public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 720L;
+    public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
+    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 60L;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
@@ -39,6 +41,7 @@ public final class Default {
     public static final int PERSISTENCE_MONGO_PORT = 27017;
     public static final String PERSISTENCE_PREFIX = "persistence.";
     public static final Boolean SCHEDULER_ENABLE = Boolean.TRUE;
+    public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String SESSION_COOKIE_NAME = "mangooio-session";
     public static final Boolean SESSION_COOKIE_SECURE = Boolean.FALSE;
     public static final long SESSION_COOKIE_TOKEN_EXPIRES = 60L;
@@ -50,8 +53,7 @@ public final class Default {
     public static final String SMTP_PROTOCOL = "smtps";
     public static final String STYLESHEET_FOLDER = "stylesheet";
     public static final long UNDERTOW_MAX_ENTITY_SIZE = 4194304L;
-    public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
-    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 60L;
+
     private static final Map<String, String> messages = new HashMap<>();
 
     static {

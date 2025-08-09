@@ -56,7 +56,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setHttpOnly(true)
                     .setPath("/")
                     .setMaxAge(0)
-                    .setSameSite(true)
                     .setSameSiteMode(SAME_SITE_MODE)
                     .setDiscard(true);
             
@@ -71,7 +70,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                 
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
-                        .setSameSite(true)
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setHttpOnly(true)
                         .setPath("/")
@@ -104,8 +102,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setHttpOnly(true)
                     .setPath("/")
                     .setMaxAge(0)
-                    .setSameSite(true)
-                    .setSameSiteMode(SAME_SITE_MODE)
+                    .setSameSiteMode(config.getAuthenticationCookieSameSiteMode())
                     .setDiscard(true);
             
             exchange.setResponseCookie(cookie);
@@ -129,9 +126,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                             .setValue(token)
                             .setSecure(config.isAuthenticationCookieSecure())
                             .setHttpOnly(true)
-                            .setSameSite(true)
                             .setPath("/")
-                            .setSameSiteMode(SAME_SITE_MODE);
+                            .setSameSiteMode(config.getAuthenticationCookieSameSiteMode());
 
                     if (authentication.isRememberMe() || config.isAuthenticationCookieExpires()) {
                         cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
@@ -162,7 +158,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setValue("")
                     .setSecure(config.isFlashCookieSecure())
                     .setPath("/")
-                    .setSameSite(true)
                     .setSameSiteMode(SAME_SITE_MODE)
                     .setDiscard(true)
                     .setMaxAge(0);
@@ -185,7 +180,6 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .setValue(token)
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
-                        .setSameSite(true)
                         .setPath("/")
                         .setSameSiteMode(SAME_SITE_MODE)
                         .setExpires(DateUtils.localDateTimeToDate(expires));

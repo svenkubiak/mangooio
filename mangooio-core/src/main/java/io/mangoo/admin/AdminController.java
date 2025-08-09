@@ -184,7 +184,6 @@ public class AdminController {
                 .setPath("/")
                 .setDiscard(true)
                 .setExpires(new Date())
-                .setSameSite(true)
                 .setSameSiteMode("Strict");
         
         return Response.redirect(ADMIN_INDEX).cookie(cookie);

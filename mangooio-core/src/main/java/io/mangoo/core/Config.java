@@ -772,6 +772,13 @@ public class Config {
         return getString(Key.APPLICATION_PASETO_SECRET, null);
     }
 
+    /**
+     * @return authentication.cookie.samesitemode or default value if undefined
+     */
+    public String getAuthenticationCookieSameSiteMode() {
+        return getString(Key.AUTHENTICATION_COOKIE_SAME_SITE_MODE, Default.AUTHENTICATION_COOKIE_SAME_SITE_MODE);
+    }
+
     public boolean isValid() {
         return valid;
     }

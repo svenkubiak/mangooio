@@ -20,6 +20,7 @@ public final class Key {
     public static final String AUTHENTICATION_COOKIE_EXPIRES = "authentication.cookie.expires";
     public static final String AUTHENTICATION_COOKIE_NAME = "authentication.cookie.name";
     public static final String AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = "authentication.cookie.remember.expires";
+    public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "authentication.cookie.samesitemode";
     public static final String AUTHENTICATION_COOKIE_SECRET = "authentication.cookie.secret";
     public static final String AUTHENTICATION_COOKIE_SECURE = "authentication.cookie.secure";
     public static final String AUTHENTICATION_COOKIE_TOKEN_EXPIRES = "authentication.cookie.token.expires";

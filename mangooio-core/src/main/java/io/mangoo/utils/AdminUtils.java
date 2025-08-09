@@ -56,7 +56,6 @@ public final class AdminUtils {
                 .setHttpOnly(true)
                 .setSecure(Application.inProdMode())
                 .setPath("/")
-                .setSameSite(true)
                 .setSameSiteMode("Strict");
     }
 
