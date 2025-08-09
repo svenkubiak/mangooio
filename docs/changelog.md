@@ -1,6 +1,15 @@
-## Version 9.7.0
+## Version 9.8.0
 
 Unreleased
+
+* Version bumps (svenkubiak)
+  * tika-core 3.2.1 -&gt; 3.2.2
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.7.0...9.8.0)
+
+## Version 9.7.0
+
+Released at 05.08.2025
 
 * LocalDateTime/LocalDate is now serialized as ISO-8601 string (svenkubiak)
 * Version bumps (svenkubiak)
@@ -15,6 +24,8 @@ Unreleased
   * commons-io 2.19.0 -&gt; 2.20.0
   * caffeine 3.2.1 -&gt; 3.2.2
 
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.6.0...9.7.0)
+
 ## Version 9.6.0
 
 Released at 27.06.2025
@@ -27,7 +38,7 @@ Released at 27.06.2025
   * log4j 2.24.3 -&gt; 2.25.0
   * classgraph 4.8.179 -&gt; 4.8.180
 
-[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.4.0...9.5.0)
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.5.0...9.6.0)
 
 * Added new response method to return a binary stream (svenkubiak)
 * Added option to directly access the mongodatabase (svenkubiak)
