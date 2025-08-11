@@ -3,8 +3,10 @@
 Unreleased
 
 * Added OriginFilter for the checking the Origin-Header (svenkubiak)
+* Added CsrfFilter and corresponding methods for CSRF checks (svenkubiak)
 * Version bumps (svenkubiak)
   * tika-core 3.2.1 -&gt; 3.2.2
+  * greenmail-standalone 2.1.4 -&gt; 2.1.5
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.7.0...9.8.0)
 
