@@ -29,6 +29,14 @@ public class Bootstrap implements MangooBootstrap {
                 On.get().to("/headerfilter").respondeWith("headerfilter"),
                 On.get().to("/filters").respondeWith("filters")
         );
+
+        // ACsrfController
+        Bind.controller(CsrfController.class).withRoutes(
+                On.get().to("/authenticityform").respondeWith("form"),
+                On.get().to("/authenticitytoken").respondeWith("token"),
+                On.get().to("/valid").respondeWith("valid"),
+                On.get().to("/invalid").respondeWith("invalid")
+        );
         
         // I18nController
         Bind.controller(I18nController.class).withRoutes(
