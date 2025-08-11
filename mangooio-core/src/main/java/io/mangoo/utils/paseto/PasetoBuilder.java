@@ -51,7 +51,7 @@ public class PasetoBuilder {
 
     public PasetoBuilder withClaims(Map<String, String> claims) {
         Objects.requireNonNull(claims, NotNull.CLAIMS);
-        token.setClaims(claims);
+        token.getClaims().putAll(claims);
 
         return this;
     }

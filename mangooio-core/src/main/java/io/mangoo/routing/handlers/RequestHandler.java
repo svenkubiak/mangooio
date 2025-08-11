@@ -58,6 +58,7 @@ public class RequestHandler implements HttpHandler {
                 .withSession(attachment.getSession())
                 .withAuthentication(attachment.getAuthentication())
                 .withParameter(attachment.getRequestParameter())
+                .withCsrf(attachment.getSession().getCsrf())
                 .withBody(attachment.getBody());
     }
 

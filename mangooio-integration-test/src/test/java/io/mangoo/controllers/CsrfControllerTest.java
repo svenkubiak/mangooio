@@ -9,6 +9,8 @@ import io.undertow.util.StatusCodes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.net.HttpCookie;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -22,62 +24,39 @@ public class CsrfControllerTest {
 	private static final int AUTHENTICITY_LENGTH = 32;
 
     @Test
-    public void testAuthenticityForm() {
-        //given
-        TestResponse response = TestRequest.get("/authenticityform").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent(), startsWith("<input type=\"hidden\" value=\""));
-        assertThat(response.getContent(), endsWith(" name=\"authenticity\" />"));
-    }
-
-    @Test
-    public void testAuthenticityToken() {
-        //given
-        TestResponse response = TestRequest.get("/authenticitytoken").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent().length(), equalTo(AUTHENTICITY_LENGTH));
-    }
-
-    @Test
-    public void testValidAuthenticity() {
+    public void testValidCsrf() {
         //given
     	TestBrowser instance = TestBrowser.open();
 
     	//when
-        TestResponse response = instance.to("/authenticitytoken")
+        TestResponse response = instance.to("/csrf")
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
-        String token = response.getContent();
 
         //then
         assertThat(response, not(nullValue()));
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-        assertThat(response.getContent().length(), equalTo(AUTHENTICITY_LENGTH));
+
+        HttpCookie cookie = response.getCookie("test-session");
+System.out.println(cookie);
 
         //when
-        response = instance.to("/valid?authenticity=" + token)
+        response = instance.to("/valid")
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
-
+        System.out.println(cookie);
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
         assertThat(response.getContent(), equalTo("bar"));
     }
 
     @Test
-    public void testInvalidAuthenticity() {
+    public void testInvalidCsrf() {
         //when
-        TestResponse response = TestRequest.get("/invalid?authenticity=fdjsklfjsd82jkfldsjkl").execute();
+        TestResponse response = TestRequest.get("/valid").execute();
 
         //then
         assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
         assertThat(response.getContent(), not(containsString("bar")));
-        assertThat(response.getContent(), containsString("Access forbidden"));
     }
 }

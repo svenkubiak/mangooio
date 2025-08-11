@@ -3,16 +3,14 @@ package controllers;
 import io.mangoo.annotations.FilterWith;
 import io.mangoo.filters.CsrfFilter;
 import io.mangoo.routing.Response;
+import io.mangoo.routing.bindings.Session;
 
 public class CsrfController {
-    public Response form() {
-        return Response.ok().render("foo", "bar");
+    public Response csrf(Session session) {
+        session.keep();
+        return Response.ok();
     }
-    
-    public Response token() {
-        return Response.ok().render("foo", "bar");
-    }
-    
+
     @FilterWith(CsrfFilter.class)
     public Response valid() {
         return Response.ok().render("foo", "bar");

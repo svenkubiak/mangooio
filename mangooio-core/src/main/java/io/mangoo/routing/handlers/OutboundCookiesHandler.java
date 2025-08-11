@@ -60,11 +60,12 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setDiscard(true);
             
             exchange.setResponseCookie(cookie);
-        } else if (session.hasChanges()) {
+        } else if (session.isKept()) {
             try {
                 String token = PasetoBuilder.create()
                         .withExpires(session.getExpires())
                         .withSecret(config.getSessionCookieSecret())
+                        .withClaim("csrf-token", session.getCsrf())
                         .withClaims(session.getValues())
                         .build();
                 
@@ -83,8 +84,6 @@ public class OutboundCookiesHandler implements HttpHandler {
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
                 LOG.error("Failed to generate session cookie", e);
             }
-        } else {
-            //Ignore and send no cookie to the client
         }
     }
 
