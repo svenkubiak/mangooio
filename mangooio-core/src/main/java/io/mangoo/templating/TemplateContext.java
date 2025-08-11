@@ -4,6 +4,8 @@ import io.mangoo.i18n.Messages;
 import io.mangoo.routing.bindings.Flash;
 import io.mangoo.routing.bindings.Form;
 import io.mangoo.routing.bindings.Session;
+import io.mangoo.templating.directives.CsrfFormDirective;
+import io.mangoo.templating.directives.CsrfTokenDirective;
 import io.mangoo.templating.methods.I18nMethod;
 import io.mangoo.templating.methods.LocationMethod;
 import io.mangoo.templating.methods.PrettyTimeMethod;
@@ -53,6 +55,16 @@ public class TemplateContext {
     
     public TemplateContext withPrettyTime(Locale locale) {
         content.put("prettytime", new PrettyTimeMethod(locale));
+        return this;
+    }
+
+    public TemplateContext withCsrf(Session session) {
+        content.put("csrf-token", new CsrfTokenDirective(session));
+        return this;
+    }
+
+    public TemplateContext withAuthenticityForm(Session session) {
+        content.put("csrf-form", new CsrfFormDirective(session));
         return this;
     }
     

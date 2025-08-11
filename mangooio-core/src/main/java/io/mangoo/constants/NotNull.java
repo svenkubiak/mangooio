@@ -23,6 +23,7 @@ public final class NotNull {
     public static final String COLLECTION = "collection can not be null";
     public static final String CRON = "cron can no be null";
     public static final String CRYPTO = "crypto can not be null";
+    public static final String CSRF = "csrf can not be null";
     public static final String DATA = "data can not be null";
     public static final String DATASTORE = "datastore can not be null";
     public static final String DIGITS = "digits can not be null";

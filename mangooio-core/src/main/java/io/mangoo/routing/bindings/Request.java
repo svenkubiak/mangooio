@@ -24,6 +24,7 @@ public class Request extends Validator {
     private transient Map<String, Cookie> cookies = new HashMap<>();
     private transient Map<String, Object> attributes = new HashMap<>();
     private String body = Strings.EMPTY;
+    private String csrf = Strings.EMPTY;
     private Map<String, String> parameter;
 
     public Request(){
@@ -44,6 +45,11 @@ public class Request extends Validator {
     
     public Request withAuthentication(Authentication authentication) {
         this.authentication = authentication;
+        return this;
+    }
+
+    public Request withCsrf(String csrf) {
+        this.csrf = csrf;
         return this;
     }
     
@@ -84,6 +90,16 @@ public class Request extends Validator {
         }
         
         return new HashMap<>();
+    }
+
+    /**
+     * Checks if the session bound authenticity token matches the client sent
+     * authenticity token
+     *
+     * @return True if the token matches, false otherwise
+     */
+    public boolean hasValidCsrf() {
+        return session.getCsrf().equals(csrf);
     }
 
     /**

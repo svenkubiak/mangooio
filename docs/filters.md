@@ -20,7 +20,7 @@ Filters can be applied to an entire controller class or individual methods. If a
 package controllers;
 
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.filters.AuthenticityFilter;
+import io.mangoo.filters.CsrfFilter;
 import io.mangoo.routing.Response;
 
 @FilterWith(MyFilter.class)

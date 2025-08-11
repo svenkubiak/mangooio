@@ -14,6 +14,7 @@ public class Session {
     private static final Logger LOG = LogManager.getLogger(Session.class);
     private static final Set<String> INVALID_CHARACTERS = Set.of("|", ":", "&", " ");
     private Map<String, String> values = new HashMap<>();
+    private String csrf;
     private LocalDateTime expires;
     private boolean changed;
     private boolean invalid;
@@ -33,6 +34,13 @@ public class Session {
         Objects.requireNonNull(expires, NotNull.EXPIRES);
         
         this.expires = expires;
+        return this;
+    }
+
+    public Session withCsrf(String csrf) {
+        Objects.requireNonNull(csrf, NotNull.CSRF);
+
+        this.csrf = csrf;
         return this;
     }
     
@@ -74,6 +82,13 @@ public class Session {
      */
     public LocalDateTime getExpires() {
         return expires;
+    }
+
+    /**
+     * @return The csrf token of the session
+     */
+    public String getCsrf() {
+        return csrf;
     }
 
     /**
