@@ -27,6 +27,7 @@ public final class Default {
     public static final String CORS_HEADERS_EXPOSE_HEADERS = "Accept-Ranges,Content-Length,Content-Range,ETag,Link,Server,X-Total-Count";
     public static final String CORS_HEADERS_MAX_AGE = "864000";
     public static final String CORS_URL_PATTERN = "^http(s)?://([^/]+)(:([^/]+))?(/([^/])+)?/api(/.*)?$";
+    public static final String CSRF_TOKEN = "csrf-token";
     public static final String FILES_FOLDER = "files";
     public static final String FLASH_COOKIE_NAME = "mangooio-flash";
     public static final String I18N_COOKIE_NAME = "mangooio-i18n";

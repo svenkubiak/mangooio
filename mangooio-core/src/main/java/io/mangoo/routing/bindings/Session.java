@@ -96,6 +96,7 @@ public class Session {
      * @return The csrf token of the session
      */
     public String getCsrf() {
+        this.keep = true;
         return csrf;
     }
 
