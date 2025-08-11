@@ -8,13 +8,11 @@ import io.undertow.util.Headers;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import java.util.Set;
-
 public class OriginFilter implements PerRequestFilter {
-    private final Set<String> allowedOrigins;
+    private final String allowedOrigins;
 
     @Inject
-    public OriginFilter(@Named(Key.APPLICATION_ALLOWED_ORIGINS) Set<String> allowedOrigins) {
+    public OriginFilter(@Named(Key.APPLICATION_ALLOWED_ORIGINS) String allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
     }
 

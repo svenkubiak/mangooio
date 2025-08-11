@@ -3,7 +3,7 @@
 Filters allow execution of code before each controller or method in a controller is executed. To apply a filter, use the `@FilterWith` annotation:
 
 ```java
-@FilterWith(MyFilter.class)
+@FilterWith(MyFilter.class);
 ```
 
 mangoo I/O provides two types of filters:
@@ -26,12 +26,12 @@ import io.mangoo.routing.Response;
 @FilterWith(MyFilter.class)
 public class MyController {
     public Response token() {
-        return Response.withOk().andContent("foo", "bar");
+        return Response.ok().render("foo", "bar");
     }
 
     @FilterWith(AuthenticityFilter.class)
     public Response valid() {
-        return Response.withOk().andContent("foo", "bar");
+        return Response.ok().render("foo", "bar");
     }
 }
 ```
@@ -115,24 +115,3 @@ Filters process requests in the following order:
 3. Method filters
 
 Only the header and content values are merged with the response object returned by the controller.
-
-## Example: CSRF Protection Filter
-
-Below is an example of an authenticity filter used for CSRF checks:
-
-```java
-public class AuthenticityFilter implements MangooControllerFilter {
-    @Override
-    public Response execute(Request request, Response response) {
-        if (!request.authenticityMatches()) {
-            return Response.withForbidden().andBody(Template.DEFAULT.forbidden()).end();
-        }
-        return response;
-    }
-}
-```
-
-This filter checks the request’s authenticity and, if invalid, returns a `403 Forbidden` response, ending further filter execution.
-
-!!! note
-    Always return a response object. Returning `null` will result in an exception.

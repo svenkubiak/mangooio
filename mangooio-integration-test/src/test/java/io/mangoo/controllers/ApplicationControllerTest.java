@@ -49,6 +49,28 @@ class ApplicationControllerTest {
     }
 
     @Test
+    void testOriginSuccess() {
+        //given
+        final TestResponse response = TestRequest.get("/origin").withHeader("Origin", "http://foo.de").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
+    }
+
+    @Test
+    void testOriginSuccessFailture() {
+        //given
+        final TestResponse response = TestRequest.get("/origin").execute();
+
+        //then
+        assertThat(response, not(nullValue()));
+        assertThat(response.getContentType(), equalTo(TEXT_PLAIN));
+        assertThat(response.getStatusCode(), equalTo(StatusCodes.FORBIDDEN));
+    }
+
+    @Test
     void testAnyOf() {
         //given
         final TestResponse deleteResponse = TestRequest.delete("/").execute();

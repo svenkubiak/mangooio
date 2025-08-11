@@ -6,7 +6,7 @@ public final class Key {
     public static final String APPLICATION_ADMIN_PASSWORD = "application.admin.password";
     public static final String APPLICATION_ADMIN_SECRET = "application.admin.secret";
     public static final String APPLICATION_ADMIN_USERNAME = "application.admin.username";
-    public static final String APPLICATION_ALLOWED_ORIGINS = "application.allowedorigins";
+    public static final String APPLICATION_ALLOWED_ORIGINS = "application.allowedOrigins";
     public static final String APPLICATION_API_KEY = "application.api.key";
     public static final String APPLICATION_CONFIG = "application.config";
     public static final String APPLICATION_CONTROLLER = "application.controller";

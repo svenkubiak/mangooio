@@ -6,6 +6,7 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
+import io.mangoo.filters.OriginFilter;
 import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
@@ -30,6 +31,11 @@ public class ApplicationController {
     }
 
     public Response index() {
+        return Response.ok();
+    }
+
+    @FilterWith(OriginFilter.class)
+    public Response origin() {
         return Response.ok();
     }
 

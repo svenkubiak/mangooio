@@ -3,7 +3,6 @@
 Unreleased
 
 * Added OriginFilter for the checking the Origin-Header (svenkubiak)
-* Added CsrfFilter for checking CSRF in Form Post or Header value (svenkubiak)
 * Version bumps (svenkubiak)
   * tika-core 3.2.1 -&gt; 3.2.2
 
