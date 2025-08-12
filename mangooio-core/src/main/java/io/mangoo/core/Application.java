@@ -540,6 +540,11 @@ public final class Application {
                 failsafe();
             }
         }
+
+        if (config.getAllConfigurations().containsKey(Key.APPLICATION_ALLOWED_ORIGINS) && StringUtils.isBlank(config.getString(Key.APPLICATION_ALLOWED_ORIGINS))) {
+            LOG.error("application.allowedOrigins is present in config.yaml, but has now value.");
+            failsafe();
+        }
     }
 
     /**
