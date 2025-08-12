@@ -3,6 +3,7 @@ package io.mangoo.constants;
 public final class NotNull {
     public static final String ACCOUNT_NAME = "account name can not be null";
     public static final String ALGORITHM = "algorithm can not be null";
+    public static final String ALLOWED_ORIGINS = "allowed origins can not be null";
     public static final String BCCS = "bccs can not be null";
     public static final String BYTES = "bytes can not be null";
     public static final String CACHE = "cache can not be null";

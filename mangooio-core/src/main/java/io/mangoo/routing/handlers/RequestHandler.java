@@ -57,7 +57,7 @@ public class RequestHandler implements HttpHandler {
     protected Request getRequest(HttpServerExchange exchange) {
         final String csrf = Optional
                 .ofNullable(exchange.getRequestHeaders().getFirst(Default.CSRF_TOKEN))
-                .orElse(attachment.getForm().get(Default.CSRF_TOKEN));
+                .orElseGet(() -> attachment.getForm().get(Default.CSRF_TOKEN));
 
         return new Request(exchange)
                 .withSession(attachment.getSession())
