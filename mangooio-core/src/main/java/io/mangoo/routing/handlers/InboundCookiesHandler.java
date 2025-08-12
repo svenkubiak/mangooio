@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -70,7 +71,7 @@ public class InboundCookiesHandler implements HttpHandler {
                     session = Session.create()
                             .keep()
                             .withContent(MangooUtils.copyMap(token.getClaims()))
-                            .withCsrf(token.getClaim("csrf-token"))
+                            .withCsrf(token.getClaim(Default.CSRF_TOKEN))
                             .withExpires(token.getExpires());
                 }
             } catch (MangooTokenException e) {

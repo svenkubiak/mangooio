@@ -1,6 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -65,7 +66,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 String token = PasetoBuilder.create()
                         .withExpires(session.getExpires())
                         .withSecret(config.getSessionCookieSecret())
-                        .withClaim("csrf-token", session.getCsrf())
+                        .withClaim(Default.CSRF_TOKEN, session.getCsrf())
                         .withClaims(session.getValues())
                         .build();
                 
