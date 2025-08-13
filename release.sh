@@ -1,13 +1,14 @@
 #!/bin/bash
 mvn release:clean
 mvn clean verify
-mvn versions:set
 STATUS=$?
-VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
 
 if [ $STATUS -ne 0 ]; then
-  echo "Failed to set new version!"
+  echo "Build failed!"
+  exit 1
 else
+  mvn versions:set
+  VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
   mvn clean deploy -Prelease
   STATUS=$?
   if [ $STATUS -ne 0 ]; then
