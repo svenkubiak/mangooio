@@ -545,6 +545,17 @@ public final class Application {
             LOG.error("application.allowedOrigins is present in config.yaml, but has now value.");
             failsafe();
         }
+
+        if (!config.getSessionCookieSameSiteMode().equals("Strict") && !config.getSessionCookieSameSiteMode().equals("Lax")) {
+            LOG.error("Only 'Strict' or 'Lax' is allowed in session.cookie.samesitemode is allowed");
+            failsafe();
+        }
+
+        if (!config.getAuthenticationCookieSameSiteMode().equals("Strict") && !config.getAuthenticationCookieSameSiteMode().equals("Lax")) {
+            System.out.println("found " + config.getAuthenticationCookieSameSiteMode());
+            LOG.error("Only 'Strict' or 'Lax' is allowed in authentication.cookie.samesitemode is allowed");
+            failsafe();
+        }
     }
 
     /**

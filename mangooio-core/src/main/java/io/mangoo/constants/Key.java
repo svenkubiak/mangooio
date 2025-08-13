@@ -61,6 +61,7 @@ public final class Key {
     public static final String SESSION_COOKIE_SECRET = "session.cookie.secret";
     public static final String SESSION_COOKIE_SECURE = "session.cookie.secure";
     public static final String SESSION_COOKIE_TOKEN_EXPIRES = "session.cookie.token.expires";
+    public static final String SESSION_COOKIE_SAME_SITE_MODE = "session.cookie.samesitemode";
     public static final String SMTP_AUTHENTICATION = "smtp.authentication";
     public static final String SMTP_DEBUG = "smtp.debug";
     public static final String SMTP_FROM = "smtp.from";

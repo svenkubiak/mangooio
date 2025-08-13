@@ -782,4 +782,8 @@ public class Config {
     public boolean isValid() {
         return valid;
     }
+
+    public String getSessionCookieSameSiteMode() {
+        return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
+    }
 }

@@ -42,6 +42,7 @@ public final class Default {
     public static final int PERSISTENCE_MONGO_PORT = 27017;
     public static final String PERSISTENCE_PREFIX = "persistence.";
     public static final Boolean SCHEDULER_ENABLE = Boolean.TRUE;
+    public static final String SESSION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String SESSION_COOKIE_NAME = "mangooio-session";
     public static final Boolean SESSION_COOKIE_SECURE = Boolean.FALSE;

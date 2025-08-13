@@ -57,7 +57,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setHttpOnly(true)
                     .setPath("/")
                     .setMaxAge(0)
-                    .setSameSiteMode(SAME_SITE_MODE)
+                    .setSameSiteMode(config.getSessionCookieSameSiteMode())
                     .setDiscard(true);
             
             exchange.setResponseCookie(cookie);
@@ -72,7 +72,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                 
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
-                        .setSameSiteMode(SAME_SITE_MODE)
+                        .setSameSiteMode(config.getSessionCookieSameSiteMode())
                         .setHttpOnly(true)
                         .setPath("/")
                         .setSecure(config.isSessionCookieSecure());
