@@ -37,7 +37,7 @@ class SessionTest {
         //then
         assertThat(session.hasContent(), equalTo(true));
         assertThat(session.get(FOO), equalTo(BAR));
-        assertThat(session.isKept(), equalTo(true));
+        assertThat(session.isKept(), equalTo(false));
     }
 
     @Test
@@ -52,7 +52,7 @@ class SessionTest {
         //then
         assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
-        assertThat(session.isKept(), equalTo(true));
+        assertThat(session.isKept(), equalTo(false));
     }
 
     @Test
@@ -67,7 +67,7 @@ class SessionTest {
         //then
         assertThat(session.hasContent(), equalTo(false));
         assertThat(session.get(FOO), equalTo(null));
-        assertThat(session.isKept(), equalTo(true));
+        assertThat(session.isKept(), equalTo(false));
     }
 
     @Test
