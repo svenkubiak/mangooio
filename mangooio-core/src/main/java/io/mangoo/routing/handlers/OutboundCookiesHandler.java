@@ -73,13 +73,10 @@ public class OutboundCookiesHandler implements HttpHandler {
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
                         .setSameSiteMode(config.getSessionCookieSameSiteMode())
+                        .setExpires(DateUtils.localDateTimeToDate(session.getExpires()))
                         .setHttpOnly(true)
                         .setPath("/")
                         .setSecure(config.isSessionCookieSecure());
-                
-                if (Boolean.TRUE.equals(config.isSessionCookieExpires())) {
-                    cookie.setExpires(DateUtils.localDateTimeToDate(session.getExpires()));
-                }
 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here
@@ -125,13 +122,10 @@ public class OutboundCookiesHandler implements HttpHandler {
                     var cookie = new CookieImpl(config.getAuthenticationCookieName())
                             .setValue(token)
                             .setSecure(config.isAuthenticationCookieSecure())
+                            .setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()))
                             .setHttpOnly(true)
                             .setPath("/")
                             .setSameSiteMode(config.getAuthenticationCookieSameSiteMode());
-
-                    if (authentication.isRememberMe() || config.isAuthenticationCookieExpires()) {
-                        cookie.setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()));
-                    }
 
                     exchange.setResponseCookie(cookie);
                 } catch (Exception e) { //NOSONAR Intentionally catching exception here

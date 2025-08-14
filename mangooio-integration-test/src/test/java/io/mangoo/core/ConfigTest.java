@@ -167,35 +167,6 @@ class ConfigTest {
     }
 
     @Test
-    void testGetAuthenticationCookieExpires() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String expires = "42";
-
-        // when
-        Map<String, String> configValues = ImmutableMap.of("authentication.cookie.expires", expires);
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isAuthenticationCookieExpires(), equalTo(Boolean.valueOf(expires)));
-    }
-
-    @Test
-    void testGetAuthenticationCookieExpiresDefaultValue() throws IOException {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Map<String, String> configValues = new HashMap<>();
-        createTempConfig(configValues);
-        Config config = new Config();
-
-        // then
-        assertThat(config.isAuthenticationCookieExpires(), equalTo(Default.AUTHENTICATION_COOKIE_EXPIRES));
-    }
-
-    @Test
     void testGetSessionCookieExpires() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());

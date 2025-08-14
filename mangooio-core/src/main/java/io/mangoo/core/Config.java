@@ -719,13 +719,6 @@ public class Config {
     /**
      * @return authentication.cookie.expires or default value if undefined
      */
-    public boolean isAuthenticationCookieExpires() {
-        return getBoolean(Key.AUTHENTICATION_COOKIE_EXPIRES, Default.AUTHENTICATION_COOKIE_EXPIRES);
-    }
-
-    /**
-     * @return authentication.cookie.expires or default value if undefined
-     */
     public long getAuthenticationCookieTokenExpires() {
         return getLong(Key.AUTHENTICATION_COOKIE_TOKEN_EXPIRES, Default.AUTHENTICATION_COOKIE_TOKEN_EXPIRES);
     }
