@@ -2,7 +2,8 @@
 
 Unreleased
 
-* Added OriginFilter for the checking the Origin-Header (svenkubiak)
+* Paseto token and cookie have now the same expie date (svenkubiak)
+* Added OriginFilter for checking the Origin-Header (svenkubiak)
 * Added CsrfFilter and corresponding methods for CSRF checks (svenkubiak)
 * Version bumps (svenkubiak)
   * tika-core 3.2.1 -&gt; 3.2.2
