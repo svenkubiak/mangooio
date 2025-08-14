@@ -21,6 +21,7 @@ public class CsrfFormDirective implements TemplateDirectiveModel {
     @Override
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
         if (session != null) {
+            session.keep();
             environment.getOut().append("<input type=\"hidden\" value=\"" + session.getCsrf() + "\" name=\"" + Default.CSRF_TOKEN + "\" />");
         }
     }

@@ -20,6 +20,7 @@ public class CsrfTokenDirective implements TemplateDirectiveModel {
     @Override
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
         if (session != null) {
+            session.keep();
             environment.getOut().append(session.getCsrf());
         }
     }

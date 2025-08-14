@@ -16,8 +16,9 @@ public class Session {
     private Map<String, String> values = new HashMap<>();
     private String csrf;
     private LocalDateTime expires;
-    private boolean keep;
+    private boolean changed;
     private boolean invalid;
+    private boolean keep;
 
     public static Session create() {
         return new Session();
@@ -45,18 +46,14 @@ public class Session {
     }
 
     /**
-     * Keeps the current session for following requests
-     */
-    public Session keep() {
-        keep = true;
-        return this;
-    }
-
-    /**
      * Invalidates the session by sending expiring the client cookie
      */
     public void invalidate() {
         invalid = true;
+    }
+
+    public void keep() {
+        keep = true;
     }
 
     /**
@@ -96,7 +93,6 @@ public class Session {
      * @return The csrf token of the session
      */
     public String getCsrf() {
-        this.keep = true;
         return csrf;
     }
 
@@ -111,7 +107,7 @@ public class Session {
             LOG.error("Session key or value can not contain the following characters: spaces, |, & or :");
         }  else {
             values.put(key, value);
-            keep = true;
+            changed = true;
         }
     }
 
@@ -121,8 +117,8 @@ public class Session {
      * @param key The key to remove
      */
     public void remove(String key) {
-        keep = true;
         values.remove(key);
+        changed = true;
     }
 
     /**
@@ -137,8 +133,11 @@ public class Session {
         return invalid;
     }
 
+    public boolean hasChanged() {
+        return changed;
+    }
+
     public boolean isKept() {
         return keep;
     }
-
 }

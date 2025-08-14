@@ -58,7 +58,7 @@ public class InboundCookiesHandler implements HttpHandler {
             .withContent(new HashMap<>())
             .withCsrf(MangooUtils.randomString(32))
             .withExpires(LocalDateTime.now().plusMinutes(config.getSessionCookieTokenExpires()));
-        
+
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
@@ -69,7 +69,6 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 if (token.getExpires().isAfter(LocalDateTime.now())) {
                     session = Session.create()
-                            .keep()
                             .withContent(MangooUtils.copyMap(token.getClaims()))
                             .withCsrf(token.getClaim(Default.CSRF_TOKEN))
                             .withExpires(token.getExpires());

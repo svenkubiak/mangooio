@@ -99,7 +99,9 @@ public class Request extends Validator {
      * @return True if the token matches, false otherwise
      */
     public boolean hasValidCsrf() {
-        return session.getCsrf().equals(csrf);
+        return StringUtils.isNotBlank(session.getCsrf())
+                && StringUtils.isNotBlank(csrf)
+                && session.getCsrf().equals(csrf);
     }
 
     /**

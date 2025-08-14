@@ -61,7 +61,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                     .setDiscard(true);
             
             exchange.setResponseCookie(cookie);
-        } else if (session.isKept()) {
+        } else if (session.hasChanged() || session.isKept()) {
             try {
                 String token = PasetoBuilder.create()
                         .withExpires(session.getExpires())
@@ -69,7 +69,7 @@ public class OutboundCookiesHandler implements HttpHandler {
                         .withClaim(Default.CSRF_TOKEN, session.getCsrf())
                         .withClaims(session.getValues())
                         .build();
-                
+
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(token)
                         .setSameSiteMode(config.getSessionCookieSameSiteMode())
