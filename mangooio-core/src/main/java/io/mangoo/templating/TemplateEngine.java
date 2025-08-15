@@ -14,6 +14,7 @@ import io.mangoo.records.Source;
 import io.undertow.server.HttpServerExchange;
 import no.api.freemarker.java8.Java8ObjectWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.io.File;
@@ -191,7 +192,7 @@ public class TemplateEngine {
         int position = packageName.lastIndexOf('.');
         if (position > 0) {
             packageName = packageName.substring(0, position);
-            return StringUtils.replace(packageName, ".", File.separator) + File.separator + stackTraceElement.getFileName();
+            return Strings.CI.replace(packageName, ".", File.separator) + File.separator + stackTraceElement.getFileName();
         }
 
         return stackTraceElement.getFileName();

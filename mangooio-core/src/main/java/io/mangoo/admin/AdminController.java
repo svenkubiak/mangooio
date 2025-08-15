@@ -12,6 +12,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.crypto.Crypto;
 import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.filters.AdminFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
@@ -196,7 +197,11 @@ public class AdminController {
         if (AdminUtils.isNotLocked() && form.isValid()) {
             if (AdminUtils.isValidAuthentication(form)) {
                 resetLockCounter();
-                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(true));
+                try {
+                    return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(true));
+                } catch (MangooJwtExeption e) {
+                    AdminUtils.invalidAuthentication();
+                }
             } else {
                 AdminUtils.invalidAuthentication();
             }
@@ -212,7 +217,11 @@ public class AdminController {
         
         if (AdminUtils.isNotLocked() && form.isValid()) {
             if (TotpUtils.verifiedTotp(config.getApplicationAdminSecret(), form.get("code"))) {
-                return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
+                try {
+                    return Response.redirect(ADMIN_INDEX).cookie(AdminUtils.getAdminCookie(false));
+                } catch (MangooJwtExeption e) {
+                    AdminUtils.invalidAuthentication();
+                }
             } else {
                 AdminUtils.invalidAuthentication();
             }

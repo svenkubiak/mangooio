@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class MangooUtils {
     private static final Logger LOG = LogManager.getLogger(MangooUtils.class);
@@ -65,7 +66,23 @@ public final class MangooUtils {
         
         return new HashMap<>(originalMap);
     }
-    
+
+    /**
+     * Copies a given map to a new map instance
+     *
+     * @param originalMap The map to copy
+     * @return A new Map instance with value from originalMap
+     */
+    public static Map<String, String> toStringMap(Map<String, Object> originalMap) {
+        Objects.requireNonNull(originalMap, NotNull.MAP);
+
+        return originalMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> Objects.toString(e.getValue(), null)
+                ));
+    }
+
     /**
      * Generates a random string with the given length.
      * <p>

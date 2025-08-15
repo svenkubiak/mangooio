@@ -11,10 +11,10 @@ public final class Default {
     public static final String APPLICATION_LANGUAGE = "en";
     public static final String APPLICATION_NAME = "mangooio-application";
     public static final String AUTHENTICATION_COOKIE_NAME = "mangooio-auth";
-    public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 720L;
+    public static final long AUTHENTICATION_COOKIE_REMEMBER_EXPIRES = 2592000;
     public static final String AUTHENTICATION_COOKIE_SAME_SITE_MODE = "Strict";
     public static final Boolean AUTHENTICATION_COOKIE_SECURE = Boolean.FALSE;
-    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 60L;
+    public static final long AUTHENTICATION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final int AUTHENTICATION_LOCK = 10;
     public static final Boolean AUTHENTICATION_ORIGIN = Boolean.FALSE;
     public static final String BUNDLE_NAME = "translations/messages";
@@ -45,7 +45,7 @@ public final class Default {
     public static final Boolean SESSION_COOKIE_EXPIRES = Boolean.FALSE;
     public static final String SESSION_COOKIE_NAME = "mangooio-session";
     public static final Boolean SESSION_COOKIE_SECURE = Boolean.FALSE;
-    public static final long SESSION_COOKIE_TOKEN_EXPIRES = 60L;
+    public static final long SESSION_COOKIE_TOKEN_EXPIRES = 3600;
     public static final Boolean SMTP_AUTHENTICATION = Boolean.FALSE;
     public static final Boolean SMTP_DEBUG = Boolean.FALSE;
     public static final String SMTP_FROM = "mangoo <noreply@mangoo.local>";

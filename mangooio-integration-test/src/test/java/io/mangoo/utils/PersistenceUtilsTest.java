@@ -14,7 +14,7 @@ class PersistenceUtilsTest {
     void testCollection() {
         //given
         String key = this.getClass().getName();
-        String value = CodecUtils.uuid();
+        String value = CodecUtils.uuidV6();
 
         //when
         PersistenceUtils.addCollection(key, value);

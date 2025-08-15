@@ -7,7 +7,6 @@ import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.filters.ApiKeyFilter;
 import io.mangoo.filters.OriginFilter;
-import io.mangoo.filters.PasetoFilter;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -63,11 +62,6 @@ public class ApplicationController {
 
     @FilterWith(ApiKeyFilter.class)
     public Response apiFilter() {
-        return Response.ok();
-    }
-
-    @FilterWith(PasetoFilter.class)
-    public Response tokenFilter() {
         return Response.ok();
     }
 

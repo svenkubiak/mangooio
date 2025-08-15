@@ -217,7 +217,7 @@ class MangooUtilsTest {
         MatcherAssert.assertThat(t -> {
             //given
             File file = new File(UUID.randomUUID().toString());
-            String uuid = CodecUtils.uuid();
+            String uuid = CodecUtils.uuidV6();
             Files.write(file.toPath(), uuid.getBytes());
             
             //when
@@ -247,7 +247,7 @@ class MangooUtilsTest {
     @Test
     void testUUID() {
         //when
-        String uuid = CodecUtils.uuid();
+        String uuid = CodecUtils.uuidV6();
 
         //then
         assertThat(uuid, not(nullValue()));
@@ -257,7 +257,7 @@ class MangooUtilsTest {
     void testUUIDConcurrent() {
         MatcherAssert.assertThat(t -> {
             //when
-            String uuid = CodecUtils.uuid();
+            String uuid = CodecUtils.uuidV6();
 
             // then
             return StringUtils.isNotBlank(uuid);

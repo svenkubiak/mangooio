@@ -1,6 +1,7 @@
 package io.mangoo.utils;
 
 import io.mangoo.TestExtension;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.routing.bindings.Form;
 import io.undertow.server.handlers.Cookie;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import static org.hamcrest.Matchers.*;
 @ExtendWith({TestExtension.class})
 public class AdminUtilsTest {
     @Test
-    void testGetAdminCookie() {
+    void testGetAdminCookie() throws MangooJwtExeption {
         //given
         boolean twofactor = false;
 

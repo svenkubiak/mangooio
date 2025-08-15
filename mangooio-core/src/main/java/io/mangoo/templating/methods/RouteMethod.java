@@ -6,7 +6,7 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import io.mangoo.routing.Router;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class RouteMethod implements TemplateMethodModelEx {
                 var i = 1;
                 while (matcher.find()) {
                     var argument = ((SimpleScalar) arguments.get(i)).getAsString();
-                    url = StringUtils.replace(url, "{" + matcher.group(1) + "}", argument);
+                    url = Strings.CI.replace(url, "{" + matcher.group(1) + "}", argument);
                     i++;
                 }
             } else {

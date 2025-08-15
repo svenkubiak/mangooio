@@ -157,7 +157,7 @@ public final class JsonUtils {
     private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map) {
         if (jsonNode.isObject()) {
             var objectNode = (ObjectNode) jsonNode;
-            Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
+            Iterator<Map.Entry<String, JsonNode>> iter = objectNode.properties().iterator();
             String pathPrefix = currentPath.isEmpty() ? Strings.EMPTY : currentPath + ".";
 
             while (iter.hasNext()) {

@@ -6,10 +6,9 @@ import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Request;
-import io.mangoo.utils.paseto.PasetoParser;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Methods;
@@ -100,13 +99,14 @@ public final class RequestUtils {
             
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    PasetoParser.create()
-                        .withSecret(config.getAuthenticationCookieSecret())
-                        .withValue(value)
-                        .parse();
+                    JwtUtils.parseJwt(value,
+                            config.getAuthenticationCookieSecret(),
+                            config.getApplicationName(),
+                            config.getAuthenticationCookieName(),
+                            config.getAuthenticationCookieTokenExpires());
                     
                     valid = true;
-                } catch (MangooTokenException e) {
+                } catch (MangooJwtExeption e) {
                     LOG.error("Failed to parse authentication cookie", e);
                 }
             }

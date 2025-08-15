@@ -170,7 +170,7 @@ class ConfigTest {
     void testGetSessionCookieExpires() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        String expires = "60";
+        String expires = "3600";
 
         // when
         Map<String, String> configValues = ImmutableMap.of("session.cookie.expires", expires);
@@ -1709,7 +1709,7 @@ class ConfigTest {
     }
 
     private void createTempConfig(Map<String, String> values) {
-        Path configTempFile = tempDir.resolve(CodecUtils.uuid());
+        Path configTempFile = tempDir.resolve(CodecUtils.uuidV6());
 
         try {
             // Create the main configuration map

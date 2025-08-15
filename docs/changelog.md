@@ -1,3 +1,12 @@
+## Version 9.9.0
+
+Unreleased
+
+* Switched from Paseto to JWT (svenkubiak)
+* Version bumps (svenkubiak)
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.8.0...9.9.0)
+
 ## Version 9.8.0
 
 Released at 15.08.2025

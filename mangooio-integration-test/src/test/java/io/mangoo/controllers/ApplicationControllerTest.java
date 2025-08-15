@@ -5,10 +5,9 @@ import io.mangoo.cache.Cache;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
-import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.util.Headers;
 import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.util.Strings;
@@ -17,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.time.LocalDateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -110,19 +107,9 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testTokenFilterUnauthorized() {
-        //given
-        final TestResponse response = TestRequest.get("/token-filter").execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-    }
-
-    @Test
     void testApiFilterUnauthorized() {
         //given
-        final TestResponse response = TestRequest.get("/token-filter").execute();
+        final TestResponse response = TestRequest.get("/api-filter").execute();
 
         //then
         assertThat(response, not(nullValue()));
@@ -130,7 +117,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testApiFilterAuthorized() throws MangooTokenException {
+    void testApiFilterAuthorized() throws MangooJwtExeption {
         //given
         final TestResponse response = TestRequest
                 .get("/api-filter")
@@ -142,35 +129,6 @@ class ApplicationControllerTest {
         assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
     }
 
-    @Test
-    void testTokenFilterAuthorized() throws MangooTokenException {
-        //given
-        String token = PasetoBuilder.create()
-                .withSecret(Application.getInstance(Config.class).getTokenSecret())
-                .build();
-
-        final TestResponse response = TestRequest.get("/token-filter").withHeader("Authorization", token).execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.OK));
-    }
-
-    @Test
-    void testTokenFilterExpired() throws MangooTokenException {
-        //given
-        String token = PasetoBuilder.create()
-                .withSecret(Application.getInstance(Config.class).getTokenSecret())
-                .withExpires(LocalDateTime.now().minusDays(1))
-                .build();
-
-        final TestResponse response = TestRequest.get("/token-filter").withHeader("Authorization", token).execute();
-
-        //then
-        assertThat(response, not(nullValue()));
-        assertThat(response.getStatusCode(), equalTo(StatusCodes.UNAUTHORIZED));
-    }
-    
     @Test
     void testReverse() {
         //given

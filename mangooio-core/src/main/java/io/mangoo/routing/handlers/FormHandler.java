@@ -9,7 +9,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.form.FormData.FormValue;
 import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.HttpString;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -54,7 +54,7 @@ public class FormHandler implements HttpHandler {
                                     form.addFile(Files.newInputStream(formValue.getFileItem().getFile()));
                                 } else {
                                     if (data.contains("[]")) {
-                                        var key = StringUtils.replace(data, "[]", "");
+                                        var key = Strings.CI.replace(data, "[]", "");
                                         for (FormValue value : deque) {
                                             form.addValueList(new HttpString(key).toString(), value.getValue());
                                         }

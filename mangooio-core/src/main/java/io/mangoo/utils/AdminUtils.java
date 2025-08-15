@@ -4,9 +4,8 @@ import io.mangoo.cache.Cache;
 import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.mangoo.core.Application.getInstance;
@@ -34,29 +35,34 @@ public final class AdminUtils {
                username.equals(form.get("username")) && password.equals(form.get("password"));
     }
 
-    public static Cookie getAdminCookie(boolean includeTwoFactor) {
-        var tokenBuilder = PasetoBuilder.create()
-                .withSecret(getInstance(Config.class).getApplicationSecret())
-                .withExpires(LocalDateTime.now().plusMinutes(30))
-                .withClaim("uuid", MangooUtils.randomString(32));
+    public static Cookie getAdminCookie(boolean includeTwoFactor) throws MangooJwtExeption {
+        Config config = getInstance(Config.class);
+        Map<String, String> claims = new HashMap<>();
+        claims.put("uuid", MangooUtils.randomString(32));
 
-        if (includeTwoFactor && StringUtils.isNotBlank(getInstance(Config.class).getApplicationAdminSecret())) {
-            tokenBuilder.withClaim("twofactor", "true");
+        if (includeTwoFactor && StringUtils.isNotBlank(config.getApplicationAdminSecret())) {
+            claims.put("twofactor", "true");
         }
 
-        var token = "";
         try {
-            token = tokenBuilder.build();
-        } catch (MangooTokenException e) {
-            LOG.error("Failed to create admin cookie", e);
-        }
+            String jwt = JwtUtils.createJwt(
+                    config.getApplicationSecret(),
+                    config.getApplicationName(),
+                    Default.APPLICATION_ADMIN_COOKIE_NAME,
+                    CodecUtils.uuidV6(),
+                    1800,
+                    claims);
 
-        return new CookieImpl(Default.APPLICATION_ADMIN_COOKIE_NAME)
-                .setValue(token)
-                .setHttpOnly(true)
-                .setSecure(Application.inProdMode())
-                .setPath("/")
-                .setSameSiteMode("Strict");
+            return new CookieImpl(Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME)
+                    .setValue(jwt)
+                    .setHttpOnly(true)
+                    .setSecure(Application.inProdMode())
+                    .setPath("/")
+                    .setSameSiteMode("Strict");
+        } catch (MangooJwtExeption e) {
+            LOG.error("Failed to create admin cookie", e);
+            throw new MangooJwtExeption(e);
+        }
     }
 
     public static void invalidAuthentication() {

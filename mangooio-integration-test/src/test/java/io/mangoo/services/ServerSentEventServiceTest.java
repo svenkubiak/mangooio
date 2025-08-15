@@ -10,15 +10,15 @@ import io.mangoo.TestExtension;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooTokenException;
+import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.manager.ServerSentEventManager;
-import io.mangoo.utils.paseto.PasetoBuilder;
+import io.mangoo.utils.JwtUtils;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.net.URI;
-import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -68,18 +68,19 @@ class ServerSentEventServiceTest {
 	}
 	
     @Test
-    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, MangooTokenException {
+    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, MangooJwtExeption {
         //given
         Config config = Application.getInstance(Config.class);
 
-        String token = PasetoBuilder.create()
-            .withSubject("foo")
-            .withClaim(ClaimKey.TWO_FACTOR, "false")
-            .withExpires(LocalDateTime.now().plusHours(1))
-            .withSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
-            .build();
+        String jwt = JwtUtils.createJwt(
+                "oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk",
+                config.getApplicationName(),
+                config.getAuthenticationCookieName(),
+                "foo",
+                config.getAuthenticationCookieTokenExpires(),
+                Map.of(ClaimKey.TWO_FACTOR, "false"));
 
-        String cookie = config.getAuthenticationCookieName() + "=" + token;
+        String cookie = config.getAuthenticationCookieName() + "=" + jwt;
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");
 
         Headers headers = new Headers.Builder()

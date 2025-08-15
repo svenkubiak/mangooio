@@ -8,8 +8,8 @@ import io.mangoo.core.Config;
 import io.mangoo.routing.Attachment;
 import io.mangoo.utils.CodecUtils;
 import io.mangoo.utils.DateUtils;
+import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.RequestUtils;
-import io.mangoo.utils.paseto.PasetoBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.CookieImpl;
@@ -17,7 +17,10 @@ import jakarta.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class OutboundCookiesHandler implements HttpHandler {
@@ -63,15 +66,18 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (session.hasChanged() || session.isKept()) {
             try {
-                String token = PasetoBuilder.create()
-                        .withExpires(session.getExpires())
-                        .withSecret(config.getSessionCookieSecret())
-                        .withClaim(Default.CSRF_TOKEN, session.getCsrf())
-                        .withClaims(session.getValues())
-                        .build();
+                Map<String, String> claims = session.getValues();
+                claims.put(Default.CSRF_TOKEN, session.getCsrf());
+                var jwt = JwtUtils.createJwt(
+                        config.getSessionCookieSecret(),
+                        config.getApplicationName(),
+                        config.getSessionCookieName(),
+                        CodecUtils.uuidV6(),
+                        Duration.between(LocalDateTime.now(), session.getExpires()).getSeconds(),
+                        claims);
 
                 var cookie = new CookieImpl(config.getSessionCookieName())
-                        .setValue(token)
+                        .setValue(jwt)
                         .setSameSiteMode(config.getSessionCookieSameSiteMode())
                         .setExpires(DateUtils.localDateTimeToDate(session.getExpires()))
                         .setHttpOnly(true)
@@ -106,21 +112,27 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (authentication.isValid()) {
             var authCookie = exchange.getRequestCookie(config.getAuthenticationCookieName());
             if (authCookie == null || authentication.isUpdate()) {
+                LocalDateTime now = LocalDateTime.now();
                 if (authentication.isRememberMe()) {
-                    authentication.withExpires(LocalDateTime.now().plusHours(config.getAuthenticationCookieRememberExpires()));
+                    authentication.withExpires(now.plusSeconds(config.getAuthenticationCookieRememberExpires()));
                 }
 
                 try {
-                    String token = PasetoBuilder.create()
-                            .withExpires(authentication.getExpires())
-                            .withSecret(config.getAuthenticationCookieSecret())
-                            .withClaim(ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()))
-                            .withClaim(ClaimKey.REMEMBER_ME, String.valueOf(authentication.isRememberMe()))
-                            .withSubject(authentication.getSubject())
-                            .build();
+                    var claims = Map.of(
+                            ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()),
+                            ClaimKey.REMEMBER_ME, String.valueOf(authentication.isRememberMe()));
+
+                    var jwt = JwtUtils.createJwt(
+                            config.getAuthenticationCookieSecret(),
+                            config.getApplicationName(),
+                            config.getAuthenticationCookieName(),
+                            authentication.getSubject(),
+                            Duration.between(LocalDateTime.now(), authentication.getExpires()).getSeconds(),
+                            claims
+                           );
 
                     var cookie = new CookieImpl(config.getAuthenticationCookieName())
-                            .setValue(token)
+                            .setValue(jwt)
                             .setSecure(config.isAuthenticationCookieSecure())
                             .setExpires(DateUtils.localDateTimeToDate(authentication.getExpires()))
                             .setHttpOnly(true)
@@ -159,24 +171,33 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (flash.hasContent() || form.isKept()) {
             try {
-                LocalDateTime expires = LocalDateTime.now().plusSeconds(SIXTY);
+                /*
                 var tokenBuilder = PasetoBuilder.create()
                         .withExpires(expires)
                         .withSecret(config.getFlashCookieSecret())
                         .withClaims(flash.getValues());
-                
+                */
+
+                Map<String, String> claims = new HashMap<>(flash.getValues());
                 if (form.isKept()) {
-                    tokenBuilder.withClaim(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
+                    claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
                 }
-                
-                String token = tokenBuilder.build();
+
+                var jwt = JwtUtils.createJwt(
+                        config.getFlashCookieSecret(),
+                        config.getApplicationName(),
+                        config.getFlashCookieName(),
+                        CodecUtils.uuidV6(),
+                        SIXTY,
+                        claims);
+
                 var cookie = new CookieImpl(config.getFlashCookieName())
-                        .setValue(token)
+                        .setValue(jwt)
                         .setSecure(config.isFlashCookieSecure())
                         .setHttpOnly(true)
                         .setPath("/")
                         .setSameSiteMode(SAME_SITE_MODE)
-                        .setExpires(DateUtils.localDateTimeToDate(expires));
+                        .setExpires(DateUtils.localDateTimeToDate(LocalDateTime.now().plusSeconds(SIXTY)));
                 
                 exchange.setResponseCookie(cookie);
             } catch (Exception e) { //NOSONAR Intentionally catching exception here

@@ -35,7 +35,7 @@ class DatastoreTest {
     void testConcurrentSave() throws InterruptedException {
         MatcherAssert.assertThat(t -> {
             //given
-            String name = CodecUtils.uuid();
+            String name = CodecUtils.uuidV6();
             TestModel model = new TestModel(name);
             
             //when
@@ -128,8 +128,8 @@ class DatastoreTest {
     @Test
     void testFindFirst() {
         //given
-        String name = CodecUtils.uuid();
-        String name2 = CodecUtils.uuid();
+        String name = CodecUtils.uuidV6();
+        String name2 = CodecUtils.uuidV6();
         datastore.dropDatabase();
         TestModel model = new TestModel(name, LocalDateTime.now());
         TestModel model2 = new TestModel(name2, LocalDateTime.now().plusMinutes(25));
@@ -148,8 +148,8 @@ class DatastoreTest {
         TestModel model = new TestModel("foo", LocalDateTime.now());
         TestModel model2 = new TestModel("foo", LocalDateTime.now());
         TestModel model3 = new TestModel("foo", LocalDateTime.now());
-        TestModel model4 = new TestModel(CodecUtils.uuid(), LocalDateTime.now());
-        TestModel model5 = new TestModel(CodecUtils.uuid(), LocalDateTime.now());
+        TestModel model4 = new TestModel(CodecUtils.uuidV6(), LocalDateTime.now());
+        TestModel model5 = new TestModel(CodecUtils.uuidV6(), LocalDateTime.now());
 
         //when
         datastore.saveAll(List.of(model, model2, model3, model4, model5));
@@ -164,7 +164,7 @@ class DatastoreTest {
         
         MatcherAssert.assertThat(t -> {
             //given
-            String name = CodecUtils.uuid();
+            String name = CodecUtils.uuidV6();
             TestModel model = new TestModel(name);
             
             //when
