@@ -1,8 +1,8 @@
 ## Version 9.8.0
 
-Unreleased
+Released at 15.08.2025
 
-* Paseto token and cookie have now the same expie date (svenkubiak)
+* Paseto token and cookie have now the same expire date (svenkubiak)
 * Added OriginFilter for checking the Origin-Header (svenkubiak)
 * Added CsrfFilter and corresponding methods for CSRF checks (svenkubiak)
 * Version bumps (svenkubiak)
