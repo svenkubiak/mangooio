@@ -44,6 +44,7 @@ public final class NotNull {
     public static final String ISSUER = "issuer can not be null";
     public static final String JSON = "json can not be null";
     public static final String JWT = "jwt can not be null";
+    public static final String JWT_DATA = "jwtData can not be null";
     public static final String KEY = "key can not be null";
     public static final String LOCAL_DATE = "localDate can not be null";
     public static final String LOCAL_DATE_TIME = "localDateTime can not be null";

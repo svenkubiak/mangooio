@@ -99,12 +99,13 @@ public final class RequestUtils {
             
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    JwtUtils.parseJwt(value,
-                            config.getAuthenticationCookieSecret(),
-                            config.getApplicationName(),
-                            config.getAuthenticationCookieName(),
-                            config.getAuthenticationCookieTokenExpires());
-                    
+                    var jwtData = JwtUtils.JwtData.create()
+                                    .withSecret(config.getAuthenticationCookieSecret())
+                                    .withIssuer(config.getApplicationName())
+                                    .withAudience(config.getAuthenticationCookieName())
+                                    .withTtlSeconds(config.getAuthenticationCookieTokenExpires());
+
+                    JwtUtils.parseJwt(value, jwtData);
                     valid = true;
                 } catch (MangooJwtExeption e) {
                     LOG.error("Failed to parse authentication cookie", e);

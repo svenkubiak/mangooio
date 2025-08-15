@@ -67,7 +67,6 @@ public final class Application {
     private static final Logger LOG = LogManager.getLogger(Application.class);
     private static final LocalDateTime START = LocalDateTime.now();
     private static final int KEY_MIN_BIT_LENGTH = 512;
-    private static final int PASETO_SECRET_MIN_LENGTH = 256;
     private static final String COLLECTION = "io.mangoo.annotations.Collection";
     private static final String INDEXED = "io.mangoo.annotations.Indexed";
     private static final String SCHEDULER = "io.mangoo.annotations.Run";
@@ -523,14 +522,6 @@ public final class Application {
         if (!config.isDecrypted()) {
             LOG.error("Found encrypted config values in config.yaml but decryption was not successful!");
             failsafe();
-        }
-
-        if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_PASETO_SECRET))) {
-            bitLength = getBitLength(config.getString(Key.APPLICATION_PASETO_SECRET));
-            if (bitLength < PASETO_SECRET_MIN_LENGTH) {
-                LOG.error("Paseto secret requires a 256 bit secret length. The current property for paseto.secret has only {} bits.", bitLength);
-                failsafe();
-            }
         }
 
         if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY))) {

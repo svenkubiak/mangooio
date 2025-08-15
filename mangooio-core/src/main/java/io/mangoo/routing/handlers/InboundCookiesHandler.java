@@ -64,12 +64,13 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtClaimsSet = JwtUtils.parseJwt(
-                        cookieValue,
-                        config.getSessionCookieSecret(),
-                        config.getApplicationName(),
-                        config.getSessionCookieName(),
-                        config.getSessionCookieTokenExpires());
+                var jwtData = JwtUtils.JwtData.create()
+                        .withSecret(config.getSessionCookieSecret())
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getSessionCookieName())
+                        .withTtlSeconds(config.getSessionCookieTokenExpires());
+
+                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 session = Session.create()
                         .withContent(MangooUtils.toStringMap(jwtClaimsSet.getClaims()))
@@ -100,20 +101,22 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue,
-                        config.getAuthenticationCookieSecret(),
-                        config.getApplicationName(),
-                        config.getAuthenticationCookieName(),
-                        config.getAuthenticationCookieRememberExpires());
-                
-                    authentication = Authentication.create()
-                            .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
-                            .withSubject(jwtClaimsSet.getSubject())
-                            .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
-                            .withExpires(LocalDateTime.ofInstant(
-                                jwtClaimsSet.getExpirationTime().toInstant(),
-                                ZoneId.systemDefault()
-                            ));
+                var jwtData = JwtUtils.JwtData.create()
+                        .withSecret(config.getAuthenticationCookieSecret())
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getAuthenticationCookieName())
+                        .withTtlSeconds(config.getAuthenticationCookieRememberExpires());
+
+                var jwtClaimsSet = JwtUtils.parseJwt(cookieValue, jwtData);
+
+                authentication = Authentication.create()
+                        .rememberMe(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.REMEMBER_ME)))
+                        .withSubject(jwtClaimsSet.getSubject())
+                        .twoFactorAuthentication(Boolean.parseBoolean(jwtClaimsSet.getClaimAsString(ClaimKey.TWO_FACTOR)))
+                        .withExpires(LocalDateTime.ofInstant(
+                            jwtClaimsSet.getExpirationTime().toInstant(),
+                            ZoneId.systemDefault()
+                        ));
             } catch (ParseException | MangooJwtExeption e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
@@ -134,11 +137,13 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtClaimSet = JwtUtils.parseJwt(cookieValue,
-                        config.getFlashCookieSecret(),
-                        config.getApplicationName(),
-                        config.getFlashCookieName(),
-                        60);
+                var jwtData = JwtUtils.JwtData.create()
+                        .withSecret(config.getFlashCookieSecret())
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getFlashCookieName())
+                        .withTtlSeconds(60);
+
+                var jwtClaimSet = JwtUtils.parseJwt(cookieValue, jwtData);
 
                 String formClaim = jwtClaimSet.getClaimAsString(ClaimKey.FORM);
                 if (StringUtils.isNotBlank(formClaim)) {

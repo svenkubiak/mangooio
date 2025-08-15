@@ -39,14 +39,13 @@ public class AdminFilter implements PerRequestFilter {
             String value = cookie.getValue();
             if (StringUtils.isNotBlank(value)) {
                 try {
-                    var jwtClaimSet = JwtUtils.parseJwt(
-                            value,
-                            config.getApplicationSecret(),
-                            config.getApplicationName(),
-                            Default.APPLICATION_ADMIN_COOKIE_NAME,
-                            1800
-                    );
+                    var jwtData = JwtUtils.JwtData.create()
+                            .withSecret(config.getApplicationSecret())
+                            .withIssuer(config.getApplicationName())
+                            .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)
+                            .withTtlSeconds(1800);
 
+                    var jwtClaimSet = JwtUtils.parseJwt(value, jwtData);
                     if (jwtClaimSet.getClaim(ClaimKey.TWO_FACTOR) != null && jwtClaimSet.getBooleanClaim(ClaimKey.TWO_FACTOR)) {
                         return Response.redirect("/@admin/twofactor").end();
                     }

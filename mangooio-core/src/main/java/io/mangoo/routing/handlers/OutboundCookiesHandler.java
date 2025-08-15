@@ -68,13 +68,16 @@ public class OutboundCookiesHandler implements HttpHandler {
             try {
                 Map<String, String> claims = session.getValues();
                 claims.put(Default.CSRF_TOKEN, session.getCsrf());
-                var jwt = JwtUtils.createJwt(
-                        config.getSessionCookieSecret(),
-                        config.getApplicationName(),
-                        config.getSessionCookieName(),
-                        CodecUtils.uuidV6(),
-                        Duration.between(LocalDateTime.now(), session.getExpires()).getSeconds(),
-                        claims);
+
+                var jwtData = JwtUtils.JwtData.create()
+                        .withSecret(config.getSessionCookieSecret())
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getSessionCookieName())
+                        .withSubject(CodecUtils.uuidV6())
+                        .withTtlSeconds(Duration.between(LocalDateTime.now(), session.getExpires()).getSeconds())
+                        .withClaims(claims);
+
+                var jwt = JwtUtils.createJwt(jwtData);
 
                 var cookie = new CookieImpl(config.getSessionCookieName())
                         .setValue(jwt)
@@ -122,14 +125,15 @@ public class OutboundCookiesHandler implements HttpHandler {
                             ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()),
                             ClaimKey.REMEMBER_ME, String.valueOf(authentication.isRememberMe()));
 
-                    var jwt = JwtUtils.createJwt(
-                            config.getAuthenticationCookieSecret(),
-                            config.getApplicationName(),
-                            config.getAuthenticationCookieName(),
-                            authentication.getSubject(),
-                            Duration.between(LocalDateTime.now(), authentication.getExpires()).getSeconds(),
-                            claims
-                           );
+                    var jwtData = JwtUtils.JwtData.create()
+                            .withSecret(config.getAuthenticationCookieSecret())
+                            .withIssuer(config.getApplicationName())
+                            .withAudience(config.getAuthenticationCookieName())
+                            .withSubject(authentication.getSubject())
+                            .withTtlSeconds(Duration.between(LocalDateTime.now(), authentication.getExpires()).getSeconds())
+                            .withClaims(claims);
+
+                    var jwt = JwtUtils.createJwt(jwtData);
 
                     var cookie = new CookieImpl(config.getAuthenticationCookieName())
                             .setValue(jwt)
@@ -171,25 +175,20 @@ public class OutboundCookiesHandler implements HttpHandler {
             exchange.setResponseCookie(cookie);
         } else if (flash.hasContent() || form.isKept()) {
             try {
-                /*
-                var tokenBuilder = PasetoBuilder.create()
-                        .withExpires(expires)
-                        .withSecret(config.getFlashCookieSecret())
-                        .withClaims(flash.getValues());
-                */
-
                 Map<String, String> claims = new HashMap<>(flash.getValues());
                 if (form.isKept()) {
                     claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
                 }
 
-                var jwt = JwtUtils.createJwt(
-                        config.getFlashCookieSecret(),
-                        config.getApplicationName(),
-                        config.getFlashCookieName(),
-                        CodecUtils.uuidV6(),
-                        SIXTY,
-                        claims);
+                var jwtData = JwtUtils.JwtData.create()
+                        .withSecret(config.getFlashCookieSecret())
+                        .withIssuer(config.getApplicationName())
+                        .withAudience(config.getFlashCookieName())
+                        .withSubject(CodecUtils.uuidV6())
+                        .withTtlSeconds(SIXTY)
+                        .withClaims(claims);
+
+                var jwt = JwtUtils.createJwt(jwtData);
 
                 var cookie = new CookieImpl(config.getFlashCookieName())
                         .setValue(jwt)

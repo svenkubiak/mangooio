@@ -72,13 +72,15 @@ class ServerSentEventServiceTest {
         //given
         Config config = Application.getInstance(Config.class);
 
-        String jwt = JwtUtils.createJwt(
-                "oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk",
-                config.getApplicationName(),
-                config.getAuthenticationCookieName(),
-                "foo",
-                config.getAuthenticationCookieTokenExpires(),
-                Map.of(ClaimKey.TWO_FACTOR, "false"));
+        var jwtData = JwtUtils.JwtData.create()
+                .withSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
+                .withIssuer(config.getApplicationName())
+                .withAudience(config.getAuthenticationCookieName())
+                .withSubject("foo")
+                .withTtlSeconds(config.getAuthenticationCookieTokenExpires())
+                .withClaims(Map.of(ClaimKey.TWO_FACTOR, "false"));
+
+        var jwt = JwtUtils.createJwt(jwtData);
 
         String cookie = config.getAuthenticationCookieName() + "=" + jwt;
         String url = String.format("http://" + config.getConnectorHttpHost() + ":" + config.getConnectorHttpPort() + "/sseauth");

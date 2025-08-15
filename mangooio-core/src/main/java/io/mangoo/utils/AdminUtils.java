@@ -45,13 +45,15 @@ public final class AdminUtils {
         }
 
         try {
-            String jwt = JwtUtils.createJwt(
-                    config.getApplicationSecret(),
-                    config.getApplicationName(),
-                    Default.APPLICATION_ADMIN_COOKIE_NAME,
-                    CodecUtils.uuidV6(),
-                    1800,
-                    claims);
+            var jwtData = JwtUtils.JwtData.create()
+                    .withSecret(config.getApplicationSecret())
+                    .withIssuer(config.getApplicationName())
+                    .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)
+                    .withSubject(CodecUtils.uuidV6())
+                    .withTtlSeconds(1800)
+                    .withClaims(claims);
+
+            var jwt = JwtUtils.createJwt(jwtData);
 
             return new CookieImpl(Application.inProdMode() ? "__Host-" + Default.APPLICATION_ADMIN_COOKIE_NAME : Default.APPLICATION_ADMIN_COOKIE_NAME)
                     .setValue(jwt)

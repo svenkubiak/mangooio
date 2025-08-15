@@ -16,35 +16,32 @@ import java.util.*;
 public final class JwtUtils {
     private static final int SALT_LENGTH = 32;
     private static final int ITERATIONS = 200_000;
-    private static final Set<String> RESERVED = Set.of("iss","aud","sub","iat","nbf","exp","jti");
+    private static final Set<String> RESERVED = Set.of("iss", "aud", "sub", "iat", "nbf", "exp", "jti");
 
-    private JwtUtils() {}
+    private JwtUtils() {
+    }
 
-    public static String createJwt(String secret,
-                               String issuer,
-                               String audience,
-                               String subject,
-                               long ttlSeconds,
-                               Map<String, String> claims) throws MangooJwtExeption {
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(issuer, NotNull.ISSUER);
-        Objects.requireNonNull(audience, NotNull.AUDIENCE);
-        Objects.requireNonNull(subject, NotNull.SUBJECT);
-        Preconditions.checkArgument(ttlSeconds > 0, "TTL must be greater than 0.");
+    public static String createJwt(JwtData jwtData) throws MangooJwtExeption {
+        Objects.requireNonNull(jwtData, NotNull.JWT_DATA);
+        Objects.requireNonNull(jwtData.secret(), NotNull.SECRET);
+        Objects.requireNonNull(jwtData.issuer(), NotNull.ISSUER);
+        Objects.requireNonNull(jwtData.audience(), NotNull.AUDIENCE);
+        Objects.requireNonNull(jwtData.subject(), NotNull.SUBJECT);
+        Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
 
         try {
             Instant now = Instant.now();
             JWTClaimsSet.Builder jwtClaimsSetBuilder = new JWTClaimsSet.Builder()
-                    .issuer(issuer)
-                    .audience(audience)
-                    .subject(subject)
+                    .issuer(jwtData.issuer())
+                    .audience(jwtData.audience())
+                    .subject(jwtData.subject())
                     .issueTime(Date.from(now))
                     .notBeforeTime(Date.from(now.minusSeconds(30)))
-                    .expirationTime(Date.from(now.plusSeconds(ttlSeconds)))
+                    .expirationTime(Date.from(now.plusSeconds(jwtData.ttlSeconds())))
                     .jwtID(CodecUtils.uuidV6());
 
-            if (claims != null && !claims.isEmpty()) {
-                for (Map.Entry<String, String> e : claims.entrySet()) {
+            if (jwtData.claims() != null && !jwtData.claims().isEmpty()) {
+                for (Map.Entry<String, String> e : jwtData.claims().entrySet()) {
                     String key = Objects.requireNonNull(e.getKey(), "extra claim key must not be null");
                     if (RESERVED.contains(key)) {
                         throw new IllegalArgumentException("Extra claim '" + key + "' conflicts with a reserved claim");
@@ -61,7 +58,7 @@ public final class JwtUtils {
                     .type(JOSEObjectType.JWT)
                     .build();
 
-            PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(secret, SALT_LENGTH, ITERATIONS);
+            PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(jwtData.secret(), SALT_LENGTH, ITERATIONS);
             encrypter.getJCAContext().setSecureRandom(new SecureRandom());
 
             EncryptedJWT jwe = new EncryptedJWT(jweHeader, jwtClaimsSet);
@@ -73,17 +70,13 @@ public final class JwtUtils {
         }
     }
 
-    public static JWTClaimsSet parseJwt(
-            String jwt,
-            String secret,
-            String issuer,
-            String audience,
-            long ttlSeconds) throws MangooJwtExeption {
+    public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtExeption {
         Objects.requireNonNull(jwt, NotNull.JWT);
-        Objects.requireNonNull(secret, NotNull.SECRET);
-        Objects.requireNonNull(issuer, NotNull.ISSUER);
-        Objects.requireNonNull(audience, NotNull.AUDIENCE);
-        Preconditions.checkArgument(ttlSeconds > 0, "TTL must be greater than 0.");
+        Objects.requireNonNull(jwtData, NotNull.JWT_DATA);
+        Objects.requireNonNull(jwtData.secret(), NotNull.SECRET);
+        Objects.requireNonNull(jwtData.issuer(), NotNull.ISSUER);
+        Objects.requireNonNull(jwtData.audience(), NotNull.AUDIENCE);
+        Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
 
         try {
             EncryptedJWT jwe = EncryptedJWT.parse(jwt);
@@ -96,22 +89,22 @@ public final class JwtUtils {
                 throw new JOSEException("Unexpected JWE enc: " + h.getEncryptionMethod());
             }
 
-            PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(secret);
+            PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(jwtData.secret());
             jwe.decrypt(decrypter);
 
             JWTClaimsSet claims = jwe.getJWTClaimsSet();
             Instant now = Instant.now();
 
             Date exp = require(claims.getExpirationTime(), "exp");
-            Date iat = require(claims.getIssueTime(),      "iat");
-            Date nbf = require(claims.getNotBeforeTime(),  "nbf");
+            Date iat = require(claims.getIssueTime(), "iat");
+            Date nbf = require(claims.getNotBeforeTime(), "nbf");
 
-            if (!Objects.equals(issuer, claims.getIssuer())) {
+            if (!Objects.equals(jwtData.issuer(), claims.getIssuer())) {
                 throw new JOSEException("Issuer mismatch");
             }
 
             List<String> aud = claims.getAudience();
-            if (aud == null || aud.stream().noneMatch(audience::equals)) {
+            if (aud == null || aud.stream().noneMatch(jwtData.audience()::equals)) {
                 throw new JOSEException("Audience mismatch");
             }
 
@@ -129,7 +122,7 @@ public final class JwtUtils {
             }
 
             long lifetime = (exp.getTime() - iat.getTime()) / 1000L;
-            if (lifetime > ttlSeconds) {
+            if (lifetime > jwtData.ttlSeconds()) {
                 throw new JOSEException("Token lifetime exceeds limit");
             }
 
@@ -142,5 +135,43 @@ public final class JwtUtils {
     private static <T> T require(T v, String name) throws JOSEException {
         if (v == null) throw new JOSEException("Missing '" + name + "' claim");
         return v;
+    }
+
+    public record JwtData(
+            String secret,
+            String issuer,
+            String audience,
+            String subject,
+            long ttlSeconds,
+            Map<String, String> claims
+        ) {
+
+        public static JwtData create() {
+            return new JwtData(null, null, null, null, 0L, Map.of());
+        }
+
+        public JwtData withSecret(String secret) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public JwtData withIssuer(String issuer) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public JwtData withAudience(String audience) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public JwtData withSubject(String subject) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public JwtData withTtlSeconds(long ttlSeconds) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
+
+        public JwtData withClaims(Map<String, String> claims) {
+            return new JwtData(secret, issuer, audience, subject, ttlSeconds, claims);
+        }
     }
 }
