@@ -65,6 +65,7 @@ nav:
   - Working with JSON: working-with-json.md
   - Persistence: persistence.md
   - CORS: cors.md
+  - CSRF: csrf.md
   - Authentication: authentication.md
   - Server-Sent Events: sse.md
   - Scheduler: scheduler.md
