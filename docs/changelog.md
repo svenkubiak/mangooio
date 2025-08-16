@@ -4,6 +4,7 @@ Unreleased
 
 * Switched from Paseto to JWT (svenkubiak)
 * Version bumps (svenkubiak)
+  * mockito 5.18.0 -&gt; 5.19.0
 
 [Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.8.0...9.9.0)
 
