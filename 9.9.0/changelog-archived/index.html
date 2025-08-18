@@ -1,0 +1,5548 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Sven Kubiak">
+      
+      
+        <link rel="canonical" href="https://svenkubiak.github.io/mangooio/9.9.0/changelog-archived/">
+      
+      
+        <link rel="prev" href="../operating/">
+      
+      
+        <link rel="next" href="../migrations-archived/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Changelog - mangoo I/O</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/timeago.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#version-7190" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You're not viewing the latest version.
+<a href="../..">
+    <strong>Click here to go to latest.</strong>
+</a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mangoo I/O" class="md-header__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mangoo I/O
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mangoo I/O" class="md-nav__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    mangoo I/O
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Routing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bootstrap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Controllers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependency-injection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dependency Injection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Templating
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../working-with-json/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Working with JSON
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Persistence
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CORS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../csrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CSRF
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Server-Sent Events
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheduler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../async/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Async
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../forms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sessions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Flash
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internationalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Internationalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Caching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../emails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Emails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Administration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Operating
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_31" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_31" id="__nav_31_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Archived
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_31_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_31">
+            <span class="md-nav__icon md-icon"></span>
+            Archived
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-7190" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.19.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7180" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7170" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-790" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-780" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-770" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-760" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-750" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-740" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-732" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-731" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-730" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-720" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-710" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-701" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6152" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6151" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-690" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-660" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-651" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.5.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-650" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-640" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-630" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-620" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-610" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5132" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5131" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5101" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.10.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-590" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-581" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-580" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-570" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-560" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-550" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-540" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-530" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-520" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-510" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-501" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-500" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4180" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4170" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-490" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-480" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-472" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-471" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-470" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-460" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-450" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-441" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.4.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-440" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-433" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-432" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-431" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-430" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-421" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.2.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-420" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-411" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-410" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-400" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-390" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-381" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-380" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-371" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.7.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-370" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-360" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-350" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-340" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-330" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-320" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-311" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-310" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-300" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-261" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.6.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-260" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-251" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.5.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-250" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-241" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.4.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-240" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-231" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-230" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-220" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-210" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-202" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-201" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-200" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-132" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-131" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-114" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-113" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-112" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-111" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.0.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations-archived/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#version-7190" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.19.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7180" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7170" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-7100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-790" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-780" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-770" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-760" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-750" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-740" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-732" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-731" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-730" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-720" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-710" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-701" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 7.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6152" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6151" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-6100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-690" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-660" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-651" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.5.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-650" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-640" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-630" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-620" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-610" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5132" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5131" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5101" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.10.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-5100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-590" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-581" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-580" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-570" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-560" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-550" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-540" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-530" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-520" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-510" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-501" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-500" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 5.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4180" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4170" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4160" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4150" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4140" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-4100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-490" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-480" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-472" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-471" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-470" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-460" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-450" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-441" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.4.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-440" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-433" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-432" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-431" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-430" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-421" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.2.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-420" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-411" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-410" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-400" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 4.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-3100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-390" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-381" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-380" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-371" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.7.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-370" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-360" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-350" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-340" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-330" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-320" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-311" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-310" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-300" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 3.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-261" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.6.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-260" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-251" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.5.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-250" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-241" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.4.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-240" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-231" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-230" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-220" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-210" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-202" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-201" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-200" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 2.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-132" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-131" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-130" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-120" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-114" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-113" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-112" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-111" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-110" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-100" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version 1.0.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Changelog</h1>
+
+<h2 id="version-7190">Version 7.19.0</h2>
+<p>Released at 17.11.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.18.0...7.19.0">Full Changelog</a></p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>commons-io 2.14.0 -&gt; 2.15.0</li>
+<li>morphia-core 2.4.6 -&gt; 2.4.8</li>
+<li>classgraph 4.8.163 -&gt; 4.8.165</li>
+<li>mockito-core 5.6.0 -&gt; 5.7.0</li>
+<li>fury-core 0.2.1 -&gt; 0.3.0</li>
+<li>junit 5.10.0 -&gt; 5.10.1</li>
+<li>mongodb-driver 4.11.0 -&gt; 4.11.1</li>
+<li>jackson 2.15.0 -&gt; 2.16.0</li>
+<li>commons-compress 1.24.0 -&gt; 1.25.0</li>
+<li>bouncy-castle 1.76 -&gt; 1.77</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7180">Version 7.18.0</h2>
+<p>Released at 25.10.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.17.0...7.18.0">Full Changelog</a></p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>fury-core 0.1.1 -&gt; 0.2.1</li>
+<li>commons-io 2.13.0 -&gt; 2.14.0</li>
+<li>morphia-core 2.4.5 -&gt; 2.4.6</li>
+<li>instancio 3.3.0 -&gt; 3.3.1</li>
+<li>mockito-core 5.5.0 -&gt; 5.6.0</li>
+<li>guava 32.1.2-jre -&gt; 32.1.3-jre</li>
+<li>mongodb 4.10.2 -&gt; 4.11.0</li>
+<li>undertow-core 2.3.8.Final -&gt; 2.3.10.Final</li>
+<li>classgraph 4.8.162 -&gt; 4.8.163</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7170">Version 7.17.0</h2>
+<p>Released at 20.09.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.16.0...7.17.0">Full Changelog</a></p>
+<ul>
+<li>Added Fury (https://github.com/alipay/fury) for faster serialization/deserialization</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>instancio-junit 3.1.0 -&gt; 3.3.0</li>
+<li>morphia-core 2.4.2 -&gt; 2.4.5</li>
+<li>commons-compress 1.23.0 -&gt; 1.24.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7160">Version 7.16.0</h2>
+<p>Released at 24.08.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.15.0...7.16.0">Full Changelog</a></p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>morphia-core 2.3.6 -&gt; 2.4.2</li>
+<li>commons-lang3 3.12.0 -&gt; 3.13.0</li>
+<li>bouncy-castle 1.75 -&gt; 1.76</li>
+<li>instancio-junit 3.0.0 -&gt; 3.1.0</li>
+<li>guava 32.1.1-jre -&gt; 32.1.2-jre</li>
+<li>classgraph 4.8.161 -&gt; 4.8.162</li>
+<li>undertow-core 2.3.7 -&gt; 2.3.8</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7150">Version 7.15.0</h2>
+<p>Released at 24.07.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.14.0...7.15.0">Full Changelog</a></p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>commons-codec 1.15 -&gt; 1.16.0</li>
+<li>mongodb 4.9.1 -&gt; 4.10.2</li>
+<li>bouncycastle 1.74 -&gt; 1.75</li>
+<li>mockito-core 5.3.0 -&gt; 5.4.1</li>
+<li>morphia-core 2.3.5 -&gt; 2.3.6</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7140">Version 7.14.0</h2>
+<p>Released at 18.06.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.13.0...7.14.0">Full Changelog</a></p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>guava 31.1-jre -&gt; 32.0.1-jre</li>
+<li>jackson 2.15.1 -&gt; 2.15.2</li>
+<li>commons-io 2.12.0 -&gt; 2.13.0</li>
+<li>undertow-core 2.3.6.Final -&gt; 2.3.7.Final</li>
+<li>bouncycastle 1.73 -&gt; 1.74</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7130">Version 7.13.0</h2>
+<p>Released at 22.05.2023</p>
+<p><a href="https://github.com/svenkubiak/mangooio/compare/7.12.0...7.13.0">Full Changelog</a></p>
+<ul>
+<li>Fixed an issue where a filter returned a redirect but the controller was invoked additionally (svenkubiak)</li>
+<li>Moved @FilterWith and @Run annotation close to the corresponding packages (svenkubiak)</li>
+<li>Removed @admin overview of configured routes (svenkubiak)</li>
+<li>Added jackson-afterburner module (svenkubiak)</li>
+<li>Added option to dispose a cookie (Svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mongodb 4.9.0 -&gt; 4.9.1</li>
+<li>bouncy-castle 1.72 -&gt; 1.73</li>
+<li>mockito-core 5.2.0 -&gt; 5.3.0</li>
+<li>morphia-core 2.3.1 -&gt; 2.3.2</li>
+<li>junit 5.9.2 -&gt; 5.9.3</li>
+<li>classgraph 4.8.156 -&gt; 4.8.158</li>
+<li>undertow-core 2.3.5.Final -&gt; 2.3.6.Final</li>
+<li>jackson 2.15.0 -&gt; 2.15.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7120">Version 7.12.0</h2>
+<p>Released at 27.03.2023</p>
+<ul>
+<li>Added additional cache method fetch() and getAll() (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mongodb 4.8.2 -&gt; 4.9.0</li>
+<li>undertow-core 2.3.3.Final -&gt; 2.3.5.Final</li>
+<li>log4j 2.19.0 -&gt; 2.20.0</li>
+<li>mockito-core 5.1.1 -&gt; 5.2.0</li>
+<li>classgraph 4.8.156 -&gt; 4.8.156</li>
+<li>commons-compress 1.22 -&gt; 1.23</li>
+<li>json-path 2.7.0 -&gt; 2.8.0</li>
+<li>cron-utils 9.2.0 -&gt; 9.2.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7110">Version 7.11.0</h2>
+<p>Released at 10.02.2023</p>
+<ul>
+<li>Refactored handling of unrendered body content</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.3.2.Final -&gt; 2.3.3.Final</li>
+<li>mongodb 4.8.1 -&gt; 4.8.2</li>
+<li>freemarker 2.3.31 -&gt; 2.3.32</li>
+<li>mockito 4.11.0 -&gt; 5.1.1</li>
+<li>jackson-databind 2.14.1 -&gt; 2.14.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-7100">Version 7.10.0</h2>
+<p>Released at 22.12.2022</p>
+<ul>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.8.149 -&gt; 4.8.152</li>
+<li>mockito-core 4.8.1 -&gt; 4.8.2</li>
+<li>cactoos 0.54.0 -&gt; 0.55.0</li>
+<li>commons-compress 1.21 -&gt; 1.22</li>
+<li>prettytime 5.0.4.Final -&gt; 5.0.6.Final</li>
+<li>jackson-databin 2.14.0-rc3 -&gt; 2.14.1</li>
+<li>morphia-core 2.2.9 -&gt; 2.2.10</li>
+<li>okhttp-eventsource 2.7.1 -&gt; 3.0.0</li>
+<li>httpmime 4.5.13 -&gt; 4.5.14</li>
+<li>undertow-core 2.3.0.Final -&gt; 2.3.2.Final</li>
+<li>slf4j 2.0.5 -&gt; 2.0.6</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-790">Version 7.9.0</h2>
+<p>Released at 31.10.2022</p>
+<ul>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Switched to V2.local paesto for all cookies (svenkubiak)</li>
+<li>Added new convenient functions for creating and parsing paseto (JWT) Tokens (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>slf4j 2.0.0 -&gt; 2.0.2</li>
+<li>mongodb 4.7.1 -&gt; 4.7.2</li>
+<li>undertow-core 2.3.0.Beta1 -&gt; 2.3.0.Final</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-780">Version 7.8.0</h2>
+<p>Released at 26.09.2022</p>
+<ul>
+<li>Added additional Async persistence methods (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mockito-core 4.7.0 -&gt; 4.8.0</li>
+<li>prettytime 5.0.3.Final -&gt; 5.0.4.Final</li>
+<li>jackson-databind 2.13.3 -&gt; 2.13.4</li>
+<li>morphia-core 2.2.7 -&gt; 2.2.9</li>
+<li>cactoos 0.53.0 -&gt; 0.54.0</li>
+<li>slf4j 1.7.36 -&gt; 2.0.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-770">Version 7.7.0</h2>
+<p>Released at 19.08.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.3.0.Alpha1 -&gt; 2.3.0.Alpha2</li>
+<li>junit 5.9.0-RC1 -&gt; 5.9.0</li>
+<li>cron-utils 9.1.7 -&gt; 9.1.8</li>
+<li>mongodb 4.7.0 -&gt; 4.7.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-760">Version 7.6.0</h2>
+<p>Released at 20.07.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>re2j 1.6 -&gt; 1.7</li>
+<li>log4j 2.17.2 -&gt; 2.18.0</li>
+<li>cron-utils 9.1.2 -&gt; 9.1.7</li>
+<li>cactoos 0.51.0 -&gt; 0.52.0</li>
+<li>freemarker-java8 2.0.0 -&gt; 2.1.0</li>
+<li>okhttp-eventsource 2.6.1 -&gt; 2.6.2</li>
+<li>mongodb 4.7.0 -&gt; 4.7.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-750">Version 7.5.0</h2>
+<p>Released at 20.06.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jackson-databind 2.13.2.2 -&gt; 2.13.3</li>
+<li>prettytime 5.0.2.Final -&gt; 5.0.3.Final</li>
+<li>morphia 2.2.6 -&gt; 2.2.7</li>
+<li>mockito-core 4.6.0 -&gt; 4.6.1</li>
+<li>undertow-core 2.2.17-Final -&gt; 2.3.0-Alpha1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-740">Version 7.4.0</h2>
+<p>Released at 03.05.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 2.2.16.Final -&gt; 2.2.17.Final</li>
+<li>classgraph 4.8.143 -&gt; 4.8.146</li>
+<li>mongodb 4.5.0 -&gt; 4.6.0</li>
+<li>mockito-core 4.4.0 -&gt; 4.5.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-732">Version 7.3.2</h2>
+<p>Released at 29.03.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jackson-databind 2.13.2.1 -&gt; 2.13.2.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-731">Version 7.3.1</h2>
+<p>Released at 25.03.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jackson-databind 2.13.2 -&gt; 2.13.2.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-730">Version 7.3.0</h2>
+<p>Released at 23.03.2022</p>
+<ul>
+<li>Complete refactoring of ServerSentEvent support (svenkubiak)</li>
+<li>Removed WebSocket support (svenkubiak)</li>
+<li>Switched Cache implementation from ehCache to Guava (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>wildfly-common 1.5.4 -&gt; 1.6.0</li>
+<li>jackson-databind 2.13.1 -&gt; 2.13.2</li>
+<li>awaitility 4.1.1 -&gt; 4.2.0</li>
+<li>mockito-core 4.3.1 -&gt; 4.4.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-720">Version 7.2.0</h2>
+<p>Released at 01.03.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>embedded mongodb 6.0.1 -&gt; 6.0.2</li>
+<li>json-path 2.6.0 -&gt; 2.7.0</li>
+<li>undertow-core 2.2.14.Final -&gt; 2.2.15.Final</li>
+<li>classgraph 4.8.138 -&gt; 4.8.141</li>
+<li>mongodb 4.4.1 -&gt; 4.5.0</li>
+<li>log4j 2.17.1 -&gt; 2.17.2</li>
+<li>guava 31.0.1-jre -&gt; 31.1-jre</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-710">Version 7.1.0</h2>
+<p>Released at 28.01.2022</p>
+<ul>
+<li>Changed mail handling from SimpleMail to Jakarta (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mongodb 4.4.0 -&gt; 4.4.1</li>
+<li>okhttp-eventsource 2.4.0 -&gt; 2.5.0</li>
+<li>jboss-logging 3.4.2.Final -&gt; 3.4.3.Final</li>
+<li>guice 5.0.1 -&gt; 5.1.0</li>
+<li>mockito-core 4.2.0 -&gt; 4.3.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-701">Version 7.0.1</h2>
+<p>Released at 06.01.2022</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.17.0 -&gt; 2.17.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-700">Version 7.0.0</h2>
+<p>Released at 24.12.2021</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/509">#509</a> Removed build-in rate limit handling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/504">#504</a> Removed slim-jar deployment feature (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/501">#501</a> Removed JCasbin and authroization handling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/483">#483</a> Switched Scheduler from Quartz to ScheduledExecutorService (svenkubiak)</li>
+<li>Require and Support Java 17 (svenkubiak)</li>
+<li>Removed authenticity handling (svenkubiak)</li>
+<li>Switched (password) hashing vom JBcrypt to Argon2 (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>awaitility 4.1.0 -&gt; 4.1.1</li>
+<li>reflections 0.10.1 -&gt; 0.10.2</li>
+<li>classgraph 4.8.128 -&gt; 4.8.138</li>
+<li>mongodb 4.3.2 -&gt; 4.4.0</li>
+<li>cron-utils 9.1.5 -&gt; 9.1.6</li>
+<li>morphia-core 2.2.2 -&gt; 2.2.3</li>
+<li>undertow 2.2.12.Final -&gt; 2.2.13.Final</li>
+<li>mockito-core 4.1.0 -&gt; 4.3.0</li>
+<li>bouncy castle 1.69 -&gt; 1.70</li>
+<li>log4j 2.14.1 -&gt; 2.17.0</li>
+<li>hamcrest-date 2.0.7 -&gt; 2.0.8</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6152">Version 6.15.2</h2>
+<p>Released at 19.12.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.16.0 -&gt; 2.17.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6151">Version 6.15.1</h2>
+<p>Released at 15.12.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.15.0 -&gt; 2.16.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6150">Version 6.15.0</h2>
+<p>Released at 10.12.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.14.1 -&gt; 2.15.0</li>
+<li>maven-core 3.8.3 -&gt; 3.8.4</li>
+<li>mongodb 4.3.1 -&gt; 4.4.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6140">Version 6.14.0</h2>
+<p>Released at 26.10.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>maven 3.8.2 -&gt; 3.8.3</li>
+<li>junit 5.8.0 -&gt; 5.8.1</li>
+<li>jpasteo 0.6.0 -&gt; 0.7.0</li>
+<li>undertow-core 2.2.10.Final -&gt; 2.2.12.Final</li>
+<li>prettytime 2.2.1 -&gt; 2.2.2</li>
+<li>jcasbin 1.13.1 -&gt; 1.16.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6130">Version 6.13.0</h2>
+<p>Released at 30.08.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jcasbin 1.13.0 -&gt; 1.13.1</li>
+<li>plexus-utils 3.3.0 -&gt; 3.4.0</li>
+<li>ehcache-clustered 3.9.4 -&gt; 3.9.6</li>
+<li>classgraph 4.8.110 -&gt; 4.9.111</li>
+<li>mongodb 4.3.0 -&gt; 4.3.1</li>
+<li>mockito-core 3.11.2 -&gt; 3.12.4</li>
+<li>greenmail-standalone 1.6.4 -&gt; 1.6.5</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6120">Version 6.12.0</h2>
+<p>Released at 26.07.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 2.2.8.Final -&gt; 2.2.9.Final</li>
+<li>bouncycastle 1.68 -&gt; 1.69</li>
+<li>commons-io 2.9.0 -&gt; 2.11.0</li>
+<li>mockito-core 3.11.0 -&gt; 3.11.1</li>
+<li>jcasbin 1.10.0 -&gt; 1.13.0</li>
+<li>simple-mail 6.6.0 -&gt; 6.6.1</li>
+<li>okhttp-eventsource 2.3.1 -&gt; 2.3.2</li>
+<li>classgraph 4.8.109 -&gt; 4.9.110</li>
+<li>commons-compress 1.20 -&gt; 1.21</li>
+<li>jackson-databind 2.12.3 -&gt; 2.13.0-rc1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6110">Version 6.11.0</h2>
+<p>Released at 07.06.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>cactoos-matchers 0.24 -&gt; 0.25</li>
+<li>morphia-core 2.1.5 -&gt; 2.2.1</li>
+<li>simple-mail 6.5.2 -&gt; 6.6.0</li>
+<li>jcasbin 1.8.4 -&gt; 1.10.0</li>
+<li>awaitility 4.0.3 -&gt; 4.1.0</li>
+<li>greenmail 1.6.3 -&gt; 1.6.4</li>
+<li>mockito-core 3.9.0 -&gt; 3.10.0</li>
+<li>undertow-core 2.2.8.Final -&gt; 2.2.9.Final</li>
+<li>commons-io 2.8.0 -&gt; 2.9.0</li>
+<li>json-path 2.5.0 -&gt; 2.6.0</li>
+<li>classgraph 4.8.106 -&gt; 4.8.108</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-6100">Version 6.10.0</h2>
+<p>Released at 03.05.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>mockito-core 3.8.0 -&gt; 3.9.0</li>
+<li>mongodb 4.2.2 -&gt; 4.2.3</li>
+<li>simple-mail 6.5.0 -&gt; 6.5.2</li>
+<li>jackson-databind 2.12.2 -&gt; 2.12.3</li>
+<li>morphia-core 2.1.4 -&gt; 2.1.5</li>
+<li>jcasbin 1.7.4 -&gt; 1.8.4</li>
+<li>ehcache-clustered 3.9.0 -&gt; 3.9.3</li>
+<li>classgraph 4.8.104 -&gt; 4.8.105</li>
+<li>cactoos 0.49 -&gt; 0.50</li>
+<li>prettytime 5.0.0 -&gt; 5.0.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-690">Version 6.9.0</h2>
+<p>Released at 06.04.2021</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>commons-lang3 3.11 -&gt; 3.12.0</li>
+<li>jackson-databind 2.12.1 -&gt; 2.12.2</li>
+<li>jcasbin 1.6.4 -&gt; 1.7.2</li>
+<li>undertow-core 2.2.4.Final -&gt; 2.2.7.Final</li>
+<li>re2j 1.5 -&gt; 1.6</li>
+<li>guava 1.6.1 -&gt; 1.6.2</li>
+<li>classgraph 4.8.102 -&gt; 4.8.104</li>
+<li>greenmail 1.6.2 -&gt; 1.6.3</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-680">Version 6.8.0</h2>
+<p>Released at 01.03.2021</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/490">#497</a> Added async persistence save and delete (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.8.98 -&gt; 4.8.102</li>
+<li>jcasbin 1.6.3 -&gt; 1.6.4</li>
+<li>plexus-archiver 4.2.3 -&gt; 4.2.4</li>
+<li>greenmail 1.6.1 -&gt; 1.6.2</li>
+<li>jpaseto 0.5.0 -&gt; 0.6.0</li>
+<li>simplejavamail 6.4.4 -&gt; 6.5.0</li>
+<li>freemarker 2.3.0 -&gt; 2.3.1</li>
+<li>cactoos-matcher 0.23 -&gt; 0.24</li>
+<li>mockito-core 3.7.7 -&gt; 3.8.0</li>
+<li>jodd-propds 6.0.1 -&gt; 6.0.2</li>
+</ul>
+</li>
+</ul>
+<p>Released at 20.01.2021</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/490">#490</a> Fixed form localization issue (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/489">#489</a> Fixed on-the-fly minification not working correctly (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>guave-jre 30.0-jre -&gt; 30.1-jre</li>
+<li>prettytime 4.0.4.Final -&gt; 5.0.0.Final</li>
+<li>bouncycastle 1.67 -&gt; 1.68</li>
+<li>jcasbin 1.6.0 -&gt; 1.6.3</li>
+<li>cactoos 0.48 -&gt; 0.49</li>
+<li>cactoos-matchers 0.22 -&gt; 0.23</li>
+<li>classgraph 4.8.97 -&gt; 4.8.98</li>
+<li>mockito-core 3.6.28 -&gt; 3.7.7</li>
+<li>jackson-databind 2.12.0 -&gt; 2.12.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-660">Version 6.6.0</h2>
+<p>Released at 13.12.2020</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.8.92 -&gt; 4.8.95</li>
+<li>jBcrypt 0.4.1 -&gt; 0.4.3</li>
+<li>undertow-core 2.2.2.Final -&gt; 2.2.3.Final</li>
+<li>morphia-core 2.1.0 -&gt; 2.1.3</li>
+<li>json-path 2.4.0 -&gt; 2.5.0</li>
+<li>guave-jre 30.0-jre -&gt; 30.1-jre</li>
+<li>prettytime 4.0.4.Final -&gt; 5.0.0.Final</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-651">Version 6.5.1</h2>
+<p>Released at 02.12.2020</p>
+<ul>
+<li>Fixed a bug that was point to a wrong config key (svenkubiak)</li>
+<li>Fixed a bug in archetype config (svenkubiak)</li>
+</ul>
+<h2 id="version-650">Version 6.5.0</h2>
+<p>Released at 30.11.2020</p>
+<ul>
+<li>Fixed bug that did not serve admin assets when admin was not enabled (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>org.simplejavamail 6.4.3 -&gt; 6.4.4</li>
+<li>mockito-core 3.5.15 -&gt; 3.6.0</li>
+<li>cactoos 0.46 -&gt; 0.48</li>
+<li>bouncycastle 1.66 -&gt; 1.67</li>
+<li>greenmail 1.60 -&gt; 1.61</li>
+<li>log4j 2.13.3 -&gt; 2.14.0</li>
+<li>morphia-core 2.0.2 -&gt; 2.1.0</li>
+<li>cactoos-matchers 0.21 -&gt; 0.22</li>
+<li>jackson-databind 2.12.0-rc1 -&gt; 2.12.0</li>
+<li>classgraph 4.8.90 -&gt; 4.8.92</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-640">Version 6.4.0</h2>
+<p>Released at 19.10.2020</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>junit 5.7.0-M1 -&gt; 5.7.0</li>
+<li>junit-platform 1.7.0-M1 -&gt; 1.7.0</li>
+<li>undertow-core 2.1.3.Final -&gt; 2.2.2.Final</li>
+<li>morphia-core 2.0.0 -&gt; 2.0.2</li>
+<li>jodd-props 5.1.6 -&gt; 6.0.1</li>
+<li>mockito-core 3.5.10 -&gt; 3.5.11</li>
+<li>jcasbin 1.5.0 -&gt; 1.6.0</li>
+<li>jackson-databind 2.11.2 -&gt; 2.11.3</li>
+<li>re2j 1.4 -&gt; 1.5</li>
+<li>maven-resolver 1.4.2 -&gt; 1.6.1</li>
+<li>guava 29.0-jre -&gt; 30.0-jre</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-630">Version 6.3.0</h2>
+<p>Released at 11.09.2020</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jodd-props 5.1.5 -&gt; 5.1.6</li>
+<li>commons-validator 1.6 -&gt; 1.7</li>
+<li>mockito-core 3.4.6 -&gt; 3.5.10</li>
+<li>greenmail 1.5.14 -&gt; 1.6.0</li>
+<li>classgraph 4.8.87 -&gt; 4.8.90</li>
+<li>commons-codec 1.14 -&gt; 1.15</li>
+<li>zt-exec 1.11 -&gt; 1.12</li>
+<li>cactoos-matcher 0.18 -&gt; 0.19</li>
+<li>commons-io 2.7 -&gt; 2.8.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-620">Version 6.2.0</h2>
+<p>Released at 07.08.2020</p>
+<ul>
+<li>Added option to add multiple credentials for persistence (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>morphia-core 2.0.0-RC1 -&gt; 2.0.0</li>
+<li>jodd-props 5.1.4 -&gt; 5.1.5</li>
+<li>jcasbin 1.4.0 -&gt; 1.5.0</li>
+<li>bouncycastle 1.65.01 -&gt; 1.66</li>
+<li>commons-lang3 3.10 -&gt; 3.11</li>
+<li>mockito-core 3.3.3 -&gt; 3.4.6</li>
+<li>SimpleMail 6.1.0 -&gt; 6.4.3</li>
+<li>Jackson-Databind 2.11.1 -&gt; 2.11.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-610">Version 6.1.0</h2>
+<p>Released at 06.07.2020</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/471">#471</a> Added cache metrics to admin dashboard (svenkubiak)</li>
+<li>Added /@admin/health endpoint (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.1.2.Final -&gt; 2.1.3.Final</li>
+<li>re2j 1.3 -&gt; 1.4</li>
+<li>classgraph 4.8.83 -&gt; 4.8.87</li>
+<li>SimpleMail 6.0.4 -&gt; 6.0.5</li>
+<li>jackson-databind 2.11.1 -&gt; 2.11.1</li>
+<li>greenmail 1.5.13 -&gt; 1.5.14</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-600">Version 6.0.0</h2>
+<p>Released at 03.06.2020</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/466">#466</a> Removed 2FA from BasicAuthentication (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/465">#465</a> Added persistence example to archetype (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/464">#464</a> Checked and removed unused enums (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/463">#463</a> Re-organized Maven dependencies structure (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/458">#458</a> Removed SASS and LESS precompiler (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/444">#444</a> Switched to Paseto for JWT handling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/444">#444</a> Renamed Filter interfaces (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/439">#439</a> Switched Admin UI to Bulma (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/436">#436</a> Switched Authentication of Admin UI (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/434">#434</a> Added persistence to core (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Removed all deprecations (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.30.Final -&gt; 2.1.2.Final</li>
+<li>classgraph 4.8.68 -&gt; 4.8.80</li>
+<li>junit 5.6.1 -&gt; 5.7.0-M1</li>
+<li>junit-platform 1.6.1 -&gt; 1.7.0-M1</li>
+<li>greenmail 1.5.12 -&gt; 1.5.13</li>
+<li>guava 28.2-jre -&gt; 29.0-jre</li>
+<li>commons-codec 1.12 -&gt; 1.14</li>
+<li>log4j2 2.13.1 -&gt; 2.13.2</li>
+<li>freemarker-java8 1.3.0 -&gt; 2.0.0</li>
+<li>jackson-databind 2.11.0.rc1 -&gt; 2.11.0</li>
+<li>awaitility 4.0.2 -&gt; 4.0.3</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5160">Version 5.16.0</h2>
+<p>Released at 09.04.2020</p>
+<ul>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mockito-core 3.3.0 -&gt; 3.3.3</li>
+<li>guice 4.2.2 -&gt; 4.2.3</li>
+<li>junit 5.6.0 -&gt; 5.6.1</li>
+<li>junit-platform 1.6.0 -&gt; 1.6.1</li>
+<li>classgraph 4.8.65 -&gt; 4.8.68</li>
+<li>commons-lang3 3.9 -&gt; 3.10</li>
+<li>jackson-databind 2.10.3 -&gt; 2.11.0.rc1</li>
+<li>greenmail 1.5.11 -&gt; 1.5.12</li>
+<li>bcprov-jdk15on 1.64 -&gt; 1.65</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5150">Version 5.15.0</h2>
+<p>Released at 12.03.2020</p>
+<ul>
+<li>Added startup check if application is started as root (svenkubiak)</li>
+<li>Switched RegEx parsing to Google re2j (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>httpmime 4.5.11 -&gt; 4.5.12</li>
+<li>freemarker 2.3.29 -&gt; 2.3.30</li>
+<li>classgraph 4.8.62 -&gt; 4.8.65</li>
+<li>mockito-core 3.2.4 -&gt; 3.3.0</li>
+<li>prettytime 4.0.3.Final -&gt; 4.0.4.Final</li>
+<li>log4j 2.13.0 -&gt; 2.13.1</li>
+<li>jackson-databind 2.10.2 -&gt; 2.10.3</li>
+<li>jodd-props 5.1.3 -&gt; 5.1.4</li>
+<li>undertow 2.0.29.Final -&gt; 2.0.30.Final</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5140">Version 5.14.0</h2>
+<p>Released at 14.02.2020</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/454">#454</a> Switched to JavaSimpleMail (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/452">#452</a> Updated AdminLTE to latest version (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>http-mime 4.5.10 -&gt; 4.5.11</li>
+<li>prettytime 4.0.2.Final -&gt; 4.0.3.Final</li>
+<li>classgraph 4.8.60 -&gt; 4.8.62</li>
+<li>cactoos 0.43 -&gt; 0.44</li>
+<li>jodd-props 5.1.0-20190624 -&gt; 5.1.3</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5132">Version 5.13.2</h2>
+<p>Released at 19.01.2020</p>
+<ul>
+<li>No changes release due to Maven Central issues (svenkubiak)</li>
+</ul>
+<h2 id="version-5131">Version 5.13.1</h2>
+<p>Released at 17.01.2020</p>
+<ul>
+<li>No changes release due to Maven Central issues (svenkubiak)</li>
+</ul>
+<h2 id="version-5130">Version 5.13.0</h2>
+<p>Released at 14.01.2020</p>
+<ul>
+<li>config.props does now support empty values (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.28.Final -&gt; 2.0.29.Final</li>
+<li>classgraph 4.8.54 -&gt; 4.8.60</li>
+<li>mockito-core 3.1.0 -&gt; 3.2.4</li>
+<li>cactoos 0.42 -&gt; 0.43</li>
+<li>log4j 2.12.1 -&gt; 2.13.0</li>
+<li>guava 28.1-jre -&gt; 28.2-jre</li>
+<li>awaitility 4.0.1 -&gt; 4.0.2</li>
+<li>jackson 2.10.1 -&gt; 2.10.2</li>
+<li>reflections 0.9.11 -&gt; 0.9.12</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5120">Version 5.12.0</h2>
+<p>Released at 28.11.2019</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/443">#443</a> Enhanced Scheduler with "Every" option (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/442">#442</a> Minor refactorings on Form object to make it more fluent (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/441">#441</a> Wrapped eMail implementation to make it more fluent (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/440">#440</a> Added option to inject config values (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/435">#435</a> Added new ThinJAR generation (svenkubiak)</li>
+<li>Updated Admin area to AdminLTE3 Final (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.8.52 -&gt; 4.8.54</li>
+<li>jsass 5.10.2 -&gt; 5.10.3</li>
+<li>undertow-core 2.0.27.Final -&gt; 2.0.28.Final</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5110">Version 5.11.0</h2>
+<p>Released at 24.10.2019</p>
+<ul>
+<li>Updated AdminLTE3 to latest version (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>cactoos-matcher 0.17 -&gt; 0.18</li>
+<li>jsass 5.9.2 -&gt; 5.10.2</li>
+<li>bouncycastle 1.63 -&gt; 1.64</li>
+<li>undertow-core 2.0.26.Final -&gt; 2.0.27.Final</li>
+<li>classgraph 4.8.47 -&gt; 4.8.52</li>
+<li>hamcrest 2.2-rc1 -&gt; 2.2</li>
+<li>greenmail 1.5.10 -&gt; 1.5.11</li>
+<li>quartz 2.3.1 -&gt; 2.3.2</li>
+<li>plexus-components 2.0.0 -&gt; 2.1.0</li>
+<li>jose4j 0.6.5 -&gt; 0.7.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-5101">Version 5.10.1</h2>
+<p>Released at 12.09.2019</p>
+<ul>
+<li>Bumped BeanUtils version to 1.9.4 to fix CVE-2019-10086 (svenkubiak)</li>
+</ul>
+<h2 id="version-5100">Version 5.10.0</h2>
+<p>Released at 12.09.2019</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/431">#431</a> Added CORS handler (svenkubiak)</li>
+<li>Upgraded Admin Dashboard to latest AdminLTE version</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.24.Final -&gt; 2.0.26.Final</li>
+<li>classgraph 4.8.44 -&gt; 4.8.47</li>
+<li>freemarker 2.8.23 -&gt; 2.8.24</li>
+<li>guava 28.0-jre -&gt; 28.1-jre</li>
+<li>awaitility 4.0.0-rc1 -&gt; 4.0.1</li>
+<li>juniper 5.5.1 -&gt; 5.5.2</li>
+<li>juniper-platform 1.5.1 -&gt; 1.5.2</li>
+<li>httpmime 4.5.9 -&gt; 4.5.10</li>
+<li>bouncycastle 1.62 -&gt; 1.63</li>
+<li>jersey 2.29 -&gt; 2.29.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-590">Version 5.9.0</h2>
+<p>Released at 15.08.2019</p>
+<ul>
+<li>Fixed async mail sending (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>Junit 5.5.0 -&gt; 5.5.1</li>
+<li>Junit Platform 1.5.0 -&gt; 1.5.1</li>
+<li>Jackson-Databin 2.9.9.1 -&gt; 2.9.9.2</li>
+<li>ehcache-clustered 3.7.1 -&gt; 3.8.0</li>
+<li>jackson-databind 2.9.9.2 - 2.9.9.3</li>
+<li>log4j 2.12.0 -&gt; 2.12.1</li>
+<li>undertow-core 2.0.22.Final -&gt; 2.0.24.Final</li>
+<li>classgraph 4.8.43 -&gt; 4.8.44</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-581">Version 5.8.1</h2>
+<p>Released at 02.08.2019</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>Junit 5.5.0 -&gt; 5.5.1</li>
+<li>Junit Platform 1.5.0 -&gt; 1.5.1</li>
+<li>Jackson-Databin 2.9.9.1 -&gt; 2.9.9.2</li>
+<li>ehcache-clustered 3.7.1 -&gt; 3.8.0</li>
+<li>undertow-core 2.0.22.Final -&gt; 2.0.23.Final</li>
+<li>Sonar refactorings</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-580">Version 5.8.0</h2>
+<p>Released at 18.07.2019</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.21.Final -&gt; 2.0.22.Final</li>
+<li>classgraph 4.8.40 -&gt; 4.8.41</li>
+<li>jsass 5.8.0 -&gt; 5.9.1</li>
+<li>log4j 2.11.2 -&gt; 2.12.0</li>
+<li>Jersey 2.28 -&gt; 2.29</li>
+<li>Junit 5.5.0-RC1 -&gt; 5.5.0</li>
+<li>Junit Platform 1.5.0-RC1 -&gt; 1.5.0</li>
+<li>Jodd-Mail 5.0.13 -&gt; 5.1.0</li>
+<li>Jodd-Props 5.0.13 -&gt; 5.1.0</li>
+<li>JCasbin 1.3.0 -&gt; 1.4.0</li>
+<li>Jackson-Databind 2.9.9 -&gt; 2.9.9.1</li>
+<li>Cactoos 0.41 -&gt; 0.42</li>
+<li>Classgraph 5.9.1 -&gt; 5.9.2</li>
+<li>zt-exec 1.10 -&gt; 1.11</li>
+<li>mockito-core 2.28.2 -&gt; 3.0.0</li>
+<li>plexus-utils 3.2.0 -&gt; 3.2.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-570">Version 5.7.0</h2>
+<p>Released at 15.06.2019</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.20.Final -&gt; 2.0.21.Final</li>
+<li>mockito-core 2.27.0 -&gt; 2.28.2</li>
+<li>cactoos-matcher 0.15 -&gt; 0.17</li>
+<li>classgraph 4.8.37 -&gt; 4.8.40</li>
+<li>bcprov-jdk15on 1.61 -&gt; 1.62</li>
+<li>junit-platform 1.5.0-M1 -&gt; 1.5.0-RC1</li>
+<li>junit-jupiter 5.5.0-M1 -&gt; 5.5.0-RC1</li>
+<li>httpmime 4.5.8 -&gt; 4.5.9</li>
+<li>guava 27.1-jre -&gt; 28.0-jre</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-560">Version 5.6.0</h2>
+<p>Release at 24.05.2019</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.8.24 -&gt; 4.8.35</li>
+<li>cactoos 0.40 -&gt; 0.41</li>
+<li>cactoos-matcher 0.14 -&gt; 0.15</li>
+<li>jcasbin 1.20 -&gt; 1.30</li>
+<li>jodd-mail 5.0.12 -&gt; 5.0.13</li>
+<li>jodd-props 5.0.12 -&gt; 5.0.13</li>
+<li>jackson-databind 2.9.8 -&gt; 2.9.9</li>
+<li>zxing 3.3.3 -&gt; 3.4.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-550">Version 5.5.0</h2>
+<p>Released at 17.04.2019</p>
+<ul>
+<li>MinRequestTime in Metrics is now counted only if MinRequestTime &gt; 0 (svenkubiak)</li>
+<li>Bumped to latest version of Bootstrap and jQuery in Admin interface (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.19.Final -&gt; 2.0.20.Final</li>
+<li>junit-juniper 5.4.0 -&gt; 5.4.1</li>
+<li>junit-platform 1.4.0 -&gt; 1.4.1</li>
+<li>mockito-core 2.25.0 -&gt; 2.27.0</li>
+<li>classgraph 4.8.14 -&gt; 4.8.24</li>
+<li>greenmail 1.5.9 -&gt; 1.5.10</li>
+<li>c3p0 0.9.5.3 -&gt; 0.9.5.4</li>
+<li>maven 3.6.0 -&gt; 3.6.1</li>
+<li>quartz 2.3.0 -&gt; 2.3.1</li>
+<li>jsass 5.7.4 -&gt; 5.8.0</li>
+<li>httpmime 4.5.7 -&gt; 4.5.8</li>
+<li>jodd-props 5.0.10 -&gt; 5.0.12</li>
+<li>jodd-mail 5.0.10 -&gt; 5.0.12</li>
+<li>ehcache-clustered 3.7.0 -&gt; 3.7.1</li>
+<li>commons-lang3 3.8.1 -&gt; 3.9</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-540">Version 5.4.0</h2>
+<p>Released at 11.03.2019</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/415">#415</a> Fixed incorrect styling of error page in dev mode (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/414">#414</a> Fixed bug that calculated the error rate metric incorrectly (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.17.Final -&gt; 2.0.19.Final</li>
+<li>log4j 2.11.1 -&gt; 2.11.2</li>
+<li>bcprov-jdk15on 1.60 -&gt; 1.61</li>
+<li>cactoos-matchers 0.13 -&gt; 0.14</li>
+<li>cactoos 0.39 -&gt; 0.40</li>
+<li>jodd-props 5.0.6 -&gt; 5.0.10</li>
+<li>jodd-mail 5.0.6 -&gt; 5.0.10</li>
+<li>junit-jupiter 5.4.0-RC2 -&gt; 5.4.0</li>
+<li>junit-platform 1.4.0-RC2 -&gt; 1.4.0</li>
+<li>classgraph 4.6.13 -&gt; 4.8.14</li>
+<li>mockito-core 2.24.0 -&gt; 2.25.0</li>
+<li>jsass 5.7.3 -&gt; 5.7.4</li>
+<li>guava 27.0.1-jre -&gt; 27.1-jre</li>
+<li>plexus-utils 3.1.1 -&gt; 3.2.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-530">Version 5.3.0</h2>
+<p>Released at 05.02.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/409">#409</a> Added optional 2FA for admin area, controller and request routes (svenkubiak)</li>
+<li>Temporal fix für <a href="https://nvd.nist.gov/vuln/detail/CVE-2018-20433">CVE-2018-20433</a> until <a href="https://github.com/quartz-scheduler/quartz/issues/316">Quartz library gets updated</a> (svenkubiak)</li>
+<li>Fixed a bug in TotpUtils that returned an incorrect 2FA QR Code (svenkubiak)</li>
+<li>Increased startup time of maven plugin by around 15% (svenkubiak)</li>
+<li>JDPA Debug in maven plugin is now disabled by default (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.6.13 -&gt; 4.6.32</li>
+<li>undertow 2.0.16.Final -&gt; 2.0.17.Final</li>
+<li>jose4j 0.6.4 -&gt; 0.6.5</li>
+<li>cactoos-matchers 0.12 -&gt; 0.13</li>
+<li>cactoos 0.38 -&gt; 0.39</li>
+<li>httpmime 4.5.6 -&gt; 4.5.7</li>
+<li>awaitility 3.1.5 -&gt; 3.1.6</li>
+<li>plexus-component-annotations 1.7.1 -&gt; 2.0.0</li>
+<li>jcasbin 1.1.0 -&gt; 1.2.0</li>
+<li>mockito-core 2.23.4 -&gt; 2.24.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-520">Version 5.2.0</h2>
+<p>Released at 14.01.2019</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/404">#404</a> Upgraded LessCSS Compiler to 2.0.0 (agabrys)</li>
+<li>Changed handling of additional Security headers (svenkubiak)</li>
+<li>Changed handling of assets in admin interface (svenkubiak)</li>
+<li>Added Feature-Policy header (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>classgraph 4.6.8 -&gt; 4.6.13</li>
+<li>plexus-utils 3.1.0 -&gt; 3.1.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-510">Version 5.1.0</h2>
+<p>Released at 16.12.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/401">#401</a> Added method in Response class for sending unrendered body content (svenkubiak)</li>
+<li>Fixed NPE when using JS/CSS minification in development mode</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.15.Final -&gt; 2.0.16.Final</li>
+<li>junit 5.3.1 -&gt; 5.3.2</li>
+<li>junit-platform 1.3.1 -&gt; 1.3.2</li>
+<li>greenmail 1.5.8 -&gt; 1.5.9</li>
+<li>cactoos-matcher 0.11 -&gt; 0.12</li>
+<li>classgraph 4.6.1 -&gt; 4.6.10</li>
+<li>awaitility 3.1.3 -&gt; 3.1.5</li>
+<li>jackson 2.9.7 -&gt; 2.9.8</li>
+<li>plexus-utils 3.1.0 -&gt; 3.1.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-501">Version 5.0.1</h2>
+<p>Released at 03.12.2018</p>
+<ul>
+<li>Fixed bug that displayed the state of a job incorrectly in the admin interface (svenkubiak)</li>
+</ul>
+<h2 id="version-500">Version 5.0.0</h2>
+<p>Released at 26.11.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/393">#393</a> Refactored HTTP test classes to JDK9 introduced java.net.http (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/392">#392</a> Added EventBus metrics to admin area (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/391">#391</a> New programmatically routing system (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/390">#390</a> Added <a href="https://github.com/casbin/jcasbin">jCasbin</a> as authorization provider (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/388">#388</a> Removed X-Response-Time header (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/385">#385</a> Removed cooke versioning (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/384">#384</a> Cleanup of Log4j2 integration (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/367">#367</a> Migrated admin area to Admin LTE 3 (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/361">#361</a> Switched to Jodd Props for configuration handling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/351">#351</a> Moved RequestHelper to RequestUtils (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/336">#336</a> Cleanup of Freemarker integration (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/293">#293</a> Removed ambiguous CLI args (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/283">#283</a> Migrated to JUnit 5 (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/273">#273</a> Removed all deprecated methods and classes (svenkubiak)</li>
+<li>Added public/private key handling for encrypted configuration values (svenkubiak)</li>
+<li>Removed FluentLenium integration in test project (svenkubiak)</li>
+<li>Removed ETag for dynamic content (svenkubiak)</li>
+<li>Removed OAuth Filters and Libraries (svenkubiak)</li>
+<li>Removed benchmark and examples projects (svenkubiak)</li>
+<li>Support and require Java 11 (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>ehcache 3.6.1 -&gt; 3.6.2</li>
+<li>junit 4.12 -&gt; 5.3.1</li>
+<li>awaitility 3.1.2 -&gt; 3.1.3</li>
+<li>guava 27.0-jre -&gt; 27.0.1-jre</li>
+<li>mockito-core 2.23.0 -&gt; 2.23.4</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4180">Version 4.18.0</h2>
+<p>Released at 05.11.2018</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.13-Final -&gt; 2.0.15-Final</li>
+<li>guice 4.2.1 -&gt; 4.2.2</li>
+<li>freemarker-java8 1.2.0 -&gt; 1.3.0</li>
+<li>classgraph 4.2.12 -&gt; 4.4.12</li>
+<li>selenium-java 3.14.0 -&gt; 3.141.0</li>
+<li>htmlunit-driver 2.33.0 -&gt; 2.33.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4170">Version 4.17.0</h2>
+<p>Released at 12.10.2018</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>jackson-databind 2.9.6 -&gt; 2.9.7</li>
+<li>classgraph 4.1.5 -&gt; 4.2.12</li>
+<li>commongs-lang 3.8 -&gt; 3.8.1</li>
+<li>ehcache-clustered 3.6.0 -&gt; 3.6.1</li>
+<li>fluentlenium 3.6.1 -&gt; 3.7.0</li>
+<li>mockito-core 2.21.0 -&gt; 2.22.0</li>
+<li>guice 4.2.0 -&gt; 4.2.1</li>
+<li>dsiutils 2.5.1 -&gt; 2.5.2</li>
+<li>cactoos 0.36 -&gt; 0.38</li>
+<li>jodd-mail 5.0.4 -&gt; 5.0.5</li>
+<li>scribe-java 5.5.0 -&gt; 6.0.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4160">Version 4.16.0</h2>
+<p>Released at 03.09.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/380">#380</a> Fixed invalidation of session cookie due to wrong path (wildunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/379">#379</a> Support of inheritence of controller methods (wildunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/378">#378</a> Migrated from fast-classpath-scanner to classgraph (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>htmlunit 2.32.0 -&gt; 2.32.1</li>
+<li>mockito-core 2.20.1 -&gt; 2.21.0</li>
+<li>undertow-core 2.0.11-Final -&gt; 2.0.13-Final</li>
+<li>jodd-mail 5.0.3 -&gt; 5.0.4</li>
+<li>greenmail 1.5.7 -&gt; 1.5.8</li>
+<li>ehcache-clustered 3.5.2 -&gt; 3.6.0</li>
+<li>fast-classpath-scanner -&gt; classgraph 4.1.5</li>
+<li>commons-lang3 3.7 -&gt; 3.8</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4150">Version 4.15.0</h2>
+<p>Released at 30.07.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/371">#374</a> Pass messages from attachment to controller (wildunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/371">#371</a> Provide a charset for the template based emails (wildunne)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>cactoo 0.35 -&gt; 0.36</li>
+<li>fluentlenium 3.6.0 -&gt; 3.6.1</li>
+<li>bouncycastle 1.59 &gt; 1.60</li>
+<li>fast-classpath-scanner 3.1.6 -&gt; 3.1.12</li>
+<li>http-components 4.5.5 -&gt; 4.5.6</li>
+<li>undertow-core 2.0.9-Final -&gt; 2.0.11-Final</li>
+<li>jodd-mail 5.0.2 -&gt; 5.0.3</li>
+<li>jose4j 0.6.3 -&gt; 0.6.4</li>
+<li>mockito-core 2.19.0 -&gt; 2.20.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4140">Version 4.14.0</h2>
+<p>Released at 01.07.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/357">#357 </a>Refactored MinificationUtils (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.7-Final -&gt; 2.0.9-Final</li>
+<li>prettytime 4.0.1.Final -&gt; 4.0.2.Final</li>
+<li>scribe-java 5.4.0 -&gt; 5.5.0</li>
+<li>cactoo-matchers 0.9.1 -&gt; 0.11</li>
+<li>zxing 3.3.2 -&gt; 3.3.3</li>
+<li>cactoo 0.33 -&gt; 0.35</li>
+<li>jackson 2.9.5 -&gt; 2.9.6</li>
+<li>jodd-mail 4.3.2 -&gt; 5.0.2</li>
+<li>fast-classpath-scanner 2.20.0 -&gt; 3.1.6</li>
+<li>mockito-core 2.18.3 -&gt; 2.19.0</li>
+<li>fluentlenium 3.5.2 -&gt; 3.6.0</li>
+<li>selenium-java 3.12.0 -&gt; 3.13.0</li>
+<li>awaitility 3.1.0 -&gt; 3.1.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4130">Version 4.13.0</h2>
+<p>Released at 18.05.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/363">#363</a> Keys are now enforced to at least 512 Bit and validated on startup (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/360">#360</a> Switched from commons-email to jodd-email (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/358">#358</a> Refactored and increased cookie handling and security (svenkubiak)</li>
+<li>Fixed concurrency bug in DispatcherHandler (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.4.Final -&gt; 2.0.7.Final</li>
+<li>htmlunit-driver 2.29.0 -&gt; 2.31.0</li>
+<li>fast-classpath-scanner 2.18.1 -&gt; 2.20.0</li>
+<li>scribe-java 5.3.0 -&gt; 5.4.0</li>
+<li>jsass 5.7.0 -&gt; 5.7.3</li>
+<li>mockito-core 2.18.0 -&gt; 2.18.3</li>
+<li>cactoo 0.30.0 -&gt; 0.33.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4120">Version 4.12.0</h2>
+<p>Released at 14.04.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/353">#353</a> Fixed issue with Admin interface navigation in responsive view (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/352">#352</a> Fixed issue with JWTS Sign key length (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/350">#350</a> Added support for Same Site Cookie Attribute (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/350">#343</a> Added groovy script to auto generate keys in archetype generation (svenkubiak)</li>
+<li>Improved sanity checks (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 2.0.1.Final -&gt; 2.0.4.Final</li>
+<li>ehcache-clustered 3.5.0 -&gt; 3.5.2</li>
+<li>log4j 2.10.0 -&gt; 2.11.0</li>
+<li>jackson-databind 2.9.4 -&gt; 2.9.5</li>
+<li>mockito-core 2.16.0 -&gt; 2.18.0</li>
+<li>jsass 5.5.6 -&gt; 5.7.0</li>
+<li>freemarker 2.3.27-incubation -&gt; 2.3.28</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4110">Version 4.11.0</h2>
+<p>Released at 15.03.2018</p>
+<ul>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 1.4.22.Final -&gt; 2.0.1.Final</li>
+<li>fast-classpath-scanner 2.12.0 -&gt; 2.18.0</li>
+<li>selenium-java 3.8.1 -&gt; 3.11.0</li>
+<li>htmlunit-driver 2.29.0 -&gt; 2.29.3</li>
+<li>jsass 5.5.5 -&gt; 5.5.6</li>
+<li>fluentlenium 3.4.1 -&gt; 3.5.3</li>
+<li>greenmail 1.5.6 -&gt; 1.5.7</li>
+<li>mockito-core 2.13.0 -&gt; 2.16.0</li>
+<li>governator 1.17.4 -&gt; 1.17.5</li>
+<li>ehcache-clustered 3.4.0 -&gt; 3.5.0</li>
+<li>guice 4.1.0 -&gt; 4.2.0</li>
+<li>awaitility 3.0.0 -&gt; 3.1.0</li>
+<li>scribe-java 5.2.0-java7again -&gt; 5.3.0</li>
+<li>maven-core 3.5.2 -&gt; 3.5.3</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-4100">Version 4.10.0</h2>
+<p>Released at 31.01.2018</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/344">#344</a> Added multikey encryption/decryption for config values (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/342">#342</a> Session and Authentication cookie now use separate sign and encryption keys (svenkubiak)</li>
+<li>Updated AdminLTE and additional CSS/JS to latest version (svenkubiak)</li>
+<li>Added RandomString method to CryptoUtils (svenkubiak)</li>
+<li>Added additional validators (svenkubiak)</li>
+<li>Sanity checks are now also display in @admin interface (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.21.Final -&gt; 1.4.22.Final</li>
+<li>httpmime 4.5.4 -&gt; 4.5.5</li>
+<li>bcprov-jdk15on 1.58 -&gt; 1.59</li>
+<li>fast-classpath-scanner 2.9.3 -&gt; 2.12.0</li>
+<li>htmlunit-driver 2.28.4 -&gt; 2.29.0</li>
+<li>jackson-databind 2.9.3 -&gt; 2.9.4</li>
+<li>scribe-java 5.0.0 -&gt; 5.2.0</li>
+<li>jsass 5.5.4 -&gt; 5.5.5</li>
+<li>zxing 3.3.1 -&gt; 3.3.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-490">Version 4.9.0</h2>
+<p>Released at 21.12.2017</p>
+<ul>
+<li>Added option to enable metrics independently of @admin interface (svenkubiak)</li>
+<li>Metrics now count all requests (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>htmlunit-driver 2.28 -&gt; 2.28.4</li>
+<li>jsass 5.5.3 -&gt; 5.5.4</li>
+<li>scribe-java 4.2.0 -&gt; 5.0.0</li>
+<li>log4j 2.9.1 -&gt; 2.10.0</li>
+<li>greenmail 1.5.5 -&gt; 1.5.6</li>
+<li>httpmime 4.5.3 -&gt; 4.5.4</li>
+<li>selenium-java 3.7.1 -&gt; 3.8.1</li>
+<li>mockito-core 2.12.0 -&gt; 2.13.0</li>
+<li>jackson-databind 2.9.2 -&gt; 2.9.3</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-480">Version 4.8.0</h2>
+<p>Release at 17.11.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/332">#332</a> Added option to reset Metrics (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/328">#328</a> Added REST/JSON call to @admin pages (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/327">#327</a> Added sanity checks to application startup (svenkubiak)</li>
+<li>Repleaced LESS4j with new LESS compiler due to outdated dependencies (with CVEs) in LESS4j (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>commons-lang3 3.6 -&gt; 3.7</li>
+<li>undertow-core 1.4.20.Final -&gt; 1.4.21.Final</li>
+<li>fast-classpath-scanner 2.8.0 -&gt; 2.9.3</li>
+<li>freemarker 2.3.26-incubating -&gt; 2.3.27-incubating</li>
+<li>selenium-java 3.6.0 -&gt; 3.7.1</li>
+<li>mockito-core 2.11.0 -&gt; 2.12.0</li>
+<li>htmlunit-driver 2.27 -&gt; 2.28</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-472">Version 4.7.2</h2>
+<p>Released at 05.11.2017</p>
+<ul>
+<li>Fixed bug that did not load env specific Log4J2 configuration (svenkubiak)</li>
+</ul>
+<h2 id="version-471">Version 4.7.1</h2>
+<p>Released at 01.11.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/329">#329</a> Fixed bug with custom appenders and Log4J2 configuration (svenkubiak)</li>
+</ul>
+<h2 id="version-470">Version 4.7.0</h2>
+<p>Released at 25.10.2017</p>
+<ul>
+<li>Added additional Unit tests (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>jackson-databind 2.9.0.pr4 -&gt; 2.9.2</li>
+<li>mockito-core 2.9.0 -&gt; 2.11.0</li>
+<li>log4j 2.9.0 -&gt; 2.9.1</li>
+<li>fast-classpath-scanner 2.4.7 -&gt; 2.8.0</li>
+<li>jjwt 0.7.0 -&gt; 0.8.0</li>
+<li>fluentlenium 3.3.0 -&gt; 3.4.1</li>
+<li>junit-toolbox 2.3 -&gt; 2.4</li>
+<li>dsiutils 2.4.0 -&gt; 2.4.2</li>
+<li>commons-io 2.5 -&gt; 2.6</li>
+<li>maven-core 3.5.0 -&gt; 3.5.2</li>
+<li>zxing 3.3.0 -&gt; 3.3.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-460">Version 4.6.0</h2>
+<p>Released at 05.09.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/313">#314</a> Added examples project (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/313">#313</a> Enhanced rate limit handling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/312">#312</a> Refactored TOTP support (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/304">#304</a> Cleanup of dependencies (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 1.4.18.Final -&gt; 1.4.20.Final</li>
+<li>ehcache-clsutered 3.3.1 -&gt; 3.4.0</li>
+<li>scribe-java 4.1.2 -&gt; 4.2.0</li>
+<li>jsass 5.5.2 -&gt; 5.5.3</li>
+<li>fluentlenium 3.2.0 -&gt; 3.3.0</li>
+<li>fast-classpath-scanner 2.4.2 -&gt; 2.4.7</li>
+<li>commons-email 1.4 -&gt; 1.5</li>
+<li>zt-exec 1.9 -&gt; 1.10</li>
+<li>bcprov-jdk15on 1.57 -&gt; 1.58</li>
+<li>freemarker-java8 1.1.5 -&gt; 1.2.0</li>
+<li>log4j 2.8.2 -&gt; 2.9.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-450">Version 4.5.0</h2>
+<p>Released at 10.07.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/302">#309</a> Added EventBus (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/308">#308</a> Upgraded AdminLTE for Admin pages (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/302">#302</a> Added Governator for Google Guice enhancements (svenkubiak)</li>
+<li>Removed unused CSS and JS files in archetype (svenkubiak)</li>
+<li>Refactored internal enums (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 1.4.13.Final -&gt; 1.4.18.Final</li>
+<li>jsass 5.5.0 -&gt; 5.5.2</li>
+<li>fast-classpath-scanner 2.0.19 -&gt; 2.4.2</li>
+<li>greenmail 1.5.4 -&gt; 1.5.5</li>
+<li>bcprov-jdk15on 1.56 -&gt; 1.57</li>
+<li>scribe-java 4.1.0 -&gt; 4.1.2</li>
+<li>mockito-core 2.7.22 -&gt; 2.8.47</li>
+<li>guava 21.0 -&gt; 22.0</li>
+<li>json-path 2.2.0 -&gt; 2.4.0</li>
+<li>dsiutils 2.3.6 -&gt; 2.4.0</li>
+<li>scribe-java 4.1.1 -&gt; 4.1.2</li>
+<li>governator 1.17.2 -&gt; 1.17.4</li>
+<li>htmlunit-driver 2.26 -&gt; 2.27</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-441">Version 4.4.1</h2>
+<p>Released at 19.05.2017</p>
+<ul>
+<li>Fixed bug in archetype generation (svenkubiak)</li>
+</ul>
+<h2 id="version-440">Version 4.4.0</h2>
+<p>Released at 02.05.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/300">#300</a> Neccassary refactorings of Utility classes to avoid concurrency issues (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/297">#297</a> Enhanced Admin Routes page (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/296">#296</a> Added option to pass parameter as Optional (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/295">#295</a> Added PATCH method (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/291">#291</a> Added option to pass config values as JVM argument (svenkubiak)</li>
+<li>Added new admin page for on-the-fly logger configuration (svenkubiak)</li>
+<li>Added option to pass masterkey as JVM argument (svenkubiak)</li>
+<li>Set default charset for sending emails to UTF-8 (svenkubiak)</li>
+<li>Removed JVM properties from admin dashboard and replaced it with memory information (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow 1.4.11.Final -&gt; 1.4.13.Final</li>
+<li>ehcache-clustered 3.3.0 -&gt; 3.3.1</li>
+<li>scribejava-apis 4.0.0 -&gt; 4.1.0</li>
+<li>scribejava-core 4.0.0 -&gt; 4.1.0</li>
+<li>mockito-core 2.7.20 -&gt; 2.7.22</li>
+<li>htmlunit-driver 2.25 -&gt; 2.26</li>
+<li>junit-toolbox 2.2 -&gt; 2.3</li>
+<li>maven-core 3.3.9 -&gt; 3.5.0</li>
+<li>fluentlenium-assertj 3.1.1 -&gt; 3.2.0</li>
+<li>fluentlenium-junit 3.1.1 -&gt; 3.2.0</li>
+<li>log4j 2.8.1 -&gt; 2.8.2</li>
+<li>jackson-databind 2.8.7 -&gt; 2.8.8</li>
+<li>fast-classpath-scanner 2.0.18 -&gt; 2.0.19</li>
+<li>greenmail 1.5.3 -&gt; 1.5.4</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-433">Version 4.3.3</h2>
+<p>Released at 21.04.2017</p>
+<ul>
+<li>Fixed concurrency issue in JSON serializer (svenkubiak, gowthaman-basuvaraj)</li>
+</ul>
+<h2 id="version-432">Version 4.3.2</h2>
+<p>Released at 10.04.2017</p>
+<ul>
+<li>Fixed bug that resulted in not decrypting all encrypted config values in some cases (svenkubiak)</li>
+</ul>
+<h2 id="version-431">Version 4.3.1</h2>
+<p>Released at 07.04.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/284">#284</a> Fixed NPE in CookieParser (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/282">#282</a> Fixed failing decryption of encrypted config values (svenkubiak)</li>
+</ul>
+<h2 id="version-430">Version 4.3.0</h2>
+<p>Released at 31.03.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/276">#276</a> Added OPTIONS HTTP method (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/271">#272</a> Added TwoFactorAuthentication flow into Authentication class (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/271">#271</a> Added JVM options for setting HTTP/AJP host and port (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/271">#269</a> Added option for reverse routing in templates (svenkubiak)</li>
+<li>Fixed bug that generated incorrect QR-Code for TwoFactorAuthentication (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>mockito-core 2.7.13 -&gt; 2.7.20</li>
+<li>fast-classpath-scanner 2.0.17 -&gt; 2.0.18</li>
+<li>freemarker 2.3.25-incubating -&gt; 2.3.26-incubating</li>
+<li>jsass 5.4.3 -&gt; 5.5.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-421">Version 4.2.1</h2>
+<p>Released at 13.03.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/264">#264</a> Fixed bug when controllers where located in sub-package (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/267">#267</a> Fixed/Refactored not working location attribute (svenkubiak)</li>
+</ul>
+<h2 id="version-420">Version 4.2.0</h2>
+<p>Released at 03.03.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/259">#259</a> Added additional methods for 2FA in Authentication class (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/256">#256</a> Added handling of multivalue form fields (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/255">#255</a> Fixed wrong spelling in validation messages (wildunne)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.10.Final -&gt; 1.4.11.Final</li>
+<li>log4j 2.8 -&gt; 2.8.1</li>
+<li>mockito-core 2.7.3 -&gt; 2.7.13</li>
+<li>ehcache-clustered 3.2.0 -&gt; 3.3.0</li>
+<li>fast-classpath-scanner 2.0.13 -&gt; 2.0.17</li>
+<li>dsiutils 2.3.3 -&gt; 2.3.6</li>
+<li>jackson-databind 2.8.6 -&gt; 2.8.7</li>
+<li>jackson-dataformat-yaml 2.8.6 -&gt; 2.8.7</li>
+<li>commons-validator 1.5.1 -&gt; 1.6</li>
+<li>htmlunit-driver 2.24 -&gt; 2.25</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-411">Version 4.1.1</h2>
+<p>Released at 27.02.2017</p>
+<ul>
+<li>Fixed NPE when request parameter is missing (svenkubiak)</li>
+</ul>
+<h2 id="version-410">Version 4.1.0</h2>
+<p>Released at 06.02.2017</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/250">#250</a> Added support for Java 8 in Freemarker (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/249">#249</a> Introduced prettytime in Freemarker template (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/247">#247</a> Checked and verified HTTP security header (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/244">#244</a> Enhanced scheduler (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/241">#241</a> Added location attribute (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/2238">#238</a> Updated version in archetype (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.7.Final -&gt; 1.4.10.Final</li>
+<li>log4j 2.7 -&gt; 2.8</li>
+<li>jsass 5.4.0 -&gt; 5.4.3</li>
+<li>mockito-core 2.7.0 -&gt; 2.7.3</li>
+<li>fast-classpath-scanner 2.0.9 -&gt; 2.0.13</li>
+<li>websocket-api 9.4.0.v20161208 -&gt; 9.4.1.v20170120</li>
+<li>websocket-client 9.4.0.v20161208 -&gt; 9.4.1.v20170120</li>
+<li>jackson-databind 2.8.5 -&gt; 2.8.6</li>
+<li>jackson-dataformat-yaml 2.8.5 -&gt; 2.8.6</li>
+<li>scribejava-apis 3.4.1 -&gt; 4.0.0</li>
+<li>scribejava-core 3.4.1 -&gt; 4.0.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-400">Version 4.0.0</h2>
+<p>Released at 30.12.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/236">#236</a> Form enhancement (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/235">#235</a> Cache enhancement (MarkVink)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/205">#205</a> Added shutdown of ExecutionService (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/204">#204</a> Added authentication per request (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/203">#203</a> Switch Session, Auth, Flash cookie to Json Web Token (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/191">#191</a> Added limit login attemps (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/190">#191</a> Added request throtteling (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/180">#180</a> Added new enhanced routing (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/179">#179</a> Added additional AJP connector (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/178">#178</a> Added application shutdown method to lifecycle (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/173">#173</a> Admin UI is now using JBCrypt for password hashing (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/175">#175</a> AES256 is now enforced (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.3.Final -&gt; 1.4.7.Final</li>
+<li>jersey-media-sse 2.23.2 -&gt; 2.25</li>
+<li>jsass 5.3.0 -&gt; 5.3.1</li>
+<li>mockito-core 2.2.9 -&gt; 2.7.0</li>
+<li>ehcache-clustered 3.1.3 -&gt; 3.2.0</li>
+<li>fast-classpath-scanner 2.0.6 -&gt; 2.0.9</li>
+<li>websocket-api 9.3.13.v20161014 -&gt; 9.4.0.v20161208</li>
+<li>websocket-client 9.3.13.v20161014 -&gt; 9.4.0.v20161208</li>
+<li>bcprov-jdk15on 1.5.5 -&gt; 1.5.6</li>
+<li>jackson-databind 2.8.4 -&gt; 2.8.5</li>
+<li>jackson-dataformat-yaml 2.8.4 -&gt; 2.8.5</li>
+<li>fluentlenium-assertj 3.0.3 -&gt; 3.1.0</li>
+<li>fluentlenium-junit 3.0.3 -&gt; 3.1.0</li>
+<li>scribejava-apis 3.2.0 -&gt; 3.4.1</li>
+<li>scribejava-core 3.2.0 -&gt; 3.4.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-3120">Version 3.12.0</h2>
+<p>Released at 21.04.2017</p>
+<ul>
+<li>Fixed concurrency issue in JSON serializer</li>
+<li>Version bumps (svenkubiak)</li>
+</ul>
+<h2 id="version-3110">Version 3.11.0</h2>
+<p>Released at 06.02.2017</p>
+<ul>
+<li>Version bumps (svenkubiak)</li>
+</ul>
+<h2 id="version-3100">Version 3.10.0</h2>
+<p>Released at 15.12.2016</p>
+<ul>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.7.Final -&gt; 1.4.8.Final</li>
+<li>guava 20.0 -&gt; 21.0</li>
+<li>greenmail 1.5.2 -&gt; 1.5.3</li>
+<li>jackson-databind 2.8.5 -&gt; 2.8.6</li>
+<li>jackson-dataformat-yaml 2.8.5 -&gt; 2.8.6</li>
+<li>fleunt-hc 4.5.2 -&gt; 4.5.3</li>
+<li>jsass 5.4.0 -&gt; 5.4.3</li>
+<li>fast-classpath-scanner 2.0.9 -&gt; 2.0.13</li>
+<li>websocket-client 9.3.12.v20160915 -&gt; 9.4.1.v20170120</li>
+<li>hazelcast-client 3.7.2 -&gt; 3.7.5</li>
+<li>log4j-api 2.7 -&gt; 2.8</li>
+<li>log4j-core 2.7 -&gt; 2.8</li>
+<li>log4j-slf4j-impl 2.7 -&gt; 2.8</li>
+<li>mockito-core 2.3.4 -&gt; 2.7.0</li>
+<li>bcprov-jdk15on 1.55 -&gt; 1.56</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-390">Version 3.9.0</h2>
+<p>Released at 26.10.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/230">#230</a> Added option to pass JVM args (gowthaman-basuvaraj)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/222">#222</a> Added debugger mode to mvn:mangooio run (gowthaman-basuvaraj)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>pebble 2.2.2 -&gt; 2.2.3</li>
+<li>htmlunit-driver 2.21-&gt; 2.23</li>
+<li>jackson-databind 2.8.3 -&gt; 2.8.4</li>
+<li>jackson-dataformat-yaml 2.8.3 -&gt; 2.8.4</li>
+<li>hazelcast-client 3.7.1 -&gt; 3.7.2</li>
+<li>fast-classpath-scanner 2.0.3 -&gt; 2.0.5</li>
+<li>commons-lang3 3.4 -&gt; 3.5</li>
+<li>websocket-client 9.3.12.v20160915 -&gt; 9.3.13.v20161014</li>
+<li>log4j-api 2.6.2 -&gt; 2.7</li>
+<li>log4j-core 2.6.2 -&gt; 2.7</li>
+<li>log4j-slf4j-impl 2.6.2 -&gt; 2.7</li>
+<li>mockito-core 2.1.0-RC.2 -&gt; 2.2.9</li>
+<li>htmlunit-driver 2.23 -&gt; 2.23.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-381">Version 3.8.1</h2>
+<p>Released at 19.10.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/227">#227</a> Response.andContentType now sets the header accordingly (svenkubiak)</li>
+<li>Crypto key now only accepts ASCII characters (svenkubiak)</li>
+</ul>
+<h2 id="version-380">Version 3.8.0</h2>
+<p>Released at 30.09.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/215">#215</a> Fixed StaticLogger warning on startup (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/216">#216</a> Make headers configurable (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.4.0-Final -&gt; 1.4.3.Final</li>
+<li>hazelcast-client 3.7 -&gt; 3.7.1</li>
+<li>jackson-databind 2.8.2 -&gt; 2.8.3</li>
+<li>jackson-dataformat-yaml 2.8.2 -&gt; 2.8.3</li>
+<li>mockito-core 2.0.111-beta -&gt; 2.1.0-RC.2</li>
+<li>jetty-websocket 8.1.19.v20160209 -&gt; 8.2.0.v20160908</li>
+<li>websocket-client 9.3.11.v20160721 -&gt; 9.3.12.v20160915</li>
+<li>jsass 5.2.0 -&gt; 5.3.0</li>
+<li>greenmail 1.5.1 -&gt; 1.5.2</li>
+<li>scribejava-apis 3.1.0 -&gt; 3.2.0</li>
+<li>scribejava-core 3.1.0 -&gt; 3.2.0</li>
+<li>fast-classpath-scanner 2.0.1 -&gt; 2.0.3</li>
+<li>jjwt 0.6.0 -&gt; 0.7.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-371">Version 3.7.1</h2>
+<p>Released at 05.09.2016</p>
+<ul>
+<li>Fixed missing log4j2.yaml file in archetype (svenkubiak)</li>
+<li>Fixed missing dependency when using fluentlenium (svenkubiak)</li>
+</ul>
+<h2 id="version-370">Version 3.7.0</h2>
+<p>Released at 31.08.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/210">#210</a> Added new Admin UI tools page (svenkubiak)</li>
+<li>Fixed potential bug in i18n handling (svenkubiak)</li>
+<li>Switched from Reflections API to FastClasspathScanner (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>hazelcast-client 3.6.4 -&gt; 3.7</li>
+<li>jawr-core 3.8 -&gt; 3.9</li>
+<li>scribejava-apis 3.0.0 -&gt; 3.1.0</li>
+<li>scribejava-core 3.0.0 -&gt; 3.1.0</li>
+<li>bcprov-jdk15on 1.54 -&gt; 1.55</li>
+<li>fluentlenium-core 0.13.2 -&gt; 0.13.3</li>
+<li>htmlunit-driver 2.21 -&gt; 2.23</li>
+<li>mockito-core 2.0.106-beta -&gt; 2.0.111-beta</li>
+<li>jackson-databind 2.8.1 -&gt; 2.8.2</li>
+<li>jackson-dataformat-yaml 2.8.1 -&gt; 2.8.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-360">Version 3.6.0</h2>
+<p>Released at 18.08.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/201">#201</a> Added support for Json Web Token (svenkubiak)</li>
+<li>Updated documentation (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.23.Final -&gt; 1.4.0.Final</li>
+<li>jersey-media-sse 2.23.1 -&gt; 2.23.2</li>
+<li>mockito-beta 2.0.89-beta -&gt; 2.0.106-beta</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-350">Version 3.5.0</h2>
+<p>Released at 25.07.2016</p>
+<ul>
+<li>Fixed bug in maven archetype (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>scribejava-apis 2.8.1 -&gt; 3.0.0</li>
+<li>scribejava-core 2.8.1 -&gt; 3.0.0</li>
+<li>log4j-1.2-api 2.6.1 -&gt; 2.6.2</li>
+<li>log4j-api 2.6.1 -&gt; 2.6.2</li>
+<li>log4j-core 2.6.1 -&gt; 2.6.2</li>
+<li>greenmail 1.5.0 -&gt; 1.5.1</li>
+<li>boon-json 0.6.4 -&gt; 0.6.6</li>
+<li>mockito-beta 2.0.81-beta -&gt; 2.0.89-beta</li>
+<li>jackson-databind 2.8.0 -&gt; 2.8.1</li>
+<li>jackson-dataformat-yaml 2.8.0 -&gt; 2.8.1</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-340">Version 3.4.0</h2>
+<p>Released at 07.07.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/194">#194</a> Changed scheduler UI page if no jobs are scheduled (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/193">#193</a> Fixed footer in admin UI (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/184">#184</a> Added confirmation dialogs to scheduler admin UI page (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>
+<p>Version bumps (svenkubiak)</p>
+<ul>
+<li>scribejava-apis 2.7.3 -&gt; 2.8.1</li>
+<li>scribejava-core 2.7.3 -&gt; 2.8.1</li>
+<li>guice 4.0 -&gt; 4.1.0</li>
+<li>hazelcast-client 3.6.3 -&gt; 3.6.4</li>
+<li>pebble 2.2.1 -&gt; 2.2.2</li>
+<li>
+<p>boon-json 0.6.2 -&gt; 0.6.4</p>
+</li>
+<li>
+<p>freemarker 2.3.24-incubating -&gt; 2.3.25-incubating</p>
+</li>
+<li>
+<p>fluentlenium-core 0.13.0 -&gt; 0.13.1</p>
+</li>
+<li>
+<p>mockito-core 2.0.59-beta -&gt; 2.0.81-beta</p>
+</li>
+<li>
+<p>jackson-databind 2.7.5 -&gt; 2.8.0</p>
+</li>
+<li>
+<p>jackson-dataformat-yaml 2.7.5 -&gt;2.8.0</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-330">Version 3.3.0</h2>
+<p>Released at 17.06.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/183">#183</a> Fixed bug in WebRequest HTTP utility (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.6 -&gt; 2.6.1</li>
+<li>jersey-media-sse 2.23 -&gt;2.23.1</li>
+<li>scribejava-apis 2.6.0 -&gt; 2.7.3</li>
+<li>scribejava-core 2.6.0 -&gt; 2.7.3</li>
+<li>mockito-core 2.0.54-beta -&gt; 2.0.59-beta</li>
+<li>jackson-databind 2.7.4 -&gt; 2.7.5</li>
+<li>jackson-dataformat-yaml 2.7.4 -&gt;2.7.5</li>
+<li>jsass 5.1.1 -&gt; 5.2.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-320">Version 3.2.0</h2>
+<p>Released at 06.06.2016</p>
+<ul>
+<li>Fixed bug in Crypto class that could cause concurrency issues (svenkubiak)</li>
+<li>Fixed bug in TwoFactorUtils that could return wrong numbers (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.22.Final -&gt; 1.3.23.Final</li>
+<li>boon-json 0.6.1 -&gt; 0.6.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-311">Version 3.1.1</h2>
+<p>Released at 06.06.2016</p>
+<ul>
+<li>Fixed bug in metrics – Listener now only tracks non Admin UI calls (svenkubiak)</li>
+</ul>
+<h2 id="version-310">Version 3.1.0</h2>
+<p>Released at 02.06.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/168">#168</a> Added first step of enhanced metrics</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/167">#167</a> Added option to start/stop scheduler jobs in admin UI</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/169">#169</a> Re-added mailer with enhancements</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>jersey-media-sse 2.22.2 -&gt; 2.23</li>
+<li>hazelcast-client 3.6.2 -&gt; 3.6.3</li>
+<li>htmlunit-driver 2.2.0 -&gt; 2.2.1</li>
+<li>scribejava-core 2.5.2 -&gt; 2.6.0</li>
+<li>scribejava-apis 2.5.2 -&gt; 2.6.0</li>
+<li>log4j-api 2.5 -&gt; 2.6</li>
+<li>log4j-core 2.5 -&gt; 2.6</li>
+<li>mockito-core 2.0.53-beta -&gt; 2.0.54-beta</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-300">Version 3.0.0</h2>
+<p>Released at 18.05.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/104">#104</a> Completely refactored Admin UI (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/165">#165</a> Made test utilities part of the core (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/147">#147</a> Big documentation update (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/85">#85</a> Removed Gzip minification (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/82">#82</a> Added new SASS and LESS compiler (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/164">#164</a> Switched to log4j2 yaml based configuration (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/165">#165</a> Renamed mangooio-test-utilities to mangooio-test (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/112">#112</a> Removed all @deprecated functions and classes (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/111">#111</a> Moved Authentication class to bindings package (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.21.Final -&gt; 1.3.22.Final</li>
+<li>scribejava-apis 2.5.2 -&gt; 2.5.3</li>
+<li>scribejava-core 2.5.2 -&gt; 2.5.3</li>
+<li>mockito 2.0.46-Beta -&gt; 2.0.53-Beta</li>
+<li>quartz 2.2.2 -&gt; 2.2.3</li>
+<li>boon-json 0.5.7 -&gt; 0.6.1</li>
+<li>commons-io 2.4 -&gt; 2.5</li>
+<li>commons-validator 1.5.0 -&gt; 1.5.1</li>
+<li>jackson-dataformat-yaml 2. 7.3 -&gt; 2.7.4</li>
+<li>jackson-databind 2.7.3 -&gt; 2.7.4</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-261">Version 2.6.1</h2>
+<p>Released at 17.04.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/163">#163</a> Fixed dependency cycle bug when using mangoo-test-utilities (svenkubiak)</li>
+</ul>
+<h2 id="version-260">Version 2.6.0</h2>
+<p>Released at 15.04.2016</p>
+<ul>
+<li>Added option to encrypt configuration values (svenkubiak)</li>
+<li>Switched to default Java 8 Base64 Encoder/Decoder (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.19.Final -&gt; 1.3.21.Final</li>
+<li>freemarker 2.3.23 -&gt; 2.3.24-incubating</li>
+<li>pebble 2.2.0 -&gt; 2.2.1</li>
+<li>hazelcast-client 3.6.1 -&gt; 3.6.2</li>
+<li>boon-json 0.5.6.RELEASE -&gt; 0.5.7</li>
+<li>fluentlenium-core 0.10.9 -&gt; 0.13.0</li>
+<li>scripe-apis 2.4.0 -&gt; 2.5.2</li>
+<li>scripe-core 2.4.0 -&gt; 2.5.2</li>
+<li>zt-exec 1.8 -&gt; 1.9</li>
+<li>dsituils 2.3.0 -&gt; 2.3.2</li>
+<li>mockito 2.0.44-Beta -&gt; 2.0.46-Beta</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-251">Version 2.5.1</h2>
+<p>Released at 20.03.2016</p>
+<ul>
+<li>Documentation fix</li>
+</ul>
+<h2 id="version-250">Version 2.5.0</h2>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/160">#160</a> Fixed ClassCastException in OAuthLoginFilter (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/159">#159</a> Added authenticity token and form for Pebble (svenkubiak</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/154">#154</a> Added new exception handling for public API (svenkubiak</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.15.Final -&gt; 1.3.19.Final</li>
+<li>mockito 2.0.42-Beta -&gt; 2.0.44-Beta</li>
+<li>pebble 2.1.0 -&gt; 2.2.0</li>
+<li>scripe-apis 2.2.2 -&gt; 2.4.0</li>
+<li>scripe-core 2.2.2 -&gt; 2.4.0</li>
+<li>hazlecast-client 3.6 -&gt; 3.6.1</li>
+<li>json-path 2.1.0 -&gt; 2.2.0</li>
+<li>fleunt-hc 4.5.1 -&gt; 4.5.2</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-241">Version 2.4.1</h2>
+<p>Released at 23.02.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/157">#157</a> Fixed bug that prevented authentication wrong showing an error (svenkubiak)</li>
+<li>Added additional methods for mapping collections in JSONUtils (svenkubiak)</li>
+</ul>
+<h2 id="version-240">Version 2.4.0</h2>
+<p>Released at 20.02.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/154">#154</a> Added limit for max post size (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/146">#146</a> Updated to 2.x of Scribe OAuth library (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/145">#145</a> Added provider for TemplateEngine and second Template Engine Pebble (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/139">#139</a> Added utility methods for Two-Factor-Authentication (svenkubiak, MrDunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/134">#134</a> Change documentation from ascidoc to MkDocs (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/138">#138</a> Added provider for cache (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/137">#133</a> SSE and WSS informations are now stored in cache (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Updated documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.15.Final -&gt; 1.3.18.Final</li>
+<li>mockito 2.0.40-Beta -&gt; 2.0.42-Beta</li>
+<li>dsiutils 2.2.6 -&gt; 2.3.0</li>
+<li>jersey-media-sse 2.22.1 -&gt; 2.22.2</li>
+<li>snakeyaml 1.16 -&gt; 1.17</li>
+<li>jetty-websocket 8.1.18.v20150929 -&gt; 8.1.19.v20160209</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-231">Version 2.3.1</h2>
+<p>Released at 27.01.2016</p>
+<ul>
+<li>Fxed bug when config injector was initialized in application start (svenkubiak)</li>
+</ul>
+<h2 id="version-230">Version 2.3.0</h2>
+<p>Released at 26.01.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/126">#126</a> Added i18n cookie to LocaleHandler (MrDunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/118">#118</a> Refactored request chaining for custom handlers (svenkubiak, MarkVink)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/122">#122</a> Fixed inconsistency configuration controller package (MrDunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/109">#109</a> Refactored Config (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/120">#120</a>Added getAcceptLangauge to Request (MrDunne)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/121">#121</a> Updated readme (MrDunne)</li>
+<li>Added an option to add a custom cookie in test utilities request method (svenkubiak)</li>
+<li>Removed Mangoo.TEST enum in test utilities (svenkubiak)</li>
+<li>Removed cache provider (svenkubiak)</li>
+<li>Refactored LocaleHandler (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Updated documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.12.Final -&gt; 1.3.15.Final</li>
+<li>mockito 2.0.36-Beta -&gt; 2.0.40-Beta</li>
+<li>dsiutils 2.2.5 -&gt; 2.2.6</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-220">Version 2.2.0</h2>
+<p>Released at 10.01.2016</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/110">#110</a> Added X-Response-Header (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/108">#108</a> Refactored RequestHandler (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/98">#98</a> Improved RequestHandler (svenkubiak)</li>
+<li>Added LocalDateTime timestamp of application start (svenkubiak)</li>
+<li>Added new Benchmark project (svenkubiak)</li>
+<li>Improved application startup time (svenkubiak)</li>
+<li>Updated documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.10.Final -&gt; 1.3.12.Final</li>
+<li>bcprov-jdk15on 1.53 -&gt; 1.54</li>
+<li>mockito 2.0.33-Beta -&gt; 2.0.36-Beta</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-210">Version 2.1.0</h2>
+<p>Released at 21.12.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/103">#103</a> Fixed bug when cookie encryption was enabled (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/102">#102</a> Made Cache eviction configurable (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/101">#101</a> Fixed keys in archetype (MarkVink)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/97">#97</a> Fixed incorrect Form documentation (svenkubiak, MarkVink)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/95">#95</a> Added new @memory administrative URL (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/94">#94</a> Added new @system administrative URL (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/93">#93</a> Improved DispatcherHandler/RequestHandler (svenkubiak)</li>
+<li>Updated documentation (svenkubiak, MarkVink)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>log4j 2.4.1 -&gt; 2.5</li>
+<li>mockito 2.0.31-Beta -&gt; 2.0.33-Beta</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-202">Version 2.0.2</h2>
+<p>Released at 17.12.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/91">#91</a> Added numeric validation (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/90">#90</a> Added JSONUtils for custom serialization with annotations (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/89">#89</a> Added Internal Server Error to Response class (svenkubiak)</li>
+<li>Sonar refactorings (svenkubiak)</li>
+<li>Updated documentation (svenkubiak)</li>
+</ul>
+<h2 id="version-201">Version 2.0.1</h2>
+<p>Released at 13.12.2015</p>
+<ul>
+<li>Fixed bug in documentation asciidoc file (svenkubiak)</li>
+</ul>
+<h2 id="version-200">Version 2.0.0</h2>
+<p>Released at 13.12.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/79">#79</a> Add Server-Sent Events handler (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/78">#78</a> Switched to plugin and dependency management in root pom.xml (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/69">#69</a> Restructured integration tests (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/76">#76</a> Improved handling of values in forms (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/77">#77</a> Added option for adding custom cookies (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/75">#75</a> Fixed bug that did not handle remember in authentication correctly (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/74">#74</a> Refactored test utilities (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/64">#64</a> Move to log4j2 for logging (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/53">#53</a> Extracted Mailer to own extension (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/66">#66</a> Removed all redundant legacy code (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/45">#45</a> Removed all @deprecated methods and classes (svenkubiak)</li>
+<li>Refactored routing mechanism to routes.yaml file (svenkubiak)</li>
+<li>Code cleanup, refactorings and more JavaDoc (svenkubiak)</li>
+<li>Updated Documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.3.Final -&gt; 1.3.10.Final</li>
+<li>guava 18.0 -&gt; 19.0</li>
+<li>fluent-hc 4.4.1 -&gt; 4.5.1</li>
+<li>fluentlenium-core 0.10.3 -&gt; 0.10.8</li>
+<li>json-path 2.0.0 -&gt; 2.1.0</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-132">Version 1.3.2</h2>
+<p>Released at 19.11.2015</p>
+<ul>
+<li>Fixed NPE in maven plugin (svenkubiak)</li>
+</ul>
+<h2 id="version-131">Version 1.3.1</h2>
+<p>Released at 25.10.2015</p>
+<ul>
+<li>Fixed bug that displayed the wrong previous firing time on @scheduler page (svenkubiak)</li>
+<li>Fixed bug in table that displayed schedule job on @scheduler page (svenkubiak)</li>
+</ul>
+<h2 id="version-130">Version 1.3.0</h2>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/73">#73</a> Added Basic HTTP authentication for administrative URLs (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/72&quot;">#72</a> Added @scheduler administrative URL (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/71">#71</a> Added autostart option to scheduler (svenkubiak)</li>
+<li>Code cleanup, refactorings and more javadoc (svenkubiak)</li>
+<li>Updated Documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.3.0.Final -&gt; 1.3.3.Final</li>
+<li>bcprov-jdk15on 1.52 -&gt; 1.53</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-120">Version 1.2.0</h2>
+<p>Released at 17.10.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/33">#33</a> Added Cookie versioning (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/57">#57</a> Added OAuth to authentication (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/61">#61</a> Move Body to Request (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/58">#58</a> Added @metrics administrative URL (svenkubiak)</li>
+<li>Added PUT and DELETE to MangooRequest in test utilities (svenkuibiak)</li>
+<li>Fixed typo in MangooRequestFilter interface (svenkubiak)</li>
+<li>Updated Documentation (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>undertow-core 1.2.12.Final -&gt;1.3.0.Final</li>
+<li>quartz 2.2.1 -&gt; 2.2.2</li>
+<li>jetty-websocket 8.1.17.v20150415 -&gt; 8.1.18.v20150929</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-114">Version 1.1.4</h2>
+<p>Released at 04.10.2015</p>
+<ul>
+<li>Fixed bug when sending binary content (svenkubiak)</li>
+<li>ExceptionHandler now preserves root cause when exception occurs (svenkubiak)</li>
+</ul>
+<h2 id="version-113">Version 1.1.3</h2>
+<p>Released at 21.09.2015</p>
+<ul>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/62">#62</a> Set default encoding (UTF-8) to form parsing (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/59">#59</a> Fixed a NPE when template exception was caught (svenkubiak)</li>
+</ul>
+<h2 id="version-112">Version 1.1.2</h2>
+<p>Released at 17.09.2015</p>
+<ul>
+<li>Fixed a NPE when a Request object and JSON was required in a controller method (svenkubiak)</li>
+<li>Refactored dev mode exception template (svenkubiak)</li>
+<li>Fixed bug that did not show exception in frontend in dev mode (svenkubiak)</li>
+<li>Fixed typo in ContentType enum (svenkubiak)</li>
+</ul>
+<h2 id="version-111">Version 1.1.1</h2>
+<p>Released at 15.09.2015</p>
+<ul>
+<li>Updated Documentation (svenkubiak)</li>
+</ul>
+<h2 id="version-110">Version 1.1.0</h2>
+<p>Released at 14.09.2015</p>
+<ul>
+<li>Refactored RequestHandler (svenkubiak)</li>
+<li>Refactored EhCache to Guava Cache (svenkubiak)</li>
+<li>Added ETag support for dynamic content (svenkubiak)</li>
+<li>Added a method for adding a complete content map to a template (svenkubiak)</li>
+<li>Added administrative URLs @health, @routes, @cache and @config (svenkubiak)</li>
+<li>Updated Documentation (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/52">#52</a> Refactored filters (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/40">#40</a> Added handling of multiple parameters in controller method (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/39">#39</a> Added methods for parameter validation (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/37">#37</a> Added option to set the secure flag for session and auth cookie (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/35">#35</a> Added method for regular expression to validation (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/34">#34</a> Added LocalDate and LocalDateTime as request parameter (svenkubiak)</li>
+<li><a href="https://github.com/svenkubiak/mangooio/issues/36">#36</a> Validation now works for numeric values (svenkubiak)</li>
+<li>Version bumps (svenkubiak)<ul>
+<li>doctester-core 1.1.6 -&gt; 1.1.8</li>
+<li>snakeyaml 1.15 -&gt; 1.16</li>
+<li>junit-toolbox 2.1 -&gt; 2.2</li>
+<li>undertow-core 1.2.9.Final -&gt; 1.2.12.Final</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-101">Version 1.0.1</h2>
+<p>Released at 05.08.2015</p>
+<ul>
+<li>Fixed typo in archetype that prevented archetype from building (svenkubiak)</li>
+</ul>
+<h2 id="version-100">Version 1.0.0</h2>
+<p>Released at 31.07.2015</p>
+<ul>
+<li>Initial release (svenkubiak)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../operating/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Operating">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Operating
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../migrations-archived/" class="md-footer__link md-footer__link--next" aria-label="Next: Migrations">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Migrations
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Sven Kubiak
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+    
+    
+    
+      
+      
+    
+    <a href="https://social.kubiak.me/@sven" target="_blank" rel="noopener me" title="social.kubiak.me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M433 179.1c0-97.2-63.7-125.7-63.7-125.7-62.5-28.7-228.6-28.4-290.5 0 0 0-63.7 28.5-63.7 125.7 0 115.7-6.6 259.4 105.6 289.1 40.5 10.7 75.3 13 103.3 11.4 50.8-2.8 79.3-18.1 79.3-18.1l-1.7-36.9s-36.3 11.4-77.1 10.1c-40.4-1.4-83-4.4-89.6-54-.6-4.6-.9-9.3-.9-13.9 85.6 20.9 158.7 9.1 178.7 6.7 56.1-6.7 105-41.3 111.2-72.9 9.8-49.8 9-121.5 9-121.5zm-75.1 125.2h-46.6V190.1c0-49.7-64-51.6-64 6.9v62.5H201V197c0-58.5-64-56.6-64-6.9v114.2H90.3c0-122.1-5.2-147.9 18.4-175 25.9-28.9 79.8-30.8 103.8 6.1l11.6 19.5 11.6-19.5c24.1-37.1 78.1-34.8 103.8-6.1 23.7 27.3 18.4 53 18.4 175"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.top", "navigation.footer", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.footer", "search.highlight", "search.share", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="../js/timeago.min.js"></script>
+      
+        <script src="../js/timeago_mkdocs_material.js"></script>
+      
+    
+  </body>
+</html>

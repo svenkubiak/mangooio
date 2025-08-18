@@ -1,0 +1,3149 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="Sven Kubiak">
+      
+      
+        <link rel="canonical" href="https://svenkubiak.github.io/mangooio/9.9.0/migrations-archived/">
+      
+      
+        <link rel="prev" href="../changelog-archived/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Migrations - mangoo I/O</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/timeago.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#from-7180-to-7190" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You're not viewing the latest version.
+<a href="../..">
+    <strong>Click here to go to latest.</strong>
+</a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mangoo I/O" class="md-header__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mangoo I/O
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migrations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mangoo I/O" class="md-nav__button md-logo" aria-label="mangoo I/O" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    mangoo I/O
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/svenkubiak/mangooio" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migrations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Routing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bootstrap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controllers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Controllers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependency-injection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dependency Injection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../templating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Templating
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../working-with-json/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Working with JSON
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Persistence
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CORS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../csrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CSRF
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authentication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Server-Sent Events
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scheduler
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../async/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Async
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Filters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../forms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Forms
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sessions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sessions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../flash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Flash
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internationalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Internationalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Caching
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../emails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Emails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Testing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../administration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Administration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operating/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Operating
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_31" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_31" id="__nav_31_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Archived
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_31_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_31">
+            <span class="md-nav__icon md-icon"></span>
+            Archived
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog-archived/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Migrations
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migrations
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#from-7180-to-7190" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.18.0 to 7.19.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7170-to-7180" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.17.0 to 7.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7160-to-7170" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.16.0 to 7.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7150-to-7160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.15.0 to 7.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7140-to-7150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.14.0 to 7.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7130-to-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.13.0 to 7.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7120-to-7130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.12.0 to 7.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7110-to-7120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.11.0 to 7.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7100-to-7110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.10.0 to 7.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-790-to-7100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.9.0 to 7.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-780-to-790" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.8.0 to 7.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-770-to-780" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.7.0 to 7.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-760-to-770" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.6.0 to 7.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-750-to-760" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.5.0 to 7.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-740-to-750" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.4.0 to 7.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-730-to-740" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.3.0 to 7.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-720-to-730" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.2.0 to 7.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-710-to-720" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.1.0 to 7.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-700-to-710" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.0.0 to 7.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6xx-to-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.x.x to 7.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6140-to-6150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.14.0 to 6.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6130-to-6140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.13.0 to 6.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6120-to-6130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.12.0 to 6.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6110-to-6120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.11.0 to 6.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6100-to-6110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.10.0 to 6.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-690-to-6100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.9.0 to 6.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-680-to-690" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.8.0 to 6.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-670-to-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.7.0 to 6.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-660-to-670" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.6.0 to 6.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-650-to-660" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.5.0 to 6.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-640-to-650" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.4.0 to 6.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-630-to-640" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.3.0 to 6.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-620-to-630" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.2.0 to 6.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-610-to-620" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.1.0 to 6.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-600-to-610" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.0.0 to 6.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5xx-to-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.x.x to 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5150-to-5160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.15.0 to 5.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5140-to-5150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.14.0 to 5.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5132-to-5140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.2 to 5.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5131-to-5132" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.1 to 5.13.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5130-to-5131" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.0 to 5.13.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5120-to-5130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.12.0 to 5.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5110-to-5120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.11.0 to 5.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5100-to-5110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.10.0 to 5.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5100-to-5101" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.10.0 to 5.10.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-590-to-5100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.9.0 to 5.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-581-to-590" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.8.1 to 5.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-580-to-581" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.8.0 to 5.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-570-to-580" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.7.0 to 5.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-560-to-570" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.6.0 to 5.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-550-to-560" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.5.0 to 5.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-540-to-550" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.4.0 to 5.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-530-to-540" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.3.0 to 5.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-520-to-530" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.2.0 to 5.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-510-to-520" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.1.0 to 5.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-501-to-510" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.0.1 to 5.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-500-to-501" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.0.0 to 5.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4xx-to-500" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.x.x to 5.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4170-to-4180" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.17.0 to 4.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4160-to-4170" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.16.0 to 4.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4150-to-4160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.15.0 to 4.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4140-to-4150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.14.0 to 4.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4130-to-4140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.13.0 to 4.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4120-to-4130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.12.0 to 4.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4110-to-4120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.11.0 to 4.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4100-to-4110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.10.0 to 4.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-490-to-4100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.9.0 to 4.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-480-to-490" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.8.0 to 4.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-470-to-480" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.7.0 to 4.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-460-to-470" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.6.0 to 4.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-450-to-460" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.5.0 to 4.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-440-to-450" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.4.0 to 4.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-430-to-440" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.3.0 to 4.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-420-to-430" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.2.0 to 4.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-410-to-420" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.1.0 to 4.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-400-to-410" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.0.0 to 4.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-3xx-to-400" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.x.x to 4.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-380-to-390" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.8.0 to 3.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-370-to-380" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.7.0 to 3.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-360-to-370" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.6.0 to 3.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-350-to-360" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.5.0 to 3.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-340-to-350" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.4.0 to 3.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-330-to-340" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.3.0 to 3.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-320-to-330" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.2.0 to 3.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-310-to-320" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.1.0 to 3.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-300-to-310" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.0.0 to 3.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-2xx-to-300" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 2.x.x to 3.0.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#from-7180-to-7190" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.18.0 to 7.19.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7170-to-7180" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.17.0 to 7.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7160-to-7170" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.16.0 to 7.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7150-to-7160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.15.0 to 7.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7140-to-7150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.14.0 to 7.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7130-to-7140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.13.0 to 7.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7120-to-7130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.12.0 to 7.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7110-to-7120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.11.0 to 7.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-7100-to-7110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.10.0 to 7.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-790-to-7100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.9.0 to 7.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-780-to-790" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.8.0 to 7.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-770-to-780" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.7.0 to 7.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-760-to-770" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.6.0 to 7.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-750-to-760" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.5.0 to 7.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-740-to-750" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.4.0 to 7.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-730-to-740" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.3.0 to 7.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-720-to-730" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.2.0 to 7.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-710-to-720" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.1.0 to 7.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-700-to-710" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 7.0.0 to 7.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6xx-to-700" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.x.x to 7.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6140-to-6150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.14.0 to 6.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6130-to-6140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.13.0 to 6.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6120-to-6130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.12.0 to 6.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6110-to-6120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.11.0 to 6.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-6100-to-6110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.10.0 to 6.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-690-to-6100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.9.0 to 6.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-680-to-690" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.8.0 to 6.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-670-to-680" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.7.0 to 6.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-660-to-670" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.6.0 to 6.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-650-to-660" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.5.0 to 6.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-640-to-650" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.4.0 to 6.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-630-to-640" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.3.0 to 6.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-620-to-630" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.2.0 to 6.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-610-to-620" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.1.0 to 6.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-600-to-610" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 6.0.0 to 6.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5xx-to-600" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.x.x to 6.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5150-to-5160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.15.0 to 5.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5140-to-5150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.14.0 to 5.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5132-to-5140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.2 to 5.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5131-to-5132" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.1 to 5.13.2
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5130-to-5131" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.13.0 to 5.13.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5120-to-5130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.12.0 to 5.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5110-to-5120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.11.0 to 5.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5100-to-5110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.10.0 to 5.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-5100-to-5101" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.10.0 to 5.10.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-590-to-5100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.9.0 to 5.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-581-to-590" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.8.1 to 5.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-580-to-581" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.8.0 to 5.8.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-570-to-580" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.7.0 to 5.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-560-to-570" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.6.0 to 5.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-550-to-560" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.5.0 to 5.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-540-to-550" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.4.0 to 5.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-530-to-540" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.3.0 to 5.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-520-to-530" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.2.0 to 5.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-510-to-520" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.1.0 to 5.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-501-to-510" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.0.1 to 5.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-500-to-501" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 5.0.0 to 5.0.1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4xx-to-500" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.x.x to 5.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4170-to-4180" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.17.0 to 4.18.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4160-to-4170" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.16.0 to 4.17.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4150-to-4160" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.15.0 to 4.16.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4140-to-4150" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.14.0 to 4.15.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4130-to-4140" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.13.0 to 4.14.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4120-to-4130" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.12.0 to 4.13.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4110-to-4120" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.11.0 to 4.12.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-4100-to-4110" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.10.0 to 4.11.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-490-to-4100" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.9.0 to 4.10.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-480-to-490" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.8.0 to 4.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-470-to-480" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.7.0 to 4.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-460-to-470" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.6.0 to 4.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-450-to-460" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.5.0 to 4.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-440-to-450" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.4.0 to 4.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-430-to-440" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.3.0 to 4.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-420-to-430" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.2.0 to 4.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-410-to-420" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.1.0 to 4.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-400-to-410" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 4.0.0 to 4.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-3xx-to-400" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.x.x to 4.0.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-380-to-390" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.8.0 to 3.9.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-370-to-380" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.7.0 to 3.8.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-360-to-370" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.6.0 to 3.7.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-350-to-360" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.5.0 to 3.6.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-340-to-350" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.4.0 to 3.5.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-330-to-340" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.3.0 to 3.4.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-320-to-330" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.2.0 to 3.3.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-310-to-320" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.1.0 to 3.2.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-300-to-310" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 3.0.0 to 3.1.0
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-2xx-to-300" class="md-nav__link">
+    <span class="md-ellipsis">
+      From 2.x.x to 3.0.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Migrations</h1>
+
+<h2 id="from-7180-to-7190">From 7.18.0 to 7.19.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7170-to-7180">From 7.17.0 to 7.18.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7160-to-7170">From 7.16.0 to 7.17.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7150-to-7160">From 7.15.0 to 7.16.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7140-to-7150">From 7.14.0 to 7.15.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7130-to-7140">From 7.13.0 to 7.14.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7120-to-7130">From 7.12.0 to 7.13.0</h2>
+<p>The annotations for @FilterWith and @Run have been moved. Reorganizing imports is advised.</p>
+<h2 id="from-7110-to-7120">From 7.11.0 to 7.12.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-7100-to-7110">From 7.10.0 to 7.11.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-790-to-7100">From 7.9.0 to 7.10.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-780-to-790">From 7.8.0 to 7.9.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-770-to-780">From 7.7.0 to 7.8.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-760-to-770">From 7.6.0 to 7.7.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-750-to-760">From 7.5.0 to 7.6.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-740-to-750">From 7.4.0 to 7.5.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-730-to-740">From 7.3.0 to 7.4.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-720-to-730">From 7.2.0 to 7.3.0</h2>
+<p>With this release the cache implementation was switched from ehCache to Google Guava cache. This was a drop-in replacement and should be in no effect to end-users.</p>
+<p>The WebSocket implementation had to be removed and will not be replaced.</p>
+<p>The ServerSentEvent implementation had to be completely refactored.</p>
+<h2 id="from-710-to-720">From 7.1.0 to 7.2.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-700-to-710">From 7.0.0 to 7.1.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-6xx-to-700">From 6.x.x to 7.0.0</h2>
+<p>mangoo I/O 7.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading to 7.x:</p>
+<p><strong>Java 17</strong></p>
+<p>mangoo I/O now requires and uses Java 17.</p>
+<p><strong>Removed build-in rate limit handling</strong></p>
+<p>The built-in rate limit handling has been remove, as rate limiting should be done in a HTTP-Proxy (e.g. nginx).</p>
+<p><strong>Authenticity handling has been removed</strong></p>
+<p>Authenticity handling has been removed, as now all major browser support SameSite Cookies which is default in mangoo I/O.</p>
+<p><strong>Removed slim-jar deployment feature</strong></p>
+<p>The slim-jar deployment feature has been removed as at was to error prune.</p>
+<p><strong>Removed JCasbin and authroization handling</strong></p>
+<p>The JCasbin library and he authorization feature has been remove as the integration and maintenance was to cumbersome.</p>
+<p><strong>Switched (password) hashing fromJBcrypt to Argon2</strong></p>
+<p>The built-in password hashing has changed to Argon2. If you have used the build-in authentication mechanism you need to update your stored passwords.</p>
+<h2 id="from-6140-to-6150">From 6.14.0 to 6.15.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-6130-to-6140">From 6.13.0 to 6.14.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-6120-to-6130">From 6.12.0 to 6.13.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-6110-to-6120">From 6.11.0 to 6.12.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-6100-to-6110">From 6.10.0 to 6.11.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-690-to-6100">From 6.9.0 to 6.10.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-680-to-690">From 6.8.0 to 6.9.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-670-to-680">From 6.7.0 to 6.8.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-660-to-670">From 6.6.0 to 6.7.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-650-to-660">From 6.5.0 to 6.6.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-640-to-650">From 6.4.0 to 6.5.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-630-to-640">From 6.3.0 to 6.4.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-620-to-630">From 6.2.0 to 6.3.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-610-to-620">From 6.1.0 to 6.2.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-600-to-610">From 6.0.0 to 6.1.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5xx-to-600">From 5.x.x to 6.0.0</h2>
+<p>mangoo I/O 6.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading to 6.x:</p>
+<p><strong>Removed 2FA from Basic authentication</strong></p>
+<p>In previous versions it was possible to add and additional 2FA to basic authentication. This functionality has been removed.</p>
+<p><strong>Removed SASS and LESS precompiler</strong></p>
+<p>The precompiler functionality for SASS and LESS has been removed, mainly due to the fact that both Libraries were blowing up the FatJAR by more than 10MB.</p>
+<p><strong>Renamed Filter interfaces</strong></p>
+<p>The naming of the global and per request filter has changed.
+"MangooFilter" is now "PerRequestFilter" and "MangooRequestFilter"is nor "OncePerRequestFilter".</p>
+<p><strong>Switched Authentication of Admin UI</strong></p>
+<p>The Admin UI was accessible through Basic authentication. This has been changed to a Form/Cookie based authentication and now offers the option to add 2FA to the Admin UI. Configuration of credentials for the Admin UI remains unchanged.</p>
+<p><strong>Added persistence to core</strong>
+One of the biggest changes in this version is the additional persistence based on MongoDB/Morphia to the Core. There is no need to add the additional mangooio-mongodb-extension anymore.</p>
+<h2 id="from-5150-to-5160">From 5.15.0 to 5.16.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5140-to-5150">From 5.14.0 to 5.15.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5132-to-5140">From 5.13.2 to 5.14.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5131-to-5132">From 5.13.1 to 5.13.2</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5130-to-5131">From 5.13.0 to 5.13.1</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5120-to-5130">From 5.12.0 to 5.13.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5110-to-5120">From 5.11.0 to 5.12.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5100-to-5110">From 5.10.0 to 5.11.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-5100-to-5101">From 5.10.0 to 5.10.1</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-590-to-5100">From 5.9.0 to 5.10.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-581-to-590">From 5.8.1 to 5.9.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-580-to-581">From 5.8.0 to 5.8.1</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-570-to-580">From 5.7.0 to 5.8.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-560-to-570">From 5.6.0 to 5.7.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-550-to-560">From 5.5.0 to 5.6.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-540-to-550">From 5.4.0 to 5.5.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-530-to-540">From 5.3.0 to 5.4.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-520-to-530">From 5.2.0 to 5.3.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-510-to-520">From 5.1.0 to 5.2.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-501-to-510">From 5.0.1 to 5.1.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-500-to-501">From 5.0.0 to 5.0.1</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4xx-to-500">From 4.x.x to 5.0.0</h2>
+<p>mangoo I/O 5.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading to version 5.0.0:</p>
+<p><strong>Java version</strong></p>
+<p>Java 11 is now required and supported. It is recommended to set a maven property</p>
+<div class="highlight"><pre><span></span><code>&lt;properties&gt;
+    &lt;java.version&gt;11&lt;/java.version&gt;
+&lt;/properties&gt;
+</code></pre></div>
+<p>and set the source and target variable accordingly in the compiler plugin</p>
+<div class="highlight"><pre><span></span><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.8.0&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;source&gt;${java.version}&lt;/source&gt;
+        &lt;target&gt;${java.version}&lt;/target&gt;
+        &lt;compilerArgument&gt;-parameters&lt;/compilerArgument&gt;
+        &lt;optimize&gt;true&lt;/optimize&gt;
+        &lt;debug&gt;false&lt;/debug&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre></div>
+<p><strong>Plugin versions</strong></p>
+<p>It is recommended to check that your plugins are at the latest available versions.</p>
+<p><strong>Maven Surefire Plugin</strong></p>
+<p>In previous versions the Surefire Plugin was used to execute the Unit test via a TestSuite. This has been removed and the according configuration can be removed in the Maven Plugin.</p>
+<div class="highlight"><pre><span></span><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.0.0-M1&lt;/version&gt;
+&lt;/plugin&gt;
+</code></pre></div>
+<p><strong>Maven Jar Plugin</strong></p>
+<p>As integration of Log4j2 has become cleaner (more on that see below), the Log4j2-test file needs to be filtered when the JAR is created. Therefore, the following configuration needs to be added to the Jar Plugin
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-jar-plugin</artifactId>
+<version>3.1.0</version>
+<configuration>
+<excludes>
+<exclude>*<em>/log4j2-test</em></exclude>
+</excludes>
+</configuration>
+</plugin></p>
+<p><strong>Renamed conf package</strong></p>
+<p>The previously named "conf" package containing the Google Guice Module configration and the Lifecycle class has been renamed to "app" and must be renamed accordingly.</p>
+<p><strong>Renamed Lifecycle class</strong></p>
+<p>The previously named "Lifecycle" class is now called "Bootstrap" and must be renamed accordingly. It must also implement the new "MangooBootstrap" interface instead of "MangooLifecycle".</p>
+<p><strong>Updated Module configuration</strong></p>
+<p>In additional of the renaming the Lifecylce class, the binding in the module configuration needs to be updated accordingly</p>
+<div class="highlight"><pre><span></span><code>bind(MangooBootstrap.class).to(Bootstrap.class);
+</code></pre></div>
+<p><strong>Removed AuthenticationFilter</strong></p>
+<p>The AuthenticationFilter has been removed as this is now handled via the new programmatically routes configuration (more on that see below).</p>
+<p><strong>Removed ETag for dynamic content</strong></p>
+<p>The ETag function for dynmaic content has been removed. Please update your inovcations of the Response class accordingly.</p>
+<p><strong>Cleanup of Log4j2 integration</strong></p>
+<p>The integration of Log4j2 is now much cleaner and closer to the standard. You are not bound anymore to use the configuration via *.yaml files and can now use all available file extensiosn to configure your logging. That being sad, the Jackson yaml library has been removed from mangoo-core. If you want to continue using the exsiting yaml file configuraiton you need to added the following dependency</p>
+<div class="highlight"><pre><span></span><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-dataformat-yaml&lt;/artifactId&gt;
+    &lt;version&gt;2.9.7&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre></div>
+<p>Furthermore, the integration now follows the <a href="https://logging.apache.org/log4j/2.x/manual/configuration.html">automatic configuration</a> of Log4j2, looking for specific files during the startup process. This means, that the previous environment specific configuration with log4j2.prod.yaml, log4j2.dev.yaml and log4j2.test.yaml has been dropped. In order to configure Log4j2 to specific environment, we are now following the Log4j2 standard by using</p>
+<div class="highlight"><pre><span></span><code>log4j2-test.*
+</code></pre></div>
+<p>for dev and test. And</p>
+<div class="highlight"><pre><span></span><code>log4j2.*
+</code></pre></div>
+<p>for production environments.</p>
+<p>This makes it important to filter the test Log4j2 test configuration during the JAR build (see above). If the Log4j2 test configuration is not filtered during JAR build, it will become active in production.</p>
+<p><strong>New config.props</strong></p>
+<p>The previously used yaml configration (application.yaml) has been dropped in favour of <a href="https://jodd.org/props">Jodd props</a> which give much more flexibility when it comes to cofiguring the application. Please refer to the <a href="https://github.com/svenkubiak/mangooio/wiki/Configuration">updated documentation</a> on how to setup the new Jodd props based configuration file.</p>
+<p><strong>Migrated to JUnit5</strong></p>
+<p>mangoo I/O has been updated from JUnit4 to JUnit5. Please refer to the <a href="https://github.com/svenkubiak/mangooio/wiki/Testing">updated documentaion</a> on how to configure and run Unit tests with the updated version.</p>
+<p><strong>New programmatically routing</strong>
+Configuration of routes through the routes.yaml file has been dropeed in favour of a programmatically route configuration. Please refer to the <a href="https://github.com/svenkubiak/mangooio/wiki/Routing">updated documentation</a> on how to setup routes programmatically.</p>
+<h2 id="from-4170-to-4180">From 4.17.0 to 4.18.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4160-to-4170">From 4.16.0 to 4.17.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4150-to-4160">From 4.15.0 to 4.16.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4140-to-4150">From 4.14.0 to 4.15.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4130-to-4140">From 4.13.0 to 4.14.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4120-to-4130">From 4.12.0 to 4.13.0</h2>
+<p>Due to security concerns in regards to JWT, refactorings where required that break API compatability.</p>
+<p>The application won't start if either a 512 Bit application secret is set or the following configuration values have a 512 Bit secret:</p>
+<div class="highlight"><pre><span></span><code> session:
+    cookie:
+       signkey: ...
+       encryptionkey: ...
+
+ flash:
+    cookie:
+       signkey: ...        
+       encryptionkey: ...
+
+ authentication:
+     cookie:
+         signkey : ...      
+         encryptionkey: ...
+</code></pre></div>
+<p>Please note, that starting with this version all values for the above cookies are encrypted by default.</p>
+<h2 id="from-4110-to-4120">From 4.11.0 to 4.12.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-4100-to-4110">From 4.10.0 to 4.11.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-490-to-4100">From 4.9.0 to 4.10.0</h2>
+<p>Required refactoring in the configuration lead to renaming of some configuration values.</p>
+<p>Previously the session cookie was configured</p>
+<div class="highlight"><pre><span></span><code>cookie:
+  name: ...
+  encrypt: ...
+</code></pre></div>
+<p>This has been refactored to</p>
+<div class="highlight"><pre><span></span><code>session:
+  cookie:
+    name:
+    encrypt: ..
+</code></pre></div>
+<p>Previously the authentication cookie was configured</p>
+<div class="highlight"><pre><span></span><code>auth:
+  cookie:
+    name: ...
+    encrypt: ...
+</code></pre></div>
+<p>This has been refactored to</p>
+<div class="highlight"><pre><span></span><code>authentication:
+  cookie:
+    name: ...
+      encrypt: ...
+</code></pre></div>
+<h2 id="from-480-to-490">From 4.8.0 to 4.9.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-470-to-480">From 4.7.0 to 4.8.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-460-to-470">From 4.6.0 to 4.7.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-450-to-460">From 4.5.0 to 4.6.0</h2>
+<p>There was a required refactoring of the authentication class. Previously, the validLogin method did also execute the actual login. This has been removed and now the newly created login method has to be performed to actually do the login.</p>
+<p>Additionally some dependencies where challenged and removed. So you might see some red flags, when using dependencies that where shipped with mangoo I/O.</p>
+<h2 id="from-440-to-450">From 4.4.0 to 4.5.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-430-to-440">From 4.3.0 to 4.4.0</h2>
+<p>This is basically a drop-in replacement. However, there have been some required refctorings on the Utility class. The RequestUtils and the TwoFactorUtils have been refactored and now sit in the helper package. To avoid concurrency issues these classes can not be accessed in a static way anymore and need to be injected.</p>
+<h2 id="from-420-to-430">From 4.2.0 to 4.3.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-410-to-420">From 4.1.0 to 4.2.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-400-to-410">From 4.0.0 to 4.1.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-3xx-to-400">From 3.x.x to 4.0.0</h2>
+<p>mangoo I/O 4.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading to version 4.0.0:</p>
+<ul>
+<li>All @depracted classes and methods have been removed</li>
+<li>A new method in the MangooLifecycle interface has been added</li>
+</ul>
+<p><strong>Changes in routes.yaml</strong><br />
+The syntax of the routes.yaml file has been updated to add more flexibility to the creating of routes. The new syntax requires the routes file to start with the following line:</p>
+<div class="highlight"><pre><span></span><code>routes:
+</code></pre></div>
+<p>Also each route has a new syntax. Here is an example</p>
+<div class="highlight"><pre><span></span><code>- method: GET
+  url: /
+  mapping: ApplicationController.index
+</code></pre></div>
+<p>Click <a href="https://docs.mangoo.io/routing.html">here</a> for the complete documentation on the new routes syntax.</p>
+<p><strong>Changes to application.conf (1)</strong><br />
+As a new AJP connector has been added, the configuration for the listening host and port has been changed. The new syntax is as follows:</p>
+<div class="highlight"><pre><span></span><code>default:
+    connector:
+        http:
+            host      : localhost
+            port      : 9898
+        ajp:
+            host      : localhost
+            port      : 9899
+</code></pre></div>
+<p>Click <a href="https://docs.mangoo.io/configuration.html">here</a> for the complete documentation on the new application properties. Also see the updated overview of the <a href="https://docs.mangoo.io/default-values.html">default configuration values</a>.</p>
+<p><strong>Changes to application.conf (2)</strong><br />
+Encryption with AES256 is now enforced, which requires you to set an application secret with at least 32 characters.</p>
+<p><strong>Changes to application.conf (3)</strong><br />
+The basic authentication for the Admin UI has been updated. The password now has to be configured as an JBcrypt hased value. Hint: You can create a hashed value using the <a href="https://docs.mangoo.io/administration.html">Admin UI</a>.</p>
+<h2 id="from-380-to-390">From 3.8.0 to 3.9.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-370-to-380">From 3.7.0 to 3.8.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-360-to-370">From 3.6.0 to 3.7.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-350-to-360">From 3.5.0 to 3.6.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-340-to-350">From 3.4.0 to 3.5.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-330-to-340">From 3.3.0 to 3.4.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-320-to-330">From 3.2.0 to 3.3.0</h2>
+<p>This is basically a drop-in replacement. However, this release fixes a bug with the WebRequest, WebResponse and WebBrowser classes which were integrated from the test project in the 3.0.0 release. If you have used this classes (which probably failed due to the bug) I have bad news. As the bug was so major, these utility classes have been removed from the core and are now back in the test project.</p>
+<h2 id="from-310-to-320">From 3.1.0 to 3.2.0</h2>
+<p>This is a drop-in replacement.</p>
+<h2 id="from-300-to-310">From 3.0.0 to 3.1.0</h2>
+<p>There have been last minute changes on the Scheduler. If you are using the scheduler in manual mode (e.g. starting and stopping the scheduler manualy), then your need to catch the newly thrown exceptions from the scheudler class on some methods. Otherwise version 3.1.0 is a drop in replacement. If you have previously used the mailer extension to send emails from mangoo I/O, I have good news for you. Sending e-mails has been re-integrated into mangoo I/O but in a more fluent way than before. Check out the documentation on <a href="https://docs.mangoo.io/sending-emails.html">how to send e-mails</a>.</p>
+<h2 id="from-2xx-to-300">From 2.x.x to 3.0.0</h2>
+<p>mangoo I/O 3.0.0 is a major release and contains code that will break API compatibility. These are the changes you need to consider when upgrading to version 3.0.0:</p>
+<ul>
+<li>The mangooio-test-utilities artifact has been renamed to mangooio-test</li>
+<li>All @depracted classes and methods have been removed</li>
+<li>The authentication class has been moved from io.mangoo.authentication to io.mangoo.routing.bindings.authentication</li>
+<li>The on-the-fly GZIP compression for CSS and JS files has been removed, as this belongs in a “real” webserver</li>
+<li>The log4j2.xml configuration has been switched to log4j2.yaml configuration, as all configuration files are now YAML based</li>
+<li>The Admin UI was completely refactored and is now available under the /@admin URL. The /@health URL has been removed completely</li>
+<li>The Test-Utitlites for HTTP Requests (Request, Response and Browser) have been moved to the core and have been renamed to WebRequest, WebResponse and WebBrowser</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../changelog-archived/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Changelog">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Changelog
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; Sven Kubiak
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+    
+    
+    
+      
+      
+    
+    <a href="https://social.kubiak.me/@sven" target="_blank" rel="noopener me" title="social.kubiak.me" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M433 179.1c0-97.2-63.7-125.7-63.7-125.7-62.5-28.7-228.6-28.4-290.5 0 0 0-63.7 28.5-63.7 125.7 0 115.7-6.6 259.4 105.6 289.1 40.5 10.7 75.3 13 103.3 11.4 50.8-2.8 79.3-18.1 79.3-18.1l-1.7-36.9s-36.3 11.4-77.1 10.1c-40.4-1.4-83-4.4-89.6-54-.6-4.6-.9-9.3-.9-13.9 85.6 20.9 158.7 9.1 178.7 6.7 56.1-6.7 105-41.3 111.2-72.9 9.8-49.8 9-121.5 9-121.5zm-75.1 125.2h-46.6V190.1c0-49.7-64-51.6-64 6.9v62.5H201V197c0-58.5-64-56.6-64-6.9v114.2H90.3c0-122.1-5.2-147.9 18.4-175 25.9-28.9 79.8-30.8 103.8 6.1l11.6 19.5 11.6-19.5c24.1-37.1 78.1-34.8 103.8-6.1 23.7 27.3 18.4 53 18.4 175"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.instant.progress", "navigation.tracking", "navigation.top", "navigation.footer", "content.code.annotate", "content.code.copy", "content.tabs.link", "content.footer", "search.highlight", "search.share", "search.suggest"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="../js/timeago.min.js"></script>
+      
+        <script src="../js/timeago_mkdocs_material.js"></script>
+      
+    
+  </body>
+</html>
