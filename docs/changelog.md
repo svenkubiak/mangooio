@@ -1,3 +1,12 @@
+## Version 9.9.0
+
+Released at 18.08.2025
+
+* Version bumps (svenkubiak)
+    * mockito-core 3.2.1 -&gt; 3.2.2
+
+[Full Changelog](https://github.com/svenkubiak/mangooio/compare/9.8.0...9.9.0)
+
 ## Version 9.8.0
 
 Released at 15.08.2025
