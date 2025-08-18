@@ -69,7 +69,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                 Map<String, String> claims = session.getValues();
                 claims.put(Default.CSRF_TOKEN, session.getCsrf());
 
-                var jwtData = JwtUtils.JwtData.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getSessionCookieKey())
                         .withSecret(config.getSessionCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
@@ -125,7 +126,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                             ClaimKey.TWO_FACTOR, String.valueOf(authentication.isTwoFactor()),
                             ClaimKey.REMEMBER_ME, String.valueOf(authentication.isRememberMe()));
 
-                    var jwtData = JwtUtils.JwtData.create()
+                    var jwtData = JwtUtils.jwtData()
+                            .withKey(config.getAuthenticationCookieKey())
                             .withSecret(config.getAuthenticationCookieSecret())
                             .withIssuer(config.getApplicationName())
                             .withAudience(config.getAuthenticationCookieName())
@@ -180,7 +182,8 @@ public class OutboundCookiesHandler implements HttpHandler {
                     claims.put(ClaimKey.FORM, CodecUtils.serializeToBase64(form));
                 }
 
-                var jwtData = JwtUtils.JwtData.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getFlashCookieKey())
                         .withSecret(config.getFlashCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())

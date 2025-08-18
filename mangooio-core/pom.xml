@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<name>mangoo I/O core</name>
 	<parent>
@@ -296,6 +296,10 @@
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk18on</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -456,12 +460,15 @@
 						<goals>
 							<goal>enforce</goal>
 						</goals>
-						<configuration>
-							<rules>
-								<banDynamicVersions />
-							</rules>
-							<fail>true</fail>
-						</configuration>
+                        <configuration>
+                            <rules>
+                                <banDynamicVersions>
+                                    <ignores>
+                                        <ignore>org.bouncycastle:bcutil-jdk18on</ignore>
+                                    </ignores>
+                                </banDynamicVersions>
+                            </rules>
+                        </configuration>
 					</execution>
 				</executions>
 				<dependencies>

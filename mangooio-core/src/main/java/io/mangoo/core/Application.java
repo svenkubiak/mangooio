@@ -17,6 +17,7 @@ import io.mangoo.constants.CacheName;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
+import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.enums.Sort;
 import io.mangoo.interfaces.MangooBootstrap;
@@ -83,14 +84,14 @@ public final class Application {
     private static ScheduledExecutorService scheduledExecutorService;
     private static ExecutorService executorService;
     private static String httpHost;
-    private static String ajpHost;
+    private static String httpsHost;
     private static Undertow undertow;
     private static Mode mode;
     private static Injector injector;
     private static PathHandler pathHandler;
     private static boolean started;
     private static int httpPort;
-    private static int ajpPort;
+    private static int httpsPort;
 
     private Application() {
     }
@@ -604,7 +605,33 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        getInstance(CacheProvider.class).getCache(CacheName.APPLICATION).put(Key.MANGOOIO_WARNINGS, warnings);
+        if (config.getAuthenticationCookieKey().equals(config.getApplicationSecret())) {
+            var warning = "Authentication cookie key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (config.getAuthenticationCookieKey().equals(config.getApplicationSecret())) {
+            var warning = "Authentication cookie key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (config.getSessionCookieKey().equals(config.getApplicationSecret())) {
+            var warning = "Session cookie key is using application secret. It is highly recommended to set a dedicated value to session.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (config.getFlashCookieKey().equals(config.getApplicationSecret())) {
+            var warning = "Flash cookie key is using application secret. It is highly recommended to set a dedicated value to flash.cookie.key.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        getInstance(CacheProvider.class)
+                .getCache(CacheName.APPLICATION)
+                .put(Key.MANGOOIO_WARNINGS, warnings);
     }
 
     /**
@@ -697,6 +724,7 @@ public final class Application {
 
     private static void prepareUndertow() {
         var config = getInstance(Config.class);
+        var vault = getInstance(Vault.class);
 
         HttpHandler httpHandler;
         if (config.isMetricsEnable()) {
@@ -713,8 +741,8 @@ public final class Application {
 
         httpHost = config.getConnectorHttpHost();
         httpPort = config.getConnectorHttpPort();
-        ajpHost = config.getConnectorAjpHost();
-        ajpPort = config.getConnectorAjpPort();
+        httpsHost = config.getConnectorHttpsHost();
+        httpsPort = config.getConnectorHttpsPort();
 
         var hasConnector = false;
         if (httpPort > 0 && StringUtils.isNotBlank(httpHost)) {
@@ -722,8 +750,8 @@ public final class Application {
             hasConnector = true;
         }
 
-        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-            builder.addAjpListener(ajpPort, ajpHost);
+        if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
+            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext());
             hasConnector = true;
         }
 
@@ -731,7 +759,7 @@ public final class Application {
             undertow = builder.build();
             undertow.start();
         } else {
-            LOG.error("No connector found! Please configure a HTTP and/or an AJP connector in your config.yaml file");
+            LOG.error("No connector found! Please configure a HTTP and/or an HTTPS connector in your config.yaml file");
             failsafe();
         }
     }
@@ -750,8 +778,8 @@ public final class Application {
             LOG.info("HTTP connector listening @{}:{}", httpHost, httpPort);
         }
 
-        if (ajpPort > 0 && StringUtils.isNotBlank(ajpHost)) {
-            LOG.info("AJP connector listening @{}:{}", ajpHost, ajpPort);
+        if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
+            LOG.info("HTTPS connector listening @{}:{}", httpsHost, httpsPort);
         }
 
         String startup = "mangoo I/O application started in " + ChronoUnit.MILLIS.between(START, LocalDateTime.now()) + " ms in " + mode + " mode. Enjoy.";

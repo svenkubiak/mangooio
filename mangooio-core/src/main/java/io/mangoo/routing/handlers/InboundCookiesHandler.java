@@ -64,7 +64,8 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getSessionCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtData = JwtUtils.JwtData.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getSessionCookieKey())
                         .withSecret(config.getSessionCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getSessionCookieName())
@@ -101,7 +102,8 @@ public class InboundCookiesHandler implements HttpHandler {
         String cookieValue = getCookieValue(exchange, config.getAuthenticationCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtData = JwtUtils.JwtData.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getAuthenticationCookieKey())
                         .withSecret(config.getAuthenticationCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getAuthenticationCookieName())
@@ -137,7 +139,8 @@ public class InboundCookiesHandler implements HttpHandler {
         final String cookieValue = getCookieValue(exchange, config.getFlashCookieName());
         if (StringUtils.isNotBlank(cookieValue)) {
             try {
-                var jwtData = JwtUtils.JwtData.create()
+                var jwtData = JwtUtils.jwtData()
+                        .withKey(config.getFlashCookieKey())
                         .withSecret(config.getFlashCookieSecret())
                         .withIssuer(config.getApplicationName())
                         .withAudience(config.getFlashCookieName())

@@ -733,22 +733,22 @@ class ConfigTest {
     }
 
     @Test
-    void testGetConnectorAjpHost() throws IOException {
+    void testGetConnectorHttpsHost() throws IOException {
         // given
         String host = "192.168.3.24";
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("connector.ajp.host", host);
+        Map<String, String> configValues = ImmutableMap.of("connector.https.host", host);
         createTempConfig(configValues);
         Config config = new Config();
 
         // then
-        assertThat(config.getConnectorAjpHost(), equalTo(host));
+        assertThat(config.getConnectorHttpsHost(), equalTo(host));
     }
 
     @Test
-    void testGetConnectorAjpHostDefaultValue() throws IOException {
+    void testGetConnectorHttpsHostDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
@@ -758,27 +758,27 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getConnectorAjpHost(), equalTo(null));
+        assertThat(config.getConnectorHttpsHost(), equalTo(null));
     }
 
     @Test
-    void testGetConnectorAjpPort() throws IOException {
+    void testGetConnectorHttpsPort() throws IOException {
         // given
         String port = "2542";
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
         // when
-        Map<String, String> configValues = ImmutableMap.of("connector.ajp.port", port);
+        Map<String, String> configValues = ImmutableMap.of("connector.https.port", port);
         createTempConfig(configValues);
         System.setProperty("application.mode", Mode.TEST.toString().toLowerCase());
         Config config = new Config();
 
         // then
-        assertThat(config.getConnectorAjpPort(), equalTo(Integer.valueOf(port)));
+        assertThat(config.getConnectorHttpsPort(), equalTo(Integer.valueOf(port)));
     }
 
     @Test
-    void testGetConnectorAjpPortDefaultValue() throws IOException {
+    void testGetConnectorHttpsPortDefaultValue() throws IOException {
         // given
         System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
 
@@ -788,7 +788,7 @@ class ConfigTest {
         Config config = new Config();
 
         // then
-        assertThat(config.getConnectorAjpPort(), equalTo(0));
+        assertThat(config.getConnectorHttpsPort(), equalTo(0));
     }
 
     @Test

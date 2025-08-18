@@ -32,8 +32,9 @@
 		<enforcer.version>1.10.0</enforcer.version>
 		<jackson.version>2.20.0-rc1</jackson.version>
 		<maven.compiler.optimze>true</maven.compiler.optimze>
-		<javadoc.version>3.11.2</javadoc.version>
+		<javadoc.version>3.11.3</javadoc.version>
 		<modernizer.version>3.1.0</modernizer.version>
+        <bouncy-castle.version>1.81</bouncy-castle.version>
 	</properties>
 	<modules>
 		<module>mangooio-core</module>
@@ -543,8 +544,13 @@
 			<dependency>
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk18on</artifactId>
-				<version>1.81</version>
+				<version>${bouncy-castle.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncy-castle.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.zeroturnaround</groupId>
 				<artifactId>zt-exec</artifactId>

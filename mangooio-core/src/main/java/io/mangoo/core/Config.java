@@ -506,17 +506,17 @@ public class Config {
     }
 
     /**
-     * @return jvm property ajp.host or connector.ajp.host or null if undefined
+     * @return connector.https.host or null if undefined
      */
-    public String getConnectorAjpHost() {
-        return getString(Key.CONNECTOR_AJP_HOST, null);
+    public String getConnectorHttpsHost() {
+        return getString(Key.CONNECTOR_HTTPS_HOST, null);
     }
 
     /**
-     * @return jvm property ajp.port or connector.ajp.port or 0 if undefined
+     * @return connector.https.port or 0 if undefined
      */
-    public int getConnectorAjpPort() {
-        return getInt(Key.CONNECTOR_AJP_PORT, 0);
+    public int getConnectorHttpsPort() {
+        return getInt(Key.CONNECTOR_HTTPS_PORT, 0);
     }
 
     /**
@@ -772,7 +772,45 @@ public class Config {
         return getString(Key.SESSION_COOKIE_SAME_SITE_MODE, Default.SESSION_COOKIE_SAME_SITE_MODE);
     }
 
+    /**
+     *
+     * @return application.vault.secret or null if undefined
+     */
+    public String getApplicationVaultSecret() {
+        return getString(Key.APPLICATION_VAULT_SECRET, null);
+    }
+
+    /**
+     *
+     * @return application.vault.path or null if undefined
+     */
+    public String getApplicationVaultPath() {
+        return getString(Key.APPLICATION_VAULT_SECRET, null);
+    }
+
+    /**
+     * @return session.cookie.key or application.secret if undefined
+     */
+    public String getSessionCookieKey() {
+        return getString(Key.SESSION_COOKIE_KEY, getApplicationSecret());
+    }
+
+    /**
+     * @return flash.cookie.key or application.secret if undefined
+     */
+    public String getFlashCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret());
+    }
+
+    /**
+     * @return authentication.cookie.key or application.secret if undefined
+     */
+    public String getAuthenticationCookieKey() {
+        return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret());
+    }
+
     public boolean isValid() {
         return valid;
     }
+
 }
