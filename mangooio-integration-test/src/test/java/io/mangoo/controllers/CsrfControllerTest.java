@@ -3,7 +3,7 @@ package io.mangoo.controllers;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import io.mangoo.TestExtension;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.Const;
 import io.mangoo.test.http.TestBrowser;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
@@ -40,7 +40,7 @@ public class CsrfControllerTest {
 
         String token = getCsrf(response.getContent());
         Multimap<String, String> form = ArrayListMultimap.create();
-        form.put(Default.CSRF_TOKEN, token);
+        form.put(Const.CSRF_TOKEN, token);
 
         //when
         response = instance.to("/csrf/validate")
@@ -71,7 +71,7 @@ public class CsrfControllerTest {
 
         //when
         response = instance.to("/csrf/validate")
-                .withHeader(Default.CSRF_TOKEN, token)
+                .withHeader(Const.CSRF_TOKEN, token)
                 .withHTTPMethod(Methods.GET.toString())
                 .execute();
 

@@ -1,7 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -67,7 +67,7 @@ public class OutboundCookiesHandler implements HttpHandler {
         } else if (session.hasChanged() || session.isKept()) {
             try {
                 Map<String, String> claims = session.getValues();
-                claims.put(Default.CSRF_TOKEN, session.getCsrf());
+                claims.put(Const.CSRF_TOKEN, session.getCsrf());
 
                 var jwtData = JwtUtils.jwtData()
                         .withKey(config.getSessionCookieKey())

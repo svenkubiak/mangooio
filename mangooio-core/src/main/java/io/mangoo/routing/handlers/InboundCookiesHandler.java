@@ -1,7 +1,7 @@
 package io.mangoo.routing.handlers;
 
 import io.mangoo.constants.ClaimKey;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
@@ -75,7 +75,7 @@ public class InboundCookiesHandler implements HttpHandler {
 
                 session = Session.create()
                         .withContent(MangooUtils.toStringMap(jwtClaimsSet.getClaims()))
-                        .withCsrf(jwtClaimsSet.getClaimAsString(Default.CSRF_TOKEN))
+                        .withCsrf(jwtClaimsSet.getClaimAsString(Const.CSRF_TOKEN))
                         .withExpires(LocalDateTime.ofInstant(
                                 jwtClaimsSet.getExpirationTime().toInstant(),
                                 ZoneId.systemDefault()

@@ -14,8 +14,6 @@ public final class Key {
     public static final String APPLICATION_MODE = "application.mode";
     public static final String APPLICATION_NAME = "application.name";
     public static final String APPLICATION_NAMED = "application.named";
-    public static final String APPLICATION_PRIVATE_KEY = "application.privatekey";
-    public static final String APPLICATION_PUBLIC_KEY = "application.publickey";
     public static final String APPLICATION_SECRET = "application.secret";
     public static final String APPLICATION_VAULT_PATH = "application.vault.path";
     public static final String APPLICATION_VAULT_SECRET = "application.vault.secret";

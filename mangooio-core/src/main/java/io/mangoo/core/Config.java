@@ -3,15 +3,15 @@ package io.mangoo.core;
 import com.google.common.io.Resources;
 import com.google.re2j.Pattern;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.exceptions.MangooEncryptionException;
+import io.mangoo.crypto.Vault;
+import io.mangoo.utils.ConfigUtils;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -24,18 +24,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 
 @Singleton
 public class Config {
     private static final Logger LOG = LogManager.getLogger(Config.class);
-    private static final String CONFIG_FILE = "config.yaml";
-    private static final String CRYPTEX_TAG = "cryptex{";
+    private static final String VAULT_TAG = "vault{}";
     private static final String ARG_TAG = "arg{}";
     private final Map<String, String> values = new ConcurrentHashMap<>();
+    private final Vault vault = new Vault();
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
-    private boolean decrypted = true;
     private boolean valid;
 
     public Config() {
@@ -60,9 +58,9 @@ public class Config {
             Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
             if (activeEnvironment != null) {
                 Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
-                mergeMaps(mergedConfig, activeEnvironment);
+                ConfigUtils.mergeMaps(mergedConfig, activeEnvironment);
 
-                Map<String, String> falttenedMap = flattenMap(mergedConfig);
+                Map<String, String> falttenedMap = ConfigUtils.flattenMap(mergedConfig);
                 falttenedMap.forEach(this::parse);
 
                 valid = true;
@@ -82,40 +80,10 @@ public class Config {
         if (StringUtils.isNotBlank(configPath)) {
             inputStream = Files.newInputStream(Path.of(configPath));
         } else {
-            inputStream = Resources.getResource(CONFIG_FILE).openStream();
+            inputStream = Resources.getResource(Const.CONFIG_FILE).openStream();
         }
 
         return inputStream;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void mergeMaps(Map<String, Object> baseMap, Map<String, Object> overrideMap) {
-        overrideMap.forEach((key, value) -> {
-            if (value instanceof Map && baseMap.get(key) instanceof Map) {
-                mergeMaps((Map<String, Object>) baseMap.get(key), (Map<String, Object>) value);
-            } else {
-                baseMap.put(key, value);
-            }
-        });
-    }
-
-    private Map<String, String> flattenMap(Map<String, Object> map) {
-        Map<String, String> flatMap = new HashMap<>();
-        flattenMapHelper(map, "", flatMap);
-        return flatMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void flattenMapHelper(Map<String, Object> map, String prefix, Map<String, String> flatMap) {
-        map.forEach((key, value) -> {
-            String newKey = prefix.isEmpty() ? key : prefix + "." + key;
-
-            if (value instanceof Map) {
-                flattenMapHelper((Map<String, Object>) value, newKey, flatMap);
-            } else {
-                flatMap.put(newKey, value != null ? value.toString() : Strings.EMPTY);
-            }
-        });
     }
 
     /**
@@ -129,10 +97,6 @@ public class Config {
         if (ARG_TAG.equals(value)) {
             String propertyValue = System.getProperty(key);
 
-            if (StringUtils.isNotBlank(propertyValue) && propertyValue.startsWith(CRYPTEX_TAG)) {
-                propertyValue = decrypt(key, propertyValue);
-            }
-
             if (StringUtils.isNotBlank(propertyValue)) {
                 values.put(key, propertyValue);
             }
@@ -142,46 +106,21 @@ public class Config {
             if (StringUtils.isNotBlank(value)) {
                 values.put(key, value);
             }
-        } else if (value.startsWith(CRYPTEX_TAG)) {
-            values.put(key, decrypt(key, value));
+        } else if (VAULT_TAG.equals(value)) {
+            String propertyValue = vault.get(key);
+
+            if (StringUtils.isNotBlank(propertyValue)) {
+                values.put(key, propertyValue);
+            }
+        } else if (value.startsWith("vault{")) {
+            value = StringUtils.substringBetween(value, "vault{", "}");
+
+            if (StringUtils.isNotBlank(value)) {
+                values.put(key, value);
+            }
         } else {
             values.put(key, value);
         }
-    }
-
-    /**
-     * Decrypts a given property key and rewrites it to props
-     *
-     * @param value The encrypted value to decrypt
-     */
-    private String decrypt(String key, String value) {
-        var crypto = new Crypto();
-
-        String keyFile = System.getProperty(Key.APPLICATION_PRIVATE_KEY);
-        if (StringUtils.isNotBlank(keyFile)) {
-            try (Stream<String> lines = Files.lines(Path.of(keyFile))) { //NOSONAR KeyFile can intentionally come from user input
-                String encryptionKey = lines.findFirst().orElse(null);
-                if (StringUtils.isNotBlank(encryptionKey)) {
-                    var privateKey = crypto.getPrivateKeyFromString(encryptionKey);
-                    var cryptex = StringUtils.substringBetween(value, CRYPTEX_TAG, "}");
-
-                    if (privateKey != null && StringUtils.isNotBlank(cryptex)) {
-                        return crypto.decrypt(cryptex, privateKey);
-                    } else {
-                        LOG.error("Failed to decrypt an encrypted config value");
-                        decrypted = false;
-                    }
-                }
-            } catch (IOException | SecurityException | MangooEncryptionException e) {
-                LOG.error("Failed to decrypt an encrypted config value", e);
-                decrypted = false;
-            }
-        } else {
-            LOG.error("{} has an encrypted value in config.yaml but private key for decryption is missing", key);
-            decrypted = false;
-        }
-
-        return Strings.EMPTY;
     }
 
     /**
@@ -190,7 +129,7 @@ public class Config {
     public void validate() {
         for (Map.Entry<String, String> entry : values.entrySet()) {
             String value = entry.getValue();
-            if (value != null && (value.startsWith(CRYPTEX_TAG) || value.startsWith(ARG_TAG)) ) {
+            if (value != null && (value.startsWith(VAULT_TAG) || value.startsWith(ARG_TAG)) ) {
                 LOG.error("{} has not been decrypted or parsed correctly", entry.getKey());
                 valid = false;
             }
@@ -207,13 +146,6 @@ public class Config {
         properties.putAll(values);
 
         return properties;
-    }
-
-    /**
-     * @return True if decryption of config values was successful, false otherwise
-     */
-    public boolean isDecrypted() {
-        return decrypted;
     }
 
     /**
@@ -363,13 +295,6 @@ public class Config {
      */
     public String getApplicationSecret() {
         return getString(Key.APPLICATION_SECRET);
-    }
-
-    /**
-     * @return application.publicKey from config.yaml
-     */
-    public String getApplicationPublicKey() {
-        return getString(Key.APPLICATION_PUBLIC_KEY);
     }
 
     /**

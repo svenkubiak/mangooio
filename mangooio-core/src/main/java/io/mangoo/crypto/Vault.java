@@ -1,10 +1,11 @@
 package io.mangoo.crypto;
 
+import io.mangoo.constants.Const;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
-import io.mangoo.core.Config;
+import io.mangoo.core.Application;
+import io.mangoo.utils.ConfigUtils;
 import io.mangoo.utils.MangooUtils;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +21,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -32,33 +34,34 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Singleton
 public class Vault {
     private static final Logger LOG = LogManager.getLogger(Vault.class);
-    private static final String FILENAME = "vault.p12";
-    private final Config config;
+    private final KeyStore keyStore;
     private Path path;
-    private KeyStore keyStore;
+    private String prefix;
     private char[] secret;
+    private Map<String, String> config = new HashMap<>();
 
-    @Inject
-    public Vault(Config config) {
+    public Vault() {
         Security.addProvider(new BouncyCastleProvider());
-        this.config = Objects.requireNonNull(config, NotNull.CONFIG);
         try {
             this.keyStore = KeyStore.getInstance("pkcs12");
         } catch (KeyStoreException e) {
-            LOG.error("Failed to get instance of KeyStore", e);
+            throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
         }
+        loadConfig();
+        loadPrefix();
         loadPath();
         loadSecret();
         loadKeyStore();
+        cleanUp();
     }
 
     private void loadKeyStore() {
@@ -67,10 +70,20 @@ public class Vault {
                 keyStore.load(inputStream, secret);
                 LOG.info("Successfully loaded existing key store from {}", path);
             } catch (Exception e) {
-                LOG.error("Failed to load key store", e);
+                throw new IllegalStateException("Failed to load existing keystore", e);
             }
         } else {
-            try (OutputStream outputStream = Files.newOutputStream(path)) {
+            try (OutputStream outputStream = Files.newOutputStream(path,
+                    StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
+                try {
+                    Set<PosixFilePermission> perms = EnumSet.of(
+                            PosixFilePermission.OWNER_READ,
+                            PosixFilePermission.OWNER_WRITE);
+                    Files.setPosixFilePermissions(path, perms);
+                } catch (UnsupportedOperationException ignored) {
+                    // likely running on Windows
+                }
+
                 keyStore.load(null, secret);
                 keyStore.store(outputStream, secret);
 
@@ -78,39 +91,72 @@ public class Vault {
                 createSecrets();
                 LOG.info("Successfully created new key store at {}", path);
             } catch (Exception e) {
-                LOG.error("Failed to create key store", e);
+                throw new IllegalStateException("Failed to create keystore", e);
             }
         }
     }
 
+    private void cleanUp() {
+        config = new HashMap<>();
+    }
+
     private void loadSecret() {
-        String secret = System.getProperty(Key.APPLICATION_VAULT_SECRET);
+        String providedSecret = System.getProperty(Key.APPLICATION_VAULT_SECRET);
 
-        if (StringUtils.isBlank(secret)) {
-            secret = config.getApplicationVaultSecret();
+        if (StringUtils.isBlank(providedSecret)) {
+            providedSecret = config.get(Key.APPLICATION_VAULT_SECRET);
         }
 
-        if (StringUtils.isBlank(secret)) {
-            secret = config.getApplicationSecret();
+        if (StringUtils.isBlank(providedSecret)) {
+            providedSecret = config.get(Key.APPLICATION_SECRET);
         }
 
-        this.secret = secret.toCharArray();
+        if (StringUtils.isBlank(providedSecret) || providedSecret.length() < 64) {
+            throw new IllegalStateException(
+                    "Keystore password (Vault secret) must be provided and at least 64 characters long."
+            );
+        }
+
+        this.secret = providedSecret.toCharArray();
     }
 
     private void loadPath() {
-        String path = System.getProperty(Key.APPLICATION_VAULT_PATH);
+        String pathStr = System.getProperty(Key.APPLICATION_VAULT_PATH);
 
-        if (StringUtils.isBlank(path)) {
-            path = config.getApplicationVaultPath();
+        if (StringUtils.isBlank(pathStr)) {
+            pathStr = config.get(Key.APPLICATION_VAULT_PATH);
         }
 
-        if (StringUtils.isNotBlank(path)) {
-            path = path + "/" + FILENAME;
+        if (StringUtils.isNotBlank(pathStr)) {
+            pathStr = pathStr + "/" + Const.KEYSTORE_FILENAME;
         } else {
-            path = FILENAME;
+            pathStr = Const.KEYSTORE_FILENAME;
         }
 
-        this.path = Path.of(path);
+        this.path = Path.of(pathStr);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadConfig() {
+        var yaml = new Yaml();
+        Map<String, Object> loaded = yaml.load(MangooUtils.readResourceToString(Const.CONFIG_FILE));
+
+        Map<String, Object> defaultConfig = (Map<String, Object>) loaded.get("default");
+        Map<String, Object> environments = (Map<String, Object>) loaded.get("environments");
+
+        String activeEnv = Application.getMode().toString().toLowerCase(Locale.ENGLISH);
+
+        Map<String, Object> activeEnvironment = (Map<String, Object>) environments.get(activeEnv);
+        if (activeEnvironment != null) {
+            Map<String, Object> mergedConfig = new HashMap<>(defaultConfig);
+            ConfigUtils.mergeMaps(mergedConfig, activeEnvironment);
+
+            this.config = ConfigUtils.flattenMap(mergedConfig);
+        }
+    }
+
+    private void loadPrefix() {
+        this.prefix = Application.getMode().toString().toLowerCase() + ".";
     }
 
     private void createSecrets() {
@@ -137,20 +183,27 @@ public class Vault {
     }
 
     public String get(String key) {
-        byte[] raw = null;
+        Objects.requireNonNull(key, NotNull.KEY);
+        key = prefix + key;
+
         try {
             KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry)
                     keyStore.getEntry(key, new KeyStore.PasswordProtection(secret));
-            raw = entry.getSecretKey().getEncoded();
-            return new String(raw, StandardCharsets.UTF_8);
+            if (entry != null) {
+                byte[] raw = entry.getSecretKey().getEncoded();
+                return new String(raw, StandardCharsets.UTF_8);
+            }
         } catch (Exception e) {
-            LOG.error("Failed to get key", e);
+            LOG.error("Failed to get value for key: {}", key, e);
         }
 
         return null;
     }
 
     public void remove(String key) {
+        Objects.requireNonNull(key, NotNull.KEY);
+        key = prefix + key;
+
         try {
             if (keyStore.containsAlias(key)) {
                 keyStore.deleteEntry(key);
@@ -164,8 +217,12 @@ public class Vault {
     }
 
     public void put(String key, String value) {
+        Objects.requireNonNull(key, NotNull.KEY);
+        Objects.requireNonNull(value, NotNull.VALUE);
+        key = prefix + key;
+
         try (OutputStream outputStream = Files.newOutputStream(path)) {
-            SecretKey secretKey = new SecretKeySpec(value.getBytes(), "AES");
+            SecretKey secretKey = new SecretKeySpec(value.getBytes(StandardCharsets.UTF_8), "AES");
 
             KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
             KeyStore.ProtectionParameter protectionParam = new KeyStore.PasswordProtection(secret);
@@ -178,21 +235,23 @@ public class Vault {
     }
 
     public SSLContext getSSLContext() {
-        SSLContext sslContext = null;
         try {
-            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            KeyManagerFactory keyManagerFactory =
+                    KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             keyManagerFactory.init(keyStore, secret);
 
-            sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException | KeyManagementException e) {
-            LOG.error("Failed to create SSLContext", e);
+            return sslContext;
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to create SSLContext", e);
         }
-
-        return sslContext;
     }
 
-    private void createCertificate() throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, OperatorCreationException, CertificateException, KeyStoreException {
+    private void createCertificate()
+            throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException,
+            OperatorCreationException, CertificateException, KeyStoreException {
+
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA", "BC");
         keyPairGen.initialize(2048, new SecureRandom());
         KeyPair keyPair = keyPairGen.generateKeyPair();
@@ -223,6 +282,6 @@ public class Vault {
                 .setProvider("BC")
                 .getCertificate(certHolder);
 
-        keyStore.setKeyEntry("localhost", keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
+        keyStore.setKeyEntry("certificate", keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
     }
 }

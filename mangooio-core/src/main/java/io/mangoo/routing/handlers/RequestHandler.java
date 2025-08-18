@@ -2,7 +2,7 @@ package io.mangoo.routing.handlers;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.annotations.FilterWith;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.Const;
 import io.mangoo.core.Application;
 import io.mangoo.enums.Binding;
 import io.mangoo.exceptions.MangooTemplateEngineException;
@@ -56,8 +56,8 @@ public class RequestHandler implements HttpHandler {
      */
     protected Request getRequest(HttpServerExchange exchange) {
         final String csrf = Optional
-                .ofNullable(exchange.getRequestHeaders().getFirst(Default.CSRF_TOKEN))
-                .orElseGet(() -> attachment.getForm().get(Default.CSRF_TOKEN));
+                .ofNullable(exchange.getRequestHeaders().getFirst(Const.CSRF_TOKEN))
+                .orElseGet(() -> attachment.getForm().get(Const.CSRF_TOKEN));
 
         return new Request(exchange)
                 .withSession(attachment.getSession())

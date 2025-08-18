@@ -520,11 +520,6 @@ public final class Application {
             failsafe();
         }
 
-        if (!config.isDecrypted()) {
-            LOG.error("Found encrypted config values in config.yaml but decryption was not successful!");
-            failsafe();
-        }
-
         if (StringUtils.isNotBlank(config.getString(Key.APPLICATION_API_KEY))) {
             bitLength = getBitLength(config.getString(Key.APPLICATION_API_KEY));
             if (bitLength < KEY_MIN_BIT_LENGTH) {

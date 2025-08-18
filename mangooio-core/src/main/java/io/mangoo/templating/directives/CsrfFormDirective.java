@@ -5,7 +5,7 @@ import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateDirectiveModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
-import io.mangoo.constants.Default;
+import io.mangoo.constants.Const;
 import io.mangoo.routing.bindings.Session;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class CsrfFormDirective implements TemplateDirectiveModel {
     public void execute(Environment environment, Map params, TemplateModel[] loopVars, TemplateDirectiveBody templateDirectiveBody) throws TemplateException, IOException {
         if (session != null) {
             session.keep();
-            environment.getOut().append("<input type=\"hidden\" value=\"" + session.getCsrf() + "\" name=\"" + Default.CSRF_TOKEN + "\" />");
+            environment.getOut().append("<input type=\"hidden\" value=\"" + session.getCsrf() + "\" name=\"" + Const.CSRF_TOKEN + "\" />");
         }
     }
 }

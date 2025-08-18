@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import io.mangoo.TestExtension;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
+import io.mangoo.crypto.Vault;
 import io.mangoo.enums.Mode;
 import io.mangoo.utils.CodecUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -28,8 +30,6 @@ import static org.hamcrest.Matchers.*;
 
 @ExtendWith({TestExtension.class})
 class ConfigTest {
-    private static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKmFEH4KlpImZslFc+hxpaYfKcbzpoOcHQw2TryCN74ovPZTNPuIXc2upUXcOQWEuyqYQm8zKjZtbmiO1HTr/ChbCbX8Dz0uG6/2kmnLyv9hOC+g0jEG9F8mS1R8tY7Xh16fVVtAZSbLXIzhx1S/wPPi9D0ZVR85VBKntq5SUqIiBAxHxt5ze6CJu3yq6sxWKSU3EFvJmGdDjPIPadEkxUAX4AriQuL+GaWiyB66vK2u7Q5BnXF5XcGN3CwUrA2zgrnpA6EBPtcXMRH4Miu2Fa2dL4JzjbiCxY7BPdTC3Ie9pJZu2KPVihRLTRmIOc4QGkmLwj29/IaBGUxyHhMn6QIDAQAB";
-
     @TempDir
     Path tempDir;
 
@@ -40,6 +40,7 @@ class ConfigTest {
      * @param key  The dot-separated key (e.g., "application.name").
      * @param value The value to associate with the key.
      */
+    @SuppressWarnings("unchecked")
     private static void addDotSeparatedKey(Map<String, Object> map, String key, Object value) {
         String[] parts = key.split("\\.");
         Map<String, Object> currentMap = map;
@@ -57,9 +58,20 @@ class ConfigTest {
         }
     }
 
+    @BeforeAll
+    public static void setup(){
+        Vault vault = new Vault();
+        vault.put("application.foo", "admin");
+        vault.put("application.admin.username", "admin");
+        vault.put("application.admin.password", "admin");
+        vault.put("application.foobar", "essos");
+        vault.put("application.bar", "westeros");
+    }
+
     @AfterAll
     public static void cleanUp(){
         System.clearProperty(Key.APPLICATION_CONFIG);
+        Vault vault = new Vault();
     }
 
     @Test
@@ -499,34 +511,6 @@ class ConfigTest {
 
         // then
         assertThat(applicationName, equalTo("namefromarg"));
-    }
-
-    @Test
-    void testValueFromSystemPropertyInProfileEncrypted() {
-        // given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-
-        // when
-        Config config = Application.getInstance(Config.class);
-        String value = config.getString("application.profil");
-
-        // then
-        assertThat(value, equalTo("admin"));
-    }
-
-    @Test
-    void testValueFromSystemPropertyEncrypted() {
-        // given
-        System.setProperty(Key.APPLICATION_MODE, Mode.TEST.toString().toLowerCase());
-        System.clearProperty(Key.APPLICATION_CONFIG);
-
-        // when
-        Config config = Application.getInstance(Config.class);
-        String value = config.getString("application.encrypted");
-
-        // then
-        assertThat(value, equalTo("admin"));
     }
 
     @Test
@@ -1696,16 +1680,6 @@ class ConfigTest {
             //then
             assertThat(result, not(nullValue()));
         }
-    }
-
-    @Test
-    void testGetApplicationPublicKey() {
-        // given
-        System.clearProperty(Key.APPLICATION_CONFIG);
-        String key = Application.getInstance(Config.class).getApplicationPublicKey();
-
-        // then
-        assertThat(key, equalTo(PUBLIC_KEY));
     }
 
     private void createTempConfig(Map<String, String> values) {
