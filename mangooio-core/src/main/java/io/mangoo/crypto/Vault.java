@@ -1,6 +1,7 @@
 package io.mangoo.crypto;
 
 import io.mangoo.constants.Const;
+import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
@@ -39,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -47,6 +49,7 @@ import java.util.stream.Stream;
 @Singleton
 public class Vault {
     private static final Logger LOG = LogManager.getLogger(Vault.class);
+    private static final String PKCS_12 = "pkcs12";
     private final KeyStore keyStore;
     private Path path;
     private String prefix = Strings.EMPTY;
@@ -56,7 +59,7 @@ public class Vault {
     public Vault() {
         Security.addProvider(new BouncyCastleProvider());
         try {
-            this.keyStore = KeyStore.getInstance("pkcs12");
+            this.keyStore = KeyStore.getInstance(PKCS_12);
         } catch (KeyStoreException e) {
             throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
         }
@@ -236,11 +239,18 @@ public class Vault {
         }
     }
 
-    public SSLContext getSSLContext() {
-        try {
+    public SSLContext getSSLContext(String alias) {
+          try {
+            java.security.Key key = keyStore.getKey(alias, secret);
+            Certificate[] chain = keyStore.getCertificateChain(alias);
+
+            KeyStore tempKeyStore = KeyStore.getInstance("PKCS12");
+            tempKeyStore.load(null, null);
+            tempKeyStore.setKeyEntry(alias, key, secret, chain);
+
             KeyManagerFactory keyManagerFactory =
                     KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            keyManagerFactory.init(keyStore, secret);
+            keyManagerFactory.init(tempKeyStore, secret);
 
             SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
             sslContext.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
@@ -284,6 +294,8 @@ public class Vault {
                 .setProvider("BC")
                 .getCertificate(certHolder);
 
-        keyStore.setKeyEntry("certificate", keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
+        String alias = Optional.ofNullable(config.get(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS)).orElse(Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+
+        keyStore.setKeyEntry(alias, keyPair.getPrivate(), secret, new X509Certificate[]{certificate});
     }
 }

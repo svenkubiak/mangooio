@@ -107,10 +107,10 @@ environments:
     connector:
       http:
         host: localhost
-        port: 50000
-      ajp:
+        port: 8080
+      https:
         host: localhost
-        port: 50001
+        port: 8443
     smtp:
       port: 3125
     persistence:

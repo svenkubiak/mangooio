@@ -738,7 +738,7 @@ public final class Application {
         }
 
         if (httpsPort > 0 && StringUtils.isNotBlank(httpsHost)) {
-            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext());
+            builder.addHttpsListener(httpsPort, httpsHost, vault.getSSLContext(config.getConnectorHttpsCertificateAlias()));
             hasConnector = true;
         }
 

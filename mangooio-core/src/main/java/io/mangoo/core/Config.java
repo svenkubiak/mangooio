@@ -735,8 +735,14 @@ public class Config {
         return getString(Key.FLASH_COOKIE_KEY, getApplicationSecret());
     }
 
+    /**
+     * @return connector.https.certificate.alias or default value if undefined
+     */
+    public String getConnectorHttpsCertificateAlias() {
+        return getString(Key.CONNECTOR_HTTPS_CERTIFICATE_ALIAS, Default.CONNECTOR_HTTPS_CERTIFICATE_ALIAS);
+    }
+
     public boolean isValid() {
         return valid;
     }
-
 }

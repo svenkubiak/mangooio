@@ -28,6 +28,7 @@ public final class Key {
     public static final String AUTHENTICATION_ORIGIN = "authentication.origin";
     public static final String AUTHENTICATION_REDIRECT = "authentication.redirect.login";
     public static final String AUTHENTICATION_REDIRECT_MFA = "authentication.redirect.mfa";
+    public static final String CONNECTOR_HTTPS_CERTIFICATE_ALIAS = "connector.https.certificate.alias";
     public static final String CONNECTOR_HTTPS_HOST = "connector.https.host";
     public static final String CONNECTOR_HTTPS_PORT = "connector.https.port";
     public static final String CONNECTOR_HTTP_HOST = "connector.http.host";
