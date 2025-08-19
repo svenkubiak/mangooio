@@ -4,7 +4,7 @@ import io.mangoo.constants.ClaimKey;
 import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.interfaces.filters.PerRequestFilter;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Request;
@@ -53,7 +53,7 @@ public class AdminFilter implements PerRequestFilter {
 
                     response.render("version", VERSION_TAG);
                     return response;
-                } catch (ParseException | MangooJwtExeption e) {
+                } catch (ParseException | MangooJwtException e) {
                     //NOSONAR Ignore catch
                 }
             }

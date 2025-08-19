@@ -4,7 +4,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.constants.Default;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.bindings.Form;
 import io.undertow.server.handlers.Cookie;
 import io.undertow.server.handlers.CookieImpl;
@@ -35,7 +35,7 @@ public final class AdminUtils {
                username.equals(form.get("username")) && password.equals(form.get("password"));
     }
 
-    public static Cookie getAdminCookie(boolean includeTwoFactor) throws MangooJwtExeption {
+    public static Cookie getAdminCookie(boolean includeTwoFactor) throws MangooJwtException {
         Config config = getInstance(Config.class);
         Map<String, String> claims = new HashMap<>();
         claims.put("uuid", MangooUtils.randomString(32));
@@ -62,9 +62,9 @@ public final class AdminUtils {
                     .setSecure(Application.inProdMode())
                     .setPath("/")
                     .setSameSiteMode("Strict");
-        } catch (MangooJwtExeption e) {
+        } catch (MangooJwtException e) {
             LOG.error("Failed to create admin cookie", e);
-            throw new MangooJwtExeption(e);
+            throw new MangooJwtException(e);
         }
     }
 

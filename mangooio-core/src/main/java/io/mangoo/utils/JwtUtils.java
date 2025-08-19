@@ -7,7 +7,8 @@ import com.nimbusds.jose.crypto.PasswordBasedDecrypter;
 import com.nimbusds.jose.crypto.PasswordBasedEncrypter;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.constants.NotNull;
+import io.mangoo.exceptions.MangooJwtException;
 import org.apache.fury.util.Preconditions;
 
 import java.security.SecureRandom;
@@ -23,14 +24,9 @@ public final class JwtUtils {
     private JwtUtils() {
     }
 
-    public static String createJwt(JwtData jwtData) throws MangooJwtExeption {
-        Objects.requireNonNull(jwtData, "jwtData must not be null");
-        Objects.requireNonNull(jwtData.key(), "key must not be null");
-        Objects.requireNonNull(jwtData.secret(), "secret must not be null");
-        Objects.requireNonNull(jwtData.issuer(), "issuer must not be null");
-        Objects.requireNonNull(jwtData.audience(), "audience must not be null");
-        Objects.requireNonNull(jwtData.subject(), "subject must not be null");
-        Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
+    public static String createJwt(JwtData jwtData) throws MangooJwtException {
+        Objects.requireNonNull(jwtData.subject(), NotNull.SUBJECT);
+        validate(jwtData);
 
         try {
             Instant now = Instant.now();
@@ -48,7 +44,7 @@ public final class JwtUtils {
                 for (Map.Entry<String, String> e : jwtData.claims().entrySet()) {
                     String key = Objects.requireNonNull(e.getKey(), "extra claim key must not be null");
                     if (RESERVED.contains(key)) {
-                        throw new IllegalArgumentException("Extra claim '" + key + "' conflicts with a reserved claim");
+                        throw new MangooJwtException("Extra claim '" + key + "' conflicts with a reserved claim");
                     }
                     claimsBuilder.claim(key, e.getValue());
                 }
@@ -79,21 +75,14 @@ public final class JwtUtils {
             jweObject.encrypt(encrypter);
 
             return jweObject.serialize();
-
         } catch (Exception e) {
-            throw new MangooJwtExeption(e);
+            throw new MangooJwtException(e);
         }
     }
 
-
-    public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtExeption {
-        Objects.requireNonNull(jwt, "JWT must not be null");
-        Objects.requireNonNull(jwtData, "jwtData must not be null");
-        Objects.requireNonNull(jwtData.key(), "key must not be null");
-        Objects.requireNonNull(jwtData.secret(), "secret must not be null");
-        Objects.requireNonNull(jwtData.issuer(), "issuer must not be null");
-        Objects.requireNonNull(jwtData.audience(), "audience must not be null");
-        Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
+    public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtException {
+        Objects.requireNonNull(jwt, NotNull.JWT);
+        validate(jwtData);
 
         try {
             // Step 1: Parse the encrypted JWT (JWE)
@@ -166,13 +155,22 @@ public final class JwtUtils {
 
             return claims;
         } catch (Exception e) {
-            throw new MangooJwtExeption(e);
+            throw new MangooJwtException(e);
         }
     }
 
     private static <T> T require(T v, String name) throws JOSEException {
         if (v == null) throw new JOSEException("Missing '" + name + "' claim");
         return v;
+    }
+
+    private static void validate(JwtData jwtData) {
+        Objects.requireNonNull(jwtData, NotNull.JWT_DATA);
+        Objects.requireNonNull(jwtData.key(), NotNull.KEY);
+        Objects.requireNonNull(jwtData.secret(), NotNull.SECRET);
+        Objects.requireNonNull(jwtData.issuer(), NotNull.ISSUER);
+        Objects.requireNonNull(jwtData.audience(), NotNull.AUDIENCE);
+        Preconditions.checkArgument(jwtData.ttlSeconds() > 0, "TTL must be greater than 0.");
     }
     public static JwtData jwtData() {
         return new JwtData(null, null, null, null, null, 0L, Map.of());

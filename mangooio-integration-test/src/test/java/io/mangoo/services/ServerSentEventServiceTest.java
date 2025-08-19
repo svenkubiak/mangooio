@@ -10,7 +10,7 @@ import io.mangoo.TestExtension;
 import io.mangoo.constants.ClaimKey;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.utils.JwtUtils;
 import io.mangoo.utils.MangooUtils;
@@ -69,7 +69,7 @@ class ServerSentEventServiceTest {
 	}
 	
     @Test
-    void testSendDataWithInvalidAuthentication() throws IllegalArgumentException, MangooJwtExeption {
+    void testSendDataWithInvalidAuthentication() throws IllegalArgumentException, MangooJwtException {
         //given
         Config config = Application.getInstance(Config.class);
 

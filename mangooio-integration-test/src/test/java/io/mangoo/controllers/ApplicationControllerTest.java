@@ -5,7 +5,7 @@ import io.mangoo.cache.Cache;
 import io.mangoo.constants.Header;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.test.http.TestRequest;
 import io.mangoo.test.http.TestResponse;
 import io.undertow.util.Headers;
@@ -117,7 +117,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testApiFilterAuthorized() throws MangooJwtExeption {
+    void testApiFilterAuthorized() throws MangooJwtException {
         //given
         final TestResponse response = TestRequest
                 .get("/api-filter")

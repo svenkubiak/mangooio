@@ -7,6 +7,7 @@ import io.mangoo.core.Application;
 import io.mangoo.core.Config;
 import io.mangoo.core.Shutdown;
 import io.mangoo.crypto.Crypto;
+import io.mangoo.crypto.Vault;
 import io.mangoo.i18n.Messages;
 import io.mangoo.interfaces.MangooBootstrap;
 import io.mangoo.interfaces.filters.OncePerRequestFilter;
@@ -56,6 +57,15 @@ class InjectionTest {
         
         //then
         assertThat(session, not(nullValue()));
+    }
+
+    @Test
+    void testVault() {
+        //given
+        Vault vault = Application.getInstance(Vault.class);
+
+        //then
+        assertThat(vault, not(nullValue()));
     }
     
     @Test

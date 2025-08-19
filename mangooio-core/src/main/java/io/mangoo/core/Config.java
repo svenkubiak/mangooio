@@ -9,6 +9,7 @@ import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.crypto.Vault;
 import io.mangoo.utils.ConfigUtils;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,7 @@ public class Config {
     private Pattern corsAllowOrigin;
     private boolean valid;
 
+    @Inject
     public Config(Vault vault) {
         this.vault = Objects.requireNonNull(vault, NotNull.VAULT);
         load();

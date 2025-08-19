@@ -6,7 +6,7 @@ import io.mangoo.constants.Header;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Request;
 import io.undertow.server.HttpServerExchange;
@@ -107,7 +107,7 @@ public final class RequestUtils {
 
                     JwtUtils.parseJwt(value, jwtData);
                     valid = true;
-                } catch (MangooJwtExeption e) {
+                } catch (MangooJwtException e) {
                     LOG.error("Failed to parse authentication cookie", e);
                 }
             }

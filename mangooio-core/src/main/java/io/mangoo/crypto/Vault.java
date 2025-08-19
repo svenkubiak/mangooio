@@ -57,10 +57,11 @@ public class Vault {
             throw new IllegalStateException("Failed to acquire PKCS12 keystore", e);
         }
         loadConfig();
-        loadPrefix();
         loadPath();
         loadSecret();
         loadKeyStore();
+        loadPrefix();
+        
         cleanUp();
     }
 

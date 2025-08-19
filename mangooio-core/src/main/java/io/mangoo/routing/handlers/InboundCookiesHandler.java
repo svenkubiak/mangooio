@@ -5,7 +5,7 @@ import io.mangoo.constants.Const;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.exceptions.MangooJwtExeption;
+import io.mangoo.exceptions.MangooJwtException;
 import io.mangoo.routing.Attachment;
 import io.mangoo.routing.bindings.Authentication;
 import io.mangoo.routing.bindings.Flash;
@@ -80,7 +80,7 @@ public class InboundCookiesHandler implements HttpHandler {
                                 jwtClaimsSet.getExpirationTime().toInstant(),
                                 ZoneId.systemDefault()
                         ));
-            } catch (ParseException | MangooJwtExeption e) {
+            } catch (ParseException | MangooJwtException e) {
                 LOG.error("Failed to parse session cookie", e);
                 session.invalidate();
             }
@@ -119,7 +119,7 @@ public class InboundCookiesHandler implements HttpHandler {
                             jwtClaimsSet.getExpirationTime().toInstant(),
                             ZoneId.systemDefault()
                         ));
-            } catch (ParseException | MangooJwtExeption e) {
+            } catch (ParseException | MangooJwtException e) {
                 LOG.error("Failed to parse authentication cookie", e);
                 authentication.invalidate();
             }
@@ -156,7 +156,7 @@ public class InboundCookiesHandler implements HttpHandler {
                 flash = Flash.create()
                         .withContent(MangooUtils.toStringMap(jwtClaimSet.getClaims()))
                         .setDiscard(true);
-            } catch (ParseException | MangooJwtExeption e) {
+            } catch (ParseException | MangooJwtException e) {
                 LOG.error("Failed to parse flash cookie", e);
                 flash.invalidate();
             }
