@@ -19,20 +19,23 @@ default:
   session:
     cookie:
       name: ${application-name}-session
-      secret: session.cookie.secret
+      secret: vault{}
+      key: vault{}
       secure: true
   authenication:
     redirect: /login
     cookie:
       name: ${application-name}-authentication
-      secret: authentication.cookie.secret
+      secret: vault{}
+      key: vault{}
       secure: true
   token:
     secret: token.secret
   flash:
     cookie:
       name: ${application-name}-flash
-      secret: flash.cookie.secret
+      secret: vault{}
+      key: vault{}
       secure: true
   smtp:
     host: localhost
@@ -47,12 +50,18 @@ environments:
         port: 9090
     session:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     flash:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     authentication:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     persistence:
       mongo:
@@ -67,12 +76,18 @@ environments:
         port: 9090
     session:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     flash:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     authentication:
       cookie:
+        secret: vault{}
+        key: vault{}
         secure: false
     persistence:
       mongo:

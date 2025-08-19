@@ -102,6 +102,7 @@ public final class NotNull {
     public static final String VALUE = "value can not be null";
     public static final String VALUES = "values can not be null";
     public static final String RESPONSE = "response can not be null";
+    public static final String DATASTORE_FACTORY = "datastoreFactory can not be null";
 
     private NotNull() {
     }

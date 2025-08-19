@@ -4,12 +4,14 @@ import io.mangoo.constants.Const;
 import io.mangoo.constants.Key;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Application;
+import io.mangoo.enums.Mode;
 import io.mangoo.utils.ConfigUtils;
 import io.mangoo.utils.MangooUtils;
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
@@ -27,6 +29,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -39,13 +42,14 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Singleton
 public class Vault {
     private static final Logger LOG = LogManager.getLogger(Vault.class);
     private final KeyStore keyStore;
     private Path path;
-    private String prefix;
+    private String prefix = Strings.EMPTY;
     private char[] secret;
     private Map<String, String> config = new HashMap<>();
 
@@ -61,7 +65,7 @@ public class Vault {
         loadSecret();
         loadKeyStore();
         loadPrefix();
-        
+
         cleanUp();
     }
 
@@ -122,19 +126,26 @@ public class Vault {
     }
 
     private void loadPath() {
-        String pathStr = System.getProperty(Key.APPLICATION_VAULT_PATH);
-
-        if (StringUtils.isBlank(pathStr)) {
-            pathStr = config.get(Key.APPLICATION_VAULT_PATH);
-        }
-
-        if (StringUtils.isNotBlank(pathStr)) {
-            pathStr = pathStr + "/" + Const.KEYSTORE_FILENAME;
+        String path;
+        if (!Application.inProdMode()) {
+            path = MangooUtils.getRootFolder();
         } else {
-            pathStr = Const.KEYSTORE_FILENAME;
+            path = System.getProperty(Key.APPLICATION_VAULT_PATH);
+
+            if (StringUtils.isBlank(path)) {
+                path = config.get(Key.APPLICATION_VAULT_PATH);
+            }
         }
 
-        this.path = Path.of(pathStr);
+        if (StringUtils.isBlank(path)) {
+            path = Const.KEYSTORE_FILENAME;
+        } else if (path.charAt(path.length() - 1) != File.separatorChar) {
+            path += File.separator + Const.KEYSTORE_FILENAME;
+        } else {
+            path = path + Const.KEYSTORE_FILENAME;
+        }
+
+        this.path = Path.of(path);
     }
 
     @SuppressWarnings("unchecked")
@@ -161,26 +172,16 @@ public class Vault {
     }
 
     private void createSecrets() {
-        put("dev." + Key.AUTHENTICATION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("dev." + Key.AUTHENTICATION_COOKIE_KEY, MangooUtils.randomString(64));
-        put("test." + Key.AUTHENTICATION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("test." + Key.AUTHENTICATION_COOKIE_KEY, MangooUtils.randomString(64));
-        put("prod." + Key.AUTHENTICATION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("prod." + Key.AUTHENTICATION_COOKIE_KEY, MangooUtils.randomString(64));
-
-        put("dev." + Key.SESSION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("dev." + Key.SESSION_COOKIE_KEY, MangooUtils.randomString(64));
-        put("test." + Key.SESSION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("test." + Key.SESSION_COOKIE_KEY, MangooUtils.randomString(64));
-        put("prod." + Key.SESSION_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("prod." + Key.SESSION_COOKIE_KEY, MangooUtils.randomString(64));
-
-        put("dev." + Key.FLASH_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("dev." + Key.FLASH_COOKIE_KEY, MangooUtils.randomString(64));
-        put("test." + Key.FLASH_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("test." + Key.FLASH_COOKIE_KEY, MangooUtils.randomString(64));
-        put("prod." + Key.FLASH_COOKIE_SECRET, MangooUtils.randomString(64));
-        put("prod." + Key.FLASH_COOKIE_KEY, MangooUtils.randomString(64));
+        Stream.of(Mode.values())
+               .forEach(value -> {
+                   String mode = value.toString().toLowerCase(Locale.ENGLISH) + ".";
+                   put(mode + Key.AUTHENTICATION_COOKIE_SECRET, MangooUtils.randomString(64));
+                   put(mode + Key.AUTHENTICATION_COOKIE_KEY, MangooUtils.randomString(64));
+                   put(mode + Key.SESSION_COOKIE_SECRET, MangooUtils.randomString(64));
+                   put(mode + Key.SESSION_COOKIE_KEY, MangooUtils.randomString(64));
+                   put(mode + Key.FLASH_COOKIE_SECRET, MangooUtils.randomString(64));
+                   put(mode + Key.FLASH_COOKIE_KEY, MangooUtils.randomString(64));
+               });
     }
 
     public String get(String key) {

@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.*;
 public class VaultTest {
 
     @Test
-    void testPut() {
+    void testGetAndPut() {
         //given
         Vault vault = Application.getInstance(Vault.class);
         String key = "key";
@@ -26,5 +26,29 @@ public class VaultTest {
         //then
         assertThat(actual, not(nullValue()));
         assertThat(actual, equalTo(value));
+    }
+
+    @Test
+    void testRemove() {
+        //given
+        Vault vault = Application.getInstance(Vault.class);
+        String key = "key";
+        String value = CodecUtils.uuidV6();
+
+        //when
+        vault.put(key, value);
+        String actual = vault.get(key);
+
+        //then
+        assertThat(actual, not(nullValue()));
+        assertThat(actual, equalTo(value));
+
+        //when
+        vault.remove(key);
+        actual = vault.get(key);
+
+        //then
+        assertThat(actual, nullValue());
+        assertThat(actual, not(equalTo(value)));
     }
 }

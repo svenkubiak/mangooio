@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Singleton
 public class DatastoreProvider implements Provider<Datastore> {
-    private final Map<String, DatastoreImpl> datastores = new HashMap<>();
+    private final Map<String, DatastoreImpl> dataStores = new HashMap<>();
     private final DatastoreImpl defaultDatastore;
 
     @Inject
@@ -23,7 +23,7 @@ public class DatastoreProvider implements Provider<Datastore> {
     public Datastore getDatastore(String prefix) {
         Objects.requireNonNull(prefix, NotNull.PREFIX);
 
-        return datastores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
+        return dataStores.computeIfAbsent(prefix, key -> new DatastoreImpl(prefix));
     }
     
     @Override

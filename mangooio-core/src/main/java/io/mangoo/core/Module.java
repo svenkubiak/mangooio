@@ -12,7 +12,7 @@ import io.mangoo.persistence.interfaces.Datastore;
 
 public class Module extends AbstractModule {
     private final Vault vault = new Vault();
-    private final Config config = new Config(vault);
+    public final Config config = new Config(vault);
     private EmbeddedMongoDB embeddedMongoDB;
 
     public Module() {

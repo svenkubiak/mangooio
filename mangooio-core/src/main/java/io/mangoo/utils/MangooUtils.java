@@ -10,8 +10,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -225,5 +230,34 @@ public final class MangooUtils {
         }
 
         return languages;
+    }
+
+    private static File findRoot(File current) {
+        while (current != null) {
+            File pom = current.toPath().resolve("pom.xml").toFile();
+            if (pom.exists() && isRootPom(pom)) {
+                return current;
+            }
+            current = current.getParentFile();
+        }
+        return null;
+    }
+
+    private static boolean isRootPom(File pomFile) {
+        try {
+            DocumentBuilder dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = dBuilder.parse(pomFile);
+            NodeList modules = doc.getElementsByTagName("modules");
+            NodeList parentNodes = doc.getElementsByTagName("parent");
+            return modules.getLength() > 0 || parentNodes.getLength() == 0;
+        } catch (Exception e) { }
+        return false;
+    }
+
+    public static String getRootFolder() {
+        File startDir = Path.of(System.getProperty("user.dir")).toFile();
+        File root = findRoot(startDir);
+
+        return root.getAbsolutePath();
     }
 }
