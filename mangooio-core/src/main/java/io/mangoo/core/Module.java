@@ -6,11 +6,13 @@ import de.svenkubiak.embeddedmongodb.EmbeddedMongoDB;
 import io.mangoo.cache.Cache;
 import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.Default;
+import io.mangoo.crypto.Vault;
 import io.mangoo.persistence.DatastoreProvider;
 import io.mangoo.persistence.interfaces.Datastore;
 
 public class Module extends AbstractModule {
-    private final Config config = new Config();
+    private final Vault vault = new Vault();
+    private final Config config = new Config(vault);
     private EmbeddedMongoDB embeddedMongoDB;
 
     public Module() {
@@ -27,6 +29,7 @@ public class Module extends AbstractModule {
     protected void configure() {
         Names.bindProperties(binder(), config.toProperties());
 
+        bind(Vault.class).toInstance(vault);
         bind(Config.class).toInstance(config);
         bind(Cache.class).toProvider(CacheProvider.class);
         bind(Datastore.class).toProvider(DatastoreProvider.class);

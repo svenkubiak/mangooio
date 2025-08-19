@@ -46,6 +46,7 @@ public final class AdminUtils {
 
         try {
             var jwtData = JwtUtils.JwtData.create()
+                    .withKey(config.getApplicationSecret())
                     .withSecret(config.getApplicationSecret())
                     .withIssuer(config.getApplicationName())
                     .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)

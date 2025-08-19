@@ -15,7 +15,7 @@ public final class Template {
     private static final String NOT_FOUND_TEMPLATE_PATH = "defaults/404.html";
     private static final String TWO_FACTOR_TEMPLATE_PATH = "@admin/twoFactor.ftl";
     private static final String TEMPLATES_FOLDER = "templates/";
-    private static final String TOOLS_TEMPLATE_PATH = "@admin/tools.ftl";
+    private static final String TOOLS_TEMPLATE_PATH = "@admin/security.ftl";
     private static final String UNAUTHORIZED_TEMPLATE_PATH = "defaults/401.html";
     private static final String NOT_FOUND_CONTENT;
     private static final String INTERNAL_SERVER_ERROR_CONTENT;

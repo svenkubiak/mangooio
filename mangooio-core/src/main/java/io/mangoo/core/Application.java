@@ -486,37 +486,36 @@ public final class Application {
 
         bitLength = getBitLength(config.getAuthenticationCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit encryption key. The current property for authentication.cookie.secret has only {} bits.", bitLength);
+            LOG.error("Authentication cookie requires a 512 bit encryption secret. The current property for authentication.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
-
-        bitLength = getBitLength(config.getAuthenticationCookieSecret());
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Authentication cookie requires a 512 bit sign key. The current property for authentication.cookie.signkey has only {} bits.", bitLength);
-            failsafe();
-        }
-
         bitLength = getBitLength(config.getSessionCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie secret a 512 bit encryption key. The current property for session.cookie.secret has only {} bits.", bitLength);
-            failsafe();
-        }
-
-        bitLength = getBitLength(config.getSessionCookieSecret());
-        if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Session cookie requires a 512 bit sign key. The current property for session.cookie.signkey has only {} bits.", bitLength);
+            LOG.error("Session cookie secret a 512 bit encryption secret. The current property for session.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
         bitLength = getBitLength(config.getFlashCookieSecret());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit sign key. The current property for flash.cookie.signkey has only {} bits.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit encryption secret. The current property for flash.cookie.secret has only {} bits.", bitLength);
             failsafe();
         }
 
-        bitLength = getBitLength(config.getFlashCookieSecret());
+        bitLength = getBitLength(config.getFlashCookieKey());
         if (bitLength < KEY_MIN_BIT_LENGTH) {
-            LOG.error("Flash cookie requires a 512 bit encryption key. The current property for flash.cookie.secret has only {} bits.", bitLength);
+            LOG.error("Flash cookie requires a 512 bit signing key. The current property for flash.cookie.key has only {} bits.", bitLength);
+            failsafe();
+        }
+
+        bitLength = getBitLength(config.getAuthenticationCookieKey());
+        if (bitLength < KEY_MIN_BIT_LENGTH) {
+            LOG.error("Authentication cookie requires a 512 bit signing key. The current property for authentication.cookie.key has only {} bits.", bitLength);
+            failsafe();
+        }
+
+        bitLength = getBitLength(config.getSessionCookieKey());
+        if (bitLength < KEY_MIN_BIT_LENGTH) {
+            LOG.error("Session cookie requires a 512 bit signing key. The current property for session.cookie.key has only {} bits.", bitLength);
             failsafe();
         }
 
@@ -564,12 +563,6 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
-            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-
         if (!config.isSessionCookieSecure()) {
             var warning = "Session cookie has secure flag set to 'false'. It is highly recommended to set session.cookie.secure to 'true' in an production environment.";
             warnings.add(warning);
@@ -582,26 +575,26 @@ public final class Application {
             LOG.warn(warning);
         }
 
-        if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
-            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
-            warnings.add(warning);
-            LOG.warn(warning);
-        }
-
         if (Default.FLASH_COOKIE_NAME.equals(config.getFlashCookieName())) {
             var warning = "Flash cookie name has default value. Consider changing flash.cookie.name to an application specific value.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
-            var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
+        if (config.getAuthenticationCookieSecret().equals(config.getApplicationSecret())) {
+            var warning = "Authentication cookie secret is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
 
-        if (config.getAuthenticationCookieKey().equals(config.getApplicationSecret())) {
-            var warning = "Authentication cookie key is using application secret. It is highly recommended to set a dedicated value to authentication.cookie.key.";
+        if (config.getSessionCookieSecret().equals(config.getApplicationSecret())) {
+            var warning = "Session cookie secret is using application secret. It is highly recommended to set a dedicated value to session.cookie.secret.";
+            warnings.add(warning);
+            LOG.warn(warning);
+        }
+
+        if (config.getFlashCookieSecret().equals(config.getApplicationSecret())) {
+            var warning = "Flash cookie secret is using application secret. It is highly recommended to set a dedicated value to flash.cookie.secret.";
             warnings.add(warning);
             LOG.warn(warning);
         }
@@ -691,11 +684,10 @@ public final class Application {
                             On.get().to("/@admin/login").respondeWith("login"),
                             On.get().to("/@admin/twofactor").respondeWith("twofactor"),
                             On.get().to("/@admin/scheduler").respondeWith("scheduler"),
-                            On.get().to("/@admin/tools").respondeWith("tools"),
+                            On.get().to("/@admin/security").respondeWith("security"),
                             On.get().to("/@admin/logout").respondeWith("logout"),
                             On.post().to("/@admin/authenticate").respondeWith("authenticate"),
-                            On.post().to("/@admin/verify").respondeWith("verify"),
-                            On.post().to("/@admin/tools").respondeWith("toolsRx")
+                            On.post().to("/@admin/verify").respondeWith("verify")
                     );
         }
 

@@ -30,10 +30,10 @@
                 <a class="navbar-item" href="/@admin">Dashboard</a>
                 <a class="navbar-item" href="/@admin/scheduler">Scheduler</a>
                 <a class="navbar-item" href="/@admin/cache">Cache</a>
-                <a class="navbar-item" href="/@admin/tools">Config tools</a>  
+                <a class="navbar-item" href="/@admin/security">Security</a>
             </div>
             <div class="navbar-end">
-                <a class="navbar-item" href="/@admin/logout">Logout</a> 
+                <a class="navbar-item logout" href="/@admin/logout">Logout</a>
             </div>            
         </div>
     </div>

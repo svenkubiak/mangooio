@@ -13,6 +13,7 @@ import io.mangoo.core.Config;
 import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.manager.ServerSentEventManager;
 import io.mangoo.utils.JwtUtils;
+import io.mangoo.utils.MangooUtils;
 import okhttp3.Headers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,12 +69,13 @@ class ServerSentEventServiceTest {
 	}
 	
     @Test
-    void testSendDataWithInvalidAuthentication() throws InterruptedException, IllegalArgumentException, MangooJwtExeption {
+    void testSendDataWithInvalidAuthentication() throws IllegalArgumentException, MangooJwtExeption {
         //given
         Config config = Application.getInstance(Config.class);
 
         var jwtData = JwtUtils.JwtData.create()
-                .withSecret("oskdlwsodkcmansjdkwsowekd5jfvsq2mckdkalsodkskajsfdsfdsfvvkdkcskdsqidsjk")
+                .withKey(MangooUtils.randomString(64))
+                .withSecret(MangooUtils.randomString(64))
                 .withIssuer(config.getApplicationName())
                 .withAudience(config.getAuthenticationCookieName())
                 .withSubject("foo")

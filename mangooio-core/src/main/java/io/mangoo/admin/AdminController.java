@@ -10,14 +10,11 @@ import io.mangoo.cache.CacheProvider;
 import io.mangoo.constants.*;
 import io.mangoo.core.Application;
 import io.mangoo.core.Config;
-import io.mangoo.crypto.Crypto;
-import io.mangoo.exceptions.MangooEncryptionException;
 import io.mangoo.exceptions.MangooJwtExeption;
 import io.mangoo.filters.AdminFilter;
 import io.mangoo.models.Metrics;
 import io.mangoo.routing.Response;
 import io.mangoo.routing.bindings.Form;
-import io.mangoo.routing.bindings.Request;
 import io.mangoo.scheduler.Scheduler;
 import io.mangoo.utils.AdminUtils;
 import io.mangoo.utils.DateUtils;
@@ -52,14 +49,12 @@ public class AdminController {
     private final CacheProvider cacheProvider;
     private final Cache cache;
     private final Config config;
-    private final Crypto crypto;
 
     @Inject
-    public AdminController(Config config, CacheProvider cacheProvider, Crypto crypto) {
+    public AdminController(Config config, CacheProvider cacheProvider) {
         this.config = Objects.requireNonNull(config, NotNull.CONFIG);
         this.cache = cacheProvider.getCache(CacheName.APPLICATION);
         this.cacheProvider = Objects.requireNonNull(cacheProvider, NotNull.CACHE_PROVIDER);
-        this.crypto = Objects.requireNonNull(crypto, NotNull.CRYPTO);
     }
 
     public Response index() {
@@ -126,7 +121,7 @@ public class AdminController {
         return Response.ok().render("scheduler", scheduler).template(Template.schedulerPath());
     }
 
-    public Response tools() {
+    public Response security() {
         String secret = config.getApplicationAdminSecret();
         String qrCode = null;
 
@@ -141,37 +136,6 @@ public class AdminController {
                 .template(Template.toolsPath());
     }
 
-    public Response toolsRx(Request request) {
-        Map<String, Object> body = request.getBodyAsJsonMap();
-        Map<String, String> response = new HashMap<>();
-
-        if (body != null && !body.isEmpty()) {
-            var function = body.get("function").toString();
-
-            if (("keypair").equalsIgnoreCase(function)) {
-                var keyPair = crypto.generateKeyPair();
-                var publicKey = crypto.getKeyAsString(keyPair.getPublic());
-                var privateKey = crypto.getKeyAsString(keyPair.getPrivate());
-
-                response = Map.of("publickey", publicKey,  "privatekey", privateKey);
-            } else if (("encrypt").equalsIgnoreCase(function)) {
-                var cleartext = body.get("cleartext").toString();
-                var key = body.get("key").toString();
-
-                try {
-                    var publicKey = crypto.getPublicKeyFromString(key);
-                    response = Map.of("encrypted", crypto.encrypt(cleartext, publicKey));
-                } catch (MangooEncryptionException e) {
-                    LOG.error("Failed to encrypt cleartext.", e);
-                }
-            } else {
-                LOG.warn("Invalid or no function selected for AJAX request.");
-            }
-        }
-
-        return Response.ok().bodyJson(response);
-    }
-    
     public Response login() {
         return Response.ok()
                 .template(Template.loginPath());

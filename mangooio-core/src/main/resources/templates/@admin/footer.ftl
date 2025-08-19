@@ -1,3 +1,3 @@
-<script type="text/javascript" src="/@admin/assets/js/scripts.min.js"></script>
+<script type="text/javascript" src="/@admin/assets/js/admin.min.js"></script>
 </body>
 </html>

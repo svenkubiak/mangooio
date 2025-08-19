@@ -25,6 +25,7 @@ public final class JwtUtils {
 
     public static String createJwt(JwtData jwtData) throws MangooJwtExeption {
         Objects.requireNonNull(jwtData, "jwtData must not be null");
+        Objects.requireNonNull(jwtData.key(), "key must not be null");
         Objects.requireNonNull(jwtData.secret(), "secret must not be null");
         Objects.requireNonNull(jwtData.issuer(), "issuer must not be null");
         Objects.requireNonNull(jwtData.audience(), "audience must not be null");
@@ -88,6 +89,7 @@ public final class JwtUtils {
     public static JWTClaimsSet parseJwt(String jwt, JwtData jwtData) throws MangooJwtExeption {
         Objects.requireNonNull(jwt, "JWT must not be null");
         Objects.requireNonNull(jwtData, "jwtData must not be null");
+        Objects.requireNonNull(jwtData.key(), "key must not be null");
         Objects.requireNonNull(jwtData.secret(), "secret must not be null");
         Objects.requireNonNull(jwtData.issuer(), "issuer must not be null");
         Objects.requireNonNull(jwtData.audience(), "audience must not be null");

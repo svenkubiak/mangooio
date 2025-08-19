@@ -6,6 +6,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.mangoo.constants.Const;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.Key;
+import io.mangoo.constants.NotNull;
 import io.mangoo.crypto.Vault;
 import io.mangoo.utils.ConfigUtils;
 import jakarta.inject.Singleton;
@@ -19,10 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
@@ -31,12 +29,13 @@ public class Config {
     private static final String VAULT_TAG = "vault{}";
     private static final String ARG_TAG = "arg{}";
     private final Map<String, String> values = new ConcurrentHashMap<>();
-    private final Vault vault = new Vault();
+    private final Vault vault;
     private Pattern corsUrl;
     private Pattern corsAllowOrigin;
     private boolean valid;
 
-    public Config() {
+    public Config(Vault vault) {
+        this.vault = Objects.requireNonNull(vault, NotNull.VAULT);
         load();
     }
 

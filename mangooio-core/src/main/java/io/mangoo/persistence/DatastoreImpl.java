@@ -12,6 +12,7 @@ import com.mongodb.client.result.InsertOneResult;
 import io.mangoo.constants.Default;
 import io.mangoo.constants.NotNull;
 import io.mangoo.core.Config;
+import io.mangoo.crypto.Vault;
 import io.mangoo.persistence.interfaces.BaseEntity;
 import io.mangoo.persistence.interfaces.Datastore;
 import io.mangoo.utils.PersistenceUtils;
@@ -48,7 +49,7 @@ public class DatastoreImpl implements Datastore {
 
     public DatastoreImpl(String prefix) {
         Objects.requireNonNull(prefix, NotNull.PREFIX);
-        this.config = new Config();
+        this.config = new Config(new Vault());
         this.prefix = Default.PERSISTENCE_PREFIX + prefix + ".";
         connect();
     }

@@ -40,6 +40,7 @@ public class AdminFilter implements PerRequestFilter {
             if (StringUtils.isNotBlank(value)) {
                 try {
                     var jwtData = JwtUtils.JwtData.create()
+                            .withKey(config.getApplicationSecret())
                             .withSecret(config.getApplicationSecret())
                             .withIssuer(config.getApplicationName())
                             .withAudience(Default.APPLICATION_ADMIN_COOKIE_NAME)
